@@ -124,8 +124,21 @@
   var imgByKey = {};
   CATS.forEach(function (c) { imgByKey[c.key] = c.img; });
 
+  // 完整资料页映射(型号/类别 -> 详情页)。后续可继续扩充。
+  function getDetail(p) {
+    if (p.detail) return p.detail;
+    var m = (p["型号"] || "").toUpperCase();
+    if (/^2XZ/.test(m)) return "product/2xz.html";
+    return "";
+  }
+
   function openModal(p) {
     document.getElementById("mTitle").textContent = p["型号"] || (p["产品名称"] || "产品参数");
+    var dEl = document.getElementById("mDetail");
+    var durl = getDetail(p);
+    dEl.innerHTML = durl
+      ? '<a class="full-doc-btn" href="' + durl + '" target="_blank" rel="noopener">📄 查看完整产品资料（含完整对比参数表 · 可下载 Word / PDF）</a>'
+      : "";
     document.getElementById("mName").textContent = p["产品名称"] || "";
     document.getElementById("mCat").textContent = keyName[p.key] || p["类别"] || "";
     var img = document.getElementById("mImg");
