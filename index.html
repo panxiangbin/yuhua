@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>予华仪器 · 实验室仪器产品中心</title>
+<meta name="description" content="巩义予华仪器 — 旋转蒸发仪、玻璃反应釜、高压反应釜、分子蒸馏、高低温循环装置、磁力搅拌器等实验室仪器整体解决方案，厂家直供。">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- 顶部导航 -->
+<header class="nav" id="top">
+  <div class="nav-inner">
+    <a class="brand" href="#top">
+      <span class="brand-logo">予华</span>
+      <span class="brand-text"><b>予华仪器</b><i>YUHUA INSTRUMENT</i></span>
+    </a>
+    <nav class="nav-links">
+      <a href="#home">首页</a>
+      <a href="#products">产品中心</a>
+      <a href="#catalog">型号查询</a>
+      <a href="#about">关于我们</a>
+    </nav>
+  </div>
+</header>
+
+<!-- 首屏 -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-inner">
+    <p class="hero-kicker">实验室仪器整体解决方案 · 厂家直供</p>
+    <h1>专业实验仪器<br>为科研与生产赋能</h1>
+    <p class="hero-sub">旋转蒸发 · 反应釜 · 分子蒸馏 · 控温循环 · 搅拌真空<br>覆盖实验室浓缩、合成、提纯、控温全流程</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="#products">浏览产品系列</a>
+      <a class="btn btn-ghost" href="#catalog">查询具体型号</a>
+    </div>
+    <div class="hero-stats">
+      <div><b id="stat-cats">12</b><span>大产品系列</span></div>
+      <div><b id="stat-models">450+</b><span>在册型号</span></div>
+      <div><b>厂家直供</b><span>实体工厂 · 可定制</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 产品中心 -->
+<section class="section" id="products">
+  <div class="section-head">
+    <h2>产品中心</h2>
+    <p>按应用场景精选分类，点击任一系列可查看该系列下全部型号参数</p>
+  </div>
+  <div class="cat-grid" id="catGrid"><!-- JS 注入 --></div>
+</section>
+
+<!-- 型号查询 -->
+<section class="section section-alt" id="catalog">
+  <div class="section-head">
+    <h2>型号查询</h2>
+    <p>输入型号 / 名称关键词，或点选下方分类筛选。共收录 <b id="totalCount">0</b> 个型号</p>
+  </div>
+  <div class="catalog-tools">
+    <input type="search" id="searchInput" placeholder="🔍 搜索型号或名称，如 YRE-2020Z、反应釜、DLSB…" autocomplete="off">
+    <div class="chips" id="chips"></div>
+  </div>
+  <p class="result-info"><span id="resultCount">0</span> 个结果</p>
+  <div class="table-wrap">
+    <table class="ptable">
+      <thead>
+        <tr>
+          <th>型号</th><th>产品名称 / 类别</th><th>材质</th><th>容量</th>
+          <th>功率</th><th>控温范围</th><th>电源</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+    <p class="empty-tip" id="emptyTip" hidden>没有匹配的型号，换个关键词试试～</p>
+  </div>
+</section>
+
+<!-- 关于 -->
+<section class="section" id="about">
+  <div class="section-head"><h2>关于予华仪器</h2></div>
+  <div class="about-body">
+    <p>巩义予华仪器长期专注于实验室仪器的研发与制造，产品涵盖<b>旋转蒸发仪、双层玻璃反应釜、高压反应釜、分子蒸馏装置、高低温循环装置、恒温槽、磁力/电动搅拌器、真空泵</b>等多个系列，广泛应用于化工、制药、科研院所、高校实验室等领域。</p>
+    <p>工厂支持<b>非标定制与防爆机型</b>，欢迎来图来样洽谈。</p>
+    <div class="about-note">
+      💡 本站为产品资料展示，<b>不含价格信息</b>。如需报价、选型建议或技术参数详表，请联系予华仪器销售人员。
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div>予华仪器 YUHUA INSTRUMENT · 实验室仪器产品中心</div>
+  <div class="footer-sub">本页面由产品资料整理生成 · 仅供参考，具体以实物及正式技术文件为准</div>
+</footer>
+
+<button class="to-top" id="toTop" title="返回顶部">↑</button>
+
+<script src="assets/data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
