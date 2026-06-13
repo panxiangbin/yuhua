@@ -1,0 +1,79 @@
+[
+ {
+  "key": "company",
+  "title": "予华仪器 · 工厂实拍",
+  "sub": "实体工厂 验厂实录",
+  "file": "assets/videos/vid_company.mp4",
+  "poster": "assets/videos/vid_company.jpg"
+ },
+ {
+  "key": "rotary",
+  "title": "旋转蒸发仪",
+  "sub": "MR 旋转蒸发器演示",
+  "file": "assets/videos/vid_rotary.mp4",
+  "poster": "assets/videos/vid_rotary.jpg"
+ },
+ {
+  "key": "glass_reactor",
+  "title": "双层玻璃反应釜",
+  "sub": "YSF-50L 运行演示",
+  "file": "assets/videos/vid_glass_reactor.mp4",
+  "poster": "assets/videos/vid_glass_reactor.jpg"
+ },
+ {
+  "key": "hp_reactor",
+  "title": "高压反应釜",
+  "sub": "磁力耦合快卡式",
+  "file": "assets/videos/vid_hp_reactor.mp4",
+  "poster": "assets/videos/vid_hp_reactor.jpg"
+ },
+ {
+  "key": "mag_stir",
+  "title": "磁力搅拌器",
+  "sub": "ZNCL-GS 系列",
+  "file": "assets/videos/vid_mag_stir.mp4",
+  "poster": "assets/videos/vid_mag_stir.jpg"
+ },
+ {
+  "key": "elec_stir",
+  "title": "电动搅拌器",
+  "sub": "DW 系列",
+  "file": "assets/videos/vid_elec_stir.mp4",
+  "poster": "assets/videos/vid_elec_stir.jpg"
+ },
+ {
+  "key": "chiller",
+  "title": "低温冷却循环泵",
+  "sub": "CCA-20 小型冷却泵",
+  "file": "assets/videos/vid_chiller.mp4",
+  "poster": "assets/videos/vid_chiller.jpg"
+ },
+ {
+  "key": "hilo_circ",
+  "title": "高低温一体机",
+  "sub": "GDSZ 系列",
+  "file": "assets/videos/vid_hilo_circ.mp4",
+  "poster": "assets/videos/vid_hilo_circ.jpg"
+ },
+ {
+  "key": "vacuum",
+  "title": "循环水真空泵",
+  "sub": "SHZ-D3 不锈钢防腐",
+  "file": "assets/videos/vid_vacuum.mp4",
+  "poster": "assets/videos/vid_vacuum.jpg"
+ },
+ {
+  "key": "bath",
+  "title": "恒温水浴锅",
+  "sub": "YH-CJS 系列",
+  "file": "assets/videos/vid_bath.mp4",
+  "poster": "assets/videos/vid_bath.jpg"
+ },
+ {
+  "key": "others",
+  "title": "显微熔点测定仪",
+  "sub": "X-4X-5",
+  "file": "assets/videos/vid_others.mp4",
+  "poster": "assets/videos/vid_others.jpg"
+ }
+]

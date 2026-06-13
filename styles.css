@@ -113,6 +113,15 @@ b{font-weight:700}
 .footer{background:var(--blue-d);color:#cfe0f0;text-align:center;padding:38px 24px;font-size:14px}
 .footer-sub{opacity:.6;font-size:12.5px;margin-top:8px}
 
+/* 产品视频 */
+.video-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px}
+.video-card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--line);transition:.22s}
+.video-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-h)}
+.video-card video{width:100%;display:block;aspect-ratio:16/9;object-fit:contain;background:#0d1e34;cursor:pointer}
+.video-meta{padding:14px 16px}
+.video-meta b{display:block;font-size:16px;font-weight:700}
+.video-meta span{font-size:13px;color:var(--gray)}
+
 /* 查看参数按钮 */
 .spec-btn{border:1.5px solid var(--blue);color:var(--blue);background:#fff;border-radius:8px;
   padding:6px 14px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:.18s;font-family:inherit}

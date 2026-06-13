@@ -32,6 +32,24 @@
     grid.appendChild(card);
   });
 
+  // ---------- 产品视频 ----------
+  var VIDEOS = window.VIDEOS || [];
+  var vgrid = document.getElementById("videoGrid");
+  if (vgrid && VIDEOS.length) {
+    VIDEOS.forEach(function (v) {
+      var card = document.createElement("div");
+      card.className = "video-card";
+      card.innerHTML =
+        '<video controls preload="none" playsinline poster="' + v.poster + '">' +
+        '<source src="' + v.file + '" type="video/mp4"></video>' +
+        '<div class="video-meta"><b>' + v.title + '</b><span>' + (v.sub || "") + '</span></div>';
+      vgrid.appendChild(card);
+    });
+  } else if (vgrid) {
+    var sec = document.getElementById("videos");
+    if (sec) sec.style.display = "none";
+  }
+
   // ---------- 筛选 chips ----------
   var chipsBox = document.getElementById("chips");
   var chipDefs = [{ key: "all", name: "全部" }].concat(
