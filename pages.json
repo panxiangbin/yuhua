@@ -248,5 +248,54 @@
   "key": "hp_reactor",
   "prefixes": [],
   "page": "product/hpreactor3.html"
+ },
+ {
+  "pid": "dw",
+  "title": "电动搅拌器",
+  "key": "elec_stir",
+  "prefixes": [
+   "DW",
+   "R"
+  ],
+  "page": "product/dw.html"
+ },
+ {
+  "pid": "znhw",
+  "title": "电热套",
+  "key": "others",
+  "prefixes": [
+   "ZNHW"
+  ],
+  "page": "product/znhw.html"
+ },
+ {
+  "pid": "gsc",
+  "title": "高温循环油浴锅",
+  "key": "bath",
+  "prefixes": [
+   "GSC",
+   "YH-CJS"
+  ],
+  "page": "product/gsc.html"
+ },
+ {
+  "pid": "cl",
+  "title": "平板集热式磁力搅拌器",
+  "key": "mag_stir",
+  "prefixes": [
+   "CL",
+   "SHJ",
+   "RT"
+  ],
+  "page": "product/cl.html"
+ },
+ {
+  "pid": "yhcjs",
+  "title": "恒温磁力水浴槽",
+  "key": "bath",
+  "prefixes": [
+   "YH-CJS"
+  ],
+  "page": "product/yhcjs.html"
  }
 ]

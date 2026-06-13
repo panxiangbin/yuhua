@@ -133,10 +133,9 @@
       pg.prefixes.forEach(function(pf) {
         _prefixMap.push({ prefix: pf.toUpperCase(), page: pg.page });
       });
-    } else {
-      // 无前缀: 按 key 兜底(只取第一个避免覆盖)
-      if (!_keyMap[pg.key]) _keyMap[pg.key] = pg.page;
     }
+    // 所有页面都参与分类兜底(有前缀的也加入, 供无法匹配前缀的同类产品使用)
+    if (!_keyMap[pg.key]) _keyMap[pg.key] = pg.page;
   });
   _prefixMap.sort(function(a, b) { return b.prefix.length - a.prefix.length; });
 
@@ -146,7 +145,7 @@
     for (var i = 0; i < _prefixMap.length; i++) {
       if (m.indexOf(_prefixMap[i].prefix) === 0) return _prefixMap[i].page;
     }
-    // 分类兜底(针对无型号前缀的系列)
+    // 分类兜底 — 同类任意详情页均可引路
     if (p.key && _keyMap[p.key]) return _keyMap[p.key];
     return "";
   }
