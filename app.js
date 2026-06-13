@@ -124,11 +124,30 @@
   var imgByKey = {};
   CATS.forEach(function (c) { imgByKey[c.key] = c.img; });
 
-  // 完整资料页映射(型号/类别 -> 详情页)。后续可继续扩充。
+  // 完整资料页映射: 先匹配 data.js 里的 detail 字段, 再按 PAGES 前缀匹配, 最后按分类兜底
+  var _PAGES = window.PAGES || [];
+  var _prefixMap = [];   // [{prefix, page}, ...]  按长度降序
+  var _keyMap = {};      // key -> page (无前缀系列用分类兜底)
+  _PAGES.forEach(function(pg) {
+    if (pg.prefixes && pg.prefixes.length) {
+      pg.prefixes.forEach(function(pf) {
+        _prefixMap.push({ prefix: pf.toUpperCase(), page: pg.page });
+      });
+    } else {
+      // 无前缀: 按 key 兜底(只取第一个避免覆盖)
+      if (!_keyMap[pg.key]) _keyMap[pg.key] = pg.page;
+    }
+  });
+  _prefixMap.sort(function(a, b) { return b.prefix.length - a.prefix.length; });
+
   function getDetail(p) {
     if (p.detail) return p.detail;
     var m = (p["型号"] || "").toUpperCase();
-    if (/^2XZ/.test(m)) return "product/2xz.html";
+    for (var i = 0; i < _prefixMap.length; i++) {
+      if (m.indexOf(_prefixMap[i].prefix) === 0) return _prefixMap[i].page;
+    }
+    // 分类兜底(针对无型号前缀的系列)
+    if (p.key && _keyMap[p.key]) return _keyMap[p.key];
     return "";
   }
 

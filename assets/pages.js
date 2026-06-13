@@ -1,0 +1,252 @@
+window.PAGES = [
+ {
+  "pid": "shz",
+  "title": "循环水真空泵",
+  "key": "vacuum",
+  "prefixes": [
+   "SHZ"
+  ],
+  "page": "product/shz.html"
+ },
+ {
+  "pid": "2xz",
+  "title": "旋片真空泵",
+  "key": "vacuum",
+  "prefixes": [
+   "2XZ",
+   "XZ"
+  ],
+  "page": "product/2xz.html"
+ },
+ {
+  "pid": "dp",
+  "title": "隔膜真空泵",
+  "key": "vacuum",
+  "prefixes": [
+   "DP"
+  ],
+  "page": "product/dp.html"
+ },
+ {
+  "pid": "kq",
+  "title": "气流烘干器",
+  "key": "others",
+  "prefixes": [
+   "KQ"
+  ],
+  "page": "product/kq.html"
+ },
+ {
+  "pid": "df",
+  "title": "集热式磁力搅拌器",
+  "key": "mag_stir",
+  "prefixes": [
+   "DF"
+  ],
+  "page": "product/df.html"
+ },
+ {
+  "pid": "moldist",
+  "title": "分子蒸馏",
+  "key": "mol_dist",
+  "prefixes": [],
+  "page": "product/moldist.html"
+ },
+ {
+  "pid": "fa",
+  "title": "高剪切分散乳化机",
+  "key": "others",
+  "prefixes": [
+   "FA"
+  ],
+  "page": "product/fa.html"
+ },
+ {
+  "pid": "pps",
+  "title": "有机合成装置",
+  "key": "others",
+  "prefixes": [
+   "PPS"
+  ],
+  "page": "product/pps.html"
+ },
+ {
+  "pid": "ysf",
+  "title": "YSF双层玻璃反应釜",
+  "key": "glass_reactor",
+  "prefixes": [
+   "YSF"
+  ],
+  "page": "product/ysf.html"
+ },
+ {
+  "pid": "ysft",
+  "title": "YSFT双层托盘型玻璃反应釜",
+  "key": "glass_reactor",
+  "prefixes": [
+   "YSFT"
+  ],
+  "page": "product/ysft.html"
+ },
+ {
+  "pid": "yhgsf",
+  "title": "YHGSF出口型双层玻璃反应釜",
+  "key": "glass_reactor",
+  "prefixes": [
+   "YHGSF"
+  ],
+  "page": "product/yhgsf.html"
+ },
+ {
+  "pid": "xysft",
+  "title": "XYSFT新型托盘双层玻璃反应釜",
+  "key": "glass_reactor",
+  "prefixes": [
+   "XYSFT"
+  ],
+  "page": "product/xysft.html"
+ },
+ {
+  "pid": "zysf",
+  "title": "ZYSF升降双层玻璃反应釜",
+  "key": "glass_reactor",
+  "prefixes": [
+   "ZYSF"
+  ],
+  "page": "product/zysf.html"
+ },
+ {
+  "pid": "ydf",
+  "title": "单层玻璃反应釜",
+  "key": "glass_reactor",
+  "prefixes": [
+   "YDF"
+  ],
+  "page": "product/ydf.html"
+ },
+ {
+  "pid": "cf",
+  "title": "CF简易釜",
+  "key": "hp_reactor",
+  "prefixes": [
+   "CF"
+  ],
+  "page": "product/cf.html"
+ },
+ {
+  "pid": "cjf",
+  "title": "CJF不带升降高压釜",
+  "key": "hp_reactor",
+  "prefixes": [
+   "CJF"
+  ],
+  "page": "product/cjf.html"
+ },
+ {
+  "pid": "fcf",
+  "title": "FCF升降釜",
+  "key": "hp_reactor",
+  "prefixes": [
+   "FCF"
+  ],
+  "page": "product/fcf.html"
+ },
+ {
+  "pid": "tgyf",
+  "title": "TGYF-A台式高压釜",
+  "key": "hp_reactor",
+  "prefixes": [
+   "TGYF"
+  ],
+  "page": "product/tgyf.html"
+ },
+ {
+  "pid": "ysfs",
+  "title": "三层玻璃反应釜",
+  "key": "glass_reactor",
+  "prefixes": [
+   "YSFS"
+  ],
+  "page": "product/ysfs.html"
+ },
+ {
+  "pid": "mr",
+  "title": "旋转蒸发仪",
+  "key": "rotary",
+  "prefixes": [
+   "MR"
+  ],
+  "page": "product/mr.html"
+ },
+ {
+  "pid": "gdsz",
+  "title": "高低温参数",
+  "key": "hilo_circ",
+  "prefixes": [
+   "GDSZ"
+  ],
+  "page": "product/gdsz.html"
+ },
+ {
+  "pid": "hpreactor",
+  "title": "小型不锈钢反应釜",
+  "key": "hp_reactor",
+  "prefixes": [],
+  "page": "product/hpreactor.html"
+ },
+ {
+  "pid": "dlsb",
+  "title": "低温冷却循环泵",
+  "key": "chiller",
+  "prefixes": [
+   "DLSB"
+  ],
+  "page": "product/dlsb.html"
+ },
+ {
+  "pid": "chiller",
+  "title": "密闭低温泵WORD",
+  "key": "chiller",
+  "prefixes": [],
+  "page": "product/chiller.html"
+ },
+ {
+  "pid": "hicirc",
+  "title": "密闭油浴参数",
+  "key": "hi_circ",
+  "prefixes": [],
+  "page": "product/hicirc.html"
+ },
+ {
+  "pid": "yre",
+  "title": "旋转蒸发器",
+  "key": "rotary",
+  "prefixes": [
+   "YRE"
+  ],
+  "page": "product/yre.html"
+ },
+ {
+  "pid": "yf",
+  "title": "玻璃分液器",
+  "key": "glass_reactor",
+  "prefixes": [
+   "YF"
+  ],
+  "page": "product/yf.html"
+ },
+ {
+  "pid": "hpreactor2",
+  "title": "高压反应釜",
+  "key": "hp_reactor",
+  "prefixes": [],
+  "page": "product/hpreactor2.html"
+ },
+ {
+  "pid": "hpreactor3",
+  "title": "2026年予华高压反应釜产品说明书",
+  "key": "hp_reactor",
+  "prefixes": [],
+  "page": "product/hpreactor3.html"
+ }
+];
