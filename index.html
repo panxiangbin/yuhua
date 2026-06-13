@@ -69,7 +69,7 @@
       <thead>
         <tr>
           <th>型号</th><th>产品名称 / 类别</th><th>材质</th><th>容量</th>
-          <th>功率</th><th>控温范围</th><th>电源</th>
+          <th>控温范围</th><th>详细参数</th>
         </tr>
       </thead>
       <tbody id="tableBody"></tbody>
@@ -77,6 +77,30 @@
     <p class="empty-tip" id="emptyTip" hidden>没有匹配的型号，换个关键词试试～</p>
   </div>
 </section>
+
+<!-- 详细参数弹窗 -->
+<div class="modal-mask" id="modalMask" hidden>
+  <div class="modal" role="dialog" aria-modal="true">
+    <button class="modal-close" id="modalClose" title="关闭">×</button>
+    <div class="modal-head">
+      <img id="mImg" src="" alt="">
+      <div>
+        <span class="modal-cat" id="mCat"></span>
+        <h3 id="mTitle"></h3>
+        <p id="mName"></p>
+      </div>
+    </div>
+    <div class="modal-body">
+      <h4>技术参数</h4>
+      <table class="spec-table"><tbody id="mSpecs"></tbody></table>
+      <div id="mSellingWrap" hidden>
+        <h4>产品特点</h4>
+        <ul class="selling-list" id="mSelling"></ul>
+      </div>
+      <p class="modal-note">📋 以上为产品资料整理参数，具体配置与报价请联系予华仪器销售。</p>
+    </div>
+  </div>
+</div>
 
 <!-- 关于 -->
 <section class="section" id="about">

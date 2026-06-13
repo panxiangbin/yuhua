@@ -63,37 +63,86 @@
   var searchInput = document.getElementById("searchInput");
 
   function cell(v) { return v ? v : '<span class="muted">—</span>'; }
+  function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
 
+  var curRows = [];
   function render() {
     var q = (searchInput.value || "").trim().toLowerCase();
-    var rows = PRODUCTS.filter(function (p) {
+    curRows = PRODUCTS.filter(function (p) {
       if (activeKey !== "all" && p.key !== activeKey) return false;
       if (!q) return true;
       var hay = (p["型号"] + " " + p["产品名称"] + " " + p["类别"]).toLowerCase();
       return hay.indexOf(q) >= 0;
     });
 
-    resultCount.textContent = rows.length;
-    if (!rows.length) {
+    resultCount.textContent = curRows.length;
+    if (!curRows.length) {
       body.innerHTML = ""; emptyTip.hidden = false; return;
     }
     emptyTip.hidden = true;
 
-    var html = rows.map(function (p) {
+    var html = curRows.map(function (p, i) {
       var name = p["产品名称"] || keyName[p.key] || "";
-      return "<tr>" +
+      var specN = p.specs ? Object.keys(p.specs).length : 0;
+      var btn = specN
+        ? '<button class="spec-btn' + (p.rich ? ' rich' : '') + '" data-i="' + i + '">查看参数' +
+          (p.rich ? ' ✦' : '') + '</button>'
+        : '<span class="muted">—</span>';
+      return '<tr data-i="' + i + '">' +
         '<td class="model">' + cell(p["型号"]) + "</td>" +
-        '<td class="pname">' + (name ? name : '<span class="muted">—</span>') +
+        '<td class="pname">' + (name ? esc(name) : '<span class="muted">—</span>') +
           '<br><span class="ptag">' + (keyName[p.key] || p["类别"]) + "</span></td>" +
         "<td>" + cell(p["材质"]) + "</td>" +
         "<td>" + cell(p["容量"]) + "</td>" +
-        "<td>" + cell(p["功率"]) + "</td>" +
         "<td>" + cell(p["控温范围"]) + "</td>" +
-        "<td>" + cell(p["电源"]) + "</td>" +
+        "<td>" + btn + "</td>" +
         "</tr>";
     }).join("");
     body.innerHTML = html;
   }
+
+  // ---------- 详细参数弹窗 ----------
+  var mask = document.getElementById("modalMask");
+  var imgByKey = {};
+  CATS.forEach(function (c) { imgByKey[c.key] = c.img; });
+
+  function openModal(p) {
+    document.getElementById("mTitle").textContent = p["型号"] || (p["产品名称"] || "产品参数");
+    document.getElementById("mName").textContent = p["产品名称"] || "";
+    document.getElementById("mCat").textContent = keyName[p.key] || p["类别"] || "";
+    var img = document.getElementById("mImg");
+    if (imgByKey[p.key]) { img.src = imgByKey[p.key]; img.style.display = ""; }
+    else { img.style.display = "none"; }
+
+    var sp = p.specs || {};
+    var rows = Object.keys(sp).map(function (k) {
+      return "<tr><th>" + esc(k) + "</th><td>" + esc(sp[k]) + "</td></tr>";
+    }).join("");
+    document.getElementById("mSpecs").innerHTML = rows ||
+      '<tr><td class="muted">暂无更多参数，详情请咨询销售</td></tr>';
+
+    var sell = p.selling || [];
+    var wrap = document.getElementById("mSellingWrap");
+    if (sell.length) {
+      wrap.hidden = false;
+      document.getElementById("mSelling").innerHTML =
+        sell.map(function (s) { return "<li>" + esc(s) + "</li>"; }).join("");
+    } else { wrap.hidden = true; }
+
+    mask.hidden = false;
+    document.body.style.overflow = "hidden";
+  }
+  function closeModal() { mask.hidden = true; document.body.style.overflow = ""; }
+
+  body.addEventListener("click", function (e) {
+    var tr = e.target.closest("tr[data-i]");
+    if (!tr) return;
+    var p = curRows[+tr.dataset.i];
+    if (p) openModal(p);
+  });
+  document.getElementById("modalClose").addEventListener("click", closeModal);
+  mask.addEventListener("click", function (e) { if (e.target === mask) closeModal(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeModal(); });
 
   function filterTo(key) {
     setActive(key);
