@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>予华仪器 · 实验室仪器产品中心</title>
 <meta name="description" content="巩义予华仪器 — 旋转蒸发仪、玻璃反应釜、高压反应釜、分子蒸馏、高低温循环装置、磁力搅拌器等实验室仪器整体解决方案，厂家直供。">
-<link rel="stylesheet" href="styles.css?v=20260613c">
+<link rel="stylesheet" href="styles.css?v=20260614b">
 </head>
 <body>
 
@@ -24,15 +24,28 @@
       <a href="#specs">规格书</a>
       <a href="#about">关于我们</a>
     </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="菜单">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
+
+<!-- 移动端导航抽屉 -->
+<nav class="nav-mobile" id="navMobile">
+  <a href="#home">首页</a>
+  <a href="#products">产品中心</a>
+  <a href="#videos">产品视频</a>
+  <a href="#catalog">型号查询</a>
+  <a href="#specs">规格书</a>
+  <a href="#about">关于我们</a>
+</nav>
 
 <!-- 首屏 -->
 <section class="hero" id="home">
   <div class="hero-bg"></div>
   <div class="hero-inner">
     <p class="hero-kicker">实验室仪器整体解决方案 · 厂家直供</p>
-    <h1>专业实验仪器<br>为科研与生产赋能</h1>
+    <h1>专业实验仪器<br><em>为科研与生产赋能</em></h1>
     <p class="hero-sub">旋转蒸发 · 反应釜 · 分子蒸馏 · 控温循环 · 搅拌真空<br>覆盖实验室浓缩、合成、提纯、控温全流程</p>
     <div class="hero-actions">
       <a class="btn btn-primary" href="#products">浏览产品系列</a>
@@ -79,8 +92,8 @@
     <table class="ptable">
       <thead>
         <tr>
-          <th>型号</th><th>产品名称 / 类别</th><th>材质</th><th>容量</th>
-          <th>控温范围</th><th>详细参数</th>
+          <th>型号</th><th>产品名称 / 类别</th><th class="hide-sm">材质</th><th class="hide-sm">容量</th>
+          <th class="hide-sm">控温范围</th><th>详细参数</th>
         </tr>
       </thead>
       <tbody id="tableBody"></tbody>
@@ -127,7 +140,7 @@
   <p class="result-info"><span id="specResultCount">0</span> 个结果</p>
   <div class="table-wrap">
     <table class="ptable">
-      <thead><tr><th>型号/文件名</th><th>产品系列</th><th>在线查看</th><th>下载</th></tr></thead>
+      <thead><tr><th>型号/文件名</th><th class="hide-sm">产品系列</th><th>在线查看</th><th>下载</th></tr></thead>
       <tbody id="specBody"></tbody>
     </table>
     <p class="empty-tip" id="specEmptyTip" hidden>没有匹配的规格书，换个关键词试试～</p>
@@ -153,10 +166,10 @@
 
 <button class="to-top" id="toTop" title="返回顶部">↑</button>
 
-<script src="assets/data.js?v=20260614a"></script>
-<script src="assets/videos.js?v=20260614a"></script>
-<script src="assets/pages.js?v=20260614a"></script>
-<script src="assets/specs.js?v=20260614a"></script>
-<script src="app.js?v=20260614a"></script>
+<script src="assets/data.js?v=20260614b"></script>
+<script src="assets/videos.js?v=20260614b"></script>
+<script src="assets/pages.js?v=20260614b"></script>
+<script src="assets/specs.js?v=20260614b"></script>
+<script src="app.js?v=20260614b"></script>
 </body>
 </html>

@@ -289,8 +289,33 @@
   var toTop = document.getElementById("toTop");
   window.addEventListener("scroll", function () {
     toTop.classList.toggle("show", window.scrollY > 600);
-  });
+  }, { passive: true });
   toTop.addEventListener("click", function () {
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
+
+  // ---------- 导航栏滚动阴影 ----------
+  var navEl = document.querySelector(".nav");
+  window.addEventListener("scroll", function () {
+    navEl.classList.toggle("scrolled", window.scrollY > 10);
+  }, { passive: true });
+
+  // ---------- 移动端汉堡菜单 ----------
+  var navToggle = document.getElementById("navToggle");
+  var navMobile = document.getElementById("navMobile");
+  function closeMobileNav() {
+    navToggle.classList.remove("open");
+    navMobile.classList.remove("open");
+    document.body.style.overflow = "";
+  }
+  if (navToggle && navMobile) {
+    navToggle.addEventListener("click", function () {
+      var open = navMobile.classList.toggle("open");
+      navToggle.classList.toggle("open", open);
+      document.body.style.overflow = open ? "hidden" : "";
+    });
+    navMobile.querySelectorAll("a").forEach(function (a) {
+      a.addEventListener("click", closeMobileNav);
+    });
+  }
 })();
