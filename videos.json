@@ -1,79 +1,331 @@
 [
  {
-  "key": "company",
-  "title": "予华仪器 · 工厂实拍",
-  "sub": "实体工厂 验厂实录",
-  "file": "assets/videos/vid_company.mp4",
-  "poster": "assets/videos/vid_company.jpg"
- },
- {
+  "title": "YRE-2010A旋转蒸发仪",
+  "sub": "旋转蒸发仪",
   "key": "rotary",
-  "title": "旋转蒸发仪",
-  "sub": "MR 旋转蒸发器演示",
-  "file": "assets/videos/vid_rotary.mp4",
-  "poster": "assets/videos/vid_rotary.jpg"
+  "file": "assets/videos/yre_2010a.mp4",
+  "poster": "assets/videos/yre_2010a.jpg"
  },
  {
+  "title": "旋转蒸发仪YRE-2000系列",
+  "sub": "旋转蒸发仪",
+  "key": "rotary",
+  "file": "assets/videos/yre_2000.mp4",
+  "poster": "assets/videos/yre_2000.jpg"
+ },
+ {
+  "title": "旋转蒸发仪YRE-2020Z",
+  "sub": "旋转蒸发仪",
+  "key": "rotary",
+  "file": "assets/videos/yre_2020z.mp4",
+  "poster": "assets/videos/yre_2020z.jpg"
+ },
+ {
+  "title": "旋转蒸发仪YRE-2011系列",
+  "sub": "旋转蒸发仪",
+  "key": "rotary",
+  "file": "assets/videos/yre_2011.mp4",
+  "poster": "assets/videos/yre_2011.jpg"
+ },
+ {
+  "title": "旋转蒸发仪YRE-2012系列",
+  "sub": "旋转蒸发仪",
+  "key": "rotary",
+  "file": "assets/videos/yre_2012.mp4",
+  "poster": "assets/videos/yre_2012.jpg"
+ },
+ {
+  "title": "旋转蒸发仪YRE-301/501",
+  "sub": "旋转蒸发仪",
+  "key": "rotary",
+  "file": "assets/videos/yre_301_501.mp4",
+  "poster": "assets/videos/yre_301_501.jpg"
+ },
+ {
+  "title": "旋转蒸发仪YRE-5299系列",
+  "sub": "旋转蒸发仪",
+  "key": "rotary",
+  "file": "assets/videos/yre_5299.mp4",
+  "poster": "assets/videos/yre_5299.jpg"
+ },
+ {
+  "title": "旋转蒸发仪YRE-5000E",
+  "sub": "旋转蒸发仪",
+  "key": "rotary",
+  "file": "assets/videos/yre_5000e.mp4",
+  "poster": "assets/videos/yre_5000e.jpg"
+ },
+ {
+  "title": "MR系列旋转蒸发仪",
+  "sub": "旋转蒸发仪",
+  "key": "rotary",
+  "file": "assets/videos/mr.mp4",
+  "poster": "assets/videos/mr.jpg"
+ },
+ {
+  "title": "R-1050旋转蒸发仪",
+  "sub": "旋转蒸发仪",
+  "key": "rotary",
+  "file": "assets/videos/r_1050.mp4",
+  "poster": "assets/videos/r_1050.jpg"
+ },
+ {
+  "title": "YSF双层玻璃反应釜",
+  "sub": "玻璃反应釜",
   "key": "glass_reactor",
-  "title": "双层玻璃反应釜",
-  "sub": "YSF-50L 运行演示",
-  "file": "assets/videos/vid_glass_reactor.mp4",
-  "poster": "assets/videos/vid_glass_reactor.jpg"
+  "file": "assets/videos/ysf.mp4",
+  "poster": "assets/videos/ysf.jpg"
  },
  {
+  "title": "ZYSF升降双层玻璃反应釜",
+  "sub": "玻璃反应釜",
+  "key": "glass_reactor",
+  "file": "assets/videos/zysf.mp4",
+  "poster": "assets/videos/zysf.jpg"
+ },
+ {
+  "title": "XYSFT变频双层玻璃反应釜",
+  "sub": "玻璃反应釜",
+  "key": "glass_reactor",
+  "file": "assets/videos/xysft.mp4",
+  "poster": "assets/videos/xysft.jpg"
+ },
+ {
+  "title": "单层玻璃反应釜",
+  "sub": "玻璃反应釜",
+  "key": "glass_reactor",
+  "file": "assets/videos/.mp4",
+  "poster": "assets/videos/.jpg"
+ },
+ {
+  "title": "1-5L小型多功能反应器",
+  "sub": "高压反应釜",
   "key": "hp_reactor",
-  "title": "高压反应釜",
-  "sub": "磁力耦合快卡式",
-  "file": "assets/videos/vid_hp_reactor.mp4",
-  "poster": "assets/videos/vid_hp_reactor.jpg"
+  "file": "assets/videos/1_5l.mp4",
+  "poster": "assets/videos/1_5l.jpg"
  },
  {
-  "key": "mag_stir",
-  "title": "磁力搅拌器",
-  "sub": "ZNCL-GS 系列",
-  "file": "assets/videos/vid_mag_stir.mp4",
-  "poster": "assets/videos/vid_mag_stir.jpg"
- },
- {
-  "key": "elec_stir",
-  "title": "电动搅拌器",
-  "sub": "DW 系列",
-  "file": "assets/videos/vid_elec_stir.mp4",
-  "poster": "assets/videos/vid_elec_stir.jpg"
- },
- {
-  "key": "chiller",
-  "title": "低温冷却循环泵",
-  "sub": "CCA-20 小型冷却泵",
-  "file": "assets/videos/vid_chiller.mp4",
-  "poster": "assets/videos/vid_chiller.jpg"
- },
- {
-  "key": "hilo_circ",
-  "title": "高低温一体机",
-  "sub": "GDSZ 系列",
-  "file": "assets/videos/vid_hilo_circ.mp4",
-  "poster": "assets/videos/vid_hilo_circ.jpg"
- },
- {
+  "title": "循环水式真空泵SHZ-D3",
+  "sub": "真空泵",
   "key": "vacuum",
-  "title": "循环水真空泵",
-  "sub": "SHZ-D3 不锈钢防腐",
-  "file": "assets/videos/vid_vacuum.mp4",
-  "poster": "assets/videos/vid_vacuum.jpg"
+  "file": "assets/videos/shz_d3.mp4",
+  "poster": "assets/videos/shz_d3.jpg"
  },
  {
+  "title": "2XZ旋片式真空泵",
+  "sub": "真空泵",
+  "key": "vacuum",
+  "file": "assets/videos/2xz.mp4",
+  "poster": "assets/videos/2xz.jpg"
+ },
+ {
+  "title": "GDSZ高低温循环装置",
+  "sub": "高低温循环",
+  "key": "hilo_circ",
+  "file": "assets/videos/gdsz.mp4",
+  "poster": "assets/videos/gdsz.jpg"
+ },
+ {
+  "title": "DLSB低温冷却液循环泵",
+  "sub": "低温冷却",
+  "key": "chiller",
+  "file": "assets/videos/dlsb.mp4",
+  "poster": "assets/videos/dlsb.jpg"
+ },
+ {
+  "title": "CCA-20冷却水循环泵",
+  "sub": "低温冷却",
+  "key": "chiller",
+  "file": "assets/videos/cca_20.mp4",
+  "poster": "assets/videos/cca_20.jpg"
+ },
+ {
+  "title": "SYC恒温磁力水浴",
+  "sub": "高温循环",
+  "key": "hi_circ",
+  "file": "assets/videos/syc.mp4",
+  "poster": "assets/videos/syc.jpg"
+ },
+ {
+  "title": "RTC-G冷却循环搅拌器",
+  "sub": "高温循环",
+  "key": "hi_circ",
+  "file": "assets/videos/rtc_g.mp4",
+  "poster": "assets/videos/rtc_g.jpg"
+ },
+ {
+  "title": "YH-CJS恒温磁力水浴槽",
+  "sub": "恒温槽",
   "key": "bath",
-  "title": "恒温水浴锅",
-  "sub": "YH-CJS 系列",
-  "file": "assets/videos/vid_bath.mp4",
-  "poster": "assets/videos/vid_bath.jpg"
+  "file": "assets/videos/yh_cjs.mp4",
+  "poster": "assets/videos/yh_cjs.jpg"
  },
  {
+  "title": "SYP磁力恒温水浴",
+  "sub": "恒温槽",
+  "key": "bath",
+  "file": "assets/videos/syp.mp4",
+  "poster": "assets/videos/syp.jpg"
+ },
+ {
+  "title": "HJ/HJ-85磁力搅拌器",
+  "sub": "磁力搅拌",
+  "key": "mag_stir",
+  "file": "assets/videos/hj_hj_85.mp4",
+  "poster": "assets/videos/hj_hj_85.jpg"
+ },
+ {
+  "title": "ZNCL-GS磁力搅拌器",
+  "sub": "磁力搅拌",
+  "key": "mag_stir",
+  "file": "assets/videos/zncl_gs.mp4",
+  "poster": "assets/videos/zncl_gs.jpg"
+ },
+ {
+  "title": "ZNCL-S智能数控搅拌器",
+  "sub": "磁力搅拌",
+  "key": "mag_stir",
+  "file": "assets/videos/zncl_s.mp4",
+  "poster": "assets/videos/zncl_s.jpg"
+ },
+ {
+  "title": "ZNCL-BS多点磁力搅拌器",
+  "sub": "磁力搅拌",
+  "key": "mag_stir",
+  "file": "assets/videos/zncl_bs.mp4",
+  "poster": "assets/videos/zncl_bs.jpg"
+ },
+ {
+  "title": "ZNCL-TS智能搅拌器",
+  "sub": "磁力搅拌",
+  "key": "mag_stir",
+  "file": "assets/videos/zncl_ts.mp4",
+  "poster": "assets/videos/zncl_ts.jpg"
+ },
+ {
+  "title": "HWET旋转搅拌系统",
+  "sub": "磁力搅拌",
+  "key": "mag_stir",
+  "file": "assets/videos/hwet.mp4",
+  "poster": "assets/videos/hwet.jpg"
+ },
+ {
+  "title": "HWCL集热搅拌",
+  "sub": "磁力搅拌",
+  "key": "mag_stir",
+  "file": "assets/videos/hwcl.mp4",
+  "poster": "assets/videos/hwcl.jpg"
+ },
+ {
+  "title": "RTC-B冷却循环搅拌",
+  "sub": "磁力搅拌",
+  "key": "mag_stir",
+  "file": "assets/videos/rtc_b.mp4",
+  "poster": "assets/videos/rtc_b.jpg"
+ },
+ {
+  "title": "DF-101S集热磁力搅拌器",
+  "sub": "磁力搅拌",
+  "key": "mag_stir",
+  "file": "assets/videos/df_101s.mp4",
+  "poster": "assets/videos/df_101s.jpg"
+ },
+ {
+  "title": "85-2C高速磁力搅拌器",
+  "sub": "磁力搅拌",
+  "key": "mag_stir",
+  "file": "assets/videos/85_2c.mp4",
+  "poster": "assets/videos/85_2c.jpg"
+ },
+ {
+  "title": "HJ-3磁力搅拌器",
+  "sub": "磁力搅拌",
+  "key": "mag_stir",
+  "file": "assets/videos/hj_3.mp4",
+  "poster": "assets/videos/hj_3.jpg"
+ },
+ {
+  "title": "DW系电动搅拌器",
+  "sub": "电动搅拌",
+  "key": "elec_stir",
+  "file": "assets/videos/dw.mp4",
+  "poster": "assets/videos/dw.jpg"
+ },
+ {
+  "title": "J-100S电动搅拌器",
+  "sub": "电动搅拌",
+  "key": "elec_stir",
+  "file": "assets/videos/j_100s.mp4",
+  "poster": "assets/videos/j_100s.jpg"
+ },
+ {
+  "title": "R-30电动搅拌器",
+  "sub": "电动搅拌",
+  "key": "elec_stir",
+  "file": "assets/videos/r_30.mp4",
+  "poster": "assets/videos/r_30.jpg"
+ },
+ {
+  "title": "ZNHW-D电热套",
+  "sub": "其他仪器",
   "key": "others",
-  "title": "显微熔点测定仪",
-  "sub": "X-4X-5",
-  "file": "assets/videos/vid_others.mp4",
-  "poster": "assets/videos/vid_others.jpg"
+  "file": "assets/videos/znhw_d.mp4",
+  "poster": "assets/videos/znhw_d.jpg"
+ },
+ {
+  "title": "ZNHW/PTHW电热套",
+  "sub": "其他仪器",
+  "key": "others",
+  "file": "assets/videos/znhw_pthw.mp4",
+  "poster": "assets/videos/znhw_pthw.jpg"
+ },
+ {
+  "title": "FA25高剪切分散乳化机",
+  "sub": "其他仪器",
+  "key": "others",
+  "file": "assets/videos/fa25.mp4",
+  "poster": "assets/videos/fa25.jpg"
+ },
+ {
+  "title": "MCR-3微化学反应器",
+  "sub": "其他仪器",
+  "key": "others",
+  "file": "assets/videos/mcr_3.mp4",
+  "poster": "assets/videos/mcr_3.jpg"
+ },
+ {
+  "title": "PPS有机合成装置",
+  "sub": "其他仪器",
+  "key": "others",
+  "file": "assets/videos/pps.mp4",
+  "poster": "assets/videos/pps.jpg"
+ },
+ {
+  "title": "X-4显微熔点测定仪",
+  "sub": "其他仪器",
+  "key": "others",
+  "file": "assets/videos/x_4.mp4",
+  "poster": "assets/videos/x_4.jpg"
+ },
+ {
+  "title": "DHG高温干燥箱",
+  "sub": "其他仪器",
+  "key": "others",
+  "file": "assets/videos/dhg.mp4",
+  "poster": "assets/videos/dhg.jpg"
+ },
+ {
+  "title": "ZF搅拌反应桶",
+  "sub": "其他仪器",
+  "key": "others",
+  "file": "assets/videos/zf.mp4",
+  "poster": "assets/videos/zf.jpg"
+ },
+ {
+  "title": "YRGS管道搅拌器",
+  "sub": "其他仪器",
+  "key": "others",
+  "file": "assets/videos/yrgs.mp4",
+  "poster": "assets/videos/yrgs.jpg"
  }
 ]
