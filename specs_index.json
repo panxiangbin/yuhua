@@ -1,0 +1,5282 @@
+[
+ {
+  "title": "1L-200L双层不锈钢反应釜-8.6",
+  "model": "1L-200L",
+  "series": "L-200L双层不锈钢反应釜-8.6.docx",
+  "key": "hp_reactor",
+  "page": "specs/L_200L双层不锈钢反应釜_8_6_docx/1l-200l双层不锈钢反应釜-8_6.html",
+  "dl": "downloads/specs/1l-200l双层不锈钢反应釜-8_6.docx"
+ },
+ {
+  "title": "5L减压精馏装置(普通款)(1)",
+  "model": "DOCX",
+  "series": "L减压精馏装置(普通款)(1).docx",
+  "key": "misc",
+  "page": "specs/L减压精馏装置_普通款__1__docx/5l减压精馏装置_普通款_1.html",
+  "dl": "downloads/specs/5l减压精馏装置_普通款_1.docx"
+ },
+ {
+  "title": "DLSB-5-30参数",
+  "model": "DLSB-5-30",
+  "series": "DLSB-5-30参数.docx",
+  "key": "chiller",
+  "page": "specs/DLSB_5_30参数_docx/dlsb-5-30参数.html",
+  "dl": "downloads/specs/dlsb-5-30参数.docx"
+ },
+ {
+  "title": "GSZ-10L parameter",
+  "model": "GSZ-10L",
+  "series": "GSZ-10L parameter.docx",
+  "key": "hi_circ",
+  "page": "specs/GSZ_10L_parameter_docx/gsz-10l_parameter.html",
+  "dl": "downloads/specs/gsz-10l_parameter.docx"
+ },
+ {
+  "title": "S212-50L双层不锈钢反应釜",
+  "model": "S212-50L",
+  "series": "S212-50L双层不锈钢反应釜.docx",
+  "key": "hp_reactor",
+  "page": "specs/S212_50L双层不锈钢反应釜_docx/s212-50l双层不锈钢反应釜.html",
+  "dl": "downloads/specs/s212-50l双层不锈钢反应釜.docx"
+ },
+ {
+  "title": "TGYF-500ml不锈钢高压釜(1)",
+  "model": "TGYF-500ML",
+  "series": "TGYF-500ml不锈钢高压釜(1).docx",
+  "key": "hp_reactor",
+  "page": "specs/TGYF_500ml不锈钢高压釜_1__docx/tgyf-500ml不锈钢高压釜_1.html",
+  "dl": "downloads/specs/tgyf-500ml不锈钢高压釜_1.docx"
+ },
+ {
+  "title": "TGYF-500ml不锈钢高压釜(2)",
+  "model": "TGYF-500ML",
+  "series": "TGYF-500ml不锈钢高压釜(2).docx",
+  "key": "hp_reactor",
+  "page": "specs/TGYF_500ml不锈钢高压釜_2__docx/tgyf-500ml不锈钢高压釜_2.html",
+  "dl": "downloads/specs/tgyf-500ml不锈钢高压釜_2.docx"
+ },
+ {
+  "title": "TGYF-500ml不锈钢高压釜",
+  "model": "TGYF-500ML",
+  "series": "TGYF-500ml不锈钢高压釜.docx",
+  "key": "hp_reactor",
+  "page": "specs/TGYF_500ml不锈钢高压釜_docx/tgyf-500ml不锈钢高压釜.html",
+  "dl": "downloads/specs/tgyf-500ml不锈钢高压釜.docx"
+ },
+ {
+  "title": "TGYF-C-0.5l反应釜技术参数",
+  "model": "TGYF-C-0.5L",
+  "series": "TGYF-C-0.5l反应釜技术参数.docx",
+  "key": "hp_reactor",
+  "page": "specs/TGYF_C_0_5l反应釜技术参数_docx/tgyf-c-0_5l反应釜技术参数.html",
+  "dl": "downloads/specs/tgyf-c-0_5l反应釜技术参数.docx"
+ },
+ {
+  "title": "YH-CJS2-说明书_1_3_translate",
+  "model": "YH-CJS2-",
+  "series": "YH-CJS2-说明书_1_3_translate.docx",
+  "key": "bath",
+  "page": "specs/YH_CJS2_说明书_1_3_translate_docx/yh-cjs2-说明书_1_3_translate.html",
+  "dl": "downloads/specs/yh-cjs2-说明书_1_3_translate.docx"
+ },
+ {
+  "title": "YH-CJS磁力搅拌水浴锅-系列(1)(1)2024",
+  "model": "YH-CJS",
+  "series": "YH-CJS磁力搅拌水浴锅-系列(1)(1)2024.docx",
+  "key": "mag_stir",
+  "page": "specs/YH_CJS磁力搅拌水浴锅_系列_1__1_2024_doc/yh-cjs磁力搅拌水浴锅-系列_1_1_2024.html",
+  "dl": "downloads/specs/yh-cjs磁力搅拌水浴锅-系列_1_1_2024.docx"
+ },
+ {
+  "title": "YH630hc",
+  "model": "YH630HC.DOCX",
+  "series": "YH630hc.docx",
+  "key": "misc",
+  "page": "specs/YH630hc_docx/yh630hc.html",
+  "dl": "downloads/specs/yh630hc.docx"
+ },
+ {
+  "title": "YSF-200LEX防爆双层玻璃反应釜",
+  "model": "YSF-200LEX",
+  "series": "YSF-200LEX防爆双层玻璃反应釜.docx",
+  "key": "glass_reactor",
+  "page": "specs/YSF_200LEX防爆双层玻璃反应釜_docx/ysf-200lex防爆双层玻璃反应釜.html",
+  "dl": "downloads/specs/ysf-200lex防爆双层玻璃反应釜.docx"
+ },
+ {
+  "title": "yuhua YH-2G",
+  "model": "YUHUA",
+  "series": "yuhua YH-2G.docx",
+  "key": "misc",
+  "page": "specs/yuhua_YH_2G_docx/yuhua_yh-2g.html",
+  "dl": "downloads/specs/yuhua_yh-2g.docx"
+ },
+ {
+  "title": "分子蒸馏150B配置+示意图",
+  "model": "150B",
+  "series": "分子蒸馏150B配置+示意图.docx",
+  "key": "mol_dist",
+  "page": "specs/分子蒸馏150B配置_示意图_docx/分子蒸馏150b配置_示意图.html",
+  "dl": "downloads/specs/分子蒸馏150b配置_示意图.docx"
+ },
+ {
+  "title": "分子蒸馏80B配置+示意图(1)",
+  "model": "80B",
+  "series": "分子蒸馏80B配置+示意图(1).docx",
+  "key": "mol_dist",
+  "page": "specs/分子蒸馏80B配置_示意图_1__docx/分子蒸馏80b配置_示意图_1.html",
+  "dl": "downloads/specs/分子蒸馏80b配置_示意图_1.docx"
+ },
+ {
+  "title": "单层釜锅体尺寸",
+  "model": "DOCX",
+  "series": "单层釜锅体尺寸.docx",
+  "key": "misc",
+  "page": "specs/单层釜锅体尺寸_docx/单层釜锅体尺寸.html",
+  "dl": "downloads/specs/单层釜锅体尺寸.docx"
+ },
+ {
+  "title": "洗瓶器Factory Direct Fully Automatic Bottle and Laborato",
+  "model": "FACTORY",
+  "series": "洗瓶器Factory Direct Fully Automatic Bottle and Laborato.docx",
+  "key": "misc",
+  "page": "specs/洗瓶器Factory_Direct_Fully_Automa/rect_fully_automatic_bottle_and_laborato.html",
+  "dl": "downloads/specs/洗瓶器factory_direct_fully_automatic_bottle_and_laborato.docx"
+ },
+ {
+  "title": "磁力搅拌罐",
+  "model": "DOCX",
+  "series": "磁力搅拌罐.docx",
+  "key": "mag_stir",
+  "page": "specs/磁力搅拌罐_docx/磁力搅拌罐.html",
+  "dl": "downloads/specs/磁力搅拌罐.docx"
+ },
+ {
+  "title": "结晶釜参数(2)",
+  "model": "DOCX",
+  "series": "结晶釜参数(2).docx",
+  "key": "misc",
+  "page": "specs/结晶釜参数_2__docx/结晶釜参数_2.html",
+  "dl": "downloads/specs/结晶釜参数_2.docx"
+ },
+ {
+  "title": "蠕动泵说明书（予华仪器）",
+  "model": "DOCX",
+  "series": "蠕动泵说明书（予华仪器）.docx",
+  "key": "misc",
+  "page": "specs/蠕动泵说明书_予华仪器__docx/蠕动泵说明书_予华仪器.html",
+  "dl": "downloads/specs/蠕动泵说明书_予华仪器.docx"
+ },
+ {
+  "title": "防爆电动搅拌器参数",
+  "model": "DOCX",
+  "series": "防爆电动搅拌器参数.docx",
+  "key": "elec_stir",
+  "page": "specs/防爆电动搅拌器参数_docx/防爆电动搅拌器参数.html",
+  "dl": "downloads/specs/防爆电动搅拌器参数.docx"
+ },
+ {
+  "title": "1-循环水式真空泵SHZ-D(III)小型",
+  "model": "SHZ-D",
+  "series": "真空泵",
+  "key": "vacuum",
+  "page": "specs/真空泵/1-真空泵_1_循环水真空泵_1-循环水式真空泵shz-d_iii_小型.html",
+  "dl": "downloads/specs/1-真空泵_1_循环水真空泵_1-循环水式真空泵shz-d_iii_小型.docx"
+ },
+ {
+  "title": "循环水式真空泵SHZ-2000",
+  "model": "SHZ-2000.DOCX",
+  "series": "真空泵",
+  "key": "vacuum",
+  "page": "specs/真空泵/1-真空泵_1_循环水真空泵_循环水式真空泵shz-2000.html",
+  "dl": "downloads/specs/1-真空泵_1_循环水真空泵_循环水式真空泵shz-2000.docx"
+ },
+ {
+  "title": "循环水式真空泵SHZ-95A",
+  "model": "SHZ-95A.DOCX",
+  "series": "真空泵",
+  "key": "vacuum",
+  "page": "specs/真空泵/1-真空泵_1_循环水真空泵_循环水式真空泵shz-95a.html",
+  "dl": "downloads/specs/1-真空泵_1_循环水真空泵_循环水式真空泵shz-95a.docx"
+ },
+ {
+  "title": "循环水式真空泵SHZ-95B 全机防爆",
+  "model": "SHZ-95B",
+  "series": "真空泵",
+  "key": "vacuum",
+  "page": "specs/真空泵/1-真空泵_1_循环水真空泵_循环水式真空泵shz-95b_全机防爆.html",
+  "dl": "downloads/specs/1-真空泵_1_循环水真空泵_循环水式真空泵shz-95b_全机防爆.docx"
+ },
+ {
+  "title": "循环水式真空泵SHZ-95B 全防腐",
+  "model": "SHZ-95B",
+  "series": "真空泵",
+  "key": "vacuum",
+  "page": "specs/真空泵/1-真空泵_1_循环水真空泵_循环水式真空泵shz-95b_全防腐.html",
+  "dl": "downloads/specs/1-真空泵_1_循环水真空泵_循环水式真空泵shz-95b_全防腐.docx"
+ },
+ {
+  "title": "循环水式真空泵SHZ-95B",
+  "model": "SHZ-95B.DOCX",
+  "series": "真空泵",
+  "key": "vacuum",
+  "page": "specs/真空泵/1-真空泵_1_循环水真空泵_循环水式真空泵shz-95b.html",
+  "dl": "downloads/specs/1-真空泵_1_循环水真空泵_循环水式真空泵shz-95b.docx"
+ },
+ {
+  "title": "循环水式真空泵SHZ-CD",
+  "model": "SHZ-CD.DOCX",
+  "series": "真空泵",
+  "key": "vacuum",
+  "page": "specs/真空泵/1-真空泵_1_循环水真空泵_循环水式真空泵shz-cd.html",
+  "dl": "downloads/specs/1-真空泵_1_循环水真空泵_循环水式真空泵shz-cd.docx"
+ },
+ {
+  "title": "2XZ-C系列",
+  "model": "2XZ-C",
+  "series": "真空泵",
+  "key": "vacuum",
+  "page": "specs/真空泵/1-真空泵_2_旋片真空泵_2xz-c系列.html",
+  "dl": "downloads/specs/1-真空泵_2_旋片真空泵_2xz-c系列.docx"
+ },
+ {
+  "title": "2XZ旋片式真空泵",
+  "model": "2XZ",
+  "series": "真空泵",
+  "key": "vacuum",
+  "page": "specs/真空泵/1-真空泵_2_旋片真空泵_2xz旋片式真空泵.html",
+  "dl": "downloads/specs/1-真空泵_2_旋片真空泵_2xz旋片式真空泵.docx"
+ },
+ {
+  "title": "DP630隔膜泵",
+  "model": "DP630",
+  "series": "真空泵",
+  "key": "vacuum",
+  "page": "specs/真空泵/1-真空泵_3_隔膜真空泵_dp630隔膜泵.html",
+  "dl": "downloads/specs/1-真空泵_3_隔膜真空泵_dp630隔膜泵.docx"
+ },
+ {
+  "title": "YH隔膜泵",
+  "model": "DOCX",
+  "series": "真空泵",
+  "key": "vacuum",
+  "page": "specs/真空泵/1-真空泵_3_隔膜真空泵_yh隔膜泵.html",
+  "dl": "downloads/specs/1-真空泵_3_隔膜真空泵_yh隔膜泵.docx"
+ },
+ {
+  "title": "KQ玻璃气流烘干器",
+  "model": "DOCX",
+  "series": "气流烘干器",
+  "key": "others",
+  "page": "specs/气流烘干器/10-气流烘干器_kq玻璃气流烘干器.html",
+  "dl": "downloads/specs/10-气流烘干器_kq玻璃气流烘干器.docx"
+ },
+ {
+  "title": "1－DF系列集热式磁力搅拌器",
+  "model": "DOCX",
+  "series": "集热式磁力搅拌器",
+  "key": "mag_stir",
+  "page": "specs/集热式磁力搅拌器/2-集热式磁力搅拌器_1_df系列集热式磁力搅拌器.html",
+  "dl": "downloads/specs/2-集热式磁力搅拌器_1_df系列集热式磁力搅拌器.docx"
+ },
+ {
+  "title": "CL-200平板集热式磁力搅拌器",
+  "model": "CL-200",
+  "series": "集热式磁力搅拌器",
+  "key": "mag_stir",
+  "page": "specs/集热式磁力搅拌器/2-集热式磁力搅拌器_cl-200平板集热式磁力搅拌器.html",
+  "dl": "downloads/specs/2-集热式磁力搅拌器_cl-200平板集热式磁力搅拌器.docx"
+ },
+ {
+  "title": "DF-101D集热式磁力搅拌器 ",
+  "model": "DF-101D",
+  "series": "集热式磁力搅拌器",
+  "key": "mag_stir",
+  "page": "specs/集热式磁力搅拌器/2-集热式磁力搅拌器_df-101d集热式磁力搅拌器.html",
+  "dl": "downloads/specs/2-集热式磁力搅拌器_df-101d集热式磁力搅拌器.docx"
+ },
+ {
+  "title": "DF-101SH分体集热式磁力搅拌器",
+  "model": "DF-101SH",
+  "series": "集热式磁力搅拌器",
+  "key": "mag_stir",
+  "page": "specs/集热式磁力搅拌器/2-集热式磁力搅拌器_df-101sh分体集热式磁力搅拌器.html",
+  "dl": "downloads/specs/2-集热式磁力搅拌器_df-101sh分体集热式磁力搅拌器.docx"
+ },
+ {
+  "title": "DF-101S检测报告.",
+  "model": "DF-101S",
+  "series": "集热式磁力搅拌器",
+  "key": "mag_stir",
+  "page": "specs/集热式磁力搅拌器/2-集热式磁力搅拌器_df-101s检测报告.html",
+  "dl": "downloads/specs/2-集热式磁力搅拌器_df-101s检测报告.docx"
+ },
+ {
+  "title": "DF-101S集热式磁力搅拌器一体",
+  "model": "DF-101S",
+  "series": "集热式磁力搅拌器",
+  "key": "mag_stir",
+  "page": "specs/集热式磁力搅拌器/2-集热式磁力搅拌器_df-101s集热式磁力搅拌器一体.html",
+  "dl": "downloads/specs/2-集热式磁力搅拌器_df-101s集热式磁力搅拌器一体.docx"
+ },
+ {
+  "title": "GDSZ-100-40+200 Technical YUHUA",
+  "model": "GDSZ-100-40+200",
+  "series": "高低温资料",
+  "key": "hilo_circ",
+  "page": "specs/高低温资料/024高低温资料_gdsz-100-40_200_technical_yuhua.html",
+  "dl": "downloads/specs/2024高低温资料_gdsz-100-40_200_technical_yuhua.docx"
+ },
+ {
+  "title": "GDSZ-150-40+200 Technical YUHUA",
+  "model": "GDSZ-150-40+200",
+  "series": "高低温资料",
+  "key": "hilo_circ",
+  "page": "specs/高低温资料/024高低温资料_gdsz-150-40_200_technical_yuhua.html",
+  "dl": "downloads/specs/2024高低温资料_gdsz-150-40_200_technical_yuhua.docx"
+ },
+ {
+  "title": "X-4X-5显微熔点测定仪",
+  "model": "X-4X-5",
+  "series": "显微熔点测定仪",
+  "key": "others",
+  "page": "specs/显微熔点测定仪/22-显微熔点测定仪_x-4x-5显微熔点测定仪.html",
+  "dl": "downloads/specs/22-显微熔点测定仪_x-4x-5显微熔点测定仪.docx"
+ },
+ {
+  "title": "分子蒸馏200B配置+示意图(1)",
+  "model": "200B",
+  "series": "分子蒸馏",
+  "key": "mol_dist",
+  "page": "specs/分子蒸馏/23-分子蒸馏_分子蒸馏200b配置_示意图_1.html",
+  "dl": "downloads/specs/23-分子蒸馏_分子蒸馏200b配置_示意图_1.docx"
+ },
+ {
+  "title": "薄膜蒸发器FMD-150C配置",
+  "model": "FMD-150C",
+  "series": "分子蒸馏",
+  "key": "mol_dist",
+  "page": "specs/分子蒸馏/23-分子蒸馏_薄膜蒸发器fmd-150c配置.html",
+  "dl": "downloads/specs/23-分子蒸馏_薄膜蒸发器fmd-150c配置.docx"
+ },
+ {
+  "title": "实验室均质乳化系统反应器参数",
+  "model": "DOCX",
+  "series": "均质高剪切乳化机",
+  "key": "others",
+  "page": "specs/均质高剪切乳化机/25-均质高剪切乳化机_均质乳化器_实验室均质乳化系统反应器参数.html",
+  "dl": "downloads/specs/25-均质高剪切乳化机_均质乳化器_实验室均质乳化系统反应器参数.docx"
+ },
+ {
+  "title": "FA25  高剪切分散乳化机",
+  "model": "FA25",
+  "series": "均质高剪切乳化机",
+  "key": "others",
+  "page": "specs/均质高剪切乳化机/切乳化机_高剪切分散乳化机_fa25高剪切分散乳化机_fa25_高剪切分散乳化机.html",
+  "dl": "downloads/specs/25-均质高剪切乳化机_高剪切分散乳化机_fa25高剪切分散乳化机_fa25_高剪切分散乳化机.docx"
+ },
+ {
+  "title": "FA30高剪切分散乳化机",
+  "model": "FA30",
+  "series": "均质高剪切乳化机",
+  "key": "others",
+  "page": "specs/均质高剪切乳化机/剪切乳化机_高剪切分散乳化机_fa30高剪切分散乳化机_fa30高剪切分散乳化机.html",
+  "dl": "downloads/specs/25-均质高剪切乳化机_高剪切分散乳化机_fa30高剪切分散乳化机_fa30高剪切分散乳化机.docx"
+ },
+ {
+  "title": "YSF-100LEX防爆双层玻璃反应釜 -400w电机",
+  "model": "YSF-100LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/ysf双层玻璃反应釜ok_ysf-100lex防爆双层玻璃反应釜_-400w电机.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-100lex防爆双层玻璃反应釜_-400w电机.docx"
+ },
+ {
+  "title": "YSF-100LEX防爆双层玻璃反应釜",
+  "model": "YSF-100LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-100lex防爆双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-100lex防爆双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-100L双层玻璃反应釜",
+  "model": "YSF-100L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-100l双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-100l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-10LEX防爆双层玻璃反应釜 -",
+  "model": "YSF-10LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/璃反应釜_1-ysf双层玻璃反应釜ok_ysf-10lex防爆双层玻璃反应釜_-.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-10lex防爆双层玻璃反应釜_-.docx"
+ },
+ {
+  "title": "YSF-10LEX防爆双层玻璃反应釜",
+  "model": "YSF-10LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-10lex防爆双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-10lex防爆双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-10LEX防爆双层玻璃反应釜300度高温",
+  "model": "YSF-10LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/_1-ysf双层玻璃反应釜ok_ysf-10lex防爆双层玻璃反应釜300度高温.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-10lex防爆双层玻璃反应釜300度高温.docx"
+ },
+ {
+  "title": "YSF-10L双层玻璃反应釜",
+  "model": "YSF-10L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-10l双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-10l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-150LEX防爆双层玻璃反应釜",
+  "model": "YSF-150LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-150lex防爆双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-150lex防爆双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-150L双层玻璃反应釜",
+  "model": "YSF-150L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-150l双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-150l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-1LEX防爆双层玻璃反应釜",
+  "model": "YSF-1LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-1lex防爆双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-1lex防爆双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-1L双层玻璃反应釜",
+  "model": "YSF-1L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-1l双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-1l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-200LEX防爆双层玻璃反应釜",
+  "model": "YSF-200LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-200lex防爆双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-200lex防爆双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-200L双层玻璃反应釜",
+  "model": "YSF-200L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-200l双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-200l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-20LEX防爆双层玻璃反应釜 - 副本",
+  "model": "YSF-20LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/釜_1-ysf双层玻璃反应釜ok_ysf-20lex防爆双层玻璃反应釜_-_副本.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-20lex防爆双层玻璃反应釜_-_副本.docx"
+ },
+ {
+  "title": "YSF-20LEX防爆双层玻璃反应釜",
+  "model": "YSF-20LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-20lex防爆双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-20lex防爆双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-20L双层玻璃反应釜",
+  "model": "YSF-20L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-20l双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-20l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-2LEX防爆双层玻璃反应釜",
+  "model": "YSF-2LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-2lex防爆双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-2lex防爆双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-2L双层玻璃反应釜",
+  "model": "YSF-2L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-2l双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-2l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-30LEX防爆双层玻璃反应釜",
+  "model": "YSF-30LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-30lex防爆双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-30lex防爆双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-30L双层玻璃反应釜",
+  "model": "YSF-30L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-30l双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-30l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-3LEX防爆双层玻璃反应釜",
+  "model": "YSF-3LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-3lex防爆双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-3lex防爆双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-3L双层玻璃反应釜",
+  "model": "YSF-3L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-3l双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-3l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-50LEX防爆双层玻璃反应釜 - 副本",
+  "model": "YSF-50LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/釜_1-ysf双层玻璃反应釜ok_ysf-50lex防爆双层玻璃反应釜_-_副本.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-50lex防爆双层玻璃反应釜_-_副本.docx"
+ },
+ {
+  "title": "YSF-50LEX防爆双层玻璃反应釜",
+  "model": "YSF-50LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-50lex防爆双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-50lex防爆双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-50L双层玻璃反应釜",
+  "model": "YSF-50L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-50l双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-50l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-5LEX防爆三层玻璃反应釜",
+  "model": "YSF-5LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-5lex防爆三层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-5lex防爆三层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-5LEX防爆双层玻璃反应釜",
+  "model": "YSF-5LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-5lex防爆双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-5lex防爆双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-5L双层玻璃反应釜",
+  "model": "YSF-5L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-5l双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-5l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-80LEX防爆双层玻璃反应釜",
+  "model": "YSF-80LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-80lex防爆双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-80lex防爆双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-80L双层玻璃反应釜",
+  "model": "YSF-80L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-80l双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_1-ysf双层玻璃反应釜ok_ysf-80l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFT-100LEX防爆双层托盘型玻璃反应釜",
+  "model": "YSFT-100LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/2-ysft双层托盘型玻璃反应釜_ysft-100lex防爆双层托盘型玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_2-ysft双层托盘型玻璃反应釜_ysft-100lex防爆双层托盘型玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFT-100L双层托盘型玻璃反应釜",
+  "model": "YSFT-100L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/反应釜_2-ysft双层托盘型玻璃反应釜_ysft-100l双层托盘型玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_2-ysft双层托盘型玻璃反应釜_ysft-100l双层托盘型玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFT-10LEX双层托盘型玻璃反应釜",
+  "model": "YSFT-10LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/应釜_2-ysft双层托盘型玻璃反应釜_ysft-10lex双层托盘型玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_2-ysft双层托盘型玻璃反应釜_ysft-10lex双层托盘型玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFT-10L双层托盘型玻璃反应釜",
+  "model": "YSFT-10L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/璃反应釜_2-ysft双层托盘型玻璃反应釜_ysft-10l双层托盘型玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_2-ysft双层托盘型玻璃反应釜_ysft-10l双层托盘型玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFT-150LEX防爆双层托盘型玻璃反应釜",
+  "model": "YSFT-150LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/2-ysft双层托盘型玻璃反应釜_ysft-150lex防爆双层托盘型玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_2-ysft双层托盘型玻璃反应釜_ysft-150lex防爆双层托盘型玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFT-150L双层托盘型玻璃反应釜",
+  "model": "YSFT-150L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/反应釜_2-ysft双层托盘型玻璃反应釜_ysft-150l双层托盘型玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_2-ysft双层托盘型玻璃反应釜_ysft-150l双层托盘型玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFT-200LEX防爆双层托盘型玻璃反应釜",
+  "model": "YSFT-200LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/2-ysft双层托盘型玻璃反应釜_ysft-200lex防爆双层托盘型玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_2-ysft双层托盘型玻璃反应釜_ysft-200lex防爆双层托盘型玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFT-200L双层托盘型玻璃反应釜",
+  "model": "YSFT-200L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/反应釜_2-ysft双层托盘型玻璃反应釜_ysft-200l双层托盘型玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_2-ysft双层托盘型玻璃反应釜_ysft-200l双层托盘型玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFT-20LEX防爆双层托盘型玻璃反应釜",
+  "model": "YSFT-20LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/_2-ysft双层托盘型玻璃反应釜_ysft-20lex防爆双层托盘型玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_2-ysft双层托盘型玻璃反应釜_ysft-20lex防爆双层托盘型玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFT-20L双层托盘型玻璃反应釜",
+  "model": "YSFT-20L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/璃反应釜_2-ysft双层托盘型玻璃反应釜_ysft-20l双层托盘型玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_2-ysft双层托盘型玻璃反应釜_ysft-20l双层托盘型玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFT-30LEX双层托盘型玻璃反应釜",
+  "model": "YSFT-30LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/应釜_2-ysft双层托盘型玻璃反应釜_ysft-30lex双层托盘型玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_2-ysft双层托盘型玻璃反应釜_ysft-30lex双层托盘型玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFT-30L双层托盘型玻璃反应釜",
+  "model": "YSFT-30L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/璃反应釜_2-ysft双层托盘型玻璃反应釜_ysft-30l双层托盘型玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_2-ysft双层托盘型玻璃反应釜_ysft-30l双层托盘型玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFT-50LEX防爆双层托盘型玻璃反应釜",
+  "model": "YSFT-50LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/_2-ysft双层托盘型玻璃反应釜_ysft-50lex防爆双层托盘型玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_2-ysft双层托盘型玻璃反应釜_ysft-50lex防爆双层托盘型玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFT-50L双层托盘型玻璃反应釜",
+  "model": "YSFT-50L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/璃反应釜_2-ysft双层托盘型玻璃反应釜_ysft-50l双层托盘型玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_2-ysft双层托盘型玻璃反应釜_ysft-50l双层托盘型玻璃反应釜.docx"
+ },
+ {
+  "title": "YHGSF-100LEX出口型双层玻璃反应釜",
+  "model": "YHGSF-100LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/yhgsf出口型双层玻璃反应釜ok_yhgsf-100lex出口型双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_3-yhgsf出口型双层玻璃反应釜ok_yhgsf-100lex出口型双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YHGSF-100L出口型双层玻璃反应釜",
+  "model": "YHGSF-100L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/3-yhgsf出口型双层玻璃反应釜ok_yhgsf-100l出口型双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_3-yhgsf出口型双层玻璃反应釜ok_yhgsf-100l出口型双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YHGSF-10LEX出口型双层玻璃反应釜",
+  "model": "YHGSF-10LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/-yhgsf出口型双层玻璃反应釜ok_yhgsf-10lex出口型双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_3-yhgsf出口型双层玻璃反应釜ok_yhgsf-10lex出口型双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YHGSF-10L出口型双层玻璃反应釜",
+  "model": "YHGSF-10L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/_3-yhgsf出口型双层玻璃反应釜ok_yhgsf-10l出口型双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_3-yhgsf出口型双层玻璃反应釜ok_yhgsf-10l出口型双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YHGSF-20LEX出口型双层玻璃反应釜",
+  "model": "YHGSF-20LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/-yhgsf出口型双层玻璃反应釜ok_yhgsf-20lex出口型双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_3-yhgsf出口型双层玻璃反应釜ok_yhgsf-20lex出口型双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YHGSF-20L出口型双层玻璃反应釜",
+  "model": "YHGSF-20L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/_3-yhgsf出口型双层玻璃反应釜ok_yhgsf-20l出口型双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_3-yhgsf出口型双层玻璃反应釜ok_yhgsf-20l出口型双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YHGSF-30LEX出口型双层玻璃反应釜",
+  "model": "YHGSF-30LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/-yhgsf出口型双层玻璃反应釜ok_yhgsf-30lex出口型双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_3-yhgsf出口型双层玻璃反应釜ok_yhgsf-30lex出口型双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YHGSF-30L出口型双层玻璃反应釜",
+  "model": "YHGSF-30L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/_3-yhgsf出口型双层玻璃反应釜ok_yhgsf-30l出口型双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_3-yhgsf出口型双层玻璃反应釜ok_yhgsf-30l出口型双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YHGSF-50LEX出口型双层玻璃反应釜",
+  "model": "YHGSF-50LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/-yhgsf出口型双层玻璃反应釜ok_yhgsf-50lex出口型双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_3-yhgsf出口型双层玻璃反应釜ok_yhgsf-50lex出口型双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YHGSF-50L出口型双层玻璃反应釜",
+  "model": "YHGSF-50L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/_3-yhgsf出口型双层玻璃反应釜ok_yhgsf-50l出口型双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_3-yhgsf出口型双层玻璃反应釜ok_yhgsf-50l出口型双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YHGSF-80LEX出口型双层玻璃反应釜",
+  "model": "YHGSF-80LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/-yhgsf出口型双层玻璃反应釜ok_yhgsf-80lex出口型双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_3-yhgsf出口型双层玻璃反应釜ok_yhgsf-80lex出口型双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YHGSF-80L出口型双层玻璃反应釜",
+  "model": "YHGSF-80L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/_3-yhgsf出口型双层玻璃反应釜ok_yhgsf-80l出口型双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_3-yhgsf出口型双层玻璃反应釜ok_yhgsf-80l出口型双层玻璃反应釜.docx"
+ },
+ {
+  "title": "XYSFT-100LEX双层玻璃反应釜",
+  "model": "XYSFT-100LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-xysft新型托盘双层玻璃反应釜ok_xysft-100lex双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_4-xysft新型托盘双层玻璃反应釜ok_xysft-100lex双层玻璃反应釜.docx"
+ },
+ {
+  "title": "XYSFT-100L双层玻璃反应釜",
+  "model": "XYSFT-100L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/釜_4-xysft新型托盘双层玻璃反应釜ok_xysft-100l双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_4-xysft新型托盘双层玻璃反应釜ok_xysft-100l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "XYSFT-150LEX双层玻璃反应釜",
+  "model": "XYSFT-150LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-xysft新型托盘双层玻璃反应釜ok_xysft-150lex双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_4-xysft新型托盘双层玻璃反应釜ok_xysft-150lex双层玻璃反应釜.docx"
+ },
+ {
+  "title": "XYSFT-150L双层玻璃反应釜",
+  "model": "XYSFT-150L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/釜_4-xysft新型托盘双层玻璃反应釜ok_xysft-150l双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_4-xysft新型托盘双层玻璃反应釜ok_xysft-150l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "XYSFT-20LEX双层玻璃反应釜",
+  "model": "XYSFT-20LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/_4-xysft新型托盘双层玻璃反应釜ok_xysft-20lex双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_4-xysft新型托盘双层玻璃反应釜ok_xysft-20lex双层玻璃反应釜.docx"
+ },
+ {
+  "title": "XYSFT-20L双层玻璃反应釜",
+  "model": "XYSFT-20L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/应釜_4-xysft新型托盘双层玻璃反应釜ok_xysft-20l双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_4-xysft新型托盘双层玻璃反应釜ok_xysft-20l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "XYSFT-30LEX双层玻璃反应釜",
+  "model": "XYSFT-30LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/_4-xysft新型托盘双层玻璃反应釜ok_xysft-30lex双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_4-xysft新型托盘双层玻璃反应釜ok_xysft-30lex双层玻璃反应釜.docx"
+ },
+ {
+  "title": "XYSFT-30L双层玻璃反应釜",
+  "model": "XYSFT-30L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/应釜_4-xysft新型托盘双层玻璃反应釜ok_xysft-30l双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_4-xysft新型托盘双层玻璃反应釜ok_xysft-30l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "XYSFT-50LEX双层玻璃反应釜",
+  "model": "XYSFT-50LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/_4-xysft新型托盘双层玻璃反应釜ok_xysft-50lex双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_4-xysft新型托盘双层玻璃反应釜ok_xysft-50lex双层玻璃反应釜.docx"
+ },
+ {
+  "title": "XYSFT-50L双层玻璃反应釜",
+  "model": "XYSFT-50L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/应釜_4-xysft新型托盘双层玻璃反应釜ok_xysft-50l双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_4-xysft新型托盘双层玻璃反应釜ok_xysft-50l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "XYSFT-II-1L 小型双层玻璃反应釜",
+  "model": "XYSFT-II-1L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/xysft新型托盘双层玻璃反应釜ok_xysft-ii-1l_小型双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_4-xysft新型托盘双层玻璃反应釜ok_xysft-ii-1l_小型双层玻璃反应釜.docx"
+ },
+ {
+  "title": "XYSFT-II-2L 小型双层玻璃反应釜",
+  "model": "XYSFT-II-2L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/xysft新型托盘双层玻璃反应釜ok_xysft-ii-2l_小型双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_4-xysft新型托盘双层玻璃反应釜ok_xysft-ii-2l_小型双层玻璃反应釜.docx"
+ },
+ {
+  "title": "XYSFT-II-3L 小型双层玻璃反应釜",
+  "model": "XYSFT-II-3L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/xysft新型托盘双层玻璃反应釜ok_xysft-ii-3l_小型双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_4-xysft新型托盘双层玻璃反应釜ok_xysft-ii-3l_小型双层玻璃反应釜.docx"
+ },
+ {
+  "title": "XYSFT-II-5L 小型双层玻璃反应釜",
+  "model": "XYSFT-II-5L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/xysft新型托盘双层玻璃反应釜ok_xysft-ii-5l_小型双层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_4-xysft新型托盘双层玻璃反应釜ok_xysft-ii-5l_小型双层玻璃反应釜.docx"
+ },
+ {
+  "title": "ZYDF-100LEX单层防爆升降玻璃反应釜 - 副本",
+  "model": "ZYDF-100LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/f升降双层玻璃反应釜ok_zydf-100lex单层防爆升降玻璃反应釜_-_副本.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_5-zysf升降双层玻璃反应釜ok_zydf-100lex单层防爆升降玻璃反应釜_-_副本.docx"
+ },
+ {
+  "title": "ZYSF-100LEX防爆升降玻璃反应釜",
+  "model": "ZYSF-100LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/釜_5-zysf升降双层玻璃反应釜ok_zysf-100lex防爆升降玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_5-zysf升降双层玻璃反应釜ok_zysf-100lex防爆升降玻璃反应釜.docx"
+ },
+ {
+  "title": "ZYSF-10LEX防爆升降玻璃反应釜",
+  "model": "ZYSF-10LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/应釜_5-zysf升降双层玻璃反应釜ok_zysf-10lex防爆升降玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_5-zysf升降双层玻璃反应釜ok_zysf-10lex防爆升降玻璃反应釜.docx"
+ },
+ {
+  "title": "ZYSF-20LEX防爆升降玻璃反应釜",
+  "model": "ZYSF-20LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/应釜_5-zysf升降双层玻璃反应釜ok_zysf-20lex防爆升降玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_5-zysf升降双层玻璃反应釜ok_zysf-20lex防爆升降玻璃反应釜.docx"
+ },
+ {
+  "title": "ZYSF-20L升降玻璃反应釜",
+  "model": "ZYSF-20L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/层玻璃反应釜_5-zysf升降双层玻璃反应釜ok_zysf-20l升降玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_5-zysf升降双层玻璃反应釜ok_zysf-20l升降玻璃反应釜.docx"
+ },
+ {
+  "title": "ZYSF-30LEX防爆升降玻璃反应釜",
+  "model": "ZYSF-30LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/应釜_5-zysf升降双层玻璃反应釜ok_zysf-30lex防爆升降玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_5-zysf升降双层玻璃反应釜ok_zysf-30lex防爆升降玻璃反应釜.docx"
+ },
+ {
+  "title": "ZYSF-30L升降玻璃反应釜",
+  "model": "ZYSF-30L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/层玻璃反应釜_5-zysf升降双层玻璃反应釜ok_zysf-30l升降玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_5-zysf升降双层玻璃反应釜ok_zysf-30l升降玻璃反应釜.docx"
+ },
+ {
+  "title": "ZYSF-50LEX防爆升降玻璃反应釜",
+  "model": "ZYSF-50LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/应釜_5-zysf升降双层玻璃反应釜ok_zysf-50lex防爆升降玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_5-zysf升降双层玻璃反应釜ok_zysf-50lex防爆升降玻璃反应釜.docx"
+ },
+ {
+  "title": "ZYSF-50L升降玻璃反应釜",
+  "model": "ZYSF-50L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/层玻璃反应釜_5-zysf升降双层玻璃反应釜ok_zysf-50l升降玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_1_双层玻璃反应釜_5-zysf升降双层玻璃反应釜ok_zysf-50l升降玻璃反应釜.docx"
+ },
+ {
+  "title": "单层玻璃发应釜YDF-100L（桶形)",
+  "model": "YDF-100L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_2_单层玻璃反应釜_单层玻璃发应釜ydf-100l_桶形.html",
+  "dl": "downloads/specs/4-反应釜_2_单层玻璃反应釜_单层玻璃发应釜ydf-100l_桶形.docx"
+ },
+ {
+  "title": "单层玻璃发应釜YDF-100L（球形)",
+  "model": "YDF-100L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_2_单层玻璃反应釜_单层玻璃发应釜ydf-100l_球形.html",
+  "dl": "downloads/specs/4-反应釜_2_单层玻璃反应釜_单层玻璃发应釜ydf-100l_球形.docx"
+ },
+ {
+  "title": "单层玻璃发应釜YDF-10L",
+  "model": "YDF-10L.DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_2_单层玻璃反应釜_单层玻璃发应釜ydf-10l.html",
+  "dl": "downloads/specs/4-反应釜_2_单层玻璃反应釜_单层玻璃发应釜ydf-10l.docx"
+ },
+ {
+  "title": "单层玻璃发应釜YDF-150L（桶形)",
+  "model": "YDF-150L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_2_单层玻璃反应釜_单层玻璃发应釜ydf-150l_桶形.html",
+  "dl": "downloads/specs/4-反应釜_2_单层玻璃反应釜_单层玻璃发应釜ydf-150l_桶形.docx"
+ },
+ {
+  "title": "单层玻璃发应釜YDF-1L",
+  "model": "YDF-1L.DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_2_单层玻璃反应釜_单层玻璃发应釜ydf-1l.html",
+  "dl": "downloads/specs/4-反应釜_2_单层玻璃反应釜_单层玻璃发应釜ydf-1l.docx"
+ },
+ {
+  "title": "单层玻璃发应釜YDF-200L（桶形)",
+  "model": "YDF-200L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_2_单层玻璃反应釜_单层玻璃发应釜ydf-200l_桶形.html",
+  "dl": "downloads/specs/4-反应釜_2_单层玻璃反应釜_单层玻璃发应釜ydf-200l_桶形.docx"
+ },
+ {
+  "title": "单层玻璃发应釜YDF-20L",
+  "model": "YDF-20L.DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_2_单层玻璃反应釜_单层玻璃发应釜ydf-20l.html",
+  "dl": "downloads/specs/4-反应釜_2_单层玻璃反应釜_单层玻璃发应釜ydf-20l.docx"
+ },
+ {
+  "title": "单层玻璃发应釜YDF-2L",
+  "model": "YDF-2L.DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_2_单层玻璃反应釜_单层玻璃发应釜ydf-2l.html",
+  "dl": "downloads/specs/4-反应釜_2_单层玻璃反应釜_单层玻璃发应釜ydf-2l.docx"
+ },
+ {
+  "title": "单层玻璃发应釜YDF-30L",
+  "model": "YDF-30L.DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_2_单层玻璃反应釜_单层玻璃发应釜ydf-30l.html",
+  "dl": "downloads/specs/4-反应釜_2_单层玻璃反应釜_单层玻璃发应釜ydf-30l.docx"
+ },
+ {
+  "title": "单层玻璃发应釜YDF-3L",
+  "model": "YDF-3L.DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_2_单层玻璃反应釜_单层玻璃发应釜ydf-3l.html",
+  "dl": "downloads/specs/4-反应釜_2_单层玻璃反应釜_单层玻璃发应釜ydf-3l.docx"
+ },
+ {
+  "title": "单层玻璃发应釜YDF-50L（桶形)",
+  "model": "YDF-50L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_2_单层玻璃反应釜_单层玻璃发应釜ydf-50l_桶形.html",
+  "dl": "downloads/specs/4-反应釜_2_单层玻璃反应釜_单层玻璃发应釜ydf-50l_桶形.docx"
+ },
+ {
+  "title": "单层玻璃发应釜YDF-50L（球形)",
+  "model": "YDF-50L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_2_单层玻璃反应釜_单层玻璃发应釜ydf-50l_球形.html",
+  "dl": "downloads/specs/4-反应釜_2_单层玻璃反应釜_单层玻璃发应釜ydf-50l_球形.docx"
+ },
+ {
+  "title": "单层玻璃发应釜YDF-5L",
+  "model": "YDF-5L.DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_2_单层玻璃反应釜_单层玻璃发应釜ydf-5l.html",
+  "dl": "downloads/specs/4-反应釜_2_单层玻璃反应釜_单层玻璃发应釜ydf-5l.docx"
+ },
+ {
+  "title": "防爆单层玻璃发应釜YDF-100LEX（桶形)",
+  "model": "YDF-100LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_2_单层玻璃反应釜_防爆单层玻璃发应釜ydf-100lex_桶形.html",
+  "dl": "downloads/specs/4-反应釜_2_单层玻璃反应釜_防爆单层玻璃发应釜ydf-100lex_桶形.docx"
+ },
+ {
+  "title": "防爆单层玻璃发应釜YDF-100LEX（球形)",
+  "model": "YDF-100LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_2_单层玻璃反应釜_防爆单层玻璃发应釜ydf-100lex_球形.html",
+  "dl": "downloads/specs/4-反应釜_2_单层玻璃反应釜_防爆单层玻璃发应釜ydf-100lex_球形.docx"
+ },
+ {
+  "title": "防爆单层玻璃发应釜YDF-10LEX",
+  "model": "YDF-10LEX.DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_2_单层玻璃反应釜_防爆单层玻璃发应釜ydf-10lex.html",
+  "dl": "downloads/specs/4-反应釜_2_单层玻璃反应釜_防爆单层玻璃发应釜ydf-10lex.docx"
+ },
+ {
+  "title": "防爆单层玻璃发应釜YDF-150LEX（桶形)",
+  "model": "YDF-150LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_2_单层玻璃反应釜_防爆单层玻璃发应釜ydf-150lex_桶形.html",
+  "dl": "downloads/specs/4-反应釜_2_单层玻璃反应釜_防爆单层玻璃发应釜ydf-150lex_桶形.docx"
+ },
+ {
+  "title": "防爆单层玻璃发应釜YDF-200LEX（桶形)",
+  "model": "YDF-200LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_2_单层玻璃反应釜_防爆单层玻璃发应釜ydf-200lex_桶形.html",
+  "dl": "downloads/specs/4-反应釜_2_单层玻璃反应釜_防爆单层玻璃发应釜ydf-200lex_桶形.docx"
+ },
+ {
+  "title": "防爆单层玻璃发应釜YDF-20LEX",
+  "model": "YDF-20LEX.DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_2_单层玻璃反应釜_防爆单层玻璃发应釜ydf-20lex.html",
+  "dl": "downloads/specs/4-反应釜_2_单层玻璃反应釜_防爆单层玻璃发应釜ydf-20lex.docx"
+ },
+ {
+  "title": "防爆单层玻璃发应釜YDF-30LEX",
+  "model": "YDF-30LEX.DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_2_单层玻璃反应釜_防爆单层玻璃发应釜ydf-30lex.html",
+  "dl": "downloads/specs/4-反应釜_2_单层玻璃反应釜_防爆单层玻璃发应釜ydf-30lex.docx"
+ },
+ {
+  "title": "防爆单层玻璃发应釜YDF-50LEX（桶形)",
+  "model": "YDF-50LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_2_单层玻璃反应釜_防爆单层玻璃发应釜ydf-50lex_桶形.html",
+  "dl": "downloads/specs/4-反应釜_2_单层玻璃反应釜_防爆单层玻璃发应釜ydf-50lex_桶形.docx"
+ },
+ {
+  "title": "防爆单层玻璃发应釜YDF-50LEX（球形)",
+  "model": "YDF-50LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_2_单层玻璃反应釜_防爆单层玻璃发应釜ydf-50lex_球形.html",
+  "dl": "downloads/specs/4-反应釜_2_单层玻璃反应釜_防爆单层玻璃发应釜ydf-50lex_球形.docx"
+ },
+ {
+  "title": "简易反应釜0.1L",
+  "model": "0.1L.DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_3_高压反应釜_付青杰_cf简易釜_简易反应釜0_1l.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_cf简易釜_简易反应釜0_1l.docx"
+ },
+ {
+  "title": "简易反应釜0.25L",
+  "model": "0.25L.DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_3_高压反应釜_付青杰_cf简易釜_简易反应釜0_25l.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_cf简易釜_简易反应釜0_25l.docx"
+ },
+ {
+  "title": "简易反应釜0.2L",
+  "model": "0.2L.DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_3_高压反应釜_付青杰_cf简易釜_简易反应釜0_2l.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_cf简易釜_简易反应釜0_2l.docx"
+ },
+ {
+  "title": "简易反应釜0.3L",
+  "model": "0.3L.DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_3_高压反应釜_付青杰_cf简易釜_简易反应釜0_3l.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_cf简易釜_简易反应釜0_3l.docx"
+ },
+ {
+  "title": "简易反应釜0.5L",
+  "model": "0.5L.DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_3_高压反应釜_付青杰_cf简易釜_简易反应釜0_5l.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_cf简易釜_简易反应釜0_5l.docx"
+ },
+ {
+  "title": "简易反应釜1L",
+  "model": "1L.DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_3_高压反应釜_付青杰_cf简易釜_简易反应釜1l.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_cf简易釜_简易反应釜1l.docx"
+ },
+ {
+  "title": "0.15L不带升降技术参数",
+  "model": "0.15L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/反应釜_3_高压反应釜_付青杰_cjf不带升降高压釜_0_15l不带升降技术参数.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_cjf不带升降高压釜_0_15l不带升降技术参数.docx"
+ },
+ {
+  "title": "0.1L不带升降技术参数",
+  "model": "0.1L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/-反应釜_3_高压反应釜_付青杰_cjf不带升降高压釜_0_1l不带升降技术参数.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_cjf不带升降高压釜_0_1l不带升降技术参数.docx"
+ },
+ {
+  "title": "0.25L不带升降技术参数-哈氏合金",
+  "model": "0.25L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/_高压反应釜_付青杰_cjf不带升降高压釜_0_25l不带升降技术参数-哈氏合金.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_cjf不带升降高压釜_0_25l不带升降技术参数-哈氏合金.docx"
+ },
+ {
+  "title": "0.25L不带升降技术参数",
+  "model": "0.25L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/反应釜_3_高压反应釜_付青杰_cjf不带升降高压釜_0_25l不带升降技术参数.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_cjf不带升降高压釜_0_25l不带升降技术参数.docx"
+ },
+ {
+  "title": "0.2L不带升降技术参数",
+  "model": "0.2L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/-反应釜_3_高压反应釜_付青杰_cjf不带升降高压釜_0_2l不带升降技术参数.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_cjf不带升降高压釜_0_2l不带升降技术参数.docx"
+ },
+ {
+  "title": "0.5L不带升降技术参数-哈氏合金",
+  "model": "0.5L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/3_高压反应釜_付青杰_cjf不带升降高压釜_0_5l不带升降技术参数-哈氏合金.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_cjf不带升降高压釜_0_5l不带升降技术参数-哈氏合金.docx"
+ },
+ {
+  "title": "0.5L不带升降技术参数",
+  "model": "0.5L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/-反应釜_3_高压反应釜_付青杰_cjf不带升降高压釜_0_5l不带升降技术参数.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_cjf不带升降高压釜_0_5l不带升降技术参数.docx"
+ },
+ {
+  "title": "1L不带升降技术参数",
+  "model": "DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_3_高压反应釜_付青杰_cjf不带升降高压釜_1l不带升降技术参数.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_cjf不带升降高压釜_1l不带升降技术参数.docx"
+ },
+ {
+  "title": "2L不带升降技术参数-哈氏合金",
+  "model": "DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/釜_3_高压反应釜_付青杰_cjf不带升降高压釜_2l不带升降技术参数-哈氏合金.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_cjf不带升降高压釜_2l不带升降技术参数-哈氏合金.docx"
+ },
+ {
+  "title": "2L不带升降技术参数",
+  "model": "DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_3_高压反应釜_付青杰_cjf不带升降高压釜_2l不带升降技术参数.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_cjf不带升降高压釜_2l不带升降技术参数.docx"
+ },
+ {
+  "title": "3L不带升降技术参数",
+  "model": "DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_3_高压反应釜_付青杰_cjf不带升降高压釜_3l不带升降技术参数.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_cjf不带升降高压釜_3l不带升降技术参数.docx"
+ },
+ {
+  "title": "5L不带升降技术参数",
+  "model": "DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_3_高压反应釜_付青杰_cjf不带升降高压釜_5l不带升降技术参数.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_cjf不带升降高压釜_5l不带升降技术参数.docx"
+ },
+ {
+  "title": "0.15L手动升降技术参数",
+  "model": "0.15L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_0_15l手动升降技术参数.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_0_15l手动升降技术参数.docx"
+ },
+ {
+  "title": "0.25L手动升降技术参数",
+  "model": "0.25L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_0_25l手动升降技术参数.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_0_25l手动升降技术参数.docx"
+ },
+ {
+  "title": "0.5L手动升降技术参数",
+  "model": "0.5L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_0_5l手动升降技术参数.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_0_5l手动升降技术参数.docx"
+ },
+ {
+  "title": "100L电动升降技术参数 油循环",
+  "model": "100L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/-反应釜_3_高压反应釜_付青杰_fcf升降釜_100l电动升降技术参数_油循环.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_100l电动升降技术参数_油循环.docx"
+ },
+ {
+  "title": "100L电动升降技术参数",
+  "model": "100L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_100l电动升降技术参数.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_100l电动升降技术参数.docx"
+ },
+ {
+  "title": "10L电动升降技术参数",
+  "model": "10L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_10l电动升降技术参数.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_10l电动升降技术参数.docx"
+ },
+ {
+  "title": "10L电动升降技术参数油浴",
+  "model": "10L",
+  "series": "反应釜",
+  "key": "hi_circ",
+  "page": "specs/反应釜/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_10l电动升降技术参数油浴.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_10l电动升降技术参数油浴.docx"
+ },
+ {
+  "title": "1L手动升降技术参数",
+  "model": "DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_1l手动升降技术参数.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_1l手动升降技术参数.docx"
+ },
+ {
+  "title": "1L手动快开升降技术参数 -",
+  "model": "DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_1l手动快开升降技术参数_-.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_1l手动快开升降技术参数_-.docx"
+ },
+ {
+  "title": "20L电动升降技术参数",
+  "model": "20L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_20l电动升降技术参数.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_20l电动升降技术参数.docx"
+ },
+ {
+  "title": "20L电动升降技术参数油循环",
+  "model": "20L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_20l电动升降技术参数油循环.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_20l电动升降技术参数油循环.docx"
+ },
+ {
+  "title": "25L电动升降技术参数",
+  "model": "25L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_25l电动升降技术参数.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_25l电动升降技术参数.docx"
+ },
+ {
+  "title": "2L手动升降技术参数",
+  "model": "DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_2l手动升降技术参数.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_2l手动升降技术参数.docx"
+ },
+ {
+  "title": "30L电动升降技术参数",
+  "model": "30L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_30l电动升降技术参数.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_30l电动升降技术参数.docx"
+ },
+ {
+  "title": "3L手动升降技术参数",
+  "model": "DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_3l手动升降技术参数.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_3l手动升降技术参数.docx"
+ },
+ {
+  "title": "50L电动升降技术参数 油浴",
+  "model": "50L",
+  "series": "反应釜",
+  "key": "hi_circ",
+  "page": "specs/反应釜/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_50l电动升降技术参数_油浴.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_50l电动升降技术参数_油浴.docx"
+ },
+ {
+  "title": "50L电动升降技术参数",
+  "model": "50L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_50l电动升降技术参数.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_50l电动升降技术参数.docx"
+ },
+ {
+  "title": "5L底板式电动升降技术参数",
+  "model": "DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_5l底板式电动升降技术参数.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_5l底板式电动升降技术参数.docx"
+ },
+ {
+  "title": "5L手动升降技术参数",
+  "model": "DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_5l手动升降技术参数.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_5l手动升降技术参数.docx"
+ },
+ {
+  "title": "5L电动升降哈氏合金",
+  "model": "DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_5l电动升降哈氏合金.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_5l电动升降哈氏合金.docx"
+ },
+ {
+  "title": "5L电动升降技术参数",
+  "model": "DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_5l电动升降技术参数.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_5l电动升降技术参数.docx"
+ },
+ {
+  "title": "80L电动升降技术参数",
+  "model": "80L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_80l电动升降技术参数.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_80l电动升降技术参数.docx"
+ },
+ {
+  "title": "TGYF-A台式反应釜0.05L",
+  "model": "TGYF-A",
+  "series": "反应釜",
+  "key": "hp_reactor",
+  "page": "specs/反应釜/3_高压反应釜_付青杰_tgyf-a台式高压釜_tgyf-a台式反应釜0_05l.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_tgyf-a台式高压釜_tgyf-a台式反应釜0_05l.docx"
+ },
+ {
+  "title": "TGYF-A台式反应釜0.15L",
+  "model": "TGYF-A",
+  "series": "反应釜",
+  "key": "hp_reactor",
+  "page": "specs/反应釜/3_高压反应釜_付青杰_tgyf-a台式高压釜_tgyf-a台式反应釜0_15l.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_tgyf-a台式高压釜_tgyf-a台式反应釜0_15l.docx"
+ },
+ {
+  "title": "TGYF-A台式反应釜0.1L",
+  "model": "TGYF-A",
+  "series": "反应釜",
+  "key": "hp_reactor",
+  "page": "specs/反应釜/_3_高压反应釜_付青杰_tgyf-a台式高压釜_tgyf-a台式反应釜0_1l.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_tgyf-a台式高压釜_tgyf-a台式反应釜0_1l.docx"
+ },
+ {
+  "title": "TGYF-A台式反应釜0.25L",
+  "model": "TGYF-A",
+  "series": "反应釜",
+  "key": "hp_reactor",
+  "page": "specs/反应釜/3_高压反应釜_付青杰_tgyf-a台式高压釜_tgyf-a台式反应釜0_25l.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_tgyf-a台式高压釜_tgyf-a台式反应釜0_25l.docx"
+ },
+ {
+  "title": "TGYF-A台式反应釜0.2L",
+  "model": "TGYF-A",
+  "series": "反应釜",
+  "key": "hp_reactor",
+  "page": "specs/反应釜/_3_高压反应釜_付青杰_tgyf-a台式高压釜_tgyf-a台式反应釜0_2l.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_tgyf-a台式高压釜_tgyf-a台式反应釜0_2l.docx"
+ },
+ {
+  "title": "TGYF-A台式反应釜0.3L",
+  "model": "TGYF-A",
+  "series": "反应釜",
+  "key": "hp_reactor",
+  "page": "specs/反应釜/_3_高压反应釜_付青杰_tgyf-a台式高压釜_tgyf-a台式反应釜0_3l.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_tgyf-a台式高压釜_tgyf-a台式反应釜0_3l.docx"
+ },
+ {
+  "title": "TGYF-A台式反应釜0.5L",
+  "model": "TGYF-A",
+  "series": "反应釜",
+  "key": "hp_reactor",
+  "page": "specs/反应釜/_3_高压反应釜_付青杰_tgyf-a台式高压釜_tgyf-a台式反应釜0_5l.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_tgyf-a台式高压釜_tgyf-a台式反应釜0_5l.docx"
+ },
+ {
+  "title": "TGYF-A台式反应釜1L",
+  "model": "TGYF-A",
+  "series": "反应釜",
+  "key": "hp_reactor",
+  "page": "specs/反应釜/应釜_3_高压反应釜_付青杰_tgyf-a台式高压釜_tgyf-a台式反应釜1l.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_tgyf-a台式高压釜_tgyf-a台式反应釜1l.docx"
+ },
+ {
+  "title": "TGYF-A台式反应釜2L",
+  "model": "TGYF-A",
+  "series": "反应釜",
+  "key": "hp_reactor",
+  "page": "specs/反应釜/应釜_3_高压反应釜_付青杰_tgyf-a台式高压釜_tgyf-a台式反应釜2l.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_tgyf-a台式高压釜_tgyf-a台式反应釜2l.docx"
+ },
+ {
+  "title": "TGYF-A台式反应釜3L",
+  "model": "TGYF-A",
+  "series": "反应釜",
+  "key": "hp_reactor",
+  "page": "specs/反应釜/应釜_3_高压反应釜_付青杰_tgyf-a台式高压釜_tgyf-a台式反应釜3l.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_tgyf-a台式高压釜_tgyf-a台式反应釜3l.docx"
+ },
+ {
+  "title": "TGYF-A台式反应釜5L",
+  "model": "TGYF-A",
+  "series": "反应釜",
+  "key": "hp_reactor",
+  "page": "specs/反应釜/应釜_3_高压反应釜_付青杰_tgyf-a台式高压釜_tgyf-a台式反应釜5l.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_tgyf-a台式高压釜_tgyf-a台式反应釜5l.docx"
+ },
+ {
+  "title": "TGYF-B台式反应釜0.2L",
+  "model": "TGYF-B",
+  "series": "反应釜",
+  "key": "hp_reactor",
+  "page": "specs/反应釜/_3_高压反应釜_付青杰_tgyf-a台式高压釜_tgyf-b台式反应釜0_2l.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_tgyf-a台式高压釜_tgyf-b台式反应釜0_2l.docx"
+ },
+ {
+  "title": "TGYF-B数显台式搅拌器反应釜0.1L",
+  "model": "TGYF-B",
+  "series": "反应釜",
+  "key": "hp_reactor",
+  "page": "specs/反应釜/反应釜_付青杰_tgyf-b台式高压釜_tgyf-b数显台式搅拌器反应釜0_1l.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_tgyf-b台式高压釜_tgyf-b数显台式搅拌器反应釜0_1l.docx"
+ },
+ {
+  "title": "TGYF-B数显台式搅拌器反应釜0.25L",
+  "model": "TGYF-B",
+  "series": "反应釜",
+  "key": "hp_reactor",
+  "page": "specs/反应釜/应釜_付青杰_tgyf-b台式高压釜_tgyf-b数显台式搅拌器反应釜0_25l.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_tgyf-b台式高压釜_tgyf-b数显台式搅拌器反应釜0_25l.docx"
+ },
+ {
+  "title": "TGYF-B数显台式搅拌器反应釜0.5L",
+  "model": "TGYF-B",
+  "series": "反应釜",
+  "key": "hp_reactor",
+  "page": "specs/反应釜/反应釜_付青杰_tgyf-b台式高压釜_tgyf-b数显台式搅拌器反应釜0_5l.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_tgyf-b台式高压釜_tgyf-b数显台式搅拌器反应釜0_5l.docx"
+ },
+ {
+  "title": "TGYF-B数显台式搅拌器反应釜1L",
+  "model": "TGYF-B",
+  "series": "反应釜",
+  "key": "hp_reactor",
+  "page": "specs/反应釜/高压反应釜_付青杰_tgyf-b台式高压釜_tgyf-b数显台式搅拌器反应釜1l.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_tgyf-b台式高压釜_tgyf-b数显台式搅拌器反应釜1l.docx"
+ },
+ {
+  "title": "TGYF-B数显搅拌器反应釜0.05L",
+  "model": "TGYF-B",
+  "series": "反应釜",
+  "key": "hp_reactor",
+  "page": "specs/反应釜/压反应釜_付青杰_tgyf-b台式高压釜_tgyf-b数显搅拌器反应釜0_05l.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_tgyf-b台式高压釜_tgyf-b数显搅拌器反应釜0_05l.docx"
+ },
+ {
+  "title": "台式机械搅拌反应釜0.05L",
+  "model": "0.05L.DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/高压反应釜_付青杰_tgyf-c机械搅拌台式高压釜_台式机械搅拌反应釜0_05l.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_tgyf-c机械搅拌台式高压釜_台式机械搅拌反应釜0_05l.docx"
+ },
+ {
+  "title": "台式机械搅拌反应釜0.1L",
+  "model": "0.1L.DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/_高压反应釜_付青杰_tgyf-c机械搅拌台式高压釜_台式机械搅拌反应釜0_1l.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_tgyf-c机械搅拌台式高压釜_台式机械搅拌反应釜0_1l.docx"
+ },
+ {
+  "title": "台式机械搅拌反应釜0.25L",
+  "model": "0.25L.DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/高压反应釜_付青杰_tgyf-c机械搅拌台式高压釜_台式机械搅拌反应釜0_25l.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_tgyf-c机械搅拌台式高压釜_台式机械搅拌反应釜0_25l.docx"
+ },
+ {
+  "title": "台式机械搅拌反应釜0.2L",
+  "model": "0.2L.DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/_高压反应釜_付青杰_tgyf-c机械搅拌台式高压釜_台式机械搅拌反应釜0_2l.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_tgyf-c机械搅拌台式高压釜_台式机械搅拌反应釜0_2l.docx"
+ },
+ {
+  "title": "台式机械搅拌反应釜0.5L",
+  "model": "0.5L.DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/_高压反应釜_付青杰_tgyf-c机械搅拌台式高压釜_台式机械搅拌反应釜0_5l.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_tgyf-c机械搅拌台式高压釜_台式机械搅拌反应釜0_5l.docx"
+ },
+ {
+  "title": "台式机械搅拌反应釜1L",
+  "model": "1L.DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/_3_高压反应釜_付青杰_tgyf-c机械搅拌台式高压釜_台式机械搅拌反应釜1l.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_tgyf-c机械搅拌台式高压釜_台式机械搅拌反应釜1l.docx"
+ },
+ {
+  "title": "台式机械搅拌反应釜2L",
+  "model": "2L.DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/_3_高压反应釜_付青杰_tgyf-c机械搅拌台式高压釜_台式机械搅拌反应釜2l.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_tgyf-c机械搅拌台式高压釜_台式机械搅拌反应釜2l.docx"
+ },
+ {
+  "title": "台式机械搅拌反应釜3L",
+  "model": "3L.DOCX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/_3_高压反应釜_付青杰_tgyf-c机械搅拌台式高压釜_台式机械搅拌反应釜3l.html",
+  "dl": "downloads/specs/4-反应釜_3_高压反应釜_付青杰_tgyf-c机械搅拌台式高压釜_台式机械搅拌反应釜3l.docx"
+ },
+ {
+  "title": "MPF-10LJL精馏塔反应装置参数",
+  "model": "MPF-10LJL",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_5-精馏釜_mpf-10ljl精馏塔反应装置参数.html",
+  "dl": "downloads/specs/4-反应釜_5-精馏釜_mpf-10ljl精馏塔反应装置参数.docx"
+ },
+ {
+  "title": "YSFS-100LEX防爆三层玻璃反应釜",
+  "model": "YSFS-100LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_6-三层玻璃反应釜_ysfs-100lex防爆三层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_6-三层玻璃反应釜_ysfs-100lex防爆三层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFS-100L三层玻璃反应釜",
+  "model": "YSFS-100L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_6-三层玻璃反应釜_ysfs-100l三层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_6-三层玻璃反应釜_ysfs-100l三层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFS-10LEX防爆三层玻璃反应釜",
+  "model": "YSFS-10LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_6-三层玻璃反应釜_ysfs-10lex防爆三层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_6-三层玻璃反应釜_ysfs-10lex防爆三层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFS-10L三层玻璃反应釜",
+  "model": "YSFS-10L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_6-三层玻璃反应釜_ysfs-10l三层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_6-三层玻璃反应釜_ysfs-10l三层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFS-20LEX防爆三层玻璃反应釜",
+  "model": "YSFS-20LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_6-三层玻璃反应釜_ysfs-20lex防爆三层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_6-三层玻璃反应釜_ysfs-20lex防爆三层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFS-20L三层玻璃反应釜",
+  "model": "YSFS-20L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_6-三层玻璃反应釜_ysfs-20l三层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_6-三层玻璃反应釜_ysfs-20l三层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFS-30LEX防爆三层玻璃反应釜",
+  "model": "YSFS-30LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_6-三层玻璃反应釜_ysfs-30lex防爆三层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_6-三层玻璃反应釜_ysfs-30lex防爆三层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFS-30L三层玻璃反应釜",
+  "model": "YSFS-30L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_6-三层玻璃反应釜_ysfs-30l三层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_6-三层玻璃反应釜_ysfs-30l三层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFS-50LEX防爆三层玻璃反应釜",
+  "model": "YSFS-50LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_6-三层玻璃反应釜_ysfs-50lex防爆三层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_6-三层玻璃反应釜_ysfs-50lex防爆三层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFS-50L三层玻璃反应釜",
+  "model": "YSFS-50L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_6-三层玻璃反应釜_ysfs-50l三层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_6-三层玻璃反应釜_ysfs-50l三层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFS-5LEX防爆三层玻璃反应釜",
+  "model": "YSFS-5LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_6-三层玻璃反应釜_ysfs-5lex防爆三层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_6-三层玻璃反应釜_ysfs-5lex防爆三层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFS-5L三层玻璃反应釜",
+  "model": "YSFS-5L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_6-三层玻璃反应釜_ysfs-5l三层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_6-三层玻璃反应釜_ysfs-5l三层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFS-80LEX防爆三层玻璃反应釜",
+  "model": "YSFS-80LEX",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_6-三层玻璃反应釜_ysfs-80lex防爆三层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_6-三层玻璃反应釜_ysfs-80lex防爆三层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFS-80L三层玻璃反应釜",
+  "model": "YSFS-80L",
+  "series": "反应釜",
+  "key": "glass_reactor",
+  "page": "specs/反应釜/4-反应釜_6-三层玻璃反应釜_ysfs-80l三层玻璃反应釜.html",
+  "dl": "downloads/specs/4-反应釜_6-三层玻璃反应釜_ysfs-80l三层玻璃反应釜.docx"
+ },
+ {
+  "title": "R-1005",
+  "model": "R-1005.DOCX",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_r-1005_r-1005.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_r-1005_r-1005.docx"
+ },
+ {
+  "title": "R-1010",
+  "model": "R-1010.DOCX",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_r-1010_r-1010.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_r-1010_r-1010.docx"
+ },
+ {
+  "title": "R-1010EX",
+  "model": "R-1010EX.DOCX",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_r-1010ex_r-1010ex.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_r-1010ex_r-1010ex.docx"
+ },
+ {
+  "title": "R-1020",
+  "model": "R-1020.DOCX",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_r-1020_r-1020.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_r-1020_r-1020.docx"
+ },
+ {
+  "title": "R-1020EX",
+  "model": "R-1020EX.DOCX",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_r-1020ex_r-1020ex.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_r-1020ex_r-1020ex.docx"
+ },
+ {
+  "title": "R-1050",
+  "model": "R-1050.DOCX",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_r-1050_r-1050.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_r-1050_r-1050.docx"
+ },
+ {
+  "title": "R-1050EX",
+  "model": "R-1050EX.DOCX",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_r-1050ex_r-1050ex.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_r-1050ex_r-1050ex.docx"
+ },
+ {
+  "title": "YRE-100参数",
+  "model": "YRE-100",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-100_yre-100参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-100_yre-100参数.docx"
+ },
+ {
+  "title": "YRE-2000A参数",
+  "model": "YRE-2000A",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-2000a_yre-2000a参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-2000a_yre-2000a参数.docx"
+ },
+ {
+  "title": "YRE-2000B参数",
+  "model": "YRE-2000B",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-2000b_yre-2000b参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-2000b_yre-2000b参数.docx"
+ },
+ {
+  "title": "YRE-2000B参数油浴",
+  "model": "YRE-2000B",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-2000b_yre-2000b参数油浴.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-2000b_yre-2000b参数油浴.docx"
+ },
+ {
+  "title": "YRE-2000E参数",
+  "model": "YRE-2000E",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-2000e_yre-2000e参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-2000e_yre-2000e参数.docx"
+ },
+ {
+  "title": "YRE-2010A参数",
+  "model": "YRE-2010A",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-2010a_yre-2010a参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-2010a_yre-2010a参数.docx"
+ },
+ {
+  "title": "YRE-2010AEX参数",
+  "model": "YRE-2010AEX",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-2010aex_yre-2010aex参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-2010aex_yre-2010aex参数.docx"
+ },
+ {
+  "title": "YRE-2010Z参数",
+  "model": "YRE-2010Z",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-2010z_yre-2010z参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-2010z_yre-2010z参数.docx"
+ },
+ {
+  "title": "YRE-2011参数",
+  "model": "YRE-2011",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-2011_yre-2011参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-2011_yre-2011参数.docx"
+ },
+ {
+  "title": "YRE-2012参数",
+  "model": "YRE-2012",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-2012_yre-2012参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-2012_yre-2012参数.docx"
+ },
+ {
+  "title": "YRE-201D参数",
+  "model": "YRE-201D",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-201d_yre-201d参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-201d_yre-201d参数.docx"
+ },
+ {
+  "title": "YRE-2020A参数",
+  "model": "YRE-2020A",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-2020a_yre-2020a参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-2020a_yre-2020a参数.docx"
+ },
+ {
+  "title": "YRE-2020AEX参数",
+  "model": "YRE-2020AEX",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-2020aex_yre-2020aex参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-2020aex_yre-2020aex参数.docx"
+ },
+ {
+  "title": "YRE-2020Z参数",
+  "model": "YRE-2020Z",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-2020z_yre-2020z参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-2020z_yre-2020z参数.docx"
+ },
+ {
+  "title": "YRE-202A参数",
+  "model": "YRE-202A",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-202a_yre-202a参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-202a_yre-202a参数.docx"
+ },
+ {
+  "title": "YRE-2030A参数",
+  "model": "YRE-2030A",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-2030a_yre-2030a参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-2030a_yre-2030a参数.docx"
+ },
+ {
+  "title": "YRE-2030AEX参数",
+  "model": "YRE-2030AEX",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-2030aex_yre-2030aex参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-2030aex_yre-2030aex参数.docx"
+ },
+ {
+  "title": "YRE-2030Z参数",
+  "model": "YRE-2030Z",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-2030z_yre-2030z参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-2030z_yre-2030z参数.docx"
+ },
+ {
+  "title": "YRE-2050A参数",
+  "model": "YRE-2050A",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-2050a_yre-2050a参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-2050a_yre-2050a参数.docx"
+ },
+ {
+  "title": "YRE-2050AEX参数",
+  "model": "YRE-2050AEX",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-2050aex_yre-2050aex参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-2050aex_yre-2050aex参数.docx"
+ },
+ {
+  "title": "YRE-2050Z参数",
+  "model": "YRE-2050Z",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-2050z_yre-2050z参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-2050z_yre-2050z参数.docx"
+ },
+ {
+  "title": "YRE-3000A参数",
+  "model": "YRE-3000A",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-3000a_yre-3000a参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-3000a_yre-3000a参数.docx"
+ },
+ {
+  "title": "YRE-3000B参数",
+  "model": "YRE-3000B",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-3000b_yre-3000b参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-3000b_yre-3000b参数.docx"
+ },
+ {
+  "title": "YRE-3000E参数",
+  "model": "YRE-3000E",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-3000e_yre-3000e参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-3000e_yre-3000e参数.docx"
+ },
+ {
+  "title": "YRE-301D参数 -防爆",
+  "model": "YRE-301D",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-301d_yre-301d参数_-防爆.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-301d_yre-301d参数_-防爆.docx"
+ },
+ {
+  "title": "YRE-301D参数",
+  "model": "YRE-301D",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-301d_yre-301d参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-301d_yre-301d参数.docx"
+ },
+ {
+  "title": "YRE-5000A参数",
+  "model": "YRE-5000A",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-5000a_yre-5000a参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-5000a_yre-5000a参数.docx"
+ },
+ {
+  "title": "YRE-5000B参数",
+  "model": "YRE-5000B",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-5000b_yre-5000b参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-5000b_yre-5000b参数.docx"
+ },
+ {
+  "title": "YRE-5000E参数",
+  "model": "YRE-5000E",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-5000e_yre-5000e参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-5000e_yre-5000e参数.docx"
+ },
+ {
+  "title": "YRE-501D参数",
+  "model": "YRE-501D",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-501d_yre-501d参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-501d_yre-501d参数.docx"
+ },
+ {
+  "title": "YRE-501参数",
+  "model": "YRE-501",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-501d_yre-501参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-501d_yre-501参数.docx"
+ },
+ {
+  "title": "YRE-501DEX参数",
+  "model": "YRE-501DEX",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-501dex_yre-501dex参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-501dex_yre-501dex参数.docx"
+ },
+ {
+  "title": "YRE-5299参数",
+  "model": "YRE-5299",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-5299_yre-5299参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-5299_yre-5299参数.docx"
+ },
+ {
+  "title": "YRE-52C参数 ",
+  "model": "YRE-52C",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-5299_yre-52c参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-5299_yre-52c参数.docx"
+ },
+ {
+  "title": "YRE-52A参数",
+  "model": "YRE-52A",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-52a_yre-52a参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-52a_yre-52a参数.docx"
+ },
+ {
+  "title": "YRE-52C参数",
+  "model": "YRE-52C",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_yre-52c_yre-52c参数.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_yre-52c_yre-52c参数.docx"
+ },
+ {
+  "title": "予华-真空控制器使用说明手册(1)",
+  "model": "DOCX",
+  "series": "旋转蒸发仪",
+  "key": "rotary",
+  "page": "specs/旋转蒸发仪/7-旋转蒸发仪_真空控制器_予华-真空控制器使用说明手册_1.html",
+  "dl": "downloads/specs/7-旋转蒸发仪_真空控制器_予华-真空控制器使用说明手册_1.docx"
+ },
+ {
+  "title": "GDSZ-10-20+200高低温循环装置",
+  "model": "GDSZ-10-20+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-10-20_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-10-20_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-10-20+200高低温循环装置_1",
+  "model": "GDSZ-10-20+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-10-20_200高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-10-20_200高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-10-30+200高低温循环装置",
+  "model": "GDSZ-10-30+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-10-30_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-10-30_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-10-30+200高低温循环装置_1",
+  "model": "GDSZ-10-30+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-10-30_200高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-10-30_200高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-10-35+200高低温循环装置-程序控温",
+  "model": "GDSZ-10-35+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_高低温参数_gdsz-10-35_200高低温循环装置-程序控温.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-10-35_200高低温循环装置-程序控温.docx"
+ },
+ {
+  "title": "GDSZ-10-35+200高低温循环装置-程序控温_1",
+  "model": "GDSZ-10-35+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/温循环装置_高低温参数_gdsz-10-35_200高低温循环装置-程序控温_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-10-35_200高低温循环装置-程序控温_1.docx"
+ },
+ {
+  "title": "GDSZ-10-35+300高低温循环装置",
+  "model": "GDSZ-10-35+300",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-10-35_300高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-10-35_300高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-10-35+300高低温循环装置_1",
+  "model": "GDSZ-10-35+300",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-10-35_300高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-10-35_300高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-10-40+200高低温循环装置",
+  "model": "GDSZ-10-40+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-10-40_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-10-40_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-10-40+200高低温循环装置_1",
+  "model": "GDSZ-10-40+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-10-40_200高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-10-40_200高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-10-60+160高低温循环装置",
+  "model": "GDSZ-10-60+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-10-60_160高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-10-60_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-10-60+160高低温循环装置_1",
+  "model": "GDSZ-10-60+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-10-60_160高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-10-60_160高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-10-80+160高低温循环装置",
+  "model": "GDSZ-10-80+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-10-80_160高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-10-80_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-10-80+160高低温循环装置_1",
+  "model": "GDSZ-10-80+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-10-80_160高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-10-80_160高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-100-20+200高低温循环装置",
+  "model": "GDSZ-100-20+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-100-20_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-100-20_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-100-20+200高低温循环装置_1",
+  "model": "GDSZ-100-20+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-100-20_200高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-100-20_200高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-100-30+200高低温循环装置",
+  "model": "GDSZ-100-30+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-100-30_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-100-30_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-100-30+200高低温循环装置_1",
+  "model": "GDSZ-100-30+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-100-30_200高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-100-30_200高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-100-35+200高低温循环装置-含配置清单",
+  "model": "GDSZ-100-35+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/温循环装置_高低温参数_gdsz-100-35_200高低温循环装置-含配置清单.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-100-35_200高低温循环装置-含配置清单.docx"
+ },
+ {
+  "title": "GDSZ-100-35+200高低温循环装置",
+  "model": "GDSZ-100-35+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-100-35_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-100-35_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-100-40+200高低温循环装置",
+  "model": "GDSZ-100-40+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-100-40_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-100-40_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-100-40+200高低温循环装置_1",
+  "model": "GDSZ-100-40+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-100-40_200高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-100-40_200高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-100-60+160高低温循环装置",
+  "model": "GDSZ-100-60+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-100-60_160高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-100-60_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-100-60+160高低温循环装置_1",
+  "model": "GDSZ-100-60+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-100-60_160高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-100-60_160高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-100-80+160高低温循环装置",
+  "model": "GDSZ-100-80+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-100-80_160高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-100-80_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-100-80+160高低温循环装置_1",
+  "model": "GDSZ-100-80+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-100-80_160高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-100-80_160高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-100-80EX+160高低温循环装置",
+  "model": "GDSZ-100-80EX+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-100-80ex_160高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-100-80ex_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-100-80EX+160高低温循环装置_1",
+  "model": "GDSZ-100-80EX+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_高低温参数_gdsz-100-80ex_160高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-100-80ex_160高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-1000-10+200高低温循环装置",
+  "model": "GDSZ-1000-10+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-1000-10_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-1000-10_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-1000-10+200高低温循环装置_1",
+  "model": "GDSZ-1000-10+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/-高低温循环装置_高低温参数_gdsz-1000-10_200高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-1000-10_200高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-150-20+200高低温循环装置",
+  "model": "GDSZ-150-20+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-150-20_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-150-20_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-150-20+200高低温循环装置_1",
+  "model": "GDSZ-150-20+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-150-20_200高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-150-20_200高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-150-30+200高低温循环装置",
+  "model": "GDSZ-150-30+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-150-30_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-150-30_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-150-30+200高低温循环装置_1",
+  "model": "GDSZ-150-30+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-150-30_200高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-150-30_200高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-150-40+200高低温循环装置",
+  "model": "GDSZ-150-40+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-150-40_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-150-40_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-150-40+200高低温循环装置_1",
+  "model": "GDSZ-150-40+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-150-40_200高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-150-40_200高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-150-60+160高低温循环装置",
+  "model": "GDSZ-150-60+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-150-60_160高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-150-60_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-150-60+160高低温循环装置_1",
+  "model": "GDSZ-150-60+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-150-60_160高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-150-60_160高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-150-80+160高低温循环装置",
+  "model": "GDSZ-150-80+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-150-80_160高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-150-80_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-150-80+160高低温循环装置_1",
+  "model": "GDSZ-150-80+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-150-80_160高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-150-80_160高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-20-100+160高低温循环装置",
+  "model": "GDSZ-20-100+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-20-100_160高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-20-100_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-20-100+160高低温循环装置_1",
+  "model": "GDSZ-20-100+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-20-100_160高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-20-100_160高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-20-20+200高低温循环装置",
+  "model": "GDSZ-20-20+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-20-20_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-20-20_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-20-20+200高低温循环装置_1",
+  "model": "GDSZ-20-20+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-20-20_200高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-20-20_200高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-20-30+200高低温循环装置",
+  "model": "GDSZ-20-30+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-20-30_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-20-30_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-20-30+200高低温循环装置_1",
+  "model": "GDSZ-20-30+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-20-30_200高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-20-30_200高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-20-40+200高低温循环装置",
+  "model": "GDSZ-20-40+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-20-40_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-20-40_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-20-40+200高低温循环装置_1",
+  "model": "GDSZ-20-40+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-20-40_200高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-20-40_200高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-20-60+160高低温循环装置",
+  "model": "GDSZ-20-60+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-20-60_160高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-20-60_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-20-60+160高低温循环装置_1",
+  "model": "GDSZ-20-60+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-20-60_160高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-20-60_160高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-20-80+160高低温循环装置",
+  "model": "GDSZ-20-80+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-20-80_160高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-20-80_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-20-80+160高低温循环装置_1",
+  "model": "GDSZ-20-80+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-20-80_160高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-20-80_160高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-200-20+200高低温循环装置",
+  "model": "GDSZ-200-20+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-200-20_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-200-20_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-200-20+200高低温循环装置_1",
+  "model": "GDSZ-200-20+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-200-20_200高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-200-20_200高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-200-30+200高低温循环装置",
+  "model": "GDSZ-200-30+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-200-30_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-200-30_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-200-30+200高低温循环装置_1",
+  "model": "GDSZ-200-30+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-200-30_200高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-200-30_200高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-200-40+200高低温循环装置",
+  "model": "GDSZ-200-40+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-200-40_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-200-40_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-200-40+200高低温循环装置_1",
+  "model": "GDSZ-200-40+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-200-40_200高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-200-40_200高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-200-80+160高低温循环装置",
+  "model": "GDSZ-200-80+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-200-80_160高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-200-80_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-200-80+160高低温循环装置_1",
+  "model": "GDSZ-200-80+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-200-80_160高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-200-80_160高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-30-20+200高低温循环装置",
+  "model": "GDSZ-30-20+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-30-20_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-30-20_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-30-20+200高低温循环装置_1",
+  "model": "GDSZ-30-20+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-30-20_200高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-30-20_200高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-30-30+200高低温循环装置",
+  "model": "GDSZ-30-30+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-30-30_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-30-30_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-30-30+200高低温循环装置_1",
+  "model": "GDSZ-30-30+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-30-30_200高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-30-30_200高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-30-40+200高低温循环装置",
+  "model": "GDSZ-30-40+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-30-40_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-30-40_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-30-40+200高低温循环装置_1",
+  "model": "GDSZ-30-40+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-30-40_200高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-30-40_200高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-30-60+160高低温循环装置",
+  "model": "GDSZ-30-60+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-30-60_160高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-30-60_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-30-60+160高低温循环装置_1",
+  "model": "GDSZ-30-60+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-30-60_160高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-30-60_160高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-30-80+160高低温循环装置",
+  "model": "GDSZ-30-80+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-30-80_160高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-30-80_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-30-80+160高低温循环装置_1",
+  "model": "GDSZ-30-80+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-30-80_160高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-30-80_160高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-300-20+200高低温循环装置",
+  "model": "GDSZ-300-20+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-300-20_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-300-20_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-300-20+200高低温循环装置_1",
+  "model": "GDSZ-300-20+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-300-20_200高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-300-20_200高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-300-30+200高低温循环装置",
+  "model": "GDSZ-300-30+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-300-30_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-300-30_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-300-30+200高低温循环装置_1",
+  "model": "GDSZ-300-30+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-300-30_200高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-300-30_200高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-300-40+200高低温循环装置",
+  "model": "GDSZ-300-40+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-300-40_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-300-40_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-300-40+200高低温循环装置_1",
+  "model": "GDSZ-300-40+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-300-40_200高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-300-40_200高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-300-80+160高低温循环装置",
+  "model": "GDSZ-300-80+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-300-80_160高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-300-80_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-300-80+160高低温循环装置_1",
+  "model": "GDSZ-300-80+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-300-80_160高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-300-80_160高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-5-20+200高低温循环装置",
+  "model": "GDSZ-5-20+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-5-20_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-5-20_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-5-20+200高低温循环装置_1",
+  "model": "GDSZ-5-20+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-5-20_200高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-5-20_200高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-5-30+200高低温循环装置",
+  "model": "GDSZ-5-30+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-5-30_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-5-30_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-5-30+200高低温循环装置_1",
+  "model": "GDSZ-5-30+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-5-30_200高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-5-30_200高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-5-40+200高低温循环装置",
+  "model": "GDSZ-5-40+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-5-40_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-5-40_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-5-40+200高低温循环装置_1",
+  "model": "GDSZ-5-40+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-5-40_200高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-5-40_200高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-5-60+160高低温循环装置",
+  "model": "GDSZ-5-60+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-5-60_160高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-5-60_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-5-60+160高低温循环装置_1",
+  "model": "GDSZ-5-60+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-5-60_160高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-5-60_160高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-5-80+160高低温循环装置",
+  "model": "GDSZ-5-80+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-5-80_160高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-5-80_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-5-80+160高低温循环装置_1",
+  "model": "GDSZ-5-80+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-5-80_160高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-5-80_160高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-50-20+200高低温循环装置",
+  "model": "GDSZ-50-20+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-50-20_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-50-20_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-50-20+200高低温循环装置_1",
+  "model": "GDSZ-50-20+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-50-20_200高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-50-20_200高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-50-20+300高低温循环装置",
+  "model": "GDSZ-50-20+300",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-50-20_300高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-50-20_300高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-50-20+300高低温循环装置_1",
+  "model": "GDSZ-50-20+300",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-50-20_300高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-50-20_300高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-50-30+200高低温循环装置",
+  "model": "GDSZ-50-30+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-50-30_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-50-30_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-50-30+200高低温循环装置_1",
+  "model": "GDSZ-50-30+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-50-30_200高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-50-30_200高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-50-35+200高低温循环装置",
+  "model": "GDSZ-50-35+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-50-35_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-50-35_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-50-35+200高低温循环装置_1",
+  "model": "GDSZ-50-35+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-50-35_200高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-50-35_200高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-50-40+200高低温循环装置 程序控制",
+  "model": "GDSZ-50-40+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_高低温参数_gdsz-50-40_200高低温循环装置_程序控制.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-50-40_200高低温循环装置_程序控制.docx"
+ },
+ {
+  "title": "GDSZ-50-40+200高低温循环装置 程序控制_1",
+  "model": "GDSZ-50-40+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/温循环装置_高低温参数_gdsz-50-40_200高低温循环装置_程序控制_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-50-40_200高低温循环装置_程序控制_1.docx"
+ },
+ {
+  "title": "GDSZ-50-40+200高低温循环装置",
+  "model": "GDSZ-50-40+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-50-40_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-50-40_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-50-40+200高低温循环装置_1",
+  "model": "GDSZ-50-40+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-50-40_200高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-50-40_200高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-50-40EX+200防爆高低温循环装置",
+  "model": "GDSZ-50-40EX+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/-高低温循环装置_高低温参数_gdsz-50-40ex_200防爆高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-50-40ex_200防爆高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-50-40EX+200防爆高低温循环装置_1",
+  "model": "GDSZ-50-40EX+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/低温循环装置_高低温参数_gdsz-50-40ex_200防爆高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-50-40ex_200防爆高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-50-60+160高低温循环装置",
+  "model": "GDSZ-50-60+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-50-60_160高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-50-60_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-50-60+160高低温循环装置_1",
+  "model": "GDSZ-50-60+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-50-60_160高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-50-60_160高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-50-80+160高低温循环装置",
+  "model": "GDSZ-50-80+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-50-80_160高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-50-80_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-50-80+160高低温循环装置_1",
+  "model": "GDSZ-50-80+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-50-80_160高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-50-80_160高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-500-20+200高低温循环装置",
+  "model": "GDSZ-500-20+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-500-20_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-500-20_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-500-20+200高低温循环装置_1",
+  "model": "GDSZ-500-20+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-500-20_200高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-500-20_200高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-500-30+200高低温循环装置",
+  "model": "GDSZ-500-30+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-500-30_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-500-30_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-500-30+200高低温循环装置_1",
+  "model": "GDSZ-500-30+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-500-30_200高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-500-30_200高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-500-40+200高低温循环装置",
+  "model": "GDSZ-500-40+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-500-40_200高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-500-40_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-500-40+200高低温循环装置_1",
+  "model": "GDSZ-500-40+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-500-40_200高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-500-40_200高低温循环装置_1.docx"
+ },
+ {
+  "title": "GDSZ-500-80+160高低温循环装置",
+  "model": "GDSZ-500-80+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-500-80_160高低温循环装置.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-500-80_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-500-80+160高低温循环装置_1",
+  "model": "GDSZ-500-80+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温参数_gdsz-500-80_160高低温循环装置_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温参数_gdsz-500-80_160高低温循环装置_1.docx"
+ },
+ {
+  "title": "PMX200-50陶氏高低温油",
+  "model": "PMX200-50",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温油_pmx200-50陶氏高低温油.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温油_pmx200-50陶氏高低温油.docx"
+ },
+ {
+  "title": "高低温C2001控制器说明书-V02(1)",
+  "model": "C2001",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/9-高低温循环装置_高低温表参数_高低温c2001控制器说明书-v02_1.html",
+  "dl": "downloads/specs/9-高低温循环装置_高低温表参数_高低温c2001控制器说明书-v02_1.docx"
+ },
+ {
+  "title": "YSFS-100LEX防爆三层玻璃反应釜",
+  "model": "YSFS-100LEX",
+  "series": "三层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/三层玻璃反应釜/三层玻璃反应釜ok_ysfs-100lex防爆三层玻璃反应釜.html",
+  "dl": "downloads/specs/三层玻璃反应釜ok_ysfs-100lex防爆三层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFS-100L三层玻璃反应釜",
+  "model": "YSFS-100L",
+  "series": "三层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/三层玻璃反应釜/三层玻璃反应釜ok_ysfs-100l三层玻璃反应釜.html",
+  "dl": "downloads/specs/三层玻璃反应釜ok_ysfs-100l三层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFS-10LEX防爆三层玻璃反应釜",
+  "model": "YSFS-10LEX",
+  "series": "三层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/三层玻璃反应釜/三层玻璃反应釜ok_ysfs-10lex防爆三层玻璃反应釜.html",
+  "dl": "downloads/specs/三层玻璃反应釜ok_ysfs-10lex防爆三层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFS-10L三层玻璃反应釜",
+  "model": "YSFS-10L",
+  "series": "三层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/三层玻璃反应釜/三层玻璃反应釜ok_ysfs-10l三层玻璃反应釜.html",
+  "dl": "downloads/specs/三层玻璃反应釜ok_ysfs-10l三层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFS-20LEX防爆三层玻璃反应釜",
+  "model": "YSFS-20LEX",
+  "series": "三层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/三层玻璃反应釜/三层玻璃反应釜ok_ysfs-20lex防爆三层玻璃反应釜.html",
+  "dl": "downloads/specs/三层玻璃反应釜ok_ysfs-20lex防爆三层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFS-20L三层玻璃反应釜",
+  "model": "YSFS-20L",
+  "series": "三层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/三层玻璃反应釜/三层玻璃反应釜ok_ysfs-20l三层玻璃反应釜.html",
+  "dl": "downloads/specs/三层玻璃反应釜ok_ysfs-20l三层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFS-30LEX防爆三层玻璃反应釜",
+  "model": "YSFS-30LEX",
+  "series": "三层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/三层玻璃反应釜/三层玻璃反应釜ok_ysfs-30lex防爆三层玻璃反应釜.html",
+  "dl": "downloads/specs/三层玻璃反应釜ok_ysfs-30lex防爆三层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFS-30L三层玻璃反应釜",
+  "model": "YSFS-30L",
+  "series": "三层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/三层玻璃反应釜/三层玻璃反应釜ok_ysfs-30l三层玻璃反应釜.html",
+  "dl": "downloads/specs/三层玻璃反应釜ok_ysfs-30l三层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFS-50LEX防爆三层玻璃反应釜",
+  "model": "YSFS-50LEX",
+  "series": "三层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/三层玻璃反应釜/三层玻璃反应釜ok_ysfs-50lex防爆三层玻璃反应釜.html",
+  "dl": "downloads/specs/三层玻璃反应釜ok_ysfs-50lex防爆三层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFS-50L三层玻璃反应釜",
+  "model": "YSFS-50L",
+  "series": "三层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/三层玻璃反应釜/三层玻璃反应釜ok_ysfs-50l三层玻璃反应釜.html",
+  "dl": "downloads/specs/三层玻璃反应釜ok_ysfs-50l三层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFS-5LEX防爆三层玻璃反应釜",
+  "model": "YSFS-5LEX",
+  "series": "三层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/三层玻璃反应釜/三层玻璃反应釜ok_ysfs-5lex防爆三层玻璃反应釜.html",
+  "dl": "downloads/specs/三层玻璃反应釜ok_ysfs-5lex防爆三层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFS-5L三层玻璃反应釜",
+  "model": "YSFS-5L",
+  "series": "三层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/三层玻璃反应釜/三层玻璃反应釜ok_ysfs-5l三层玻璃反应釜.html",
+  "dl": "downloads/specs/三层玻璃反应釜ok_ysfs-5l三层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFS-80LEX防爆三层玻璃反应釜",
+  "model": "YSFS-80LEX",
+  "series": "三层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/三层玻璃反应釜/三层玻璃反应釜ok_ysfs-80lex防爆三层玻璃反应釜.html",
+  "dl": "downloads/specs/三层玻璃反应釜ok_ysfs-80lex防爆三层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFS-80L三层玻璃反应釜",
+  "model": "YSFS-80L",
+  "series": "三层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/三层玻璃反应釜/三层玻璃反应釜ok_ysfs-80l三层玻璃反应釜.html",
+  "dl": "downloads/specs/三层玻璃反应釜ok_ysfs-80l三层玻璃反应釜.docx"
+ },
+ {
+  "title": "YH型隔膜真空泵",
+  "model": "DOCX",
+  "series": "产品照片参数",
+  "key": "vacuum",
+  "page": "specs/产品照片参数/产品照片参数_循环水式真空泵_隔膜泵_yh型隔膜真空泵.html",
+  "dl": "downloads/specs/产品照片参数_循环水式真空泵_隔膜泵_yh型隔膜真空泵.docx"
+ },
+ {
+  "title": "双冷旋蒸参数图片",
+  "model": "DOCX",
+  "series": "产品照片参数",
+  "key": "rotary",
+  "page": "specs/产品照片参数/产品照片参数_旋转蒸发器_r型旋转蒸发器_双冷凝_双冷旋蒸参数图片.html",
+  "dl": "downloads/specs/产品照片参数_旋转蒸发器_r型旋转蒸发器_双冷凝_双冷旋蒸参数图片.docx"
+ },
+ {
+  "title": "2000旋蒸技术参数(1)",
+  "model": "2000",
+  "series": "产品照片参数",
+  "key": "rotary",
+  "page": "specs/产品照片参数/产品照片参数_旋转蒸发器_yre-2000型_2000旋蒸技术参数_1.html",
+  "dl": "downloads/specs/产品照片参数_旋转蒸发器_yre-2000型_2000旋蒸技术参数_1.docx"
+ },
+ {
+  "title": "新型升降旋转反应釜图片参数",
+  "model": "DOCX",
+  "series": "产品照片参数",
+  "key": "glass_reactor",
+  "page": "specs/产品照片参数/产品照片参数_玻璃反应釜_双层玻璃反应釜_升降反应釜_新型升降旋转反应釜图片参数.html",
+  "dl": "downloads/specs/产品照片参数_玻璃反应釜_双层玻璃反应釜_升降反应釜_新型升降旋转反应釜图片参数.docx"
+ },
+ {
+  "title": "CJF参数",
+  "model": "CJF",
+  "series": "产品照片参数",
+  "key": "hp_reactor",
+  "page": "specs/产品照片参数/产品照片参数_高压釜_cjf高压釜_cjf参数.html",
+  "dl": "downloads/specs/产品照片参数_高压釜_cjf高压釜_cjf参数.docx"
+ },
+ {
+  "title": "CCA-20参数",
+  "model": "CCA-20",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_cca-20_cca-20参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_cca-20_cca-20参数.docx"
+ },
+ {
+  "title": "DLSB-10-10参数",
+  "model": "DLSB-10-10",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-10-10_dlsb-10-10参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-10-10_dlsb-10-10参数.docx"
+ },
+ {
+  "title": "DLSB-10-120参数",
+  "model": "DLSB-10-120",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-10-120_dlsb-10-120参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-10-120_dlsb-10-120参数.docx"
+ },
+ {
+  "title": "DLSB-10-20参数",
+  "model": "DLSB-10-20",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-10-20_dlsb-10-20参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-10-20_dlsb-10-20参数.docx"
+ },
+ {
+  "title": "DLSB-10-30参数",
+  "model": "DLSB-10-30",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-10-30_dlsb-10-30参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-10-30_dlsb-10-30参数.docx"
+ },
+ {
+  "title": "DLSB-10-40参数",
+  "model": "DLSB-10-40",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-10-40_dlsb-10-40参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-10-40_dlsb-10-40参数.docx"
+ },
+ {
+  "title": "DLSB-10-60参数",
+  "model": "DLSB-10-60",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-10-60_dlsb-10-60参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-10-60_dlsb-10-60参数.docx"
+ },
+ {
+  "title": "DLSB-10-80参数",
+  "model": "DLSB-10-80",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-10-80_dlsb-10-80参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-10-80_dlsb-10-80参数.docx"
+ },
+ {
+  "title": "DLSB-20-120参数",
+  "model": "DLSB-20-120",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-20-120_dlsb-20-120参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-20-120_dlsb-20-120参数.docx"
+ },
+ {
+  "title": "DLSB-20-120EX参数",
+  "model": "DLSB-20-120EX",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-20-120ex_dlsb-20-120ex参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-20-120ex_dlsb-20-120ex参数.docx"
+ },
+ {
+  "title": "DLSB-20-20参数",
+  "model": "DLSB-20-20",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-20-20_dlsb-20-20参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-20-20_dlsb-20-20参数.docx"
+ },
+ {
+  "title": "DLSB-20-20EX参数",
+  "model": "DLSB-20-20EX",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-20-20ex_dlsb-20-20ex参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-20-20ex_dlsb-20-20ex参数.docx"
+ },
+ {
+  "title": "DLSB-20-30参数",
+  "model": "DLSB-20-30",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-20-30_dlsb-20-30参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-20-30_dlsb-20-30参数.docx"
+ },
+ {
+  "title": "DLSB-20-30EX参数",
+  "model": "DLSB-20-30EX",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-20-30ex_dlsb-20-30ex参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-20-30ex_dlsb-20-30ex参数.docx"
+ },
+ {
+  "title": "DLSB-20-40参数",
+  "model": "DLSB-20-40",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-20-40_dlsb-20-40参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-20-40_dlsb-20-40参数.docx"
+ },
+ {
+  "title": "DLSB-20-40EX参数",
+  "model": "DLSB-20-40EX",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-20-40ex_dlsb-20-40ex参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-20-40ex_dlsb-20-40ex参数.docx"
+ },
+ {
+  "title": "DLSB-20-80参数",
+  "model": "DLSB-20-80",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-20-80_dlsb-20-80参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-20-80_dlsb-20-80参数.docx"
+ },
+ {
+  "title": "DLSB-20-80EX参数",
+  "model": "DLSB-20-80EX",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-20-80ex_dlsb-20-80ex参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-20-80ex_dlsb-20-80ex参数.docx"
+ },
+ {
+  "title": "DLSB-30-120参数",
+  "model": "DLSB-30-120",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-30-120_dlsb-30-120参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-30-120_dlsb-30-120参数.docx"
+ },
+ {
+  "title": "DLSB-30-120EX参数",
+  "model": "DLSB-30-120EX",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-30-120ex_dlsb-30-120ex参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-30-120ex_dlsb-30-120ex参数.docx"
+ },
+ {
+  "title": "DLSB-30-20参数",
+  "model": "DLSB-30-20",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-30-20_dlsb-30-20参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-30-20_dlsb-30-20参数.docx"
+ },
+ {
+  "title": "DLSB-30-20EX参数",
+  "model": "DLSB-30-20EX",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-30-20ex_dlsb-30-20ex参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-30-20ex_dlsb-30-20ex参数.docx"
+ },
+ {
+  "title": "DLSB-30-30参数",
+  "model": "DLSB-30-30",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-30-30_dlsb-30-30参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-30-30_dlsb-30-30参数.docx"
+ },
+ {
+  "title": "DLSB-30-30EX参数",
+  "model": "DLSB-30-30EX",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-30-30ex_dlsb-30-30ex参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-30-30ex_dlsb-30-30ex参数.docx"
+ },
+ {
+  "title": "DLSB-30-40参数",
+  "model": "DLSB-30-40",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-30-40_dlsb-30-40参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-30-40_dlsb-30-40参数.docx"
+ },
+ {
+  "title": "DLSB-30-40EX参数",
+  "model": "DLSB-30-40EX",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-30-40ex_dlsb-30-40ex参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-30-40ex_dlsb-30-40ex参数.docx"
+ },
+ {
+  "title": "DLSB-30-80参数",
+  "model": "DLSB-30-80",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-30-80_dlsb-30-80参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-30-80_dlsb-30-80参数.docx"
+ },
+ {
+  "title": "DLSB-30-80EX参数",
+  "model": "DLSB-30-80EX",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-30-80ex_dlsb-30-80ex参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-30-80ex_dlsb-30-80ex参数.docx"
+ },
+ {
+  "title": "DLSB-5-10参数",
+  "model": "DLSB-5-10",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-5-10_dlsb-5-10参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-5-10_dlsb-5-10参数.docx"
+ },
+ {
+  "title": "DLSB-5-120参数",
+  "model": "DLSB-5-120",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-5-120_dlsb-5-120参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-5-120_dlsb-5-120参数.docx"
+ },
+ {
+  "title": "DLSB-5-20参数",
+  "model": "DLSB-5-20",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-5-20_dlsb-5-20参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-5-20_dlsb-5-20参数.docx"
+ },
+ {
+  "title": "DLSB-5-25参数",
+  "model": "DLSB-5-25",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-5-25_dlsb-5-25参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-5-25_dlsb-5-25参数.docx"
+ },
+ {
+  "title": "DLSB-5-30参数",
+  "model": "DLSB-5-30",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-5-30_dlsb-5-30参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-5-30_dlsb-5-30参数.docx"
+ },
+ {
+  "title": "DLSB-5-40参数",
+  "model": "DLSB-5-40",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-5-40_dlsb-5-40参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-5-40_dlsb-5-40参数.docx"
+ },
+ {
+  "title": "DLSB-5-60参数",
+  "model": "DLSB-5-60",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-5-60_dlsb-5-60参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-5-60_dlsb-5-60参数.docx"
+ },
+ {
+  "title": "DLSB-5-80参数",
+  "model": "DLSB-5-80",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-5-80_dlsb-5-80参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-5-80_dlsb-5-80参数.docx"
+ },
+ {
+  "title": "DLSB-50-120参数",
+  "model": "DLSB-50-120",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-50-120_dlsb-50-120参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-50-120_dlsb-50-120参数.docx"
+ },
+ {
+  "title": "DLSB-50-120EX参数",
+  "model": "DLSB-50-120EX",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-50-120ex_dlsb-50-120ex参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-50-120ex_dlsb-50-120ex参数.docx"
+ },
+ {
+  "title": "DLSB-50-20EX参数",
+  "model": "DLSB-50-20EX",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-50-20ex_dlsb-50-20ex参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-50-20ex_dlsb-50-20ex参数.docx"
+ },
+ {
+  "title": "DLSB-50-30参数",
+  "model": "DLSB-50-30",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-50-30_dlsb-50-30参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-50-30_dlsb-50-30参数.docx"
+ },
+ {
+  "title": "DLSB-50-30EX参数",
+  "model": "DLSB-50-30EX",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-50-30ex_dlsb-50-30ex参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-50-30ex_dlsb-50-30ex参数.docx"
+ },
+ {
+  "title": "DLSB-50-40参数",
+  "model": "DLSB-50-40",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-50-40_dlsb-50-40参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-50-40_dlsb-50-40参数.docx"
+ },
+ {
+  "title": "DLSB-50-40EX参数",
+  "model": "DLSB-50-40EX",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-50-40ex_dlsb-50-40ex参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-50-40ex_dlsb-50-40ex参数.docx"
+ },
+ {
+  "title": "DLSB-50-80参数",
+  "model": "DLSB-50-80",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-50-80_dlsb-50-80参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-50-80_dlsb-50-80参数.docx"
+ },
+ {
+  "title": "DLSB-50-80EX参数",
+  "model": "DLSB-50-80EX",
+  "series": "低温冷却循环泵",
+  "key": "chiller",
+  "page": "specs/低温冷却循环泵/低温冷却循环泵_dlsb-50-80ex_dlsb-50-80ex参数.html",
+  "dl": "downloads/specs/低温冷却循环泵_dlsb-50-80ex_dlsb-50-80ex参数.docx"
+ },
+ {
+  "title": "HJ-1",
+  "model": "HJ-1.DOCX",
+  "series": "其它",
+  "key": "mag_stir",
+  "page": "specs/其它/其它_hj-1.html",
+  "dl": "downloads/specs/其它_hj-1.docx"
+ },
+ {
+  "title": "ZYSF-100LEX防爆升降玻璃反应釜",
+  "model": "ZYSF-100LEX",
+  "series": "升降双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/升降双层玻璃反应釜/升降双层玻璃反应釜ok_zysf-100lex防爆升降玻璃反应釜.html",
+  "dl": "downloads/specs/升降双层玻璃反应釜ok_zysf-100lex防爆升降玻璃反应釜.docx"
+ },
+ {
+  "title": "ZYSF-10LEX防爆升降玻璃反应釜",
+  "model": "ZYSF-10LEX",
+  "series": "升降双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/升降双层玻璃反应釜/升降双层玻璃反应釜ok_zysf-10lex防爆升降玻璃反应釜.html",
+  "dl": "downloads/specs/升降双层玻璃反应釜ok_zysf-10lex防爆升降玻璃反应釜.docx"
+ },
+ {
+  "title": "ZYSF-20LEX防爆升降玻璃反应釜",
+  "model": "ZYSF-20LEX",
+  "series": "升降双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/升降双层玻璃反应釜/升降双层玻璃反应釜ok_zysf-20lex防爆升降玻璃反应釜.html",
+  "dl": "downloads/specs/升降双层玻璃反应釜ok_zysf-20lex防爆升降玻璃反应釜.docx"
+ },
+ {
+  "title": "ZYSF-20L升降玻璃反应釜",
+  "model": "ZYSF-20L",
+  "series": "升降双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/升降双层玻璃反应釜/升降双层玻璃反应釜ok_zysf-20l升降玻璃反应釜.html",
+  "dl": "downloads/specs/升降双层玻璃反应釜ok_zysf-20l升降玻璃反应釜.docx"
+ },
+ {
+  "title": "ZYSF-30LEX防爆升降玻璃反应釜",
+  "model": "ZYSF-30LEX",
+  "series": "升降双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/升降双层玻璃反应釜/升降双层玻璃反应釜ok_zysf-30lex防爆升降玻璃反应釜.html",
+  "dl": "downloads/specs/升降双层玻璃反应釜ok_zysf-30lex防爆升降玻璃反应釜.docx"
+ },
+ {
+  "title": "ZYSF-30L升降玻璃反应釜",
+  "model": "ZYSF-30L",
+  "series": "升降双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/升降双层玻璃反应釜/升降双层玻璃反应釜ok_zysf-30l升降玻璃反应釜.html",
+  "dl": "downloads/specs/升降双层玻璃反应釜ok_zysf-30l升降玻璃反应釜.docx"
+ },
+ {
+  "title": "ZYSF-50LEX防爆升降玻璃反应釜",
+  "model": "ZYSF-50LEX",
+  "series": "升降双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/升降双层玻璃反应釜/升降双层玻璃反应釜ok_zysf-50lex防爆升降玻璃反应釜.html",
+  "dl": "downloads/specs/升降双层玻璃反应釜ok_zysf-50lex防爆升降玻璃反应釜.docx"
+ },
+ {
+  "title": "ZYSF-50L升降玻璃反应釜",
+  "model": "ZYSF-50L",
+  "series": "升降双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/升降双层玻璃反应釜/升降双层玻璃反应釜ok_zysf-50l升降玻璃反应釜.html",
+  "dl": "downloads/specs/升降双层玻璃反应釜ok_zysf-50l升降玻璃反应釜.docx"
+ },
+ {
+  "title": "单层玻璃发应釜YDF-100L（桶形)",
+  "model": "YDF-100L",
+  "series": "单层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/单层玻璃反应釜/单层玻璃反应釜_单层玻璃发应釜ydf-100l_桶形.html",
+  "dl": "downloads/specs/单层玻璃反应釜_单层玻璃发应釜ydf-100l_桶形.docx"
+ },
+ {
+  "title": "单层玻璃发应釜YDF-100L（球形)",
+  "model": "YDF-100L",
+  "series": "单层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/单层玻璃反应釜/单层玻璃反应釜_单层玻璃发应釜ydf-100l_球形.html",
+  "dl": "downloads/specs/单层玻璃反应釜_单层玻璃发应釜ydf-100l_球形.docx"
+ },
+ {
+  "title": "单层玻璃发应釜YDF-10L",
+  "model": "YDF-10L.DOCX",
+  "series": "单层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/单层玻璃反应釜/单层玻璃反应釜_单层玻璃发应釜ydf-10l.html",
+  "dl": "downloads/specs/单层玻璃反应釜_单层玻璃发应釜ydf-10l.docx"
+ },
+ {
+  "title": "单层玻璃发应釜YDF-150L（桶形)",
+  "model": "YDF-150L",
+  "series": "单层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/单层玻璃反应釜/单层玻璃反应釜_单层玻璃发应釜ydf-150l_桶形.html",
+  "dl": "downloads/specs/单层玻璃反应釜_单层玻璃发应釜ydf-150l_桶形.docx"
+ },
+ {
+  "title": "单层玻璃发应釜YDF-200L（桶形)",
+  "model": "YDF-200L",
+  "series": "单层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/单层玻璃反应釜/单层玻璃反应釜_单层玻璃发应釜ydf-200l_桶形.html",
+  "dl": "downloads/specs/单层玻璃反应釜_单层玻璃发应釜ydf-200l_桶形.docx"
+ },
+ {
+  "title": "单层玻璃发应釜YDF-20L",
+  "model": "YDF-20L.DOCX",
+  "series": "单层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/单层玻璃反应釜/单层玻璃反应釜_单层玻璃发应釜ydf-20l.html",
+  "dl": "downloads/specs/单层玻璃反应釜_单层玻璃发应釜ydf-20l.docx"
+ },
+ {
+  "title": "单层玻璃发应釜YDF-30L",
+  "model": "YDF-30L.DOCX",
+  "series": "单层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/单层玻璃反应釜/单层玻璃反应釜_单层玻璃发应釜ydf-30l.html",
+  "dl": "downloads/specs/单层玻璃反应釜_单层玻璃发应釜ydf-30l.docx"
+ },
+ {
+  "title": "单层玻璃发应釜YDF-50L（桶形)",
+  "model": "YDF-50L",
+  "series": "单层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/单层玻璃反应釜/单层玻璃反应釜_单层玻璃发应釜ydf-50l_桶形.html",
+  "dl": "downloads/specs/单层玻璃反应釜_单层玻璃发应釜ydf-50l_桶形.docx"
+ },
+ {
+  "title": "单层玻璃发应釜YDF-50L（球形)",
+  "model": "YDF-50L",
+  "series": "单层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/单层玻璃反应釜/单层玻璃反应釜_单层玻璃发应釜ydf-50l_球形.html",
+  "dl": "downloads/specs/单层玻璃反应釜_单层玻璃发应釜ydf-50l_球形.docx"
+ },
+ {
+  "title": "防爆单层玻璃发应釜YDF-100LEX（桶形)",
+  "model": "YDF-100LEX",
+  "series": "单层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/单层玻璃反应釜/单层玻璃反应釜_防爆单层玻璃发应釜ydf-100lex_桶形.html",
+  "dl": "downloads/specs/单层玻璃反应釜_防爆单层玻璃发应釜ydf-100lex_桶形.docx"
+ },
+ {
+  "title": "防爆单层玻璃发应釜YDF-100LEX（球形)",
+  "model": "YDF-100LEX",
+  "series": "单层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/单层玻璃反应釜/单层玻璃反应釜_防爆单层玻璃发应釜ydf-100lex_球形.html",
+  "dl": "downloads/specs/单层玻璃反应釜_防爆单层玻璃发应釜ydf-100lex_球形.docx"
+ },
+ {
+  "title": "防爆单层玻璃发应釜YDF-10LEX",
+  "model": "YDF-10LEX.DOCX",
+  "series": "单层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/单层玻璃反应釜/单层玻璃反应釜_防爆单层玻璃发应釜ydf-10lex.html",
+  "dl": "downloads/specs/单层玻璃反应釜_防爆单层玻璃发应釜ydf-10lex.docx"
+ },
+ {
+  "title": "防爆单层玻璃发应釜YDF-150LEX（桶形)",
+  "model": "YDF-150LEX",
+  "series": "单层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/单层玻璃反应釜/单层玻璃反应釜_防爆单层玻璃发应釜ydf-150lex_桶形.html",
+  "dl": "downloads/specs/单层玻璃反应釜_防爆单层玻璃发应釜ydf-150lex_桶形.docx"
+ },
+ {
+  "title": "防爆单层玻璃发应釜YDF-200LEX（桶形)",
+  "model": "YDF-200LEX",
+  "series": "单层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/单层玻璃反应釜/单层玻璃反应釜_防爆单层玻璃发应釜ydf-200lex_桶形.html",
+  "dl": "downloads/specs/单层玻璃反应釜_防爆单层玻璃发应釜ydf-200lex_桶形.docx"
+ },
+ {
+  "title": "防爆单层玻璃发应釜YDF-20LEX",
+  "model": "YDF-20LEX.DOCX",
+  "series": "单层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/单层玻璃反应釜/单层玻璃反应釜_防爆单层玻璃发应釜ydf-20lex.html",
+  "dl": "downloads/specs/单层玻璃反应釜_防爆单层玻璃发应釜ydf-20lex.docx"
+ },
+ {
+  "title": "防爆单层玻璃发应釜YDF-30LEX",
+  "model": "YDF-30LEX.DOCX",
+  "series": "单层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/单层玻璃反应釜/单层玻璃反应釜_防爆单层玻璃发应釜ydf-30lex.html",
+  "dl": "downloads/specs/单层玻璃反应釜_防爆单层玻璃发应釜ydf-30lex.docx"
+ },
+ {
+  "title": "防爆单层玻璃发应釜YDF-50LEX（桶形)",
+  "model": "YDF-50LEX",
+  "series": "单层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/单层玻璃反应釜/单层玻璃反应釜_防爆单层玻璃发应釜ydf-50lex_桶形.html",
+  "dl": "downloads/specs/单层玻璃反应釜_防爆单层玻璃发应釜ydf-50lex_桶形.docx"
+ },
+ {
+  "title": "防爆单层玻璃发应釜YDF-50LEX（球形)",
+  "model": "YDF-50LEX",
+  "series": "单层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/单层玻璃反应釜/单层玻璃反应釜_防爆单层玻璃发应釜ydf-50lex_球形.html",
+  "dl": "downloads/specs/单层玻璃反应釜_防爆单层玻璃发应釜ydf-50lex_球形.docx"
+ },
+ {
+  "title": "XYSFT-100LEX双层玻璃反应釜",
+  "model": "XYSFT-100LEX",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/k_xysft新型托盘双层玻璃反应釜ok_xysft-100lex双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_xysft新型托盘双层玻璃反应釜ok_xysft-100lex双层玻璃反应釜.docx"
+ },
+ {
+  "title": "XYSFT-100L双层玻璃反应釜",
+  "model": "XYSFT-100L",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/釜ok_xysft新型托盘双层玻璃反应釜ok_xysft-100l双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_xysft新型托盘双层玻璃反应釜ok_xysft-100l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "XYSFT-150LEX双层玻璃反应釜",
+  "model": "XYSFT-150LEX",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/k_xysft新型托盘双层玻璃反应釜ok_xysft-150lex双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_xysft新型托盘双层玻璃反应釜ok_xysft-150lex双层玻璃反应釜.docx"
+ },
+ {
+  "title": "XYSFT-150L双层玻璃反应釜",
+  "model": "XYSFT-150L",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/釜ok_xysft新型托盘双层玻璃反应釜ok_xysft-150l双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_xysft新型托盘双层玻璃反应釜ok_xysft-150l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "XYSFT-20LEX双层玻璃反应釜",
+  "model": "XYSFT-20LEX",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/ok_xysft新型托盘双层玻璃反应釜ok_xysft-20lex双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_xysft新型托盘双层玻璃反应釜ok_xysft-20lex双层玻璃反应釜.docx"
+ },
+ {
+  "title": "XYSFT-20L双层玻璃反应釜",
+  "model": "XYSFT-20L",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/应釜ok_xysft新型托盘双层玻璃反应釜ok_xysft-20l双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_xysft新型托盘双层玻璃反应釜ok_xysft-20l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "XYSFT-30LEX双层玻璃反应釜",
+  "model": "XYSFT-30LEX",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/ok_xysft新型托盘双层玻璃反应釜ok_xysft-30lex双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_xysft新型托盘双层玻璃反应釜ok_xysft-30lex双层玻璃反应釜.docx"
+ },
+ {
+  "title": "XYSFT-30L双层玻璃反应釜",
+  "model": "XYSFT-30L",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/应釜ok_xysft新型托盘双层玻璃反应釜ok_xysft-30l双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_xysft新型托盘双层玻璃反应釜ok_xysft-30l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "XYSFT-50LEX双层玻璃反应釜",
+  "model": "XYSFT-50LEX",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/ok_xysft新型托盘双层玻璃反应釜ok_xysft-50lex双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_xysft新型托盘双层玻璃反应釜ok_xysft-50lex双层玻璃反应釜.docx"
+ },
+ {
+  "title": "XYSFT-50L双层玻璃反应釜",
+  "model": "XYSFT-50L",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/应釜ok_xysft新型托盘双层玻璃反应釜ok_xysft-50l双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_xysft新型托盘双层玻璃反应釜ok_xysft-50l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YHGSF-100LEX出口型双层玻璃反应釜",
+  "model": "YHGSF-100LEX",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/yhgsf出口型双层玻璃反应釜ok_yhgsf-100lex出口型双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_yhgsf出口型双层玻璃反应釜ok_yhgsf-100lex出口型双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YHGSF-100L出口型双层玻璃反应釜",
+  "model": "YHGSF-100L",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/k_yhgsf出口型双层玻璃反应釜ok_yhgsf-100l出口型双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_yhgsf出口型双层玻璃反应釜ok_yhgsf-100l出口型双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YHGSF-10LEX出口型双层玻璃反应釜",
+  "model": "YHGSF-10LEX",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/_yhgsf出口型双层玻璃反应釜ok_yhgsf-10lex出口型双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_yhgsf出口型双层玻璃反应釜ok_yhgsf-10lex出口型双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YHGSF-10L出口型双层玻璃反应釜",
+  "model": "YHGSF-10L",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/ok_yhgsf出口型双层玻璃反应釜ok_yhgsf-10l出口型双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_yhgsf出口型双层玻璃反应釜ok_yhgsf-10l出口型双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YHGSF-20LEX出口型双层玻璃反应釜",
+  "model": "YHGSF-20LEX",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/_yhgsf出口型双层玻璃反应釜ok_yhgsf-20lex出口型双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_yhgsf出口型双层玻璃反应釜ok_yhgsf-20lex出口型双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YHGSF-20L出口型双层玻璃反应釜",
+  "model": "YHGSF-20L",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/ok_yhgsf出口型双层玻璃反应釜ok_yhgsf-20l出口型双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_yhgsf出口型双层玻璃反应釜ok_yhgsf-20l出口型双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YHGSF-30LEX出口型双层玻璃反应釜",
+  "model": "YHGSF-30LEX",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/_yhgsf出口型双层玻璃反应釜ok_yhgsf-30lex出口型双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_yhgsf出口型双层玻璃反应釜ok_yhgsf-30lex出口型双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YHGSF-30L出口型双层玻璃反应釜",
+  "model": "YHGSF-30L",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/ok_yhgsf出口型双层玻璃反应釜ok_yhgsf-30l出口型双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_yhgsf出口型双层玻璃反应釜ok_yhgsf-30l出口型双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YHGSF-50LEX出口型双层玻璃反应釜",
+  "model": "YHGSF-50LEX",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/_yhgsf出口型双层玻璃反应釜ok_yhgsf-50lex出口型双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_yhgsf出口型双层玻璃反应釜ok_yhgsf-50lex出口型双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YHGSF-50L出口型双层玻璃反应釜",
+  "model": "YHGSF-50L",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/ok_yhgsf出口型双层玻璃反应釜ok_yhgsf-50l出口型双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_yhgsf出口型双层玻璃反应釜ok_yhgsf-50l出口型双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YHGSF-80LEX出口型双层玻璃反应釜",
+  "model": "YHGSF-80LEX",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/_yhgsf出口型双层玻璃反应釜ok_yhgsf-80lex出口型双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_yhgsf出口型双层玻璃反应釜ok_yhgsf-80lex出口型双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YHGSF-80L出口型双层玻璃反应釜",
+  "model": "YHGSF-80L",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/ok_yhgsf出口型双层玻璃反应釜ok_yhgsf-80l出口型双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_yhgsf出口型双层玻璃反应釜ok_yhgsf-80l出口型双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFT-100LEX防爆双层托盘型玻璃反应釜",
+  "model": "YSFT-100LEX",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/k_ysft双层托盘型玻璃反应釜_ysft-100lex防爆双层托盘型玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysft双层托盘型玻璃反应釜_ysft-100lex防爆双层托盘型玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFT-100L双层托盘型玻璃反应釜",
+  "model": "YSFT-100L",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/反应釜ok_ysft双层托盘型玻璃反应釜_ysft-100l双层托盘型玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysft双层托盘型玻璃反应釜_ysft-100l双层托盘型玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFT-10LEX双层托盘型玻璃反应釜",
+  "model": "YSFT-10LEX",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/应釜ok_ysft双层托盘型玻璃反应釜_ysft-10lex双层托盘型玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysft双层托盘型玻璃反应釜_ysft-10lex双层托盘型玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFT-10L双层托盘型玻璃反应釜",
+  "model": "YSFT-10L",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/璃反应釜ok_ysft双层托盘型玻璃反应釜_ysft-10l双层托盘型玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysft双层托盘型玻璃反应釜_ysft-10l双层托盘型玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFT-150LEX防爆双层托盘型玻璃反应釜",
+  "model": "YSFT-150LEX",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/k_ysft双层托盘型玻璃反应釜_ysft-150lex防爆双层托盘型玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysft双层托盘型玻璃反应釜_ysft-150lex防爆双层托盘型玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFT-150L双层托盘型玻璃反应釜",
+  "model": "YSFT-150L",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/反应釜ok_ysft双层托盘型玻璃反应釜_ysft-150l双层托盘型玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysft双层托盘型玻璃反应釜_ysft-150l双层托盘型玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFT-200LEX防爆双层托盘型玻璃反应釜",
+  "model": "YSFT-200LEX",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/k_ysft双层托盘型玻璃反应釜_ysft-200lex防爆双层托盘型玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysft双层托盘型玻璃反应釜_ysft-200lex防爆双层托盘型玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFT-200L双层托盘型玻璃反应釜",
+  "model": "YSFT-200L",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/反应釜ok_ysft双层托盘型玻璃反应釜_ysft-200l双层托盘型玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysft双层托盘型玻璃反应釜_ysft-200l双层托盘型玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFT-20LEX防爆双层托盘型玻璃反应釜",
+  "model": "YSFT-20LEX",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/ok_ysft双层托盘型玻璃反应釜_ysft-20lex防爆双层托盘型玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysft双层托盘型玻璃反应釜_ysft-20lex防爆双层托盘型玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFT-20L双层托盘型玻璃反应釜",
+  "model": "YSFT-20L",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/璃反应釜ok_ysft双层托盘型玻璃反应釜_ysft-20l双层托盘型玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysft双层托盘型玻璃反应釜_ysft-20l双层托盘型玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFT-30LEX双层托盘型玻璃反应釜",
+  "model": "YSFT-30LEX",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/应釜ok_ysft双层托盘型玻璃反应釜_ysft-30lex双层托盘型玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysft双层托盘型玻璃反应釜_ysft-30lex双层托盘型玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFT-30L双层托盘型玻璃反应釜",
+  "model": "YSFT-30L",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/璃反应釜ok_ysft双层托盘型玻璃反应釜_ysft-30l双层托盘型玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysft双层托盘型玻璃反应釜_ysft-30l双层托盘型玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFT-50LEX防爆双层托盘型玻璃反应釜",
+  "model": "YSFT-50LEX",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/ok_ysft双层托盘型玻璃反应釜_ysft-50lex防爆双层托盘型玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysft双层托盘型玻璃反应釜_ysft-50lex防爆双层托盘型玻璃反应釜.docx"
+ },
+ {
+  "title": "YSFT-50L双层托盘型玻璃反应釜",
+  "model": "YSFT-50L",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/璃反应釜ok_ysft双层托盘型玻璃反应釜_ysft-50l双层托盘型玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysft双层托盘型玻璃反应釜_ysft-50l双层托盘型玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-100LEX防爆双层玻璃反应釜",
+  "model": "YSF-100LEX",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-100lex防爆双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-100lex防爆双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-100L双层玻璃反应釜",
+  "model": "YSF-100L",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-100l双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-100l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-10LEX防爆双层玻璃反应釜",
+  "model": "YSF-10LEX",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-10lex防爆双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-10lex防爆双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-10L双层玻璃反应釜",
+  "model": "YSF-10L",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-10l双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-10l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-150LEX防爆双层玻璃反应釜",
+  "model": "YSF-150LEX",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-150lex防爆双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-150lex防爆双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-150L双层玻璃反应釜",
+  "model": "YSF-150L",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-150l双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-150l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-1LEX防爆双层玻璃反应釜",
+  "model": "YSF-1LEX",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-1lex防爆双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-1lex防爆双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-1L双层玻璃反应釜",
+  "model": "YSF-1L",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-1l双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-1l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-200LEX防爆双层玻璃反应釜",
+  "model": "YSF-200LEX",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-200lex防爆双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-200lex防爆双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-200L双层玻璃反应釜",
+  "model": "YSF-200L",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-200l双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-200l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-20LEX防爆双层玻璃反应釜",
+  "model": "YSF-20LEX",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-20lex防爆双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-20lex防爆双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-20L双层玻璃反应釜",
+  "model": "YSF-20L",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-20l双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-20l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-2LEX防爆双层玻璃反应釜",
+  "model": "YSF-2LEX",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-2lex防爆双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-2lex防爆双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-2L双层玻璃反应釜",
+  "model": "YSF-2L",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-2l双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-2l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-30LEX防爆双层玻璃反应釜",
+  "model": "YSF-30LEX",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-30lex防爆双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-30lex防爆双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-30L双层玻璃反应釜",
+  "model": "YSF-30L",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-30l双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-30l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-3LEX防爆双层玻璃反应釜",
+  "model": "YSF-3LEX",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-3lex防爆双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-3lex防爆双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-3L双层玻璃反应釜",
+  "model": "YSF-3L",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-3l双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-3l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-50LEX防爆双层玻璃反应釜",
+  "model": "YSF-50LEX",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-50lex防爆双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-50lex防爆双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-50L双层玻璃反应釜",
+  "model": "YSF-50L",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-50l双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-50l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-5LEX防爆双层玻璃反应釜",
+  "model": "YSF-5LEX",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-5lex防爆双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-5lex防爆双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-5L双层玻璃反应釜",
+  "model": "YSF-5L",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-5l双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-5l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-80LEX防爆双层玻璃反应釜",
+  "model": "YSF-80LEX",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-80lex防爆双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-80lex防爆双层玻璃反应釜.docx"
+ },
+ {
+  "title": "YSF-80L双层玻璃反应釜",
+  "model": "YSF-80L",
+  "series": "双层玻璃反应釜",
+  "key": "glass_reactor",
+  "page": "specs/双层玻璃反应釜/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-80l双层玻璃反应釜.html",
+  "dl": "downloads/specs/双层玻璃反应釜ok_ysf双层玻璃反应釜ok_ysf-80l双层玻璃反应釜.docx"
+ },
+ {
+  "title": "密闭低温泵参数",
+  "model": "DOCX",
+  "series": "密闭低温泵WORD",
+  "key": "chiller",
+  "page": "specs/密闭低温泵WORD/密闭低温泵word_密闭低温泵参数.html",
+  "dl": "downloads/specs/密闭低温泵word_密闭低温泵参数.docx"
+ },
+ {
+  "title": "YUHUA GDSZ 2040 Spec",
+  "model": "YUHUA",
+  "series": "密闭低温泵参数",
+  "key": "hilo_circ",
+  "page": "specs/密闭低温泵参数/密闭低温泵参数_yuhua_gdsz_2040_spec.html",
+  "dl": "downloads/specs/密闭低温泵参数_yuhua_gdsz_2040_spec.docx"
+ },
+ {
+  "title": "100L高温油浴 普通型",
+  "model": "100L",
+  "series": "密闭油浴参数",
+  "key": "hi_circ",
+  "page": "specs/密闭油浴参数/密闭油浴参数_100l高温油浴_普通型.html",
+  "dl": "downloads/specs/密闭油浴参数_100l高温油浴_普通型.docx"
+ },
+ {
+  "title": "100L高温油浴 高温型 ",
+  "model": "100L",
+  "series": "密闭油浴参数",
+  "key": "hi_circ",
+  "page": "specs/密闭油浴参数/密闭油浴参数_100l高温油浴_高温型.html",
+  "dl": "downloads/specs/密闭油浴参数_100l高温油浴_高温型.docx"
+ },
+ {
+  "title": "10L-300油浴(1)",
+  "model": "10L-300",
+  "series": "密闭油浴参数",
+  "key": "hi_circ",
+  "page": "specs/密闭油浴参数/密闭油浴参数_10l-300油浴_1.html",
+  "dl": "downloads/specs/密闭油浴参数_10l-300油浴_1.docx"
+ },
+ {
+  "title": "10L高温油浴 普通型 ",
+  "model": "10L",
+  "series": "密闭油浴参数",
+  "key": "hi_circ",
+  "page": "specs/密闭油浴参数/密闭油浴参数_10l高温油浴_普通型.html",
+  "dl": "downloads/specs/密闭油浴参数_10l高温油浴_普通型.docx"
+ },
+ {
+  "title": "20L高温油浴 普通型 ",
+  "model": "20L",
+  "series": "密闭油浴参数",
+  "key": "hi_circ",
+  "page": "specs/密闭油浴参数/密闭油浴参数_20l高温油浴_普通型.html",
+  "dl": "downloads/specs/密闭油浴参数_20l高温油浴_普通型.docx"
+ },
+ {
+  "title": "20L高温油浴 防爆风冷 ",
+  "model": "20L",
+  "series": "密闭油浴参数",
+  "key": "hi_circ",
+  "page": "specs/密闭油浴参数/密闭油浴参数_20l高温油浴_防爆风冷.html",
+  "dl": "downloads/specs/密闭油浴参数_20l高温油浴_防爆风冷.docx"
+ },
+ {
+  "title": "30L高温油浴 高温型   -高温型",
+  "model": "30L",
+  "series": "密闭油浴参数",
+  "key": "hi_circ",
+  "page": "specs/密闭油浴参数/密闭油浴参数_30l高温油浴_高温型_-高温型.html",
+  "dl": "downloads/specs/密闭油浴参数_30l高温油浴_高温型_-高温型.docx"
+ },
+ {
+  "title": "30L高温油浴 高温型",
+  "model": "30L",
+  "series": "密闭油浴参数",
+  "key": "hi_circ",
+  "page": "specs/密闭油浴参数/密闭油浴参数_30l高温油浴_高温型.html",
+  "dl": "downloads/specs/密闭油浴参数_30l高温油浴_高温型.docx"
+ },
+ {
+  "title": "50L高温油浴 高温型   (1)",
+  "model": "50L",
+  "series": "密闭油浴参数",
+  "key": "hi_circ",
+  "page": "specs/密闭油浴参数/密闭油浴参数_50l高温油浴_高温型_1.html",
+  "dl": "downloads/specs/密闭油浴参数_50l高温油浴_高温型_1.docx"
+ },
+ {
+  "title": "DP630隔膜泵",
+  "model": "DP630",
+  "series": "循环水式真空泵",
+  "key": "vacuum",
+  "page": "specs/循环水式真空泵/循环水式真空泵ok_dp630隔膜泵.html",
+  "dl": "downloads/specs/循环水式真空泵ok_dp630隔膜泵.docx"
+ },
+ {
+  "title": "YH隔膜泵",
+  "model": "DOCX",
+  "series": "循环水式真空泵",
+  "key": "vacuum",
+  "page": "specs/循环水式真空泵/循环水式真空泵ok_yh隔膜泵.html",
+  "dl": "downloads/specs/循环水式真空泵ok_yh隔膜泵.docx"
+ },
+ {
+  "title": "循环水式真空泵SHZ-2000",
+  "model": "SHZ-2000.DOCX",
+  "series": "循环水式真空泵",
+  "key": "vacuum",
+  "page": "specs/循环水式真空泵/循环水式真空泵ok_循环水式真空泵shz-2000.html",
+  "dl": "downloads/specs/循环水式真空泵ok_循环水式真空泵shz-2000.docx"
+ },
+ {
+  "title": "循环水式真空泵SHZ-95A",
+  "model": "SHZ-95A.DOCX",
+  "series": "循环水式真空泵",
+  "key": "vacuum",
+  "page": "specs/循环水式真空泵/循环水式真空泵ok_循环水式真空泵shz-95a.html",
+  "dl": "downloads/specs/循环水式真空泵ok_循环水式真空泵shz-95a.docx"
+ },
+ {
+  "title": "循环水式真空泵SHZ-95B",
+  "model": "SHZ-95B.DOCX",
+  "series": "循环水式真空泵",
+  "key": "vacuum",
+  "page": "specs/循环水式真空泵/循环水式真空泵ok_循环水式真空泵shz-95b.html",
+  "dl": "downloads/specs/循环水式真空泵ok_循环水式真空泵shz-95b.docx"
+ },
+ {
+  "title": "循环水式真空泵SHZ-D(III)小型",
+  "model": "SHZ-D",
+  "series": "循环水式真空泵",
+  "key": "vacuum",
+  "page": "specs/循环水式真空泵/循环水式真空泵ok_循环水式真空泵shz-d_iii_小型.html",
+  "dl": "downloads/specs/循环水式真空泵ok_循环水式真空泵shz-d_iii_小型.docx"
+ },
+ {
+  "title": "R-1005",
+  "model": "R-1005.DOCX",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_r-1005_r-1005.html",
+  "dl": "downloads/specs/旋转蒸发器ok_r-1005_r-1005.docx"
+ },
+ {
+  "title": "R-1010",
+  "model": "R-1010.DOCX",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_r-1010_r-1010.html",
+  "dl": "downloads/specs/旋转蒸发器ok_r-1010_r-1010.docx"
+ },
+ {
+  "title": "R-1010EX",
+  "model": "R-1010EX.DOCX",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_r-1010ex_r-1010ex.html",
+  "dl": "downloads/specs/旋转蒸发器ok_r-1010ex_r-1010ex.docx"
+ },
+ {
+  "title": "R-1020",
+  "model": "R-1020.DOCX",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_r-1020_r-1020.html",
+  "dl": "downloads/specs/旋转蒸发器ok_r-1020_r-1020.docx"
+ },
+ {
+  "title": "R-1020EX",
+  "model": "R-1020EX.DOCX",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_r-1020ex_r-1020ex.html",
+  "dl": "downloads/specs/旋转蒸发器ok_r-1020ex_r-1020ex.docx"
+ },
+ {
+  "title": "R-1050",
+  "model": "R-1050.DOCX",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_r-1050_r-1050.html",
+  "dl": "downloads/specs/旋转蒸发器ok_r-1050_r-1050.docx"
+ },
+ {
+  "title": "R-1050EX",
+  "model": "R-1050EX.DOCX",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_r-1050ex_r-1050ex.html",
+  "dl": "downloads/specs/旋转蒸发器ok_r-1050ex_r-1050ex.docx"
+ },
+ {
+  "title": "YRE-100参数",
+  "model": "YRE-100",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_yre-100_yre-100参数.html",
+  "dl": "downloads/specs/旋转蒸发器ok_yre-100_yre-100参数.docx"
+ },
+ {
+  "title": "YRE-2000A参数",
+  "model": "YRE-2000A",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_yre-2000a_yre-2000a参数.html",
+  "dl": "downloads/specs/旋转蒸发器ok_yre-2000a_yre-2000a参数.docx"
+ },
+ {
+  "title": "YRE-2000B参数",
+  "model": "YRE-2000B",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_yre-2000b_yre-2000b参数.html",
+  "dl": "downloads/specs/旋转蒸发器ok_yre-2000b_yre-2000b参数.docx"
+ },
+ {
+  "title": "YRE-2000E参数",
+  "model": "YRE-2000E",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_yre-2000e_yre-2000e参数.html",
+  "dl": "downloads/specs/旋转蒸发器ok_yre-2000e_yre-2000e参数.docx"
+ },
+ {
+  "title": "YRE-2010A参数",
+  "model": "YRE-2010A",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_yre-2010a_yre-2010a参数.html",
+  "dl": "downloads/specs/旋转蒸发器ok_yre-2010a_yre-2010a参数.docx"
+ },
+ {
+  "title": "YRE-2010AEX参数",
+  "model": "YRE-2010AEX",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_yre-2010aex_yre-2010aex参数.html",
+  "dl": "downloads/specs/旋转蒸发器ok_yre-2010aex_yre-2010aex参数.docx"
+ },
+ {
+  "title": "YRE-2010Z参数",
+  "model": "YRE-2010Z",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_yre-2010z_yre-2010z参数.html",
+  "dl": "downloads/specs/旋转蒸发器ok_yre-2010z_yre-2010z参数.docx"
+ },
+ {
+  "title": "YRE-2011参数",
+  "model": "YRE-2011",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_yre-2011_yre-2011参数.html",
+  "dl": "downloads/specs/旋转蒸发器ok_yre-2011_yre-2011参数.docx"
+ },
+ {
+  "title": "YRE-2012参数",
+  "model": "YRE-2012",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_yre-2012_yre-2012参数.html",
+  "dl": "downloads/specs/旋转蒸发器ok_yre-2012_yre-2012参数.docx"
+ },
+ {
+  "title": "YRE-201D参数",
+  "model": "YRE-201D",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_yre-201d_yre-201d参数.html",
+  "dl": "downloads/specs/旋转蒸发器ok_yre-201d_yre-201d参数.docx"
+ },
+ {
+  "title": "YRE-2020A参数",
+  "model": "YRE-2020A",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_yre-2020a_yre-2020a参数.html",
+  "dl": "downloads/specs/旋转蒸发器ok_yre-2020a_yre-2020a参数.docx"
+ },
+ {
+  "title": "YRE-2020AEX参数",
+  "model": "YRE-2020AEX",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_yre-2020aex_yre-2020aex参数.html",
+  "dl": "downloads/specs/旋转蒸发器ok_yre-2020aex_yre-2020aex参数.docx"
+ },
+ {
+  "title": "YRE-2020Z参数",
+  "model": "YRE-2020Z",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_yre-2020z_yre-2020z参数.html",
+  "dl": "downloads/specs/旋转蒸发器ok_yre-2020z_yre-2020z参数.docx"
+ },
+ {
+  "title": "YRE-202A参数",
+  "model": "YRE-202A",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_yre-202a_yre-202a参数.html",
+  "dl": "downloads/specs/旋转蒸发器ok_yre-202a_yre-202a参数.docx"
+ },
+ {
+  "title": "YRE-2030A参数",
+  "model": "YRE-2030A",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_yre-2030a_yre-2030a参数.html",
+  "dl": "downloads/specs/旋转蒸发器ok_yre-2030a_yre-2030a参数.docx"
+ },
+ {
+  "title": "YRE-2030AEX参数",
+  "model": "YRE-2030AEX",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_yre-2030aex_yre-2030aex参数.html",
+  "dl": "downloads/specs/旋转蒸发器ok_yre-2030aex_yre-2030aex参数.docx"
+ },
+ {
+  "title": "YRE-2050A参数",
+  "model": "YRE-2050A",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_yre-2050a_yre-2050a参数.html",
+  "dl": "downloads/specs/旋转蒸发器ok_yre-2050a_yre-2050a参数.docx"
+ },
+ {
+  "title": "YRE-2050AEX参数",
+  "model": "YRE-2050AEX",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_yre-2050aex_yre-2050aex参数.html",
+  "dl": "downloads/specs/旋转蒸发器ok_yre-2050aex_yre-2050aex参数.docx"
+ },
+ {
+  "title": "YRE-2050Z参数",
+  "model": "YRE-2050Z",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_yre-2050z_yre-2050z参数.html",
+  "dl": "downloads/specs/旋转蒸发器ok_yre-2050z_yre-2050z参数.docx"
+ },
+ {
+  "title": "YRE-3000A参数",
+  "model": "YRE-3000A",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_yre-3000a_yre-3000a参数.html",
+  "dl": "downloads/specs/旋转蒸发器ok_yre-3000a_yre-3000a参数.docx"
+ },
+ {
+  "title": "YRE-3000B参数",
+  "model": "YRE-3000B",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_yre-3000b_yre-3000b参数.html",
+  "dl": "downloads/specs/旋转蒸发器ok_yre-3000b_yre-3000b参数.docx"
+ },
+ {
+  "title": "YRE-3000E参数",
+  "model": "YRE-3000E",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_yre-3000e_yre-3000e参数.html",
+  "dl": "downloads/specs/旋转蒸发器ok_yre-3000e_yre-3000e参数.docx"
+ },
+ {
+  "title": "YRE-301D参数",
+  "model": "YRE-301D",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_yre-301d_yre-301d参数.html",
+  "dl": "downloads/specs/旋转蒸发器ok_yre-301d_yre-301d参数.docx"
+ },
+ {
+  "title": "YRE-5000A参数",
+  "model": "YRE-5000A",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_yre-5000a_yre-5000a参数.html",
+  "dl": "downloads/specs/旋转蒸发器ok_yre-5000a_yre-5000a参数.docx"
+ },
+ {
+  "title": "YRE-5000B参数",
+  "model": "YRE-5000B",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_yre-5000b_yre-5000b参数.html",
+  "dl": "downloads/specs/旋转蒸发器ok_yre-5000b_yre-5000b参数.docx"
+ },
+ {
+  "title": "YRE-5000E参数",
+  "model": "YRE-5000E",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_yre-5000e_yre-5000e参数.html",
+  "dl": "downloads/specs/旋转蒸发器ok_yre-5000e_yre-5000e参数.docx"
+ },
+ {
+  "title": "YRE-501D参数",
+  "model": "YRE-501D",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_yre-501d_yre-501d参数.html",
+  "dl": "downloads/specs/旋转蒸发器ok_yre-501d_yre-501d参数.docx"
+ },
+ {
+  "title": "YRE-501DEX参数",
+  "model": "YRE-501DEX",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_yre-501dex_yre-501dex参数.html",
+  "dl": "downloads/specs/旋转蒸发器ok_yre-501dex_yre-501dex参数.docx"
+ },
+ {
+  "title": "YRE-5299参数",
+  "model": "YRE-5299",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_yre-5299_yre-5299参数.html",
+  "dl": "downloads/specs/旋转蒸发器ok_yre-5299_yre-5299参数.docx"
+ },
+ {
+  "title": "YRE-52A参数",
+  "model": "YRE-52A",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_yre-52a_yre-52a参数.html",
+  "dl": "downloads/specs/旋转蒸发器ok_yre-52a_yre-52a参数.docx"
+ },
+ {
+  "title": "YRE-52C参数",
+  "model": "YRE-52C",
+  "series": "旋转蒸发器",
+  "key": "rotary",
+  "page": "specs/旋转蒸发器/旋转蒸发器ok_yre-52c_yre-52c参数.html",
+  "dl": "downloads/specs/旋转蒸发器ok_yre-52c_yre-52c参数.docx"
+ },
+ {
+  "title": "KQ玻璃气流烘干器",
+  "model": "DOCX",
+  "series": "气流烘干器",
+  "key": "others",
+  "page": "specs/气流烘干器/气流烘干器ok_kq玻璃气流烘干器.html",
+  "dl": "downloads/specs/气流烘干器ok_kq玻璃气流烘干器.docx"
+ },
+ {
+  "title": "玻璃分液器YF-100L",
+  "model": "YF-100L.DOCX",
+  "series": "玻璃分液器",
+  "key": "glass_reactor",
+  "page": "specs/玻璃分液器/玻璃分液器_玻璃分液器yf-100l.html",
+  "dl": "downloads/specs/玻璃分液器_玻璃分液器yf-100l.docx"
+ },
+ {
+  "title": "玻璃分液器YF-10L",
+  "model": "YF-10L.DOCX",
+  "series": "玻璃分液器",
+  "key": "glass_reactor",
+  "page": "specs/玻璃分液器/玻璃分液器_玻璃分液器yf-10l.html",
+  "dl": "downloads/specs/玻璃分液器_玻璃分液器yf-10l.docx"
+ },
+ {
+  "title": "玻璃分液器YF-200L",
+  "model": "YF-200L.DOCX",
+  "series": "玻璃分液器",
+  "key": "glass_reactor",
+  "page": "specs/玻璃分液器/玻璃分液器_玻璃分液器yf-200l.html",
+  "dl": "downloads/specs/玻璃分液器_玻璃分液器yf-200l.docx"
+ },
+ {
+  "title": "玻璃分液器YF-20L",
+  "model": "YF-20L.DOCX",
+  "series": "玻璃分液器",
+  "key": "glass_reactor",
+  "page": "specs/玻璃分液器/玻璃分液器_玻璃分液器yf-20l.html",
+  "dl": "downloads/specs/玻璃分液器_玻璃分液器yf-20l.docx"
+ },
+ {
+  "title": "玻璃分液器YF-30L",
+  "model": "YF-30L.DOCX",
+  "series": "玻璃分液器",
+  "key": "glass_reactor",
+  "page": "specs/玻璃分液器/玻璃分液器_玻璃分液器yf-30l.html",
+  "dl": "downloads/specs/玻璃分液器_玻璃分液器yf-30l.docx"
+ },
+ {
+  "title": "玻璃分液器YF-50L",
+  "model": "YF-50L.DOCX",
+  "series": "玻璃分液器",
+  "key": "glass_reactor",
+  "page": "specs/玻璃分液器/玻璃分液器_玻璃分液器yf-50l.html",
+  "dl": "downloads/specs/玻璃分液器_玻璃分液器yf-50l.docx"
+ },
+ {
+  "title": "玻璃分液器YF-80L",
+  "model": "YF-80L.DOCX",
+  "series": "玻璃分液器",
+  "key": "glass_reactor",
+  "page": "specs/玻璃分液器/玻璃分液器_玻璃分液器yf-80l.html",
+  "dl": "downloads/specs/玻璃分液器_玻璃分液器yf-80l.docx"
+ },
+ {
+  "title": "短程蒸馏-10L",
+  "model": "10L.DOCX",
+  "series": "短程蒸馏",
+  "key": "mol_dist",
+  "page": "specs/短程蒸馏/短程蒸馏_短程蒸馏-10l.html",
+  "dl": "downloads/specs/短程蒸馏_短程蒸馏-10l.docx"
+ },
+ {
+  "title": "DF系列集热式磁力搅拌器",
+  "model": "DOCX",
+  "series": "集热式磁力搅拌器",
+  "key": "mag_stir",
+  "page": "specs/集热式磁力搅拌器/集热式磁力搅拌器ok_df系列集热式磁力搅拌器.html",
+  "dl": "downloads/specs/集热式磁力搅拌器ok_df系列集热式磁力搅拌器.docx"
+ },
+ {
+  "title": "GDSZ-10-20+200高低温循环装置",
+  "model": "GDSZ-10-20+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-10-20_200高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-10-20_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-10-30+200高低温循环装置",
+  "model": "GDSZ-10-30+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-10-30_200高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-10-30_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-10-40+200高低温循环装置",
+  "model": "GDSZ-10-40+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-10-40_200高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-10-40_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-10-60+160高低温循环装置",
+  "model": "GDSZ-10-60+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-10-60_160高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-10-60_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-10-80+160高低温循环装置",
+  "model": "GDSZ-10-80+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-10-80_160高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-10-80_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-100-20+200高低温循环装置",
+  "model": "GDSZ-100-20+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-100-20_200高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-100-20_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-100-30+200高低温循环装置",
+  "model": "GDSZ-100-30+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-100-30_200高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-100-30_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-100-40+200 Technical",
+  "model": "GDSZ-100-40+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-100-40_200_technical.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-100-40_200_technical.docx"
+ },
+ {
+  "title": "GDSZ-100-40+200高低温循环装置",
+  "model": "GDSZ-100-40+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-100-40_200高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-100-40_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-100-60+160高低温循环装置",
+  "model": "GDSZ-100-60+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-100-60_160高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-100-60_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-100-80+160高低温循环装置",
+  "model": "GDSZ-100-80+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-100-80_160高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-100-80_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-150-20+200高低温循环装置",
+  "model": "GDSZ-150-20+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-150-20_200高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-150-20_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-150-30+200高低温循环装置",
+  "model": "GDSZ-150-30+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-150-30_200高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-150-30_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-150-40+200高低温循环装置",
+  "model": "GDSZ-150-40+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-150-40_200高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-150-40_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-150-60+160高低温循环装置",
+  "model": "GDSZ-150-60+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-150-60_160高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-150-60_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-150-80+160高低温循环装置",
+  "model": "GDSZ-150-80+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-150-80_160高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-150-80_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-20-100+160高低温循环装置",
+  "model": "GDSZ-20-100+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-20-100_160高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-20-100_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-20-20+200高低温循环装置",
+  "model": "GDSZ-20-20+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-20-20_200高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-20-20_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-20-30+200高低温循环装置",
+  "model": "GDSZ-20-30+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-20-30_200高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-20-30_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-20-40+200高低温循环装置",
+  "model": "GDSZ-20-40+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-20-40_200高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-20-40_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-20-60+160高低温循环装置",
+  "model": "GDSZ-20-60+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-20-60_160高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-20-60_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-20-80+160高低温循环装置",
+  "model": "GDSZ-20-80+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-20-80_160高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-20-80_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-30-20+200高低温循环装置",
+  "model": "GDSZ-30-20+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-30-20_200高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-30-20_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-30-30+200高低温循环装置",
+  "model": "GDSZ-30-30+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-30-30_200高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-30-30_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-30-40+200高低温循环装置",
+  "model": "GDSZ-30-40+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-30-40_200高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-30-40_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-30-60+160高低温循环装置",
+  "model": "GDSZ-30-60+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-30-60_160高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-30-60_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-30-80+160高低温循环装置",
+  "model": "GDSZ-30-80+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-30-80_160高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-30-80_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-5-20+200 Heater and chiller",
+  "model": "GDSZ-5-20+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-5-20_200_heater_and_chiller.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-5-20_200_heater_and_chiller.docx"
+ },
+ {
+  "title": "GDSZ-5-20+200高低温循环装置",
+  "model": "GDSZ-5-20+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-5-20_200高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-5-20_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-5-30+200高低温循环装置",
+  "model": "GDSZ-5-30+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-5-30_200高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-5-30_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-5-40+200高低温循环装置",
+  "model": "GDSZ-5-40+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-5-40_200高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-5-40_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-5-60+160高低温循环装置",
+  "model": "GDSZ-5-60+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-5-60_160高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-5-60_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-5-80+160高低温循环装置",
+  "model": "GDSZ-5-80+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-5-80_160高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-5-80_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-50-20+200 Technical",
+  "model": "GDSZ-50-20+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-50-20_200_technical.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-50-20_200_technical.docx"
+ },
+ {
+  "title": "GDSZ-50-20+200高低温循环装置",
+  "model": "GDSZ-50-20+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-50-20_200高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-50-20_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-50-30+200 Technical",
+  "model": "GDSZ-50-30+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-50-30_200_technical.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-50-30_200_technical.docx"
+ },
+ {
+  "title": "GDSZ-50-30+200高低温循环装置",
+  "model": "GDSZ-50-30+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-50-30_200高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-50-30_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-50-40+200高低温循环装置",
+  "model": "GDSZ-50-40+200",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-50-40_200高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-50-40_200高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-50-60+160高低温循环装置",
+  "model": "GDSZ-50-60+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-50-60_160高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-50-60_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-50-80+160高低温循环装置",
+  "model": "GDSZ-50-80+160",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-50-80_160高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-50-80_160高低温循环装置.docx"
+ },
+ {
+  "title": "GDSZ-高低温循环装置",
+  "model": "GDSZ-",
+  "series": "高低温循环装置",
+  "key": "hilo_circ",
+  "page": "specs/高低温循环装置/高低温循环装置_gdsz-高低温循环装置.html",
+  "dl": "downloads/specs/高低温循环装置_gdsz-高低温循环装置.docx"
+ },
+ {
+  "title": "10L升降高压反应釜)",
+  "model": "10L",
+  "series": "高压反应釜",
+  "key": "hp_reactor",
+  "page": "specs/高压反应釜/高压反应釜_10l升降高压反应釜.html",
+  "dl": "downloads/specs/高压反应釜_10l升降高压反应釜.docx"
+ },
+ {
+  "title": "升降高压反应釜参数",
+  "model": "DOCX",
+  "series": "高压反应釜",
+  "key": "hp_reactor",
+  "page": "specs/高压反应釜/高压反应釜_升降高压反应釜参数.html",
+  "dl": "downloads/specs/高压反应釜_升降高压反应釜参数.docx"
+ },
+ {
+  "title": "磁力搅拌法兰款",
+  "model": "DOCX",
+  "series": "高压反应釜",
+  "key": "mag_stir",
+  "page": "specs/高压反应釜/高压反应釜_磁力搅拌法兰款.html",
+  "dl": "downloads/specs/高压反应釜_磁力搅拌法兰款.docx"
+ },
+ {
+  "title": "高压反应釜（磁力搅拌快卡式）参数",
+  "model": "DOCX",
+  "series": "高压反应釜",
+  "key": "mag_stir",
+  "page": "specs/高压反应釜/高压反应釜_高压反应釜_磁力搅拌快卡式_参数.html",
+  "dl": "downloads/specs/高压反应釜_高压反应釜_磁力搅拌快卡式_参数.docx"
+ },
+ {
+  "title": "10L升降高压反应釜使用说明书(5)",
+  "model": "10L",
+  "series": "高压反应釜",
+  "key": "hp_reactor",
+  "page": "specs/高压反应釜/压反应釜_2026年予华高压反应釜产品说明书_10l升降高压反应釜使用说明书_5.html",
+  "dl": "downloads/specs/高压反应釜_2026年予华高压反应釜产品说明书_10l升降高压反应釜使用说明书_5.docx"
+ },
+ {
+  "title": "GSC-100L参数",
+  "model": "GSC-100L",
+  "series": "高温循环油浴锅",
+  "key": "hi_circ",
+  "page": "specs/高温循环油浴锅/高温循环油浴锅_gsc-100l参数.html",
+  "dl": "downloads/specs/高温循环油浴锅_gsc-100l参数.docx"
+ },
+ {
+  "title": "GSC-10L参数",
+  "model": "GSC-10L",
+  "series": "高温循环油浴锅",
+  "key": "hi_circ",
+  "page": "specs/高温循环油浴锅/高温循环油浴锅_gsc-10l参数.html",
+  "dl": "downloads/specs/高温循环油浴锅_gsc-10l参数.docx"
+ },
+ {
+  "title": "GSC-150L参数",
+  "model": "GSC-150L",
+  "series": "高温循环油浴锅",
+  "key": "hi_circ",
+  "page": "specs/高温循环油浴锅/高温循环油浴锅_gsc-150l参数.html",
+  "dl": "downloads/specs/高温循环油浴锅_gsc-150l参数.docx"
+ },
+ {
+  "title": "GSC-200L参数",
+  "model": "GSC-200L",
+  "series": "高温循环油浴锅",
+  "key": "hi_circ",
+  "page": "specs/高温循环油浴锅/高温循环油浴锅_gsc-200l参数.html",
+  "dl": "downloads/specs/高温循环油浴锅_gsc-200l参数.docx"
+ },
+ {
+  "title": "GSC-20L参数",
+  "model": "GSC-20L",
+  "series": "高温循环油浴锅",
+  "key": "hi_circ",
+  "page": "specs/高温循环油浴锅/高温循环油浴锅_gsc-20l参数.html",
+  "dl": "downloads/specs/高温循环油浴锅_gsc-20l参数.docx"
+ },
+ {
+  "title": "GSC-30L参数",
+  "model": "GSC-30L",
+  "series": "高温循环油浴锅",
+  "key": "hi_circ",
+  "page": "specs/高温循环油浴锅/高温循环油浴锅_gsc-30l参数.html",
+  "dl": "downloads/specs/高温循环油浴锅_gsc-30l参数.docx"
+ },
+ {
+  "title": "GSC-50L参数",
+  "model": "GSC-50L",
+  "series": "高温循环油浴锅",
+  "key": "hi_circ",
+  "page": "specs/高温循环油浴锅/高温循环油浴锅_gsc-50l参数.html",
+  "dl": "downloads/specs/高温循环油浴锅_gsc-50l参数.docx"
+ },
+ {
+  "title": "YUHUA EN GSC-20L",
+  "model": "YUHUA",
+  "series": "高温循环油浴锅",
+  "key": "hi_circ",
+  "page": "specs/高温循环油浴锅/高温循环油浴锅_yuhua_en_gsc-20l.html",
+  "dl": "downloads/specs/高温循环油浴锅_yuhua_en_gsc-20l.docx"
+ },
+ {
+  "title": "YUHUA EN GSC-50L",
+  "model": "YUHUA",
+  "series": "高温循环油浴锅",
+  "key": "hi_circ",
+  "page": "specs/高温循环油浴锅/高温循环油浴锅_yuhua_en_gsc-50l.html",
+  "dl": "downloads/specs/高温循环油浴锅_yuhua_en_gsc-50l.docx"
+ }
+]

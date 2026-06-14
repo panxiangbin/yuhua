@@ -21,6 +21,7 @@
       <a href="#products">产品中心</a>
       <a href="#videos">产品视频</a>
       <a href="#catalog">型号查询</a>
+      <a href="#specs">规格书</a>
       <a href="#about">关于我们</a>
     </nav>
   </div>
@@ -113,6 +114,26 @@
   </div>
 </div>
 
+<!-- 规格书查询 -->
+<section class="section" id="specs">
+  <div class="section-head">
+    <h2>规格书查询</h2>
+    <p>输入型号关键词搜索，直接在线查看或下载原始 Word 规格书。共收录 <b id="specCount">0</b> 份</p>
+  </div>
+  <div class="catalog-tools">
+    <input type="search" id="specSearch" placeholder="🔍 搜索型号，如 GDSZ-100-40、YSF-50L、YRE-2020Z…" autocomplete="off">
+    <div class="chips" id="specChips"></div>
+  </div>
+  <p class="result-info"><span id="specResultCount">0</span> 个结果</p>
+  <div class="table-wrap">
+    <table class="ptable">
+      <thead><tr><th>型号/文件名</th><th>产品系列</th><th>在线查看</th><th>下载</th></tr></thead>
+      <tbody id="specBody"></tbody>
+    </table>
+    <p class="empty-tip" id="specEmptyTip" hidden>没有匹配的规格书，换个关键词试试～</p>
+  </div>
+</section>
+
 <!-- 关于 -->
 <section class="section" id="about">
   <div class="section-head"><h2>关于予华仪器</h2></div>
@@ -132,9 +153,10 @@
 
 <button class="to-top" id="toTop" title="返回顶部">↑</button>
 
-<script src="assets/data.js?v=20260613c"></script>
-<script src="assets/videos.js?v=20260613c"></script>
-<script src="assets/pages.js?v=20260613c"></script>
-<script src="app.js?v=20260613c"></script>
+<script src="assets/data.js?v=20260614a"></script>
+<script src="assets/videos.js?v=20260614a"></script>
+<script src="assets/pages.js?v=20260614a"></script>
+<script src="assets/specs.js?v=20260614a"></script>
+<script src="app.js?v=20260614a"></script>
 </body>
 </html>
