@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数控速查与学习助手</title>
+<meta name="description" content="适合新手手机查看的数控速查网页，包含G代码、参数、报警、学习路线和常用参数换算。">
+<style>
+:root{--bg:#f6efe4;--card:rgba(255,251,245,.92);--line:rgba(30,40,36,.12);--ink:#1e2824;--muted:#5e655f;--accent:#c86433;--accent2:#2f6b58;--shadow:0 20px 40px rgba(87,61,38,.12);--radius:22px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:"MiSans","PingFang SC","Microsoft YaHei",sans-serif;color:var(--ink);background:radial-gradient(circle at top left,rgba(200,100,50,.15),transparent 24%),linear-gradient(180deg,#efe2d0 0%,#f6efe4 40%,#faf6ef 100%)}
+a{text-decoration:none;color:inherit}.page{width:min(1180px,calc(100% - 16px));margin:0 auto;padding:10px 0 30px}.hero,.panel{background:var(--card);border:1px solid rgba(255,255,255,.6);box-shadow:var(--shadow);backdrop-filter:blur(10px)}.hero{padding:18px;border-radius:28px;display:grid;gap:16px}.eyebrow,.kicker{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#94431f;margin:0 0 8px}.hero h1,.panel h2,.panel h3,.panel strong{margin:0}.hero h1{font-size:32px;line-height:1.08}.hero p{margin:0;color:var(--muted);line-height:1.7}.hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}.btn{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:12px 16px;font-weight:700}.btn-primary{background:linear-gradient(135deg,var(--accent),#df8f3f);color:#fff}.btn-secondary{background:#fff;border:1px solid var(--line)}.hero-grid,.card-grid,.result-list,.calc-grid{display:grid;gap:14px}.hero-grid article,.card,.result,.calc{background:#fff9f0;border:1px solid rgba(30,40,36,.08);border-radius:20px;padding:16px}.hero-grid strong{display:block;font-size:18px;margin-top:8px}.layout{display:grid;gap:16px;margin-top:16px}.panel{padding:16px;border-radius:24px}.panel-head{display:flex;flex-direction:column;gap:8px}.desc{margin:0;color:var(--muted);line-height:1.7}.route-step{display:inline-flex;padding:6px 9px;border-radius:999px;background:rgba(47,107,88,.12);color:var(--accent2);font-size:12px;margin-bottom:10px}.clickable{cursor:pointer;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease}.clickable:hover{transform:translateY(-1px);border-color:rgba(200,100,50,.28);box-shadow:0 10px 22px rgba(200,100,50,.08)}.card p,.result p,.calc p{margin:10px 0 0;color:var(--muted);line-height:1.7}.visual{height:118px;border-radius:16px;border:1px solid rgba(30,40,36,.08);margin-bottom:12px;position:relative;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(255,248,237,.96)),linear-gradient(135deg,rgba(200,100,50,.14),rgba(47,107,88,.14))}.visual:before,.visual:after{content:"";position:absolute}.v-axis:before{left:20px;right:20px;bottom:24px;height:2px;background:linear-gradient(90deg,transparent,var(--accent2),transparent)}.v-axis:after{top:18px;bottom:18px;left:34%;width:2px;background:linear-gradient(180deg,transparent,var(--accent),transparent)}.v-arc:before{inset:24px 34px 20px 34px;border:3px solid rgba(200,100,50,.9);border-right-color:transparent;border-bottom-color:transparent;border-radius:999px}.v-flow:before{left:18px;right:18px;top:50%;height:8px;transform:translateY(-50%);background:linear-gradient(90deg,rgba(200,100,50,.18) 0 32%,transparent 32% 38%,rgba(47,107,88,.18) 38% 68%,transparent 68% 74%,rgba(148,67,31,.18) 74% 100%)}.v-tool:before{inset:20px 24px;background:linear-gradient(90deg,transparent 0 58%,rgba(200,100,50,.9) 58% 63%,transparent 63%),linear-gradient(180deg,transparent 0 16%,rgba(47,107,88,.9) 16% 20%,transparent 20%)}.toolbar{display:grid;gap:12px;margin-top:16px}label{display:grid;gap:8px}label span{font-size:13px;color:var(--muted)}input,select{width:100%;padding:14px 15px;border-radius:14px;border:1px solid var(--line);background:#fff;font:inherit;color:var(--ink)}input:focus,select:focus{outline:2px solid rgba(200,100,50,.18);border-color:rgba(200,100,50,.32)}.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.chip{border:1px solid var(--line);border-radius:999px;padding:8px 12px;background:#fff;cursor:pointer}.chip.active{background:var(--accent2);color:#fff;border-color:transparent}.meta{font-size:13px;color:var(--muted);margin-top:12px}.result.selected{border-color:rgba(200,100,50,.35);box-shadow:inset 0 0 0 1px rgba(200,100,50,.18)}.badge{display:inline-flex;padding:6px 10px;border-radius:999px;background:rgba(200,100,50,.12);color:#94431f;font-size:12px}.result-title{font-size:20px;margin-top:10px}.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.tags span{padding:6px 10px;border-radius:999px;background:rgba(47,107,88,.12);color:var(--accent2);font-size:12px}.detail{display:grid;gap:14px;margin-top:16px}.detail-card{background:#fff9f0;border:1px solid rgba(30,40,36,.08);border-radius:20px;padding:16px}.detail-main{background:linear-gradient(135deg,rgba(200,100,50,.12),rgba(47,107,88,.08))}.detail-label{display:block;font-size:12px;color:#94431f;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}.detail-code{font-size:22px;line-height:1.4}.detail-copy{margin:10px 0 0;color:var(--muted);line-height:1.75}.detail-example{margin:10px 0 0;padding:12px;border-radius:14px;background:rgba(30,40,36,.05);font-family:"Consolas","Courier New",monospace;font-size:13px;line-height:1.6;white-space:pre-wrap}.footerline{display:grid;gap:12px;margin-top:16px}.calc button,.reset{border:0;border-radius:999px;padding:12px 16px;background:linear-gradient(135deg,var(--accent),#df8f3f);color:#fff;font:inherit;font-weight:700;cursor:pointer}.tip{margin:8px 0 0;font-size:13px;line-height:1.6;color:#94431f;background:rgba(200,100,50,.08);padding:10px 12px;border-radius:12px}.public-note{background:linear-gradient(135deg,rgba(47,107,88,.09),rgba(200,100,50,.08))}.public-note p{margin:10px 0 0;color:var(--muted);line-height:1.7}.small{font-size:12px;color:var(--muted)}@media(min-width:768px){.page{width:min(1180px,calc(100% - 28px));padding:24px 0 40px}.hero{grid-template-columns:1.2fr .95fr;padding:28px;border-radius:32px}.hero h1{font-size:52px;max-width:10ch}.hero-grid,.card-grid,.result-list,.calc-grid,.detail{grid-template-columns:repeat(2,minmax(0,1fr))}.detail-main{grid-column:1/-1}.toolbar{grid-template-columns:1.4fr .8fr}.footerline{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:767px){.hero h1{font-size:28px;max-width:11ch}.btn{width:100%}.result-title,.detail-code{font-size:18px}}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="hero">
+  <div>
+    <p class="eyebrow">BEGINNER FIRST CNC</p>
+    <h1>数控速查与学习助手</h1>
+    <p>这是先上线的公网首发版，重点先解决两件事：一是别人打开网址就能看，二是新手能直接搜到常用内容。后面我会继续往里面补更全条目、图片和案例。</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="#search">直接开始搜索</a>
+      <a class="btn btn-secondary" href="#study">先看学习路线</a>
+    </div>
+  </div>
+  <section class="hero-grid">
+    <article>
+      <span class="kicker">适合谁看</span>
+      <strong>刚学数控、刚接触编程、现场边干边学的人</strong>
+    </article>
+    <article>
+      <span class="kicker">先解决什么</span>
+      <strong>G代码、回零、对刀、报警、换算</strong>
+    </article>
+    <article>
+      <span class="kicker">使用方式</span>
+      <strong>手机优先，搜关键词就能定位</strong>
+    </article>
+    <article>
+      <span class="kicker">后续扩展</span>
+      <strong>继续补图、补案例、补知识库</strong>
+    </article>
+  </section>
+</header>
+
+<main class="layout">
+  <section class="panel" id="study">
+    <div class="panel-head">
+      <div>
+        <p class="kicker">学习路线</p>
+        <h2>新手先学这 4 步</h2>
+      </div>
+      <p class="desc">别一上来背参数。先把机床怎么动、常用代码、报警入口和现场换算顺序理清楚。</p>
+    </div>
+    <div class="card-grid">
+      <article class="card clickable" data-target="learn-coordinate-system"><span class="route-step">01</span><h3>先懂机床怎么动</h3><p>先学坐标轴、回零、工件坐标系、绝对值与增量，不然后面程序看得懂字面，还是看不懂轨迹。</p></article>
+      <article class="card clickable" data-target="g02-g03-arc"><span class="route-step">02</span><h3>先学最常用代码</h3><p>优先学 G00、G01、G02、G03、G90、G91、G54-G59，别一开始就扎进太复杂循环。</p></article>
+      <article class="card clickable" data-target="fanuc-alarm-common"><span class="route-step">03</span><h3>再学参数和报警</h3><p>参数不是拿来乱改的。先学它是什么、什么时候才需要查，再学报警排查顺序。</p></article>
+      <article class="card clickable" data-target="calc-vc-rpm"><span class="route-step">04</span><h3>最后学工艺和换算</h3><p>线速度、转速、进给、螺距、余量，这些才是现场最常算的东西。</p></article>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <p class="kicker">直观入口</p>
+        <h2>先用图形思路记，不要硬背</h2>
+      </div>
+      <p class="desc">正式图片库我会继续补，这一版先把图形入口和对应条目挂上去，方便你和别人先试用。</p>
+    </div>
+    <div class="card-grid">
+      <article class="card clickable" data-target="learn-coordinate-system"><div class="visual v-axis"></div><strong>坐标系与回零</strong><p>先看懂机床如何认位置，再谈程序和对刀。</p></article>
+      <article class="card clickable" data-target="g02-g03-arc"><div class="visual v-arc"></div><strong>G02 / G03 圆弧方向</strong><p>顺逆时针、R 写法、I/K 写法，都是新手高频坑。</p></article>
+      <article class="card clickable" data-target="fanuc-alarm-common"><div class="visual v-flow"></div><strong>报警总入口</strong><p>先分程序、伺服、主轴、限位、换刀，再往下查。</p></article>
+      <article class="card clickable" data-target="machine-tool-setting"><div class="visual v-tool"></div><strong>对刀与工件零点</strong><p>会不会对刀，决定你能不能真正独立上机。</p></article>
+    </div>
+  </section>
+
+  <section class="panel" id="search">
+    <div class="panel-head">
+      <div>
+        <p class="kicker">搜索中心</p>
+        <h2>按参数号、关键词、栏目快速查</h2>
+      </div>
+      <p class="desc">先把最常用、最容易搜的入口做稳。比如搜 `G02`、`1815`、`回零`、`对刀`、`报警`、`G84` 都能直接定位。</p>
+    </div>
+    <div class="toolbar">
+      <label>
+        <span>搜索</span>
+        <input id="searchInput" type="search" placeholder="例如：G02、1815、回零、对刀、报警、螺距">
+      </label>
+      <label>
+        <span>栏目</span>
+        <select id="categorySelect"></select>
+      </label>
+    </div>
+    <div class="chips" id="quickChips"></div>
+    <div class="chips" id="categoryChips"></div>
+    <div class="meta" id="resultMeta"></div>
+    <div class="result-list" id="resultList"></div>
+    <div style="margin-top:12px"><button class="reset" id="resetBtn" type="button">重置搜索</button></div>
+  </section>
+
+  <section class="panel" id="detail">
+    <div class="panel-head">
+      <div>
+        <p class="kicker">学习详情</p>
+        <h2 id="detailTitle">点一条内容，往下深入学</h2>
+      </div>
+      <p class="desc" id="detailDesc">这里不只给名字，还要告诉新手它是什么、什么时候查、最容易错在哪。</p>
+    </div>
+    <div class="detail">
+      <article class="detail-card detail-main">
+        <span class="detail-label" id="detailCategory">学习条目</span>
+        <strong class="detail-code" id="detailCode">先从上面搜索或点卡片开始</strong>
+        <p class="detail-copy" id="detailSummary">推荐先搜 G02、G54、回零、对刀、1815、G83、G84、报警。</p>
+      </article>
+      <article class="detail-card"><h3>新手先这样理解</h3><p class="detail-copy" id="detailBeginner">先把概念和场景看懂，再去记参数和代码，学习效率会高很多。</p></article>
+      <article class="detail-card"><h3>适合什么时候查</h3><p class="detail-copy" id="detailUsage">看到不懂的代码、参数或报警词时，先用搜索定位方向。</p></article>
+      <article class="detail-card"><h3>最容易错的地方</h3><p class="detail-copy" id="detailWarning">很多问题不是不会查，而是查到之后不知道怎么判断风险。</p></article>
+      <article class="detail-card"><h3>最简单例子</h3><pre class="detail-example" id="detailExample">先从简单直线、圆弧、对刀、回零这些主题开始学。</pre></article>
+      <article class="detail-card"><h3>记忆提醒</h3><p class="detail-copy" id="detailMemory">把概念和场景连起来记，比死背更牢。</p></article>
+      <article class="detail-card"><h3>下一步学什么</h3><p class="detail-copy" id="detailNext">看完这一条，再学和它最相关的下一组内容。</p></article>
+    </div>
+    <div class="footerline">
+      <article class="detail-card"><span class="detail-label">风险等级</span><strong id="detailRisk">未选择</strong></article>
+      <article class="detail-card"><span class="detail-label">内容来源</span><strong id="detailSource">站内整理版</strong></article>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <p class="kicker">常用换算</p>
+        <h2>现场最常用的参数计算</h2>
+      </div>
+      <p class="desc">先做最常用的几项：线速度转转速、转速转线速度、每转进给转每分钟进给、英制牙数转螺距。</p>
+    </div>
+    <div class="calc-grid">
+      <article class="calc">
+        <h3>线速度转转速</h3>
+        <label><span>线速度 Vc (m/min)</span><input id="vc" type="number" value="120" step="0.1"></label>
+        <label><span>直径 D (mm)</span><input id="diameter" type="number" value="50" step="0.1"></label>
+        <button type="button" data-calc="rpm">计算转速</button>
+        <p id="rpmResult">结果显示在这里</p>
+        <p class="tip">公式：n = 1000 × Vc ÷ (π × D)</p>
+      </article>
+      <article class="calc">
+        <h3>转速转线速度</h3>
+        <label><span>转速 n (rpm)</span><input id="rpmBack" type="number" value="800" step="1"></label>
+        <label><span>直径 D (mm)</span><input id="diameterBack" type="number" value="50" step="0.1"></label>
+        <button type="button" data-calc="vcback">计算线速度</button>
+        <p id="vcResult">结果显示在这里</p>
+        <p class="tip">公式：Vc = π × D × n ÷ 1000</p>
+      </article>
+      <article class="calc">
+        <h3>进给换算</h3>
+        <label><span>每转进给 f (mm/rev)</span><input id="feedPerRev" type="number" value="0.2" step="0.001"></label>
+        <label><span>转速 n (rpm)</span><input id="feedRpm" type="number" value="600" step="1"></label>
+        <button type="button" data-calc="feed">计算每分钟进给</button>
+        <p id="feedResult">结果显示在这里</p>
+        <p class="tip">公式：F = f × n</p>
+      </article>
+      <article class="calc">
+        <h3>英制牙数转螺距</h3>
+        <label><span>TPI</span><input id="tpi" type="number" value="20" step="0.1"></label>
+        <button type="button" data-calc="pitch">计算螺距</button>
+        <p id="pitchResult">结果显示在这里</p>
+        <p class="tip">公式：螺距 = 25.4 ÷ TPI</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="panel public-note">
+    <div class="panel-head">
+      <div>
+        <p class="kicker">公网状态</p>
+        <h2>这版已经是别人可直接打开的网页</h2>
+      </div>
+      <p class="desc">先上线公网版，后面我继续往里扩：更全的参数、更多报警、更多案例、更多图片，以及更完整的知识库内容。</p>
+    </div>
+    <p>下一阶段我会继续做三件事：1. 把你现有速查表内容继续并入。2. 把知识库条目拆成更适合新手的说明。3. 把图片体系按批次补进去，逐步从几十张扩到上百张、上千张。</p>
+    <p class="small">当前公网目录：`/yuhua/cnc/`。如果你后面还要加更多内容，我继续直接在这个网址上迭代。</p>
+  </section>
+</main>
+</div>
+<script>
+const entries = [
+  {id:'learn-coordinate-system',category:'入门基础',title:'坐标系与回零',code:'机床坐标 / 回零',summary:'先搞懂机床怎么认位置。机床坐标、工件坐标、回参考点、绝对值与增量，是后面所有代码的基础。',usage:'开机回零、对不上位置、看不懂刀路时优先查。',beginner:'先记住机床先有自己的零点，再有工件零点。',warning:'回零异常、方向搞反、工件坐标乱设，都会直接影响运动结果。',example:'开机后先回参考点\n再确认当前显示坐标\n最后再设工件零点',memory:'先机床，后工件；先回零，后加工。',next:'下一步建议继续看 G90/G91 和 G54-G59。',risk:'中',source:'站内首发整理版',tags:['回零','坐标系','工件零点','机床零点']},
+  {id:'machine-tool-setting',category:'入门基础',title:'对刀与工件零点',code:'对刀 / 工件坐标',summary:'会不会对刀，决定你能不能真正独立上机。先把刀补、工件零点、基准面和试切逻辑理顺。',usage:'上机前、换刀后、工件重新装夹后最常查。',beginner:'先理解“机床知道刀尖在哪”，再理解“程序从哪开始算”。',warning:'对刀没对好就直接跑程序，风险非常高。',example:'回零\n装刀\n找基准\n录入工件坐标\n空运行检查',memory:'先找基准，再录坐标，再试跑。',next:'下一步建议继续看 G43/G49 和安全接近工件。',risk:'高',source:'站内首发整理版',tags:['对刀','工件坐标','刀补','试切']},
+  {id:'g00-g01-motion',category:'G代码编程',title:'G00 / G01 运动方式',code:'G00 G01',summary:'G00 用于快速定位，G01 用于按进给切削。新手最容易把 G00 当成安全切削动作。',usage:'写程序、看程序、排查刀路时高频使用。',beginner:'把 G00 理解成快移，把 G01 理解成按进给走刀。',warning:'G00 不是切削代码，靠近工件时乱用容易出风险。',example:'G00 X50 Z5\nG01 Z0 F0.2\nG01 X30',memory:'G00 快移位，G01 按进给。',next:'下一步建议继续看 G02/G03。',risk:'高',source:'站内首发整理版',tags:['G00','G01','快移','直线插补']},
+  {id:'g02-g03-arc',category:'G代码编程',title:'G02 / G03 圆弧插补',code:'G02 G03',summary:'用于顺时针和逆时针圆弧插补。现场最常见问题是方向搞反、R 与 I/K 写法混淆、起终点不满足圆弧条件。',usage:'编圆弧、倒圆角、查报警和刀路异常时优先查。',beginner:'先分清顺逆时针，再分清当前看的是哪个平面。',warning:'别只背 G02 顺时针、G03 逆时针，要结合起点、终点和当前平面一起看。',example:'G01 X20 Z0\nG02 X30 Z-10 R10',memory:'先看平面，再看方向，最后看起终点。',next:'下一步建议继续看 G17/G18/G19 与刀补。',risk:'中',source:'站内首发整理版',tags:['G02','G03','圆弧','R','I','K']},
+  {id:'g90-g91-mode',category:'G代码编程',title:'G90 / G91 绝对与增量',code:'G90 G91',summary:'G90 是按固定坐标值走，G91 是按当前位置增量走。新手非常容易在这里写偏。',usage:'程序起段、子程序、手动补运动时常查。',beginner:'先问自己：这行坐标是“最终到哪”还是“从现在再走多少”。',warning:'绝对和增量一旦混用不清，轨迹会整体跑偏。',example:'G90 X50\nG91 X-2\nG91 Z-1',memory:'G90 看目标，G91 看增量。',next:'下一步建议继续看回零和工件坐标。',risk:'中',source:'站内首发整理版',tags:['G90','G91','绝对编程','增量编程']},
+  {id:'learn-g54-g59',category:'G代码编程',title:'G54-G59 工件坐标系',code:'G54 G55 G56 G57 G58 G59',summary:'多个工位、多个零点切换时最常用。先搞懂这些不是“让机床怎么动”，而是“让程序从哪个零点开始算”。',usage:'一夹多件、多工位加工、换装夹后最常查。',beginner:'可以把它理解成给同一套程序换不同起点。',warning:'工件坐标录错，比代码写错更隐蔽。',example:'G54\nG00 X0 Y0\n...\nG55\nG00 X0 Y0',memory:'代码没变，零点变了。',next:'下一步建议继续看对刀和坐标设定。',risk:'高',source:'站内首发整理版',tags:['G54','G55','工件坐标','多工位']},
+  {id:'learn-g81-g83',category:'钻孔指令',title:'G81 / G83 / G84 固定循环',code:'G81 G83 G84',summary:'G81 普通钻孔，G83 深孔啄钻，G84 攻丝。先把三种循环在干什么分清，再去背格式。',usage:'钻孔、深孔、攻丝前最常查。',beginner:'先分用途，再看返回平面和孔深。',warning:'返回平面和孔深看错，动作就可能直接出问题。',example:'G98 G83 Z-25 R2 Q3 F120',memory:'普通钻、啄钻、攻丝，三件事别混。',next:'下一步建议继续看 G98/G99。',risk:'中',source:'站内首发整理版',tags:['G81','G83','G84','钻孔','攻丝']},
+  {id:'g98-g99-return',category:'钻孔指令',title:'G98 / G99 返回方式',code:'G98 G99',summary:'G98 返回初始点，G99 返回 R 点。固定循环里这两个非常容易看漏。',usage:'钻孔循环、啄钻、攻丝程序检查时最常查。',beginner:'先看你希望刀具每次退到哪里。',warning:'多夹具、多高低差工件时，返回方式选错很危险。',example:'G98 G81 Z-10 R2\nG99 G83 Z-25 R2 Q3',memory:'G98 回初始，G99 回R点。',next:'下一步建议继续看 G81/G83/G84。',risk:'中',source:'站内首发整理版',tags:['G98','G99','返回平面','固定循环']},
+  {id:'g94-g95-feed',category:'切削参数',title:'G94 / G95 进给方式',code:'G94 G95',summary:'G94 按每分钟进给，G95 按每转进给。做换算时这是最常见的基础坑。',usage:'进给设定、公式换算、车床加工最常查。',beginner:'先问清楚你的 F 值到底是“每分钟”还是“每转”。',warning:'单位没分清，算出来的进给会完全不是一个量级。',example:'G95 F0.2\n主轴 600rpm\n每分钟进给 = 120mm/min',memory:'G94 看分钟，G95 看每转。',next:'下一步建议继续看进给换算。',risk:'中',source:'站内首发整理版',tags:['G94','G95','进给','换算']},
+  {id:'fanuc-1815',category:'FANUC参数',title:'FANUC 1815 回零相关参数',code:'1815',summary:'用于回参考点相关设定。现场常见于回零异常、回零方向和参考点不准问题排查。',usage:'查回零异常、回零不到位、重新设参考点时优先关注。',beginner:'先记住它和回零、参考点有关，不要一看到参数就直接改。',warning:'参数修改前先备份，改错可能导致回零异常或参考点错误。',example:'先备份参数\n确认机械状态\n再看1815相关位',memory:'参数先备份，再判断，再下手。',next:'下一步建议继续看报警和限位逻辑。',risk:'高',source:'站内首发整理版',tags:['1815','FANUC','回零','参数']},
+  {id:'fanuc-alarm-common',category:'FANUC报警',title:'常见报警排查入口',code:'报警总入口',summary:'先分程序报警、伺服报警、主轴报警、限位报警、换刀报警，再继续往下查。',usage:'现场停机、报警号不熟、需要快速判断方向时最常查。',beginner:'先确认报警发生在什么动作之后，再看报警内容。',warning:'同一个报警号，不同现场原因可能不同，先别急着只盯数字。',example:'先看报警发生前动作\n再看是哪一类\n最后按顺序排查',memory:'先分类，再定位，再处理。',next:'下一步建议继续看伺服、主轴、限位几个入口。',risk:'中',source:'站内首发整理版',tags:['报警','故障','排查','FANUC']},
+  {id:'alarm-servo',category:'FANUC报警',title:'伺服报警入口',code:'SERVO',summary:'轴不动、轴跟随异常、驱动器报警时，从伺服入口先查。',usage:'机床某一轴无法动作、跟随误差、伺服报警时常查。',beginner:'先看是哪根轴，再看是否有动作指令、是否有机械卡滞。',warning:'伺服问题不一定全是电气，也可能是机械卡死。',example:'看报警类目\n看哪一轴\n看机械是否卡滞',memory:'先轴号，再动作，再机械。',next:'下一步建议继续看限位与回零。',risk:'高',source:'站内首发整理版',tags:['伺服','轴报警','驱动器']},
+  {id:'alarm-spindle',category:'FANUC报警',title:'主轴报警入口',code:'SPINDLE',summary:'主轴不转、主轴过载、主轴报警停机时先从这里进。',usage:'主轴无法启动、主轴转速异常、过载报警时常查。',beginner:'先看有没有主轴启动指令，再看联锁、再看驱动状态。',warning:'没有解除门锁、夹紧、液压等联锁时，主轴也可能不转。',example:'M03 是否下达\n联锁是否解除\n驱动器是否报警',memory:'先指令，再联锁，再驱动。',next:'下一步建议继续看换刀与润滑。',risk:'高',source:'站内首发整理版',tags:['主轴','过载','联锁']},
+  {id:'fault-limit-switch',category:'FANUC报警',title:'限位与超程',code:'LIMIT / OT',summary:'先判断是正限位、负限位还是动作超程，再决定怎么退回。',usage:'轴走不动、超程停机、回不来时最常查。',beginner:'先别硬退，先判断当前到底卡在哪一类限位。',warning:'不知道类型就硬操作，容易越处理越乱。',example:'看画面提示\n确认方向\n用正确方式退出',memory:'先分类型，再退回。',next:'下一步建议继续看回零和1815。',risk:'高',source:'站内首发整理版',tags:['限位','超程','OT']},
+  {id:'calc-vc-rpm',category:'切削参数',title:'线速度与转速换算',code:'Vc / n',summary:'线速度、转速、刀具直径三者关系，是现场最常用换算之一。',usage:'定切削参数、查推荐转速、核对程序时常查。',beginner:'先搞清楚直径越小，同线速度下转速越高。',warning:'单位混乱是最常见问题，尤其 m/min 和 mm。',example:'Vc=120m/min\nD=50mm\nn≈764rpm',memory:'同线速度下，直径越小，转速越高。',next:'下一步建议继续看进给换算。',risk:'低',source:'站内首发整理版',tags:['线速度','转速','公式']},
+  {id:'calc-feed',category:'切削参数',title:'每转进给与每分钟进给换算',code:'f / F',summary:'车床、攻丝、普通走刀时经常会在每转进给和每分钟进给之间切换。',usage:'做参数换算、检查程序 F 值时常查。',beginner:'先分清 G94 还是 G95，再做公式。',warning:'转速变化后，每分钟进给也会跟着变化。',example:'f=0.2mm/rev\nn=600rpm\nF=120mm/min',memory:'每转乘转速，就是每分钟。',next:'下一步建议继续看 G94/G95。',risk:'低',source:'站内首发整理版',tags:['进给','每转进给','每分钟进给']},
+  {id:'calc-thread-pitch',category:'切削参数',title:'英制牙数转公制螺距',code:'TPI / Pitch',summary:'现场看英制丝锥、英制螺纹资料时，常需要快速换成公制螺距。',usage:'螺纹加工、查丝锥规格、换算牙距时常查。',beginner:'先记住 25.4 是英寸换毫米的关键。',warning:'别把 TPI 当成直接就是螺距，它是每英寸牙数。',example:'20TPI → 25.4÷20 = 1.27mm',memory:'螺距 = 25.4 ÷ TPI。',next:'下一步建议继续看 G76 和攻丝。',risk:'低',source:'站内首发整理版',tags:['TPI','螺距','英制螺纹']},
+  {id:'g76-thread',category:'G代码编程',title:'G76 螺纹循环',code:'G76',summary:'车床螺纹循环高频指令。先理解螺距、退尾、切深分配，再去背格式。',usage:'写外螺纹、内螺纹程序时高频查。',beginner:'先搞懂螺纹怎么一刀一刀吃进去，再看参数段。',warning:'参数段多，最容易照抄但不懂。',example:'按螺距、牙高、切深分配来理解，不要死记。',memory:'先懂工艺，再记格式。',next:'下一步建议继续看螺距换算和螺纹底孔。',risk:'中',source:'站内首发整理版',tags:['G76','螺纹','车床循环']},
+  {id:'drawing-symbol',category:'图纸基础',title:'图纸符号与几何公差入口',code:'图纸符号',summary:'粗糙度、尺寸标注、平面度、垂直度、同轴度这些图纸语言，不先看懂很难真正加工。',usage:'看图纸、接首件、查检验要求时常查。',beginner:'先搞懂符号在说什么，再考虑刀路和工艺。',warning:'图纸看错，后面全都白干。',example:'先看基准\n再看尺寸\n再看公差和粗糙度',memory:'先读图，再加工。',next:'下一步建议继续看量具和首件检查。',risk:'中',source:'站内首发整理版',tags:['图纸','几何公差','粗糙度']},
+  {id:'quick-measure',category:'量具速查',title:'游标卡尺 / 千分尺 / 百分表入口',code:'量具',summary:'卡尺适合快速尺寸，千分尺看高精度直径，百分表看跳动和平行度等。',usage:'测尺寸、校正工件、看装夹状态时常查。',beginner:'先分清每种量具最适合测什么。',warning:'量具会用和会读数不是一回事。',example:'外径优先千分尺\n快速长度可用卡尺\n跳动看百分表',memory:'先选对量具，再谈读数。',next:'下一步建议继续看图纸符号。',risk:'低',source:'站内首发整理版',tags:['卡尺','千分尺','百分表']}
+];
+const searchInput=document.getElementById('searchInput');
+const categorySelect=document.getElementById('categorySelect');
+const quickChips=document.getElementById('quickChips');
+const categoryChips=document.getElementById('categoryChips');
+const resultMeta=document.getElementById('resultMeta');
+const resultList=document.getElementById('resultList');
+const resetBtn=document.getElementById('resetBtn');
+const detailIds={title:'detailTitle',desc:'detailDesc',category:'detailCategory',code:'detailCode',summary:'detailSummary',beginner:'detailBeginner',usage:'detailUsage',warning:'detailWarning',example:'detailExample',memory:'detailMemory',next:'detailNext',risk:'detailRisk',source:'detailSource'};
+const quickTerms=['G02','G54','1815','回零','对刀','报警','G83','G84','螺距'];
+const categories=['全部栏目',...new Set(entries.map(e=>e.category))];
+let activeCategory='全部栏目';
+let activeEntryId='';
+function fillCategories(){categorySelect.innerHTML=categories.map(c=>`<option value="${c}">${c}</option>`).join('');categoryChips.innerHTML=categories.map(c=>`<button class="chip${c===activeCategory?' active':''}" data-category="${c}">${c}</button>`).join('');quickChips.innerHTML=quickTerms.map(t=>`<button class="chip" data-quick="${t}">${t}</button>`).join('')}
+function matches(entry,q){if(!q)return true;const hay=[entry.id,entry.category,entry.title,entry.code,entry.summary,entry.usage,entry.beginner,entry.warning,entry.example,entry.memory,entry.next,...entry.tags].join(' ').toLowerCase();return hay.includes(q.toLowerCase())}
+function render(){const q=searchInput.value.trim();const list=entries.filter(e=>(activeCategory==='全部栏目'||e.category===activeCategory)&&matches(e,q));resultMeta.textContent=`当前显示 ${list.length} 条，原始内置 ${entries.length} 条。后面还会继续扩充。`;resultList.innerHTML=list.length?list.map(e=>`<article class="result clickable${e.id===activeEntryId?' selected':''}" data-id="${e.id}"><span class="badge">${e.category}</span><div class="result-title">${e.title}</div><p>${e.summary}</p><div class="tags">${e.tags.map(tag=>`<span>${tag}</span>`).join('')}</div></article>`).join(''):`<article class="result"><div class="result-title">没有找到匹配项</div><p>可以试试：G02、1815、回零、报警、对刀、G84、螺距。</p></article>`;categoryChips.querySelectorAll('[data-category]').forEach(btn=>btn.classList.toggle('active',btn.dataset.category===activeCategory));}
+function showEntry(id){const e=entries.find(x=>x.id===id);if(!e)return;activeEntryId=id;document.getElementById(detailIds.title).textContent=e.title;document.getElementById(detailIds.desc).textContent=e.summary;document.getElementById(detailIds.category).textContent=e.category;document.getElementById(detailIds.code).textContent=e.code;document.getElementById(detailIds.summary).textContent=e.summary;document.getElementById(detailIds.beginner).textContent=e.beginner;document.getElementById(detailIds.usage).textContent=e.usage;document.getElementById(detailIds.warning).textContent=e.warning;document.getElementById(detailIds.example).textContent=e.example||'这条内容当前先展示概念版，后面继续补更完整例子。';document.getElementById(detailIds.memory).textContent=e.memory;document.getElementById(detailIds.next).textContent=e.next;document.getElementById(detailIds.risk).textContent=e.risk;document.getElementById(detailIds.source).textContent=e.source;render();document.getElementById('detail').scrollIntoView({behavior:'smooth',block:'start'})}
+function calc(type){const num=id=>Number(document.getElementById(id).value||0);if(type==='rpm'){const vc=num('vc'),d=num('diameter');document.getElementById('rpmResult').textContent=d>0?`建议转速约 ${Math.round(1000*vc/(Math.PI*d))} rpm`:'请输入有效直径';}
+if(type==='vcback'){const n=num('rpmBack'),d=num('diameterBack');document.getElementById('vcResult').textContent=d>0?`线速度约 ${(Math.PI*d*n/1000).toFixed(1)} m/min`:'请输入有效直径';}
+if(type==='feed'){document.getElementById('feedResult').textContent=`每分钟进给约 ${(num('feedPerRev')*num('feedRpm')).toFixed(3)} mm/min`;}
+if(type==='pitch'){const tpi=num('tpi');document.getElementById('pitchResult').textContent=tpi>0?`对应螺距约 ${(25.4/tpi).toFixed(3)} mm`:'请输入有效 TPI';}}
+fillCategories();render();showEntry('g02-g03-arc');
+searchInput.addEventListener('input',render);categorySelect.addEventListener('change',e=>{activeCategory=e.target.value;render()});
+categoryChips.addEventListener('click',e=>{const btn=e.target.closest('[data-category]');if(!btn)return;activeCategory=btn.dataset.category;categorySelect.value=activeCategory;render()});
+quickChips.addEventListener('click',e=>{const btn=e.target.closest('[data-quick]');if(!btn)return;searchInput.value=btn.dataset.quick;render()});
+resultList.addEventListener('click',e=>{const box=e.target.closest('[data-id]');if(box)showEntry(box.dataset.id)});
+document.querySelectorAll('.clickable[data-target]').forEach(el=>el.addEventListener('click',()=>showEntry(el.dataset.target)));
+resetBtn.addEventListener('click',()=>{searchInput.value='';activeCategory='全部栏目';categorySelect.value=activeCategory;render()});
+document.querySelectorAll('[data-calc]').forEach(btn=>btn.addEventListener('click',()=>calc(btn.dataset.calc)));
+</script>
+</body>
+</html>
