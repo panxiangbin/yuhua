@@ -156,6 +156,7 @@ const dom = {
   baseCount: document.querySelector("#base-count"),
   coreCount: document.querySelector("#core-count"),
   archiveCount: document.querySelector("#archive-count"),
+  libraryBrowser: document.querySelector("#library-browser"),
   loadCoreButton: document.querySelector("#load-core-library"),
   loadFullButton: document.querySelector("#load-full-library"),
   libraryLog: document.querySelector("#library-log")
@@ -380,6 +381,8 @@ function keywordTokens(entry) {
   const raw = [
     entry.title,
     entry.code,
+    entry.category,
+    entry.source,
     ...(entry.tags || []),
     ...(entry.aliases || [])
   ]
@@ -400,8 +403,13 @@ function getEntryImages(entry) {
   const ranked = getGalleryLibrary()
     .filter((image) => String(image.src || "").toLowerCase().endsWith(".webp"))
     .map((image) => {
-      const hay = `${image.title || ""} ${image.caption || ""} ${image.batch || ""}`.toLowerCase();
-      const score = tokens.reduce((sum, token) => (hay.includes(token) ? sum + 1 : sum), 0);
+      const hay = `${image.title || ""} ${image.caption || ""} ${image.batch || ""} ${image.src || ""}`.toLowerCase();
+      let score = tokens.reduce((sum, token) => (hay.includes(token) ? sum + 1 : sum), 0);
+      if (entry.category.includes("刀具") && hay.includes("tool")) score += 2;
+      if (entry.category.includes("工艺") && (hay.includes("process") || hay.includes("milling") || hay.includes("turning"))) score += 2;
+      if (entry.category.includes("图纸") && (hay.includes("drawing") || hay.includes("gdt") || hay.includes("measure"))) score += 2;
+      if (entry.category.includes("报警") && hay.includes("alarm")) score += 2;
+      if (entry.category.includes("案例") && hay.includes("case")) score += 2;
       return { image, score };
     })
     .filter((item) => item.score > 0)
@@ -982,6 +990,46 @@ function renderLibraryStats() {
       : "知识库待加载";
 }
 
+function renderLibraryBrowser() {
+  if (!dom.libraryBrowser) return;
+  const categoryMap = new Map();
+  state.entries.forEach((entry) => {
+    const key = entry.category || "未分类";
+    if (!categoryMap.has(key)) categoryMap.set(key, []);
+    categoryMap.get(key).push(entry);
+  });
+
+  const groups = [...categoryMap.entries()]
+    .sort((a, b) => b[1].length - a[1].length)
+    .slice(0, 18);
+
+  dom.libraryBrowser.innerHTML = groups.map(([category, entries]) => `
+    <article class="library-browser-group">
+      <h4>${escapeHtml(category)}</h4>
+      <p>当前已并入 ${entries.length} 条。可以直接按这组分类进入工作区继续看。</p>
+      <div class="library-browser-links">
+        <button type="button" data-library-category="${escapeHtml(category)}">进入这组</button>
+        ${entries.slice(0, 3).map((entry) => `<button type="button" data-library-entry="${escapeHtml(entry.id)}">${escapeHtml(entry.title)}</button>`).join("")}
+      </div>
+    </article>
+  `).join("");
+
+  dom.libraryBrowser.querySelectorAll("[data-library-category]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.selectedCategory = button.dataset.libraryCategory || "全部栏目";
+      state.activeFilter = "all";
+      navigate("workspace");
+    });
+  });
+
+  dom.libraryBrowser.querySelectorAll("[data-library-entry]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.selectedId = button.dataset.libraryEntry;
+      navigate("workspace");
+    });
+  });
+}
+
 function renderAll() {
   state.entries = collectSources();
   state.baseEntries = [
@@ -999,6 +1047,7 @@ function renderAll() {
   renderDashboardGallery();
   renderProgressLinks();
   renderLibraryStats();
+  renderLibraryBrowser();
   renderAccessCenter();
 }
 
