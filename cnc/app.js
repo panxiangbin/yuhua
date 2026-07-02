@@ -82,6 +82,7 @@ const state = {
   activeFilter: "all",
   selectedCategory: "全部栏目",
   keyword: "",
+  workspaceMode: "list",
   selectedId: null,
   favorites: [],
   recents: [],
@@ -122,6 +123,7 @@ const dom = {
   categorySelect: document.querySelector("#category-select"),
   presetChipRow: document.querySelector("#preset-chip-row"),
   knowledgeChipRow: document.querySelector("#knowledge-chip-row"),
+  workspaceModeRow: document.querySelector("#workspace-mode-row"),
   searchInput: document.querySelector("#search-input"),
   searchMeta: document.querySelector("#search-meta"),
   resultList: document.querySelector("#result-list"),
@@ -668,6 +670,13 @@ function renderKnowledgeChips() {
     .join("");
 }
 
+function renderWorkspaceModes() {
+  if (!dom.workspaceModeRow) return;
+  dom.workspaceModeRow.querySelectorAll("[data-workspace-mode]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.workspaceMode === state.workspaceMode);
+  });
+}
+
 function renderHeroMetrics() {
   const total = state.entries.length;
   const withImages = Object.keys(window.CNC_FEATURED_IMAGES || {}).length;
@@ -710,6 +719,7 @@ function renderWorkspace() {
 
   dom.workspaceStatus.textContent = archiveNote;
   dom.searchMeta.textContent = `当前命中 ${filtered.length} 条，模块为：${activeFilterLabel}；栏目为：${categoryLabel}。基础条目 ${state.baseEntries.length} 条，扩展知识条目 ${state.archiveEntries.length} 条。`;
+  dom.resultList.classList.toggle("visual-mode", state.workspaceMode === "visual");
 
   if (filtered.length && !filtered.some((entry) => entry.id === state.selectedId)) {
     state.selectedId = filtered[0].id;
@@ -751,6 +761,7 @@ function renderWorkspace() {
   renderDetail();
   renderPresetChips();
   renderKnowledgeChips();
+  renderWorkspaceModes();
   dom.categorySelect.value = state.selectedCategory;
 }
 
@@ -1174,6 +1185,13 @@ function bindWorkspaceEvents() {
     state.keyword = button.dataset.quickTerm;
     dom.searchInput.value = state.keyword;
     state.selectedCategory = "全部栏目";
+    renderWorkspace();
+  });
+
+  dom.workspaceModeRow?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-workspace-mode]");
+    if (!button) return;
+    state.workspaceMode = button.dataset.workspaceMode || "list";
     renderWorkspace();
   });
 

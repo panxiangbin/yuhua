@@ -565,6 +565,13 @@ button:disabled {
   margin-top: 12px;
 }
 
+.view-mode-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
 .chip {
   border-radius: 999px;
   padding: 8px 12px;
@@ -635,6 +642,23 @@ button:disabled {
 .result-card.selected {
   border-color: rgba(207, 109, 54, 0.34);
   box-shadow: inset 0 0 0 1px rgba(207, 109, 54, 0.18);
+}
+
+.result-list.visual-mode {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.result-list.visual-mode .result-card {
+  padding: 12px;
+}
+
+.result-list.visual-mode .result-card.has-thumb {
+  grid-template-columns: 1fr;
+}
+
+.result-list.visual-mode .result-thumb {
+  width: 100%;
+  height: 180px;
 }
 
 .result-top {
@@ -977,6 +1001,10 @@ button:disabled {
 
   .gallery-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .result-list.visual-mode {
+    grid-template-columns: 1fr;
   }
 }
 
