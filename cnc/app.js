@@ -82,7 +82,8 @@ const state = {
   activeFilter: "all",
   selectedCategory: "全部栏目",
   keyword: "",
-  workspaceMode: "list",
+  workspaceMode: "visual",
+  onlyWithImages: false,
   selectedId: null,
   favorites: [],
   recents: [],
@@ -527,6 +528,7 @@ function getFilteredEntries() {
   return state.entries
     .filter((entry) => filterKeyMatches(entry, state.activeFilter))
     .filter((entry) => state.selectedCategory === "全部栏目" || entry.category === state.selectedCategory)
+    .filter((entry) => !state.onlyWithImages || getEntryImages(entry).length > 0)
     .filter((entry) => matchesKeyword(entry, keyword))
     .sort((a, b) => scoreEntry(b, keyword) - scoreEntry(a, keyword));
 }
@@ -682,6 +684,10 @@ function renderWorkspaceModes() {
   if (!dom.workspaceModeRow) return;
   dom.workspaceModeRow.querySelectorAll("[data-workspace-mode]").forEach((button) => {
     button.classList.toggle("active", button.dataset.workspaceMode === state.workspaceMode);
+  });
+  dom.workspaceModeRow.querySelectorAll("[data-workspace-flag]").forEach((button) => {
+    const active = button.dataset.workspaceFlag === "with-images" && state.onlyWithImages;
+    button.classList.toggle("active", active);
   });
 }
 
@@ -1239,9 +1245,18 @@ function bindWorkspaceEvents() {
 
   dom.workspaceModeRow?.addEventListener("click", (event) => {
     const button = event.target.closest("[data-workspace-mode]");
-    if (!button) return;
-    state.workspaceMode = button.dataset.workspaceMode || "list";
-    renderWorkspace();
+    if (button) {
+      state.workspaceMode = button.dataset.workspaceMode || "list";
+      renderWorkspace();
+      return;
+    }
+
+    const flagButton = event.target.closest("[data-workspace-flag]");
+    if (!flagButton) return;
+    if (flagButton.dataset.workspaceFlag === "with-images") {
+      state.onlyWithImages = !state.onlyWithImages;
+      renderWorkspace();
+    }
   });
 
   dom.favoriteToggle.addEventListener("click", toggleFavorite);
