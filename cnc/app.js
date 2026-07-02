@@ -921,6 +921,9 @@ async function bootstrap() {
   calculatePitch();
   calculateDiameter();
   await initAccess();
+  if (state.accessGranted && !state.coreLoaded) {
+    await loadKnowledgeCore();
+  }
 }
 
 bootstrap();
