@@ -283,6 +283,9 @@ select:focus {
 .tree-parent {
   background: rgba(207, 109, 54, 0.08);
   font-weight: 700;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .tree-parent.active,
@@ -295,6 +298,33 @@ select:focus {
 .tree-item {
   margin-top: 4px;
   padding-left: 18px;
+}
+
+.tree-item-standalone {
+  padding-left: 14px;
+}
+
+.tree-children {
+  margin-top: 6px;
+  display: none;
+}
+
+.tree-children.open {
+  display: block;
+}
+
+.tree-caret {
+  font-size: 14px;
+  color: var(--muted);
+  transition: transform 160ms ease;
+}
+
+.tree-parent[aria-expanded="true"] .tree-caret {
+  transform: rotate(0deg);
+}
+
+.tree-parent[aria-expanded="false"] .tree-caret {
+  transform: rotate(-90deg);
 }
 
 button:disabled {

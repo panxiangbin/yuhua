@@ -53,31 +53,51 @@
 
       <nav class="tree-nav" id="tree-nav">
         <section class="tree-group">
-          <button class="tree-parent" data-route="dashboard" type="button">总览面板</button>
+          <button class="tree-item tree-item-standalone" data-route="dashboard" type="button">总览面板</button>
         </section>
 
-        <section class="tree-group">
-          <button class="tree-parent" data-route="study" type="button">新手路线</button>
+        <section class="tree-group" data-tree-group="study">
+          <button class="tree-parent" data-tree-toggle="study" type="button">
+            <span>新手路线</span>
+            <span class="tree-caret">▾</span>
+          </button>
+          <div class="tree-children open" data-tree-panel="study">
+            <button class="tree-item" data-route="study" type="button">路线总览</button>
+            <button class="tree-item" data-entry-id="learn-coordinate-system" type="button">先学坐标与回零</button>
+            <button class="tree-item" data-entry-id="g02-g03-arc" type="button">先学 G00 G01 G02</button>
+            <button class="tree-item" data-entry-id="fanuc-alarm-common" type="button">再学报警排查</button>
+            <button class="tree-item" data-entry-id="calc-vc-rpm" type="button">最后学参数换算</button>
+          </div>
         </section>
 
-        <section class="tree-group">
-          <div class="tree-label">快速查询</div>
-          <button class="tree-item" data-route="workspace" data-filter="all" type="button">全部条目</button>
-          <button class="tree-item" data-route="workspace" data-filter="gcode" type="button">G代码 / M代码</button>
-          <button class="tree-item" data-route="workspace" data-filter="params" type="button">参数 / 报警 / 故障</button>
-          <button class="tree-item" data-route="workspace" data-filter="operation" type="button">机床操作 / 回零 / 对刀</button>
-          <button class="tree-item" data-route="workspace" data-filter="tooling" type="button">刀具 / 工艺 / 材料</button>
-          <button class="tree-item" data-route="workspace" data-filter="drawing" type="button">图纸 / 量具 / 质量</button>
-          <button class="tree-item" data-route="workspace" data-filter="cases" type="button">案例 / 实战</button>
+        <section class="tree-group" data-tree-group="workspace">
+          <button class="tree-parent" data-tree-toggle="workspace" type="button">
+            <span>快速查询目录</span>
+            <span class="tree-caret">▾</span>
+          </button>
+          <div class="tree-children open" data-tree-panel="workspace">
+            <button class="tree-item" data-route="workspace" data-filter="all" type="button">全部条目</button>
+            <button class="tree-item" data-route="workspace" data-filter="gcode" type="button">G代码 / M代码</button>
+            <button class="tree-item" data-route="workspace" data-filter="params" type="button">参数 / 报警 / 故障</button>
+            <button class="tree-item" data-route="workspace" data-filter="operation" type="button">机床操作 / 回零 / 对刀</button>
+            <button class="tree-item" data-route="workspace" data-filter="tooling" type="button">刀具 / 工艺 / 材料</button>
+            <button class="tree-item" data-route="workspace" data-filter="drawing" type="button">图纸 / 量具 / 质量</button>
+            <button class="tree-item" data-route="workspace" data-filter="cases" type="button">案例 / 实战</button>
+          </div>
         </section>
 
-        <section class="tree-group">
-          <div class="tree-label">软件功能</div>
-          <button class="tree-item" data-route="gallery" type="button">Gemini 图片图卡</button>
-          <button class="tree-item" data-route="calculator" type="button">参数换算工具</button>
-          <button class="tree-item" data-route="library" type="button">本地知识库并入</button>
-          <button class="tree-item" data-route="favorites" type="button">最近查看 / 收藏</button>
-          <button class="tree-item" data-route="access" type="button">访问控制</button>
+        <section class="tree-group" data-tree-group="tools">
+          <button class="tree-parent" data-tree-toggle="tools" type="button">
+            <span>软件功能</span>
+            <span class="tree-caret">▾</span>
+          </button>
+          <div class="tree-children open" data-tree-panel="tools">
+            <button class="tree-item" data-route="gallery" type="button">Gemini 图片图卡</button>
+            <button class="tree-item" data-route="calculator" type="button">参数换算工具</button>
+            <button class="tree-item" data-route="library" type="button">本地知识库并入</button>
+            <button class="tree-item" data-route="favorites" type="button">最近查看 / 收藏</button>
+            <button class="tree-item" data-route="access" type="button">访问控制</button>
+          </div>
         </section>
       </nav>
     </aside>

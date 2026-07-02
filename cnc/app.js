@@ -89,6 +89,11 @@ const state = {
   accessProfileLabel: "",
   loadedScripts: new Set(),
   loadedContentChunks: new Set(),
+  treeOpen: {
+    study: true,
+    workspace: true,
+    tools: true
+  },
   coreLoaded: false,
   fullLocalLoaded: false,
   libraryLogs: []
@@ -570,6 +575,27 @@ function stepVisibleEntry(direction) {
   renderWorkspace();
 }
 
+function syncTreeState() {
+  document.querySelectorAll("[data-tree-panel]").forEach((panel) => {
+    const key = panel.dataset.treePanel;
+    const open = !!state.treeOpen[key];
+    panel.classList.toggle("open", open);
+  });
+
+  document.querySelectorAll("[data-tree-toggle]").forEach((button) => {
+    const key = button.dataset.treeToggle;
+    button.setAttribute("aria-expanded", state.treeOpen[key] ? "true" : "false");
+  });
+}
+
+function openTreeGroupForView(view) {
+  if (view === "study") state.treeOpen.study = true;
+  if (view === "workspace") state.treeOpen.workspace = true;
+  if (["gallery", "calculator", "library", "favorites", "access"].includes(view)) {
+    state.treeOpen.tools = true;
+  }
+}
+
 function navigate(view, options = {}) {
   state.activeView = view;
   if (options.filter) {
@@ -580,6 +606,9 @@ function navigate(view, options = {}) {
     state.keyword = options.keyword;
     state.selectedCategory = "全部栏目";
   }
+
+  openTreeGroupForView(view);
+  syncTreeState();
 
   document.querySelectorAll(".view").forEach((node) => {
     node.classList.toggle("active", node.id === `view-${view}`);
@@ -1157,6 +1186,16 @@ function bindSidebarEvents() {
   dom.sidebarMask.addEventListener("click", closeSidebar);
 }
 
+function bindTreeEvents() {
+  document.querySelectorAll("[data-tree-toggle]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const key = button.dataset.treeToggle;
+      state.treeOpen[key] = !state.treeOpen[key];
+      syncTreeState();
+    });
+  });
+}
+
 function bindLibraryEvents() {
   dom.loadCoreButton.addEventListener("click", loadKnowledgeCore);
   dom.loadFullButton.addEventListener("click", loadFullLocalArchive);
@@ -1235,11 +1274,13 @@ async function bootstrap() {
   bindRouteButtons();
   bindWorkspaceEvents();
   bindSidebarEvents();
+  bindTreeEvents();
   bindLibraryEvents();
   bindDetailEvents();
   bindAccessEvents();
   bindCalculators();
 
+  syncTreeState();
   renderLibraryLog();
   renderAll();
   navigate(state.activeView);
