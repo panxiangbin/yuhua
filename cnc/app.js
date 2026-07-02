@@ -36,6 +36,17 @@ const KNOWLEDGE_SOURCES = [
   { id: "knowledge-core-03", src: "./knowledge-core-03.js", label: "核心包 03" }
 ];
 
+const FULL_ARCHIVE_SOURCES = [
+  { id: "knowledge-full-01", src: "./knowledge-full-01.js", label: "完整索引 01" },
+  { id: "knowledge-full-02", src: "./knowledge-full-02.js", label: "完整索引 02" },
+  { id: "knowledge-full-03", src: "./knowledge-full-03.js", label: "完整索引 03" },
+  { id: "knowledge-full-04", src: "./knowledge-full-04.js", label: "完整索引 04" },
+  { id: "knowledge-full-05", src: "./knowledge-full-05.js", label: "完整索引 05" },
+  { id: "knowledge-full-06", src: "./knowledge-full-06.js", label: "完整索引 06" },
+  { id: "knowledge-full-07", src: "./knowledge-full-07.js", label: "完整索引 07" },
+  { id: "knowledge-full-08", src: "./knowledge-full-08.js", label: "完整索引 08" }
+];
+
 const state = {
   entries: [],
   baseEntries: [],
@@ -158,6 +169,14 @@ function collectSources() {
     ...safeArray(window.CNC_KB_CORE_CHUNK_01),
     ...safeArray(window.CNC_KB_CORE_CHUNK_02),
     ...safeArray(window.CNC_KB_CORE_CHUNK_03),
+    ...safeArray(window.CNC_KB_FULL_CHUNK_01),
+    ...safeArray(window.CNC_KB_FULL_CHUNK_02),
+    ...safeArray(window.CNC_KB_FULL_CHUNK_03),
+    ...safeArray(window.CNC_KB_FULL_CHUNK_04),
+    ...safeArray(window.CNC_KB_FULL_CHUNK_05),
+    ...safeArray(window.CNC_KB_FULL_CHUNK_06),
+    ...safeArray(window.CNC_KB_FULL_CHUNK_07),
+    ...safeArray(window.CNC_KB_FULL_CHUNK_08),
     ...safeArray(window.CNC_KB_README_INDEX)
   ];
 
@@ -925,6 +944,78 @@ function bindAccessEvents() {
       ? "授权成功，已经进入资料区。"
       : "邀请码不对。你可以换一个邀请码或通过私密链接进入。";
   });
+}
+
+function collectSources() {
+  const merged = [
+    ...safeArray(window.CNC_DATA),
+    ...safeArray(window.CNC_KB_EXTRA),
+    ...safeArray(window.CNC_KB_CORE_CHUNK_01),
+    ...safeArray(window.CNC_KB_CORE_CHUNK_02),
+    ...safeArray(window.CNC_KB_CORE_CHUNK_03),
+    ...safeArray(window.CNC_KB_FULL_CHUNK_01),
+    ...safeArray(window.CNC_KB_FULL_CHUNK_02),
+    ...safeArray(window.CNC_KB_FULL_CHUNK_03),
+    ...safeArray(window.CNC_KB_FULL_CHUNK_04),
+    ...safeArray(window.CNC_KB_FULL_CHUNK_05),
+    ...safeArray(window.CNC_KB_FULL_CHUNK_06),
+    ...safeArray(window.CNC_KB_FULL_CHUNK_07),
+    ...safeArray(window.CNC_KB_FULL_CHUNK_08),
+    ...safeArray(window.CNC_KB_README_INDEX)
+  ];
+
+  const map = new Map();
+  merged.forEach((entry) => {
+    if (!entry || !entry.id) return;
+    map.set(entry.id, normalizeEntry(entry));
+  });
+  return [...map.values()];
+}
+
+async function loadFullLocalArchive() {
+  if (state.fullLocalLoaded) {
+    logLibrary("完整本地索引已经加载过。");
+    navigate("library");
+    return;
+  }
+
+  const fullArchiveSources = [
+    { id: "knowledge-full-01", src: "./knowledge-full-01.js" },
+    { id: "knowledge-full-02", src: "./knowledge-full-02.js" },
+    { id: "knowledge-full-03", src: "./knowledge-full-03.js" },
+    { id: "knowledge-full-04", src: "./knowledge-full-04.js" },
+    { id: "knowledge-full-05", src: "./knowledge-full-05.js" },
+    { id: "knowledge-full-06", src: "./knowledge-full-06.js" },
+    { id: "knowledge-full-07", src: "./knowledge-full-07.js" },
+    { id: "knowledge-full-08", src: "./knowledge-full-08.js" }
+  ];
+
+  const results = [];
+  for (const item of fullArchiveSources) {
+    const ok = await ensureScript(item.id, item.src);
+    results.push({ ...item, ok });
+  }
+
+  const loadedCount = results.filter((item) => item.ok).length;
+  const fullArchiveCount =
+    safeArray(window.CNC_KB_FULL_CHUNK_01).length +
+    safeArray(window.CNC_KB_FULL_CHUNK_02).length +
+    safeArray(window.CNC_KB_FULL_CHUNK_03).length +
+    safeArray(window.CNC_KB_FULL_CHUNK_04).length +
+    safeArray(window.CNC_KB_FULL_CHUNK_05).length +
+    safeArray(window.CNC_KB_FULL_CHUNK_06).length +
+    safeArray(window.CNC_KB_FULL_CHUNK_07).length +
+    safeArray(window.CNC_KB_FULL_CHUNK_08).length;
+
+  if (loadedCount && fullArchiveCount) {
+    state.fullLocalLoaded = true;
+    logLibrary(`完整本地索引分包已接入 ${fullArchiveCount} 条入口。`);
+  } else {
+    logLibrary("完整本地索引分包还没全部到位，当前先使用基础条目和核心包。");
+  }
+
+  renderAll();
+  navigate("library");
 }
 
 async function bootstrap() {
