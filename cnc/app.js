@@ -124,6 +124,8 @@ const dom = {
   detailTitle: document.querySelector("#detail-title"),
   detailCategory: document.querySelector("#detail-category"),
   detailCode: document.querySelector("#detail-code"),
+  detailPrev: document.querySelector("#detail-prev"),
+  detailNextButton: document.querySelector("#detail-next-button"),
   detailSummary: document.querySelector("#detail-summary"),
   detailBeginner: document.querySelector("#detail-beginner"),
   detailUsage: document.querySelector("#detail-usage"),
@@ -555,6 +557,19 @@ function findRelated(entry) {
     .map((item) => item.item);
 }
 
+function getVisibleEntries() {
+  return getFilteredEntries();
+}
+
+function stepVisibleEntry(direction) {
+  const visible = getVisibleEntries();
+  if (!visible.length) return;
+  const currentIndex = Math.max(0, visible.findIndex((entry) => entry.id === state.selectedId));
+  const targetIndex = Math.min(visible.length - 1, Math.max(0, currentIndex + direction));
+  state.selectedId = visible[targetIndex].id;
+  renderWorkspace();
+}
+
 function navigate(view, options = {}) {
   state.activeView = view;
   if (options.filter) {
@@ -729,6 +744,8 @@ function renderDetail() {
     dom.detailNext.textContent = "学完这一条，再进入和它最相关的下一组内容。";
     dom.detailPreviewStatus.textContent = "当前先显示结构化速查内容。打开大型知识库条目后，这里会继续并入原文摘录。";
     dom.detailPreview.textContent = "还没有加载原文摘录。";
+    if (dom.detailPrev) dom.detailPrev.disabled = true;
+    if (dom.detailNextButton) dom.detailNextButton.disabled = true;
     dom.detailRisk.textContent = "未选择";
     dom.detailSource.textContent = "等待选择";
     dom.detailImageCard.hidden = true;
@@ -750,6 +767,11 @@ function renderDetail() {
   dom.detailPreview.textContent = "正在检查这条知识点有没有可直接并入的原文摘录……";
   dom.detailRisk.textContent = entry.risk;
   dom.detailSource.textContent = entry.source;
+
+  const visible = getVisibleEntries();
+  const currentIndex = visible.findIndex((item) => item.id === entry.id);
+  if (dom.detailPrev) dom.detailPrev.disabled = currentIndex <= 0;
+  if (dom.detailNextButton) dom.detailNextButton.disabled = currentIndex === -1 || currentIndex >= visible.length - 1;
 
   const images = getEntryImages(entry);
   if (images.length) {
@@ -1141,11 +1163,20 @@ function bindLibraryEvents() {
 }
 
 function bindDetailEvents() {
-  if (!dom.loadPreviewButton) return;
-  dom.loadPreviewButton.addEventListener("click", async () => {
-    const entry = state.entries.find((item) => item.id === state.selectedId);
-    await loadDetailPreview(entry);
-  });
+  if (dom.loadPreviewButton) {
+    dom.loadPreviewButton.addEventListener("click", async () => {
+      const entry = state.entries.find((item) => item.id === state.selectedId);
+      await loadDetailPreview(entry);
+    });
+  }
+
+  if (dom.detailPrev) {
+    dom.detailPrev.addEventListener("click", () => stepVisibleEntry(-1));
+  }
+
+  if (dom.detailNextButton) {
+    dom.detailNextButton.addEventListener("click", () => stepVisibleEntry(1));
+  }
 }
 
 function bindAccessEvents() {
@@ -1211,6 +1242,7 @@ async function bootstrap() {
 
   renderLibraryLog();
   renderAll();
+  navigate(state.activeView);
   renderProgressLinks();
   calculateRpm();
   calculateVc();

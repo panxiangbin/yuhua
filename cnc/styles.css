@@ -297,6 +297,11 @@ select:focus {
   padding-left: 18px;
 }
 
+button:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+}
+
 .sidebar-mask {
   position: fixed;
   inset: 0;
