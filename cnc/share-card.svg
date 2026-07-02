@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#efe3d1"/>
+      <stop offset="100%" stop-color="#f8f2e9"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#cc6430"/>
+      <stop offset="100%" stop-color="#dd8a36"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect x="54" y="54" width="1092" height="522" rx="42" fill="#fff8ed" stroke="#d8c7ae" stroke-width="3"/>
+  <rect x="88" y="90" width="216" height="42" rx="21" fill="url(#accent)"/>
+  <text x="116" y="119" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="24" font-weight="700" fill="#fff8f1">BEGINNER FIRST CNC</text>
+  <text x="88" y="228" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="64" font-weight="700" fill="#1f2b25">数控新手学习助手</text>
+  <text x="88" y="300" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="30" fill="#5d655f">参数速查 · G代码 · 报警排查 · 换算工具 · 图解提示词</text>
+  <g transform="translate(88 360)">
+    <rect width="200" height="84" rx="20" fill="#2f6b58"/>
+    <rect x="222" width="200" height="84" rx="20" fill="#e9dbc7"/>
+    <rect x="444" width="200" height="84" rx="20" fill="#e9dbc7"/>
+    <rect x="666" width="200" height="84" rx="20" fill="#e9dbc7"/>
+    <text x="28" y="33" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="24" font-weight="700" fill="#f5fbf6">手机优先</text>
+    <text x="250" y="33" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="24" font-weight="700" fill="#1f2b25">学习路线</text>
+    <text x="472" y="33" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="24" font-weight="700" fill="#1f2b25">快速搜索</text>
+    <text x="694" y="33" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="24" font-weight="700" fill="#1f2b25">参数换算</text>
+    <text x="28" y="60" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="18" fill="#f5fbf6">适合新手边学边查</text>
+    <text x="250" y="60" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="18" fill="#5d655f">从坐标、代码开始</text>
+    <text x="472" y="60" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="18" fill="#5d655f">参数号 / 关键词 / G码</text>
+    <text x="694" y="60" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="18" fill="#5d655f">线速、转速、进给</text>
+  </g>
+</svg>

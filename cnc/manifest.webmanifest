@@ -1,0 +1,24 @@
+{
+  "name": "数控新手学习助手",
+  "short_name": "数控学习助手",
+  "description": "适合数控新手在手机上学习代码、参数、报警、工艺和换算的轻量网页应用。",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f6f0e5",
+  "theme_color": "#cc6430",
+  "lang": "zh-CN",
+  "icons": [
+    {
+      "src": "./icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
