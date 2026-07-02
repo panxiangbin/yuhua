@@ -446,6 +446,13 @@ select:focus {
   font-size: 20px;
 }
 
+.detail-card-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+}
+
 .route-step {
   display: inline-flex;
   border-radius: 999px;
@@ -563,6 +570,33 @@ select:focus {
   padding: 14px;
 }
 
+.result-card.has-thumb {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+
+.result-thumb {
+  width: 88px;
+  height: 88px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: rgba(226, 219, 204, 0.45);
+  border: 1px solid rgba(29, 38, 34, 0.08);
+}
+
+.result-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.result-main {
+  min-width: 0;
+}
+
 .result-card.selected {
   border-color: rgba(207, 109, 54, 0.34);
   box-shadow: inset 0 0 0 1px rgba(207, 109, 54, 0.18);
@@ -668,6 +702,17 @@ select:focus {
   background: rgba(29, 38, 34, 0.05);
   border-radius: 14px;
   padding: 12px;
+}
+
+.detail-preview-status {
+  margin: 10px 0 0;
+  color: var(--muted);
+}
+
+#detail-preview {
+  max-height: 340px;
+  overflow: auto;
+  line-height: 1.75;
 }
 
 .detail-image-card {
@@ -990,8 +1035,18 @@ select:focus {
 
   .detail-header,
   .detail-image-head,
+  .detail-card-head,
   .section-head {
     flex-direction: column;
     align-items: start;
+  }
+
+  .result-card.has-thumb {
+    grid-template-columns: 1fr;
+  }
+
+  .result-thumb {
+    width: 100%;
+    height: 150px;
   }
 }

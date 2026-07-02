@@ -72,11 +72,13 @@ const FULL_ARCHIVE_SOURCES = [
   { id: "knowledge-full-08", src: "./knowledge-full-08.js", label: "完整索引 08" }
 ];
 
+const KB_CONTENT_CHUNK_URL = (chunkNo) => `./kb-content-${String(chunkNo).padStart(2, "0")}.js`;
+
 const state = {
   entries: [],
   baseEntries: [],
   archiveEntries: [],
-  activeView: "dashboard",
+  activeView: "workspace",
   activeFilter: "all",
   selectedCategory: "全部栏目",
   keyword: "",
@@ -86,6 +88,7 @@ const state = {
   accessGranted: false,
   accessProfileLabel: "",
   loadedScripts: new Set(),
+  loadedContentChunks: new Set(),
   coreLoaded: false,
   fullLocalLoaded: false,
   libraryLogs: []
@@ -127,6 +130,9 @@ const dom = {
   detailWarning: document.querySelector("#detail-warning"),
   detailExample: document.querySelector("#detail-example"),
   detailNext: document.querySelector("#detail-next"),
+  detailPreviewStatus: document.querySelector("#detail-preview-status"),
+  detailPreview: document.querySelector("#detail-preview"),
+  loadPreviewButton: document.querySelector("#load-preview-button"),
   detailRisk: document.querySelector("#detail-risk"),
   detailSource: document.querySelector("#detail-source"),
   detailImageCard: document.querySelector("#detail-image-card"),
@@ -357,6 +363,93 @@ function getGalleryLibrary() {
   return Array.isArray(window.CNC_GALLERY_LIBRARY) ? window.CNC_GALLERY_LIBRARY : [];
 }
 
+function getContentManifest() {
+  return window.CNC_KB_CONTENT_MANIFEST || { entryToChunk: {} };
+}
+
+function keywordTokens(entry) {
+  const raw = [
+    entry.title,
+    entry.code,
+    ...(entry.tags || []),
+    ...(entry.aliases || [])
+  ]
+    .join(" ")
+    .toLowerCase()
+    .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, " ");
+
+  return [...new Set(raw.split(/\s+/).filter((item) => item && item.length >= 2))];
+}
+
+function getEntryImages(entry) {
+  const direct = getFeaturedImages(entry.id);
+  if (direct.length) return direct;
+
+  const tokens = keywordTokens(entry);
+  if (!tokens.length) return [];
+
+  const ranked = getGalleryLibrary()
+    .filter((image) => String(image.src || "").toLowerCase().endsWith(".webp"))
+    .map((image) => {
+      const hay = `${image.title || ""} ${image.caption || ""} ${image.batch || ""}`.toLowerCase();
+      const score = tokens.reduce((sum, token) => (hay.includes(token) ? sum + 1 : sum), 0);
+      return { image, score };
+    })
+    .filter((item) => item.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3)
+    .map((item) => ({
+      src: item.image.src,
+      title: item.image.title || entry.title,
+      caption: item.image.caption || "图库图片已自动匹配到当前知识点。"
+    }));
+
+  return ranked;
+}
+
+async function ensureContentChunk(chunkNo) {
+  const scriptId = `kb-content-${String(chunkNo).padStart(2, "0")}`;
+  if (state.loadedContentChunks.has(scriptId)) return true;
+  const ok = await ensureScript(scriptId, KB_CONTENT_CHUNK_URL(chunkNo));
+  if (ok) state.loadedContentChunks.add(scriptId);
+  return ok;
+}
+
+async function loadDetailPreview(entry) {
+  if (!entry || !dom.detailPreview || !dom.detailPreviewStatus) return;
+
+  const builtIn = entry.contentPreview || entry.preview || "";
+  if (builtIn) {
+    dom.detailPreview.textContent = builtIn;
+    dom.detailPreviewStatus.textContent = "当前正在显示并入网页的正文摘录。";
+    return;
+  }
+
+  const manifest = getContentManifest();
+  const chunkNo = manifest.entryToChunk?.[entry.id];
+  if (!chunkNo) {
+    dom.detailPreview.textContent = "这个条目当前还没有并入原文摘录，先看上面的结构化速查内容。";
+    dom.detailPreviewStatus.textContent = "后续还会继续补更多正文内容。";
+    return;
+  }
+
+  dom.detailPreview.textContent = "正在加载这条知识点的原文摘录……";
+  dom.detailPreviewStatus.textContent = "这部分内容来自本地知识库原文整理。";
+
+  const ok = await ensureContentChunk(chunkNo);
+  const chunkKey = `CNC_KB_CONTENT_${String(chunkNo).padStart(2, "0")}`;
+  const payload = ok ? window[chunkKey] || {} : {};
+  const content = payload[entry.id];
+
+  if (content) {
+    dom.detailPreview.textContent = content;
+    dom.detailPreviewStatus.textContent = "已并入当前知识点的原文摘录。";
+  } else {
+    dom.detailPreview.textContent = "这条知识点对应的原文摘录暂时还没取到，先看上面的结构化速查内容。";
+    dom.detailPreviewStatus.textContent = "当前条目原文未命中，后续继续补齐。";
+  }
+}
+
 function getEntryText(entry) {
   return [
     entry.id,
@@ -579,21 +672,27 @@ function renderWorkspace() {
   }
 
   dom.resultList.innerHTML = filtered.length
-    ? filtered.slice(0, 120).map((entry) => `
-      <article class="result-card${entry.id === state.selectedId ? " selected" : ""}">
-        <div class="result-top">
-          <div class="result-badges">
-            <span class="badge">${escapeHtml(entry.category)}</span>
-            <span class="badge level">${escapeHtml(levelLabel(entry))}</span>
+    ? filtered.slice(0, 120).map((entry) => {
+      const thumb = getEntryImages(entry)[0];
+      return `
+      <article class="result-card${entry.id === state.selectedId ? " selected" : ""}${thumb ? " has-thumb" : ""}">
+        ${thumb ? `<div class="result-thumb"><img src="${thumb.src}" alt="${escapeHtml(thumb.title || entry.title)}" loading="lazy"></div>` : ""}
+        <div class="result-main">
+          <div class="result-top">
+            <div class="result-badges">
+              <span class="badge">${escapeHtml(entry.category)}</span>
+              <span class="badge level">${escapeHtml(levelLabel(entry))}</span>
+            </div>
+            <strong>${escapeHtml(entry.code)}</strong>
           </div>
-          <strong>${escapeHtml(entry.code)}</strong>
+          <h4>${escapeHtml(entry.title)}</h4>
+          <p>${escapeHtml(entry.summary)}</p>
+          <div class="result-tags">${entry.tags.slice(0, 6).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>
+          <button class="result-button" data-open-entry="${escapeHtml(entry.id)}" type="button">查看详情</button>
         </div>
-        <h4>${escapeHtml(entry.title)}</h4>
-        <p>${escapeHtml(entry.summary)}</p>
-        <div class="result-tags">${entry.tags.slice(0, 6).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>
-        <button class="result-button" data-open-entry="${escapeHtml(entry.id)}" type="button">查看详情</button>
       </article>
-    `).join("")
+    `;
+    }).join("")
     : `<article class="result-card"><h4>没有找到匹配项</h4><p>可以试试搜：G02、1815、回零、对刀、报警、G84、螺距。</p></article>`;
 
   dom.resultList.querySelectorAll("[data-open-entry]").forEach((button) => {
@@ -628,6 +727,8 @@ function renderDetail() {
     dom.detailWarning.textContent = "很多问题不是不会查，而是查到之后不知道怎么判断风险。";
     dom.detailExample.textContent = "先从简单直线、圆弧、对刀、回零这些主题开始。";
     dom.detailNext.textContent = "学完这一条，再进入和它最相关的下一组内容。";
+    dom.detailPreviewStatus.textContent = "当前先显示结构化速查内容。打开大型知识库条目后，这里会继续并入原文摘录。";
+    dom.detailPreview.textContent = "还没有加载原文摘录。";
     dom.detailRisk.textContent = "未选择";
     dom.detailSource.textContent = "等待选择";
     dom.detailImageCard.hidden = true;
@@ -645,14 +746,18 @@ function renderDetail() {
   dom.detailWarning.textContent = entry.warning;
   dom.detailExample.textContent = entry.example || inferExample(entry);
   dom.detailNext.textContent = entry.nextLearn || inferNextLearn(entry);
+  dom.detailPreviewStatus.textContent = "当前先显示结构化速查内容，正文摘录会继续补进来。";
+  dom.detailPreview.textContent = "正在检查这条知识点有没有可直接并入的原文摘录……";
   dom.detailRisk.textContent = entry.risk;
   dom.detailSource.textContent = entry.source;
 
-  const images = getFeaturedImages(entry.id);
+  const images = getEntryImages(entry);
   if (images.length) {
     dom.detailImageCard.hidden = false;
     dom.detailImageTitle.textContent = `${entry.title} 对应图卡`;
-    dom.detailImageCaption.textContent = "首批 Gemini 图已经直接挂到知识点详情里。";
+    dom.detailImageCaption.textContent = getFeaturedImages(entry.id).length
+      ? "Gemini 图已经直接挂到当前知识点详情里。"
+      : "当前图片由图库自动匹配到这个知识点，用来先把学习画面补直观。";
     dom.detailImageStage.innerHTML = images.map((image) => `
       <article class="image-card">
         <img src="${image.src}" alt="${escapeHtml(image.title || entry.title)}" loading="lazy">
@@ -678,6 +783,8 @@ function renderDetail() {
       renderWorkspace();
     });
   });
+
+  loadDetailPreview(entry);
 }
 
 function renderGallery() {
@@ -1033,6 +1140,14 @@ function bindLibraryEvents() {
   dom.loadFullButton.addEventListener("click", loadFullLocalArchive);
 }
 
+function bindDetailEvents() {
+  if (!dom.loadPreviewButton) return;
+  dom.loadPreviewButton.addEventListener("click", async () => {
+    const entry = state.entries.find((item) => item.id === state.selectedId);
+    await loadDetailPreview(entry);
+  });
+}
+
 function bindAccessEvents() {
   dom.accessForm.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -1090,6 +1205,7 @@ async function bootstrap() {
   bindWorkspaceEvents();
   bindSidebarEvents();
   bindLibraryEvents();
+  bindDetailEvents();
   bindAccessEvents();
   bindCalculators();
 

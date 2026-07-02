@@ -102,7 +102,7 @@
         </div>
       </header>
 
-      <section class="view active" id="view-dashboard">
+      <section class="view" id="view-dashboard">
         <div class="hero-panel">
           <div class="hero-copy">
             <p class="eyebrow">BEGINNER FIRST CNC</p>
@@ -192,7 +192,7 @@
         </div>
       </section>
 
-      <section class="view" id="view-workspace">
+      <section class="view active" id="view-workspace">
         <div class="workspace-layout">
           <section class="workspace-panel search-panel">
             <div class="section-head compact">
@@ -261,6 +261,15 @@
               <article class="detail-card">
                 <h4>下一步学什么</h4>
                 <p id="detail-next">学完这一条，再进入和它最相关的下一组内容。</p>
+              </article>
+
+              <article class="detail-card detail-card-preview">
+                <div class="detail-card-head">
+                  <h4>知识库正文摘录</h4>
+                  <button class="ghost-button" id="load-preview-button" type="button">继续并入原文</button>
+                </div>
+                <p class="detail-preview-status" id="detail-preview-status">当前先显示结构化速查内容。打开大型知识库条目后，这里会继续并入原文摘录。</p>
+                <pre id="detail-preview">还没有加载原文摘录。</pre>
               </article>
             </div>
 
@@ -481,6 +490,7 @@
   <script src="./kb-extra.js"></script>
   <script src="./featured-images.js"></script>
   <script src="./gallery-library.js"></script>
+  <script src="./kb-content-manifest.js"></script>
   <script src="./app.js"></script>
 </body>
 </html>
