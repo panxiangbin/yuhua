@@ -1,10 +1,35 @@
 const FAVORITES_KEY = "cnc_app_favorites_v2";
 const RECENTS_KEY = "cnc_app_recents_v2";
 const ACCESS_KEY = "cnc_app_access_code_v1";
+const ACCESS_PUBLIC_URL = "https://panxiangbin.github.io/yuhua/cnc/";
+
+const ACCESS_PROFILES = [
+  {
+    id: "follower",
+    label: "粉丝通道",
+    note: "适合发给短视频、私信和直播间来的用户。",
+    code: "xp-cnc-follower-2026",
+    hash: "777e786b45a748acbc713590faef41adc4ebf63b4909c1d2572230ceed968d11"
+  },
+  {
+    id: "vip",
+    label: "深度资料通道",
+    note: "适合发给老客户、学员或需要长期复看的人。",
+    code: "xp-cnc-vip-2026",
+    hash: "6da79cd92ce1b9aa57bc55e1e7d34b392092cf5415ddc55dff10c471b1b445c6"
+  },
+  {
+    id: "legacy",
+    label: "旧版通行码",
+    note: "兼容你之前已经发出去的老链接，不影响旧用户继续打开。",
+    code: "XIAOPAN-CNC-2026",
+    hash: "223082a7d8f14cc5a31a3c01d5b25909209f2b5fd99941ac0b4e61b3791113b1"
+  }
+];
 
 const ACCESS_HASHES = new Set([
   "1b6770645ff5c012ec4f8188e03612031eb55f651610df4a818924c0c6d2239e",
-  "223082a7d8f14cc5a31a3c01d5b25909209f2b5fd99941ac0b4e61b3791113b1"
+  ...ACCESS_PROFILES.map((item) => item.hash)
 ]);
 
 const VIEW_META = {
@@ -59,6 +84,7 @@ const state = {
   favorites: [],
   recents: [],
   accessGranted: false,
+  accessProfileLabel: "",
   loadedScripts: new Set(),
   coreLoaded: false,
   fullLocalLoaded: false,
@@ -70,6 +96,10 @@ const dom = {
   accessForm: document.querySelector("#access-form"),
   accessInput: document.querySelector("#access-code-input"),
   accessMessage: document.querySelector("#access-message"),
+  accessShareStatus: document.querySelector("#access-share-status"),
+  accessPublicUrl: document.querySelector("#access-public-url"),
+  copyPublicUrl: document.querySelector("#copy-public-url"),
+  accessShareLinks: document.querySelector("#access-share-links"),
   lockPill: document.querySelector("#lock-pill"),
   knowledgePill: document.querySelector("#knowledge-pill"),
   treeNav: document.querySelector("#tree-nav"),
@@ -160,6 +190,91 @@ function renderLibraryLog() {
   dom.libraryLog.innerHTML = state.libraryLogs.length
     ? state.libraryLogs.map((item) => `<div class="library-log-item">${escapeHtml(item)}</div>`).join("")
     : `<div class="library-log-item">还没有开始加载，当前先使用基础条目。</div>`;
+}
+
+function getPublicBaseUrl() {
+  if (window.location.protocol === "file:") {
+    return ACCESS_PUBLIC_URL;
+  }
+
+  const url = new URL(window.location.href);
+  url.hash = "";
+  url.search = "";
+  return url.toString();
+}
+
+function buildInviteUrl(code) {
+  const url = new URL(getPublicBaseUrl());
+  url.searchParams.set("invite", code);
+  return url.toString();
+}
+
+async function copyText(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch (error) {
+    const input = document.createElement("textarea");
+    input.value = text;
+    input.setAttribute("readonly", "readonly");
+    input.style.position = "fixed";
+    input.style.opacity = "0";
+    document.body.appendChild(input);
+    input.select();
+    const ok = document.execCommand("copy");
+    input.remove();
+    return ok;
+  }
+}
+
+function renderAccessCenter() {
+  if (!dom.accessPublicUrl || !dom.accessShareLinks || !dom.copyPublicUrl || !dom.accessShareStatus) return;
+
+  const publicUrl = getPublicBaseUrl();
+  dom.accessPublicUrl.textContent = publicUrl;
+  dom.accessShareStatus.textContent = state.accessGranted
+    ? "当前设备已经授权，可以直接查看完整资料。下面这些链接现在可以直接发给别人。"
+    : "正式公网入口已经固定好。别人先打开这个网址，再通过你给的邀请码或授权链接进入。";
+
+  dom.accessShareLinks.innerHTML = ACCESS_PROFILES.map((profile) => {
+    const inviteUrl = buildInviteUrl(profile.code);
+    return `
+      <article class="share-link-card">
+        <div>
+          <h4>${escapeHtml(profile.label)}</h4>
+          <p>${escapeHtml(profile.note)}</p>
+        </div>
+        <div class="share-link-meta">
+          <span class="badge">${escapeHtml(profile.id)}</span>
+          <span class="badge level">已预设授权入口</span>
+        </div>
+        <code>${escapeHtml(inviteUrl)}</code>
+        <div class="share-link-actions">
+          <button class="ghost-button" data-copy-link="${escapeHtml(inviteUrl)}" type="button">复制授权链接</button>
+          <button class="ghost-button" data-copy-code="${escapeHtml(profile.code)}" type="button">复制邀请码</button>
+        </div>
+      </article>
+    `;
+  }).join("");
+
+  dom.copyPublicUrl.onclick = async () => {
+    const ok = await copyText(publicUrl);
+    dom.accessShareStatus.textContent = ok ? "正式公网地址已复制。" : "复制失败，请手动复制正式公网地址。";
+  };
+
+  dom.accessShareLinks.querySelectorAll("[data-copy-link]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const ok = await copyText(button.dataset.copyLink || "");
+      dom.accessShareStatus.textContent = ok ? "授权链接已复制，可以直接发给别人。" : "复制失败，请手动复制授权链接。";
+    });
+  });
+
+  dom.accessShareLinks.querySelectorAll("[data-copy-code]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const ok = await copyText(button.dataset.copyCode || "");
+      dom.accessShareStatus.textContent = ok ? "邀请码已复制。" : "复制失败，请手动复制邀请码。";
+    });
+  });
 }
 
 function collectSources() {
@@ -715,6 +830,7 @@ function renderAll() {
   renderDashboardGallery();
   renderProgressLinks();
   renderLibraryStats();
+  renderAccessCenter();
 }
 
 function formatNumber(value, digits = 2) {
@@ -782,11 +898,14 @@ async function grantAccess(code) {
   const trimmed = code.trim();
   const hash = await sha256Hex(trimmed);
   if (ACCESS_HASHES.has(hash)) {
+    const profile = ACCESS_PROFILES.find((item) => item.hash === hash);
     state.accessGranted = true;
+    state.accessProfileLabel = profile?.label || "已授权";
     localStorage.setItem(ACCESS_KEY, trimmed);
     dom.gate.hidden = true;
-    dom.lockPill.textContent = "已授权";
+    dom.lockPill.textContent = state.accessProfileLabel;
     dom.accessMessage.textContent = "授权成功，正在进入资料区。";
+    renderAccessCenter();
     return true;
   }
   return false;
@@ -805,6 +924,7 @@ async function initAccess() {
   state.accessGranted = false;
   dom.gate.hidden = false;
   dom.lockPill.textContent = "访问受控";
+  renderAccessCenter();
 }
 
 function ensureScript(id, src) {
@@ -840,25 +960,6 @@ async function loadKnowledgeCore() {
     logLibrary(`核心知识库包已加载 ${successCount} 个脚本，开始并入条目。`);
   } else {
     logLibrary("核心知识库包脚本暂时还没生成或还没发布，当前继续使用基础条目。");
-  }
-
-  renderAll();
-  navigate("library");
-}
-
-async function loadFullLocalArchive() {
-  if (state.fullLocalLoaded) {
-    logLibrary("完整本地索引已经加载过。");
-    navigate("library");
-    return;
-  }
-
-  const ok = await ensureScript("kb-readme-index", "./kb-readme-index.js");
-  if (ok && safeArray(window.CNC_KB_README_INDEX).length) {
-    state.fullLocalLoaded = true;
-    logLibrary(`完整本地索引已接入 ${window.CNC_KB_README_INDEX.length} 条入口。`);
-  } else {
-    logLibrary("完整本地索引在当前公网目录还没有准备好，后续需要继续拆分上传。");
   }
 
   renderAll();
@@ -946,32 +1047,6 @@ function bindAccessEvents() {
   });
 }
 
-function collectSources() {
-  const merged = [
-    ...safeArray(window.CNC_DATA),
-    ...safeArray(window.CNC_KB_EXTRA),
-    ...safeArray(window.CNC_KB_CORE_CHUNK_01),
-    ...safeArray(window.CNC_KB_CORE_CHUNK_02),
-    ...safeArray(window.CNC_KB_CORE_CHUNK_03),
-    ...safeArray(window.CNC_KB_FULL_CHUNK_01),
-    ...safeArray(window.CNC_KB_FULL_CHUNK_02),
-    ...safeArray(window.CNC_KB_FULL_CHUNK_03),
-    ...safeArray(window.CNC_KB_FULL_CHUNK_04),
-    ...safeArray(window.CNC_KB_FULL_CHUNK_05),
-    ...safeArray(window.CNC_KB_FULL_CHUNK_06),
-    ...safeArray(window.CNC_KB_FULL_CHUNK_07),
-    ...safeArray(window.CNC_KB_FULL_CHUNK_08),
-    ...safeArray(window.CNC_KB_README_INDEX)
-  ];
-
-  const map = new Map();
-  merged.forEach((entry) => {
-    if (!entry || !entry.id) return;
-    map.set(entry.id, normalizeEntry(entry));
-  });
-  return [...map.values()];
-}
-
 async function loadFullLocalArchive() {
   if (state.fullLocalLoaded) {
     logLibrary("完整本地索引已经加载过。");
@@ -979,19 +1054,8 @@ async function loadFullLocalArchive() {
     return;
   }
 
-  const fullArchiveSources = [
-    { id: "knowledge-full-01", src: "./knowledge-full-01.js" },
-    { id: "knowledge-full-02", src: "./knowledge-full-02.js" },
-    { id: "knowledge-full-03", src: "./knowledge-full-03.js" },
-    { id: "knowledge-full-04", src: "./knowledge-full-04.js" },
-    { id: "knowledge-full-05", src: "./knowledge-full-05.js" },
-    { id: "knowledge-full-06", src: "./knowledge-full-06.js" },
-    { id: "knowledge-full-07", src: "./knowledge-full-07.js" },
-    { id: "knowledge-full-08", src: "./knowledge-full-08.js" }
-  ];
-
   const results = [];
-  for (const item of fullArchiveSources) {
+  for (const item of FULL_ARCHIVE_SOURCES) {
     const ok = await ensureScript(item.id, item.src);
     results.push({ ...item, ok });
   }

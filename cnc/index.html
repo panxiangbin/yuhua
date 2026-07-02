@@ -430,24 +430,47 @@
           <div class="section-head">
             <div>
               <p class="eyebrow">访问控制</p>
-              <h3>只让你想让进的人进</h3>
+              <h3>只让你授权的人看到完整资料</h3>
             </div>
-            <p>当前先用“邀请码 / 私密链接”方式做成受控入口，适合你把链接发给指定粉丝看。</p>
+            <p>这一页现在不只是说明，而是直接给你成品化分享入口。你可以把正式网址或授权链接发给指定的人。</p>
           </div>
 
           <div class="access-grid">
             <article class="access-card">
-              <h4>当前做法</h4>
-              <p>网页会先出现受控访问层。输入邀请码，或者通过你发出去的私密链接，才会进入内容区。</p>
+              <h4>现在怎么放行</h4>
+              <p>网页会先显示受控访问层。输入邀请码，或者直接通过你发出去的授权链接，才会进入资料区。</p>
             </article>
             <article class="access-card">
               <h4>适合抖音粉丝</h4>
-              <p>你可以只在视频、私信、群或直播里发邀请码或私密链接，外部人拿不到就进不来。</p>
+              <p>你可以只在视频、私信、群或直播里发授权链接。外部人看不到链接，自然就进不来完整内容。</p>
             </article>
             <article class="access-card">
               <h4>更强方案</h4>
-              <p>真正强控制要上 Cloudflare Access 或带登录后端。当前这版先把“只有指定人可进”的入口做起来。</p>
+              <p>真正强控制要上 Cloudflare Access 或带登录后端。当前这版先把“你发出去的人能直接打开”的正式入口先做稳。</p>
             </article>
+          </div>
+
+          <div class="access-share-panel">
+            <div class="section-head compact">
+              <div>
+                <p class="eyebrow">分享中心</p>
+                <h3>可以直接发人的公网入口</h3>
+              </div>
+              <p id="access-share-status">这里会显示正式公网地址和已整理好的授权链接。</p>
+            </div>
+
+            <article class="share-card hero">
+              <div class="share-card-text">
+                <h4>正式公网地址</h4>
+                <p>这是你以后对外统一发的主入口。别人打开后，会先进入受控访问页。</p>
+              </div>
+              <div class="share-url-row">
+                <code id="access-public-url">https://panxiangbin.github.io/yuhua/cnc/</code>
+                <button class="ghost-button" id="copy-public-url" type="button">复制网址</button>
+              </div>
+            </article>
+
+            <div class="access-link-list" id="access-share-links"></div>
           </div>
         </div>
       </section>
