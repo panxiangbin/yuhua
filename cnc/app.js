@@ -69,6 +69,7 @@ const dom = {
   topbarKicker: document.querySelector("#topbar-kicker"),
   topbarTitle: document.querySelector("#topbar-title"),
   heroMetrics: document.querySelector("#hero-metrics"),
+  dashboardGalleryGrid: document.querySelector("#dashboard-gallery-grid"),
   categorySelect: document.querySelector("#category-select"),
   presetChipRow: document.querySelector("#preset-chip-row"),
   knowledgeChipRow: document.querySelector("#knowledge-chip-row"),
@@ -621,6 +622,27 @@ function renderGalleryRich() {
   });
 }
 
+function renderDashboardGallery() {
+  if (!dom.dashboardGalleryGrid) return;
+  const galleryLibrary = getGalleryLibrary().slice(0, 6);
+  dom.dashboardGalleryGrid.innerHTML = galleryLibrary.length
+    ? galleryLibrary.map((image) => `
+      <article class="gallery-card actionable" data-route="gallery">
+        <img src="${image.src}" alt="${escapeHtml(image.title || "CNC Gallery Image")}" loading="lazy">
+        <div class="result-badges">
+          <span class="badge">${escapeHtml(image.batch || "Gemini 图库")}</span>
+        </div>
+        <h4>${escapeHtml(image.title || "图库图片")}</h4>
+        <p>这张图已经接进网站图库，点进去可以继续看更多图卡。</p>
+      </article>
+    `).join("")
+    : `<article class="gallery-card"><h4>图库正在准备中</h4><p>首批图片接入后，这里会直接显示预览。</p></article>`;
+
+  dom.dashboardGalleryGrid.querySelectorAll("[data-route='gallery']").forEach((card) => {
+    card.addEventListener("click", () => navigate("gallery"));
+  });
+}
+
 function renderProgressLinks() {
   renderLinkCloud(dom.recentLinks, state.recents, "还没有最近查看");
   renderLinkCloud(dom.favoriteLinks, state.favorites, "还没有收藏内容");
@@ -671,6 +693,7 @@ function renderAll() {
   renderHeroMetrics();
   renderWorkspace();
   renderGalleryRich();
+  renderDashboardGallery();
   renderProgressLinks();
   renderLibraryStats();
 }
@@ -895,6 +918,9 @@ function bindAccessEvents() {
     event.preventDefault();
     const code = dom.accessInput.value;
     const ok = await grantAccess(code);
+    if (ok && !state.coreLoaded) {
+      await loadKnowledgeCore();
+    }
     dom.accessMessage.textContent = ok
       ? "授权成功，已经进入资料区。"
       : "邀请码不对。你可以换一个邀请码或通过私密链接进入。";

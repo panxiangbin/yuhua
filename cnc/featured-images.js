@@ -131,5 +131,131 @@ window.CNC_FEATURED_IMAGES = {
       caption: "每分钟进给和每转进给的区别。",
       src: "./assets/images/batch01_core/feed-g94-g95-001.webp"
     }
+  ],
+  "g00-g01-motion": [
+    {
+      title: "G00 / G01 运动图区",
+      caption: "快移和按进给切削，用图看比只看代码更直观。",
+      src: "./assets/images/batch01_core/gcode-g00-g01-001.webp"
+    }
+  ],
+  "learn-absolute-incremental": [
+    {
+      title: "G90 / G91 绝对与增量",
+      caption: "绝对值和增量最容易写偏，先用图理解坐标逻辑。",
+      src: "./assets/images/batch01_core/beginner-g90-g91-001.webp"
+    }
+  ],
+  "learn-g17-g18-g19": [
+    {
+      title: "G17 / G18 / G19 平面选择",
+      caption: "先看当前平面，再判断圆弧方向和补偿逻辑。",
+      src: "./assets/images/batch01_core/gcode-g17-g18-g19-001.webp"
+    }
+  ],
+  "learn-g41-g42": [
+    {
+      title: "G41 / G42 刀补方向",
+      caption: "刀具补偿先看刀走向，再看左右补。",
+      src: "./assets/images/batch01_core/gcode-g41-g42-001.webp"
+    }
+  ],
+  "learn-g43-g44-g49": [
+    {
+      title: "G43 / G44 / G49 刀长补偿",
+      caption: "刀长补偿和工件坐标要分开理解，不然容易混。",
+      src: "./assets/images/batch01_core/gcode-g43-g49-001.webp"
+    }
+  ],
+  "g20-g21-unit": [
+    {
+      title: "G20 / G21 单位切换",
+      caption: "英制和公制切换一定要提前确认单位。",
+      src: "./assets/images/batch01_core/unit-g20-g21-001.webp"
+    }
+  ],
+  "machine-home-return": [
+    {
+      title: "回零安全路径图",
+      caption: "先回参考点，再继续对刀和加工操作。",
+      src: "./assets/images/batch01_core/home-safe-path-001.webp"
+    }
+  ],
+  "fault-home-fail": [
+    {
+      title: "回零失败排查入口",
+      caption: "回不了零点时，先分机械、参数、检测开关几个方向。",
+      src: "./assets/images/batch01_core/fault-home-fail-001.webp"
+    }
+  ],
+  "learn-program-structure": [
+    {
+      title: "程序结构基础图",
+      caption: "先看地址符顺序和程序分段，再去写复杂代码。",
+      src: "./assets/images/batch02_operation_basics/program-structure-basic-001.webp"
+    }
+  ],
+  "machine-panel-english": [
+    {
+      title: "面板总览图",
+      caption: "先把常见按钮和模式区域认清，再去操作机床。",
+      src: "./assets/images/batch02_operation_basics/panel-control-overview-001.webp"
+    }
+  ],
+  "process-allowance-basics": [
+    {
+      title: "加工余量流程图",
+      caption: "粗、半精、精三段余量关系，现场很常用。",
+      src: "./assets/images/batch03_turning_process/turning-allowance-flow-001.webp"
+    }
+  ],
+  "tool-drill-selection": [
+    {
+      title: "钻头类型总览",
+      caption: "先分普通钻、定心钻、铰刀和丝锥前工序。",
+      src: "./assets/images/batch04_milling_tooling/drill-types-overview-001.webp"
+    }
+  ],
+  "tool-thread-tap": [
+    {
+      title: "攻丝与底孔关系图",
+      caption: "攻丝前先看底孔、螺距和材料，不要只背规格。",
+      src: "./assets/images/batch04_milling_tooling/milling-drill-ream-tap-001.webp"
+    }
+  ],
+  "material-aluminum": [
+    {
+      title: "铝合金加工图卡",
+      caption: "铝件切削重点先看排屑、转速和毛刺控制。",
+      src: "./assets/images/batch05_alarm_drawing_material/material-aluminum-cutting-001.webp"
+    }
+  ],
+  "material-stainless": [
+    {
+      title: "不锈钢加工图卡",
+      caption: "不锈钢重点先看发热、刀具磨损和冷却策略。",
+      src: "./assets/images/batch05_alarm_drawing_material/material-stainless-cutting-001.webp"
+    }
+  ],
+  "case-thin-wall": [
+    {
+      title: "薄壁件加工案例",
+      caption: "薄壁件先看装夹、让刀和走刀策略。",
+      src: "./assets/images/batch03_turning_process/turning-thin-wall-001.webp"
+    }
+  ],
+  "case-axis": [
+    {
+      title: "阶梯轴加工案例",
+      caption: "阶梯轴适合新手入门看程序结构和加工顺序。",
+      src: "./assets/images/batch03_turning_process/step-shaft-case-001.webp"
+    }
+  ],
+  "case-thread-part": [
+    {
+      title: "螺纹零件案例",
+      caption: "结合螺距、退刀和循环参数一起理解最稳。",
+      src: "./assets/images/batch03_turning_process/thread-part-case-001.webp"
+    }
   ]
 };

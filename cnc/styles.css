@@ -384,6 +384,7 @@ select:focus {
 
 .hero-metrics,
 .dashboard-grid,
+.dashboard-gallery-grid,
 .route-grid,
 .gallery-grid,
 .calculator-grid,
@@ -398,6 +399,7 @@ select:focus {
 
 .hero-metric,
 .dashboard-card,
+.dashboard-gallery-panel,
 .route-card,
 .detail-card,
 .detail-mini-card,
@@ -437,6 +439,7 @@ select:focus {
 }
 
 .dashboard-card h3,
+.dashboard-gallery-panel h3,
 .route-card h4,
 .calc-card h4,
 .gallery-card h4 {
@@ -455,6 +458,24 @@ select:focus {
 
 .section-panel {
   padding: 20px;
+}
+
+.dashboard-gallery-panel {
+  margin-top: 16px;
+}
+
+.dashboard-gallery-grid {
+  margin-top: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.dashboard-gallery-grid .gallery-card {
+  padding: 12px;
+}
+
+.dashboard-gallery-grid .gallery-card img {
+  height: 150px;
+  object-fit: cover;
 }
 
 .section-head {
