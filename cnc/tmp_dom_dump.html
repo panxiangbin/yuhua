@@ -1,0 +1,1549 @@
+﻿[15812:41808:0706/141417.315:ERROR:chrome\browser\importer\edge_china_browsers\edge_qqbrowser_importer_utils_win.cc:165] QQBrowser user data path not found.
+[15812:16016:0706/141417.906:ERROR:chrome\browser\task_manager\providers\fallback_task_provider.cc:126] Every renderer should have at least one task provided by a primary task provider. If a "Renderer" fallback task is shown, it is a bug. If you have repro steps, please file a new bug and tag it as a dependency of crbug.com/40528867.
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="面向数控新手的速查与学习助手，支持目录树导航、知识库检索、图卡学习和参数换算。">
+  <meta name="theme-color" content="#cf6d36">
+  <title>数控速查与学习助手</title>
+  <meta property="og:title" content="数控速查与学习助手">
+  <meta property="og:description" content="像软件一样使用的数控学习网页，支持参数、G代码、报警、工艺、图纸、量具与知识库检索。">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="./share-card.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="./share-card.svg">
+  <link rel="icon" href="./icon-192.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icon-192.svg">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./styles-enhanced.css">
+</head>
+<body>
+  <div class="gate-backdrop" id="access-gate" hidden="" aria-hidden="true" style="display: none;">
+    <div class="gate-card">
+      <p class="gate-kicker">受控访问</p>
+      <h1>这是给指定人群看的数控资料站</h1>
+      <p class="gate-text">
+        你可以把它理解成"粉丝资料库入口"。只有拿到你发出去的邀请码或私密链接的人，才能进入查看。
+      </p>
+      <form class="gate-form" id="access-form">
+        <label>
+          <span>输入邀请码</span>
+          <input id="access-code-input" type="password" placeholder="请输入你发出去的邀请码" autocomplete="off">
+        </label>
+        <button type="submit" class="primary-button">进入资料库</button>
+      </form>
+      <p class="gate-hint" id="access-message">如果你是通过私密链接进入，页面会自动放行。</p>
+    </div>
+  </div>
+
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <div>
+          <p class="brand-kicker">CNC LEARN HUB</p>
+          <h1>数控速查与学习助手</h1>
+        </div>
+        <button class="sidebar-close" id="sidebar-close" type="button" aria-label="关闭目录">×</button>
+      </div>
+
+      <div class="sidebar-status">
+        <span class="status-pill status-pill-strong" id="lock-pill" style="display: none;">访问受控</span>
+        <span class="status-pill" id="knowledge-pill">核心知识包已接入</span>
+      </div>
+
+      <nav class="tree-nav" id="tree-nav">
+        <section class="tree-group">
+          <button class="tree-item tree-item-standalone active" data-route="dashboard" type="button">总览面板</button>
+        </section>
+
+        <section class="tree-group" data-tree-group="study">
+          <button class="tree-parent" data-tree-toggle="study" type="button" aria-expanded="true">
+            <span>新手路线</span>
+            <span class="tree-caret">▾</span>
+          </button>
+          <div class="tree-children open" data-tree-panel="study">
+            <button class="tree-item" data-route="study" type="button">路线总览</button>
+            <button class="tree-item" data-entry-id="learn-coordinate-system" type="button">先学坐标与回零</button>
+            <button class="tree-item" data-entry-id="g02-g03-arc" type="button">先学 G00 G01 G02</button>
+            <button class="tree-item" data-entry-id="fanuc-alarm-common" type="button">再学报警排查</button>
+            <button class="tree-item" data-entry-id="calc-vc-rpm" type="button">最后学参数换算</button>
+          </div>
+        </section>
+
+        <section class="tree-group" data-tree-group="workspace">
+          <button class="tree-parent" data-tree-toggle="workspace" type="button" aria-expanded="true">
+            <span>快速查询目录</span>
+            <span class="tree-caret">▾</span>
+          </button>
+          <div class="tree-children open" data-tree-panel="workspace">
+            <button class="tree-item" data-route="workspace" data-filter="all" type="button">全部条目</button>
+            <button class="tree-item" data-route="workspace" data-filter="gcode" type="button">G代码 / M代码</button>
+            <button class="tree-item" data-route="workspace" data-filter="params" type="button">参数 / 报警 / 故障</button>
+            <button class="tree-item" data-route="workspace" data-filter="operation" type="button">机床操作 / 回零 / 对刀</button>
+            <button class="tree-item" data-route="workspace" data-filter="tooling" type="button">刀具 / 工艺 / 材料</button>
+            <button class="tree-item" data-route="workspace" data-filter="drawing" type="button">图纸 / 量具 / 质量</button>
+            <button class="tree-item" data-route="workspace" data-filter="cases" type="button">案例 / 实战</button>
+          </div>
+        </section>
+
+        <section class="tree-group" data-tree-group="tools">
+          <button class="tree-parent" data-tree-toggle="tools" type="button" aria-expanded="true">
+            <span>软件功能</span>
+            <span class="tree-caret">▾</span>
+          </button>
+          <div class="tree-children open" data-tree-panel="tools">
+            <button class="tree-item" data-route="learning-map" type="button">🗺 知识地图</button>
+            <button class="tree-item" data-route="gallery" type="button">🖼 图片图库</button>
+            <button class="tree-item" data-route="calculator" type="button">🧮 参数换算</button>
+            <button class="tree-item" data-route="library" type="button">📚 知识库管理</button>
+            <button class="tree-item" data-route="favorites" type="button">⭐ 收藏记录</button>
+            <button class="tree-item" data-route="access" type="button" style="display: none;">🔒 访问控制</button>
+          </div>
+        </section>
+      </nav>
+    </aside>
+
+    <div class="sidebar-mask" id="sidebar-mask" hidden=""></div>
+
+    <main class="main-shell">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="menu-button" id="sidebar-open" type="button" aria-label="打开目录">☰</button>
+          <div>
+            <p class="topbar-kicker" id="topbar-kicker">总览面板</p>
+            <h2 id="topbar-title">数控工程师工作平台</h2>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <button class="quick-pill" data-jump-keyword="G02" type="button">搜 G02</button>
+          <button class="quick-pill" data-jump-keyword="1815" type="button">搜 1815</button>
+          <button class="quick-pill" data-jump-keyword="对刀" type="button">搜 对刀</button>
+          <button class="quick-pill" data-jump-keyword="报警" type="button">搜 报警</button>
+        </div>
+      </header>
+
+      <section class="view active" id="view-dashboard">
+        <!-- 软件启动台 Hero 区 -->
+        <div class="launchpad-hero">
+          <div class="launchpad-brand">
+            <div class="launchpad-icon">⚙</div>
+            <div>
+              <p class="launchpad-label">CNC ENGINEER WORKBENCH</p>
+              <h2>数控工程师工作平台</h2>
+              <p class="launchpad-tagline">专业图文资料库 · 智能学习路径 · 实时参数换算</p>
+            </div>
+          </div>
+          <div class="launchpad-stats" id="launchpad-stats">
+            <div class="stat-item">
+              <strong id="stat-entries">1974</strong>
+              <span>知识条目</span>
+            </div>
+            <div class="stat-item">
+              <strong id="stat-images">765</strong>
+              <span>教学图片</span>
+            </div>
+            <div class="stat-item">
+              <strong id="stat-recents">0</strong>
+              <span>最近查看</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 快速启动区 -->
+        <div class="launchpad-grid">
+          <article class="launchpad-card" data-route="study">
+            <div class="launchpad-card-icon">🎯</div>
+            <div>
+              <h3>新手学习</h3>
+              <p>从零开始，闯关式学习数控编程</p>
+              <span class="launchpad-badge">→ 开始学习</span>
+            </div>
+          </article>
+
+          <article class="launchpad-card primary" data-route="workspace" data-filter="gcode">
+            <div class="launchpad-card-icon">📘</div>
+            <div>
+              <h3>G/M代码</h3>
+              <p>G代码M代码速查，含格式和案例</p>
+              <span class="launchpad-badge">→ 查询代码</span>
+            </div>
+          </article>
+
+          <article class="launchpad-card" data-route="workspace" data-filter="params">
+            <div class="launchpad-card-icon">🚨</div>
+            <div>
+              <h3>报警排查</h3>
+              <p>报警代码查询，故障原因和解决方法</p>
+              <span class="launchpad-badge">→ 查报警</span>
+            </div>
+          </article>
+
+          <article class="launchpad-card" data-route="workspace" data-filter="params">
+            <div class="launchpad-card-icon">⚙</div>
+            <div>
+              <h3>参数速查</h3>
+              <p>机床参数、工艺参数快速检索</p>
+              <span class="launchpad-badge">→ 查参数</span>
+            </div>
+          </article>
+
+          <article class="launchpad-card" data-route="workspace" data-filter="tooling">
+            <div class="launchpad-card-icon">🔧</div>
+            <div>
+              <h3>工艺刀具</h3>
+              <p>刀具选型、切削参数、加工工艺</p>
+              <span class="launchpad-badge">→ 查工艺</span>
+            </div>
+          </article>
+
+          <article class="launchpad-card" data-route="calculator">
+            <div class="launchpad-card-icon">🧮</div>
+            <div>
+              <h3>换算工具</h3>
+              <p>线速度、进给、螺距等参数计算</p>
+              <span class="launchpad-badge">→ 打开计算器</span>
+            </div>
+          </article>
+        </div>
+
+        <!-- 快速搜索入口 -->
+        <div class="launchpad-search">
+          <div class="launchpad-search-header">
+            <h3>快速搜索</h3>
+            <p>输入G代码、报警号、关键词快速定位</p>
+          </div>
+          <div class="launchpad-search-bar">
+            <input type="search" id="quick-search-input" placeholder="例如：G02、1815、对刀、报警、螺距...">
+            <button class="primary-button" id="quick-search-btn">搜索</button>
+          </div>
+          <div class="quick-keywords">
+            <span class="keyword-label">热门:</span>
+            <button class="keyword-chip" data-jump-keyword="G54">G54</button>
+            <button class="keyword-chip" data-jump-keyword="G02">G02</button>
+            <button class="keyword-chip" data-jump-keyword="对刀">对刀</button>
+            <button class="keyword-chip" data-jump-keyword="报警">报警</button>
+            <button class="keyword-chip" data-jump-keyword="1815">1815</button>
+            <button class="keyword-chip" data-jump-keyword="刀具">刀具</button>
+          </div>
+        </div>
+
+        <!-- 最近查看 -->
+        <div class="recent-section" id="dashboard-recent-section" style="display: block;">
+          <div class="section-header">
+            <h3>接着上次看</h3>
+            <button class="ghost-button" data-route="favorites">查看全部 →</button>
+          </div>
+          <div class="recent-grid" id="dashboard-recent-list"><div class="recent-empty">这里干干净净的，像刚打扫过一样呢~ 快去逛逛，把喜欢的页面装进来吧！</div></div>
+        </div>
+
+        <!-- 精选图库预览 -->
+        <div class="featured-images-preview">
+          <div class="featured-images-header">
+            <div>
+              <p class="eyebrow">FEATURED IMAGES</p>
+              <h3>精选教学图片</h3>
+            </div>
+            <button class="ghost-button" data-route="gallery">查看全部 →</button>
+          </div>
+          <div class="featured-images-grid" id="featuredImagesPreview">
+    <div class="featured-image-card" data-image-id="alarm-limit-overtravel-001">
+      <img src="./assets/images/batch01_core/alarm-limit-overtravel-001.svg" alt="轴行程超程报警故障" loading="lazy" onerror="this.style.display='none'" style="display: none;">
+      <div class="featured-image-info">
+        <h5>轴行程超程报警故障</h5>
+      </div>
+    </div>
+  
+    <div class="featured-image-card" data-image-id="alarm-servo-001">
+      <img src="./assets/images/batch01_core/alarm-servo-001.svg" alt="伺服驱动系统故障报警" loading="lazy" onerror="this.style.display='none'" style="display: none;">
+      <div class="featured-image-info">
+        <h5>伺服驱动系统故障报警</h5>
+      </div>
+    </div>
+  
+    <div class="featured-image-card" data-image-id="alarm-spindle-001">
+      <img src="./assets/images/batch01_core/alarm-spindle-001.svg" alt="主轴驱动与过载报警" loading="lazy" onerror="this.style.display='none'" style="display: none;">
+      <div class="featured-image-info">
+        <h5>主轴驱动与过载报警</h5>
+      </div>
+    </div>
+  
+    <div class="featured-image-card" data-image-id="beginner-coordinate-001">
+      <img src="./assets/images/batch01_core/beginner-coordinate-001.svg" alt="机床与工件坐标系基础" loading="lazy" onerror="this.style.display='none'" style="display: none;">
+      <div class="featured-image-info">
+        <h5>机床与工件坐标系基础</h5>
+      </div>
+    </div>
+  
+    <div class="featured-image-card" data-image-id="beginner-g90-g91-001">
+      <img src="./assets/images/batch01_core/beginner-g90-g91-001.svg" alt="G90绝对与G91增量指令" loading="lazy" onerror="this.style.display='none'" style="display: none;">
+      <div class="featured-image-info">
+        <h5>G90绝对与G91增量指令</h5>
+      </div>
+    </div>
+  
+    <div class="featured-image-card" data-image-id="beginner-machine-zero-vs-work-zero-001">
+      <img src="./assets/images/batch01_core/beginner-machine-zero-vs-work-zero-001.svg" alt="机械原点与工件零点对比" loading="lazy" onerror="this.style.display='none'" style="display: none;">
+      <div class="featured-image-info">
+        <h5>机械原点与工件零点对比</h5>
+      </div>
+    </div>
+  
+    <div class="featured-image-card" data-image-id="beginner-touchoff-flow-001">
+      <img src="./assets/images/batch01_core/beginner-touchoff-flow-001.svg" alt="手动对刀标准操作流程" loading="lazy" onerror="this.style.display='none'" style="display: none;">
+      <div class="featured-image-info">
+        <h5>手动对刀标准操作流程</h5>
+      </div>
+    </div>
+  
+    <div class="featured-image-card" data-image-id="cycle-g81-001">
+      <img src="./assets/images/batch01_core/cycle-g81-001.svg" alt="G81标准孔加工钻孔循环" loading="lazy" onerror="this.style.display='none'" style="display: none;">
+      <div class="featured-image-info">
+        <h5>G81标准孔加工钻孔循环</h5>
+      </div>
+    </div>
+  </div>
+          <div class="dashboard-gallery-grid" id="dashboard-gallery-grid">
+      <article class="gallery-card actionable" data-route="gallery">
+        <img src="./assets/images/batch01_core/alarm-limit-overtravel-001.webp" alt="Alarm Limit Overtravel 001" loading="lazy">
+        <div class="result-badges">
+          <span class="badge">batch01_core</span>
+        </div>
+        <h4>Alarm Limit Overtravel 001</h4>
+        <p>这张图已经接进网站图库，点进去可以继续看更多图卡。</p>
+      </article>
+    
+      <article class="gallery-card actionable" data-route="gallery">
+        <img src="./assets/images/batch01_core/alarm-servo-001.webp" alt="Alarm Servo 001" loading="lazy">
+        <div class="result-badges">
+          <span class="badge">batch01_core</span>
+        </div>
+        <h4>Alarm Servo 001</h4>
+        <p>这张图已经接进网站图库，点进去可以继续看更多图卡。</p>
+      </article>
+    
+      <article class="gallery-card actionable" data-route="gallery">
+        <img src="./assets/images/batch01_core/alarm-spindle-001.webp" alt="Alarm Spindle 001" loading="lazy">
+        <div class="result-badges">
+          <span class="badge">batch01_core</span>
+        </div>
+        <h4>Alarm Spindle 001</h4>
+        <p>这张图已经接进网站图库，点进去可以继续看更多图卡。</p>
+      </article>
+    
+      <article class="gallery-card actionable" data-route="gallery">
+        <img src="./assets/images/batch01_core/beginner-coordinate-001.webp" alt="Beginner Coordinate 001" loading="lazy">
+        <div class="result-badges">
+          <span class="badge">batch01_core</span>
+        </div>
+        <h4>Beginner Coordinate 001</h4>
+        <p>这张图已经接进网站图库，点进去可以继续看更多图卡。</p>
+      </article>
+    
+      <article class="gallery-card actionable" data-route="gallery">
+        <img src="./assets/images/batch01_core/beginner-g90-g91-001.webp" alt="Beginner G90 G91 001" loading="lazy">
+        <div class="result-badges">
+          <span class="badge">batch01_core</span>
+        </div>
+        <h4>Beginner G90 G91 001</h4>
+        <p>这张图已经接进网站图库，点进去可以继续看更多图卡。</p>
+      </article>
+    
+      <article class="gallery-card actionable" data-route="gallery">
+        <img src="./assets/images/batch01_core/beginner-machine-zero-vs-work-zero-001.webp" alt="Beginner Machine Zero Vs Work Zero 001" loading="lazy">
+        <div class="result-badges">
+          <span class="badge">batch01_core</span>
+        </div>
+        <h4>Beginner Machine Zero Vs Work Zero 001</h4>
+        <p>这张图已经接进网站图库，点进去可以继续看更多图卡。</p>
+      </article>
+    </div>
+        </div>
+
+        <!-- FAQ 速查区 -->
+        <div class="faq-preview-section" id="faq-preview-section">
+          <div class="section-header">
+            <h3>报警 FAQ 速查</h3>
+            <button class="ghost-button" id="faq-toggle-btn">展开全部</button>
+          </div>
+          <div class="faq-tabs" id="faq-tabs">
+            <button class="faq-tab active" data-faq-type="alarm">报警</button>
+            <button class="faq-tab" data-faq-type="param">参数</button>
+            <button class="faq-tab" data-faq-type="beginner">新手</button>
+          </div>
+          <div class="faq-list" id="faq-list"><p class="faq-placeholder">该分类暂无 FAQ。</p></div>
+        </div>
+      </section>
+
+      <!-- 知识地图视图 -->
+      <section class="view" id="view-learning-map">
+        <div class="section-panel">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">KNOWLEDGE MAP</p>
+              <h3>数控知识地图</h3>
+            </div>
+            <p>可视化知识结构，快速定位学习方向与路径</p>
+          </div>
+
+          <div class="knowledge-map-toolbar">
+            <button class="chip active" data-map-view="tree">树状图</button>
+            <button class="chip" data-map-view="categories">分类视图</button>
+            <button class="chip" data-map-view="paths">学习路径</button>
+          </div>
+
+          <!-- 树状知识地图 -->
+          <div class="knowledge-tree-container" id="knowledgeTreeContainer">
+            <div class="knowledge-tree-placeholder" hidden="">
+              <div class="placeholder-icon">🗺</div>
+              <p>正在加载知识地图...</p>
+              <small>如果数据文件就绪，这里会显示完整的知识树结构</small>
+            </div>
+            <div class="knowledge-tree-canvas" id="knowledgeTreeCanvas"><div class="knowledge-tree"><div class="tree-node" data-node-id="root" data-level="0">
+      <div class="tree-node-header expandable">
+        <span class="tree-node-toggle">▸</span>
+        
+        <span class="tree-node-title">数控知识库</span>
+        
+      </div>
+      
+      <div class="tree-node-children"><div class="tree-node" data-node-id="cat-gcode" data-level="1">
+      <div class="tree-node-header ">
+        <span class="tree-node-dot">●</span>
+        <span class="tree-node-icon">⚙️</span>
+        <span class="tree-node-title">G代码与M代码</span>
+        
+      </div>
+      <div class="tree-node-desc">数控编程指令与控制代码</div>
+      
+    </div><div class="tree-node" data-node-id="cat-params" data-level="1">
+      <div class="tree-node-header ">
+        <span class="tree-node-dot">●</span>
+        <span class="tree-node-icon">⚠️</span>
+        <span class="tree-node-title">参数与报警</span>
+        
+      </div>
+      <div class="tree-node-desc">系统参数、报警代码与故障排查</div>
+      
+    </div><div class="tree-node" data-node-id="cat-operation" data-level="1">
+      <div class="tree-node-header ">
+        <span class="tree-node-dot">●</span>
+        <span class="tree-node-icon">🎮</span>
+        <span class="tree-node-title">机床操作</span>
+        
+      </div>
+      <div class="tree-node-desc">回零、对刀、手动操作</div>
+      
+    </div><div class="tree-node" data-node-id="cat-tooling" data-level="1">
+      <div class="tree-node-header ">
+        <span class="tree-node-dot">●</span>
+        <span class="tree-node-icon">🔧</span>
+        <span class="tree-node-title">刀具工艺</span>
+        
+      </div>
+      <div class="tree-node-desc">刀具选择、切削参数、加工工艺</div>
+      
+    </div><div class="tree-node" data-node-id="cat-drawing" data-level="1">
+      <div class="tree-node-header ">
+        <span class="tree-node-dot">●</span>
+        <span class="tree-node-icon">📐</span>
+        <span class="tree-node-title">图纸与检测</span>
+        
+      </div>
+      <div class="tree-node-desc">图纸识读、量具使用、质量控制</div>
+      
+    </div><div class="tree-node" data-node-id="cat-cases" data-level="1">
+      <div class="tree-node-header ">
+        <span class="tree-node-dot">●</span>
+        <span class="tree-node-icon">💼</span>
+        <span class="tree-node-title">加工案例</span>
+        
+      </div>
+      <div class="tree-node-desc">实战案例与经验总结</div>
+      
+    </div></div>
+    </div></div></div>
+          </div>
+
+          <!-- 分类视图 -->
+          <div class="knowledge-categories-grid" id="knowledgeCategoriesGrid" hidden="">
+            <!-- 由 JS 动态填充 -->
+          </div>
+
+          <!-- 学习路径视图 -->
+          <div class="learning-paths-grid" id="learningPathsGrid" hidden="">
+            <!-- 由 JS 动态填充 -->
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="view-study">
+        <div class="section-panel">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">闯关式学习</p>
+              <h3>新手入门 12 关</h3>
+            </div>
+            <p>按顺序闯关，从认识图纸到独立编程。每关 5-10 分钟，边学边练。</p>
+          </div>
+
+          <div class="learning-stages">
+            <!-- 第一阶段：认识机床 -->
+            <div class="stage-header">
+              <span class="stage-badge">阶段一</span>
+              <h4>认识机床与坐标</h4>
+            </div>
+            <div class="study-card-grid">
+              <article class="study-card" data-stage="1" data-level="1" data-study-bound="true" role="button" tabindex="0" style="cursor: pointer;">
+                <div class="study-card-header">
+                  <span class="study-card-badge">第 1 关</span>
+                  <span class="study-card-time">⏱ 5分钟</span>
+                </div>
+                <div class="study-card-icon">📐</div>
+                <h4>认识零件的身份证</h4>
+                <p>看懂图纸最基本的符号，知道圆、孔、台阶怎么标注。不求全懂，先认识常见符号。</p>
+                <div class="study-card-tags">
+                  <span class="tag">图纸基础</span>
+                  <span class="tag">符号识别</span>
+                </div>
+              </article>
+
+              <article class="study-card" data-stage="1" data-level="2" data-study-bound="true" role="button" tabindex="0" style="cursor: pointer;">
+                <div class="study-card-header">
+                  <span class="study-card-badge">第 2 关</span>
+                  <span class="study-card-time">⏱ 8分钟</span>
+                </div>
+                <div class="study-card-icon">🧭</div>
+                <h4>机床的东南西北</h4>
+                <p>认识 X、Y、Z 三个轴，明白正负方向。机床坐标系是整个编程的地基。</p>
+                <div class="study-card-tags">
+                  <span class="tag">坐标轴</span>
+                  <span class="tag">方向判断</span>
+                </div>
+              </article>
+
+              <article class="study-card" data-stage="1" data-level="3" data-study-bound="true" role="button" tabindex="0" style="cursor: pointer;">
+                <div class="study-card-header">
+                  <span class="study-card-badge">第 3 关</span>
+                  <span class="study-card-time">⏱ 6分钟</span>
+                </div>
+                <div class="study-card-icon">🏠</div>
+                <h4>找机床的老家</h4>
+                <p>回零（回参考点）是机床找到自己绝对位置的动作。不回零，后面全是空谈。</p>
+                <div class="study-card-tags">
+                  <span class="tag">回零</span>
+                  <span class="tag">参考点</span>
+                </div>
+              </article>
+
+              <article class="study-card" data-stage="1" data-level="4" data-study-bound="true" role="button" tabindex="0" style="cursor: pointer;">
+                <div class="study-card-header">
+                  <span class="study-card-badge">第 4 关</span>
+                  <span class="study-card-time">⏱ 10分钟</span>
+                </div>
+                <div class="study-card-icon">📍</div>
+                <h4>告诉机床活儿在哪</h4>
+                <p>对刀 + 工件坐标系（G54-G59）。这是新手最大的坎，跨过去就入门了。</p>
+                <div class="study-card-tags">
+                  <span class="tag">对刀</span>
+                  <span class="tag">G54</span>
+                  <span class="tag">工件零点</span>
+                </div>
+              </article>
+            </div>
+
+            <!-- 第二阶段：安全操作 -->
+            <div class="stage-header">
+              <span class="stage-badge">阶段二</span>
+              <h4>安全操作与刀具</h4>
+            </div>
+            <div class="study-card-grid">
+              <article class="study-card" data-stage="2" data-level="5" data-study-bound="true" role="button" tabindex="0" style="cursor: pointer;">
+                <div class="study-card-header">
+                  <span class="study-card-badge">第 5 关</span>
+                  <span class="study-card-time">⏱ 8分钟</span>
+                </div>
+                <div class="study-card-icon">🛡️</div>
+                <h4>Z 轴对刀，保命绝招</h4>
+                <p>Z 轴对不好，刀具直接撞工件或台面。学会试切法、对刀仪法。</p>
+                <div class="study-card-tags">
+                  <span class="tag">Z轴对刀</span>
+                  <span class="tag">安全</span>
+                </div>
+              </article>
+
+              <article class="study-card" data-stage="2" data-level="6" data-study-bound="true" role="button" tabindex="0" style="cursor: pointer;">
+                <div class="study-card-header">
+                  <span class="study-card-badge">第 6 关</span>
+                  <span class="study-card-time">⏱ 7分钟</span>
+                </div>
+                <div class="study-card-icon">🔪</div>
+                <h4>认识你的武器</h4>
+                <p>铣刀、车刀、钻头分类，刀尖圆弧半径，刀具材料。先认识，再学用。</p>
+                <div class="study-card-tags">
+                  <span class="tag">刀具</span>
+                  <span class="tag">材料</span>
+                </div>
+              </article>
+
+              <article class="study-card" data-stage="2" data-level="7" data-study-bound="true" role="button" tabindex="0" style="cursor: pointer;">
+                <div class="study-card-header">
+                  <span class="study-card-badge">第 7 关</span>
+                  <span class="study-card-time">⏱ 6分钟</span>
+                </div>
+                <div class="study-card-icon">↻</div>
+                <h4>顺着切还是逆着切</h4>
+                <p>顺铣、逆铣，左补偿、右补偿。这关系到加工质量和刀具寿命。</p>
+                <div class="study-card-tags">
+                  <span class="tag">顺铣逆铣</span>
+                  <span class="tag">G41/G42</span>
+                </div>
+              </article>
+            </div>
+
+            <!-- 第三阶段：编程基础 -->
+            <div class="stage-header">
+              <span class="stage-badge">阶段三</span>
+              <h4>编程基础代码</h4>
+            </div>
+            <div class="study-card-grid">
+              <article class="study-card" data-stage="3" data-level="8" data-study-bound="true" role="button" tabindex="0" style="cursor: pointer;">
+                <div class="study-card-header">
+                  <span class="study-card-badge">第 8 关</span>
+                  <span class="study-card-time">⏱ 7分钟</span>
+                </div>
+                <div class="study-card-icon">⚡</div>
+                <h4>S 和 F，谁跑得快</h4>
+                <p>主轴转速 S、进给速度 F，线速度 Vc。搞懂关系，才能算参数。</p>
+                <div class="study-card-tags">
+                  <span class="tag">转速</span>
+                  <span class="tag">进给</span>
+                  <span class="tag">线速度</span>
+                </div>
+              </article>
+
+              <article class="study-card" data-stage="3" data-level="9" data-study-bound="true" role="button" tabindex="0" style="cursor: pointer;">
+                <div class="study-card-header">
+                  <span class="study-card-badge">第 9 关</span>
+                  <span class="study-card-time">⏱ 8分钟</span>
+                </div>
+                <div class="study-card-icon">🚀</div>
+                <h4>G00 和 G01，快慢有别</h4>
+                <p>G00 快速定位，G01 直线切削。G00 走的是折线，用错了会撞刀！</p>
+                <div class="study-card-tags">
+                  <span class="tag">G00</span>
+                  <span class="tag">G01</span>
+                  <span class="tag">撞刀风险</span>
+                </div>
+              </article>
+
+              <article class="study-card" data-stage="3" data-level="10" data-study-bound="true" role="button" tabindex="0" style="cursor: pointer;">
+                <div class="study-card-header">
+                  <span class="study-card-badge">第 10 关</span>
+                  <span class="study-card-time">⏱ 5分钟</span>
+                </div>
+                <div class="study-card-icon">⚠️</div>
+                <h4>致命的小数点</h4>
+                <p>X10. 和 X10 差了10倍！小数点忘了打，轻则废件，重则撞机。</p>
+                <div class="study-card-tags">
+                  <span class="tag">编程规范</span>
+                  <span class="tag">小数点</span>
+                </div>
+              </article>
+
+              <article class="study-card" data-stage="3" data-level="11" data-study-bound="true" role="button" tabindex="0" style="cursor: pointer;">
+                <div class="study-card-header">
+                  <span class="study-card-badge">第 11 关</span>
+                  <span class="study-card-time">⏱ 9分钟</span>
+                </div>
+                <div class="study-card-icon">📊</div>
+                <h4>G90 和 G91：算总账还是算小账</h4>
+                <p>绝对值编程（G90）从零点算，增量编程（G91）从当前位置算。搞混了轨迹全错。</p>
+                <div class="study-card-tags">
+                  <span class="tag">G90</span>
+                  <span class="tag">G91</span>
+                  <span class="tag">绝对增量</span>
+                </div>
+              </article>
+            </div>
+
+            <!-- 第四阶段：固定循环 -->
+            <div class="stage-header">
+              <span class="stage-badge">阶段四</span>
+              <h4>高效编程技巧</h4>
+            </div>
+            <div class="study-card-grid">
+              <article class="study-card" data-stage="4" data-level="12" data-study-bound="true" role="button" tabindex="0" style="cursor: pointer;">
+                <div class="study-card-header">
+                  <span class="study-card-badge">第 12 关</span>
+                  <span class="study-card-time">⏱ 10分钟</span>
+                </div>
+                <div class="study-card-icon">🔄</div>
+                <h4>G81：钻孔自动化</h4>
+                <p>固定循环能把 10 行代码压成 1 行。学会 G81/G83，效率直接翻倍。</p>
+                <div class="study-card-tags">
+                  <span class="tag">G81</span>
+                  <span class="tag">G83</span>
+                  <span class="tag">固定循环</span>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+          </section></main></div>
+        
+      
+
+      <section class="view" id="view-workspace">
+        <div class="workspace-layout">
+          <!-- 左侧：搜索与列表区 -->
+          <section class="workspace-panel search-panel">
+            <div class="workspace-header">
+              <div>
+                <p class="eyebrow">KNOWLEDGE BASE</p>
+                <h3>知识库工作区</h3>
+              </div>
+              <div class="workspace-status-bar">
+                <span class="status-indicator" id="workspace-status-indicator">●</span>
+                <span id="workspace-status-text">基础条目已加载</span>
+              </div>
+            </div>
+
+            <div class="search-toolbar">
+              <div class="search-input-group">
+                <label>
+                  <span>搜索</span>
+                  <input id="search-input" type="search" placeholder="G代码 · 报警 · 对刀 · 刀具...">
+                </label>
+                <button class="icon-button" id="search-clear-btn" title="清除搜索">×</button>
+                <div class="search-suggestions" id="search-suggestions" style="display:none"></div>
+              </div>
+              <label class="filter-select-group">
+                <span>分类</span>
+                <select id="category-select"><option value="全部栏目">全部栏目</option><option value="入门基础">入门基础</option><option value="常用代码">常用代码</option><option value="G代码编程">G代码编程</option><option value="FANUC参数">FANUC参数</option><option value="报警排查">报警排查</option><option value="刀具工艺">刀具工艺</option><option value="材料加工">材料加工</option><option value="加工案例">加工案例</option><option value="速查图卡">速查图卡</option><option value="机床操作">机床操作</option><option value="FANUC报警">FANUC报警</option><option value="加工工艺">加工工艺</option><option value="图纸识读">图纸识读</option><option value="参数换算">参数换算</option><option value="图解提示词">图解提示词</option><option value="编程基础">编程基础</option><option value="数控系统">数控系统</option><option value="故障维修">故障维修</option><option value="切削参数">切削参数</option><option value="检测质量">检测质量</option><option value="材料与工艺">材料与工艺</option><option value="制图基础">制图基础</option><option value="知识库总览">知识库总览</option><option value="01 编程基础">01 编程基础</option><option value="02 机床操作">02 机床操作</option><option value="03 CAM软件">03 CAM软件</option><option value="04 刀具工艺">04 刀具工艺</option><option value="05 故障维修">05 故障维修</option><option value="06 检测质量">06 检测质量</option><option value="07 行业资讯">07 行业资讯</option><option value="08 加工案例">08 加工案例</option></select>
+              </label>
+            </div>
+
+            <div class="chip-row" id="preset-chip-row"></div>
+            <div class="chip-row" id="knowledge-chip-row"></div>
+
+            <div class="view-mode-toolbar" id="workspace-mode-row">
+              <div class="view-mode-group">
+                <button class="mode-btn" data-workspace-mode="list" title="列表模式">
+                  <span class="mode-icon">☰</span>
+                  <span>列表</span>
+                </button>
+                <button class="mode-btn active" data-workspace-mode="visual" title="图文模式">
+                  <span class="mode-icon">▦</span>
+                  <span>图文</span>
+                </button>
+              </div>
+              <button class="filter-btn" data-workspace-flag="with-images" title="只看带图">
+                <span class="filter-icon">🖼</span>
+                <span>仅带图</span>
+              </button>
+            </div>
+
+            <div class="search-meta" id="search-meta"></div>
+            <div class="result-list" id="result-list"></div>
+          </section>
+
+          <!-- 右侧：详情区 -->
+          <section class="workspace-panel detail-panel">
+            <div class="detail-header">
+              <div>
+                <p class="eyebrow">DETAIL VIEW</p>
+                <h3 id="detail-title">选择左侧条目查看详情</h3>
+              </div>
+              <div class="detail-toolbar">
+                <button class="icon-button" id="detail-prev" title="上一条">←</button>
+                <button class="icon-button" id="detail-next-button" title="下一条">→</button>
+                <button class="icon-button" id="favorite-toggle" title="收藏">⭐</button>
+                <button class="icon-button" id="detail-share" title="分享">↗</button>
+              </div>
+            </div>
+
+            <div class="detail-content-grid">
+              <!-- 主要信息卡片 -->
+              <article class="detail-card detail-card-primary">
+                <div class="detail-card-header">
+                  <span class="detail-label" id="detail-category">知识条目</span>
+                  <span class="detail-badge" id="detail-risk-badge">未选择</span>
+                </div>
+                <h4 class="detail-code" id="detail-code">请选择左侧内容</h4>
+                <p class="detail-summary" id="detail-summary">这里会显示核心说明和使用场景</p>
+              </article>
+
+              <!-- 图片展示卡片 - 优先显示 -->
+              <article class="detail-card detail-card-images" id="detail-image-card" hidden="">
+                <div class="detail-card-header">
+                  <h4>配图说明</h4>
+                  <span class="image-count-badge" id="image-count-badge">0 张</span>
+                </div>
+                <div class="detail-image-gallery" id="detail-image-stage"></div>
+              </article>
+
+              <!-- 新手理解 -->
+              <article class="detail-card">
+                <h4>💡 新手先这样理解</h4>
+                <p id="detail-beginner">概念和场景优先，参数和代码其次</p>
+              </article>
+
+              <!-- 使用场景 -->
+              <article class="detail-card">
+                <h4>🎯 适合什么时候查</h4>
+                <p id="detail-usage">遇到不懂的代码或参数时快速定位</p>
+              </article>
+
+              <!-- 易错提醒 -->
+              <article class="detail-card detail-card-warning">
+                <h4>⚠️ 最容易错的地方</h4>
+                <p id="detail-warning">查到之后要注意的风险点和验证方法</p>
+              </article>
+
+              <!-- 高风险提醒 -->
+              <article class="detail-card detail-card-frontend-risk" id="detail-frontend-risk-card" hidden="">
+                <h4>⚠️ 高危操作提醒</h4>
+                <div class="detail-frontend-risk-body" id="detail-frontend-risk-body"></div>
+              </article>
+
+              <!-- 快速检查 -->
+              <article class="detail-card" id="detail-quick-check-card">
+                <h4>✅ 加工前快速检查</h4>
+                <div class="detail-check-list" id="detail-quick-check"></div>
+              </article>
+
+              <!-- 代码示例 -->
+              <article class="detail-card detail-card-code">
+                <h4>📝 代码示例</h4>
+                <pre id="detail-example">从简单示例开始理解</pre>
+              </article>
+
+              <!-- 关联工具 -->
+              <article class="detail-card" id="detail-tools-card">
+                <h4>🧮 关联工具</h4>
+                <div class="detail-tool-list" id="detail-tools"></div>
+              </article>
+
+              <!-- 参数芯片 -->
+              <article class="detail-card" id="detail-params-card">
+                <h4>🔢 参数联动</h4>
+                <div class="detail-param-list" id="detail-params"></div>
+              </article>
+
+              <!-- 智能推荐 -->
+              <article class="detail-card" id="detail-smart-recommend-card">
+                <h4>🎯 智能推荐</h4>
+                <div class="detail-smart-recommend" id="detail-smart-recommend"></div>
+              </article>
+
+              <!-- 学习路径 -->
+              <article class="detail-card">
+                <h4>➡️ 下一步学什么</h4>
+                <p id="detail-next">相关内容的推荐学习顺序</p>
+              </article>
+
+              <!-- 知识库原文 -->
+              <article class="detail-card detail-card-preview">
+                <div class="detail-card-header">
+                  <h4>📚 知识库原文摘录</h4>
+                  <button class="ghost-button small" id="load-preview-button">加载原文</button>
+                </div>
+                <p class="detail-preview-status" id="detail-preview-status">点击按钮加载完整知识库内容</p>
+                <pre id="detail-preview" hidden=""></pre>
+              </article>
+
+              <!-- 推荐内容 -->
+              <article class="detail-card">
+                <h4>🔗 相关推荐</h4>
+                <div class="related-links-grid" id="related-links"></div>
+              </article>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" id="view-gallery">
+        <div class="section-panel">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Gemini 图片图卡 (<span id="cncGalleryCount">20</span> 张)</p>
+              <h3>首批图片直接在站内显示</h3>
+            </div>
+            <p>这部分专门解决"已经画完了，但网页里根本看不到"的问题。</p>
+          </div>
+
+          <!-- 图库搜索与筛选器 -->
+          <div class="gallery-toolbar" style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+            <input type="search" id="cncGallerySearch" placeholder="搜索图库图片..." style="padding: 8px 12px; border: 1px solid rgba(207,109,54,0.22); border-radius: 4px; background: #fffaf2; color: #5d655f; flex: 1; min-width: 200px;">
+            <select id="cncGalleryFilter" style="padding: 8px 12px; border: 1px solid rgba(207,109,54,0.22); border-radius: 4px; background: #fffaf2; color: #5d655f;">
+              <option value="all">所有分类</option>
+              <option value="batch01">核心图包 (Batch01)</option>
+              <option value="batch02">操作基础 (Batch02)</option>
+              <option value="batch03">车削工艺 (Batch03)</option>
+              <option value="batch04">铣削刀具 (Batch04)</option>
+              <option value="batch05">报警排障 (Batch05)</option>
+            </select>
+          </div>
+
+          <div class="gallery-grid" id="cncGalleryGrid">
+          <button class="cnc-gallery-card" type="button" data-index="0" aria-label="查看图片：轴行程超程报警故障">
+            <span class="cnc-gallery-img-wrap">
+              <img data-src="./assets/images/batch01_core/alarm-limit-overtravel-001.webp" alt="轴行程超程报警故障" loading="lazy">
+            </span>
+
+            <span class="cnc-gallery-overlay">
+              <h3>轴行程超程报警故障</h3>
+              <p>机床轴移动超出软/硬限位时触发，需手动反向摇出并回零，检查程序路径。</p>
+            </span>
+          </button>
+        
+          <button class="cnc-gallery-card" type="button" data-index="1" aria-label="查看图片：伺服驱动系统故障报警">
+            <span class="cnc-gallery-img-wrap">
+              <img data-src="./assets/images/batch01_core/alarm-servo-001.webp" alt="伺服驱动系统故障报警" loading="lazy">
+            </span>
+
+            <span class="cnc-gallery-overlay">
+              <h3>伺服驱动系统故障报警</h3>
+              <p>伺服电机或驱动器发生过载、过流或位置偏差过大，需检查电机负载和接线。</p>
+            </span>
+          </button>
+        
+          <button class="cnc-gallery-card" type="button" data-index="2" aria-label="查看图片：主轴驱动与过载报警">
+            <span class="cnc-gallery-img-wrap">
+              <img data-src="./assets/images/batch01_core/alarm-spindle-001.webp" alt="主轴驱动与过载报警" loading="lazy">
+            </span>
+
+            <span class="cnc-gallery-overlay">
+              <h3>主轴驱动与过载报警</h3>
+              <p>主轴电机过载、变频器异常或冷却故障，需检查主轴冷却油位与切削用量。</p>
+            </span>
+          </button>
+        
+          <button class="cnc-gallery-card" type="button" data-index="3" aria-label="查看图片：机床与工件坐标系基础">
+            <span class="cnc-gallery-img-wrap">
+              <img data-src="./assets/images/batch01_core/beginner-coordinate-001.webp" alt="机床与工件坐标系基础" loading="lazy">
+            </span>
+
+            <span class="cnc-gallery-overlay">
+              <h3>机床与工件坐标系基础</h3>
+              <p>讲解机床坐标系(MCS)与工件坐标系(WCS)的区别，阐述对刀偏置基本原理。</p>
+            </span>
+          </button>
+        
+          <button class="cnc-gallery-card" type="button" data-index="4" aria-label="查看图片：G90绝对与G91增量指令">
+            <span class="cnc-gallery-img-wrap">
+              <img data-src="./assets/images/batch01_core/beginner-g90-g91-001.webp" alt="G90绝对与G91增量指令" loading="lazy">
+            </span>
+
+            <span class="cnc-gallery-overlay">
+              <h3>G90绝对与G91增量指令</h3>
+              <p>对比绝对编程(G90)与增量编程(G91)区别，展示坐标计算与轨迹运行差异。</p>
+            </span>
+          </button>
+        
+          <button class="cnc-gallery-card" type="button" data-index="5" aria-label="查看图片：机械原点与工件零点对比">
+            <span class="cnc-gallery-img-wrap">
+              <img data-src="./assets/images/batch01_core/beginner-machine-zero-vs-work-zero-001.webp" alt="机械原点与工件零点对比" loading="lazy">
+            </span>
+
+            <span class="cnc-gallery-overlay">
+              <h3>机械原点与工件零点对比</h3>
+              <p>演示机床参考点（机械零点）与工件坐标系零点的相对空间关系及偏置转换。</p>
+            </span>
+          </button>
+        
+          <button class="cnc-gallery-card" type="button" data-index="6" aria-label="查看图片：手动对刀标准操作流程">
+            <span class="cnc-gallery-img-wrap">
+              <img data-src="./assets/images/batch01_core/beginner-touchoff-flow-001.webp" alt="手动对刀标准操作流程" loading="lazy">
+            </span>
+
+            <span class="cnc-gallery-overlay">
+              <h3>手动对刀标准操作流程</h3>
+              <p>展示试切法及寻边器手动对刀步骤，指导如何安全录入G54坐标系偏置值。</p>
+            </span>
+          </button>
+        
+          <button class="cnc-gallery-card" type="button" data-index="7" aria-label="查看图片：G81标准孔加工钻孔循环">
+            <span class="cnc-gallery-img-wrap">
+              <img data-src="./assets/images/batch01_core/cycle-g81-001.webp" alt="G81标准孔加工钻孔循环" loading="lazy">
+            </span>
+
+            <span class="cnc-gallery-overlay">
+              <h3>G81标准孔加工钻孔循环</h3>
+              <p>标准浅孔钻孔指令，刀具快进定位、受控进给到孔底后，直接快速退刀至R点。</p>
+            </span>
+          </button>
+        
+          <button class="cnc-gallery-card" type="button" data-index="8" aria-label="查看图片：G83深孔排屑啄钻循环">
+            <span class="cnc-gallery-img-wrap">
+              <img data-src="./assets/images/batch01_core/cycle-g83-001.webp" alt="G83深孔排屑啄钻循环" loading="lazy">
+            </span>
+
+            <span class="cnc-gallery-overlay">
+              <h3>G83深孔排屑啄钻循环</h3>
+              <p>间歇进刀并完全退刀排屑，将切屑带出深孔，有效防止断刀及铁屑缠绕。</p>
+            </span>
+          </button>
+        
+          <button class="cnc-gallery-card" type="button" data-index="9" aria-label="查看图片：G84右旋攻丝固定循环">
+            <span class="cnc-gallery-img-wrap">
+              <img data-src="./assets/images/batch01_core/cycle-g84-001.webp" alt="G84右旋攻丝固定循环" loading="lazy">
+            </span>
+
+            <span class="cnc-gallery-overlay">
+              <h3>G84右旋攻丝固定循环</h3>
+              <p>攻丝固定循环，实现主轴正转进给、孔底暂停、反转退刀，确保螺纹精度。</p>
+            </span>
+          </button>
+        
+          <button class="cnc-gallery-card" type="button" data-index="10" aria-label="查看图片：G98与G99退刀高度选择">
+            <span class="cnc-gallery-img-wrap">
+              <img data-src="./assets/images/batch01_core/cycle-g98-g99-001.webp" alt="G98与G99退刀高度选择" loading="lazy">
+            </span>
+
+            <span class="cnc-gallery-overlay">
+              <h3>G98与G99退刀高度选择</h3>
+              <p>对比固定循环中退刀至初始平面(G98)与R点平面(G99)的路径和加工效率。</p>
+            </span>
+          </button>
+        
+          <button class="cnc-gallery-card" type="button" data-index="11" aria-label="查看图片：尺寸公差与表面粗糙度识读">
+            <span class="cnc-gallery-img-wrap">
+              <img data-src="./assets/images/batch01_core/drawing-tolerance-roughness-001.webp" alt="尺寸公差与表面粗糙度识读" loading="lazy">
+            </span>
+
+            <span class="cnc-gallery-overlay">
+              <h3>尺寸公差与表面粗糙度识读</h3>
+              <p>讲解图纸中极限偏差、配合公差代号与粗糙度符号定义，指导中值编程控制。</p>
+            </span>
+          </button>
+        
+          <button class="cnc-gallery-card" type="button" data-index="12" aria-label="查看图片：开机手动回参考点失败故障">
+            <span class="cnc-gallery-img-wrap">
+              <img data-src="./assets/images/batch01_core/fault-home-fail-001.webp" alt="开机手动回参考点失败故障" loading="lazy">
+            </span>
+
+            <span class="cnc-gallery-overlay">
+              <h3>开机手动回参考点失败故障</h3>
+              <p>分析手动回零不停止或未到位置报警的成因，包括撞块污损与限位开关故障。</p>
+            </span>
+          </button>
+        
+          <button class="cnc-gallery-card" type="button" data-index="13" aria-label="查看图片：G94分进给与G95转进给">
+            <span class="cnc-gallery-img-wrap">
+              <img data-src="./assets/images/batch01_core/feed-g94-g95-001.webp" alt="G94分进给与G95转进给" loading="lazy">
+            </span>
+
+            <span class="cnc-gallery-overlay">
+              <h3>G94分进给与G95转进给</h3>
+              <p>对比每分钟进给率G94(mm/min)与每转进给率G95(mm/r)的适用场景与区别。</p>
+            </span>
+          </button>
+        
+          <button class="cnc-gallery-card" type="button" data-index="14" aria-label="查看图片：G00快速定位与G01直线切削">
+            <span class="cnc-gallery-img-wrap">
+              <img data-src="./assets/images/batch01_core/gcode-g00-g01-001.webp" alt="G00快速定位与G01直线切削" loading="lazy">
+            </span>
+
+            <span class="cnc-gallery-overlay">
+              <h3>G00快速定位与G01直线切削</h3>
+              <p>区分快速点定位(G00)与受控进给插补直线切削(G01)的运行特性与安全守则。</p>
+            </span>
+          </button>
+        
+          <button class="cnc-gallery-card" type="button" data-index="15" aria-label="查看图片：G02/G03顺/逆时针圆弧插补">
+            <span class="cnc-gallery-img-wrap">
+              <img data-src="./assets/images/batch01_core/gcode-g02-g03-001.webp" alt="G02/G03顺/逆时针圆弧插补" loading="lazy">
+            </span>
+
+            <span class="cnc-gallery-overlay">
+              <h3>G02/G03顺/逆时针圆弧插补</h3>
+              <p>二维圆弧插补指令，指定顺时针(G02)或逆时针(G03)路径，定义圆心或半径。</p>
+            </span>
+          </button>
+        
+          <button class="cnc-gallery-card" type="button" data-index="16" aria-label="查看图片：G17/G18/G19平面选择指令">
+            <span class="cnc-gallery-img-wrap">
+              <img data-src="./assets/images/batch01_core/gcode-g17-g18-g19-001.webp" alt="G17/G18/G19平面选择指令" loading="lazy">
+            </span>
+
+            <span class="cnc-gallery-overlay">
+              <h3>G17/G18/G19平面选择指令</h3>
+              <p>指定坐标系加工平面，G17为XY平面，G18为ZX平面，G19为YZ平面，影响圆弧和刀补。</p>
+            </span>
+          </button>
+        
+          <button class="cnc-gallery-card" type="button" data-index="17" aria-label="查看图片：G41左与G42右刀半径补偿">
+            <span class="cnc-gallery-img-wrap">
+              <img data-src="./assets/images/batch01_core/gcode-g41-g42-001.webp" alt="G41左与G42右刀半径补偿" loading="lazy">
+            </span>
+
+            <span class="cnc-gallery-overlay">
+              <h3>G41左与G42右刀半径补偿</h3>
+              <p>阐述刀具路径左侧半径补偿(G41)与右侧补偿(G42)的走刀建立，避免轮廓过切。</p>
+            </span>
+          </button>
+        
+          <button class="cnc-gallery-card" type="button" data-index="18" aria-label="查看图片：G43正向刀具长度补偿指令">
+            <span class="cnc-gallery-img-wrap">
+              <img data-src="./assets/images/batch01_core/gcode-g43-g49-001.webp" alt="G43正向刀具长度补偿指令" loading="lazy">
+            </span>
+
+            <span class="cnc-gallery-overlay">
+              <h3>G43正向刀具长度补偿指令</h3>
+              <p>讲解刀具长度正偏置补偿(G43)的建立，以及取消刀长补偿(G49)，确保刀尖精准定位。</p>
+            </span>
+          </button>
+        
+          <button class="cnc-gallery-card" type="button" data-index="19" aria-label="查看图片：G54至G59工件坐标系设定">
+            <span class="cnc-gallery-img-wrap">
+              <img data-src="./assets/images/batch01_core/gcode-g54-g59-001.webp" alt="G54至G59工件坐标系设定" loading="lazy">
+            </span>
+
+            <span class="cnc-gallery-overlay">
+              <h3>G54至G59工件坐标系设定</h3>
+              <p>介绍常用的六个工件原点偏置坐标系的建立方法，适用于多工位零件加工。</p>
+            </span>
+          </button>
+        </div>
+
+          <!-- 加载更多按钮 -->
+          <div class="gallery-actions" style="text-align: center; margin-top: 20px;">
+            <button class="primary-button" id="cncGalleryLoadMore" type="button">加载更多</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="view-calculator">
+        <div class="section-panel">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">参数换算</p>
+              <h3>现场最常用的 5 个计算</h3>
+            </div>
+            <p>不再在一长页底部翻找，单独做成工作区。</p>
+          </div>
+
+          <div class="calculator-grid">
+            <article class="calc-card">
+              <h4>线速度转转速</h4>
+              <label><span>线速度 Vc (m/min)</span><input id="vc-input" type="number" min="0" step="0.1" value="120"></label>
+              <label><span>直径 D (mm)</span><input id="diameter-input" type="number" min="0" step="0.1" value="50"></label>
+              <button class="primary-button" data-calc="rpm" type="button">计算转速</button>
+              <p class="calc-result" id="rpm-result">建议转速约 764 rpm</p>
+            </article>
+
+            <article class="calc-card">
+              <h4>转速转线速度</h4>
+              <label><span>转速 n (rpm)</span><input id="rpm-back-input" type="number" min="0" step="1" value="800"></label>
+              <label><span>直径 D (mm)</span><input id="diameter-back-input" type="number" min="0" step="0.1" value="50"></label>
+              <button class="primary-button" data-calc="vc" type="button">计算线速度</button>
+              <p class="calc-result" id="vc-result">线速度约 125.66 m/min</p>
+            </article>
+
+            <article class="calc-card">
+              <h4>每转进给转每分钟进给</h4>
+              <label><span>每转进给 f (mm/rev)</span><input id="feed-per-rev-input" type="number" min="0" step="0.001" value="0.2"></label>
+              <label><span>转速 n (rpm)</span><input id="feed-rpm-input" type="number" min="0" step="1" value="600"></label>
+              <button class="primary-button" data-calc="feed" type="button">计算进给</button>
+              <p class="calc-result" id="feed-result">每分钟进给约 120 mm/min</p>
+            </article>
+
+            <article class="calc-card">
+              <h4>英制牙数转螺距</h4>
+              <label><span>TPI</span><input id="tpi-input" type="number" min="0" step="0.1" value="20"></label>
+              <button class="primary-button" data-calc="pitch" type="button">计算螺距</button>
+              <p class="calc-result" id="pitch-result">对应螺距约 1.27 mm</p>
+            </article>
+
+            <article class="calc-card">
+              <h4>半径转直径</h4>
+              <label><span>半径 R (mm)</span><input id="radius-input" type="number" min="0" step="0.01" value="12.5"></label>
+              <button class="primary-button" data-calc="diameter" type="button">计算直径</button>
+              <p class="calc-result" id="diameter-result">对应直径约 25 mm</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="view-library">
+        <div class="section-panel">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">本地知识库并入</p>
+              <h3>把本地数据库内容逐步接成网页可查</h3>
+            </div>
+            <p>先把核心数控知识包并入，再按需拆分超大档案，避免一打开就卡死。</p>
+          </div>
+
+          <div class="library-grid">
+            <article class="library-card">
+              <span class="card-kicker">基础条目</span>
+              <strong id="base-count">178</strong>
+              <p>来自 `data.js` 和 `kb-extra.js` 的结构化条目。</p>
+            </article>
+
+            <article class="library-card">
+              <span class="card-kicker">知识库核心包</span>
+              <strong id="core-count">1796 条已并入</strong>
+              <p>优先接入真正有用的编程、操作、刀具、故障、案例类知识。</p>
+            </article>
+
+            <article class="library-card">
+              <span class="card-kicker">超大本地档案</span>
+              <strong id="archive-count">待尝试</strong>
+              <p>本地完整索引量很大，需要分块接入，不能粗暴整包塞进首页。</p>
+            </article>
+          </div>
+
+          <div class="library-actions">
+            <button class="primary-button" id="load-core-library" type="button">加载核心知识库包</button>
+            <button class="ghost-button" id="load-full-library" type="button">尝试加载完整本地索引</button>
+          </div>
+
+          <article class="library-browser-card">
+            <div class="section-head compact">
+              <div>
+                <p class="eyebrow">分类浏览</p>
+                <h3>按知识库目录直接进入</h3>
+              </div>
+              <p>不想搜的时候，可以直接按分类点进去。点一下就跳到对应条目区。</p>
+            </div>
+            <div class="library-browser" id="library-browser">
+    <article class="library-browser-group">
+      <h4>01 编程基础</h4>
+      <p>当前已并入 475 条。可以直接按这组分类进入工作区继续看。</p>
+      <div class="library-browser-links">
+        <button type="button" data-library-category="01 编程基础">进入这组</button>
+        <button type="button" data-library-entry="kb-file-01_编程基础-知识类_G代码M代码编程实例大全">FANUC G代码M代码编程实例大全(完整版)</button><button type="button" data-library-entry="kb-file-01_编程基础-知识类_FANUC_G代码全集参考手册">FANUC G代码全集参考手册</button><button type="button" data-library-entry="kb-file-01_编程基础-NotebookLM_FANUC加工中心G代码M代码完整手册">FANUC立式加工中心：G代码与M代码终极详细参考手册</button>
+      </div>
+    </article>
+  
+    <article class="library-browser-group">
+      <h4>04 刀具工艺</h4>
+      <p>当前已并入 381 条。可以直接按这组分类进入工作区继续看。</p>
+      <div class="library-browser-links">
+        <button type="button" data-library-category="04 刀具工艺">进入这组</button>
+        <button type="button" data-library-entry="kb-file-04_刀具工艺-知识类_切削参数速查大全">数控切削参数速查大全</button><button type="button" data-library-entry="kb-file-04_刀具工艺-刀柄与工具系统">数控刀柄与工具系统</button><button type="button" data-library-entry="kb-file-04_刀具工艺-加工质量控制">加工质量控制</button>
+      </div>
+    </article>
+  
+    <article class="library-browser-group">
+      <h4>02 机床操作</h4>
+      <p>当前已并入 210 条。可以直接按这组分类进入工作区继续看。</p>
+      <div class="library-browser-links">
+        <button type="button" data-library-category="02 机床操作">进入这组</button>
+        <button type="button" data-library-entry="kb-file-02_机床操作-机床操作大全">数控机床操作大全</button><button type="button" data-library-entry="kb-file-02_机床操作-数控机床电气系统">数控机床电气控制系统</button><button type="button" data-library-entry="kb-file-02_机床操作-FANUC系统手册">FANUC系统手册</button>
+      </div>
+    </article>
+  
+    <article class="library-browser-group">
+      <h4>07 行业资讯</h4>
+      <p>当前已并入 202 条。可以直接按这组分类进入工作区继续看。</p>
+      <div class="library-browser-links">
+        <button type="button" data-library-category="07 行业资讯">进入这组</button>
+        <button type="button" data-library-entry="kb-file-07_行业资讯-行业标准规范">数控加工行业标准规范</button><button type="button" data-library-entry="kb-file-07_行业资讯-数字化工厂MES与DNC集成技术">数字化工厂MES与DNC集成技术</button><button type="button" data-library-entry="kb-file-07_行业资讯-Web_工业4.0智能制造">工业4.0与智能制造</button>
+      </div>
+    </article>
+  
+    <article class="library-browser-group">
+      <h4>05 故障维修</h4>
+      <p>当前已并入 191 条。可以直接按这组分类进入工作区继续看。</p>
+      <div class="library-browser-links">
+        <button type="button" data-library-category="05 故障维修">进入这组</button>
+        <button type="button" data-library-entry="kb-file-05_故障维修-伺服系统详解">数控机床伺服系统详解</button><button type="button" data-library-entry="kb-file-05_故障维修-主轴系统详解">数控机床主轴系统详解</button><button type="button" data-library-entry="kb-file-05_故障维修-机床维护保养">机床维护保养</button>
+      </div>
+    </article>
+  
+    <article class="library-browser-group">
+      <h4>08 加工案例</h4>
+      <p>当前已并入 130 条。可以直接按这组分类进入工作区继续看。</p>
+      <div class="library-browser-links">
+        <button type="button" data-library-category="08 加工案例">进入这组</button>
+        <button type="button" data-library-entry="kb-file-08_加工案例-案例_典型零件加工全集">案例 典型零件加工全集</button><button type="button" data-library-entry="kb-file-08_加工案例-Web_螺纹加工技术大全">螺纹加工技术大全</button><button type="button" data-library-entry="kb-file-08_加工案例-典型加工工艺案例">数控加工典型工艺案例</button>
+      </div>
+    </article>
+  
+    <article class="library-browser-group">
+      <h4>03 CAM软件</h4>
+      <p>当前已并入 122 条。可以直接按这组分类进入工作区继续看。</p>
+      <div class="library-browser-links">
+        <button type="button" data-library-category="03 CAM软件">进入这组</button>
+        <button type="button" data-library-entry="kb-file-03_CAM软件-教学_UG_NX数控编程完整操作指南">UG/NX 数控编程完整操作指南</button><button type="button" data-library-entry="kb-file-03_CAM软件-教学_PowerMill五轴加工编程指南">PowerMill 五轴加工编程完整指南</button><button type="button" data-library-entry="kb-file-03_CAM软件-教学_Mastercam数控编程完整操作指南">Mastercam 数控编程完整操作指南</button>
+      </div>
+    </article>
+  
+    <article class="library-browser-group">
+      <h4>06 检测质量</h4>
+      <p>当前已并入 76 条。可以直接按这组分类进入工作区继续看。</p>
+      <div class="library-browser-links">
+        <button type="button" data-library-category="06 检测质量">进入这组</button>
+        <button type="button" data-library-entry="kb-file-06_检测质量-表面粗糙度检测方法与评定标准完全指南">表面粗糙度检测方法与评定标准完全指南</button><button type="button" data-library-entry="kb-file-06_检测质量-Web_三坐标测量技术">三坐标测量机(CMM)技术</button><button type="button" data-library-entry="kb-file-06_检测质量-在线测量与闭环补偿加工">在线测量与闭环补偿加工</button>
+      </div>
+    </article>
+  
+    <article class="library-browser-group">
+      <h4>图解提示词</h4>
+      <p>当前已并入 35 条。可以直接按这组分类进入工作区继续看。</p>
+      <div class="library-browser-links">
+        <button type="button" data-library-category="图解提示词">进入这组</button>
+        <button type="button" data-library-entry="diagram-prompt-coordinate">坐标系教学配图提示词</button><button type="button" data-library-entry="diagram-prompt-g02">G02 / G03 圆弧配图提示词</button><button type="button" data-library-entry="diagram-prompt-compensation">刀补教学配图提示词</button>
+      </div>
+    </article>
+  
+    <article class="library-browser-group">
+      <h4>编程基础</h4>
+      <p>当前已并入 33 条。可以直接按这组分类进入工作区继续看。</p>
+      <div class="library-browser-links">
+        <button type="button" data-library-category="编程基础">进入这组</button>
+        <button type="button" data-library-entry="kb-g20-g21">G20 / G21 英制公制切换</button><button type="button" data-library-entry="kb-g28-g29">G28 / G29 回参考点</button><button type="button" data-library-entry="kb-g40-g41-g42">G40 / G41 / G42 刀具半径补偿</button>
+      </div>
+    </article>
+  
+    <article class="library-browser-group">
+      <h4>常用代码</h4>
+      <p>当前已并入 20 条。可以直接按这组分类进入工作区继续看。</p>
+      <div class="library-browser-links">
+        <button type="button" data-library-category="常用代码">进入这组</button>
+        <button type="button" data-library-entry="learn-g54-g59">G54-G59 工件坐标系</button><button type="button" data-library-entry="learn-g71-g72-g73">G71 / G72 / G73 车床循环</button><button type="button" data-library-entry="learn-g81-g83">G81 / G83 钻孔与啄钻循环</button>
+      </div>
+    </article>
+  
+    <article class="library-browser-group">
+      <h4>机床操作</h4>
+      <p>当前已并入 10 条。可以直接按这组分类进入工作区继续看。</p>
+      <div class="library-browser-links">
+        <button type="button" data-library-category="机床操作">进入这组</button>
+        <button type="button" data-library-entry="machine-home-return">回零操作与参考点概念</button><button type="button" data-library-entry="machine-tool-setting">FANUC 对刀完整操作流程</button><button type="button" data-library-entry="machine-panel-english">机床面板常见英文单词</button>
+      </div>
+    </article>
+  
+    <article class="library-browser-group">
+      <h4>G代码编程</h4>
+      <p>当前已并入 9 条。可以直接按这组分类进入工作区继续看。</p>
+      <div class="library-browser-links">
+        <button type="button" data-library-category="G代码编程">进入这组</button>
+        <button type="button" data-library-entry="learn-g17-g18-g19">G17 / G18 / G19 平面选择</button><button type="button" data-library-entry="learn-g41-g42">G41 / G42 刀具补偿</button><button type="button" data-library-entry="learn-g43-g44-g49">G43 / G44 / G49 刀长补偿</button>
+      </div>
+    </article>
+  
+    <article class="library-browser-group">
+      <h4>刀具工艺</h4>
+      <p>当前已并入 9 条。可以直接按这组分类进入工作区继续看。</p>
+      <div class="library-browser-links">
+        <button type="button" data-library-category="刀具工艺">进入这组</button>
+        <button type="button" data-library-entry="tool-life">刀具寿命管理</button><button type="button" data-library-entry="tool-coating">刀具涂层技术</button><button type="button" data-library-entry="tool-insert-brand">刀具品牌与牌号认知入门</button>
+      </div>
+    </article>
+  
+    <article class="library-browser-group">
+      <h4>速查图卡</h4>
+      <p>当前已并入 9 条。可以直接按这组分类进入工作区继续看。</p>
+      <div class="library-browser-links">
+        <button type="button" data-library-category="速查图卡">进入这组</button>
+        <button type="button" data-library-entry="quick-fanuc-param">FANUC 参数修改速查</button><button type="button" data-library-entry="quick-fanuc-alarm">FANUC 报警代码速查表</button><button type="button" data-library-entry="quick-gcode">G代码与编程速查</button>
+      </div>
+    </article>
+  
+    <article class="library-browser-group">
+      <h4>知识库总览</h4>
+      <p>当前已并入 9 条。可以直接按这组分类进入工作区继续看。</p>
+      <div class="library-browser-links">
+        <button type="button" data-library-category="知识库总览">进入这组</button>
+        <button type="button" data-library-entry="kb-root-01_编程基础">01_编程基础 总览</button><button type="button" data-library-entry="kb-root-02_机床操作">02_机床操作 总览</button><button type="button" data-library-entry="kb-root-03_CAM软件">03_CAM软件 总览</button>
+      </div>
+    </article>
+  
+    <article class="library-browser-group">
+      <h4>加工案例</h4>
+      <p>当前已并入 8 条。可以直接按这组分类进入工作区继续看。</p>
+      <div class="library-browser-links">
+        <button type="button" data-library-category="加工案例">进入这组</button>
+        <button type="button" data-library-entry="case-thin-wall">薄壁零件加工案例</button><button type="button" data-library-entry="case-axis">车削阶梯轴案例</button><button type="button" data-library-entry="case-thread-part">螺纹零件加工案例</button>
+      </div>
+    </article>
+  
+    <article class="library-browser-group">
+      <h4>报警排查</h4>
+      <p>当前已并入 6 条。可以直接按这组分类进入工作区继续看。</p>
+      <div class="library-browser-links">
+        <button type="button" data-library-category="报警排查">进入这组</button>
+        <button type="button" data-library-entry="alarm-servo">伺服系统常见故障与排除</button><button type="button" data-library-entry="alarm-spindle">主轴常见故障与排除</button><button type="button" data-library-entry="alarm-atc">ATC 自动换刀故障诊断</button>
+      </div>
+    </article>
+  </div>
+          </article>
+
+          <article class="library-log-card">
+            <h4>当前并入状态</h4>
+            <div class="library-log" id="library-log"><div class="library-log-item">核心知识库包已加载 3 个脚本，开始并入条目。</div></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="view" id="view-favorites">
+        <div class="section-panel">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">最近查看 / 收藏</p>
+              <h3>像软件一样接着学，不用每次重找</h3>
+            </div>
+            <p>退出后回来还能继续接着学。</p>
+          </div>
+
+          <div class="favorites-grid">
+            <article class="detail-card">
+              <h4>最近查看</h4>
+              <div class="link-cloud" id="recent-links"><button type="button">还没有最近查看</button></div>
+            </article>
+            <article class="detail-card">
+              <h4>我的收藏</h4>
+              <div class="link-cloud" id="favorite-links"><button type="button">还没有收藏内容</button></div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="view-access">
+        <div class="section-panel">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">访问控制</p>
+              <h3>只让你授权的人看到完整资料</h3>
+            </div>
+            <p>这一页现在不只是说明，而是直接给你成品化分享入口。你可以把正式网址或授权链接发给指定的人。</p>
+          </div>
+
+          <div class="access-grid">
+            <article class="access-card">
+              <h4>现在怎么放行</h4>
+              <p>网页会先显示受控访问层。输入邀请码，或者直接通过你发出去的授权链接，才会进入资料区。</p>
+            </article>
+            <article class="access-card">
+              <h4>适合抖音粉丝</h4>
+              <p>你可以只在视频、私信、群或直播里发授权链接。外部人看不到链接，自然就进不来完整内容。</p>
+            </article>
+            <article class="access-card">
+              <h4>更强方案</h4>
+              <p>真正强控制要上 Cloudflare Access 或带登录后端。当前这版先把"你发出去的人能直接打开"的正式入口先做稳。</p>
+            </article>
+          </div>
+
+          <div class="access-share-panel">
+            <div class="section-head compact">
+              <div>
+                <p class="eyebrow">分享中心</p>
+                <h3>可以直接发人的公网入口</h3>
+              </div>
+              <p id="access-share-status">当前设备已经授权，可以直接查看完整资料。下面这些链接现在可以直接发给别人。</p>
+            </div>
+
+            <article class="share-card hero">
+              <div class="share-card-text">
+                <h4>正式公网地址</h4>
+                <p>这是你以后对外统一发的主入口。别人打开后，会先进入受控访问页。</p>
+              </div>
+              <div class="share-url-row">
+                <code id="access-public-url">https://panxiangbin.github.io/yuhua/cnc/</code>
+                <button class="ghost-button" id="copy-public-url" type="button">复制网址</button>
+              </div>
+            </article>
+
+            <div class="access-link-list" id="access-share-links">
+      <article class="share-link-card">
+        <div>
+          <h4>粉丝通道</h4>
+          <p>适合发给短视频、私信和直播间来的用户。</p>
+        </div>
+        <div class="share-link-meta">
+          <span class="badge">follower</span>
+          <span class="badge level">已预设授权入口</span>
+        </div>
+        <code>https://panxiangbin.github.io/yuhua/cnc/?invite=xp-cnc-follower-2026</code>
+        <div class="share-link-actions">
+          <button class="ghost-button" data-copy-link="https://panxiangbin.github.io/yuhua/cnc/?invite=xp-cnc-follower-2026" type="button">复制授权链接</button>
+          <button class="ghost-button" data-copy-code="xp-cnc-follower-2026" type="button">复制邀请码</button>
+        </div>
+      </article>
+    
+      <article class="share-link-card">
+        <div>
+          <h4>深度资料通道</h4>
+          <p>适合发给老客户、学员或需要长期复看的人。</p>
+        </div>
+        <div class="share-link-meta">
+          <span class="badge">vip</span>
+          <span class="badge level">已预设授权入口</span>
+        </div>
+        <code>https://panxiangbin.github.io/yuhua/cnc/?invite=xp-cnc-vip-2026</code>
+        <div class="share-link-actions">
+          <button class="ghost-button" data-copy-link="https://panxiangbin.github.io/yuhua/cnc/?invite=xp-cnc-vip-2026" type="button">复制授权链接</button>
+          <button class="ghost-button" data-copy-code="xp-cnc-vip-2026" type="button">复制邀请码</button>
+        </div>
+      </article>
+    
+      <article class="share-link-card">
+        <div>
+          <h4>旧版通行码</h4>
+          <p>兼容你之前已经发出去的老链接，不影响旧用户继续打开。</p>
+        </div>
+        <div class="share-link-meta">
+          <span class="badge">legacy</span>
+          <span class="badge level">已预设授权入口</span>
+        </div>
+        <code>https://panxiangbin.github.io/yuhua/cnc/?invite=XIAOPAN-CNC-2026</code>
+        <div class="share-link-actions">
+          <button class="ghost-button" data-copy-link="https://panxiangbin.github.io/yuhua/cnc/?invite=XIAOPAN-CNC-2026" type="button">复制授权链接</button>
+          <button class="ghost-button" data-copy-code="XIAOPAN-CNC-2026" type="button">复制邀请码</button>
+        </div>
+      </article>
+    </div>
+          </div>
+        </div>
+      </section>
+    
+  
+
+  <script src="./data.js"></script>
+  <script src="./frontend-data-layer.js"></script>
+  <script src="./kb-extra.js"></script>
+  <script src="./featured-images.js"></script>
+  <script src="./featured-images-extended.js"></script>
+  <script src="./featured-images-part2.js"></script>
+  <script src="./featured-images-supplement.js"></script>
+  <script src="./gallery-library.js"></script>
+  <script src="./gallery-library-enhanced.js"></script>
+  <script src="./kb-content-manifest.js"></script>
+  <script src="./ui-knowledge-tree.js"></script>
+  <script src="./ui-recommendations.js"></script>
+  <script src="./search-aliases.js"></script>
+  <script src="./app.js"></script><script src="./knowledge-core-01.js"></script>
+  <script src="./gallery-featured.js"></script>
+
+  <!-- 图片放大弹窗 -->
+  <div class="cnc-gallery-modal" id="cncGalleryModal" aria-hidden="true">
+    <div class="cnc-gallery-modal-mask" data-close="true"></div>
+
+    <div class="cnc-gallery-modal-panel">
+      <button class="cnc-gallery-modal-close" id="cncGalleryClose" aria-label="关闭">×</button>
+
+      <button class="cnc-gallery-nav cnc-gallery-prev" id="cncGalleryPrev" aria-label="上一张">‹</button>
+
+      <figure class="cnc-gallery-preview">
+        <img id="cncGalleryPreviewImg" src="" alt="">
+        <figcaption>
+          <h3 id="cncGalleryPreviewTitle"></h3>
+          <p id="cncGalleryPreviewDesc"></p>
+          <span id="cncGalleryPreviewIndex"></span>
+        </figcaption>
+      </figure>
+
+      <button class="cnc-gallery-nav cnc-gallery-next" id="cncGalleryNext" aria-label="下一张">›</button>
+    </div>
+  </div>
+
+
+<script src="./knowledge-core-02.js"></script><script src="./knowledge-core-03.js"></script></body></html>

@@ -1,0 +1,912 @@
+[
+    {
+        "id":  "alarm-faq-001",
+        "faqType":  "alarm",
+        "title":  "THP报警 — 程序开头没人性（没写安全代码）",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-002",
+        "faqType":  "alarm",
+        "title":  "非法G代码 — 系统不认识你写的G代码",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-003",
+        "faqType":  "alarm",
+        "title":  "超过最大指令数 — 一行里写了太多东西",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-004",
+        "faqType":  "alarm",
+        "title":  "坐标轴指令重复 — 同一行里两次指定同一个轴",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-005",
+        "faqType":  "alarm",
+        "title":  "G代码/Q地址错误 — 指令和地址码不匹配",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-006",
+        "faqType":  "alarm",
+        "title":  "地址码重复 — 一行里写了两次同样的地址",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-007",
+        "faqType":  "alarm",
+        "title":  "P/S指令值超出范围 — 数写太大了",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-008",
+        "faqType":  "alarm",
+        "title":  "M代码不在标准范围 — 系统不认识的M指令",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-009",
+        "faqType":  "alarm",
+        "title":  "G代码格式冲突 — 同组的G代码用混了",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-010",
+        "faqType":  "alarm",
+        "title":  "程序中用了非法字符 — 写了系统不认识的符号",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-011",
+        "faqType":  "alarm",
+        "title":  "宏程序变量未定义 — 用了没赋值的变量",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-012",
+        "faqType":  "alarm",
+        "title":  "IF/WHILE条件格式错误 — 判断语句写错了",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-013",
+        "faqType":  "alarm",
+        "title":  "圆弧指令参数错误 — 圆弧数据给得不对",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-014",
+        "faqType":  "alarm",
+        "title":  "子程序嵌套过深 — 子程序套子程序套太多了",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-015",
+        "faqType":  "alarm",
+        "title":  "宏程序括号不匹配 — 括号多了或少了",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-016",
+        "faqType":  "alarm",
+        "title":  "伺服准备信号断开 — 伺服放大器没准备好",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-017",
+        "faqType":  "alarm",
+        "title":  "伺服过载 — 电机太累了转不动",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-018",
+        "faqType":  "alarm",
+        "title":  "伺服停止误差超差 — 停下来了但没停准位置",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-019",
+        "faqType":  "alarm",
+        "title":  "伺服移动误差超差 — 跑的过程中跟丢了",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-020",
+        "faqType":  "alarm",
+        "title":  "伺服电流异常 — 电流突然爆表",
+        "priority":  "P0",
+        "reason":  "紧急危险等级需确认建议安全性"
+    },
+    {
+        "id":  "alarm-faq-021",
+        "faqType":  "alarm",
+        "title":  "伺服过电压 — 电压太高了",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-022",
+        "faqType":  "alarm",
+        "title":  "伺服欠电压 — 电压不够了",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-023",
+        "faqType":  "alarm",
+        "title":  "伺服编码器通信断线 — CNC和电机编码器联系不上了",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-024",
+        "faqType":  "alarm",
+        "title":  "伺服编码器位置数据异常 — 编码器数据乱跳",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-025",
+        "faqType":  "alarm",
+        "title":  "伺服过电压（再生回路）— 刹车能量没地方去",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-026",
+        "faqType":  "alarm",
+        "title":  "伺服编码器计数错误 — 位置数据算不对",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-027",
+        "faqType":  "alarm",
+        "title":  "伺服偏载过大 — 电机挂着太重了",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-028",
+        "faqType":  "alarm",
+        "title":  "伺服编码器软相位错误 — 编码器对不上位置",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-029",
+        "faqType":  "alarm",
+        "title":  "伺服编码器硬相位错误 — 编码器硬件问题",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-030",
+        "faqType":  "alarm",
+        "title":  "伺服电流环错误 — 电流控制环路出问题了",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-031",
+        "faqType":  "alarm",
+        "title":  "伺服速度环错误 — 速度控制异常",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-032",
+        "faqType":  "alarm",
+        "title":  "伺服位置环错误 — 位置控制异常",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-033",
+        "faqType":  "alarm",
+        "title":  "伺服再生电阻过载 — 放电电阻扛不住了",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-034",
+        "faqType":  "alarm",
+        "title":  "伺服放大器过热 — 放大器太烫了",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-035",
+        "faqType":  "alarm",
+        "title":  "伺服编码器通信协议错误 — CNC和编码器说不上话",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-036",
+        "faqType":  "alarm",
+        "title":  "伺服电机速度超差 — 电机的实际速度和指令速度差太多",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-037",
+        "faqType":  "alarm",
+        "title":  "伺服电机过速度 — 电机跑太快了",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-038",
+        "faqType":  "alarm",
+        "title":  "伺服电机输出数据异常 — 电机反馈数据格式不对",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-039",
+        "faqType":  "alarm",
+        "title":  "伺服编码器通信超时 — 数据传太慢了",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-040",
+        "faqType":  "alarm",
+        "title":  "伺服放大器通信异常 — 放大器之间的通信出了问题",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-041",
+        "faqType":  "alarm",
+        "title":  "伺服电机过电流 — 往电机里冲的电太多了",
+        "priority":  "P0",
+        "reason":  "紧急危险等级需确认建议安全性"
+    },
+    {
+        "id":  "alarm-faq-042",
+        "faqType":  "alarm",
+        "title":  "伺服放大器电路故障 — 放大器内部电路出问题了",
+        "priority":  "P0",
+        "reason":  "紧急危险等级需确认建议安全性"
+    },
+    {
+        "id":  "alarm-faq-043",
+        "faqType":  "alarm",
+        "title":  "伺服编码器电池电压低 — 编码器记位置的电池快没电了",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-044",
+        "faqType":  "alarm",
+        "title":  "伺服电机温度过高 — 电机烫得快炸了",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-045",
+        "faqType":  "alarm",
+        "title":  "伺服电机编码器Z脉冲异常 — 找零点的脉冲信号不对",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-046",
+        "faqType":  "alarm",
+        "title":  "伺服编码器通信数据错误 — 传回来的数不对校验不过",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-047",
+        "faqType":  "alarm",
+        "title":  "主轴过热 — 主轴电机热得不行了",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-048",
+        "faqType":  "alarm",
+        "title":  "主轴过载 — 主轴转不动了",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-049",
+        "faqType":  "alarm",
+        "title":  "主轴速度异常 — 转速不在指令范围内",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-050",
+        "faqType":  "alarm",
+        "title":  "主轴过电压 — 主轴驱动器的电压太高了",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-051",
+        "faqType":  "alarm",
+        "title":  "主轴欠电压 — 主轴驱动器电压不够",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-052",
+        "faqType":  "alarm",
+        "title":  "主轴驱动电流异常 — 电流不正常地大",
+        "priority":  "P0",
+        "reason":  "紧急危险等级需确认建议安全性"
+    },
+    {
+        "id":  "alarm-faq-053",
+        "faqType":  "alarm",
+        "title":  "主轴驱动散热器过热 — 驱动器太烫了",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-054",
+        "faqType":  "alarm",
+        "title":  "主轴电机速度反馈断线 — 不知道主轴实际转多快",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-055",
+        "faqType":  "alarm",
+        "title":  "主轴在定向停止时位置偏差 — 主轴定向停的位置不准",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-056",
+        "faqType":  "alarm",
+        "title":  "主轴切换挡位失败 — 换挡没换进去",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-057",
+        "faqType":  "alarm",
+        "title":  "主轴传感器零点丢失 — 主轴不知道零位在哪了",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-058",
+        "faqType":  "alarm",
+        "title":  "主轴驱动器通信异常 — 和主轴驱动器说不上话",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-059",
+        "faqType":  "alarm",
+        "title":  "主轴电机过速 — 主轴转太快了",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-060",
+        "faqType":  "alarm",
+        "title":  "主轴驱动模块故障 — 驱动器坏掉了",
+        "priority":  "P0",
+        "reason":  "紧急危险等级需确认建议安全性"
+    },
+    {
+        "id":  "alarm-faq-061",
+        "faqType":  "alarm",
+        "title":  "主轴电机编码器信号幅值异常 — 反馈信号太弱了",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-062",
+        "faqType":  "alarm",
+        "title":  "主轴电机参数不匹配 — 驱动器和电机不是一套的",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-063",
+        "faqType":  "alarm",
+        "title":  "主轴电机抱闸故障 — 主轴紧抱着松不开",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-064",
+        "faqType":  "alarm",
+        "title":  "主轴输出功率过载 — 主轴出力太大了",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-065",
+        "faqType":  "alarm",
+        "title":  "主轴攻丝同步误差 — 攻丝时主轴和Z轴没配合好",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-066",
+        "faqType":  "alarm",
+        "title":  "主轴驱动器输入电源缺相 — 三相电少了一相",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-067",
+        "faqType":  "alarm",
+        "title":  "主轴驱动器故障 — 驱动器硬件异常",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-068",
+        "faqType":  "alarm",
+        "title":  "主轴电机过电压 — 电机端电压太高",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-069",
+        "faqType":  "alarm",
+        "title":  "主轴驱动器风扇异常 — 散热风扇坏了",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-070",
+        "faqType":  "alarm",
+        "title":  "主轴启动超时 — 主轴半天转不起来",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-071",
+        "faqType":  "alarm",
+        "title":  "主轴驱动器编码器通信异常 — 主轴编码器数据传不过来",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-072",
+        "faqType":  "alarm",
+        "title":  "主轴驱动器再生放电异常 — 刹车电没放出去",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-073",
+        "faqType":  "alarm",
+        "title":  "主轴驱动器电源异常 — 驱动器供电出问题了",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-074",
+        "faqType":  "alarm",
+        "title":  "主轴电机参数自整定失败 — 驱动器认不准电机",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-075",
+        "faqType":  "alarm",
+        "title":  "主轴驱动器参数错误 — 设置的数据不对",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-076",
+        "faqType":  "alarm",
+        "title":  "主轴电机热敏电阻异常 — 电机的测温元件异常",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-077",
+        "faqType":  "alarm",
+        "title":  "+X轴正向超程 — X轴跑到最右边停不下来",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-078",
+        "faqType":  "alarm",
+        "title":  "-X轴负向超程 — X轴跑到最左边停不下来",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-079",
+        "faqType":  "alarm",
+        "title":  "+Y轴正向超程 — Y轴跑到极限了",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-080",
+        "faqType":  "alarm",
+        "title":  "-Y轴负向超程 — Y轴跑到另一边极限了",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-081",
+        "faqType":  "alarm",
+        "title":  "+Z轴正向超程 — Z轴往上顶到头了",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-082",
+        "faqType":  "alarm",
+        "title":  "-Z轴负向超程 — Z轴往下撞到底了",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-083",
+        "faqType":  "alarm",
+        "title":  "第四轴超程 — 旋转轴转太多了",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-084",
+        "faqType":  "alarm",
+        "title":  "第五轴超程 — 五轴机第五轴过限位",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-085",
+        "faqType":  "alarm",
+        "title":  "多轴同时超程 — 好几个轴一起撞限位了",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-086",
+        "faqType":  "alarm",
+        "title":  "PMC急停回路断开 — 急停被按下了",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-087",
+        "faqType":  "alarm",
+        "title":  "PMC门锁报警 — 安全门没关好",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-088",
+        "faqType":  "alarm",
+        "title":  "PMC润滑报警 — 润滑系统出问题了",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-089",
+        "faqType":  "alarm",
+        "title":  "PMC冷却液报警 — 冷却液系统异常",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-090",
+        "faqType":  "alarm",
+        "title":  "PMC液压系统报警 — 液压站压力不够",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-091",
+        "faqType":  "alarm",
+        "title":  "PMC气动系统报警 — 气压不够了",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-092",
+        "faqType":  "alarm",
+        "title":  "PMC换刀系统报警 — 刀库出问题了",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-093",
+        "faqType":  "alarm",
+        "title":  "PMC排屑器报警 — 排屑器不转了",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-094",
+        "faqType":  "alarm",
+        "title":  "PMC主轴松开/夹紧报警 — 刀具没夹紧或没松开",
+        "priority":  "P0",
+        "reason":  "紧急危险等级需确认建议安全性"
+    },
+    {
+        "id":  "alarm-faq-095",
+        "faqType":  "alarm",
+        "title":  "PMC伺服准备信号异常 — 伺服系统没就绪",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-096",
+        "faqType":  "alarm",
+        "title":  "PMC外围传感器异常 — 外部检测信号出问题",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-097",
+        "faqType":  "alarm",
+        "title":  "PMC主轴倍率开关异常 — 主轴倍率信号不对",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-098",
+        "faqType":  "alarm",
+        "title":  "PMC进给倍率开关异常 — 进给倍率信号不对",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-099",
+        "faqType":  "alarm",
+        "title":  "PMC主轴定位信号异常 — 主轴定向信号不对",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-100",
+        "faqType":  "alarm",
+        "title":  "PMC冷却风扇报警 — 电柜风扇不转了",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-101",
+        "faqType":  "alarm",
+        "title":  "绝对编码器电池电压低 — 位置记忆电池快没电了",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-102",
+        "faqType":  "alarm",
+        "title":  "FSSB通信错误 — 伺服光纤通信断了",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-103",
+        "faqType":  "alarm",
+        "title":  "FSSB通信数据错误 — 光纤传的数据有误",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-104",
+        "faqType":  "alarm",
+        "title":  "西门子轮廓监控 — 轴实际位置跟不上指令位置",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-105",
+        "faqType":  "alarm",
+        "title":  "西门子静止监控 — 轴明明让停了还在动",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-106",
+        "faqType":  "alarm",
+        "title":  "西门子编码器硬件故障 — 编码器坏了",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-107",
+        "faqType":  "alarm",
+        "title":  "西门子编码器通信异常 — 和编码器说不上话",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-108",
+        "faqType":  "alarm",
+        "title":  "西门子急停触发 — 紧急停止被激活",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-109",
+        "faqType":  "alarm",
+        "title":  "西门子驱动过载 — 驱动器出力太大了",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-110",
+        "faqType":  "alarm",
+        "title":  "西门子驱动器过电压 — 驱动器电压太高了",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-111",
+        "faqType":  "alarm",
+        "title":  "西门子驱动器欠电压 — 驱动器电压太低了",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-112",
+        "faqType":  "alarm",
+        "title":  "西门子直流母线过电压 — 母线电压爆表",
+        "priority":  "P0",
+        "reason":  "紧急危险等级需确认建议安全性"
+    },
+    {
+        "id":  "alarm-faq-113",
+        "faqType":  "alarm",
+        "title":  "西门子驱动器温度过高 — 驱动器太烫了",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-114",
+        "faqType":  "alarm",
+        "title":  "西门子驱动电流超限 — 电流太大了",
+        "priority":  "P0",
+        "reason":  "紧急危险等级需确认建议安全性"
+    },
+    {
+        "id":  "alarm-faq-115",
+        "faqType":  "alarm",
+        "title":  "西门子电机温度传感器异常 — 电机测温有问题",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-116",
+        "faqType":  "alarm",
+        "title":  "西门子电机过载 — 电机出力太大了",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-117",
+        "faqType":  "alarm",
+        "title":  "西门子电机过热 — 电机太烫了",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-118",
+        "faqType":  "alarm",
+        "title":  "西门子主轴驱动器故障 — 主轴驱动出了严重问题",
+        "priority":  "P0",
+        "reason":  "紧急危险等级需确认建议安全性"
+    },
+    {
+        "id":  "alarm-faq-119",
+        "faqType":  "alarm",
+        "title":  "西门子电源模块故障 — 供电模块坏了",
+        "priority":  "P0",
+        "reason":  "紧急危险等级需确认建议安全性"
+    },
+    {
+        "id":  "alarm-faq-120",
+        "faqType":  "alarm",
+        "title":  "西门子电源输入缺相 — 三相电少了一相",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-121",
+        "faqType":  "alarm",
+        "title":  "西门子抱闸控制异常 — 电机抱闸有问题",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-122",
+        "faqType":  "alarm",
+        "title":  "西门子安全停止响应 — 安全功能被触发",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-123",
+        "faqType":  "alarm",
+        "title":  "西门子绝对值编码器位置丢失 — 编码器忘了在哪了",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-124",
+        "faqType":  "alarm",
+        "title":  "西门子编码器电压等级超限 — 编码器供电电压异常",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-125",
+        "faqType":  "alarm",
+        "title":  "西门子编码器信号幅值太低 — 反馈信号太弱了",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-126",
+        "faqType":  "alarm",
+        "title":  "西门子驱动循环时间超时 — 驱动器运算忙不过来了",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-127",
+        "faqType":  "alarm",
+        "title":  "西门子驱动参数设定错误 — 参数设得不合理",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-128",
+        "faqType":  "alarm",
+        "title":  "西门子驱动参数只读 — 想改一个不允许改的参数",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    },
+    {
+        "id":  "alarm-faq-129",
+        "faqType":  "alarm",
+        "title":  "西门子驱动识别失败 — 驱动器没被系统认出来",
+        "priority":  "P1",
+        "reason":  "高风险等级建议确认排障步骤"
+    },
+    {
+        "id":  "alarm-faq-130",
+        "faqType":  "alarm",
+        "title":  "西门子编码器安装位置错误 — 编码器没装对地方",
+        "priority":  "P2",
+        "reason":  "常规draft复核"
+    }
+]

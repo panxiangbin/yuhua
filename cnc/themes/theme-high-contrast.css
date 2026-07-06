@@ -1,0 +1,36 @@
+/* ============================================
+   themes/theme-high-contrast.css — 高对比度主题
+   ============================================ */
+:root[data-theme="high-contrast"] {
+  --bg-primary: #000000; --bg-secondary: #0a0a0a; --bg-tertiary: #1a1a1a;
+  --text-primary: #ffffff; --text-secondary: #e0e0e0; --text-muted: #b0b0b0;
+  --border-primary: #ffffff; --border-secondary: #888888;
+  --accent-primary: #ffaa44; --accent-secondary: #ffcc88; --accent-dark: #ff8822;
+  --accent-success: #44ff44; --accent-error: #ff4444; --accent-warning: #ffff44;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.5); --shadow-md: 0 2px 8px rgba(0,0,0,0.6); --shadow-lg: 0 4px 16px rgba(0,0,0,0.7);
+  --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px; --radius-xl: 16px;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "Cascadia Code", "Fira Code", monospace;
+  --transition-fast: 0s; --transition-normal: 0s;
+  color-scheme: dark;
+}
+:root[data-theme="high-contrast"] * { transition-duration: 0s !important; animation-duration: 0s !important; }
+:root[data-theme="high-contrast"] body { background: var(--bg-primary); color: var(--text-primary); }
+:root[data-theme="high-contrast"] a { color: var(--accent-primary); text-decoration: underline; }
+:root[data-theme="high-contrast"] a:hover { color: var(--accent-secondary); }
+:root[data-theme="high-contrast"] .card, :root[data-theme="high-contrast"] .masonry-card, :root[data-theme="high-contrast"] .detail-card { background: var(--bg-secondary); border-color: var(--border-primary); border-width: 2px; }
+:root[data-theme="high-contrast"] input, :root[data-theme="high-contrast"] select, :root[data-theme="high-contrast"] textarea { background: var(--bg-tertiary); color: var(--text-primary); border-color: var(--border-primary); border-width: 2px; }
+:root[data-theme="high-contrast"] input:focus, :root[data-theme="high-contrast"] select:focus { outline: 3px solid var(--accent-primary); }
+:root[data-theme="high-contrast"] button { border-width: 2px; }
+:root[data-theme="high-contrast"] .lesson-header { border-bottom-width: 3px; }
+:root[data-theme="high-contrast"] .quiz-option { border-width: 2px; background: var(--bg-tertiary); }
+:root[data-theme="high-contrast"] .quiz-option:hover { outline: 2px solid var(--accent-primary); }
+:root[data-theme="high-contrast"] .quiz-feedback { border-width: 2px; }
+:root[data-theme="high-contrast"] .code-block { border: 2px solid var(--border-primary); }
+:root[data-theme="high-contrast"] .inline-code { background: var(--bg-tertiary); border: 1px solid var(--border-primary); }
+:root[data-theme="high-contrast"] .search-suggestions-dropdown { border-width: 2px; }
+:root[data-theme="high-contrast"] .suggestion-highlight { background: var(--accent-primary); color: #000; }
+:root[data-theme="high-contrast"] .image-viewer-controls button { border-width: 2px; }
+:root[data-theme="high-contrast"] img { filter: contrast(1.2); }
+:root[data-theme="high-contrast"] .progress-bar-fill { background: var(--accent-primary); }
+:root[data-theme="high-contrast"] ::selection { background: var(--accent-primary); color: #000; }

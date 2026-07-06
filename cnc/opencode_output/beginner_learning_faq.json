@@ -1,0 +1,1572 @@
+[
+  {
+    "id": "beginner-faq-001",
+    "question": "回零是什么意思？为啥开机床要先回零？",
+    "shortAnswer": "回零就是让机床找到自己的绝对零点，CNC才知道每个轴现在的实际位置。",
+    "beginnerExplanation": "机床不像人有眼睛，它不知道自己在哪里。回零时，每个轴慢慢移动去找传感器，确认原点位置。不回零的话，机床的坐标系是悬空的，G00走到X100可能直接撞机。增量编码器的机床每次断电后位置丢失，所以每次开机必须回零。",
+    "relatedTopic": "回零",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "machine-home-return",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-002",
+    "question": "为什么要设G54？G54到底代表什么？",
+    "shortAnswer": "G54告诉机床工件放在哪里，是一个可设定的参考坐标系原点。",
+    "beginnerExplanation": "你把工件夹在台钳上，总得告诉机床零件在这个位置吧？G54就是干这个的——你找好工件零点，把坐标值填入G54，之后程序写X0Y0就走到工件中心，不用管工件在机床上的实际位置。",
+    "relatedTopic": "坐标系",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "learn-g54-g59",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-003",
+    "question": "G90和G91有什么区别？怎么用？",
+    "shortAnswer": "G90是绝对坐标（走到指定数值的位置），G91是增量坐标（从当前位置走多少距离）。",
+    "beginnerExplanation": "G90模式下，写G90 X100.就是走到X=100mm那个位置。G91模式下，同样的指令意思是从当前位置往前走100mm。G90适合写主程序，G91适合写子程序或循环。顺序铣削时也常用G91来控制每次下刀深度。",
+    "relatedTopic": "编程基础",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "g90-g91-difference",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-004",
+    "question": "G00为什么危险？快移时要注意什么？",
+    "shortAnswer": "G00是快速移动，路径可能不是直线！刀具会拐急弯且不切东西。",
+    "beginnerExplanation": "G00的移动路径在不同系统不一样：有的先X后Z（直角走），有的XZ同时（斜线走），但总之是走最快的路径，不会被切到工件停下——它假设路上没东西。这就是为什么G00段最容易撞刀。注意：快移前一定把Z抬到安全高度，确认路径上没有障碍。",
+    "relatedTopic": "安全操作",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "g00-g01-motion",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-005",
+    "question": "对刀到底在干什么？为什么要对刀？",
+    "shortAnswer": "对刀就是把刀具和工件之间的位置关系告诉机床，让系统知道刀尖在哪。",
+    "beginnerExplanation": "你装了把新刀在主轴里，机床完全不知道这把刀有多长、刀尖在哪儿。对刀就是用对刀仪或者试切的方法，让机床算出主轴端面到刀尖的距离，并把这个数据存入H值。这样写G43 Z100时，机床才能让刀尖正确地停到Z100的位置。",
+    "relatedTopic": "对刀操作",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "tool-offset-setting",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-006",
+    "question": "攻丝为什么容易断丝锥？",
+    "shortAnswer": "因为主轴转速和Z轴进给必须严格同步，稍有偏差丝锥就被拽断。",
+    "beginnerExplanation": "攻丝时，主轴转一圈Z轴必须精确走一个螺距。如果有任何不同步——比如转速波动、Z轴进给抖动、底孔偏小、排屑不畅——丝锥的螺旋槽就卡住，轻则丝锥卡顿，重则直接扭断。刚性攻丝(M29)就是用系统保证同步，但仍需底孔直径合适且加切削液。",
+    "relatedTopic": "攻丝",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "tapping-basics",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-007",
+    "question": "顺铣和逆铣有什么区别？哪个更好？",
+    "shortAnswer": "顺铣（爬坡铣）刀齿从厚到薄切，表面光洁度好；逆铣（反铣）刀齿从薄到厚切，常规加工更安全。",
+    "beginnerExplanation": "顺铣：刀具旋转方向和工件进给方向相同，切屑从厚到薄，切削力把工件往下压，表面质量好，但容易拽刀。逆铣：方向相反，切屑从薄到厚，切削力把工件往上抬，没有拽刀问题但加工表面略差。刚性好、间隙小的机床用顺铣效果好。",
+    "relatedTopic": "切削工艺",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "climb-vs-conventional",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-008",
+    "question": "工件零点和机械零点有什么差别？",
+    "shortAnswer": "机械零点是机床自己的绝对原点（固定的），工件零点是你设的编程原点（可变的）。",
+    "beginnerExplanation": "机械零点：机床出厂时由传感器和编码器确定的固定位置，不能改。工件零点：你根据工件位置在G54里设的坐标，可以随便改。比如你干了10个件，每一个都要分中设一次G54，但机械零点从来没变过。程序里的X/Y/Z都是相对于工件零点的。",
+    "relatedTopic": "坐标系",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "machine-work-coordinate",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-009",
+    "question": "主轴转速和进给速度是什么关系？",
+    "shortAnswer": "转速(S)管刀转多快，进给(F)管刀走多快；两者要匹配，匹配比叫每齿进给。",
+    "beginnerExplanation": "转速S决定了刀刃切到材料的速度，进给F决定了切多厚。关键参数是每齿进给量fz = F / (S * 齿数)。比如S=4000、四刃刀、F=800，fz=800/(4000*4)=0.05mm/齿——这个值太小说不定在磨，太大会崩刃。一般硬质合金铣刀fz在0.03~0.15mm/齿。",
+    "relatedTopic": "切削参数",
+    "recommendedImageType": "chart",
+    "relatedEntryId": "speeds-feeds-basics",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-010",
+    "question": "刀补G41/G42的左右怎么判断？",
+    "shortAnswer": "沿着刀具运动方向看，刀具在轮廓左边=G41，在右边=G42。",
+    "beginnerExplanation": "想象你在刀具后面，刀具走的方向就是你面朝的方向。那么刀具在轮廓的左边就用G41，在右边就用G42。另一个记忆法：顺铣用G41，逆铣用G42。判断错了加工出来的轮廓镜像出错或过切。",
+    "relatedTopic": "刀补",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "tool-compensation-G41-G42",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-011",
+    "question": "什么是刀长补偿？为什么要用G43？",
+    "shortAnswer": "刀长补偿告诉机床这把刀有多长，G43 H__就是把刀补值加上去，确保深度准确。",
+    "beginnerExplanation": "每把刀长度不同，如果不做补偿，换刀后Z轴基准就变了。你把10mm的小钻头换成100mm的长钻头，两者Z方向差了90mm！所以对刀时测出每把刀的刀长，加工中用G43 H01调用，系统自动在Z指令值上加/减刀长，确保不同刀具刀尖位置一致。",
+    "relatedTopic": "刀长补偿",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "tool-length-offset",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-012",
+    "question": "程序开头为什么要有G40 G80 G90？",
+    "shortAnswer": "这是安全复位指令——清除前面程序留下的各种模态状态，防止串戏。",
+    "beginnerExplanation": "如果上一个程序用了G41刀补、G83钻孔循环、G91增量模式，这些模态指令不会自动消失。新程序一启动，如果没清零，可能带着G91在做G90的事。所以标准开头：G40取消刀补、G80取消固定循环、G90绝对模式、G49取消刀长补偿、G17平面选择。",
+    "relatedTopic": "编程规范",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "program-header-safety",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-013",
+    "question": "G代码和M代码有什么区别？",
+    "shortAnswer": "G代码管移动（怎么走、走哪里），M代码管开关（主轴转不转、冷却液开不开等）。",
+    "beginnerExplanation": "G代码(G01、G02、G90等)是准备功能，告诉CNC执行什么运动模式。M代码(M03、M08、M30等)是辅助功能，控制机床的开关量。简单记忆：G=Geometry（几何运动），M=Miscellaneous（杂项控制）。",
+    "relatedTopic": "编程基础",
+    "recommendedImageType": "chart",
+    "relatedEntryId": "g-code-vs-m-code",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-014",
+    "question": "数控加工和普通加工有什么不同？",
+    "shortAnswer": "数控是电脑控制机床自动干活，普通加工是人手摇机床干活。",
+    "beginnerExplanation": "普通铣床/车床：操作员手摇手轮控制刀具运动，精度靠手感和经验。CNC：把程序写好输入系统，机床自动走刀、换刀、进给，精度高、一致性好、可24小时加工。但CNC需要编程、对刀、设参数等准备工作。",
+    "relatedTopic": "数控基础",
+    "recommendedImageType": "comparison",
+    "relatedEntryId": "cnc-vs-manual",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-015",
+    "question": "铝件加工为什么容易粘刀？",
+    "shortAnswer": "铝的熔点低、塑性好，切屑容易焊在刀刃上形成积屑瘤。",
+    "beginnerExplanation": "铝材在切削高温下会软化，切屑变形后容易粘在刀尖上。粘刀后刀刃几何形状改变，切削力增大、表面变粗糙、甚至崩刃。解决方法：提高转速和进给让切屑快速脱离；用锋利的刀刃；加切削液充分冷却；用抛光槽的铝专用刀具。",
+    "relatedTopic": "材料加工",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "aluminum-machining",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-016",
+    "question": "不锈钢为什么难加工？",
+    "shortAnswer": "不锈钢韧性大、导热差、加工硬化严重，切屑不断还容易啃刀。",
+    "beginnerExplanation": "不锈钢有三大特性导致难加工：韧性大（切屑不断）；导热差（切削热集中在刀尖）；加工硬化（切过的表面变硬）。对策：用硬质合金涂层刀具、小的每齿进给、充足的冷却液、保持稳定的切削深度。",
+    "relatedTopic": "材料加工",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "stainless-machining",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-017",
+    "question": "钻孔循环的Q值是什么？",
+    "shortAnswer": "Q值是G83深孔钻每次的啄钻深度。",
+    "beginnerExplanation": "G83 X__ Y__ Z__ R__ Q__ F__ 中的Q值是每次啄钻深度。比如G83 Z-30. R2. Q5. F100，意思是先快速到R平面，然后钻5mm深退回排屑再钻5mm退回重复直到Z-30。Q值太大排屑不好容易断钻头，Q值太小效率低。一般Q=钻头直径*0.3~0.5。",
+    "relatedTopic": "钻孔循环",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "drilling-cycles-g83",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-018",
+    "question": "G83和G81有什么区别？",
+    "shortAnswer": "G81是一钻到底，G83是啄钻，深孔用G83。",
+    "beginnerExplanation": "G81是普通钻孔：快进到R平面进给到Z深度快退。适合浅孔。G83是啄钻：快进到R进给Q深度退到R排屑再进给Q再退重复到Z。适合深孔，钻深孔不断屑时切屑会卡住钻头。",
+    "relatedTopic": "钻孔循环",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "drilling-cycles-g81-g83",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-019",
+    "question": "千分尺和卡尺怎么读数？",
+    "shortAnswer": "卡尺看主尺+游标对齐线，千分尺看套筒+微分筒的刻度对齐。",
+    "beginnerExplanation": "卡尺读数：主尺读整数，游标对齐的线读小数，两数相加。千分尺读数：套筒读整数+半毫米，微分筒读小数。注意千分尺需要棘轮咔咔响后再读数、不要太用力。",
+    "relatedTopic": "测量基础",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "measurement-tools",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-020",
+    "question": "图纸上那些符号(⌀, R, C, ±)是什么意思？",
+    "shortAnswer": "⌀=直径，R=半径，C=倒角，±=公差范围。",
+    "beginnerExplanation": "⌀10 表示直径10mm的孔或轴。R5 表示弧度半径为5mm的圆角。C2 表示2mm*45度倒角。±0.1 表示尺寸误差不能超过±0.1mm。另外还有：M6=公制螺纹、t=厚度、□=平面度、◎=同轴度等。",
+    "relatedTopic": "识图基础",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "blueprint-symbols",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-021",
+    "question": "什么是绝对坐标？什么是增量坐标？",
+    "shortAnswer": "绝对坐标以工件零点为基准，增量坐标以当前位置为基准。",
+    "beginnerExplanation": "绝对坐标不管你现在在哪儿，只告诉你目标位置在坐标系中的数值，比如X100.就是到X=100mm处。增量坐标告诉你从当前位置走多远，比如U50.就是再往前走50mm。G90是绝对编程，G91是增量编程。",
+    "relatedTopic": "编程基础",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "absolute-incremental",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-022",
+    "question": "首件为什么一定要做空运行？",
+    "shortAnswer": "空运行让机床不切材料走一遍程序，提前发现撞刀风险。",
+    "beginnerExplanation": "空运行时，机床驱动刀具沿着程序路径走一遍但不对工件切削。这样可以看到所有移动轨迹，检查有没有快移撞夹具、Z轴下刀太深、坐标偏移量错了导致跑偏。空运行是花时间换安全，首件不做空运行等于在赌命。",
+    "relatedTopic": "安全操作",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "dry-run-first-piece",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-023",
+    "question": "什么是模态指令？和非模态有什么不同？",
+    "shortAnswer": "模态指令记住不消失直到被替换，非模态只对本段有效。",
+    "beginnerExplanation": "模态指令如G01、G90，写一次就一直有效，写新指令才替换。比如：写G01 X10.后，下一段只写Y20.还是G01直线切削。非模态指令如G04、M00，只在本段生效。模态的好处是省去重复写G代码，坏处是容易忘掉当前模式而出错。",
+    "relatedTopic": "编程基础",
+    "recommendedImageType": "chart",
+    "relatedEntryId": "modal-vs-nonmodal",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-024",
+    "question": "报警了应该先做什么？",
+    "shortAnswer": "先看屏幕报警号翻手册或查系统报警表判断原因再处理。不要盲目按RESET消除。",
+    "beginnerExplanation": "报警号是CNC告诉你问题的密码。比如P/S 090是回零未完成，SV0401是伺服过载，#500是过行程。先看报警号，再看诊断画面，然后分析原因。盲目按RESET可能消除报警但不解决问题，再走同样的程序还是会撞。",
+    "relatedTopic": "故障处理",
+    "recommendedImageType": "alarm_screen",
+    "relatedEntryId": "alarm-handling",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-025",
+    "question": "急停按了之后怎么恢复？",
+    "shortAnswer": "按急停按钮旋转弹起按RESET复位报警回零重新建立坐标系。",
+    "beginnerExplanation": "急停按下后伺服断电、主轴刹车。恢复步骤：旋转急停按钮弹起；按RESET键消除急停报警；如果系统是增量编码器，需要重新回零；如果绝对值编码器，检查坐标是否正常。恢复后手动慢速移动确认一切正常。",
+    "relatedTopic": "安全操作",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "emergency-stop-recovery",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-026",
+    "question": "换刀时刀号和刀补怎么对应？",
+    "shortAnswer": "T01对应H01和D01，T02对应H02和D02，以此类推——但注意不是自动的！",
+    "beginnerExplanation": "T01 M06是换刀，但刀长补偿和半径补偿不自动带过来。你必须写G43 H01才会调用1号刀的刀长补偿，写G41 D01才会调用半径补偿。所以标准换刀程序是：T01 M06; G43 H01 Z100.; S1000 M03; ...。很多新手换完刀直接往下切忘写G43，结果撞刀。",
+    "relatedTopic": "换刀操作",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "tool-change-offset-matching",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-027",
+    "question": "主轴正转反转怎么判断？",
+    "shortAnswer": "从主轴端向刀尖看，逆时针旋转=正转(M03)，顺时针=反转(M04)。",
+    "beginnerExplanation": "立式加工中心：M03正转时主轴逆时针旋转，M04反转时顺时针。车床：卡盘端看，M03正转是逆时针，多数车削用正转。搞混了方向会导致刀片崩刃或工件飞出。",
+    "relatedTopic": "主轴操作",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "spindle-direction",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-028",
+    "question": "如何提高表面光洁度？",
+    "shortAnswer": "提高转速、降低每齿进给、用更小的刀尖R角、加切削液、最后一刀留精加工余量。",
+    "beginnerExplanation": "表面光洁度主要受每齿进给fz和刀尖R角影响：理论粗糙度=fz^2/(8*R)。所以想更光滑可以：提高转速；降低每齿进给；使用刀尖R角更大刀片；精加工余量留0.1~0.3mm；保持切削液充足；使用锋利的精加工刀片。如果是振纹问题，需调转速避开共振区。",
+    "relatedTopic": "切削工艺",
+    "recommendedImageType": "comparison",
+    "relatedEntryId": "surface-finish-improvement",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-029",
+    "question": "为什么切出来的尺寸总是偏大/偏小？",
+    "shortAnswer": "最常见原因是刀补没设准、刀具磨损、或工件坐标系偏置不对。",
+    "beginnerExplanation": "尺寸不准的几个排查方向：刀具有磨损；G54分中偏了；刀长补偿H值不对；刀具让刀；热变形。建议首件先测尺寸然后反过来调刀补或坐标。",
+    "relatedTopic": "质量管控",
+    "recommendedImageType": "chart",
+    "relatedEntryId": "dimensional-accuracy",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-030",
+    "question": "粗加工和精加工有什么区别？",
+    "shortAnswer": "粗加工：大刀、大余量、效率优先；精加工：小刀、小余量、保证精度和光洁度。",
+    "beginnerExplanation": "粗加工的目标是快速去掉多余材料，用大直径刀具、大切深、大进给，留0.2~0.5mm精加工余量。精加工的目标是达到尺寸和表面要求，用小切深、小进给、高转速、新刀片，由外到内一刀到位不留余量。",
+    "relatedTopic": "切削工艺",
+    "recommendedImageType": "comparison",
+    "relatedEntryId": "roughing-vs-finishing",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-031",
+    "question": "什么是切削三要素？",
+    "shortAnswer": "切削三要素：切削速度(Vc)、进给量(f)、切削深度(ap)。",
+    "beginnerExplanation": "三要素是加工的基础参数：切削速度Vc由转速S和刀具直径D决定；进给量f影响表面质量和切削力；切削深度ap影响切削力和材料去除率。三个参数要互相平衡，需要根据刀具、材料、机床刚性综合选择。",
+    "relatedTopic": "切削参数",
+    "recommendedImageType": "chart",
+    "relatedEntryId": "cutting-parameters",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-032",
+    "question": "转速S和线速度Vc是什么关系？",
+    "shortAnswer": "Vc=π*D*S/1000，线速度由转速和刀具直径决定。",
+    "beginnerExplanation": "Vc是刀刃切过材料的实际速度，和材料直接相关。S是主轴每分钟转多少圈。关系是：Vc=π*D*S/1000。同样铝件推荐Vc=500m/min，用D10刀S≈15900rpm，用D20刀S≈7960rpm。选材料先看Vc再算S。",
+    "relatedTopic": "切削参数",
+    "recommendedImageType": "chart",
+    "relatedEntryId": "spindle-speed-cutting-speed",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-033",
+    "question": "什么是F值？每分钟进给和每转进给有什么区别？",
+    "shortAnswer": "F值是进给速度。G94时F=mm/min，G95时F=mm/r。",
+    "beginnerExplanation": "每分钟进给G94（铣床默认）：F200=刀具每分钟走200mm。每转进给G95（车床默认）：F0.15=主轴每转一圈刀具走0.15mm。两种模式不要搞混。",
+    "relatedTopic": "进给模式",
+    "recommendedImageType": "comparison",
+    "relatedEntryId": "feed-rate-modes",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-034",
+    "question": "车床和加工中心有什么区别？",
+    "shortAnswer": "车床：工件转、刀具不动；加工中心：刀具转、工件不动。",
+    "beginnerExplanation": "车床加工圆柱形/回转体零件。加工中心可加工平面、槽、孔、曲面等各种形状。车铣复合机床则两者兼备。",
+    "relatedTopic": "机床基础",
+    "recommendedImageType": "comparison",
+    "relatedEntryId": "lathe-vs-machining-center",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-035",
+    "question": "什么是刀库？ATC是什么意思？",
+    "shortAnswer": "刀库存放多把刀具，ATC是自动换刀装置。",
+    "beginnerExplanation": "加工中心用刀库储存多把刀。程序里T01 M06时，ATC机械手从刀库抓出T01刀、卸下主轴上的旧刀、装上T01——整个过程全自动。所以加工中心可以连续用十几把刀加工一个复杂零件。",
+    "relatedTopic": "机床基础",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "tool-magazine-atc",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-036",
+    "question": "加工中心为什么要先回Z轴？",
+    "shortAnswer": "因为Z轴不先抬到安全位置，其他轴移动时刀具可能撞到工件或夹具。",
+    "beginnerExplanation": "标准的操作顺序：开机后先回Z轴，确保刀具远离工件台面。然后再回X/Y时，即使Z轴不动也安全。如果先回X/Y，这时Z轴还在工件附近，X轴一移动刀具可能撞到工件或虎钳。",
+    "relatedTopic": "安全操作",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "z-axis-first",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-037",
+    "question": "寻边器怎么用？分中怎么操作？",
+    "shortAnswer": "寻边器找工件边缘，分中是找工件中心的操作步骤。",
+    "beginnerExplanation": "分中：在工件一侧碰寻边器，记录当前坐标值；到对侧同样位置碰，记录坐标；两个坐标取平均值就是工件中心。Z轴用对刀块或直接碰工件上表面。现在很多机床有自动分中宏程序。",
+    "relatedTopic": "对刀操作",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "edge-finder-centering",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-038",
+    "question": "什么是硬限位和软限位？",
+    "shortAnswer": "硬限位是物理开关限制，软限位是参数设定的坐标限制。",
+    "beginnerExplanation": "硬限位：机床导轨两端装有行程开关，撞到后直接切断伺服动力。软限位：参数1320/1321设了一面看不见的墙，到达时软件报警但还有电，可反向退出。软限位可设得很精确，硬限位在最后做最后保险。",
+    "relatedTopic": "行程极限",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "soft-hard-limit",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-039",
+    "question": "G02和G03圆弧插补怎么区分？",
+    "shortAnswer": "G02顺时针圆弧，G03逆时针圆弧。",
+    "beginnerExplanation": "在XY平面中，从Z轴正方向往下看：G02顺时针画弧，G03逆时针画弧。记忆法：G02数字2是顺时针的笔画。格式：G02 X__ Y__ R__ F__或G02 X__ Y__ I__ J__ F__。",
+    "relatedTopic": "编程基础",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "circular-interpolation-g02-g03",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-040",
+    "question": "M00和M01有什么区别？",
+    "shortAnswer": "M00总是暂停，M01只有OP STOP开关ON时才暂停。",
+    "beginnerExplanation": "M00执行到就停下来，按CYCLE START再继续。M01只有面板上选择停止按钮亮着时才停。M01常用于抽检——平时不停，需要检查时按亮OP STOP键。",
+    "relatedTopic": "编程基础",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "program-stop-m00-m01",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-041",
+    "question": "单段执行有什么用？",
+    "shortAnswer": "按一次跑一行程序，用于首件试切时逐段检查。",
+    "beginnerExplanation": "单段键按下后，每执行完一行程序就停下来。首件试切时打开单段，走一段停一下、看刀具位置是否正确、确认安全再走下一段。",
+    "relatedTopic": "操作技巧",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "single-block-operation",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-042",
+    "question": "程序中的G17/G18/G19是干什么的？",
+    "shortAnswer": "选择加工平面：G17=XY平面，G18=ZX平面，G19=YZ平面。",
+    "beginnerExplanation": "G17告诉CNC在哪个平面进行圆弧插补和刀补。G17（默认）最常用，铣削时在XY平面走圆弧。G18用于车床或在XZ平面编程。G19在YZ平面。",
+    "relatedTopic": "编程基础",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "plane-selection-g17-g18-g19",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-043",
+    "question": "DNC加工是什么意思？",
+    "shortAnswer": "DNC是电脑直接传程序给机床加工，程序太长不存到机床里。",
+    "beginnerExplanation": "DNC也叫在线加工：用电脑通过RS232/网线/U盘实时传输程序给机床，边传边加工。当程序超过机床内存容量时必须用DNC。做DNC时通讯线要稳定、波特率要匹配、电脑不能休眠。",
+    "relatedTopic": "程序传输",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "dnc-operation",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-044",
+    "question": "什么是工装？为什么要用夹具？",
+    "shortAnswer": "工装就是把工件固定住、保证每次装夹位置一致的装置。",
+    "beginnerExplanation": "工件不固定好没法加工。夹具就是用来固定工件的。好的夹具还有定位作用：每次放上去位置都一样，不用重新分中。比如做批量零件，用带定位销的夹具，每天第一件校一次就够了。",
+    "relatedTopic": "工装夹具",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "fixtures-and-jigs",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-045",
+    "question": "冷却液有什么用？",
+    "shortAnswer": "冷却、润滑、排屑——三合一功能。",
+    "beginnerExplanation": "切削液三个作用：冷却带走切削热；润滑减少刀屑摩擦；排屑把切屑冲走。干切削时刀具寿命可能降低50%~80%。常见的切削液有乳化液和切削油。",
+    "relatedTopic": "切削工艺",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "coolant-function",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-046",
+    "question": "什么是分中？为什么加工前必须分中？",
+    "shortAnswer": "分中就是找工件的中心位置，这样才能把程序原点设到工件中心。",
+    "beginnerExplanation": "程序里写X0Y0加工孔，系统需要知道这个X0Y0对应工件上的哪个点。分中就是通过碰工件四边计算出工件中心。不分中程序里的X0Y0可能是机床原点，而工件放在别的地方。",
+    "relatedTopic": "对刀操作",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "centering-workpiece",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-047",
+    "question": "手轮(MPG)怎么用？",
+    "shortAnswer": "手轮是手动微调刀具位置的设备，一个刻度等于一个脉冲当量。",
+    "beginnerExplanation": "手轮用来精确移动机床轴。面板上选择要移动的轴和倍率，然后摇手轮控制移动。对刀、靠近工件、微调位置时用手轮最安全。新手要记住：*100时一格0.1mm，一不小心就撞上了。",
+    "relatedTopic": "操作技巧",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "mpg-handwheel",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-048",
+    "question": "程序中的O、N、%分别代表什么？",
+    "shortAnswer": "O=程序号，N=行号，%=程序文件的开始/结束标记。",
+    "beginnerExplanation": "O0001是程序号，用来识别不同的程序。N10是行号，方便跳转和查找。%在程序开头和结尾，用来告诉传输软件文件开始/结束——在机内编程不需要写%，但通过RS232/DNC传输时必须有。",
+    "relatedTopic": "编程基础",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "program-format",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-049",
+    "question": "什么是背吃刀量（切深ap）？",
+    "shortAnswer": "背吃刀量ap就是刀具一次切进去的深度，影响切削力和效率。",
+    "beginnerExplanation": "铣削时ap分两种：轴向切深和径向切深。车削时ap就是单边切下去多少mm。ap越大材料去除越快但切削力越大。粗加工ap大，精加工ap小。",
+    "relatedTopic": "切削参数",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "depth-of-cut",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-050",
+    "question": "撞刀后该怎么办？",
+    "shortAnswer": "急停检查受损情况维修更换重新对刀谨慎恢复加工。",
+    "beginnerExplanation": "撞刀了不要慌：立即按急停；检查刀具、工件、主轴是否受损；记录撞刀时的程序行和坐标分析原因；换新刀、重新对刀、检查主轴精度。几乎每个CNC操作员都撞过刀，关键是总结经验不再犯。",
+    "relatedTopic": "故障处理",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "crash-recovery",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-051",
+    "question": "什么是加工余量？留多少合适？",
+    "shortAnswer": "余量就是预留出来给后续加工去掉的材料。粗加工留0.2~0.5mm给精加工。",
+    "beginnerExplanation": "加工余量是粗加工后留下的等待精加工去掉的材料厚度。一般推荐：钢件粗到精留0.3~0.5mm，铝件0.2~0.5mm。",
+    "relatedTopic": "切削工艺",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "machining-allowance",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-052",
+    "question": "什么是刚性攻丝（M29）？和普通攻丝有什么区别？",
+    "shortAnswer": "刚性攻丝主轴和Z轴同步，不需浮动夹头；普通攻丝用浮动夹头补偿误差。",
+    "beginnerExplanation": "刚性攻丝通过编码器反馈让主轴和Z轴严格同步，不需要浮动刀柄。普通攻丝使用带伸缩补偿的攻丝夹头。刚性攻丝精度高、速度快。",
+    "relatedTopic": "攻丝",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "rigid-tapping",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-053",
+    "question": "急停和复位(RESET)有什么区别？",
+    "shortAnswer": "急停切电源、轴急刹；复位只是停止程序执行、消除非严重报警。",
+    "beginnerExplanation": "急停直接切断伺服驱动电源，是物理级停止。RESET只停止程序执行、复位当前状态，还可以消除一部分报警。但RESET不停主轴，也不停冷却液。所以看到有危险要用急停。",
+    "relatedTopic": "安全操作",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "emergency-vs-reset",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-054",
+    "question": "CW和CCW在机床上是什么意思？",
+    "shortAnswer": "CW=顺时针，CCW=逆时针。M03=CW，M04=CCW。",
+    "beginnerExplanation": "CW和CCW是从主轴前端看的旋转方向。CW顺时针=M03（标准正转），CCW逆时针=M04（反转）。换刀时的刀盘旋转方向也是CW/CCW描述。",
+    "relatedTopic": "主轴操作",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "cw-ccw-direction",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-055",
+    "question": "为什么车床要设G50限制最高转速？",
+    "shortAnswer": "G50限制G96模式下工件转速不会飞太高——防止卡盘飞散。",
+    "beginnerExplanation": "车端面时用G96恒线速，刀越靠近中心工件转速越高。如果没有G50 S2000限制，刀移到中心附近转速可能冲到10000rpm以上——超过了卡盘额定转速，卡盘可能解体！所以车床只要用G96就必配G50。",
+    "relatedTopic": "安全操作",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "g50-max-spindle-speed",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-056",
+    "question": "缓冲区是什么？在DNC加工中重要吗？",
+    "shortAnswer": "缓冲区是系统预先读入的程序段存储区，DNC时常用以确保程序不卡顿。",
+    "beginnerExplanation": "CNC系统在执行当前段时会提前读取后面几段。在DNC加工中，如果缓冲区不够大、传输速度跟不上执行速度，机床就会停下来等待数据。调大缓冲区可减少断流。",
+    "relatedTopic": "DNC",
+    "recommendedImageType": "chart",
+    "relatedEntryId": "dnc-buffer",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-057",
+    "question": "M30和M02有什么区别？",
+    "shortAnswer": "M30程序结束+返回开头；M02只结束不返回。",
+    "beginnerExplanation": "M02结束程序。M30结束程序并自动把光标返回到程序开头，按CYCLE START直接重新运行。现代CNC编程基本都用M30。另外M02不关闭冷却液和主轴。",
+    "relatedTopic": "编程基础",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "m02-vs-m30",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-058",
+    "question": "什么是倒角和圆角？编程时怎么处理？",
+    "shortAnswer": "倒角(C)是切出一个斜面，圆角(R)是切出一个弧形过渡。",
+    "beginnerExplanation": "倒角C2表示2mm*45度的斜边。圆角R2表示半径2mm的圆弧过渡。手动编程时倒角用G01加两个方向的移动，圆角用G02/G03。CAM编程时直接选对应操作。",
+    "relatedTopic": "编程基础",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "chamfer-radius",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-059",
+    "question": "什么是刀尖半径补偿（车床）？",
+    "shortAnswer": "车刀刀尖是个圆弧不是尖点，补偿这个圆弧才能加工出精确的锥度和圆弧。",
+    "beginnerExplanation": "车刀的刀尖其实是个小圆弧，不是理想的尖点。加工锥面或圆弧时，刀尖R会导致实际轮廓偏大/偏小。车床用G41/G42进行刀尖R补偿。",
+    "relatedTopic": "刀补",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "tool-nose-radius-compensation",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-060",
+    "question": "M08和M09什么时候用？",
+    "shortAnswer": "M08开冷却液，M09关冷却液。",
+    "beginnerExplanation": "标准用法：启动主轴后写M08开冷却。在换刀前、程序结束前M09关冷却。如果忘记关冷却液就换刀，冷却液可能喷到刀库上。",
+    "relatedTopic": "编程基础",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "coolant-m08-m09",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-061",
+    "question": "什么是局部坐标系G52？什么情况下用？",
+    "shortAnswer": "G52在G54基础上再叠一个临时偏移，适合加工多个相同特征。",
+    "beginnerExplanation": "比如加工板子上的四个凹槽，不用为每个槽分别建G54。先设好G54，然后G52 X-50 Y50偏移到第一个槽的位置加工，再G52 X50 Y50加工第二个槽。用完记得G52 X0 Y0取消。",
+    "relatedTopic": "坐标系",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "g52-local-coordinate",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-062",
+    "question": "为什么铝件加工会出现毛刺？怎么减少？",
+    "shortAnswer": "毛刺是刀具切出工件时材料变形产生的，可优化刀具路径减少。",
+    "beginnerExplanation": "减少毛刺方法：从工件外往内铣；用锋利的刀具；减少每齿进给；用倒角刀去毛刺。",
+    "relatedTopic": "切削工艺",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "burr-reduction",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-063",
+    "question": "G76车床螺纹切削循环怎么用？",
+    "shortAnswer": "G76是车床复合螺纹切削循环，可自动分多次切深加工螺纹。",
+    "beginnerExplanation": "G76 P__ Q__ R__; G76 X__ Z__ P__ Q__ F__——车螺纹时不需要手工写多次走刀。系统自动计算螺纹深度，分多次切削，最后精加工一次。",
+    "relatedTopic": "车削编程",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "g76-thread-cutting",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-064",
+    "question": "为什么高速加工需要特殊编程策略？",
+    "shortAnswer": "高速加工要保持切削载荷恒定、避免急转弯，需要特殊刀路。",
+    "beginnerExplanation": "高速加工特点是转速高、每齿进给小、切深小。传统CAM的来回铣不适合。HSM常用：螺旋下刀、摆线铣削、动态铣削，保持恒定切宽。",
+    "relatedTopic": "高速加工",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "hsm-strategies",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-065",
+    "question": "什么是S形加减速？为什么比直线加减速好？",
+    "shortAnswer": "S形加减速让机床启停更平滑，适合高速高精度加工。",
+    "beginnerExplanation": "直线加减速启停瞬间有冲击。S形加减速在加减速的开始和结束段增加过渡弧，让速度变化更平滑，机械冲击更小、加工表面更好。",
+    "relatedTopic": "伺服系统",
+    "recommendedImageType": "chart",
+    "relatedEntryId": "s-curve-acceleration",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-066",
+    "question": "什么是过切？为什么会出现？",
+    "shortAnswer": "过切是刀具切到了不该切的地方，常见原因是刀补/坐标系/刀路错误。",
+    "beginnerExplanation": "原因：刀补方向搞反；G54坐标设偏；刀具路径内R小于刀径；D值设置错误；Z轴深度错了。",
+    "relatedTopic": "故障处理",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "overcut-causes",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-067",
+    "question": "加工中心需要多长时间保养一次？",
+    "shortAnswer": "日常每天做，周保养过滤网，月/季保养精度和导轨。",
+    "beginnerExplanation": "每天：清理切屑、检查切削液和润滑。每周：清洗过滤网、检查刀库。每月：检查主轴拉力、导轨刮屑板。每半年：更换APC电池、校准主轴。",
+    "relatedTopic": "机床维护",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "machine-maintenance",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-068",
+    "question": "什么是拉刀力？怎么检查？",
+    "shortAnswer": "拉刀力是主轴拉爪夹紧刀柄的拉力，不够时刀具会飞出来。",
+    "beginnerExplanation": "拉刀力由主轴碟簧和拉爪产生，把刀柄拉紧在主轴锥孔。标准BT40约8000~12000N。如果拉刀力不足，高速旋转时刀具可能飞出！定期检查很有必要。",
+    "relatedTopic": "主轴维护",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "pull-stud-force",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-069",
+    "question": "什么是螺纹的M、G、Rc代号？有什么区别？",
+    "shortAnswer": "M=公制普通螺纹，G=英制管螺纹，Rc=英制锥管螺纹。",
+    "beginnerExplanation": "M6*1：M=公制牙，6=大径6mm，1=螺距1mm。G1/2：G=英制圆柱管螺纹。Rc1/2：英制锥管螺纹密封用。不同螺纹牙型角、螺距都不同。",
+    "relatedTopic": "识图基础",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "thread-designations",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-070",
+    "question": "为什么有时候加工出来的孔是喇叭口？",
+    "shortAnswer": "喇叭口常因钻头跳动、主轴跳动或钻头横刃不正引起。",
+    "beginnerExplanation": "原因：钻头没装正；主轴锥孔有磨损；钻头横刃不对称；中心钻没打好；钻头太长让刀。用好的钻夹头、缩短悬长、先用中心钻定位。",
+    "relatedTopic": "钻孔",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "bellmouth-hole",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-071",
+    "question": "硬质合金和高速钢刀具的区别？",
+    "shortAnswer": "硬质合金硬度高耐高温可高速切削但脆；高速钢韧性好便宜耐冲击。",
+    "beginnerExplanation": "硬质合金可承受800度以上高温，转速可以很高，但遇冲击易崩刃。高速钢韧性好不怕冲击，但最大Vc只有30~50m/min。批量加工用硬质合金，试切小批量用高速钢。",
+    "relatedTopic": "刀具基础",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "carbide-vs-hss",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-072",
+    "question": "什么是让刀？怎么减少？",
+    "shortAnswer": "让刀是切削力把刀具推偏了，导致实际尺寸偏小或偏大。",
+    "beginnerExplanation": "刀具是个悬臂梁——刀杆越长、直径越小就越容易被推偏。减少让刀：缩短刀具悬长；用更大直径的刀；减少切深和进给；用顺铣。",
+    "relatedTopic": "切削工艺",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "tool-deflection",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-073",
+    "question": "什么是刀柄？BT、SK、HSK有什么区别？",
+    "shortAnswer": "刀柄连接刀具和主轴。BT最常用，HSK适合高速主轴。",
+    "beginnerExplanation": "BT（7:24锥度）最普遍的加工中心刀柄，靠锥面定位+拉爪拉紧。HSK空心短锥柄，双面接触，适合高速高精度。SK是德国标准的BT类似物。",
+    "relatedTopic": "刀具基础",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "tool-holder-types",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-074",
+    "question": "什么是主轴锥孔？为什么不能有磕碰？",
+    "shortAnswer": "主轴锥孔是装刀柄的精密锥面，磕碰后刀柄装不正影响精度。",
+    "beginnerExplanation": "锥孔如果有磕碰或划伤，装刀后刀具跳动，加工出来的孔偏大/表面粗糙。所以换刀时刀柄要轻拿轻放，定期清洁锥孔。",
+    "relatedTopic": "主轴维护",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "spindle-taper-care",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-075",
+    "question": "G73是什么？和G83有什么不同？",
+    "shortAnswer": "G73高速啄钻退一点不退到顶，G83退回R平面。G73更快。",
+    "beginnerExplanation": "G73每次钻Q深度退刀一个固定量，速度快。G83每次退到R平面，更安全但速度慢。断屑排屑困难的材料用G83。",
+    "relatedTopic": "钻孔循环",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "g73-vs-g83",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-076",
+    "question": "什么是G92坐标系设定？和G54有什么不同？",
+    "shortAnswer": "G92把当前位置设定为指定坐标值，不存储，断电消失。",
+    "beginnerExplanation": "G92 X0 Y0就是把当前刀具位置定义为X0Y0。不存储在参数里，断电消失。适合临时移动零点。",
+    "relatedTopic": "坐标系",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "g92-coordinate-setting",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-077",
+    "question": "零点偏置和工件偏置是一回事吗？",
+    "shortAnswer": "类似但不完全相同，本质都是告诉系统工件在哪。",
+    "beginnerExplanation": "零点偏置和工件偏置说的是同一个功能。FANUC叫工件坐标系，HAAS叫工件偏置，Siemens叫零点偏移。外部零点偏置是额外的叠加偏置。",
+    "relatedTopic": "坐标系",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "zero-vs-work-offset",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-078",
+    "question": "G94和G95是什么？什么时候切换？",
+    "shortAnswer": "G94=每分钟进给，G95=每转进给，铣床用G94、车床用G95。",
+    "beginnerExplanation": "G94模式F值固定是mm/min。G95模式F值是mm/r。铣床几乎全用G94。车床几乎全用G95。铣床上攻丝时也会临时用G95，攻完再切回G94。",
+    "relatedTopic": "进给模式",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "g94-g95-feed-modes",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-079",
+    "question": "在机床上怎么看程序？怎么看当前坐标？",
+    "shortAnswer": "按POS键看坐标，按PROG键看运行中的程序，按OFS/SET键看刀补。",
+    "beginnerExplanation": "FANUC面板快捷键：POS显示位置，PROG显示当前运行的程序，OFS/SET看刀补和G54坐标，SYSTEM进参数。熟悉这几个键是上机基础。",
+    "relatedTopic": "操作基础",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "panel-operation-basics",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-080",
+    "question": "为什么输入的程序过不了？常见语法错误有哪些？",
+    "shortAnswer": "常见错误：缺小数点、G代码不存在、程序号重复、模态冲突等。",
+    "beginnerExplanation": "新手常犯：X100缺小数点变成0.01mm；写G00 G01在一行冲突；O0001和O001重复；负号位置错；没有M30程序不结束。",
+    "relatedTopic": "编程基础",
+    "recommendedImageType": "alarm_screen",
+    "relatedEntryId": "common-programming-errors",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-081",
+    "question": "什么是刀具半径补偿的D值？磨损值怎么输入？",
+    "shortAnswer": "D值是半径补偿量，在OFFSET画面的偏置页输入。",
+    "beginnerExplanation": "D值=刀具有效半径。比如D10刀半径是5mm，D值输5.0。刀用久了在磨损列输入负值补偿。注意：D值不是刀具直径是半径！",
+    "relatedTopic": "刀补",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "d-value-input",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-082",
+    "question": "在加工中心上怎么找Z轴零点？",
+    "shortAnswer": "用对刀块：刀尖碰对刀块表面，记录Z值设为G54的Z0。",
+    "beginnerExplanation": "常用方法：标准对刀块；直接碰工件用纸片感觉；电子Z轴设定器。核心是让刀尖知道工件表面在哪里。",
+    "relatedTopic": "对刀操作",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "z-axis-zero-setting",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-083",
+    "question": "什么是撞刀恐惧症？怎么克服？",
+    "shortAnswer": "新手怕撞刀很正常！通过系统性安全检查流程来消除恐惧。",
+    "beginnerExplanation": "建立安全检查清单：程序从头到尾看一遍；空运行一遍；首件慢速开切；单段检查关键位置。流程做到位了，撞刀概率就极低。",
+    "relatedTopic": "安全操作",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "fear-of-crashing",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-084",
+    "question": "什么是公差？±0.1和±0.01有什么不同？",
+    "shortAnswer": "公差是允许的尺寸误差范围。±0.1mm=普通，±0.01mm=高精度。",
+    "beginnerExplanation": "±0.1允许9.9~10.1mm，普通铣床就能达到。±0.01mm允许9.99~10.01mm，需要精加工+稳定工艺。精度越高成本越高。",
+    "relatedTopic": "质量管控",
+    "recommendedImageType": "chart",
+    "relatedEntryId": "tolerance-basics",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-085",
+    "question": "G00快移时是不是走直线？",
+    "shortAnswer": "不一定！取决于系统参数，有些系统先走完一个轴再走另一个。",
+    "beginnerExplanation": "G00路径分两种：直线插补和每个轴单独快移。后者是折线路径。所以G00从A到B不一定走直线！中间有障碍很容易撞。",
+    "relatedTopic": "安全操作",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "g00-travel-path",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-086",
+    "question": "什么是PMC？",
+    "shortAnswer": "PMC是CNC内部的小电脑，控制开关信号。",
+    "beginnerExplanation": "CNC除了控制轴运动，还要管理主轴正反转、冷却泵、刀库电机等开关量。这些逻辑由PMC控制。PMC故障时会出现机床不动作但CNC没报警的现象。",
+    "relatedTopic": "机床基础",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "pmc-basics",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-087",
+    "question": "为什么开车床前要先让主轴空转一会儿？",
+    "shortAnswer": "让润滑系统充分润滑主轴轴承，特别是冷机启动时。",
+    "beginnerExplanation": "机床冷机时润滑油稠，还没充分到达主轴轴承。如果立刻重切削，主轴轴承加速磨损。建议冷机启动后先让主轴低速空转3~5分钟暖机。",
+    "relatedTopic": "操作规范",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "warm-up-procedure",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-088",
+    "question": "为什么导轨需要润滑？不润滑会怎样？",
+    "shortAnswer": "导轨润滑减少摩擦防止磨损和爬行。不润滑导轨磨损精度丧失。",
+    "beginnerExplanation": "润滑不足会导致：伺服电机负载增大过载报警；低速移动顿挫；导轨表面磨损精度全丢。每天检查润滑油液位。",
+    "relatedTopic": "机床维护",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "guideway-lubrication",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-089",
+    "question": "什么是刀尖R补偿？什么时候必须用？",
+    "shortAnswer": "刀尖R补偿用来修正车刀圆弧刀尖在锥面和圆弧上的尺寸偏差。",
+    "beginnerExplanation": "车刀刀尖不是纯尖的，是R0.2~R1.2的圆弧。车锥面或圆弧时刀尖R会导致实际轮廓偏大或偏小。用G41/G42+刀尖方位T实现补偿。",
+    "relatedTopic": "车削编程",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "tnr-compensation",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-090",
+    "question": "什么是断屑？为什么车削时切屑不断很麻烦？",
+    "shortAnswer": "断屑是让切屑断裂成小段，防止缠绕伤人和缠刀。",
+    "beginnerExplanation": "车削钢件会产生长条切屑缠绕在工件和刀架上。解决：用带断屑槽的刀片；调整进给量使切屑变厚易断；改变切深。",
+    "relatedTopic": "车削工艺",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "chip-breaking",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-091",
+    "question": "什么是端面和外圆？",
+    "shortAnswer": "端面是工件的头顶，外圆是工件的身体。",
+    "beginnerExplanation": "端面是工件朝外的平面，通常是长度测量基准。外圆是圆柱体的外表圆面。车削时先车端面定长度基准，再车外圆到图纸直径。",
+    "relatedTopic": "车削基础",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "face-vs-od",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-092",
+    "question": "什么是基准？为什么加工和测量都要先定基准？",
+    "shortAnswer": "基准就是所有尺寸从哪里开始算，没有基准就没法确定位置。",
+    "beginnerExplanation": "基准选错加工出来的零件都对不上图纸。常见基准：设计基准（图纸标的A/B/C）；工艺基准（装夹找正面）；测量基准（三坐标对零面）。",
+    "relatedTopic": "测量基础",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "datum-basics",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-093",
+    "question": "G04暂停指令怎么用？",
+    "shortAnswer": "G04 X1.0或G04 P1000——暂停指定时间。",
+    "beginnerExplanation": "G04 X1.5=暂停1.5秒，P1500=暂停1500毫秒。用于钻深孔暂停排屑；主轴正反转切换前停稳；退刀后等切屑掉下来。",
+    "relatedTopic": "编程基础",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "g04-dwell",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-094",
+    "question": "什么是子程序？什么时候用？",
+    "shortAnswer": "子程序是一段可重复调用的程序代码，用M98调用。",
+    "beginnerExplanation": "子程序用O开头单独存储，主程序用M98 P1000调用。适合多个相同特征的加工；分层加工；标准的定心/倒角/攻丝流程。",
+    "relatedTopic": "编程基础",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "subprogram-m98",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-095",
+    "question": "M98和M99怎么用？",
+    "shortAnswer": "M98调用子程序，M99在子程序末尾返回主程序。",
+    "beginnerExplanation": "M98 P1000 L3 = 调用O1000子程序3次。M99在子程序尾执行就跳回主程序M98的下一行。",
+    "relatedTopic": "编程基础",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "m98-m99-subprogram",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-096",
+    "question": "什么是模态指令的编组？",
+    "shortAnswer": "同一个编组的G代码互相同性相斥——写了新的旧的自动取消。",
+    "beginnerExplanation": "G代码分成若干组，同一组内的G代码不能共存。例：G01和G02在同一组，写了G02后G01自动失效。G90/G91是同一组，G54~G59是同一组。",
+    "relatedTopic": "编程基础",
+    "recommendedImageType": "chart",
+    "relatedEntryId": "g-code-groups",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-097",
+    "question": "什么是相对坐标？和绝对坐标怎么切换？",
+    "shortAnswer": "绝对坐标以工件原点为基准，相对坐标以临时参考点为原点。",
+    "beginnerExplanation": "FANUC位置画面可按软键切换：绝对坐标(ABS)、相对坐标(REL)、机械坐标(MACH)。相对坐标常用于量距离。",
+    "relatedTopic": "操作基础",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "relative-absolute-coordinate",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-098",
+    "question": "G54坐标怎么输入？是不是在程序里写的？",
+    "shortAnswer": "G54不在程序里写坐标值，是在面板OFS/SET页面设定。程序只写G54。",
+    "beginnerExplanation": "G54坐标值在面板上设置。按OFS/SET按坐标系软键看到G54的输入框填入分中得到的坐标值。程序里只需要写G54激活它。",
+    "relatedTopic": "坐标系",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "g54-input-method",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-099",
+    "question": "换刀时刀号对刀补要注意什么？",
+    "shortAnswer": "T刀号要配相应的H值和D值，换刀后别忘了写G43 H__。",
+    "beginnerExplanation": "换刀程序：T01 M06把1号刀换到主轴，然后G43 H01 Z100.加载刀长补偿。T01只负责换刀动作，不自动加载刀补。换完T02忘记写G43 H02是新手最容易犯的错。",
+    "relatedTopic": "换刀操作",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "tool-number-offset-mapping",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-100",
+    "question": "G98/G99什么时候选哪个？",
+    "shortAnswer": "有夹具干涉时用G98，平面无障碍时用G99。",
+    "beginnerExplanation": "G99退到R平面，抬刀少省时间。但如果工件上有凸台或夹具凸台高于R平面，G99会撞到——必须用G98退到初始平面。",
+    "relatedTopic": "钻孔",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "g98-g99-return",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-101",
+    "question": "为什么切出来的平面有接刀痕？",
+    "shortAnswer": "接刀痕是两刀之间的台阶，因刀具让刀或吃刀量不一致引起。",
+    "beginnerExplanation": "原因：刀具让刀前后两刀径向偏移不同；主轴跳动；机床反向间隙；切深不一致。解决方法：精加工用恒定切深顺铣；用新刀做精加工。",
+    "relatedTopic": "切削工艺",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "stepover-marks",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-102",
+    "question": "加工时为什么怕局部高温？",
+    "shortAnswer": "切削高温会让工件表面变质，影响零件性能。",
+    "beginnerExplanation": "切削时刀尖温度可达800度以上，传到工件表面可能引起局部回火或二次淬火。所以要加充足冷却液，不能一刀吃太深导致过热。",
+    "relatedTopic": "切削工艺",
+    "recommendedImageType": "chart",
+    "relatedEntryId": "thermal-damage-machining",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-103",
+    "question": "什么是刀具涂层？有什么好处？",
+    "shortAnswer": "涂层是在刀片上镀一层硬质薄膜——更硬、更耐热、更润滑。",
+    "beginnerExplanation": "常见涂层：TiN金色通用；TiAlN紫蓝耐热600~800度；AlCrN耐热800+度；DLC加工铝/塑料不粘刀。涂层后刀具寿命可提高2~10倍。",
+    "relatedTopic": "刀具基础",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "tool-coatings",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-104",
+    "question": "G71/G72/G70在车床上是什么？",
+    "shortAnswer": "G71外圆粗车、G72端面粗车、G70精车——车床复合循环指令。",
+    "beginnerExplanation": "只需描述最终轮廓形状，系统自动计算每次切深和路径。G71 U__ R__; G71 P__ Q__ U__ W__ F__。G70 P__ Q__做精加工。极大简化复杂形状编程。",
+    "relatedTopic": "车削编程",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "g71-g70-turning-cycle",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-105",
+    "question": "为什么手动摇手轮时轴走得不顺？",
+    "shortAnswer": "可能原因：润滑不足爬行、手轮倍率太高、电机负载大。",
+    "beginnerExplanation": "手轮慢速移动一顿一顿最常见原因是导轨润滑不足。也可能是手轮倍率*100移动太快看起来不连续。检查润滑油路和倍率选择。",
+    "relatedTopic": "操作技巧",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "stick-slip",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-106",
+    "question": "螺纹加工中退刀槽是干什么的？",
+    "shortAnswer": "退刀槽是螺纹结尾的让刀槽——给螺纹车刀留出退刀空间。",
+    "beginnerExplanation": "车螺纹时车到末尾必须退刀，但螺纹刀不能直接径向退出。所以需要在螺纹末端提前留一个槽。退刀槽宽度一般大于2倍螺距。",
+    "relatedTopic": "车削工艺",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "thread-relief-groove",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-107",
+    "question": "ATC的双向和单向换刀有什么区别？",
+    "shortAnswer": "单向换刀完刀臂回到起点；双向换刀完直接旋转回去，更快。",
+    "beginnerExplanation": "单向换刀：换完刀刀臂回原位等待。双向换刀：刀臂继续旋转把旧刀放回刀库。双向比单向快，是高速加工中心常见配置。",
+    "relatedTopic": "换刀操作",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "atc-direction",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-108",
+    "question": "什么是程序头和程序尾？标准格式怎么写？",
+    "shortAnswer": "程序头：安全初始化指令；程序尾：抬刀关主轴冷却结束程序。",
+    "beginnerExplanation": "标准程序头：O0001; G90 G94 G17 G40 G80 G49; G54; M06 T01; G43 H01 Z100.。标准程序尾：G00 Z100.; M09; M05; G91 G28 Z0; M30。",
+    "relatedTopic": "编程规范",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "program-header-safety",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-109",
+    "question": "G70/G71/G72能否用在铣床上？",
+    "shortAnswer": "不能，这些是FANUC车床复合循环指令，铣床不能用。",
+    "beginnerExplanation": "G70~G76只适用车床。铣床类似的循环有G12/G13全圆铣削、G15/G16极坐标编程等。不同系统品牌的G代码有差异。",
+    "relatedTopic": "编程基础",
+    "recommendedImageType": "comparison",
+    "relatedEntryId": "lathe-mill-code-diff",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-110",
+    "question": "什么是自动编程和手动编程？哪个更好？",
+    "shortAnswer": "手动编程直接写G代码适合简单件；自动编程用CAM生成适合复杂件。",
+    "beginnerExplanation": "手动编程灵活但复杂曲面写不出来。自动编程用CAM软件建立3D模型选择加工策略生成G代码。现代工厂90%以上用自动编程。",
+    "relatedTopic": "编程基础",
+    "recommendedImageType": "comparison",
+    "relatedEntryId": "manual-vs-cam-programming",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-111",
+    "question": "G40和G49可以在一行写吗？",
+    "shortAnswer": "可以但建议分开写——特别是G49会立即改变Z坐标。",
+    "beginnerExplanation": "建议先G49取消刀长补，再移动Z到安全位置，然后G40取消半径补偿。G49会让Z轴位置跳变，分行更安全。",
+    "relatedTopic": "编程安全",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "g40-g49-separate",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-112",
+    "question": "什么是刀片的ISO编码？怎么看？",
+    "shortAnswer": "ISO编码标识刀片的形状、尺寸、厚度、刀尖R等。",
+    "beginnerExplanation": "以CNMG120408为例：C=80度菱形、N=法后角0度、M=公差等级、G=固定方式、12=刀刃长度12mm、04=厚度4.76mm、08=刀尖R0.8mm。",
+    "relatedTopic": "刀具基础",
+    "recommendedImageType": "chart",
+    "relatedEntryId": "insert-iso-code",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-113",
+    "question": "什么是刀片磨损？怎么看该换刀了？",
+    "shortAnswer": "刀片磨损后切屑变色、表面变粗糙、切削声音变尖锐。",
+    "beginnerExplanation": "磨损表现：切屑颜色发蓝/紫；表面粗糙有亮带；声音从唰唰变成吱吱；主轴负载表上升。出现任一现象就建议换刀片。",
+    "relatedTopic": "刀具基础",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "insert-wear-detection",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-114",
+    "question": "什么是振刀？怎么消除？",
+    "shortAnswer": "振刀是刀具和工件之间的共振——发出轰鸣声、表面出现振纹。",
+    "beginnerExplanation": "振刀表现为低频轰鸣声和规则振纹。解决方法：降低转速避开共振区；增加进给；减少刀具悬长；用更锋利的刀片；增加工件刚性。",
+    "relatedTopic": "切削工艺",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "chatter-elimination",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-115",
+    "question": "什么是冷却液浓度？怎么测？",
+    "shortAnswer": "冷却液一般浓度5~10%，用折光仪（糖度计）测。",
+    "beginnerExplanation": "乳化液切削液按比例兑水。浓度太稀润滑不够刀具磨损快，太浓成本高。用光学折光仪测量滴几滴冷却液在棱镜上看刻度读数。",
+    "relatedTopic": "机床维护",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "coolant-concentration",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-116",
+    "question": "什么是三坐标测量机？",
+    "shortAnswer": "CMM是用探针在三维空间测量工件尺寸的高精度设备。",
+    "beginnerExplanation": "CMM精度可达微米级，用于首件检测、模具检测、定期校验。不是每台CNC配CMM，大中型工厂才有测量室。",
+    "relatedTopic": "测量基础",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "cmm-basics",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-117",
+    "question": "什么是表面粗糙度Ra？Ra1.6和Ra6.3差多少？",
+    "shortAnswer": "Ra是表面粗糙度指标，Ra1.6约精磨，Ra6.3约粗加工。",
+    "beginnerExplanation": "Ra1.6μm较光滑需精铣才能达到。Ra3.2μm一般精加工表面。Ra6.3μm粗加工表面。Ra值越小要求进给越小成本越高。",
+    "relatedTopic": "质量管控",
+    "recommendedImageType": "chart",
+    "relatedEntryId": "surface-roughness-ra",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-118",
+    "question": "什么是啄钻？为什么钻孔要点水？",
+    "shortAnswer": "啄钻就是钻一点退一下——断屑排屑、防止切屑堵住钻头。",
+    "beginnerExplanation": "钻深孔时切屑排不出来，螺旋槽堵住钻头卡死。所以采用啄钻法：钻一小段退回一段再钻。G83和G73都是啄钻。",
+    "relatedTopic": "钻孔",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "peck-drilling",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-119",
+    "question": "G28回参考点怎么用？和G30有什么区别？",
+    "shortAnswer": "G28通过中间点回第1参考点，G30回第2参考点。",
+    "beginnerExplanation": "G28 Z100;先到Z100再回参考点。G28回参数1240定义的位置，G30回1241定义的位置。程序结束常用G91 G28 Z0。",
+    "relatedTopic": "编程基础",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "g28-g30-reference",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-120",
+    "question": "G92的另一种用法——设主轴最高转速？",
+    "shortAnswer": "G92坐标系设定，G50限制恒线速时的最高转速。两者不同。",
+    "beginnerExplanation": "注意：FANUC中G92用于坐标系设定，用G50限制转速。千万别把坐标系G92当G50用。",
+    "relatedTopic": "编程基础",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "g92-multiple-uses",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-121",
+    "question": "新手学CNC先从什么学起？",
+    "shortAnswer": "先从看懂坐标和G00/G01开始，然后学对刀和设坐标系。",
+    "beginnerExplanation": "路线：坐标概念手动操作对刀/设G54跑G00/G01圆弧刀补固定循环子程序宏程序。花时间打基础比急着学高级指令重要。",
+    "relatedTopic": "学习路径",
+    "recommendedImageType": "chart",
+    "relatedEntryId": "cnc-learning-path",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-122",
+    "question": "数控车床和普通车床操作有什么不同？",
+    "shortAnswer": "数控车床输入程序自动走刀，普通车床手摇中拖板手动走刀。",
+    "beginnerExplanation": "普通车床靠手感，数控车床编程序自动走刀。数控的优势是一次编程重复加工、可加工复杂轮廓。",
+    "relatedTopic": "车削基础",
+    "recommendedImageType": "comparison",
+    "relatedEntryId": "cnc-vs-manual-lathe",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-123",
+    "question": "G50在编程和参数上有什么不同？",
+    "shortAnswer": "程序中的G50 S2000限制最高转速；参数3761是系统级上限。两者取小值。",
+    "beginnerExplanation": "G50只在本程序生效。参数3761对所有程序生效。二者同时存在时有效限速取较低值。",
+    "relatedTopic": "主轴操作",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "g50-vs-3761",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-124",
+    "question": "什么是刀具路径模拟？",
+    "shortAnswer": "刀具路径模拟就是在屏幕上画出刀具走过的路线。",
+    "beginnerExplanation": "按GRAPH键启动模拟，系统在屏幕上画出刀具运动轨迹。能快速发现明显错误，但不能完全代替空运行。",
+    "relatedTopic": "操作技巧",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "toolpath-simulation",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-125",
+    "question": "什么是IPC和IPM？",
+    "shortAnswer": "IPC=每转进给对应G95，IPM=每分钟进给对应G94。",
+    "beginnerExplanation": "英制进给单位。IPC对应G95模式每转进给量。IPM对应G94模式每分钟进给量。进口机床和英制图纸中常见。",
+    "relatedTopic": "进给模式",
+    "recommendedImageType": "chart",
+    "relatedEntryId": "ipc-ipm-feed",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-126",
+    "question": "什么是刀座？刀库位置只能放指定刀号吗？",
+    "shortAnswer": "刀座是刀库中放刀的位置。大多数刀库随意放，系统自动记住位置。",
+    "beginnerExplanation": "现代CNC刀库大多是随机存取：你插哪系统记哪。老式刀库是固定刀座。随机刀库不需要记位置。",
+    "relatedTopic": "换刀操作",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "tool-pocket-random",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-127",
+    "question": "M06和T__的顺序是什么？",
+    "shortAnswer": "标准写法T__先选刀，M06执行换刀。常写为T01 M06。",
+    "beginnerExplanation": "T指令准备好刀具，M06执行换刀动作。FANUC标准分两步。正确选刀+换刀是自动化的基础。",
+    "relatedTopic": "换刀操作",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "t-code-m06-order",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-128",
+    "question": "什么情况下需要手动换刀？",
+    "shortAnswer": "刀库满了、装了超长刀具放不进刀库、维修后测试。",
+    "beginnerExplanation": "刀库已满、特殊刀具放不进刀库、ATC机械手故障时需要手动换刀。手动换刀时要断电或确保安全模式。",
+    "relatedTopic": "换刀操作",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "manual-tool-change",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-129",
+    "question": "G90在车床和铣床上的含义一样吗？",
+    "shortAnswer": "不一样！铣床G90=绝对值编程；车床FANUC的G90=外圆切削循环。",
+    "beginnerExplanation": "FANUC车床系统中G90是复合固定循环。车床的绝对/增量更多用U/W表示。初学者一定要查所开车床的G代码表。",
+    "relatedTopic": "编程基础",
+    "recommendedImageType": "chart",
+    "relatedEntryId": "g90-lathe-vs-mill",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-130",
+    "question": "刀路的顺铣和逆铣对表面质量的影响？",
+    "shortAnswer": "顺铣表面光洁度更好，但机床要有足够刚性和无间隙。",
+    "beginnerExplanation": "顺铣刀齿从厚到薄，离开工件时刮力最小，表面质量好。逆铣从薄到厚，容易形成冷硬层和毛刺。但顺铣要求丝杠间隙小。",
+    "relatedTopic": "切削工艺",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "climb-vs-conventional-milling",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-131",
+    "question": "为什么新换的刀片第一刀容易崩刃？",
+    "shortAnswer": "新刀片刃口锋利但脆弱，第一刀冲击容易崩。",
+    "beginnerExplanation": "新刀片涂层刚镀好刃口脆弱。第一刀用较小切深和进给磨合；对铸件先倒角去除黑皮；用有刃口钝化处理的刀片。",
+    "relatedTopic": "刀具使用",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "new-insert-chipping",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-132",
+    "question": "什么是刀路转角减速？为什么需要？",
+    "shortAnswer": "刀路遇到锐角拐弯时自动减速——减少冲击防止过切。",
+    "beginnerExplanation": "刀具高速移动突然遇到锐角拐弯，惯性导致实际路径甩出拐角。系统在拐角附近提前减速，过了拐角再加速。",
+    "relatedTopic": "切削工艺",
+    "recommendedImageType": "chart",
+    "relatedEntryId": "corner-deceleration",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-133",
+    "question": "G75车床切槽循环怎么用？",
+    "shortAnswer": "G75 R__; G75 X__ Z__ P__ Q__ F__——用于切宽槽时自动分刀。",
+    "beginnerExplanation": "切宽槽时一刀切不完整槽宽，G75让系统自动化多次进刀/退刀。编程员只需给出最终形状参数。",
+    "relatedTopic": "车削编程",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "g75-grooving-cycle",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-134",
+    "question": "G83钻孔时为什么有时会划伤孔壁？",
+    "shortAnswer": "退刀时钻头刃口会刮到已加工过的孔壁。",
+    "beginnerExplanation": "在退刀前加G04 P200短暂停留；降低退刀速度；或用G73替代。",
+    "relatedTopic": "钻孔工艺",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "g83-wall-scratch",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-135",
+    "question": "什么是夹渣？铸件加工为什么容易崩刀？",
+    "shortAnswer": "铸件内部可能有砂眼/硬点，刀具碰到硬点直接崩刃。",
+    "beginnerExplanation": "铸造件可能混入型砂产生白口硬点。刀具切到等于撞击高硬度材料。对策：先做黑皮加工；用韧性好刀片粗加工。",
+    "relatedTopic": "材料加工",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "casting-defects",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-136",
+    "question": "G02/G03中的I、J、K参数是什么？",
+    "shortAnswer": "I/J/K是圆弧中心相对于起点的坐标增量。",
+    "beginnerExplanation": "I=起点到圆心在X方向的增量，J=Y方向。I/J比R编程更精确，可用于整圆。注意I/J永远用增量。",
+    "relatedTopic": "编程基础",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "ijk-circular-interpolation",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-137",
+    "question": "为什么CNC的首件通常做得很慢？",
+    "shortAnswer": "首件要验证程序、刀补、坐标、装夹——安全第一、速度最后。",
+    "beginnerExplanation": "首件过程中单段运行、进给倍率从10%开始逐步提升、每把刀加工完后测量尺寸。首件耗时是成熟加工的5~10倍，这是必需的。",
+    "relatedTopic": "操作规范",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "first-article-process",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-138",
+    "question": "什么是程序预读？",
+    "shortAnswer": "预读是CNC在执行当前段时提前读取后面的程序段。",
+    "beginnerExplanation": "CNC会提前看后面多段代码，提前规划加减速和路径。预读段数越多高速高精度加工越平滑。",
+    "relatedTopic": "CNC原理",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "look-ahead",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-139",
+    "question": "为什么加工不锈钢时切削液要用高浓度的？",
+    "shortAnswer": "不锈钢导热差，需要高浓度切削液加强润滑和冷却。",
+    "beginnerExplanation": "不锈钢导热性只有钢的1/3，切削热量集中在刀尖。浓度需要比普通钢件高。推荐含极压添加剂的切削液。",
+    "relatedTopic": "材料加工",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "stainless-coolant",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-140",
+    "question": "什么是脉冲当量？0.001mm是什么意思？",
+    "shortAnswer": "脉冲当量是系统发出一个脉冲对应的机床移动量。",
+    "beginnerExplanation": "FANUC标准脉冲当量1微米。手轮*1倍时一格=0.001mm。有时也设为0.0001mm用于超精密加工。",
+    "relatedTopic": "CNC原理",
+    "recommendedImageType": "chart",
+    "relatedEntryId": "pulse-equivalent",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-141",
+    "question": "什么是伺服电机和步进电机？有什么区别？",
+    "shortAnswer": "伺服有编码器反馈位置控得准；步进开环控制便宜但会丢步。",
+    "beginnerExplanation": "步进电机开环控制，便宜但高速扭矩急剧下降。伺服电机有编码器反馈，高速扭矩好、精度高。CNC的XYZ轴全用伺服。",
+    "relatedTopic": "机床基础",
+    "recommendedImageType": "comparison",
+    "relatedEntryId": "servo-vs-stepper",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-142",
+    "question": "什么是编码器分辨率？2000线是什么意思？",
+    "shortAnswer": "2000线表示编码器每转输出2000个脉冲，经4倍频后8000脉冲/转。",
+    "beginnerExplanation": "分辨率越高定位越精确。FANUC常见：标准型2000P/R，高精型4000P/R以上。丝杠螺距10mm时2000线分辨率1.25微米。",
+    "relatedTopic": "编码器",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "encoder-resolution",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-143",
+    "question": "G00和G01混在一起用时要注意什么？",
+    "shortAnswer": "G00之后再写G01如果不标注F值，会用上一个G01的F。",
+    "beginnerExplanation": "G01是模态指令，G00之后要切的话一定要再写G01并指定F值！不然G00速度直接下刀切速度快几倍必断刀。",
+    "relatedTopic": "编程安全",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "g00-g01-transition",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-144",
+    "question": "什么是对刀仪的标定？为什么需要定期做？",
+    "shortAnswer": "标定是确认对刀仪测量准确性——用标准棒测一次再对一对。",
+    "beginnerExplanation": "对刀仪用久了会漂移。用标准刀放进对刀仪测出的值与真实值比较在系统中输入补偿量。建议每周或每月标定一次。",
+    "relatedTopic": "对刀操作",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "presetter-calibration",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-145",
+    "question": "M03 S1000和S1000 M03有区别吗？",
+    "shortAnswer": "效果一样，但标准写法M03在前。",
+    "beginnerExplanation": "语法上顺序不影响功能，但行业惯例M代码在前S/T/F在后。保持一致的风格让程序更规范。",
+    "relatedTopic": "编程规范",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "m-code-order",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-146",
+    "question": "G54~G59这6个坐标系怎么用？一次加工能用多个吗？",
+    "shortAnswer": "可以！正面用G54、翻面用G55——每次选不同坐标系就行。",
+    "beginnerExplanation": "多坐标系应用：多面加工、多工位批量加工（4个工件分存G54~G57）、复杂箱体。切换坐标系只需写一行G55。",
+    "relatedTopic": "坐标系",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "multiple-work-offsets",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-147",
+    "question": "为什么CNC断电后程序会丢掉？怎么防止？",
+    "shortAnswer": "程序在RAM中存储断电丢失。需要存入闪存才永久保存。",
+    "beginnerExplanation": "编好程序要按输入/储存存入系统闪存，或转存到CF卡/U盘/电脑备份。养成每天备份程序的好习惯。",
+    "relatedTopic": "程序管理",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "program-storage",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-148",
+    "question": "什么是加工中的红线和蓝线？",
+    "shortAnswer": "红线=过切/碰撞标记，蓝线=刀具路径/未切削区域。",
+    "beginnerExplanation": "在CAM软件中红色高亮表示过切或碰撞。蓝色显示未切削区域。模拟结束还有红色说明刀路有问题。",
+    "relatedTopic": "编程基础",
+    "recommendedImageType": "comparison",
+    "relatedEntryId": "cam-simulation-colors",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-149",
+    "question": "G83啄钻的最小啄钻深度可以调吗？",
+    "shortAnswer": "可以，参数5113设定G83/G73的最小啄钻量。",
+    "beginnerExplanation": "当剩余深度小于Q值时系统自动只钻剩余量。参数5113设定最小啄钻深度，调整可优化深孔钻最后几刀的精度。",
+    "relatedTopic": "钻孔参数",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "peck-minimum-depth",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-150",
+    "question": "CNC加工为什么不建议用手触碰刀具？",
+    "shortAnswer": "手上有油脂润滑不够粘刀，另外锋利刃口容易割手。",
+    "beginnerExplanation": "手上有汗和油脂摸到刀片切削刃，高温下碳化影响涂层性能。刀片非常锋利摸上去可能割破手指。拿刀片时尽量戴手套。",
+    "relatedTopic": "安全操作",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "handling-inserts",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-151",
+    "question": "什么是快速倍率？怎么用？",
+    "shortAnswer": "快速倍率控制G00快移速度比例，对刀时调低。",
+    "beginnerExplanation": "面板快速倍率旋钮有F0/25%/50%/100%四挡。对刀靠近工件时调低到25%或F0。很多撞刀事故是因为快速倍率拧到100%忘了降。",
+    "relatedTopic": "操作技巧",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "rapid-override",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-152",
+    "question": "加工时为什么要关防护门？",
+    "shortAnswer": "防护门挡住飞出的切屑和冷却液，必须关上才能加工。",
+    "beginnerExplanation": "切屑以高速飞出可达几十米/秒，冷却液四处飞溅，防护门是最后的屏障。很多机床有门锁互锁。",
+    "relatedTopic": "安全操作",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "safety-door",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-153",
+    "question": "什么是刀具寿命管理？",
+    "shortAnswer": "刀具寿命管理是系统记录每把刀的使用时间，到期报警提示换刀。",
+    "beginnerExplanation": "通过参数设定每把刀的使用寿命（分钟），系统在加工中累计使用时间，达到设定值时在屏幕上报警提示。适合批量生产时保证刀具在最佳状态。",
+    "relatedTopic": "刀具管理",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "tool-life-management",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-154",
+    "question": "G32和G92在车螺纹上有什么区别？",
+    "shortAnswer": "G32是单段螺纹切削，G92是螺纹循环。G92更高效。",
+    "beginnerExplanation": "G32每段都要写进给指令，适合特殊螺纹。G92自动完成多次切削，编程更简洁。现代多用G92或G76车螺纹。",
+    "relatedTopic": "车削编程",
+    "recommendedImageType": "diagram",
+    "relatedEntryId": "g32-vs-g92-thread",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-155",
+    "question": "为什么刚性攻丝比普通攻丝精度高？",
+    "shortAnswer": "刚性攻丝主轴和Z轴硬同步，没有浮动夹头的弹性补偿误差。",
+    "beginnerExplanation": "刚性攻丝通过主轴编码器实时反馈实现精确同步，螺距精度高。普通攻丝靠浮动夹头机械补偿同步误差，精度较低。",
+    "relatedTopic": "攻丝",
+    "recommendedImageType": "tool_photo",
+    "relatedEntryId": "rigid-tapping-precision",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-156",
+    "question": "什么是刀偏表？怎么用？",
+    "shortAnswer": "刀偏表是存储刀具补偿值的表格，包含形状和磨损两列。",
+    "beginnerExplanation": "在OFFSET SETTING画面下可以看到刀偏表：每行对应一个刀号，有H值（刀长）和D值（半径），分形状和磨损两列。形状列输测量值，磨损列输磨损补偿。",
+    "relatedTopic": "刀补",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "offset-table",
+    "reviewStatus": "draft"
+  },
+  {
+    "id": "beginner-faq-157",
+    "question": "CNC编程时X和U有什么区别？",
+    "shortAnswer": "X是绝对坐标直径值，U是增量坐标直径值。车床常用。",
+    "beginnerExplanation": "在FANUC车床中X表示直径绝对坐标（X50. = 直径50mm），U表示X方向的增量坐标（U10. = 直径方向再走10mm）。类似Z和W（Z=绝对，W=增量）。",
+    "relatedTopic": "车削编程",
+    "recommendedImageType": "panel_photo",
+    "relatedEntryId": "x-u-difference",
+    "reviewStatus": "draft"
+  }
+]

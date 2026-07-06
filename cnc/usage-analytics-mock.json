@@ -1,0 +1,114 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-07-03T03:43:56.844Z",
+  "period": "2026-06-01 to 2026-06-30",
+  "overview": {
+    "totalUsers": 1250,
+    "activeUsers": 890,
+    "newUsers": 340,
+    "totalSessions": 8560,
+    "avgSessionDuration": "18.5 minutes"
+  },
+  "popularContent": [
+    {
+      "rank": 1,
+      "entryId": "kb-00001",
+      "title": "G54工件坐标系设置",
+      "category": "编程基础",
+      "views": 3420,
+      "avgReadTime": "5.2 minutes"
+    },
+    {
+      "rank": 2,
+      "entryId": "kb-00003",
+      "title": "FANUC常见报警代码",
+      "category": "故障维修",
+      "views": 2890,
+      "avgReadTime": "3.8 minutes"
+    },
+    {
+      "rank": 3,
+      "entryId": "kb-00005",
+      "title": "铣削刀具参数选择",
+      "category": "刀具工艺",
+      "views": 2340,
+      "avgReadTime": "7.1 minutes"
+    }
+  ],
+  "searchAnalytics": {
+    "topSearchTerms": [
+      {
+        "term": "G54",
+        "count": 1250
+      },
+      {
+        "term": "报警",
+        "count": 980
+      },
+      {
+        "term": "对刀",
+        "count": 750
+      },
+      {
+        "term": "铣刀",
+        "count": 620
+      },
+      {
+        "term": "宏程序",
+        "count": 510
+      }
+    ],
+    "noResultsQueries": [
+      {
+        "term": "G999",
+        "count": 25
+      },
+      {
+        "term": "特殊材料",
+        "count": 18
+      },
+      {
+        "term": "五轴联动",
+        "count": 12
+      }
+    ]
+  },
+  "userBehavior": {
+    "avgDailyUsage": "2.3 sessions",
+    "peakUsageHours": [
+      "09:00-10:00",
+      "14:00-15:00",
+      "20:00-21:00"
+    ],
+    "mostUsedFeatures": [
+      {
+        "feature": "搜索",
+        "usage": "85%"
+      },
+      {
+        "feature": "知识地图",
+        "usage": "45%"
+      },
+      {
+        "feature": "图库",
+        "usage": "32%"
+      },
+      {
+        "feature": "收藏夹",
+        "usage": "28%"
+      }
+    ]
+  },
+  "learningProgress": {
+    "completedPaths": {
+      "beginner": 120,
+      "intermediate": 45,
+      "advanced": 12
+    },
+    "avgCompletionTime": {
+      "beginner": "85 hours",
+      "intermediate": "62 hours",
+      "advanced": "48 hours"
+    }
+  }
+}

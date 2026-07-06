@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>数控加工计算器工具集</title>
+  <style>
+    :root {
+      --bg: #f3ebde;
+      --card: #fffaf2;
+      --primary: #cf6d36;
+      --primary-dark: #a94f23;
+      --text: #5d655f;
+      --muted: #a89c8e;
+      --border: rgba(207, 109, 54, 0.22);
+      --soft: rgba(207, 109, 54, 0.1);
+      --code: #2d2d2d;
+      --green: #00a878;
+      --blue: #4a9eff;
+      --purple: #8a63d2;
+      --danger: #c94c4c;
+      --shadow: 0 14px 36px rgba(93, 101, 95, 0.13);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(207, 109, 54, 0.13), transparent 34%),
+        radial-gradient(circle at 82% 12%, rgba(74, 158, 255, 0.1), transparent 28%),
+        var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    .app-shell {
+      display: grid;
+      grid-template-columns: 290px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 24px 18px;
+      background: rgba(255, 250, 242, 0.84);
+      border-right: 1px solid var(--border);
+      box-shadow: 10px 0 30px rgba(93, 101, 95, 0.08);
+      overflow-y: auto;
+      backdrop-filter: blur(14px);
+    }
+
+    .brand {
+      padding: 12px 12px 18px;
+      border-bottom: 1px solid rgba(207, 109, 54, 0.16);
+      margin-bottom: 14px;
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--soft);
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+    }
+
+    .brand h1 {
+      margin: 0 0 8px;
+      font-size: 22px;
+      line-height: 1.25;
+      color: var(--text);
+    }
+
+    .brand p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .nav-title {
+      margin: 16px 12px 10px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+    }
+
+    .calc-nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .nav-item {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      border: 1px solid transparent;
+      border-radius: 16px;
+      padding: 10px;
+      background: transparent;
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.22s ease;
+    }
+
+    .nav-item:hover {
+      background: rgba(207, 109, 54, 0.08);
+      transform: translateX(3px);
+    }
+
+    .nav-item.active {
+      background: var(--primary);
+      color: var(--card);
+      border-color: var(--primary);
+      box-shadow: 0 10px 22px rgba(207, 109, 54, 0.22);
+    }
+
+    .nav-index {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: rgba(207, 109, 54, 0.12);
+      color: var(--primary);
+      font-weight: 900;
+      font-size: 13px;
+    }
+
+    .nav-item.active .nav-index {
+      background: rgba(255, 250, 242, 0.2);
+      color: var(--card);
+    }
+
+    .nav-name {
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .sidebar-note {
+      margin: 18px 8px 0;
+      padding: 12px;
+      border-radius: 16px;
+      background: rgba(74, 158, 255, 0.08);
+      color: #55718c;
+      font-size: 12px;
+      line-height: 1.7;
+      border: 1px solid rgba(74, 158, 255, 0.18);
+    }
+
+    .main {
+      padding: 34px;
+      min-width: 0;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    .page-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      color: var(--primary);
+      font-weight: 900;
+      font-size: 13px;
+    }
+
+    .page-title {
+      margin: 0 0 8px;
+      font-size: clamp(26px, 3vw, 40px);
+      line-height: 1.16;
+      color: var(--text);
+    }
+
+    .page-desc {
+      margin: 0;
+      max-width: 760px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 15px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: all 0.22s ease;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: var(--card);
+      box-shadow: 0 10px 22px rgba(207, 109, 54, 0.2);
+    }
+
+    .btn-ghost {
+      background: var(--card);
+      color: var(--primary);
+      border: 1px solid var(--border);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 26px rgba(93, 101, 95, 0.14);
+    }
+
+    .calc-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      background: rgba(255, 250, 242, 0.9);
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+      padding: 22px 24px;
+      border-bottom: 1px solid rgba(207, 109, 54, 0.14);
+    }
+
+    .calc-title-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .calc-title {
+      margin: 0;
+      font-size: 24px;
+      color: var(--text);
+    }
+
+    .calc-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: var(--soft);
+      color: var(--primary);
+      font-weight: 900;
+      font-size: 12px;
+    }
+
+    .calc-desc {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .form-area {
+      padding: 22px 24px 24px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .field small {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      height: 44px;
+      border: 1px solid rgba(207, 109, 54, 0.24);
+      border-radius: 14px;
+      padding: 0 12px;
+      background: #fffdf8;
+      color: var(--text);
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(207, 109, 54, 0.12);
+    }
+
+    .form-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .result-panel {
+      position: sticky;
+      top: 22px;
+    }
+
+    .result-body {
+      padding: 22px 24px 24px;
+    }
+
+    .result-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .result-card {
+      position: relative;
+      padding: 15px 16px;
+      border-radius: 18px;
+      background: rgba(207, 109, 54, 0.08);
+      border: 1px solid rgba(207, 109, 54, 0.16);
+      overflow: hidden;
+    }
+
+    .result-card::after {
+      content: "";
+      position: absolute;
+      inset: auto -40px -52px auto;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: rgba(207, 109, 54, 0.08);
+    }
+
+    .result-label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .result-value {
+      position: relative;
+      z-index: 1;
+      font-size: 24px;
+      font-weight: 950;
+      color: var(--primary);
+      line-height: 1.25;
+    }
+
+    .result-note {
+      position: relative;
+      z-index: 1;
+      margin-top: 6px;
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .formula-box,
+    .history-box,
+    .warning-box,
+    .api-box {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(45, 45, 45, 0.95);
+      color: #f8eee1;
+      border: 1px solid rgba(255, 250, 242, 0.08);
+    }
+
+    .formula-box h3,
+    .history-box h3,
+    .api-box h3 {
+      margin: 0 0 10px;
+      color: #fffaf2;
+      font-size: 15px;
+    }
+
+    .formula-box p,
+    .api-box p {
+      margin: 0 0 8px;
+      line-height: 1.75;
+      color: rgba(255, 250, 242, 0.82);
+      font-size: 13px;
+    }
+
+    .formula-code {
+      display: block;
+      padding: 9px 10px;
+      margin: 8px 0;
+      border-radius: 12px;
+      background: rgba(255, 250, 242, 0.08);
+      color: #ffd6ad;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      overflow-x: auto;
+    }
+
+    .history-box {
+      background: rgba(255, 250, 242, 0.78);
+      color: var(--text);
+      border-color: var(--border);
+    }
+
+    .history-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .history-box h3 {
+      color: var(--text);
+      margin: 0;
+    }
+
+    .text-btn {
+      border: none;
+      background: transparent;
+      color: var(--primary);
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .history-list {
+      display: grid;
+      gap: 8px;
+      max-height: 260px;
+      overflow: auto;
+      padding-right: 3px;
+    }
+
+    .history-item {
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(207, 109, 54, 0.08);
+      border: 1px solid rgba(207, 109, 54, 0.12);
+      font-size: 12px;
+      line-height: 1.55;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .history-item:hover {
+      transform: translateX(2px);
+      border-color: rgba(207, 109, 54, 0.28);
+    }
+
+    .history-time {
+      display: block;
+      color: var(--muted);
+      margin-bottom: 4px;
+      font-weight: 800;
+    }
+
+    .history-summary {
+      color: var(--text);
+    }
+
+    .warning-box {
+      background: rgba(201, 76, 76, 0.09);
+      color: #994444;
+      border-color: rgba(201, 76, 76, 0.18);
+      line-height: 1.7;
+      font-size: 13px;
+    }
+
+    .material-table-wrap {
+      overflow-x: auto;
+      border: 1px solid rgba(207, 109, 54, 0.16);
+      border-radius: 16px;
+      background: #fffdf8;
+    }
+
+    .material-table {
+      width: 100%;
+      min-width: 640px;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .material-table th,
+    .material-table td {
+      padding: 11px 12px;
+      border-bottom: 1px solid rgba(207, 109, 54, 0.12);
+      text-align: left;
+      line-height: 1.55;
+    }
+
+    .material-table th {
+      background: rgba(207, 109, 54, 0.1);
+      color: var(--primary);
+      font-weight: 950;
+    }
+
+    .material-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .api-section {
+      margin-top: 22px;
+    }
+
+    .api-box {
+      background: rgba(45, 45, 45, 0.95);
+    }
+
+    .api-box code {
+      color: #ffd6ad;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 28px;
+      z-index: 80;
+      transform: translateX(-50%) translateY(18px);
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: var(--code);
+      color: var(--card);
+      font-weight: 900;
+      opacity: 0;
+      pointer-events: none;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
+      transition: all 0.24s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 980px) {
+      .app-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: relative;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .calc-nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .main {
+        padding: 24px 16px;
+      }
+
+      .calc-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .result-panel {
+        position: relative;
+        top: auto;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .calc-nav {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        flex-direction: column;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+      }
+
+      .panel-head {
+        flex-direction: column;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calc-title {
+        font-size: 21px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell" id="cncCalculatorApp">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">CNC CALC SUITE</div>
+        <h1>数控加工计算器工具集</h1>
+        <p>10 个常用加工计算器，实时计算、公式说明、历史记录，一页搞定。</p>
+      </div>
+
+      <div class="nav-title">计算器导航</div>
+      <nav class="calc-nav" id="calculatorNav"></nav>
+
+      <div class="sidebar-note">
+        说明：本工具用于工艺估算和编程辅助，实际加工请结合机床刚性、刀具品牌、装夹状态、冷却条件和现场试切修正。
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <div class="page-kicker">⚙ 实时计算 · 本地历史 · 数据驱动</div>
+          <h2 class="page-title">数控加工计算器</h2>
+          <p class="page-desc">覆盖转速、进给、切削时间、螺纹、锥度、圆弧、刀具寿命、功率扭矩、坐标偏置和材料参数速查。</p>
+        </div>
+
+        <div class="top-actions">
+          <button class="btn btn-ghost" id="exportHistoryBtn">导出历史</button>
+          <button class="btn btn-primary" id="clearAllHistoryBtn">清空全部历史</button>
+        </div>
+      </header>
+
+      <section class="calc-layout">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="calc-title-row">
+                <h2 class="calc-title" id="calcTitle">计算器</h2>
+                <span class="calc-chip" id="calcChip">实时计算</span>
+              </div>
+              <p class="calc-desc" id="calcDesc"></p>
+            </div>
+          </div>
+
+          <div class="form-area">
+            <form class="form-grid" id="calcForm"></form>
+            <div class="form-actions">
+              <button class="btn btn-primary" id="saveHistoryBtn" type="button">保存到历史</button>
+              <button class="btn btn-ghost" id="resetCurrentBtn" type="button">恢复默认值</button>
+            </div>
+            <div class="warning-box" id="warningBox"></div>
+          </div>
+        </div>
+
+        <aside class="panel result-panel">
+          <div class="panel-head">
+            <div>
+              <div class="calc-title-row">
+                <h2 class="calc-title">计算结果</h2>
+                <span class="calc-chip">RESULT</span>
+              </div>
+              <p class="calc-desc">输入变化后自动刷新。点击“保存到历史”可记录当前计算。</p>
+            </div>
+          </div>
+
+          <div class="result-body">
+            <div class="result-grid" id="resultGrid"></div>
+
+            <div class="formula-box" id="formulaBox"></div>
+
+            <div class="history-box">
+              <div class="history-head">
+                <h3>历史记录</h3>
+                <button class="text-btn" id="clearCurrentHistoryBtn" type="button">清空本项</button>
+              </div>
+              <div class="history-list" id="historyList"></div>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="api-section">
+        <div class="api-box">
+          <h3>API 使用说明</h3>
+          <p><code>window.CncCalculatorSuite.setActive(id)</code>：切换计算器，例如 <code>speed</code>、<code>feed</code>、<code>arc</code>。</p>
+          <p><code>window.CncCalculatorSuite.calculate(id, values)</code>：传入指定计算器 ID 和表单值，返回计算结果。</p>
+          <p><code>window.CncCalculatorSuite.getHistory(id)</code>：读取某个计算器历史；不传 ID 返回全部历史。</p>
+          <p><code>window.CncCalculatorSuite.clearHistory(id)</code>：清空某个计算器历史；不传 ID 清空全部。</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast">操作成功</div>
+
+  <script>
+    const materialData = {
+      aluminum: {
+        name: "铝合金 6061/7075",
+        vcCarbide: "250 - 800 m/min",
+        vcHss: "60 - 150 m/min",
+        fz: "0.03 - 0.20 mm/齿",
+        ap: "0.5D - 1.5D",
+        coolant: "建议乳化液/气冷，注意排屑",
+        note: "铝件容易粘刀，刀具要锋利，优先大前角和抛光槽。"
+      },
+      steel: {
+        name: "45钢/碳钢",
+        vcCarbide: "120 - 220 m/min",
+        vcHss: "25 - 45 m/min",
+        fz: "0.02 - 0.12 mm/齿",
+        ap: "0.2D - 1.0D",
+        coolant: "建议乳化液或切削油",
+        note: "粗加工看机床刚性，精加工优先稳定切深和稳定进给。"
+      },
+      stainless: {
+        name: "不锈钢 304/316",
+        vcCarbide: "70 - 160 m/min",
+        vcHss: "15 - 30 m/min",
+        fz: "0.015 - 0.08 mm/齿",
+        ap: "0.15D - 0.8D",
+        coolant: "强冷却，避免加工硬化",
+        note: "不锈钢怕蹭刀，进给不能过低，刀具磨损后要及时换。"
+      },
+      castiron: {
+        name: "灰铸铁",
+        vcCarbide: "100 - 250 m/min",
+        vcHss: "20 - 40 m/min",
+        fz: "0.03 - 0.16 mm/齿",
+        ap: "0.3D - 1.2D",
+        coolant: "多采用干切或吸尘",
+        note: "铸铁粉尘多，注意防护和导轨清洁。"
+      },
+      brass: {
+        name: "黄铜/铜合金",
+        vcCarbide: "180 - 500 m/min",
+        vcHss: "50 - 120 m/min",
+        fz: "0.03 - 0.18 mm/齿",
+        ap: "0.3D - 1.2D",
+        coolant: "可干切或少量冷却",
+        note: "铜类材料导热好，但软铜容易缠屑。"
+      },
+      plastic: {
+        name: "工程塑料 POM/尼龙",
+        vcCarbide: "150 - 500 m/min",
+        vcHss: "50 - 180 m/min",
+        fz: "0.03 - 0.25 mm/齿",
+        ap: "0.2D - 1.0D",
+        coolant: "气冷优先，防止热变形",
+        note: "塑料件注意夹紧变形和毛刺，刀具要锋利。"
+      },
+      hardened: {
+        name: "淬硬钢 HRC45-55",
+        vcCarbide: "40 - 100 m/min",
+        vcHss: "不建议",
+        fz: "0.01 - 0.05 mm/齿",
+        ap: "0.02D - 0.3D",
+        coolant: "根据刀具建议，常用气冷/油雾",
+        note: "淬硬钢优先小切深、高刚性、短悬伸。"
+      }
+    };
+
+    const calculators = [
+      {
+        id: "speed",
+        title: "线速度与转速换算",
+        chip: "Vc ↔ n",
+        desc: "根据刀具直径、主轴转速或线速度，快速换算切削线速度 Vc 与转速 n。",
+        warning: "提示：铣削常按刀具直径计算，车削常按工件直径计算。单位一定要统一。",
+        fields: [
+          { name: "mode", label: "计算目标", type: "select", default: "vc", options: [["vc", "已知转速，计算线速度 Vc"], ["rpm", "已知线速度，计算转速 n"]], full: true },
+          { name: "diameter", label: "直径 D", unit: "mm", type: "number", default: 10, min: 0 },
+          { name: "rpm", label: "主轴转速 n", unit: "r/min", type: "number", default: 8000, min: 0 },
+          { name: "vc", label: "线速度 Vc", unit: "m/min", type: "number", default: 251.33, min: 0 }
+        ],
+        formulas: [
+          "Vc = π × D × n ÷ 1000",
+          "n = 1000 × Vc ÷ (π × D)",
+          "D 单位 mm，n 单位 r/min，Vc 单位 m/min。"
+        ],
+        calculate(values) {
+          const D = num(values.diameter);
+          const n = num(values.rpm);
+          const vc = num(values.vc);
+          if (D <= 0) return errorResult("直径 D 必须大于 0");
+
+          if (values.mode === "rpm") {
+            const rpm = 1000 * vc / (Math.PI * D);
+            return result([
+              item("推荐转速 n", rpm, "r/min", "按输入线速度反推主轴转速。"),
+              item("角速度估算", rpm * 360, "°/min", "用于理解主轴每分钟旋转角度。")
+            ]);
+          }
+
+          const lineSpeed = Math.PI * D * n / 1000;
+          return result([
+            item("线速度 Vc", lineSpeed, "m/min", "刀尖相对材料表面的切削速度。"),
+            item("每秒转数", n / 60, "r/s", "用于观察高速加工状态。")
+          ]);
+        }
+      },
+      {
+        id: "feed",
+        title: "进给量计算",
+        chip: "F / fz / f",
+        desc: "支持铣削每齿进给和车削每转进给，实时计算程序中的 F 值。",
+        warning: "提示：铣削进给 F = n × z × fz；车削进给常用 F = n × f。实际还要看刀具直径、悬伸、材料和装夹。",
+        fields: [
+          { name: "mode", label: "加工类型", type: "select", default: "milling", options: [["milling", "铣削：按每齿进给 fz"], ["turning", "车削/钻削：按每转进给 f"]], full: true },
+          { name: "rpm", label: "主轴转速 n", unit: "r/min", type: "number", default: 3000, min: 0 },
+          { name: "teeth", label: "刀齿数 z", unit: "齿", type: "number", default: 4, min: 1 },
+          { name: "fz", label: "每齿进给 fz", unit: "mm/齿", type: "number", default: 0.05, min: 0 },
+          { name: "feedRev", label: "每转进给 f", unit: "mm/r", type: "number", default: 0.12, min: 0 }
+        ],
+        formulas: [
+          "铣削：F = n × z × fz",
+          "车削/钻削：F = n × f",
+          "F 单位 mm/min。"
+        ],
+        calculate(values) {
+          const n = num(values.rpm);
+          const z = Math.max(1, num(values.teeth));
+          const fz = num(values.fz);
+          const f = num(values.feedRev);
+
+          if (values.mode === "turning") {
+            const F = n * f;
+            return result([
+              item("程序进给 F", F, "mm/min", "车削或钻削模式下按每转进给计算。"),
+              item("每转进给 f", f, "mm/r", "G99 模式常用该单位。")
+            ]);
+          }
+
+          const F = n * z * fz;
+          const feedPerRev = z * fz;
+          return result([
+            item("程序进给 F", F, "mm/min", "铣削程序常用的进给速度。"),
+            item("每转进给", feedPerRev, "mm/r", "主轴每转一圈刀具推进距离。"),
+            item("每秒进给", F / 60, "mm/s", "便于感受实际移动速度。")
+          ]);
+        }
+      },
+      {
+        id: "time",
+        title: "切削时间估算",
+        chip: "T = L/F",
+        desc: "根据切削长度、进给速度和走刀次数估算加工时间。",
+        warning: "提示：本计算主要估算切削时间，不含换刀、测量、快移、装夹和机床加减速损耗。",
+        fields: [
+          { name: "length", label: "单次切削长度 L", unit: "mm", type: "number", default: 120, min: 0 },
+          { name: "feed", label: "进给速度 F", unit: "mm/min", type: "number", default: 600, min: 0 },
+          { name: "passes", label: "走刀次数", unit: "次", type: "number", default: 3, min: 1 },
+          { name: "extra", label: "辅助时间", unit: "秒", type: "number", default: 20, min: 0 }
+        ],
+        formulas: [
+          "单次切削时间：t = L ÷ F",
+          "总时间：T = L × 走刀次数 ÷ F + 辅助时间",
+          "L 单位 mm，F 单位 mm/min。"
+        ],
+        calculate(values) {
+          const L = num(values.length);
+          const F = num(values.feed);
+          const passes = Math.max(1, num(values.passes));
+          const extra = num(values.extra);
+          if (F <= 0) return errorResult("进给速度 F 必须大于 0");
+
+          const cuttingMin = L * passes / F;
+          const totalSec = cuttingMin * 60 + extra;
+          return result([
+            item("纯切削时间", cuttingMin, "min", "只统计实际切削走刀时间。"),
+            item("总估算时间", totalSec / 60, "min", "包含输入的辅助时间。"),
+            item("总估算时间", totalSec, "s", "适合短程序估算。")
+          ]);
+        }
+      },
+      {
+        id: "thread",
+        title: "螺纹参数计算",
+        chip: "M / P",
+        desc: "用于公制普通螺纹的基础参数估算，包括底孔、牙高、外螺纹小径等。",
+        warning: "提示：螺纹标准较多，本工具按常见 60° 公制普通螺纹估算。精密螺纹请查标准表。",
+        fields: [
+          { name: "diameter", label: "公称直径 D", unit: "mm", type: "number", default: 10, min: 0 },
+          { name: "pitch", label: "螺距 P", unit: "mm", type: "number", default: 1.5, min: 0 },
+          { name: "threadLength", label: "螺纹长度", unit: "mm", type: "number", default: 20, min: 0 },
+          { name: "rpm", label: "攻丝转速", unit: "r/min", type: "number", default: 500, min: 0 }
+        ],
+        formulas: [
+          "理论牙型高度：H = 0.866 × P",
+          "外螺纹牙深约：h = 0.6134 × P",
+          "外螺纹小径约：d1 = D - 1.2269 × P",
+          "常用攻丝底孔估算：底孔 ≈ D - P"
+        ],
+        calculate(values) {
+          const D = num(values.diameter);
+          const P = num(values.pitch);
+          const L = num(values.threadLength);
+          const rpm = num(values.rpm);
+          if (D <= 0 || P <= 0) return errorResult("公称直径和螺距必须大于 0");
+
+          const H = 0.8660254 * P;
+          const depth = 0.6134 * P;
+          const minorExternal = D - 1.2269 * P;
+          const drill = D - P;
+          const turns = L / P;
+          const feed = rpm * P;
+          const time = feed > 0 ? L / feed : 0;
+
+          return result([
+            item("推荐攻丝底孔", drill, "mm", "常用经验值 D - P。"),
+            item("理论牙型高度 H", H, "mm", "60° 公制螺纹基础牙型。"),
+            item("外螺纹牙深约", depth, "mm", "车外螺纹时常用估算。"),
+            item("外螺纹小径约", minorExternal, "mm", "用于外螺纹轮廓估算。"),
+            item("螺纹圈数", turns, "圈", "按螺纹长度 ÷ 螺距。"),
+            item("攻丝进给", feed, "mm/min", "刚性攻丝时 F = n × P。"),
+            item("攻丝时间", time * 60, "s", "仅估算单向进给时间。")
+          ]);
+        }
+      },
+      {
+        id: "taper",
+        title: "锥度计算",
+        chip: "1:n / angle",
+        desc: "根据大端、小端和长度计算锥度比、半角和全角。",
+        warning: "提示：车削锥度时通常看半角；图纸标注锥度时常见 D-d 与长度 L 的比值。",
+        fields: [
+          { name: "bigD", label: "大端直径 D", unit: "mm", type: "number", default: 30, min: 0 },
+          { name: "smallD", label: "小端直径 d", unit: "mm", type: "number", default: 20, min: 0 },
+          { name: "length", label: "锥体长度 L", unit: "mm", type: "number", default: 80, min: 0 }
+        ],
+        formulas: [
+          "锥度 K = (D - d) ÷ L",
+          "半角 α = atan((D - d) ÷ (2L))",
+          "全角 = 2α"
+        ],
+        calculate(values) {
+          const D = num(values.bigD);
+          const d = num(values.smallD);
+          const L = num(values.length);
+          if (L <= 0) return errorResult("锥体长度 L 必须大于 0");
+
+          const diff = Math.abs(D - d);
+          const K = diff / L;
+          const half = Math.atan(diff / (2 * L)) * 180 / Math.PI;
+          const full = half * 2;
+          const ratio = K > 0 ? 1 / K : 0;
+
+          return result([
+            item("直径差", diff, "mm", "大端与小端直径差。"),
+            item("锥度 K", K, "", "即 (D-d)/L。"),
+            item("锥度表示", ratio, "", K > 0 ? `约为 1:${fmt(ratio)}` : "无锥度"),
+            item("每 100mm 直径变化", K * 100, "mm/100mm", "方便工艺估算。"),
+            item("半角 α", half, "°", "车床小拖板常看半角。"),
+            item("全角", full, "°", "圆锥包含角。")
+          ]);
+        }
+      },
+      {
+        id: "arc",
+        title: "圆弧插补计算",
+        chip: "G02/G03",
+        desc: "根据起点、终点和 I/J 圆心偏置计算圆心、半径、角度和弧长。",
+        warning: "提示：FANUC 常用 I/J 表示圆心相对起点的增量值。G02 顺时针，G03 逆时针。",
+        fields: [
+          { name: "direction", label: "圆弧方向", type: "select", default: "G02", options: [["G02", "G02 顺时针"], ["G03", "G03 逆时针"]], full: true },
+          { name: "sx", label: "起点 Xs", unit: "mm", type: "number", default: 0 },
+          { name: "sy", label: "起点 Ys", unit: "mm", type: "number", default: 0 },
+          { name: "ex", label: "终点 Xe", unit: "mm", type: "number", default: 20 },
+          { name: "ey", label: "终点 Ye", unit: "mm", type: "number", default: 20 },
+          { name: "i", label: "I 偏置", unit: "mm", type: "number", default: 0 },
+          { name: "j", label: "J 偏置", unit: "mm", type: "number", default: 20 }
+        ],
+        formulas: [
+          "圆心：Cx = Xs + I，Cy = Ys + J",
+          "半径：R = √(I² + J²)",
+          "弧长：S = R × θ，θ 使用弧度制"
+        ],
+        calculate(values) {
+          const sx = num(values.sx), sy = num(values.sy), ex = num(values.ex), ey = num(values.ey);
+          const I = num(values.i), J = num(values.j);
+          const cx = sx + I, cy = sy + J;
+          const rStart = Math.hypot(sx - cx, sy - cy);
+          const rEnd = Math.hypot(ex - cx, ey - cy);
+          if (rStart <= 0) return errorResult("I/J 不能同时为 0，否则无法确定圆心和半径");
+
+          const a1 = Math.atan2(sy - cy, sx - cx);
+          const a2 = Math.atan2(ey - cy, ex - cx);
+          let sweep;
+
+          if (values.direction === "G02") {
+            sweep = a1 - a2;
+            if (sweep <= 0) sweep += Math.PI * 2;
+          } else {
+            sweep = a2 - a1;
+            if (sweep <= 0) sweep += Math.PI * 2;
+          }
+
+          const chord = Math.hypot(ex - sx, ey - sy);
+          const arcLength = rStart * sweep;
+          const radiusError = Math.abs(rStart - rEnd);
+
+          return result([
+            item("圆心坐标", `${fmt(cx)}, ${fmt(cy)}`, "", "由起点加 I/J 偏置得到。"),
+            item("半径 R", rStart, "mm", "起点到圆心距离。"),
+            item("终点半径误差", radiusError, "mm", radiusError > 0.01 ? "半径不一致，检查终点或 I/J。" : "起终点半径基本一致。"),
+            item("圆心角", sweep * 180 / Math.PI, "°", "按当前 G02/G03 方向计算。"),
+            item("弦长", chord, "mm", "起点到终点直线距离。"),
+            item("弧长", arcLength, "mm", "可用于估算圆弧切削时间。")
+          ], radiusError > 0.05 ? "起点半径和终点半径误差偏大，实际程序可能报警或轨迹不正确。" : "");
+        }
+      },
+      {
+        id: "toolLife",
+        title: "刀具寿命估算",
+        chip: "Taylor",
+        desc: "基于 Taylor 刀具寿命公式，用切削速度估算单刃寿命和总寿命。",
+        warning: "提示：刀具寿命受材料、涂层、冷却、断续切削和机床刚性影响很大。本项适合做趋势判断。",
+        fields: [
+          { name: "vc", label: "当前切削速度 V", unit: "m/min", type: "number", default: 180, min: 0 },
+          { name: "c", label: "Taylor 常数 C", unit: "", type: "number", default: 360, min: 0 },
+          { name: "n", label: "寿命指数 n", unit: "", type: "number", default: 0.25, min: 0 },
+          { name: "edges", label: "可用刃数", unit: "刃", type: "number", default: 4, min: 1 }
+        ],
+        formulas: [
+          "Taylor 公式：V × Tⁿ = C",
+          "刀具寿命：T = (C ÷ V)^(1/n)",
+          "总可用时间 ≈ 单刃寿命 × 可用刃数"
+        ],
+        calculate(values) {
+          const V = num(values.vc);
+          const C = num(values.c);
+          const n = num(values.n);
+          const edges = Math.max(1, num(values.edges));
+          if (V <= 0 || C <= 0 || n <= 0) return errorResult("V、C、n 必须大于 0");
+
+          const T = Math.pow(C / V, 1 / n);
+          return result([
+            item("单刃寿命", T, "min", "按 Taylor 公式估算。"),
+            item("总可用时间", T * edges, "min", "按可用刃数估算。"),
+            item("降速 10% 后寿命", Math.pow(C / (V * 0.9), 1 / n), "min", "可观察降速对寿命的影响。"),
+            item("提速 10% 后寿命", Math.pow(C / (V * 1.1), 1 / n), "min", "可观察提速对寿命的影响。")
+          ]);
+        }
+      },
+      {
+        id: "powerTorque",
+        title: "功率与扭矩计算",
+        chip: "P / T",
+        desc: "支持功率推扭矩、扭矩推功率，也支持按切削力和线速度估算切削功率。",
+        warning: "提示：机床铭牌功率不等于刀尖可用功率，重切削要考虑主轴低速扭矩曲线。",
+        fields: [
+          { name: "mode", label: "计算模式", type: "select", default: "torque", options: [["torque", "已知功率，计算扭矩"], ["power", "已知扭矩，计算功率"], ["forcePower", "已知切削力和线速度，估算功率"]], full: true },
+          { name: "power", label: "主轴功率 P", unit: "kW", type: "number", default: 5.5, min: 0 },
+          { name: "rpm", label: "主轴转速 n", unit: "r/min", type: "number", default: 3000, min: 0 },
+          { name: "torque", label: "扭矩 T", unit: "N·m", type: "number", default: 17.5, min: 0 },
+          { name: "force", label: "切削力 Fc", unit: "N", type: "number", default: 1200, min: 0 },
+          { name: "vc", label: "线速度 Vc", unit: "m/min", type: "number", default: 180, min: 0 },
+          { name: "efficiency", label: "传动效率 η", unit: "0-1", type: "number", default: 0.85, min: 0, max: 1 }
+        ],
+        formulas: [
+          "扭矩：T = 9550 × P × η ÷ n",
+          "功率：P = T × n ÷ (9550 × η)",
+          "切削功率：P = Fc × Vc ÷ (60 × 1000 × η)"
+        ],
+        calculate(values) {
+          const P = num(values.power);
+          const rpm = num(values.rpm);
+          const T = num(values.torque);
+          const F = num(values.force);
+          const Vc = num(values.vc);
+          const eta = clamp(num(values.efficiency), 0.01, 1);
+
+          if (values.mode === "power") {
+            if (rpm <= 0) return errorResult("主轴转速必须大于 0");
+            const power = T * rpm / (9550 * eta);
+            return result([
+              item("所需功率", power, "kW", "由扭矩和转速反推。"),
+              item("所需功率", power * 1.341, "HP", "换算成马力。")
+            ]);
+          }
+
+          if (values.mode === "forcePower") {
+            const power = F * Vc / (60 * 1000 * eta);
+            return result([
+              item("切削功率", power, "kW", "按切削力和线速度估算。"),
+              item("建议预留功率", power * 1.25, "kW", "预留 25% 余量。")
+            ]);
+          }
+
+          if (rpm <= 0) return errorResult("主轴转速必须大于 0");
+          const torque = 9550 * P * eta / rpm;
+          return result([
+            item("可用扭矩", torque, "N·m", "按功率和效率估算。"),
+            item("角速度", rpm * 2 * Math.PI / 60, "rad/s", "用于工程换算。")
+          ]);
+        }
+      },
+      {
+        id: "offset",
+        title: "坐标系偏置计算",
+        chip: "G54-G59",
+        desc: "根据当前机床坐标和目标工件坐标，计算新的工件坐标系偏置及修正量。",
+        warning: "提示：不同系统坐标页面命名可能不同。写入前务必确认是机械坐标、相对坐标还是工件坐标。",
+        fields: [
+          { name: "mx", label: "当前机械坐标 X", unit: "mm", type: "number", default: -320.125 },
+          { name: "my", label: "当前机械坐标 Y", unit: "mm", type: "number", default: -155.5 },
+          { name: "mz", label: "当前机械坐标 Z", unit: "mm", type: "number", default: -420.25 },
+          { name: "targetX", label: "该点目标工件坐标 X", unit: "mm", type: "number", default: 0 },
+          { name: "targetY", label: "该点目标工件坐标 Y", unit: "mm", type: "number", default: 0 },
+          { name: "targetZ", label: "该点目标工件坐标 Z", unit: "mm", type: "number", default: 50 },
+          { name: "oldX", label: "原偏置 X", unit: "mm", type: "number", default: -319.8 },
+          { name: "oldY", label: "原偏置 Y", unit: "mm", type: "number", default: -156.0 },
+          { name: "oldZ", label: "原偏置 Z", unit: "mm", type: "number", default: -470.0 }
+        ],
+        formulas: [
+          "新偏置 = 当前机械坐标 - 该点目标工件坐标",
+          "修正量 = 新偏置 - 原偏置",
+          "例如目标点应为 X0，则 G54 X = 当前机械 X - 0。"
+        ],
+        calculate(values) {
+          const nx = num(values.mx) - num(values.targetX);
+          const ny = num(values.my) - num(values.targetY);
+          const nz = num(values.mz) - num(values.targetZ);
+          const dx = nx - num(values.oldX);
+          const dy = ny - num(values.oldY);
+          const dz = nz - num(values.oldZ);
+
+          return result([
+            item("新偏置 X", nx, "mm", `相对原偏置修正 ${signed(dx)} mm。`),
+            item("新偏置 Y", ny, "mm", `相对原偏置修正 ${signed(dy)} mm。`),
+            item("新偏置 Z", nz, "mm", `相对原偏置修正 ${signed(dz)} mm。`),
+            item("修正量合计", Math.hypot(dx, dy, dz), "mm", "三轴修正向量长度。")
+          ]);
+        }
+      },
+      {
+        id: "material",
+        title: "材料切削参数速查",
+        chip: "参数范围",
+        desc: "按材料快速查看硬质合金/HSS 线速度、每齿进给、切深建议和注意事项。",
+        warning: "提示：这里给的是常用参考范围，不替代刀具厂家的正式参数表。实际加工建议从保守值开始试切。",
+        fields: [
+          { name: "material", label: "材料", type: "select", default: "aluminum", options: Object.entries(materialData).map(([key, item]) => [key, item.name]), full: true },
+          { name: "tool", label: "刀具类型", type: "select", default: "carbide", options: [["carbide", "硬质合金"], ["hss", "高速钢 HSS"]] },
+          { name: "diameter", label: "刀具直径 D", unit: "mm", type: "number", default: 10, min: 0 },
+          { name: "teeth", label: "刀齿数 z", unit: "齿", type: "number", default: 4, min: 1 },
+          { name: "fz", label: "计划每齿进给", unit: "mm/齿", type: "number", default: 0.05, min: 0 }
+        ],
+        formulas: [
+          "转速估算：n = 1000 × Vc ÷ (π × D)",
+          "进给估算：F = n × z × fz",
+          "参数范围会随刀具品牌、涂层、刃长、机床刚性变化。"
+        ],
+        calculate(values) {
+          const m = materialData[values.material] || materialData.aluminum;
+          const range = values.tool === "hss" ? m.vcHss : m.vcCarbide;
+          const avgVc = averageRange(range);
+          const D = num(values.diameter);
+          const z = Math.max(1, num(values.teeth));
+          const fz = num(values.fz);
+          const rpm = D > 0 && avgVc > 0 ? 1000 * avgVc / (Math.PI * D) : 0;
+          const feed = rpm * z * fz;
+
+          const tableHtml = `
+            <div class="material-table-wrap">
+              <table class="material-table">
+                <thead>
+                  <tr>
+                    <th>材料</th>
+                    <th>硬质合金 Vc</th>
+                    <th>HSS Vc</th>
+                    <th>每齿进给</th>
+                    <th>切深建议</th>
+                    <th>冷却/排屑</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${Object.values(materialData).map(row => `
+                    <tr>
+                      <td>${escapeHTML(row.name)}</td>
+                      <td>${escapeHTML(row.vcCarbide)}</td>
+                      <td>${escapeHTML(row.vcHss)}</td>
+                      <td>${escapeHTML(row.fz)}</td>
+                      <td>${escapeHTML(row.ap)}</td>
+                      <td>${escapeHTML(row.coolant)}</td>
+                    </tr>
+                  `).join("")}
+                </tbody>
+              </table>
+            </div>
+          `;
+
+          return result([
+            item("当前材料", m.name, "", m.note),
+            item("推荐线速度范围", range, "", values.tool === "hss" ? "高速钢参考范围。" : "硬质合金参考范围。"),
+            item("按中值估算转速", rpm, "r/min", "用推荐 Vc 范围中值估算。"),
+            item("按计划 fz 估算进给", feed, "mm/min", "F = n × z × fz。"),
+            item("参数速查表", tableHtml, "html", "")
+          ]);
+        }
+      }
+    ];
+
+    class CncCalculatorSuiteClass {
+      constructor() {
+        this.calculators = calculators;
+        this.activeId = calculators[0].id;
+        this.historyKey = "cncCalculatorSuiteHistory.v1";
+        this.history = this.loadHistory();
+        this.elements = {};
+      }
+
+      init() {
+        this.elements.nav = document.getElementById("calculatorNav");
+        this.elements.form = document.getElementById("calcForm");
+        this.elements.title = document.getElementById("calcTitle");
+        this.elements.chip = document.getElementById("calcChip");
+        this.elements.desc = document.getElementById("calcDesc");
+        this.elements.warning = document.getElementById("warningBox");
+        this.elements.resultGrid = document.getElementById("resultGrid");
+        this.elements.formula = document.getElementById("formulaBox");
+        this.elements.historyList = document.getElementById("historyList");
+
+        this.renderNav();
+        this.bindEvents();
+        this.setActive(this.activeId);
+      }
+
+      renderNav() {
+        this.elements.nav.innerHTML = this.calculators.map((calc, index) => `
+          <button class="nav-item ${calc.id === this.activeId ? "active" : ""}" data-id="${calc.id}">
+            <span class="nav-index">${String(index + 1).padStart(2, "0")}</span>
+            <span class="nav-name">${escapeHTML(calc.title)}</span>
+          </button>
+        `).join("");
+      }
+
+      bindEvents() {
+        this.elements.nav.addEventListener("click", event => {
+          const btn = event.target.closest(".nav-item");
+          if (!btn) return;
+          this.setActive(btn.dataset.id);
+        });
+
+        this.elements.form.addEventListener("input", () => this.renderResult());
+        this.elements.form.addEventListener("change", () => this.renderResult());
+
+        document.getElementById("saveHistoryBtn").addEventListener("click", () => this.saveCurrentHistory());
+        document.getElementById("resetCurrentBtn").addEventListener("click", () => this.resetCurrent());
+        document.getElementById("clearCurrentHistoryBtn").addEventListener("click", () => this.clearHistory(this.activeId));
+        document.getElementById("clearAllHistoryBtn").addEventListener("click", () => this.clearHistory());
+        document.getElementById("exportHistoryBtn").addEventListener("click", () => this.exportHistory());
+
+        this.elements.historyList.addEventListener("click", event => {
+          const item = event.target.closest(".history-item");
+          if (!item) return;
+          const index = Number(item.dataset.index);
+          const records = this.getHistory(this.activeId);
+          if (!records[index]) return;
+          this.applyValues(records[index].values);
+          showToast("已恢复该条历史输入");
+        });
+      }
+
+      setActive(id) {
+        if (!this.calculators.some(calc => calc.id === id)) return;
+        this.activeId = id;
+        this.renderNav();
+        this.renderForm();
+        this.renderResult();
+        this.renderHistory();
+      }
+
+      getActiveCalculator() {
+        return this.calculators.find(calc => calc.id === this.activeId);
+      }
+
+      renderForm() {
+        const calc = this.getActiveCalculator();
+        this.elements.title.textContent = calc.title;
+        this.elements.chip.textContent = calc.chip || "实时计算";
+        this.elements.desc.textContent = calc.desc || "";
+        this.elements.warning.textContent = calc.warning || "";
+
+        this.elements.form.innerHTML = calc.fields.map(field => this.renderField(field)).join("");
+        this.elements.formula.innerHTML = `
+          <h3>公式说明</h3>
+          ${calc.formulas.map(formula => `<code class="formula-code">${escapeHTML(formula)}</code>`).join("")}
+        `;
+      }
+
+      renderField(field) {
+        const common = `name="${field.name}" id="field-${field.name}"`;
+        const fieldClass = field.full ? "field full" : "field";
+        const unit = field.unit ? `<small>${escapeHTML(field.unit)}</small>` : "";
+
+        if (field.type === "select") {
+          return `
+            <div class="${fieldClass}">
+              <label for="field-${field.name}"><span>${escapeHTML(field.label)}</span>${unit}</label>
+              <select ${common}>
+                ${(field.options || []).map(([value, label]) => `
+                  <option value="${escapeAttr(value)}" ${value === field.default ? "selected" : ""}>${escapeHTML(label)}</option>
+                `).join("")}
+              </select>
+            </div>
+          `;
+        }
+
+        return `
+          <div class="${fieldClass}">
+            <label for="field-${field.name}"><span>${escapeHTML(field.label)}</span>${unit}</label>
+            <input
+              ${common}
+              type="number"
+              value="${field.default ?? ""}"
+              ${field.min !== undefined ? `min="${field.min}"` : ""}
+              ${field.max !== undefined ? `max="${field.max}"` : ""}
+              step="any"
+            />
+          </div>
+        `;
+      }
+
+      getValues() {
+        const data = new FormData(this.elements.form);
+        const values = {};
+        for (const [key, value] of data.entries()) {
+          values[key] = value;
+        }
+        return values;
+      }
+
+      applyValues(values) {
+        Object.entries(values || {}).forEach(([key, value]) => {
+          const field = this.elements.form.elements[key];
+          if (field) field.value = value;
+        });
+        this.renderResult();
+      }
+
+      calculate(id = this.activeId, values = this.getValues()) {
+        const calc = this.calculators.find(item => item.id === id);
+        if (!calc) return errorResult("计算器不存在");
+        return calc.calculate(values);
+      }
+
+      renderResult() {
+        const output = this.calculate(this.activeId, this.getValues());
+        this.latestOutput = output;
+        this.elements.resultGrid.innerHTML = this.renderResultItems(output.items || []);
+
+        if (output.message) {
+          this.elements.warning.textContent = output.message;
+        } else {
+          this.elements.warning.textContent = this.getActiveCalculator().warning || "";
+        }
+      }
+
+      renderResultItems(items) {
+        return items.map(row => {
+          const isHtml = row.unit === "html";
+          const valueHtml = isHtml ? row.value : `${escapeHTML(formatValue(row.value))}${row.unit ? `<small> ${escapeHTML(row.unit)}</small>` : ""}`;
+          return `
+            <div class="result-card">
+              <span class="result-label">${escapeHTML(row.label)}</span>
+              <div class="result-value">${valueHtml}</div>
+              ${row.note ? `<div class="result-note">${escapeHTML(row.note)}</div>` : ""}
+            </div>
+          `;
+        }).join("");
+      }
+
+      saveCurrentHistory() {
+        const calc = this.getActiveCalculator();
+        const values = this.getValues();
+        const output = this.calculate(this.activeId, values);
+
+        if (output.error) {
+          showToast("当前输入有错误，暂未保存");
+          return;
+        }
+
+        const record = {
+          calculatorId: this.activeId,
+          calculatorTitle: calc.title,
+          time: new Date().toLocaleString("zh-CN"),
+          values,
+          summary: this.createSummary(output)
+        };
+
+        if (!this.history[this.activeId]) this.history[this.activeId] = [];
+        this.history[this.activeId].unshift(record);
+        this.history[this.activeId] = this.history[this.activeId].slice(0, 20);
+        this.persistHistory();
+        this.renderHistory();
+        showToast("已保存到历史记录");
+      }
+
+      createSummary(output) {
+        return (output.items || [])
+          .slice(0, 3)
+          .map(row => `${row.label}: ${formatValue(row.value)}${row.unit && row.unit !== "html" ? row.unit : ""}`)
+          .join("；");
+      }
+
+      renderHistory() {
+        const records = this.getHistory(this.activeId);
+        if (!records.length) {
+          this.elements.historyList.innerHTML = `<div class="history-item">暂无历史记录</div>`;
+          return;
+        }
+
+        this.elements.historyList.innerHTML = records.map((record, index) => `
+          <div class="history-item" data-index="${index}">
+            <span class="history-time">${escapeHTML(record.time)}</span>
+            <div class="history-summary">${escapeHTML(record.summary)}</div>
+          </div>
+        `).join("");
+      }
+
+      getHistory(id) {
+        if (!id) return this.history;
+        return this.history[id] || [];
+      }
+
+      clearHistory(id) {
+        if (id) {
+          this.history[id] = [];
+          showToast("已清空本项历史");
+        } else {
+          this.history = {};
+          showToast("已清空全部历史");
+        }
+        this.persistHistory();
+        this.renderHistory();
+      }
+
+      resetCurrent() {
+        const calc = this.getActiveCalculator();
+        calc.fields.forEach(field => {
+          const input = this.elements.form.elements[field.name];
+          if (input) input.value = field.default ?? "";
+        });
+        this.renderResult();
+        showToast("已恢复默认值");
+      }
+
+      loadHistory() {
+        try {
+          return JSON.parse(localStorage.getItem(this.historyKey) || "{}");
+        } catch (error) {
+          return {};
+        }
+      }
+
+      persistHistory() {
+        localStorage.setItem(this.historyKey, JSON.stringify(this.history));
+      }
+
+      exportHistory() {
+        const content = JSON.stringify(this.history, null, 2);
+        const blob = new Blob([content], { type: "application/json;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "cnc-calculator-history.json";
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast("历史记录已导出");
+      }
+    }
+
+    function result(items, message = "") {
+      return { items, message, error: false };
+    }
+
+    function errorResult(message) {
+      return {
+        error: true,
+        message,
+        items: [item("无法计算", "请检查输入", "", message)]
+      };
+    }
+
+    function item(label, value, unit = "", note = "") {
+      return { label, value, unit, note };
+    }
+
+    function num(value) {
+      const n = Number(value);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function fmt(value, digits = 3) {
+      if (typeof value !== "number" || !Number.isFinite(value)) return String(value);
+      const abs = Math.abs(value);
+      const d = abs >= 1000 ? 1 : abs >= 100 ? 2 : digits;
+      return Number(value.toFixed(d)).toString();
+    }
+
+    function signed(value) {
+      return `${value >= 0 ? "+" : ""}${fmt(value)}`;
+    }
+
+    function formatValue(value) {
+      if (typeof value === "number") return fmt(value);
+      return value;
+    }
+
+    function averageRange(text) {
+      const nums = String(text).match(/\d+(?:\.\d+)?/g);
+      if (!nums || nums.length < 2) return Number(nums?.[0] || 0);
+      return (Number(nums[0]) + Number(nums[1])) / 2;
+    }
+
+    function escapeHTML(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function escapeAttr(value) {
+      return escapeHTML(value);
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove("show"), 1600);
+    }
+
+    window.CncCalculatorSuite = new CncCalculatorSuiteClass();
+    document.addEventListener("DOMContentLoaded", () => window.CncCalculatorSuite.init());
+  </script>
+</body>
+</html>

@@ -16,6 +16,7 @@
   <link rel="apple-touch-icon" href="./icon-192.svg">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./styles-enhanced.css">
 </head>
 <body>
   <div class="gate-backdrop" id="access-gate" hidden>
@@ -23,7 +24,7 @@
       <p class="gate-kicker">受控访问</p>
       <h1>这是给指定人群看的数控资料站</h1>
       <p class="gate-text">
-        你可以把它理解成“粉丝资料库入口”。只有拿到你发出去的邀请码或私密链接的人，才能进入查看。
+        你可以把它理解成"粉丝资料库入口"。只有拿到你发出去的邀请码或私密链接的人，才能进入查看。
       </p>
       <form class="gate-form" id="access-form">
         <label>
@@ -92,11 +93,12 @@
             <span class="tree-caret">▾</span>
           </button>
           <div class="tree-children open" data-tree-panel="tools">
-            <button class="tree-item" data-route="gallery" type="button">Gemini 图片图卡</button>
-            <button class="tree-item" data-route="calculator" type="button">参数换算工具</button>
-            <button class="tree-item" data-route="library" type="button">本地知识库并入</button>
-            <button class="tree-item" data-route="favorites" type="button">最近查看 / 收藏</button>
-            <button class="tree-item" data-route="access" type="button">访问控制</button>
+            <button class="tree-item" data-route="learning-map" type="button">🗺 知识地图</button>
+            <button class="tree-item" data-route="gallery" type="button">🖼 图片图库</button>
+            <button class="tree-item" data-route="calculator" type="button">🧮 参数换算</button>
+            <button class="tree-item" data-route="library" type="button">📚 知识库管理</button>
+            <button class="tree-item" data-route="favorites" type="button">⭐ 收藏记录</button>
+            <button class="tree-item" data-route="access" type="button">🔒 访问控制</button>
           </div>
         </section>
       </nav>
@@ -122,210 +124,571 @@
         </div>
       </header>
 
-      <section class="view" id="view-dashboard">
-        <div class="hero-panel">
-          <div class="hero-copy">
-            <p class="eyebrow">BEGINNER FIRST CNC</p>
-            <h3>现在这版会朝正式软件界面走</h3>
-            <p>
-              不再是一直往下翻的超长页，而是左侧目录树、右侧工作区。点一个板块，就进入对应内容区，像软件一样继续看下一层。
-            </p>
-            <div class="hero-actions">
-              <button class="primary-button" data-route="workspace" data-filter="all" type="button">直接进入查询区</button>
-              <button class="ghost-button" data-route="gallery" type="button">先看 Gemini 图卡</button>
-            </div>
-          </div>
-
-          <div class="hero-metrics" id="hero-metrics"></div>
-        </div>
-
-        <div class="dashboard-grid">
-          <article class="dashboard-card actionable" data-route="study">
-            <span class="card-kicker">01</span>
-            <h3>先按路线学</h3>
-            <p>先搞懂机床怎么动、常用代码、报警入口和常用换算，再往后学更稳。</p>
-          </article>
-
-          <article class="dashboard-card actionable" data-route="workspace" data-filter="gcode">
-            <span class="card-kicker">02</span>
-            <h3>先查最常用代码</h3>
-            <p>G00、G01、G02、G03、G54-G59、G81/G83/G84 都可以直接进入对应检索。</p>
-          </article>
-
-          <article class="dashboard-card actionable" data-route="gallery">
-            <span class="card-kicker">03</span>
-            <h3>把 Gemini 图片直接接进来</h3>
-            <p>首批图卡会直接显示在站内，不再只是“已经画好了但网页里看不到”。</p>
-          </article>
-
-          <article class="dashboard-card actionable" data-route="library">
-            <span class="card-kicker">04</span>
-            <h3>本地知识库逐步并入</h3>
-            <p>先把核心数控知识包并进网页，再继续拆分超大档案，避免页面卡死。</p>
-          </article>
-        </div>
-
-        <article class="dashboard-gallery-panel">
-          <div class="section-head compact">
+      <section class="view active" id="view-dashboard">
+        <!-- 软件启动台 Hero 区 -->
+        <div class="launchpad-hero">
+          <div class="launchpad-brand">
+            <div class="launchpad-icon">⚙</div>
             <div>
-              <p class="eyebrow">Gemini 图卡预览</p>
-              <h3>打开第一页就直接看图</h3>
+              <p class="launchpad-label">CNC ENGINEER WORKBENCH</p>
+              <h2>数控工程师工作平台</h2>
+              <p class="launchpad-tagline">专业图文资料库 · 智能学习路径 · 实时参数换算</p>
             </div>
-            <p>先把已经做好的图直接摆出来，不用你再去猜图片到底有没有接进站里。</p>
           </div>
+          <div class="launchpad-stats" id="launchpad-stats">
+            <div class="stat-item">
+              <strong id="stat-entries">0</strong>
+              <span>知识条目</span>
+            </div>
+            <div class="stat-item">
+              <strong id="stat-images">125</strong>
+              <span>教学图片</span>
+            </div>
+            <div class="stat-item">
+              <strong id="stat-recents">0</strong>
+              <span>最近查看</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 快速启动区 -->
+        <div class="launchpad-grid">
+          <article class="launchpad-card" data-route="study">
+            <div class="launchpad-card-icon">🎯</div>
+            <div>
+              <h3>新手学习</h3>
+              <p>从零开始，闯关式学习数控编程</p>
+              <span class="launchpad-badge">→ 开始学习</span>
+            </div>
+          </article>
+
+          <article class="launchpad-card primary" data-route="workspace" data-filter="gcode">
+            <div class="launchpad-card-icon">📘</div>
+            <div>
+              <h3>G/M代码</h3>
+              <p>G代码M代码速查，含格式和案例</p>
+              <span class="launchpad-badge">→ 查询代码</span>
+            </div>
+          </article>
+
+          <article class="launchpad-card" data-route="workspace" data-filter="params">
+            <div class="launchpad-card-icon">🚨</div>
+            <div>
+              <h3>报警排查</h3>
+              <p>报警代码查询，故障原因和解决方法</p>
+              <span class="launchpad-badge">→ 查报警</span>
+            </div>
+          </article>
+
+          <article class="launchpad-card" data-route="workspace" data-filter="params">
+            <div class="launchpad-card-icon">⚙</div>
+            <div>
+              <h3>参数速查</h3>
+              <p>机床参数、工艺参数快速检索</p>
+              <span class="launchpad-badge">→ 查参数</span>
+            </div>
+          </article>
+
+          <article class="launchpad-card" data-route="workspace" data-filter="tooling">
+            <div class="launchpad-card-icon">🔧</div>
+            <div>
+              <h3>工艺刀具</h3>
+              <p>刀具选型、切削参数、加工工艺</p>
+              <span class="launchpad-badge">→ 查工艺</span>
+            </div>
+          </article>
+
+          <article class="launchpad-card" data-route="calculator">
+            <div class="launchpad-card-icon">🧮</div>
+            <div>
+              <h3>换算工具</h3>
+              <p>线速度、进给、螺距等参数计算</p>
+              <span class="launchpad-badge">→ 打开计算器</span>
+            </div>
+          </article>
+        </div>
+
+        <!-- 快速搜索入口 -->
+        <div class="launchpad-search">
+          <div class="launchpad-search-header">
+            <h3>快速搜索</h3>
+            <p>输入G代码、报警号、关键词快速定位</p>
+          </div>
+          <div class="launchpad-search-bar">
+            <input type="search" id="quick-search-input" placeholder="例如：G02、1815、对刀、报警、螺距..." />
+            <button class="primary-button" id="quick-search-btn">搜索</button>
+          </div>
+          <div class="quick-keywords">
+            <span class="keyword-label">热门:</span>
+            <button class="keyword-chip" data-jump-keyword="G54">G54</button>
+            <button class="keyword-chip" data-jump-keyword="G02">G02</button>
+            <button class="keyword-chip" data-jump-keyword="对刀">对刀</button>
+            <button class="keyword-chip" data-jump-keyword="报警">报警</button>
+            <button class="keyword-chip" data-jump-keyword="1815">1815</button>
+            <button class="keyword-chip" data-jump-keyword="刀具">刀具</button>
+          </div>
+        </div>
+
+        <!-- 最近查看 -->
+        <div class="recent-section" id="dashboard-recent-section" style="display: none;">
+          <div class="section-header">
+            <h3>接着上次看</h3>
+            <button class="ghost-button" data-route="favorites">查看全部 →</button>
+          </div>
+          <div class="recent-grid" id="dashboard-recent-list"></div>
+        </div>
+
+        <!-- 精选图库预览 -->
+        <div class="featured-images-preview">
+          <div class="featured-images-header">
+            <div>
+              <p class="eyebrow">FEATURED IMAGES</p>
+              <h3>精选教学图片</h3>
+            </div>
+            <button class="ghost-button" data-route="gallery">查看全部 →</button>
+          </div>
+          <div class="featured-images-grid" id="featuredImagesPreview"></div>
           <div class="dashboard-gallery-grid" id="dashboard-gallery-grid"></div>
-        </article>
+        </div>
+
+        <!-- FAQ 速查区 -->
+        <div class="faq-preview-section" id="faq-preview-section">
+          <div class="section-header">
+            <h3>报警 FAQ 速查</h3>
+            <button class="ghost-button" id="faq-toggle-btn">展开全部</button>
+          </div>
+          <div class="faq-tabs" id="faq-tabs">
+            <button class="faq-tab active" data-faq-type="alarm">报警</button>
+            <button class="faq-tab" data-faq-type="param">参数</button>
+            <button class="faq-tab" data-faq-type="beginner">新手</button>
+          </div>
+          <div class="faq-list" id="faq-list">
+            <p class="faq-placeholder">正在加载 FAQ 数据……</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 知识地图视图 -->
+      <section class="view" id="view-learning-map">
+        <div class="section-panel">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">KNOWLEDGE MAP</p>
+              <h3>数控知识地图</h3>
+            </div>
+            <p>可视化知识结构，快速定位学习方向与路径</p>
+          </div>
+
+          <div class="knowledge-map-toolbar">
+            <button class="chip active" data-map-view="tree">树状图</button>
+            <button class="chip" data-map-view="categories">分类视图</button>
+            <button class="chip" data-map-view="paths">学习路径</button>
+          </div>
+
+          <!-- 树状知识地图 -->
+          <div class="knowledge-tree-container" id="knowledgeTreeContainer">
+            <div class="knowledge-tree-placeholder">
+              <div class="placeholder-icon">🗺</div>
+              <p>正在加载知识地图...</p>
+              <small>如果数据文件就绪，这里会显示完整的知识树结构</small>
+            </div>
+            <div class="knowledge-tree-canvas" id="knowledgeTreeCanvas" hidden></div>
+          </div>
+
+          <!-- 分类视图 -->
+          <div class="knowledge-categories-grid" id="knowledgeCategoriesGrid" hidden>
+            <!-- 由 JS 动态填充 -->
+          </div>
+
+          <!-- 学习路径视图 -->
+          <div class="learning-paths-grid" id="learningPathsGrid" hidden>
+            <!-- 由 JS 动态填充 -->
+          </div>
+        </div>
       </section>
 
       <section class="view" id="view-study">
         <div class="section-panel">
           <div class="section-head">
             <div>
-              <p class="eyebrow">学习路线</p>
-              <h3>新手先学这 4 步</h3>
+              <p class="eyebrow">闯关式学习</p>
+              <h3>新手入门 12 关</h3>
             </div>
-            <p>别一上来背参数。先把运动、坐标、常用代码、报警和换算逻辑理清楚。</p>
+            <p>按顺序闯关，从认识图纸到独立编程。每关 5-10 分钟，边学边练。</p>
           </div>
 
-          <div class="route-grid">
-            <article class="route-card actionable" data-entry-id="learn-coordinate-system">
-              <span class="route-step">01</span>
-              <h4>先懂机床怎么动</h4>
-              <p>先学坐标轴、回零、工件坐标、绝对值与增量。</p>
-            </article>
-            <article class="route-card actionable" data-entry-id="g02-g03-arc">
-              <span class="route-step">02</span>
-              <h4>先学最常用代码</h4>
-              <p>优先学 G00、G01、G02、G03、G90、G91、G54-G59。</p>
-            </article>
-            <article class="route-card actionable" data-entry-id="fanuc-alarm-common">
-              <span class="route-step">03</span>
-              <h4>再学参数和报警</h4>
-              <p>参数别乱改，先知道作用和风险，再学排查顺序。</p>
-            </article>
-            <article class="route-card actionable" data-entry-id="calc-vc-rpm">
-              <span class="route-step">04</span>
-              <h4>最后学工艺和换算</h4>
-              <p>线速度、转速、进给、螺距、余量，这些才是现场常用。</p>
-            </article>
+          <div class="learning-stages">
+            <!-- 第一阶段：认识机床 -->
+            <div class="stage-header">
+              <span class="stage-badge">阶段一</span>
+              <h4>认识机床与坐标</h4>
+            </div>
+            <div class="study-card-grid">
+              <article class="study-card" data-stage="1" data-level="1">
+                <div class="study-card-header">
+                  <span class="study-card-badge">第 1 关</span>
+                  <span class="study-card-time">⏱ 5分钟</span>
+                </div>
+                <div class="study-card-icon">📐</div>
+                <h4>认识零件的身份证</h4>
+                <p>看懂图纸最基本的符号，知道圆、孔、台阶怎么标注。不求全懂，先认识常见符号。</p>
+                <div class="study-card-tags">
+                  <span class="tag">图纸基础</span>
+                  <span class="tag">符号识别</span>
+                </div>
+              </article>
+
+              <article class="study-card" data-stage="1" data-level="2">
+                <div class="study-card-header">
+                  <span class="study-card-badge">第 2 关</span>
+                  <span class="study-card-time">⏱ 8分钟</span>
+                </div>
+                <div class="study-card-icon">🧭</div>
+                <h4>机床的东南西北</h4>
+                <p>认识 X、Y、Z 三个轴，明白正负方向。机床坐标系是整个编程的地基。</p>
+                <div class="study-card-tags">
+                  <span class="tag">坐标轴</span>
+                  <span class="tag">方向判断</span>
+                </div>
+              </article>
+
+              <article class="study-card" data-stage="1" data-level="3">
+                <div class="study-card-header">
+                  <span class="study-card-badge">第 3 关</span>
+                  <span class="study-card-time">⏱ 6分钟</span>
+                </div>
+                <div class="study-card-icon">🏠</div>
+                <h4>找机床的老家</h4>
+                <p>回零（回参考点）是机床找到自己绝对位置的动作。不回零，后面全是空谈。</p>
+                <div class="study-card-tags">
+                  <span class="tag">回零</span>
+                  <span class="tag">参考点</span>
+                </div>
+              </article>
+
+              <article class="study-card" data-stage="1" data-level="4">
+                <div class="study-card-header">
+                  <span class="study-card-badge">第 4 关</span>
+                  <span class="study-card-time">⏱ 10分钟</span>
+                </div>
+                <div class="study-card-icon">📍</div>
+                <h4>告诉机床活儿在哪</h4>
+                <p>对刀 + 工件坐标系（G54-G59）。这是新手最大的坎，跨过去就入门了。</p>
+                <div class="study-card-tags">
+                  <span class="tag">对刀</span>
+                  <span class="tag">G54</span>
+                  <span class="tag">工件零点</span>
+                </div>
+              </article>
+            </div>
+
+            <!-- 第二阶段：安全操作 -->
+            <div class="stage-header">
+              <span class="stage-badge">阶段二</span>
+              <h4>安全操作与刀具</h4>
+            </div>
+            <div class="study-card-grid">
+              <article class="study-card" data-stage="2" data-level="5">
+                <div class="study-card-header">
+                  <span class="study-card-badge">第 5 关</span>
+                  <span class="study-card-time">⏱ 8分钟</span>
+                </div>
+                <div class="study-card-icon">🛡️</div>
+                <h4>Z 轴对刀，保命绝招</h4>
+                <p>Z 轴对不好，刀具直接撞工件或台面。学会试切法、对刀仪法。</p>
+                <div class="study-card-tags">
+                  <span class="tag">Z轴对刀</span>
+                  <span class="tag">安全</span>
+                </div>
+              </article>
+
+              <article class="study-card" data-stage="2" data-level="6">
+                <div class="study-card-header">
+                  <span class="study-card-badge">第 6 关</span>
+                  <span class="study-card-time">⏱ 7分钟</span>
+                </div>
+                <div class="study-card-icon">🔪</div>
+                <h4>认识你的武器</h4>
+                <p>铣刀、车刀、钻头分类，刀尖圆弧半径，刀具材料。先认识，再学用。</p>
+                <div class="study-card-tags">
+                  <span class="tag">刀具</span>
+                  <span class="tag">材料</span>
+                </div>
+              </article>
+
+              <article class="study-card" data-stage="2" data-level="7">
+                <div class="study-card-header">
+                  <span class="study-card-badge">第 7 关</span>
+                  <span class="study-card-time">⏱ 6分钟</span>
+                </div>
+                <div class="study-card-icon">↻</div>
+                <h4>顺着切还是逆着切</h4>
+                <p>顺铣、逆铣，左补偿、右补偿。这关系到加工质量和刀具寿命。</p>
+                <div class="study-card-tags">
+                  <span class="tag">顺铣逆铣</span>
+                  <span class="tag">G41/G42</span>
+                </div>
+              </article>
+            </div>
+
+            <!-- 第三阶段：编程基础 -->
+            <div class="stage-header">
+              <span class="stage-badge">阶段三</span>
+              <h4>编程基础代码</h4>
+            </div>
+            <div class="study-card-grid">
+              <article class="study-card" data-stage="3" data-level="8">
+                <div class="study-card-header">
+                  <span class="study-card-badge">第 8 关</span>
+                  <span class="study-card-time">⏱ 7分钟</span>
+                </div>
+                <div class="study-card-icon">⚡</div>
+                <h4>S 和 F，谁跑得快</h4>
+                <p>主轴转速 S、进给速度 F，线速度 Vc。搞懂关系，才能算参数。</p>
+                <div class="study-card-tags">
+                  <span class="tag">转速</span>
+                  <span class="tag">进给</span>
+                  <span class="tag">线速度</span>
+                </div>
+              </article>
+
+              <article class="study-card" data-stage="3" data-level="9">
+                <div class="study-card-header">
+                  <span class="study-card-badge">第 9 关</span>
+                  <span class="study-card-time">⏱ 8分钟</span>
+                </div>
+                <div class="study-card-icon">🚀</div>
+                <h4>G00 和 G01，快慢有别</h4>
+                <p>G00 快速定位，G01 直线切削。G00 走的是折线，用错了会撞刀！</p>
+                <div class="study-card-tags">
+                  <span class="tag">G00</span>
+                  <span class="tag">G01</span>
+                  <span class="tag">撞刀风险</span>
+                </div>
+              </article>
+
+              <article class="study-card" data-stage="3" data-level="10">
+                <div class="study-card-header">
+                  <span class="study-card-badge">第 10 关</span>
+                  <span class="study-card-time">⏱ 5分钟</span>
+                </div>
+                <div class="study-card-icon">⚠️</div>
+                <h4>致命的小数点</h4>
+                <p>X10. 和 X10 差了10倍！小数点忘了打，轻则废件，重则撞机。</p>
+                <div class="study-card-tags">
+                  <span class="tag">编程规范</span>
+                  <span class="tag">小数点</span>
+                </div>
+              </article>
+
+              <article class="study-card" data-stage="3" data-level="11">
+                <div class="study-card-header">
+                  <span class="study-card-badge">第 11 关</span>
+                  <span class="study-card-time">⏱ 9分钟</span>
+                </div>
+                <div class="study-card-icon">📊</div>
+                <h4>G90 和 G91：算总账还是算小账</h4>
+                <p>绝对值编程（G90）从零点算，增量编程（G91）从当前位置算。搞混了轨迹全错。</p>
+                <div class="study-card-tags">
+                  <span class="tag">G90</span>
+                  <span class="tag">G91</span>
+                  <span class="tag">绝对增量</span>
+                </div>
+              </article>
+            </div>
+
+            <!-- 第四阶段：固定循环 -->
+            <div class="stage-header">
+              <span class="stage-badge">阶段四</span>
+              <h4>高效编程技巧</h4>
+            </div>
+            <div class="study-card-grid">
+              <article class="study-card" data-stage="4" data-level="12">
+                <div class="study-card-header">
+                  <span class="study-card-badge">第 12 关</span>
+                  <span class="study-card-time">⏱ 10分钟</span>
+                </div>
+                <div class="study-card-icon">🔄</div>
+                <h4>G81：钻孔自动化</h4>
+                <p>固定循环能把 10 行代码压成 1 行。学会 G81/G83，效率直接翻倍。</p>
+                <div class="study-card-tags">
+                  <span class="tag">G81</span>
+                  <span class="tag">G83</span>
+                  <span class="tag">固定循环</span>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
           </div>
         </div>
       </section>
 
-      <section class="view active" id="view-workspace">
+      <section class="view" id="view-workspace">
         <div class="workspace-layout">
+          <!-- 左侧：搜索与列表区 -->
           <section class="workspace-panel search-panel">
-            <div class="section-head compact">
+            <div class="workspace-header">
               <div>
-                <p class="eyebrow">搜索中心</p>
-                <h3>按关键词、栏目、知识包快速查</h3>
+                <p class="eyebrow">KNOWLEDGE BASE</p>
+                <h3>知识库工作区</h3>
               </div>
-              <p id="workspace-status">正在使用基础条目。</p>
+              <div class="workspace-status-bar">
+                <span class="status-indicator" id="workspace-status-indicator">●</span>
+                <span id="workspace-status-text">基础条目已加载</span>
+              </div>
             </div>
 
             <div class="search-toolbar">
-              <label>
-                <span>搜索</span>
-                <input id="search-input" type="search" placeholder="例如：G02、1815、回零、对刀、报警、G84、螺距">
-              </label>
-              <label>
-                <span>栏目</span>
+              <div class="search-input-group">
+                <label>
+                  <span>搜索</span>
+                  <input id="search-input" type="search" placeholder="G代码 · 报警 · 对刀 · 刀具...">
+                </label>
+                <button class="icon-button" id="search-clear-btn" title="清除搜索">×</button>
+                <div class="search-suggestions" id="search-suggestions" style="display:none"></div>
+              </div>
+              <label class="filter-select-group">
+                <span>分类</span>
                 <select id="category-select"></select>
               </label>
             </div>
 
             <div class="chip-row" id="preset-chip-row"></div>
             <div class="chip-row" id="knowledge-chip-row"></div>
-            <div class="view-mode-row" id="workspace-mode-row">
-              <button class="chip" data-workspace-mode="list" type="button">列表模式</button>
-              <button class="chip active" data-workspace-mode="visual" type="button">图文模式</button>
-              <button class="chip soft" data-workspace-flag="with-images" type="button">只看带图</button>
+
+            <div class="view-mode-toolbar" id="workspace-mode-row">
+              <div class="view-mode-group">
+                <button class="mode-btn" data-workspace-mode="list" title="列表模式">
+                  <span class="mode-icon">☰</span>
+                  <span>列表</span>
+                </button>
+                <button class="mode-btn active" data-workspace-mode="visual" title="图文模式">
+                  <span class="mode-icon">▦</span>
+                  <span>图文</span>
+                </button>
+              </div>
+              <button class="filter-btn" data-workspace-flag="with-images" title="只看带图">
+                <span class="filter-icon">🖼</span>
+                <span>仅带图</span>
+              </button>
             </div>
+
             <div class="search-meta" id="search-meta"></div>
             <div class="result-list" id="result-list"></div>
           </section>
 
+          <!-- 右侧：详情区 -->
           <section class="workspace-panel detail-panel">
             <div class="detail-header">
               <div>
-                <p class="eyebrow">学习详情</p>
-                <h3 id="detail-title">点左边条目进入详情</h3>
+                <p class="eyebrow">DETAIL VIEW</p>
+                <h3 id="detail-title">选择左侧条目查看详情</h3>
               </div>
-              <div class="detail-actions">
-                <button class="ghost-button" id="detail-prev" type="button">上一条</button>
-                <button class="ghost-button" id="detail-next-button" type="button">下一条</button>
-                <button class="ghost-button" id="favorite-toggle" type="button">收藏这条内容</button>
+              <div class="detail-toolbar">
+                <button class="icon-button" id="detail-prev" title="上一条">←</button>
+                <button class="icon-button" id="detail-next-button" title="下一条">→</button>
+                <button class="icon-button" id="favorite-toggle" title="收藏">⭐</button>
+                <button class="icon-button" id="detail-share" title="分享">↗</button>
               </div>
             </div>
 
-            <div class="detail-grid">
-              <article class="detail-card detail-card-main">
-                <span class="detail-label" id="detail-category">学习条目</span>
-                <strong class="detail-code" id="detail-code">请选择左侧内容</strong>
-                <p id="detail-summary">这里会告诉你它是什么、什么时候查、最容易错在哪。</p>
+            <div class="detail-content-grid">
+              <!-- 主要信息卡片 -->
+              <article class="detail-card detail-card-primary">
+                <div class="detail-card-header">
+                  <span class="detail-label" id="detail-category">知识条目</span>
+                  <span class="detail-badge" id="detail-risk-badge">未选择</span>
+                </div>
+                <h4 class="detail-code" id="detail-code">请选择左侧内容</h4>
+                <p class="detail-summary" id="detail-summary">这里会显示核心说明和使用场景</p>
               </article>
 
+              <!-- 图片展示卡片 - 优先显示 -->
+              <article class="detail-card detail-card-images" id="detail-image-card" hidden>
+                <div class="detail-card-header">
+                  <h4>配图说明</h4>
+                  <span class="image-count-badge" id="image-count-badge">0 张</span>
+                </div>
+                <div class="detail-image-gallery" id="detail-image-stage"></div>
+              </article>
+
+              <!-- 新手理解 -->
               <article class="detail-card">
-                <h4>新手先这样理解</h4>
-                <p id="detail-beginner">先把概念和场景看懂，再去记参数和代码。</p>
+                <h4>💡 新手先这样理解</h4>
+                <p id="detail-beginner">概念和场景优先，参数和代码其次</p>
               </article>
 
+              <!-- 使用场景 -->
               <article class="detail-card">
-                <h4>适合什么时候查</h4>
-                <p id="detail-usage">碰到不懂的代码、参数、报警或工艺词时，先来这里定位方向。</p>
+                <h4>🎯 适合什么时候查</h4>
+                <p id="detail-usage">遇到不懂的代码或参数时快速定位</p>
               </article>
 
+              <!-- 易错提醒 -->
+              <article class="detail-card detail-card-warning">
+                <h4>⚠️ 最容易错的地方</h4>
+                <p id="detail-warning">查到之后要注意的风险点和验证方法</p>
+              </article>
+
+              <!-- 高风险提醒 -->
+              <article class="detail-card detail-card-frontend-risk" id="detail-frontend-risk-card" hidden>
+                <h4>⚠️ 高危操作提醒</h4>
+                <div class="detail-frontend-risk-body" id="detail-frontend-risk-body"></div>
+              </article>
+
+              <!-- 快速检查 -->
+              <article class="detail-card" id="detail-quick-check-card">
+                <h4>✅ 加工前快速检查</h4>
+                <div class="detail-check-list" id="detail-quick-check"></div>
+              </article>
+
+              <!-- 代码示例 -->
+              <article class="detail-card detail-card-code">
+                <h4>📝 代码示例</h4>
+                <pre id="detail-example">从简单示例开始理解</pre>
+              </article>
+
+              <!-- 关联工具 -->
+              <article class="detail-card" id="detail-tools-card">
+                <h4>🧮 关联工具</h4>
+                <div class="detail-tool-list" id="detail-tools"></div>
+              </article>
+
+              <!-- 参数芯片 -->
+              <article class="detail-card" id="detail-params-card">
+                <h4>🔢 参数联动</h4>
+                <div class="detail-param-list" id="detail-params"></div>
+              </article>
+
+              <!-- 智能推荐 -->
+              <article class="detail-card" id="detail-smart-recommend-card">
+                <h4>🎯 智能推荐</h4>
+                <div class="detail-smart-recommend" id="detail-smart-recommend"></div>
+              </article>
+
+              <!-- 学习路径 -->
               <article class="detail-card">
-                <h4>最容易错的地方</h4>
-                <p id="detail-warning">很多问题不是不会查，而是查到之后不知道怎么判断风险。</p>
+                <h4>➡️ 下一步学什么</h4>
+                <p id="detail-next">相关内容的推荐学习顺序</p>
               </article>
 
-              <article class="detail-card">
-                <h4>最简单例子</h4>
-                <pre id="detail-example">先从简单直线、圆弧、对刀、回零这些主题开始。</pre>
-              </article>
-
-              <article class="detail-card">
-                <h4>下一步学什么</h4>
-                <p id="detail-next">学完这一条，再进入和它最相关的下一组内容。</p>
-              </article>
-
+              <!-- 知识库原文 -->
               <article class="detail-card detail-card-preview">
-                <div class="detail-card-head">
-                  <h4>知识库正文摘录</h4>
-                  <button class="ghost-button" id="load-preview-button" type="button">继续并入原文</button>
+                <div class="detail-card-header">
+                  <h4>📚 知识库原文摘录</h4>
+                  <button class="ghost-button small" id="load-preview-button">加载原文</button>
                 </div>
-                <p class="detail-preview-status" id="detail-preview-status">当前先显示结构化速查内容。打开大型知识库条目后，这里会继续并入原文摘录。</p>
-                <pre id="detail-preview">还没有加载原文摘录。</pre>
+                <p class="detail-preview-status" id="detail-preview-status">点击按钮加载完整知识库内容</p>
+                <pre id="detail-preview" hidden></pre>
+              </article>
+
+              <!-- 推荐内容 -->
+              <article class="detail-card">
+                <h4>🔗 相关推荐</h4>
+                <div class="related-links-grid" id="related-links"></div>
               </article>
             </div>
-
-            <article class="detail-image-card" id="detail-image-card" hidden>
-              <div class="detail-image-head">
-                <div>
-                  <p class="eyebrow">Gemini 图片图卡</p>
-                  <h4 id="detail-image-title">这条内容对应的图卡</h4>
-                </div>
-                <p id="detail-image-caption">图卡会直接显示在这里。</p>
-              </div>
-              <div class="detail-image-stage" id="detail-image-stage"></div>
-            </article>
-
-            <div class="detail-footer-grid">
-              <article class="detail-mini-card">
-                <span class="detail-label">风险等级</span>
-                <strong id="detail-risk">未选择</strong>
-              </article>
-              <article class="detail-mini-card">
-                <span class="detail-label">内容来源</span>
-                <strong id="detail-source">等待选择</strong>
-              </article>
-            </div>
-
-            <article class="detail-card">
-              <h4>相关继续学</h4>
-              <div class="link-cloud" id="related-links"></div>
-            </article>
           </section>
         </div>
       </section>
@@ -334,13 +697,31 @@
         <div class="section-panel">
           <div class="section-head">
             <div>
-              <p class="eyebrow">Gemini 图片图卡</p>
+              <p class="eyebrow">Gemini 图片图卡 (<span id="cncGalleryCount">0</span> 张)</p>
               <h3>首批图片直接在站内显示</h3>
             </div>
-            <p>这部分专门解决“已经画完了，但网页里根本看不到”的问题。</p>
+            <p>这部分专门解决"已经画完了，但网页里根本看不到"的问题。</p>
           </div>
 
-          <div class="gallery-grid" id="gallery-grid"></div>
+          <!-- 图库搜索与筛选器 -->
+          <div class="gallery-toolbar" style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+            <input type="search" id="cncGallerySearch" placeholder="搜索图库图片..." style="padding: 8px 12px; border: 1px solid rgba(207,109,54,0.22); border-radius: 4px; background: #fffaf2; color: #5d655f; flex: 1; min-width: 200px;">
+            <select id="cncGalleryFilter" style="padding: 8px 12px; border: 1px solid rgba(207,109,54,0.22); border-radius: 4px; background: #fffaf2; color: #5d655f;">
+              <option value="all">所有分类</option>
+              <option value="batch01">核心图包 (Batch01)</option>
+              <option value="batch02">操作基础 (Batch02)</option>
+              <option value="batch03">车削工艺 (Batch03)</option>
+              <option value="batch04">铣削刀具 (Batch04)</option>
+              <option value="batch05">报警排障 (Batch05)</option>
+            </select>
+          </div>
+
+          <div class="gallery-grid" id="cncGalleryGrid"></div>
+
+          <!-- 加载更多按钮 -->
+          <div class="gallery-actions" style="text-align: center; margin-top: 20px;">
+            <button class="primary-button" id="cncGalleryLoadMore" type="button">加载更多</button>
+          </div>
         </div>
       </section>
 
@@ -493,7 +874,7 @@
             </article>
             <article class="access-card">
               <h4>更强方案</h4>
-              <p>真正强控制要上 Cloudflare Access 或带登录后端。当前这版先把“你发出去的人能直接打开”的正式入口先做稳。</p>
+              <p>真正强控制要上 Cloudflare Access 或带登录后端。当前这版先把"你发出去的人能直接打开"的正式入口先做稳。</p>
             </article>
           </div>
 
@@ -525,10 +906,76 @@
   </div>
 
   <script src="./data.js"></script>
+  <!-- 运行时四件套：环境检测 → 配置管理 → 资源加载 → 诊断工具 -->
+  <script src="./runtime-env-detector.js"></script>
+  <script src="./runtime-config.js"></script>
+  <script src="./runtime-loader.js"></script>
+  <script src="./runtime-diagnostic.js"></script>
+  <script src="./runtime-data-loader.js"></script>
+  <script src="./runtime-search-layer.js"></script>
+  <script src="./runtime-image-layer.js"></script>
+  <script src="./frontend-data-layer.js"></script>
   <script src="./kb-extra.js"></script>
   <script src="./featured-images.js"></script>
+  <script src="./featured-images-extended.js"></script>
+  <script src="./featured-images-part2.js"></script>
+  <script src="./featured-images-supplement.js"></script>
   <script src="./gallery-library.js"></script>
+  <script src="./gallery-library-enhanced.js"></script>
   <script src="./kb-content-manifest.js"></script>
+  <script src="./ui-knowledge-tree.js"></script>
+  <script src="./ui-recommendations.js"></script>
+  <script src="./search-aliases.js"></script>
+  <script src="./search-runtime-debug.js"></script>
+  <script src="./study-entry-rules.js"></script>
+  <script src="./learning-content-data.js"></script>
+
+  <!-- 0号：运行时环境模块 (2026-07-06) -->
+  <script src="./runtime-env-detector.js"></script>
+  <script src="./runtime-config.js"></script>
+  <script src="./runtime-data-loader.js"></script>
+  <script src="./runtime-image-layer.js"></script>
+  <script src="./runtime-search-layer.js"></script>
+  <script src="./runtime-loader.js"></script>
+  <script src="./runtime-diagnostic.js"></script>
+
+  <!-- 3号：JSON加载器（处理BOM） -->
+  <script src="./json-loader.js"></script>
+
+  <!-- 6号：知识图谱引擎 -->
+  <script src="./KnowledgeGraph.js"></script>
+
+  <!-- 0号：知识图谱数据导入系统 (2026-07-06) -->
+  <script src="./import-config.js"></script>
+  <script src="./entity-extractor.js"></script>
+  <script src="./data-cleaner.js"></script>
+  <script src="./relationship-builder.js"></script>
+  <script src="./graph-importer.js"></script>
+  <script src="./import-test.js"></script>
+
   <script src="./app.js"></script>
+  <script src="./gallery-featured.js"></script>
+
+  <!-- 图片放大弹窗 -->
+  <div class="cnc-gallery-modal" id="cncGalleryModal" aria-hidden="true">
+    <div class="cnc-gallery-modal-mask" data-close="true"></div>
+
+    <div class="cnc-gallery-modal-panel">
+      <button class="cnc-gallery-modal-close" id="cncGalleryClose" aria-label="关闭">×</button>
+
+      <button class="cnc-gallery-nav cnc-gallery-prev" id="cncGalleryPrev" aria-label="上一张">‹</button>
+
+      <figure class="cnc-gallery-preview">
+        <img id="cncGalleryPreviewImg" src="" alt="">
+        <figcaption>
+          <h3 id="cncGalleryPreviewTitle"></h3>
+          <p id="cncGalleryPreviewDesc"></p>
+          <span id="cncGalleryPreviewIndex"></span>
+        </figcaption>
+      </figure>
+
+      <button class="cnc-gallery-nav cnc-gallery-next" id="cncGalleryNext" aria-label="下一张">›</button>
+    </div>
+  </div>
 </body>
 </html>

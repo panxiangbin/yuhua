@@ -1,0 +1,488 @@
+{
+  "categories": [
+    {
+      "category": "切削参数",
+      "subcategories": [
+        {
+          "name": "45号钢 (中碳钢)",
+          "tools": [
+            {
+              "toolType": "硬质合金涂层立铣刀",
+              "diameter": 10,
+              "cuttingSpeed": "100-150 m/min",
+              "feedPerTooth": "0.06-0.10 mm/z",
+              "depthOfCut": "1.5-3.0 mm",
+              "note": "推荐使用乳化液冷却，粗加工采用顺铣",
+              "source": "kb-00045"
+            },
+            {
+              "toolType": "硬质合金外圆车刀",
+              "diameter": 20,
+              "cuttingSpeed": "120-180 m/min",
+              "feedPerTooth": "0.15-0.30 mm/r",
+              "depthOfCut": "2.0-5.0 mm",
+              "note": "粗车外圆，连续切削，中等进给",
+              "source": "kb-00046"
+            },
+            {
+              "toolType": "高速钢钻头",
+              "diameter": 12,
+              "cuttingSpeed": "20-30 m/min",
+              "feedPerTooth": "0.12-0.20 mm/r",
+              "depthOfCut": "12.0 mm",
+              "note": "啄钻循环，推荐加压乳化液内冷",
+              "source": "kb-00047"
+            }
+          ]
+        },
+        {
+          "name": "6061铝合金",
+          "tools": [
+            {
+              "toolType": "无涂层硬质合金铣刀",
+              "diameter": 8,
+              "cuttingSpeed": "250-400 m/min",
+              "feedPerTooth": "0.10-0.20 mm/z",
+              "depthOfCut": "3.0-8.0 mm",
+              "note": "强力排屑，推荐大流量水溶性冷却液",
+              "source": "kb-00052"
+            },
+            {
+              "toolType": "超细颗粒硬质合金车刀",
+              "diameter": 16,
+              "cuttingSpeed": "300-500 m/min",
+              "feedPerTooth": "0.10-0.25 mm/r",
+              "depthOfCut": "1.5-3.0 mm",
+              "note": "精车，高转速防粘刀，保证光洁度",
+              "source": "kb-00053"
+            }
+          ]
+        },
+        {
+          "name": "304不锈钢 (奥氏体不锈钢)",
+          "tools": [
+            {
+              "toolType": "富铝钛纳米涂层铣刀",
+              "diameter": 12,
+              "cuttingSpeed": "60-90 m/min",
+              "feedPerTooth": "0.04-0.08 mm/z",
+              "depthOfCut": "1.0-2.0 mm",
+              "note": "切削阻力大，严禁无冷切屑粘结，低转速大进给",
+              "source": "kb-00055"
+            },
+            {
+              "toolType": "金属陶瓷车刀片",
+              "diameter": 20,
+              "cuttingSpeed": "90-130 m/min",
+              "feedPerTooth": "0.12-0.22 mm/r",
+              "depthOfCut": "1.0-3.0 mm",
+              "note": "断屑较难，选择大前角槽型车刀",
+              "source": "kb-00056"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "G代码参数",
+      "items": [
+        {
+          "code": "G00",
+          "name": "快速定位",
+          "format": "G00 X_ Y_ Z_",
+          "description": "以系统预设的最大速度直线运动到目标点",
+          "example": "G00 X50.0 Z5.0",
+          "relatedCodes": [
+            "G01",
+            "G02",
+            "G03"
+          ],
+          "source": "kb-00002"
+        },
+        {
+          "code": "G01",
+          "name": "直线插补",
+          "format": "G01 X_ Y_ Z_ F_",
+          "description": "以给定的进给速度直线切削运动到目标点",
+          "example": "G01 Z-20.0 F150",
+          "relatedCodes": [
+            "G00",
+            "G02",
+            "G03"
+          ],
+          "source": "kb-00003"
+        },
+        {
+          "code": "G02",
+          "name": "顺时针圆弧插补",
+          "format": "G02 X_ Y_ Z_ R_ F_ 或 G02 X_ Y_ Z_ I_ J_ F_",
+          "description": "以给定的进给速度进行顺时针圆弧加工",
+          "example": "G02 X30.0 Y30.0 R15.0 F120",
+          "relatedCodes": [
+            "G03"
+          ],
+          "source": "kb-00004"
+        },
+        {
+          "code": "G03",
+          "name": "逆时针圆弧插补",
+          "format": "G03 X_ Y_ Z_ R_ F_",
+          "description": "以给定的进给速度进行逆时针圆弧加工",
+          "example": "G03 X30.0 Y30.0 R15.0 F120",
+          "relatedCodes": [
+            "G02"
+          ],
+          "source": "kb-00005"
+        },
+        {
+          "code": "G41",
+          "name": "刀具半径左补偿",
+          "format": "G41 G01 X_ Y_ D_",
+          "description": "沿刀具前进方向左侧进行刀具半径偏置补偿",
+          "example": "G41 G01 X10.0 Y20.0 D01 F100",
+          "relatedCodes": [
+            "G42",
+            "G40"
+          ],
+          "source": "kb-00021"
+        },
+        {
+          "code": "G42",
+          "name": "刀具半径右补偿",
+          "format": "G42 G01 X_ Y_ D_",
+          "description": "沿刀具前进方向右侧进行刀具半径偏置补偿",
+          "example": "G42 G01 X10.0 Y20.0 D01 F100",
+          "relatedCodes": [
+            "G41",
+            "G40"
+          ],
+          "source": "kb-00022"
+        },
+        {
+          "code": "G40",
+          "name": "取消刀具半径补偿",
+          "format": "G40 G00 X_ Y_",
+          "description": "撤销刀具半径补偿状态，使刀具中心恢复轨迹",
+          "example": "G40 G00 X0 Y0",
+          "relatedCodes": [
+            "G41",
+            "G42"
+          ],
+          "source": "kb-00023"
+        },
+        {
+          "code": "G43",
+          "name": "刀具长度正补偿",
+          "format": "G43 G01 Z_ H_",
+          "description": "沿Z轴正向加上刀具偏置参数表中指定的长度偏置量",
+          "example": "G43 G01 Z10.0 H01 F200",
+          "relatedCodes": [
+            "G44",
+            "G49"
+          ],
+          "source": "kb-00025"
+        },
+        {
+          "code": "G49",
+          "name": "取消刀具长度补偿",
+          "format": "G49 G00 Z_",
+          "description": "注销当前的Z轴刀具长度偏置量",
+          "example": "G49 G00 Z100.0",
+          "relatedCodes": [
+            "G43"
+          ],
+          "source": "kb-00026"
+        },
+        {
+          "code": "G54",
+          "name": "第一工件坐标系",
+          "format": "G54 G00 X_ Y_",
+          "description": "启用第一组工件零点偏置坐标系",
+          "example": "G54 G00 X0 Y0",
+          "relatedCodes": [
+            "G55",
+            "G56",
+            "G57",
+            "G58",
+            "G59"
+          ],
+          "source": "kb-00010"
+        }
+      ]
+    },
+    {
+      "category": "M代码参数",
+      "items": [
+        {
+          "code": "M00",
+          "name": "程序无条件停止",
+          "format": "M00",
+          "description": "暂停程序执行，机床各轴停止，便于手工测量或调头",
+          "example": "M00 (暂停测量尺寸)",
+          "relatedCodes": [
+            "M01"
+          ],
+          "source": "kb-00030"
+        },
+        {
+          "code": "M01",
+          "name": "程序选择性停止",
+          "format": "M01",
+          "description": "当机床面板上的'选择性停止'键处于开启状态时暂停程序",
+          "example": "M01",
+          "relatedCodes": [
+            "M00"
+          ],
+          "source": "kb-00031"
+        },
+        {
+          "code": "M03",
+          "name": "主轴顺时针启动 (正转)",
+          "format": "M03 S_",
+          "description": "启动主轴正向转动，需指定S值速度",
+          "example": "M03 S1500",
+          "relatedCodes": [
+            "M04",
+            "M05"
+          ],
+          "source": "kb-00032"
+        },
+        {
+          "code": "M04",
+          "name": "主轴逆时针启动 (反转)",
+          "format": "M04 S_",
+          "description": "启动主轴反向转动，常用于左旋螺纹加工",
+          "example": "M04 S800",
+          "relatedCodes": [
+            "M03",
+            "M05"
+          ],
+          "source": "kb-00033"
+        },
+        {
+          "code": "M05",
+          "name": "主轴停止旋转",
+          "format": "M05",
+          "description": "主轴制动停止，用于换刀或手工干预前安全保障",
+          "example": "M05",
+          "relatedCodes": [
+            "M03",
+            "M04"
+          ],
+          "source": "kb-00034"
+        },
+        {
+          "code": "M06",
+          "name": "自动换刀指令",
+          "format": "T_ M06",
+          "description": "执行自动换刀机构将主轴刀具与预备刀号进行替换",
+          "example": "T2 M06 (换2号刀)",
+          "relatedCodes": [],
+          "source": "kb-00035"
+        },
+        {
+          "code": "M08",
+          "name": "开启冷却液",
+          "format": "M08",
+          "description": "开启主切削冷却泵，喷射切削液",
+          "example": "M08",
+          "relatedCodes": [
+            "M09"
+          ],
+          "source": "kb-00036"
+        },
+        {
+          "code": "M09",
+          "name": "关闭冷却液",
+          "format": "M09",
+          "description": "停止冷却液泵运行，便于观察或完成加工段",
+          "example": "M09",
+          "relatedCodes": [
+            "M08"
+          ],
+          "source": "kb-00037"
+        },
+        {
+          "code": "M30",
+          "name": "程序结束并返回起点",
+          "format": "M30",
+          "description": "指示主程序执行完毕，复位系统，光标跳回程序首行",
+          "example": "M30",
+          "relatedCodes": [],
+          "source": "kb-00038"
+        }
+      ]
+    },
+    {
+      "category": "报警代码",
+      "systems": [
+        {
+          "system": "FANUC (法兰克)",
+          "alarms": [
+            {
+              "code": "OT0001",
+              "description": "+X 轴正向超程 (软极限)",
+              "causes": [
+                "目标移动坐标超出了系统设置的行程上限",
+                "程序G00走刀超出范围",
+                "工件原点偏置设定不当"
+              ],
+              "solutions": [
+                "切换到手摇模式(HANDLE)",
+                "反方向摇动超程轴退出超程区",
+                "检查并调整工件坐标系设定"
+              ],
+              "source": "kb-00085"
+            },
+            {
+              "code": "ALARM 090",
+              "description": "主轴伺服电机负载过大",
+              "causes": [
+                "切削三要素（吃刀量、进给、转速）设置过大",
+                "刀具严重磨损导致切削阻力急剧上升",
+                "材料硬度不均匀或主轴机构机械卡塞"
+              ],
+              "solutions": [
+                "降低切削参数，优化切削比",
+                "检查刀尖磨损状况，及时更换刀片",
+                "检查主轴传动带和轴承"
+              ],
+              "source": "kb-00086"
+            },
+            {
+              "code": "ALARM 5136",
+              "description": "FSSB 光纤伺服总线放大器故障",
+              "causes": [
+                "主控板与伺服放大器之间的光纤连线松动或断裂",
+                "某轴伺服放大器24V控制电源断电",
+                "放大器本身硬件受损损坏总线信号"
+              ],
+              "solutions": [
+                "重新插拔或更换光纤线缆",
+                "检查强电回路中的熔断丝及空气开关",
+                "更换伺服放大器单元"
+              ],
+              "source": "kb-00087"
+            }
+          ]
+        },
+        {
+          "system": "Siemens (西门子)",
+          "alarms": [
+            {
+              "code": "25000",
+              "description": "轴伺服主线监测故障",
+              "causes": [
+                "硬件编码器线插接接触不良",
+                "伺服参数设置与实际硬件不匹配",
+                "机械卡死导致轴在移动时编码器无反馈"
+              ],
+              "solutions": [
+                "检查编码器电缆及接头",
+                "核对系统轴电机配置参数",
+                "检查丝杠及导轨机械是否卡死"
+              ],
+              "source": "kb-00095"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "螺纹参数",
+      "threads": [
+        {
+          "standard": "普通公制螺纹 (M)",
+          "pitch": "0.5 - 3.0 mm",
+          "values": [
+            {
+              "size": "M3",
+              "pitch": 0.5,
+              "majorDia": 3,
+              "minorDia": 2.45,
+              "suggestedRPM": "800-1200",
+              "feed": "0.5 mm/r"
+            },
+            {
+              "size": "M6",
+              "pitch": 1,
+              "majorDia": 6,
+              "minorDia": 4.91,
+              "suggestedRPM": "500-800",
+              "feed": "1.0 mm/r"
+            },
+            {
+              "size": "M10",
+              "pitch": 1.5,
+              "majorDia": 10,
+              "minorDia": 8.37,
+              "suggestedRPM": "350-500",
+              "feed": "1.5 mm/r"
+            },
+            {
+              "size": "M16",
+              "pitch": 2,
+              "majorDia": 16,
+              "minorDia": 13.83,
+              "suggestedRPM": "200-300",
+              "feed": "2.0 mm/r"
+            },
+            {
+              "size": "M24",
+              "pitch": 3,
+              "majorDia": 24,
+              "minorDia": 20.75,
+              "suggestedRPM": "100-150",
+              "feed": "3.0 mm/r"
+            }
+          ]
+        },
+        {
+          "standard": "英制统一螺纹 (UNC/UNF)",
+          "pitch": "以每英寸牙数计",
+          "values": [
+            {
+              "size": "1/4-20 UNC",
+              "pitch": 1.27,
+              "majorDia": 6.35,
+              "minorDia": 5.11,
+              "suggestedRPM": "500-750",
+              "feed": "1.27 mm/r"
+            },
+            {
+              "size": "1/2-13 UNC",
+              "pitch": 1.95,
+              "majorDia": 12.7,
+              "minorDia": 10.79,
+              "suggestedRPM": "250-400",
+              "feed": "1.95 mm/r"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "刀具规格与建议",
+      "tools": [
+        {
+          "type": "硬质合金立铣刀",
+          "diameterRange": "D1 - D20 mm",
+          "coating": "TiAlN (铝钛纳米涂层)",
+          "mainUsage": "钢件、不锈钢、难加工材料的中低速粗精加工"
+        },
+        {
+          "type": "铝用白钢刀 (高钴高速钢)",
+          "diameterRange": "D3 - D25 mm",
+          "coating": "DLC类金刚石或无涂层",
+          "mainUsage": "铝合金、有色金属的高速抛光加工，防粘刀"
+        },
+        {
+          "type": "外圆粗车刀 (CNMG型刀片)",
+          "diameterRange": "20x20 / 25x25 刀柄",
+          "coating": "CVD厚涂层",
+          "mainUsage": "钢件及铸铁大余量粗车，承受冲击负荷"
+        }
+      ]
+    }
+  ]
+}

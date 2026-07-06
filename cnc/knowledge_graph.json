@@ -1,0 +1,1245 @@
+{
+  "nodes": [
+    {
+      "id": "learn-coordinate-system",
+      "title": "坐标系与对刀详解",
+      "category": "入门基础",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "learn-absolute-incremental",
+      "title": "G90 / G91 绝对值与增量编程",
+      "category": "入门基础",
+      "level": "beginner",
+      "core": true
+    },
+    {
+      "id": "learn-g54-g59",
+      "title": "G54-G59 工件坐标系",
+      "category": "常用代码",
+      "level": "intermediate",
+      "core": true
+    },
+    {
+      "id": "learn-g17-g18-g19",
+      "title": "G17 / G18 / G19 平面选择",
+      "category": "G代码编程",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "learn-g41-g42",
+      "title": "G41 / G42 刀具补偿",
+      "category": "G代码编程",
+      "level": "beginner",
+      "core": true
+    },
+    {
+      "id": "learn-g43-g44-g49",
+      "title": "G43 / G44 / G49 刀长补偿",
+      "category": "G代码编程",
+      "level": "beginner",
+      "core": true
+    },
+    {
+      "id": "learn-g71-g72-g73",
+      "title": "G71 / G72 / G73 车床循环",
+      "category": "常用代码",
+      "level": "intermediate",
+      "core": false
+    },
+    {
+      "id": "learn-g81-g83",
+      "title": "G81 / G83 钻孔与啄钻循环",
+      "category": "常用代码",
+      "level": "intermediate",
+      "core": true
+    },
+    {
+      "id": "learn-g84",
+      "title": "G84 攻丝循环",
+      "category": "G代码编程",
+      "level": "beginner",
+      "core": true
+    },
+    {
+      "id": "fanuc-param-backup",
+      "title": "FANUC 参数备份与恢复",
+      "category": "FANUC参数",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "fanuc-rigid-tap",
+      "title": "FANUC 刚性攻丝编程与参数",
+      "category": "FANUC参数",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "alarm-servo",
+      "title": "伺服系统常见故障与排除",
+      "category": "报警排查",
+      "level": "advanced",
+      "core": false
+    },
+    {
+      "id": "alarm-spindle",
+      "title": "主轴常见故障与排除",
+      "category": "报警排查",
+      "level": "advanced",
+      "core": false
+    },
+    {
+      "id": "alarm-atc",
+      "title": "ATC 自动换刀故障诊断",
+      "category": "报警排查",
+      "level": "advanced",
+      "core": false
+    },
+    {
+      "id": "tool-life",
+      "title": "刀具寿命管理",
+      "category": "刀具工艺",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "tool-coating",
+      "title": "刀具涂层技术",
+      "category": "刀具工艺",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "material-stainless",
+      "title": "不锈钢加工完整方案",
+      "category": "材料加工",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "material-aluminum",
+      "title": "铝合金加工基础",
+      "category": "材料加工",
+      "level": "beginner",
+      "core": true
+    },
+    {
+      "id": "material-high-temp",
+      "title": "高温合金加工专项",
+      "category": "材料加工",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "case-thin-wall",
+      "title": "薄壁零件加工案例",
+      "category": "加工案例",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "case-axis",
+      "title": "车削阶梯轴案例",
+      "category": "加工案例",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "case-thread-part",
+      "title": "螺纹零件加工案例",
+      "category": "加工案例",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "quick-fanuc-param",
+      "title": "FANUC 参数修改速查",
+      "category": "速查图卡",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "quick-fanuc-alarm",
+      "title": "FANUC 报警代码速查表",
+      "category": "速查图卡",
+      "level": "advanced",
+      "core": false
+    },
+    {
+      "id": "quick-gcode",
+      "title": "G代码与编程速查",
+      "category": "速查图卡",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "quick-g96",
+      "title": "G96 恒线速速查表",
+      "category": "速查图卡",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "quick-thread",
+      "title": "螺纹与规格速查",
+      "category": "速查图卡",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "quick-measure",
+      "title": "量具使用速查表",
+      "category": "速查图卡",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "learn-program-structure",
+      "title": "程序结构与常见地址符",
+      "category": "入门基础",
+      "level": "beginner",
+      "core": true
+    },
+    {
+      "id": "machine-home-return",
+      "title": "回零操作与参考点概念",
+      "category": "机床操作",
+      "level": "beginner",
+      "core": true
+    },
+    {
+      "id": "machine-tool-setting",
+      "title": "FANUC 对刀完整操作流程",
+      "category": "机床操作",
+      "level": "beginner",
+      "core": true
+    },
+    {
+      "id": "machine-panel-english",
+      "title": "机床面板常见英文单词",
+      "category": "机床操作",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "g04-dwell",
+      "title": "G04 暂停指令",
+      "category": "常用代码",
+      "level": "intermediate",
+      "core": false
+    },
+    {
+      "id": "g20-g21-unit",
+      "title": "G20 / G21 英制与公制切换",
+      "category": "常用代码",
+      "level": "intermediate",
+      "core": true
+    },
+    {
+      "id": "g28-g29-reference",
+      "title": "G28 / G29 参考点返回",
+      "category": "常用代码",
+      "level": "intermediate",
+      "core": false
+    },
+    {
+      "id": "g00-g01-motion",
+      "title": "G00 / G01 快移与直线切削",
+      "category": "常用代码",
+      "level": "intermediate",
+      "core": true
+    },
+    {
+      "id": "g02-g03-arc",
+      "title": "G02 / G03 圆弧插补",
+      "category": "常用代码",
+      "level": "intermediate",
+      "core": true
+    },
+    {
+      "id": "g40-cancel-comp",
+      "title": "G40 取消刀补",
+      "category": "常用代码",
+      "level": "intermediate",
+      "core": false
+    },
+    {
+      "id": "g53-machine-coordinate",
+      "title": "G53 机床坐标调用",
+      "category": "常用代码",
+      "level": "intermediate",
+      "core": false
+    },
+    {
+      "id": "g94-g95-feed",
+      "title": "G94 / G95 进给方式",
+      "category": "常用代码",
+      "level": "intermediate",
+      "core": true
+    },
+    {
+      "id": "g76-thread-cycle",
+      "title": "G76 螺纹循环",
+      "category": "常用代码",
+      "level": "intermediate",
+      "core": false
+    },
+    {
+      "id": "g80-cancel-cycle",
+      "title": "G80 取消固定循环",
+      "category": "常用代码",
+      "level": "intermediate",
+      "core": false
+    },
+    {
+      "id": "g98-g99-return",
+      "title": "G98 / G99 返回平面",
+      "category": "常用代码",
+      "level": "intermediate",
+      "core": false
+    },
+    {
+      "id": "g96-g97-spindle",
+      "title": "G96 / G97 恒线速与固定转速",
+      "category": "常用代码",
+      "level": "intermediate",
+      "core": false
+    },
+    {
+      "id": "m30-program-end",
+      "title": "M30 程序结束与复位",
+      "category": "常用代码",
+      "level": "intermediate",
+      "core": false
+    },
+    {
+      "id": "m03-m04-m05",
+      "title": "M03 / M04 / M05 主轴控制",
+      "category": "常用代码",
+      "level": "intermediate",
+      "core": true
+    },
+    {
+      "id": "m06-tool-change",
+      "title": "M06 自动换刀",
+      "category": "常用代码",
+      "level": "intermediate",
+      "core": false
+    },
+    {
+      "id": "m08-m09-coolant",
+      "title": "M08 / M09 冷却液控制",
+      "category": "常用代码",
+      "level": "intermediate",
+      "core": false
+    },
+    {
+      "id": "m00-m01-stop",
+      "title": "M00 / M01 程序停止",
+      "category": "常用代码",
+      "level": "intermediate",
+      "core": false
+    },
+    {
+      "id": "fanuc-alarm-common",
+      "title": "FANUC 常见报警代码解析",
+      "category": "FANUC报警",
+      "level": "advanced",
+      "core": false
+    },
+    {
+      "id": "fault-limit-switch",
+      "title": "限位与超程类问题排查",
+      "category": "报警排查",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "fault-home-fail",
+      "title": "回不了零点时先查什么",
+      "category": "报警排查",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "fault-home-reference",
+      "title": "回零失败与参考点异常",
+      "category": "报警排查",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "process-allowance-basics",
+      "title": "粗加工 / 半精加工 / 精加工余量逻辑",
+      "category": "加工工艺",
+      "level": "beginner",
+      "core": true
+    },
+    {
+      "id": "process-surface-roughness",
+      "title": "表面粗糙度标准与选用",
+      "category": "加工工艺",
+      "level": "beginner",
+      "core": true
+    },
+    {
+      "id": "drawing-symbol",
+      "title": "图纸符号与尺寸标注入门",
+      "category": "图纸识读",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "tool-insert-brand",
+      "title": "刀具品牌与牌号认知入门",
+      "category": "刀具工艺",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "tool-drill-selection",
+      "title": "钻头选型与切削基础",
+      "category": "刀具工艺",
+      "level": "beginner",
+      "core": true
+    },
+    {
+      "id": "tool-thread-tap",
+      "title": "丝锥攻丝入门",
+      "category": "刀具工艺",
+      "level": "beginner",
+      "core": true
+    },
+    {
+      "id": "material-carbon-steel",
+      "title": "常见钢材加工基础",
+      "category": "材料加工",
+      "level": "beginner",
+      "core": true
+    },
+    {
+      "id": "material-plastic",
+      "title": "工程塑料加工特点",
+      "category": "材料加工",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "case-flange",
+      "title": "法兰盘加工案例",
+      "category": "加工案例",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "case-gear",
+      "title": "精密齿轮加工案例",
+      "category": "加工案例",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "quick-allowance-card",
+      "title": "加工余量标准速查表",
+      "category": "速查图卡",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "quick-insert-card",
+      "title": "刀片型号解读速查表",
+      "category": "速查图卡",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "quick-cutting-card",
+      "title": "切削参数速查",
+      "category": "速查图卡",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "learn-g20-g21",
+      "title": "G20 / G21 英制与公制切换",
+      "category": "G代码编程",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "learn-g28-g29",
+      "title": "G28 / G29 参考点返回",
+      "category": "G代码编程",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "learn-m03-m05",
+      "title": "M03 / M04 / M05 主轴控制",
+      "category": "G代码编程",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "learn-m06",
+      "title": "M06 自动换刀",
+      "category": "G代码编程",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "learn-m08-m09",
+      "title": "M08 / M09 冷却液控制",
+      "category": "G代码编程",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "learn-fanuc-alarm-common",
+      "title": "FANUC 常见报警代码解析",
+      "category": "FANUC报警",
+      "level": "advanced",
+      "core": false
+    },
+    {
+      "id": "calc-vc-rpm",
+      "title": "线速度、转速换算",
+      "category": "参数换算",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "calc-feed",
+      "title": "进给速度换算",
+      "category": "参数换算",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "calc-thread-pitch",
+      "title": "螺距与 TPI 换算",
+      "category": "参数换算",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "calc-radius-diameter",
+      "title": "半径与直径换算",
+      "category": "参数换算",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-coordinate",
+      "title": "坐标系教学配图提示词",
+      "category": "图解提示词",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-g02",
+      "title": "G02 / G03 圆弧配图提示词",
+      "category": "图解提示词",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-compensation",
+      "title": "刀补教学配图提示词",
+      "category": "图解提示词",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-cycle",
+      "title": "钻孔与攻丝循环提示词",
+      "category": "图解提示词",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-plane",
+      "title": "G17 / G18 / G19 平面提示词",
+      "category": "图解提示词",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-offset",
+      "title": "G54 / G59 工件坐标提示词",
+      "category": "图解提示词",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-home",
+      "title": "G28 回零与安全退刀提示词",
+      "category": "图解提示词",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-thread",
+      "title": "G76 螺纹循环提示词",
+      "category": "图解提示词",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-alarm",
+      "title": "报警排查流程提示词",
+      "category": "图解提示词",
+      "level": "advanced",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-gauge",
+      "title": "量具识别与读数提示词",
+      "category": "图解提示词",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-tool-life",
+      "title": "刀具寿命与涂层提示词",
+      "category": "图解提示词",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-tolerance",
+      "title": "公差与配合提示词",
+      "category": "图解提示词",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-roughness",
+      "title": "表面粗糙度提示词",
+      "category": "图解提示词",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-cutting",
+      "title": "切削参数提示词",
+      "category": "图解提示词",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-parameter-sheet",
+      "title": "现场参数速查提示词",
+      "category": "图解提示词",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-material",
+      "title": "材料切削与刀具选择提示词",
+      "category": "图解提示词",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-startup",
+      "title": "开机检查与安全准备提示词",
+      "category": "图解提示词",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-atc",
+      "title": "ATC 换刀与刀库提示词",
+      "category": "图解提示词",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-compensation-flow",
+      "title": "刀补流程与对刀提示词",
+      "category": "图解提示词",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-feed-mode",
+      "title": "G94 / G95 进给模式提示词",
+      "category": "图解提示词",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-return-plane",
+      "title": "G98 / G99 返回平面提示词",
+      "category": "图解提示词",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-unit-switch",
+      "title": "G20 / G21 单位切换提示词",
+      "category": "图解提示词",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-tool-length",
+      "title": "G43 / G49 刀长补偿提示词",
+      "category": "图解提示词",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-fixed-cycle",
+      "title": "G81 / G83 / G84 固定循环提示词",
+      "category": "图解提示词",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-alarm-servo",
+      "title": "伺服报警排查提示词",
+      "category": "图解提示词",
+      "level": "advanced",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-alarm-spindle",
+      "title": "主轴报警排查提示词",
+      "category": "图解提示词",
+      "level": "advanced",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-alarm-limit",
+      "title": "限位与超程报警提示词",
+      "category": "图解提示词",
+      "level": "advanced",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-home-fail",
+      "title": "回零失败与参考点异常提示词",
+      "category": "图解提示词",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-touchoff-fail",
+      "title": "对刀失败与基准异常提示词",
+      "category": "图解提示词",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-parameter-backup",
+      "title": "参数备份与初始化提示词",
+      "category": "图解提示词",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-home-parameter",
+      "title": "回零参数与参考点设定提示词",
+      "category": "图解提示词",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-init",
+      "title": "机床初始化与上电流程提示词",
+      "category": "图解提示词",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-high-risk-params",
+      "title": "高风险参数类别提示词",
+      "category": "图解提示词",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-init-checklist",
+      "title": "机床初始化检查清单提示词",
+      "category": "图解提示词",
+      "level": "beginner",
+      "core": false
+    },
+    {
+      "id": "diagram-prompt-alarm-overview",
+      "title": "报警总览与分类图卡提示词",
+      "category": "图解提示词",
+      "level": "advanced",
+      "core": false
+    }
+  ],
+  "edges": [
+    {
+      "from": "machine-home-return",
+      "to": "machine-tool-setting",
+      "type": "prerequisite",
+      "reason": "对刀操作必须在机械坐标轴回零（建立绝对机床基准）后进行才具有绝对物理意义。"
+    },
+    {
+      "from": "machine-tool-setting",
+      "to": "learn-g54-g59",
+      "type": "operation",
+      "reason": "对刀后测得的工件表面/边缘绝对物理位置必须存入 G54 坐标偏置寄存器以对齐图纸。"
+    },
+    {
+      "from": "learn-g54-g59",
+      "to": "learn-g43-g44-g49",
+      "type": "prerequisite",
+      "reason": "工件零点建立后，换刀加工必须配合 G43 刀长补偿以调入刀具的相对高度读数。"
+    },
+    {
+      "from": "learn-g43-g44-g49",
+      "to": "learn-program-structure",
+      "type": "next",
+      "reason": "对刀与刀长设定完成后，需静态排查 NC 代码中是否包含正确的 G54 与 G43 H 代码段。"
+    },
+    {
+      "from": "tool-drill-selection",
+      "to": "learn-g41-g42",
+      "type": "parameter",
+      "reason": "根据所选刀具的几何物理半径值，确定轮廓切削时 G41/G42 刀补寄存器（D代号）的参数写入。"
+    },
+    {
+      "from": "learn-g41-g42",
+      "to": "g40-cancel-comp",
+      "type": "operation",
+      "reason": "切削轮廓走向段结束后，必须指定 G40 取消半径补偿，以防退刀轨迹发生过切干涉。"
+    },
+    {
+      "from": "g40-cancel-comp",
+      "to": "process-allowance-basics",
+      "type": "case",
+      "reason": "取消补偿退刀后执行卡尺对位测量，核对首件实际表面余量是否符合后续精加工指标。"
+    },
+    {
+      "from": "learn-g17-g18-g19",
+      "to": "g02-g03-arc",
+      "type": "prerequisite",
+      "reason": "圆弧插补顺逆走向（G02/G03）与定位轴强依赖于当前工作平面（如 G17 对应 XY 平面）的选择。"
+    },
+    {
+      "from": "g02-g03-arc",
+      "to": "calc-radius-diameter",
+      "type": "parameter",
+      "reason": "圆弧插补中终点坐标与半径（R值或I/K向量）是圆周轨迹数学计算的直接参数。"
+    },
+    {
+      "from": "calc-radius-diameter",
+      "to": "learn-program-structure",
+      "type": "next",
+      "reason": "确定圆弧轮廓切入及中心偏置正确后，调入仿真模拟器进行首件刀路无碰撞校验。"
+    },
+    {
+      "from": "learn-g81-g83",
+      "to": "learn-g84",
+      "type": "compare",
+      "reason": "G81/G83 为钻底孔循环，G84 为丝锥攻丝循环，两者在孔系加工中属于前后承接工艺。"
+    },
+    {
+      "from": "learn-g84",
+      "to": "tool-thread-tap",
+      "type": "operation",
+      "reason": "攻丝执行前，必须针对底孔直径与螺距选择适配的螺旋槽或挤压丝锥以完成顺畅排屑。"
+    },
+    {
+      "from": "tool-thread-tap",
+      "to": "m08-m09-coolant",
+      "type": "tool",
+      "reason": "攻丝及孔系加工超过2倍径时，需强开冷却液或喷淋润滑油以防止丝锥粘刀发热损坏。"
+    },
+    {
+      "from": "m08-m09-coolant",
+      "to": "fault-limit-switch",
+      "type": "risk",
+      "reason": "冷却不力会导致排屑受阻，引起丝锥扭断崩刃，或进给轴伺服瞬时过载限位锁死。"
+    },
+    {
+      "from": "material-aluminum",
+      "to": "tool-drill-selection",
+      "type": "parameter",
+      "reason": "被加工材料的硬度与热变形特性，直接决定了刀片涂层材料与几何刃口（如前角）的选择。"
+    },
+    {
+      "from": "tool-drill-selection",
+      "to": "calc-vc-rpm",
+      "type": "parameter",
+      "reason": "根据刀片材质硬度与推荐的切削线速度 Vc，换算推荐的每分钟主轴物理转速 S。"
+    },
+    {
+      "from": "calc-vc-rpm",
+      "to": "calc-feed",
+      "type": "parameter",
+      "reason": "主轴转速 S 确定后，联立刀具齿数 Z 与每齿进给率 fz 算得每分钟轴向移动进给速度 F。"
+    },
+    {
+      "from": "calc-feed",
+      "to": "process-surface-roughness",
+      "type": "next",
+      "reason": "进给走刀速度与刀尖圆角半径是切削时残留面积高度（决定粗糙度 Ra/Rz）的直接函数。"
+    },
+    {
+      "from": "quick-fanuc-alarm",
+      "to": "fanuc-alarm-common",
+      "type": "alarm",
+      "reason": "操作面板抛出报警故障时，根据代号段划定程序错误、伺服过载或限位硬件大类。"
+    },
+    {
+      "from": "fanuc-alarm-common",
+      "to": "fault-limit-switch",
+      "type": "risk",
+      "reason": "确立故障大类后，前往电气柜或滑动极限开关排查是否触碰物理行程碰块。"
+    },
+    {
+      "from": "fault-limit-switch",
+      "to": "alarm-servo",
+      "type": "alarm",
+      "reason": "诊断限位正常后，按住操作柜上的超程释放键，手摇手轮反向移出超程区释放警报。"
+    },
+    {
+      "from": "learn-absolute-incremental",
+      "to": "learn-g54-g59",
+      "type": "compare",
+      "reason": "G90/G91 定义数值来源，而 G54 定义了数值的原点，两者在坐标定位中构成参考系配合。"
+    },
+    {
+      "from": "g94-g95-feed",
+      "to": "calc-feed",
+      "type": "parameter",
+      "reason": "进给速度换算工具直接支持 G94 每分钟进给与 G95 每转进给的数据变换计算。"
+    },
+    {
+      "from": "m03-m04-m05",
+      "to": "m08-m09-coolant",
+      "type": "operation",
+      "reason": "主轴启动切削常与冷却液喷淋开关同步动作，以确保切削刃口得到恒定控温。"
+    },
+    {
+      "from": "g20-g21-unit",
+      "to": "calc-thread-pitch",
+      "type": "compare",
+      "reason": "英公制转换直接影响每英寸牙数（TPI）与标准公制螺距（P）的计算核算。"
+    },
+    {
+      "from": "material-carbon-steel",
+      "to": "material-aluminum",
+      "type": "compare",
+      "reason": "钢件切削呈带状高热磨损，铝件则易发生粘刀熔焊，两者的转速与进给参数方案构成对比。"
+    },
+    {
+      "from": "process-allowance-basics",
+      "to": "process-surface-roughness",
+      "type": "next",
+      "reason": "粗加工控制几何精度，精加工在极小深度（ap）下切削以达到要求的表面粗糙度等级。"
+    },
+    {
+      "from": "learn-g54-g59",
+      "to": "learn-coordinate-system",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "learn-g54-g59",
+      "to": "g53-machine-coordinate",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "g00-g01-motion",
+      "to": "g02-g03-arc",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "g00-g01-motion",
+      "to": "g04-dwell",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "g00-g01-motion",
+      "to": "g94-g95-feed",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "g02-g03-arc",
+      "to": "g00-g01-motion",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "g02-g03-arc",
+      "to": "learn-g17-g18-g19",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "g02-g03-arc",
+      "to": "g40-cancel-comp",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "learn-g41-g42",
+      "to": "learn-absolute-incremental",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "learn-g41-g42",
+      "to": "process-allowance-basics",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "learn-g43-g44-g49",
+      "to": "learn-g54-g59",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "learn-g43-g44-g49",
+      "to": "machine-tool-setting",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "learn-g43-g44-g49",
+      "to": "m06-tool-change",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "learn-g81-g83",
+      "to": "g98-g99-return",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "learn-g81-g83",
+      "to": "g80-cancel-cycle",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "learn-g81-g83",
+      "to": "tool-drill-selection",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "learn-g84",
+      "to": "learn-g81-g83",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "learn-g84",
+      "to": "g80-cancel-cycle",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "learn-absolute-incremental",
+      "to": "learn-coordinate-system",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "learn-absolute-incremental",
+      "to": "g28-g29-reference",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "machine-tool-setting",
+      "to": "learn-coordinate-system",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "machine-tool-setting",
+      "to": "learn-g43-g44-g49",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "machine-tool-setting",
+      "to": "fault-limit-switch",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "machine-home-return",
+      "to": "g28-g29-reference",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "machine-home-return",
+      "to": "fault-home-fail",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "machine-home-return",
+      "to": "fault-home-reference",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "m03-m04-m05",
+      "to": "m30-program-end",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "m03-m04-m05",
+      "to": "g96-g97-spindle",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "g94-g95-feed",
+      "to": "g00-g01-motion",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "g94-g95-feed",
+      "to": "m03-m04-m05",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "material-aluminum",
+      "to": "process-allowance-basics",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "material-aluminum",
+      "to": "material-carbon-steel",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "process-allowance-basics",
+      "to": "learn-g41-g42",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "process-allowance-basics",
+      "to": "quick-allowance-card",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "learn-program-structure",
+      "to": "m30-program-end",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "learn-program-structure",
+      "to": "learn-absolute-incremental",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "learn-program-structure",
+      "to": "quick-gcode",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "g20-g21-unit",
+      "to": "learn-program-structure",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "g20-g21-unit",
+      "to": "learn-absolute-incremental",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "tool-drill-selection",
+      "to": "learn-g81-g83",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "tool-drill-selection",
+      "to": "tool-thread-tap",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "tool-drill-selection",
+      "to": "material-carbon-steel",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "tool-thread-tap",
+      "to": "learn-g84",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "tool-thread-tap",
+      "to": "tool-drill-selection",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "tool-thread-tap",
+      "to": "quick-thread",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "material-carbon-steel",
+      "to": "material-stainless",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "material-carbon-steel",
+      "to": "tool-insert-brand",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "process-surface-roughness",
+      "to": "process-allowance-basics",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "process-surface-roughness",
+      "to": "quick-allowance-card",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    },
+    {
+      "from": "process-surface-roughness",
+      "to": "quick-insert-card",
+      "type": "related",
+      "reason": "关联工艺概念推荐。操机与编程时应参照校验。"
+    }
+  ]
+}

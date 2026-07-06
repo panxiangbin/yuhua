@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+  <title>CNC Param QuickFinder · 移动端首页演示</title>
+  <style>
+    :root {
+      --primary: #0c2340; --primary-light: #1565c0; --accent: #2196f3;
+      --bg: #ffffff; --surface: #ffffff; --border: #e0e0e0;
+      --text-primary: #212121; --text-secondary: #616161; --text-tertiary: #9e9e9e;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.1);
+      --nav-height: 56px; --topbar-height: 44px;
+      --safe-top: env(safe-area-inset-top,0px); --safe-bottom: env(safe-area-inset-bottom,0px);
+      --font: -apple-system, BlinkMacSystemFont, "PingFang SC","Microsoft YaHei",sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: var(--font); background: var(--bg); color: var(--text-primary);
+      max-width: 450px; margin: 0 auto; min-height: 100vh;
+      padding-bottom: var(--nav-height); overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── 顶部工具栏 ── */
+    .top-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      height: calc(var(--topbar-height) + var(--safe-top));
+      padding-top: var(--safe-top); padding-left: 12px; padding-right: 12px;
+      background: rgba(255,255,255,0.9); backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 100;
+    }
+    .top-logo { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border: none; background: none; cursor: pointer; font-size: 22px; }
+    .top-title { font-size: 15px; font-weight: 600; color: var(--text-secondary); flex: 1; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .top-actions { display: flex; gap: 2px; }
+    .top-btn { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border: none; background: none; border-radius: 50%; font-size: 20px; cursor: pointer; transition: background 0.15s; }
+    .top-btn:active { background: rgba(0,0,0,0.06); }
+
+    /* ── 搜索区 ── */
+    .search-area { padding: 8px 16px; background: #fff; }
+    .search-trigger {
+      width: 100%; height: 44px; display: flex; align-items: center; gap: 10px;
+      padding: 0 18px; background: #f0f2f5; border: none; border-radius: 22px;
+      font-size: 16px; color: var(--text-tertiary); cursor: pointer; text-align: left;
+      transition: background 0.15s; font-family: var(--font);
+    }
+    .search-trigger:active { background: #e4e6eb; }
+    .search-icon { font-size: 18px; flex-shrink: 0; }
+
+    /* ── 快捷入口 ── */
+    .quick-section { padding: 4px 16px 12px; background: #fff; }
+    .section-title { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+    .section-more { font-size: 13px; color: var(--text-tertiary); border: none; background: none; cursor: pointer; padding: 4px 8px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .quick-entry {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      height: 80px; padding: 8px; border-radius: 12px; border: none; cursor: pointer;
+      transition: transform 0.12s; background: #f8f9fa;
+    }
+    .quick-entry:active { transform: scale(0.93); }
+    .entry-icon {
+      width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+      border-radius: 12px; font-size: 20px; margin-bottom: 5px; color: #fff;
+    }
+    .entry-label { font-size: 13px; font-weight: 500; color: var(--text-primary); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+
+    /* ── 最近查看 ── */
+    .recent-section { padding: 8px 16px 12px; background: #fff; }
+    .recent-scroll { display: flex; gap: 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 4px; }
+    .recent-scroll::-webkit-scrollbar { display: none; }
+    .recent-card {
+      flex: 0 0 120px; padding: 12px; border-radius: 12px; border: 1px solid var(--border);
+      background: var(--surface); cursor: pointer; transition: transform 0.12s; text-align: left;
+      box-shadow: var(--shadow-sm);
+    }
+    .recent-card:active { transform: scale(0.96); }
+    .recent-card-icon { font-size: 24px; margin-bottom: 6px; display: block; }
+    .recent-card-title { font-size: 13px; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
+    .recent-card-time { font-size: 11px; color: var(--text-tertiary); }
+
+    /* ── 推荐内容 ── */
+    .recommend-section { padding: 8px 16px 16px; background: #fff; }
+    .rec-item {
+      display: block; padding: 14px 16px; margin-bottom: 10px;
+      border-radius: 12px; background: var(--surface); border: 1px solid var(--border);
+      text-decoration: none; cursor: pointer; transition: transform 0.12s;
+      box-shadow: var(--shadow-sm);
+    }
+    .rec-item:active { transform: scale(0.98); }
+    .rec-title { font-size: 16px; font-weight: 500; color: var(--text-primary); margin-bottom: 4px; }
+    .rec-tags { font-size: 12px; color: var(--text-tertiary); margin-bottom: 4px; }
+    .rec-meta { font-size: 11px; color: var(--text-tertiary); display: flex; gap: 12px; }
+    .rec-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; background: #fff3e0; color: #e65100; }
+    .rec-empty { text-align: center; padding: 40px 0; color: var(--text-tertiary); font-size: 15px; }
+
+    /* ── 底部导航 ── */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: calc(var(--nav-height) + var(--safe-bottom));
+      padding-bottom: var(--safe-bottom);
+      max-width: 450px; margin: 0 auto;
+      background: rgba(255,255,255,0.94); backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex; justify-content: space-around; align-items: center;
+      border-top: 0.5px solid var(--border); z-index: 1000;
+    }
+    .nav-item {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      width: 60px; min-height: 44px; padding: 4px 0; border: none; background: none;
+      cursor: pointer; color: var(--text-tertiary); transition: color 0.15s;
+    }
+    .nav-item.active { color: var(--accent); }
+    .nav-item:active { opacity: 0.6; }
+    .nav-icon { font-size: 22px; line-height: 1; margin-bottom: 2px; }
+    .nav-label { font-size: 10px; line-height: 1; font-weight: 500; }
+
+    /* ── 骨架屏 ── */
+    .skeleton { background: linear-gradient(90deg,#e8e8e8 25%,#f5f5f5 37%,#e8e8e8 63%); background-size: 200% 100%; animation: sk 1.4s ease infinite; border-radius: 8px; }
+    @keyframes sk { 0% { background-position:200% 0 } 100% { background-position:-200% 0 } }
+
+    /* ── 暗色模式 ── */
+    [data-theme="dark"] {
+      --bg: #121212; --surface: #1e1e1e; --border: #333;
+      --text-primary: #e0e0e0; --text-secondary: #9e9e9e; --text-tertiary: #757575;
+    }
+    [data-theme="dark"] .top-bar { background: rgba(18,18,18,0.92); }
+    [data-theme="dark"] .search-area { background: #121212; }
+    [data-theme="dark"] .quick-section, [data-theme="dark"] .recent-section, [data-theme="dark"] .recommend-section { background: #121212; }
+    [data-theme="dark"] .quick-entry { background: #1e1e1e; }
+    [data-theme="dark"] .entry-label { color: #e0e0e0; }
+    [data-theme="dark"] .search-trigger { background: #2c2c2c; color: #757575; }
+    [data-theme="dark"] .recent-card { background: #1e1e1e; border-color: #333; }
+    [data-theme="dark"] .rec-item { background: #1e1e1e; border-color: #333; }
+    [data-theme="dark"] .bottom-nav { background: rgba(18,18,18,0.94); border-color: #333; }
+    [data-theme="dark"] .rec-badge { background: #3e2723; color: #ffcc80; }
+  </style>
+</head>
+<body>
+
+  <!-- 顶部工具栏 -->
+  <header class="top-bar" role="banner">
+    <button class="top-logo" aria-label="首页">🔧</button>
+    <span class="top-title">CNC QuickFinder</span>
+    <div class="top-actions">
+      <button class="top-btn" id="themeToggle" aria-label="切换主题">🌙</button>
+      <button class="top-btn" aria-label="设置">⚙️</button>
+    </div>
+  </header>
+
+  <!-- 搜索区 -->
+  <div class="search-area" role="search">
+    <button class="search-trigger" id="searchTrigger" aria-label="搜索">
+      <span class="search-icon">🔍</span>
+      <span>搜索G代码/刀具/材料/案例...</span>
+    </button>
+  </div>
+
+  <!-- 快捷入口 -->
+  <div class="quick-section">
+    <div class="section-title">
+      <span>快捷功能</span>
+      <button class="section-more" id="quickMore">更多 ›</button>
+    </div>
+    <div class="grid-4" id="quickGrid"></div>
+  </div>
+
+  <!-- 最近查看 -->
+  <div class="recent-section">
+    <div class="section-title">
+      <span>最近查看</span>
+      <button class="section-more" onclick="alert('浏览历史')">更多 ›</button>
+    </div>
+    <div class="recent-scroll" id="recentList"></div>
+  </div>
+
+  <!-- 推荐内容 -->
+  <div class="recommend-section">
+    <div class="section-title">
+      <span>推荐阅读</span>
+      <div style="display:flex;gap:12px;font-size:13px;color:var(--text-tertiary)">
+        <span style="color:var(--accent);font-weight:500">推荐</span>
+        <span>最新</span>
+        <span>热门</span>
+      </div>
+    </div>
+    <div id="recommendList"></div>
+  </div>
+
+  <!-- 底部导航 -->
+  <nav class="bottom-nav" role="tablist">
+    <button class="nav-item active" role="tab" aria-selected="true"><span class="nav-icon">🏠</span><span class="nav-label">首页</span></button>
+    <button class="nav-item" role="tab"><span class="nav-icon">📚</span><span class="nav-label">知识</span></button>
+    <button class="nav-item" role="tab"><span class="nav-icon">🎯</span><span class="nav-label">学习</span></button>
+    <button class="nav-item" role="tab"><span class="nav-icon">🔧</span><span class="nav-label">工具</span></button>
+    <button class="nav-item" role="tab"><span class="nav-icon">👤</span><span class="nav-label">我的</span></button>
+  </nav>
+
+  <script>
+    (function() {
+      // ── 快捷入口数据 ──
+      var ENTRIES = [
+        { icon:'G', label:'G代码', color:'#e74c3c' },
+        { icon:'M', label:'M代码', color:'#e67e22' },
+        { icon:'🔧', label:'刀具', color:'#3498db' },
+        { icon:'🎯', label:'对刀', color:'#9b59b6' },
+        { icon:'🔄', label:'工艺', color:'#1abc9c' },
+        { icon:'📋', label:'案例', color:'#e91e63' },
+        { icon:'📚', label:'学习', color:'#2980b9' },
+        { icon:'📐', label:'工具', color:'#34495e' }
+      ];
+
+      // ── 推荐数据 ──
+      var RECS = [
+        { title:'G00/G01快速定位与直线插补详解', tags:'G00 · G01 · 快速定位 · 直线插补', meta:'184 字', badge:'🔥 精选' },
+        { title:'FANUC G代码全集参考手册', tags:'FANUC · G代码 · 参考手册', meta:'25.1K 字', badge:'📖 深度' },
+        { title:'切削参数速查大全', tags:'切削 · 进给 · 转速 · 切深', meta:'18.1K 字', badge:'📖 深度' },
+        { title:'对刀操作完整指南', tags:'对刀 · 寻边 · 分中 · 刀补', meta:'8.2K 字', badge:'' },
+        { title:'UG NX数控编程完整指南', tags:'UG · NX · 编程 · CAM', meta:'18.4K 字', badge:'📖 深度' }
+      ];
+
+      var RECENT = [
+        { icon:'📄', title:'G02/G03圆弧插补', time:'5分钟前' },
+        { icon:'📄', title:'端铣刀选择指南', time:'23分钟前' },
+        { icon:'📄', title:'M代码大全', time:'1小时前' },
+        { icon:'📄', title:'FANUC系统操作', time:'3小时前' }
+      ];
+
+      // ── 渲染 ──
+      function renderQuick() {
+        var el = document.getElementById('quickGrid');
+        var html = '';
+        ENTRIES.forEach(function(e) {
+          html += '<button class="quick-entry" onclick="alert(\'导航到' + e.label + '\')">' +
+            '<div class="entry-icon" style="background:' + e.color + '">' + e.icon + '</div>' +
+            '<span class="entry-label">' + e.label + '</span></button>';
+        });
+        el.innerHTML = html;
+      }
+
+      function renderRecent() {
+        var el = document.getElementById('recentList');
+        var html = '';
+        RECENT.forEach(function(r) {
+          html += '<button class="recent-card" onclick="alert(\'查看' + r.title + '\')">' +
+            '<span class="recent-card-icon">' + r.icon + '</span>' +
+            '<div class="recent-card-title">' + r.title + '</div>' +
+            '<div class="recent-card-time">' + r.time + '</div></button>';
+        });
+        el.innerHTML = html;
+      }
+
+      function renderRecs() {
+        var el = document.getElementById('recommendList');
+        var html = '';
+        RECS.forEach(function(r) {
+          html += '<div class="rec-item" onclick="alert(\'查看' + r.title + '\')">' +
+            '<div class="rec-title">' + r.title + '</div>' +
+            '<div class="rec-tags">' + r.tags + '</div>' +
+            '<div class="rec-meta"><span>' + r.meta + '</span>' +
+            (r.badge ? '<span class="rec-badge">' + r.badge + '</span>' : '') + '</div></div>';
+        });
+        el.innerHTML = html;
+      }
+
+      // ── 搜索框交互 ──
+      document.getElementById('searchTrigger').addEventListener('click', function() {
+        alert('🔍 搜索页面 (覆盖层动画)');
+      });
+
+      // ── 更多快捷入口 ──
+      document.getElementById('quickMore').addEventListener('click', function() {
+        alert('展开更多快捷入口 (12个)');
+      });
+
+      // ── 暗色模式 ──
+      var themeToggle = document.getElementById('themeToggle');
+      var isDark = false;
+      themeToggle.addEventListener('click', function() {
+        isDark = !isDark;
+        document.documentElement.setAttribute('data-theme', isDark ? 'dark' : '');
+        themeToggle.textContent = isDark ? '☀️' : '🌙';
+      });
+
+      // ── 底部导航 ──
+      document.querySelectorAll('.nav-item').forEach(function(item) {
+        item.addEventListener('click', function() {
+          document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+          this.classList.add('active');
+        });
+      });
+
+      renderQuick();
+      renderRecent();
+      renderRecs();
+    })();
+  </script>
+</body>
+</html>

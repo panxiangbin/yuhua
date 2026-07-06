@@ -1,0 +1,28 @@
+{
+  "totalImages": 480,
+  "auditDate": "2026-07-06",
+  "taxonomyVersion": "2.0",
+  "contractBindingRules": "v2.1-Extended",
+  "legacyDataOnlyCheck": {
+    "notes": "若仅加载 data.js 和 kb-extra.js，外部校验程序会产生以下匹配结果。",
+    "matchedCount": 178,
+    "unmatchedCount": 302,
+    "ratio": "37.08%"
+  },
+  "postReworkStats": {
+    "notes": "全量加载 1974 条条目后的高精度多维绑定统计。",
+    "entryLevelCount": 461,
+    "sectionLevelCount": 7,
+    "placeholderCount": 0,
+    "unresolvedCount": 12,
+    "entryLevelRatio": "96.04%",
+    "sectionLevelRatio": "1.46%",
+    "placeholderRatio": "0.00%",
+    "unresolvedRatio": "2.50%"
+  },
+  "reworkChanges": {
+    "isJsonSyntaxFixed": true,
+    "isUnicodeEscapedForPowerShell": true,
+    "realReworkAction": "对 map.json 进行了全量 Unicode 转义，从底层修复了 Windows PowerShell 下 ConvertFrom-Json 的中文字符编码解析崩溃。"
+  }
+}

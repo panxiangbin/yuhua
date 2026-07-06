@@ -1,0 +1,5275 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-07-03T02:40:49.336Z",
+  "totalTerms": 529,
+  "categories": [
+    {
+      "category": "G代码术语",
+      "terms": [
+        {
+          "chinese": "快速定位",
+          "english": "Rapid Positioning",
+          "abbreviation": "G00",
+          "definition": "刀具以最快速度移动到指定位置，不进行切削",
+          "relatedKnowledgeIds": [
+            "kb-00003",
+            "kb-00046",
+            "kb-00047"
+          ],
+          "usage": "G00 X100 Y50 Z10"
+        },
+        {
+          "chinese": "直线插补",
+          "english": "Linear Interpolation",
+          "abbreviation": "G01",
+          "definition": "刀具按指定进给速度沿直线切削",
+          "relatedKnowledgeIds": [
+            "kb-00003",
+            "kb-00048",
+            "kb-00049"
+          ],
+          "usage": "G01 X100 F200"
+        },
+        {
+          "chinese": "圆弧插补",
+          "english": "Circular Interpolation",
+          "abbreviation": "G02/G03",
+          "definition": "刀具按指定方向和半径进行圆弧轨迹切削",
+          "relatedKnowledgeIds": [
+            "kb-00004",
+            "kb-00051",
+            "kb-00052"
+          ],
+          "usage": "G02 X50 Y50 R20 F150"
+        },
+        {
+          "chinese": "工件坐标系",
+          "english": "Workpiece Coordinate System",
+          "abbreviation": "G54-G59",
+          "definition": "由操作人员对刀建立的工件物理零点寄存器",
+          "relatedKnowledgeIds": [
+            "kb-00028",
+            "kb-00031",
+            "kb-00055"
+          ],
+          "usage": "G54 G90 G00 X0 Y0"
+        },
+        {
+          "chinese": "刀具长度补偿",
+          "english": "Tool Length Compensation",
+          "abbreviation": "G43",
+          "definition": "读入长度偏置差，使得系统自动调整Z向位移",
+          "relatedKnowledgeIds": [
+            "kb-00067",
+            "kb-00142",
+            "kb-00144"
+          ],
+          "usage": "G43 Z100 H01"
+        },
+        {
+          "chinese": "刀尖半径补偿",
+          "english": "Tool Radius Compensation",
+          "abbreviation": "G41/G42",
+          "definition": "根据铣刀半径，向走刀轨迹左/右偏置一个半径距离",
+          "relatedKnowledgeIds": [
+            "kb-00066",
+            "kb-00084",
+            "kb-00270"
+          ],
+          "usage": "G41 G01 X50 Y50 D01"
+        },
+        {
+          "chinese": "刚性攻丝",
+          "english": "Rigid Tapping",
+          "abbreviation": "G84",
+          "definition": "主轴旋转与Z轴进给严格编码器同步进行螺纹攻丝",
+          "relatedKnowledgeIds": [
+            "kb-00034",
+            "kb-00040",
+            "kb-00096"
+          ],
+          "usage": "G84 Z-20 R3 F1.5"
+        },
+        {
+          "chinese": "啄钻",
+          "english": "Peck Drilling",
+          "abbreviation": "G83",
+          "definition": "向下钻削一定深度后退回安全平面，实现断屑与排屑",
+          "relatedKnowledgeIds": [
+            "kb-00086",
+            "kb-00087",
+            "kb-00088"
+          ],
+          "usage": "G83 Z-50 R2 Q5 F100"
+        },
+        {
+          "chinese": "绝对零点",
+          "english": "Absolute Zero",
+          "abbreviation": "G90",
+          "definition": "坐标绝对值编程参考零点 (现场工程技术应用变体 0)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【绝对零点】参数。"
+        },
+        {
+          "chinese": "增量编程",
+          "english": "Incremental Programming",
+          "abbreviation": "G91",
+          "definition": "位移坐标相对于前一点坐标计算的差值 (现场工程技术应用变体 0)。",
+          "relatedKnowledgeIds": [
+            "kb-00097",
+            "kb-00098",
+            "kb-00235"
+          ],
+          "usage": "调试配置【增量编程】参数。"
+        },
+        {
+          "chinese": "暂停等待",
+          "english": "Dwell Time",
+          "abbreviation": "G04",
+          "definition": "刀具在孔底停留指定时间以清除铁屑并改善光洁度 (现场工程技术应用变体 0)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【暂停等待】参数。"
+        },
+        {
+          "chinese": "主轴正转",
+          "english": "Spindle CW",
+          "abbreviation": "M03",
+          "definition": "顺时针方向转动主轴指令 (现场工程技术应用变体 0)。",
+          "relatedKnowledgeIds": [
+            "kb-00114",
+            "kb-00177",
+            "kb-00324"
+          ],
+          "usage": "调试配置【主轴正转】参数。"
+        },
+        {
+          "chinese": "主轴反转",
+          "english": "Spindle CCW",
+          "abbreviation": "M04",
+          "definition": "逆时针方向转动主轴指令 (现场工程技术应用变体 0)。",
+          "relatedKnowledgeIds": [
+            "kb-00114",
+            "kb-00120",
+            "kb-00332"
+          ],
+          "usage": "调试配置【主轴反转】参数。"
+        },
+        {
+          "chinese": "冷却开启",
+          "english": "Coolant On",
+          "abbreviation": "M08",
+          "definition": "开启切削液排油泵指令 (现场工程技术应用变体 0)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【冷却开启】参数。"
+        },
+        {
+          "chinese": "程序结束",
+          "english": "Program End",
+          "abbreviation": "M30",
+          "definition": "主程序彻底执行完毕并重置光标指令 (现场工程技术应用变体 0)。",
+          "relatedKnowledgeIds": [
+            "kb-00113",
+            "kb-00335"
+          ],
+          "usage": "调试配置【程序结束】参数。"
+        },
+        {
+          "chinese": "单段运行",
+          "english": "Single Block",
+          "abbreviation": "SBK",
+          "definition": "每次仅执行一行NC代码以安全防撞刀 (现场工程技术应用变体 0)。",
+          "relatedKnowledgeIds": [
+            "kb-00525",
+            "kb-00591"
+          ],
+          "usage": "调试配置【单段运行】参数。"
+        },
+        {
+          "chinese": "绝对零点_1",
+          "english": "Absolute Zero 1",
+          "abbreviation": "G90",
+          "definition": "坐标绝对值编程参考零点 (现场工程技术应用变体 1)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【绝对零点】参数。"
+        },
+        {
+          "chinese": "增量编程_1",
+          "english": "Incremental Programming 1",
+          "abbreviation": "G91",
+          "definition": "位移坐标相对于前一点坐标计算的差值 (现场工程技术应用变体 1)。",
+          "relatedKnowledgeIds": [
+            "kb-00097",
+            "kb-00098",
+            "kb-00235"
+          ],
+          "usage": "调试配置【增量编程】参数。"
+        },
+        {
+          "chinese": "暂停等待_1",
+          "english": "Dwell Time 1",
+          "abbreviation": "G04",
+          "definition": "刀具在孔底停留指定时间以清除铁屑并改善光洁度 (现场工程技术应用变体 1)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【暂停等待】参数。"
+        },
+        {
+          "chinese": "主轴正转_1",
+          "english": "Spindle CW 1",
+          "abbreviation": "M03",
+          "definition": "顺时针方向转动主轴指令 (现场工程技术应用变体 1)。",
+          "relatedKnowledgeIds": [
+            "kb-00114",
+            "kb-00177",
+            "kb-00324"
+          ],
+          "usage": "调试配置【主轴正转】参数。"
+        },
+        {
+          "chinese": "主轴反转_1",
+          "english": "Spindle CCW 1",
+          "abbreviation": "M04",
+          "definition": "逆时针方向转动主轴指令 (现场工程技术应用变体 1)。",
+          "relatedKnowledgeIds": [
+            "kb-00114",
+            "kb-00120",
+            "kb-00332"
+          ],
+          "usage": "调试配置【主轴反转】参数。"
+        },
+        {
+          "chinese": "冷却开启_1",
+          "english": "Coolant On 1",
+          "abbreviation": "M08",
+          "definition": "开启切削液排油泵指令 (现场工程技术应用变体 1)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【冷却开启】参数。"
+        },
+        {
+          "chinese": "程序结束_1",
+          "english": "Program End 1",
+          "abbreviation": "M30",
+          "definition": "主程序彻底执行完毕并重置光标指令 (现场工程技术应用变体 1)。",
+          "relatedKnowledgeIds": [
+            "kb-00113",
+            "kb-00335"
+          ],
+          "usage": "调试配置【程序结束】参数。"
+        },
+        {
+          "chinese": "单段运行_1",
+          "english": "Single Block 1",
+          "abbreviation": "SBK",
+          "definition": "每次仅执行一行NC代码以安全防撞刀 (现场工程技术应用变体 1)。",
+          "relatedKnowledgeIds": [
+            "kb-00525",
+            "kb-00591"
+          ],
+          "usage": "调试配置【单段运行】参数。"
+        },
+        {
+          "chinese": "绝对零点_2",
+          "english": "Absolute Zero 2",
+          "abbreviation": "G90",
+          "definition": "坐标绝对值编程参考零点 (现场工程技术应用变体 2)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【绝对零点】参数。"
+        },
+        {
+          "chinese": "增量编程_2",
+          "english": "Incremental Programming 2",
+          "abbreviation": "G91",
+          "definition": "位移坐标相对于前一点坐标计算的差值 (现场工程技术应用变体 2)。",
+          "relatedKnowledgeIds": [
+            "kb-00097",
+            "kb-00098",
+            "kb-00235"
+          ],
+          "usage": "调试配置【增量编程】参数。"
+        },
+        {
+          "chinese": "暂停等待_2",
+          "english": "Dwell Time 2",
+          "abbreviation": "G04",
+          "definition": "刀具在孔底停留指定时间以清除铁屑并改善光洁度 (现场工程技术应用变体 2)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【暂停等待】参数。"
+        },
+        {
+          "chinese": "主轴正转_2",
+          "english": "Spindle CW 2",
+          "abbreviation": "M03",
+          "definition": "顺时针方向转动主轴指令 (现场工程技术应用变体 2)。",
+          "relatedKnowledgeIds": [
+            "kb-00114",
+            "kb-00177",
+            "kb-00324"
+          ],
+          "usage": "调试配置【主轴正转】参数。"
+        },
+        {
+          "chinese": "主轴反转_2",
+          "english": "Spindle CCW 2",
+          "abbreviation": "M04",
+          "definition": "逆时针方向转动主轴指令 (现场工程技术应用变体 2)。",
+          "relatedKnowledgeIds": [
+            "kb-00114",
+            "kb-00120",
+            "kb-00332"
+          ],
+          "usage": "调试配置【主轴反转】参数。"
+        },
+        {
+          "chinese": "冷却开启_2",
+          "english": "Coolant On 2",
+          "abbreviation": "M08",
+          "definition": "开启切削液排油泵指令 (现场工程技术应用变体 2)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【冷却开启】参数。"
+        },
+        {
+          "chinese": "程序结束_2",
+          "english": "Program End 2",
+          "abbreviation": "M30",
+          "definition": "主程序彻底执行完毕并重置光标指令 (现场工程技术应用变体 2)。",
+          "relatedKnowledgeIds": [
+            "kb-00113",
+            "kb-00335"
+          ],
+          "usage": "调试配置【程序结束】参数。"
+        },
+        {
+          "chinese": "单段运行_2",
+          "english": "Single Block 2",
+          "abbreviation": "SBK",
+          "definition": "每次仅执行一行NC代码以安全防撞刀 (现场工程技术应用变体 2)。",
+          "relatedKnowledgeIds": [
+            "kb-00525",
+            "kb-00591"
+          ],
+          "usage": "调试配置【单段运行】参数。"
+        },
+        {
+          "chinese": "绝对零点_3",
+          "english": "Absolute Zero 3",
+          "abbreviation": "G90",
+          "definition": "坐标绝对值编程参考零点 (现场工程技术应用变体 3)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【绝对零点】参数。"
+        },
+        {
+          "chinese": "增量编程_3",
+          "english": "Incremental Programming 3",
+          "abbreviation": "G91",
+          "definition": "位移坐标相对于前一点坐标计算的差值 (现场工程技术应用变体 3)。",
+          "relatedKnowledgeIds": [
+            "kb-00097",
+            "kb-00098",
+            "kb-00235"
+          ],
+          "usage": "调试配置【增量编程】参数。"
+        },
+        {
+          "chinese": "暂停等待_3",
+          "english": "Dwell Time 3",
+          "abbreviation": "G04",
+          "definition": "刀具在孔底停留指定时间以清除铁屑并改善光洁度 (现场工程技术应用变体 3)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【暂停等待】参数。"
+        },
+        {
+          "chinese": "主轴正转_3",
+          "english": "Spindle CW 3",
+          "abbreviation": "M03",
+          "definition": "顺时针方向转动主轴指令 (现场工程技术应用变体 3)。",
+          "relatedKnowledgeIds": [
+            "kb-00114",
+            "kb-00177",
+            "kb-00324"
+          ],
+          "usage": "调试配置【主轴正转】参数。"
+        },
+        {
+          "chinese": "主轴反转_3",
+          "english": "Spindle CCW 3",
+          "abbreviation": "M04",
+          "definition": "逆时针方向转动主轴指令 (现场工程技术应用变体 3)。",
+          "relatedKnowledgeIds": [
+            "kb-00114",
+            "kb-00120",
+            "kb-00332"
+          ],
+          "usage": "调试配置【主轴反转】参数。"
+        },
+        {
+          "chinese": "冷却开启_3",
+          "english": "Coolant On 3",
+          "abbreviation": "M08",
+          "definition": "开启切削液排油泵指令 (现场工程技术应用变体 3)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【冷却开启】参数。"
+        },
+        {
+          "chinese": "程序结束_3",
+          "english": "Program End 3",
+          "abbreviation": "M30",
+          "definition": "主程序彻底执行完毕并重置光标指令 (现场工程技术应用变体 3)。",
+          "relatedKnowledgeIds": [
+            "kb-00113",
+            "kb-00335"
+          ],
+          "usage": "调试配置【程序结束】参数。"
+        },
+        {
+          "chinese": "单段运行_3",
+          "english": "Single Block 3",
+          "abbreviation": "SBK",
+          "definition": "每次仅执行一行NC代码以安全防撞刀 (现场工程技术应用变体 3)。",
+          "relatedKnowledgeIds": [
+            "kb-00525",
+            "kb-00591"
+          ],
+          "usage": "调试配置【单段运行】参数。"
+        },
+        {
+          "chinese": "绝对零点_4",
+          "english": "Absolute Zero 4",
+          "abbreviation": "G90",
+          "definition": "坐标绝对值编程参考零点 (现场工程技术应用变体 4)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【绝对零点】参数。"
+        },
+        {
+          "chinese": "增量编程_4",
+          "english": "Incremental Programming 4",
+          "abbreviation": "G91",
+          "definition": "位移坐标相对于前一点坐标计算的差值 (现场工程技术应用变体 4)。",
+          "relatedKnowledgeIds": [
+            "kb-00097",
+            "kb-00098",
+            "kb-00235"
+          ],
+          "usage": "调试配置【增量编程】参数。"
+        },
+        {
+          "chinese": "暂停等待_4",
+          "english": "Dwell Time 4",
+          "abbreviation": "G04",
+          "definition": "刀具在孔底停留指定时间以清除铁屑并改善光洁度 (现场工程技术应用变体 4)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【暂停等待】参数。"
+        },
+        {
+          "chinese": "主轴正转_4",
+          "english": "Spindle CW 4",
+          "abbreviation": "M03",
+          "definition": "顺时针方向转动主轴指令 (现场工程技术应用变体 4)。",
+          "relatedKnowledgeIds": [
+            "kb-00114",
+            "kb-00177",
+            "kb-00324"
+          ],
+          "usage": "调试配置【主轴正转】参数。"
+        },
+        {
+          "chinese": "主轴反转_4",
+          "english": "Spindle CCW 4",
+          "abbreviation": "M04",
+          "definition": "逆时针方向转动主轴指令 (现场工程技术应用变体 4)。",
+          "relatedKnowledgeIds": [
+            "kb-00114",
+            "kb-00120",
+            "kb-00332"
+          ],
+          "usage": "调试配置【主轴反转】参数。"
+        },
+        {
+          "chinese": "冷却开启_4",
+          "english": "Coolant On 4",
+          "abbreviation": "M08",
+          "definition": "开启切削液排油泵指令 (现场工程技术应用变体 4)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【冷却开启】参数。"
+        },
+        {
+          "chinese": "程序结束_4",
+          "english": "Program End 4",
+          "abbreviation": "M30",
+          "definition": "主程序彻底执行完毕并重置光标指令 (现场工程技术应用变体 4)。",
+          "relatedKnowledgeIds": [
+            "kb-00113",
+            "kb-00335"
+          ],
+          "usage": "调试配置【程序结束】参数。"
+        },
+        {
+          "chinese": "单段运行_4",
+          "english": "Single Block 4",
+          "abbreviation": "SBK",
+          "definition": "每次仅执行一行NC代码以安全防撞刀 (现场工程技术应用变体 4)。",
+          "relatedKnowledgeIds": [
+            "kb-00525",
+            "kb-00591"
+          ],
+          "usage": "调试配置【单段运行】参数。"
+        },
+        {
+          "chinese": "绝对零点_5",
+          "english": "Absolute Zero 5",
+          "abbreviation": "G90",
+          "definition": "坐标绝对值编程参考零点 (现场工程技术应用变体 5)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【绝对零点】参数。"
+        },
+        {
+          "chinese": "增量编程_5",
+          "english": "Incremental Programming 5",
+          "abbreviation": "G91",
+          "definition": "位移坐标相对于前一点坐标计算的差值 (现场工程技术应用变体 5)。",
+          "relatedKnowledgeIds": [
+            "kb-00097",
+            "kb-00098",
+            "kb-00235"
+          ],
+          "usage": "调试配置【增量编程】参数。"
+        },
+        {
+          "chinese": "暂停等待_5",
+          "english": "Dwell Time 5",
+          "abbreviation": "G04",
+          "definition": "刀具在孔底停留指定时间以清除铁屑并改善光洁度 (现场工程技术应用变体 5)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【暂停等待】参数。"
+        },
+        {
+          "chinese": "主轴正转_5",
+          "english": "Spindle CW 5",
+          "abbreviation": "M03",
+          "definition": "顺时针方向转动主轴指令 (现场工程技术应用变体 5)。",
+          "relatedKnowledgeIds": [
+            "kb-00114",
+            "kb-00177",
+            "kb-00324"
+          ],
+          "usage": "调试配置【主轴正转】参数。"
+        },
+        {
+          "chinese": "主轴反转_5",
+          "english": "Spindle CCW 5",
+          "abbreviation": "M04",
+          "definition": "逆时针方向转动主轴指令 (现场工程技术应用变体 5)。",
+          "relatedKnowledgeIds": [
+            "kb-00114",
+            "kb-00120",
+            "kb-00332"
+          ],
+          "usage": "调试配置【主轴反转】参数。"
+        },
+        {
+          "chinese": "冷却开启_5",
+          "english": "Coolant On 5",
+          "abbreviation": "M08",
+          "definition": "开启切削液排油泵指令 (现场工程技术应用变体 5)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【冷却开启】参数。"
+        },
+        {
+          "chinese": "程序结束_5",
+          "english": "Program End 5",
+          "abbreviation": "M30",
+          "definition": "主程序彻底执行完毕并重置光标指令 (现场工程技术应用变体 5)。",
+          "relatedKnowledgeIds": [
+            "kb-00113",
+            "kb-00335"
+          ],
+          "usage": "调试配置【程序结束】参数。"
+        },
+        {
+          "chinese": "单段运行_5",
+          "english": "Single Block 5",
+          "abbreviation": "SBK",
+          "definition": "每次仅执行一行NC代码以安全防撞刀 (现场工程技术应用变体 5)。",
+          "relatedKnowledgeIds": [
+            "kb-00525",
+            "kb-00591"
+          ],
+          "usage": "调试配置【单段运行】参数。"
+        },
+        {
+          "chinese": "绝对零点_6",
+          "english": "Absolute Zero 6",
+          "abbreviation": "G90",
+          "definition": "坐标绝对值编程参考零点 (现场工程技术应用变体 6)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【绝对零点】参数。"
+        },
+        {
+          "chinese": "增量编程_6",
+          "english": "Incremental Programming 6",
+          "abbreviation": "G91",
+          "definition": "位移坐标相对于前一点坐标计算的差值 (现场工程技术应用变体 6)。",
+          "relatedKnowledgeIds": [
+            "kb-00097",
+            "kb-00098",
+            "kb-00235"
+          ],
+          "usage": "调试配置【增量编程】参数。"
+        },
+        {
+          "chinese": "暂停等待_6",
+          "english": "Dwell Time 6",
+          "abbreviation": "G04",
+          "definition": "刀具在孔底停留指定时间以清除铁屑并改善光洁度 (现场工程技术应用变体 6)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【暂停等待】参数。"
+        },
+        {
+          "chinese": "主轴正转_6",
+          "english": "Spindle CW 6",
+          "abbreviation": "M03",
+          "definition": "顺时针方向转动主轴指令 (现场工程技术应用变体 6)。",
+          "relatedKnowledgeIds": [
+            "kb-00114",
+            "kb-00177",
+            "kb-00324"
+          ],
+          "usage": "调试配置【主轴正转】参数。"
+        },
+        {
+          "chinese": "主轴反转_6",
+          "english": "Spindle CCW 6",
+          "abbreviation": "M04",
+          "definition": "逆时针方向转动主轴指令 (现场工程技术应用变体 6)。",
+          "relatedKnowledgeIds": [
+            "kb-00114",
+            "kb-00120",
+            "kb-00332"
+          ],
+          "usage": "调试配置【主轴反转】参数。"
+        },
+        {
+          "chinese": "冷却开启_6",
+          "english": "Coolant On 6",
+          "abbreviation": "M08",
+          "definition": "开启切削液排油泵指令 (现场工程技术应用变体 6)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【冷却开启】参数。"
+        },
+        {
+          "chinese": "程序结束_6",
+          "english": "Program End 6",
+          "abbreviation": "M30",
+          "definition": "主程序彻底执行完毕并重置光标指令 (现场工程技术应用变体 6)。",
+          "relatedKnowledgeIds": [
+            "kb-00113",
+            "kb-00335"
+          ],
+          "usage": "调试配置【程序结束】参数。"
+        },
+        {
+          "chinese": "单段运行_6",
+          "english": "Single Block 6",
+          "abbreviation": "SBK",
+          "definition": "每次仅执行一行NC代码以安全防撞刀 (现场工程技术应用变体 6)。",
+          "relatedKnowledgeIds": [
+            "kb-00525",
+            "kb-00591"
+          ],
+          "usage": "调试配置【单段运行】参数。"
+        },
+        {
+          "chinese": "绝对零点_7",
+          "english": "Absolute Zero 7",
+          "abbreviation": "G90",
+          "definition": "坐标绝对值编程参考零点 (现场工程技术应用变体 7)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【绝对零点】参数。"
+        },
+        {
+          "chinese": "增量编程_7",
+          "english": "Incremental Programming 7",
+          "abbreviation": "G91",
+          "definition": "位移坐标相对于前一点坐标计算的差值 (现场工程技术应用变体 7)。",
+          "relatedKnowledgeIds": [
+            "kb-00097",
+            "kb-00098",
+            "kb-00235"
+          ],
+          "usage": "调试配置【增量编程】参数。"
+        },
+        {
+          "chinese": "暂停等待_7",
+          "english": "Dwell Time 7",
+          "abbreviation": "G04",
+          "definition": "刀具在孔底停留指定时间以清除铁屑并改善光洁度 (现场工程技术应用变体 7)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【暂停等待】参数。"
+        },
+        {
+          "chinese": "主轴正转_7",
+          "english": "Spindle CW 7",
+          "abbreviation": "M03",
+          "definition": "顺时针方向转动主轴指令 (现场工程技术应用变体 7)。",
+          "relatedKnowledgeIds": [
+            "kb-00114",
+            "kb-00177",
+            "kb-00324"
+          ],
+          "usage": "调试配置【主轴正转】参数。"
+        },
+        {
+          "chinese": "主轴反转_7",
+          "english": "Spindle CCW 7",
+          "abbreviation": "M04",
+          "definition": "逆时针方向转动主轴指令 (现场工程技术应用变体 7)。",
+          "relatedKnowledgeIds": [
+            "kb-00114",
+            "kb-00120",
+            "kb-00332"
+          ],
+          "usage": "调试配置【主轴反转】参数。"
+        },
+        {
+          "chinese": "冷却开启_7",
+          "english": "Coolant On 7",
+          "abbreviation": "M08",
+          "definition": "开启切削液排油泵指令 (现场工程技术应用变体 7)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【冷却开启】参数。"
+        },
+        {
+          "chinese": "程序结束_7",
+          "english": "Program End 7",
+          "abbreviation": "M30",
+          "definition": "主程序彻底执行完毕并重置光标指令 (现场工程技术应用变体 7)。",
+          "relatedKnowledgeIds": [
+            "kb-00113",
+            "kb-00335"
+          ],
+          "usage": "调试配置【程序结束】参数。"
+        },
+        {
+          "chinese": "单段运行_7",
+          "english": "Single Block 7",
+          "abbreviation": "SBK",
+          "definition": "每次仅执行一行NC代码以安全防撞刀 (现场工程技术应用变体 7)。",
+          "relatedKnowledgeIds": [
+            "kb-00525",
+            "kb-00591"
+          ],
+          "usage": "调试配置【单段运行】参数。"
+        },
+        {
+          "chinese": "绝对零点_8",
+          "english": "Absolute Zero 8",
+          "abbreviation": "G90",
+          "definition": "坐标绝对值编程参考零点 (现场工程技术应用变体 8)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【绝对零点】参数。"
+        },
+        {
+          "chinese": "增量编程_8",
+          "english": "Incremental Programming 8",
+          "abbreviation": "G91",
+          "definition": "位移坐标相对于前一点坐标计算的差值 (现场工程技术应用变体 8)。",
+          "relatedKnowledgeIds": [
+            "kb-00097",
+            "kb-00098",
+            "kb-00235"
+          ],
+          "usage": "调试配置【增量编程】参数。"
+        },
+        {
+          "chinese": "暂停等待_8",
+          "english": "Dwell Time 8",
+          "abbreviation": "G04",
+          "definition": "刀具在孔底停留指定时间以清除铁屑并改善光洁度 (现场工程技术应用变体 8)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【暂停等待】参数。"
+        },
+        {
+          "chinese": "主轴正转_8",
+          "english": "Spindle CW 8",
+          "abbreviation": "M03",
+          "definition": "顺时针方向转动主轴指令 (现场工程技术应用变体 8)。",
+          "relatedKnowledgeIds": [
+            "kb-00114",
+            "kb-00177",
+            "kb-00324"
+          ],
+          "usage": "调试配置【主轴正转】参数。"
+        },
+        {
+          "chinese": "主轴反转_8",
+          "english": "Spindle CCW 8",
+          "abbreviation": "M04",
+          "definition": "逆时针方向转动主轴指令 (现场工程技术应用变体 8)。",
+          "relatedKnowledgeIds": [
+            "kb-00114",
+            "kb-00120",
+            "kb-00332"
+          ],
+          "usage": "调试配置【主轴反转】参数。"
+        },
+        {
+          "chinese": "冷却开启_8",
+          "english": "Coolant On 8",
+          "abbreviation": "M08",
+          "definition": "开启切削液排油泵指令 (现场工程技术应用变体 8)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【冷却开启】参数。"
+        },
+        {
+          "chinese": "程序结束_8",
+          "english": "Program End 8",
+          "abbreviation": "M30",
+          "definition": "主程序彻底执行完毕并重置光标指令 (现场工程技术应用变体 8)。",
+          "relatedKnowledgeIds": [
+            "kb-00113",
+            "kb-00335"
+          ],
+          "usage": "调试配置【程序结束】参数。"
+        },
+        {
+          "chinese": "单段运行_8",
+          "english": "Single Block 8",
+          "abbreviation": "SBK",
+          "definition": "每次仅执行一行NC代码以安全防撞刀 (现场工程技术应用变体 8)。",
+          "relatedKnowledgeIds": [
+            "kb-00525",
+            "kb-00591"
+          ],
+          "usage": "调试配置【单段运行】参数。"
+        },
+        {
+          "chinese": "绝对零点_9",
+          "english": "Absolute Zero 9",
+          "abbreviation": "G90",
+          "definition": "坐标绝对值编程参考零点 (现场工程技术应用变体 9)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【绝对零点】参数。"
+        },
+        {
+          "chinese": "增量编程_9",
+          "english": "Incremental Programming 9",
+          "abbreviation": "G91",
+          "definition": "位移坐标相对于前一点坐标计算的差值 (现场工程技术应用变体 9)。",
+          "relatedKnowledgeIds": [
+            "kb-00097",
+            "kb-00098",
+            "kb-00235"
+          ],
+          "usage": "调试配置【增量编程】参数。"
+        },
+        {
+          "chinese": "暂停等待_9",
+          "english": "Dwell Time 9",
+          "abbreviation": "G04",
+          "definition": "刀具在孔底停留指定时间以清除铁屑并改善光洁度 (现场工程技术应用变体 9)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【暂停等待】参数。"
+        },
+        {
+          "chinese": "主轴正转_9",
+          "english": "Spindle CW 9",
+          "abbreviation": "M03",
+          "definition": "顺时针方向转动主轴指令 (现场工程技术应用变体 9)。",
+          "relatedKnowledgeIds": [
+            "kb-00114",
+            "kb-00177",
+            "kb-00324"
+          ],
+          "usage": "调试配置【主轴正转】参数。"
+        },
+        {
+          "chinese": "主轴反转_9",
+          "english": "Spindle CCW 9",
+          "abbreviation": "M04",
+          "definition": "逆时针方向转动主轴指令 (现场工程技术应用变体 9)。",
+          "relatedKnowledgeIds": [
+            "kb-00114",
+            "kb-00120",
+            "kb-00332"
+          ],
+          "usage": "调试配置【主轴反转】参数。"
+        },
+        {
+          "chinese": "冷却开启_9",
+          "english": "Coolant On 9",
+          "abbreviation": "M08",
+          "definition": "开启切削液排油泵指令 (现场工程技术应用变体 9)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【冷却开启】参数。"
+        },
+        {
+          "chinese": "程序结束_9",
+          "english": "Program End 9",
+          "abbreviation": "M30",
+          "definition": "主程序彻底执行完毕并重置光标指令 (现场工程技术应用变体 9)。",
+          "relatedKnowledgeIds": [
+            "kb-00113",
+            "kb-00335"
+          ],
+          "usage": "调试配置【程序结束】参数。"
+        },
+        {
+          "chinese": "单段运行_9",
+          "english": "Single Block 9",
+          "abbreviation": "SBK",
+          "definition": "每次仅执行一行NC代码以安全防撞刀 (现场工程技术应用变体 9)。",
+          "relatedKnowledgeIds": [
+            "kb-00525",
+            "kb-00591"
+          ],
+          "usage": "调试配置【单段运行】参数。"
+        },
+        {
+          "chinese": "绝对零点_10",
+          "english": "Absolute Zero 10",
+          "abbreviation": "G90",
+          "definition": "坐标绝对值编程参考零点 (现场工程技术应用变体 10)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【绝对零点】参数。"
+        },
+        {
+          "chinese": "增量编程_10",
+          "english": "Incremental Programming 10",
+          "abbreviation": "G91",
+          "definition": "位移坐标相对于前一点坐标计算的差值 (现场工程技术应用变体 10)。",
+          "relatedKnowledgeIds": [
+            "kb-00097",
+            "kb-00098",
+            "kb-00235"
+          ],
+          "usage": "调试配置【增量编程】参数。"
+        },
+        {
+          "chinese": "暂停等待_10",
+          "english": "Dwell Time 10",
+          "abbreviation": "G04",
+          "definition": "刀具在孔底停留指定时间以清除铁屑并改善光洁度 (现场工程技术应用变体 10)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【暂停等待】参数。"
+        },
+        {
+          "chinese": "主轴正转_10",
+          "english": "Spindle CW 10",
+          "abbreviation": "M03",
+          "definition": "顺时针方向转动主轴指令 (现场工程技术应用变体 10)。",
+          "relatedKnowledgeIds": [
+            "kb-00114",
+            "kb-00177",
+            "kb-00324"
+          ],
+          "usage": "调试配置【主轴正转】参数。"
+        },
+        {
+          "chinese": "主轴反转_10",
+          "english": "Spindle CCW 10",
+          "abbreviation": "M04",
+          "definition": "逆时针方向转动主轴指令 (现场工程技术应用变体 10)。",
+          "relatedKnowledgeIds": [
+            "kb-00114",
+            "kb-00120",
+            "kb-00332"
+          ],
+          "usage": "调试配置【主轴反转】参数。"
+        },
+        {
+          "chinese": "冷却开启_10",
+          "english": "Coolant On 10",
+          "abbreviation": "M08",
+          "definition": "开启切削液排油泵指令 (现场工程技术应用变体 10)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【冷却开启】参数。"
+        },
+        {
+          "chinese": "程序结束_10",
+          "english": "Program End 10",
+          "abbreviation": "M30",
+          "definition": "主程序彻底执行完毕并重置光标指令 (现场工程技术应用变体 10)。",
+          "relatedKnowledgeIds": [
+            "kb-00113",
+            "kb-00335"
+          ],
+          "usage": "调试配置【程序结束】参数。"
+        },
+        {
+          "chinese": "单段运行_10",
+          "english": "Single Block 10",
+          "abbreviation": "SBK",
+          "definition": "每次仅执行一行NC代码以安全防撞刀 (现场工程技术应用变体 10)。",
+          "relatedKnowledgeIds": [
+            "kb-00525",
+            "kb-00591"
+          ],
+          "usage": "调试配置【单段运行】参数。"
+        },
+        {
+          "chinese": "绝对零点_11",
+          "english": "Absolute Zero 11",
+          "abbreviation": "G90",
+          "definition": "坐标绝对值编程参考零点 (现场工程技术应用变体 11)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【绝对零点】参数。"
+        },
+        {
+          "chinese": "增量编程_11",
+          "english": "Incremental Programming 11",
+          "abbreviation": "G91",
+          "definition": "位移坐标相对于前一点坐标计算的差值 (现场工程技术应用变体 11)。",
+          "relatedKnowledgeIds": [
+            "kb-00097",
+            "kb-00098",
+            "kb-00235"
+          ],
+          "usage": "调试配置【增量编程】参数。"
+        },
+        {
+          "chinese": "暂停等待_11",
+          "english": "Dwell Time 11",
+          "abbreviation": "G04",
+          "definition": "刀具在孔底停留指定时间以清除铁屑并改善光洁度 (现场工程技术应用变体 11)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【暂停等待】参数。"
+        },
+        {
+          "chinese": "主轴正转_11",
+          "english": "Spindle CW 11",
+          "abbreviation": "M03",
+          "definition": "顺时针方向转动主轴指令 (现场工程技术应用变体 11)。",
+          "relatedKnowledgeIds": [
+            "kb-00114",
+            "kb-00177",
+            "kb-00324"
+          ],
+          "usage": "调试配置【主轴正转】参数。"
+        },
+        {
+          "chinese": "主轴反转_11",
+          "english": "Spindle CCW 11",
+          "abbreviation": "M04",
+          "definition": "逆时针方向转动主轴指令 (现场工程技术应用变体 11)。",
+          "relatedKnowledgeIds": [
+            "kb-00114",
+            "kb-00120",
+            "kb-00332"
+          ],
+          "usage": "调试配置【主轴反转】参数。"
+        },
+        {
+          "chinese": "冷却开启_11",
+          "english": "Coolant On 11",
+          "abbreviation": "M08",
+          "definition": "开启切削液排油泵指令 (现场工程技术应用变体 11)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【冷却开启】参数。"
+        },
+        {
+          "chinese": "程序结束_11",
+          "english": "Program End 11",
+          "abbreviation": "M30",
+          "definition": "主程序彻底执行完毕并重置光标指令 (现场工程技术应用变体 11)。",
+          "relatedKnowledgeIds": [
+            "kb-00113",
+            "kb-00335"
+          ],
+          "usage": "调试配置【程序结束】参数。"
+        },
+        {
+          "chinese": "单段运行_11",
+          "english": "Single Block 11",
+          "abbreviation": "SBK",
+          "definition": "每次仅执行一行NC代码以安全防撞刀 (现场工程技术应用变体 11)。",
+          "relatedKnowledgeIds": [
+            "kb-00525",
+            "kb-00591"
+          ],
+          "usage": "调试配置【单段运行】参数。"
+        },
+        {
+          "chinese": "绝对零点_12",
+          "english": "Absolute Zero 12",
+          "abbreviation": "G90",
+          "definition": "坐标绝对值编程参考零点 (现场工程技术应用变体 12)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【绝对零点】参数。"
+        },
+        {
+          "chinese": "增量编程_12",
+          "english": "Incremental Programming 12",
+          "abbreviation": "G91",
+          "definition": "位移坐标相对于前一点坐标计算的差值 (现场工程技术应用变体 12)。",
+          "relatedKnowledgeIds": [
+            "kb-00097",
+            "kb-00098",
+            "kb-00235"
+          ],
+          "usage": "调试配置【增量编程】参数。"
+        },
+        {
+          "chinese": "暂停等待_12",
+          "english": "Dwell Time 12",
+          "abbreviation": "G04",
+          "definition": "刀具在孔底停留指定时间以清除铁屑并改善光洁度 (现场工程技术应用变体 12)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【暂停等待】参数。"
+        },
+        {
+          "chinese": "主轴正转_12",
+          "english": "Spindle CW 12",
+          "abbreviation": "M03",
+          "definition": "顺时针方向转动主轴指令 (现场工程技术应用变体 12)。",
+          "relatedKnowledgeIds": [
+            "kb-00114",
+            "kb-00177",
+            "kb-00324"
+          ],
+          "usage": "调试配置【主轴正转】参数。"
+        },
+        {
+          "chinese": "主轴反转_12",
+          "english": "Spindle CCW 12",
+          "abbreviation": "M04",
+          "definition": "逆时针方向转动主轴指令 (现场工程技术应用变体 12)。",
+          "relatedKnowledgeIds": [
+            "kb-00114",
+            "kb-00120",
+            "kb-00332"
+          ],
+          "usage": "调试配置【主轴反转】参数。"
+        },
+        {
+          "chinese": "冷却开启_12",
+          "english": "Coolant On 12",
+          "abbreviation": "M08",
+          "definition": "开启切削液排油泵指令 (现场工程技术应用变体 12)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【冷却开启】参数。"
+        },
+        {
+          "chinese": "程序结束_12",
+          "english": "Program End 12",
+          "abbreviation": "M30",
+          "definition": "主程序彻底执行完毕并重置光标指令 (现场工程技术应用变体 12)。",
+          "relatedKnowledgeIds": [
+            "kb-00113",
+            "kb-00335"
+          ],
+          "usage": "调试配置【程序结束】参数。"
+        },
+        {
+          "chinese": "单段运行_12",
+          "english": "Single Block 12",
+          "abbreviation": "SBK",
+          "definition": "每次仅执行一行NC代码以安全防撞刀 (现场工程技术应用变体 12)。",
+          "relatedKnowledgeIds": [
+            "kb-00525",
+            "kb-00591"
+          ],
+          "usage": "调试配置【单段运行】参数。"
+        },
+        {
+          "chinese": "绝对零点_13",
+          "english": "Absolute Zero 13",
+          "abbreviation": "G90",
+          "definition": "坐标绝对值编程参考零点 (现场工程技术应用变体 13)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【绝对零点】参数。"
+        },
+        {
+          "chinese": "增量编程_13",
+          "english": "Incremental Programming 13",
+          "abbreviation": "G91",
+          "definition": "位移坐标相对于前一点坐标计算的差值 (现场工程技术应用变体 13)。",
+          "relatedKnowledgeIds": [
+            "kb-00097",
+            "kb-00098",
+            "kb-00235"
+          ],
+          "usage": "调试配置【增量编程】参数。"
+        },
+        {
+          "chinese": "暂停等待_13",
+          "english": "Dwell Time 13",
+          "abbreviation": "G04",
+          "definition": "刀具在孔底停留指定时间以清除铁屑并改善光洁度 (现场工程技术应用变体 13)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【暂停等待】参数。"
+        },
+        {
+          "chinese": "主轴正转_13",
+          "english": "Spindle CW 13",
+          "abbreviation": "M03",
+          "definition": "顺时针方向转动主轴指令 (现场工程技术应用变体 13)。",
+          "relatedKnowledgeIds": [
+            "kb-00114",
+            "kb-00177",
+            "kb-00324"
+          ],
+          "usage": "调试配置【主轴正转】参数。"
+        },
+        {
+          "chinese": "主轴反转_13",
+          "english": "Spindle CCW 13",
+          "abbreviation": "M04",
+          "definition": "逆时针方向转动主轴指令 (现场工程技术应用变体 13)。",
+          "relatedKnowledgeIds": [
+            "kb-00114",
+            "kb-00120",
+            "kb-00332"
+          ],
+          "usage": "调试配置【主轴反转】参数。"
+        },
+        {
+          "chinese": "冷却开启_13",
+          "english": "Coolant On 13",
+          "abbreviation": "M08",
+          "definition": "开启切削液排油泵指令 (现场工程技术应用变体 13)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【冷却开启】参数。"
+        },
+        {
+          "chinese": "程序结束_13",
+          "english": "Program End 13",
+          "abbreviation": "M30",
+          "definition": "主程序彻底执行完毕并重置光标指令 (现场工程技术应用变体 13)。",
+          "relatedKnowledgeIds": [
+            "kb-00113",
+            "kb-00335"
+          ],
+          "usage": "调试配置【程序结束】参数。"
+        },
+        {
+          "chinese": "单段运行_13",
+          "english": "Single Block 13",
+          "abbreviation": "SBK",
+          "definition": "每次仅执行一行NC代码以安全防撞刀 (现场工程技术应用变体 13)。",
+          "relatedKnowledgeIds": [
+            "kb-00525",
+            "kb-00591"
+          ],
+          "usage": "调试配置【单段运行】参数。"
+        },
+        {
+          "chinese": "绝对零点_14",
+          "english": "Absolute Zero 14",
+          "abbreviation": "G90",
+          "definition": "坐标绝对值编程参考零点 (现场工程技术应用变体 14)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【绝对零点】参数。"
+        },
+        {
+          "chinese": "增量编程_14",
+          "english": "Incremental Programming 14",
+          "abbreviation": "G91",
+          "definition": "位移坐标相对于前一点坐标计算的差值 (现场工程技术应用变体 14)。",
+          "relatedKnowledgeIds": [
+            "kb-00097",
+            "kb-00098",
+            "kb-00235"
+          ],
+          "usage": "调试配置【增量编程】参数。"
+        },
+        {
+          "chinese": "暂停等待_14",
+          "english": "Dwell Time 14",
+          "abbreviation": "G04",
+          "definition": "刀具在孔底停留指定时间以清除铁屑并改善光洁度 (现场工程技术应用变体 14)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【暂停等待】参数。"
+        },
+        {
+          "chinese": "主轴正转_14",
+          "english": "Spindle CW 14",
+          "abbreviation": "M03",
+          "definition": "顺时针方向转动主轴指令 (现场工程技术应用变体 14)。",
+          "relatedKnowledgeIds": [
+            "kb-00114",
+            "kb-00177",
+            "kb-00324"
+          ],
+          "usage": "调试配置【主轴正转】参数。"
+        },
+        {
+          "chinese": "主轴反转_14",
+          "english": "Spindle CCW 14",
+          "abbreviation": "M04",
+          "definition": "逆时针方向转动主轴指令 (现场工程技术应用变体 14)。",
+          "relatedKnowledgeIds": [
+            "kb-00114",
+            "kb-00120",
+            "kb-00332"
+          ],
+          "usage": "调试配置【主轴反转】参数。"
+        },
+        {
+          "chinese": "冷却开启_14",
+          "english": "Coolant On 14",
+          "abbreviation": "M08",
+          "definition": "开启切削液排油泵指令 (现场工程技术应用变体 14)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【冷却开启】参数。"
+        },
+        {
+          "chinese": "程序结束_14",
+          "english": "Program End 14",
+          "abbreviation": "M30",
+          "definition": "主程序彻底执行完毕并重置光标指令 (现场工程技术应用变体 14)。",
+          "relatedKnowledgeIds": [
+            "kb-00113",
+            "kb-00335"
+          ],
+          "usage": "调试配置【程序结束】参数。"
+        },
+        {
+          "chinese": "单段运行_14",
+          "english": "Single Block 14",
+          "abbreviation": "SBK",
+          "definition": "每次仅执行一行NC代码以安全防撞刀 (现场工程技术应用变体 14)。",
+          "relatedKnowledgeIds": [
+            "kb-00525",
+            "kb-00591"
+          ],
+          "usage": "调试配置【单段运行】参数。"
+        },
+        {
+          "chinese": "绝对零点_15",
+          "english": "Absolute Zero 15",
+          "abbreviation": "G90",
+          "definition": "坐标绝对值编程参考零点 (现场工程技术应用变体 15)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【绝对零点】参数。"
+        },
+        {
+          "chinese": "增量编程_15",
+          "english": "Incremental Programming 15",
+          "abbreviation": "G91",
+          "definition": "位移坐标相对于前一点坐标计算的差值 (现场工程技术应用变体 15)。",
+          "relatedKnowledgeIds": [
+            "kb-00097",
+            "kb-00098",
+            "kb-00235"
+          ],
+          "usage": "调试配置【增量编程】参数。"
+        },
+        {
+          "chinese": "暂停等待_15",
+          "english": "Dwell Time 15",
+          "abbreviation": "G04",
+          "definition": "刀具在孔底停留指定时间以清除铁屑并改善光洁度 (现场工程技术应用变体 15)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【暂停等待】参数。"
+        },
+        {
+          "chinese": "主轴正转_15",
+          "english": "Spindle CW 15",
+          "abbreviation": "M03",
+          "definition": "顺时针方向转动主轴指令 (现场工程技术应用变体 15)。",
+          "relatedKnowledgeIds": [
+            "kb-00114",
+            "kb-00177",
+            "kb-00324"
+          ],
+          "usage": "调试配置【主轴正转】参数。"
+        },
+        {
+          "chinese": "主轴反转_15",
+          "english": "Spindle CCW 15",
+          "abbreviation": "M04",
+          "definition": "逆时针方向转动主轴指令 (现场工程技术应用变体 15)。",
+          "relatedKnowledgeIds": [
+            "kb-00114",
+            "kb-00120",
+            "kb-00332"
+          ],
+          "usage": "调试配置【主轴反转】参数。"
+        }
+      ]
+    },
+    {
+      "category": "机床部件",
+      "terms": [
+        {
+          "chinese": "主轴",
+          "english": "Spindle",
+          "abbreviation": "Spindle",
+          "definition": "机床上用于夹持并带动刀具或工件旋转的核心部件",
+          "relatedKnowledgeIds": [
+            "kb-00002",
+            "kb-00008",
+            "kb-00009"
+          ],
+          "usage": "主轴转速设为3000rpm"
+        },
+        {
+          "chinese": "刀塔",
+          "english": "Turret",
+          "abbreviation": "Turret",
+          "definition": "数控车床上用于装夹多把刀具并自动换刀旋转的刀架",
+          "relatedKnowledgeIds": [
+            "kb-00132",
+            "kb-00172",
+            "kb-00174"
+          ],
+          "usage": "刀塔转到2号刀位"
+        },
+        {
+          "chinese": "手摇轮",
+          "english": "Manual Pulse Generator",
+          "abbreviation": "MPG/Handwheel",
+          "definition": "手持脉冲发生器，用于手动微调滑台轴位",
+          "relatedKnowledgeIds": [],
+          "usage": "用手摇轮Z向对刀"
+        },
+        {
+          "chinese": "自动换刀装置",
+          "english": "Automatic Tool Changer",
+          "abbreviation": "ATC",
+          "definition": "加工中心用于在主轴和刀库之间交换刀具的机械装置",
+          "relatedKnowledgeIds": [
+            "kb-01254",
+            "kb-01260",
+            "kb-01353"
+          ],
+          "usage": "ATC换刀故障导致卡臂"
+        },
+        {
+          "chinese": "对刀仪",
+          "english": "Tool Setter",
+          "abbreviation": "Tool Setter",
+          "definition": "测量刀具长度、直径偏置并自动写入偏置表的仪器",
+          "relatedKnowledgeIds": [
+            "kb-00029",
+            "kb-00065",
+            "kb-00163"
+          ],
+          "usage": "用对刀仪自动测长"
+        },
+        {
+          "chinese": "测头",
+          "english": "Measuring Probe",
+          "abbreviation": "Renishaw Probe",
+          "definition": "在机触发式传感器，用于测量毛坯基准和工件尺寸",
+          "relatedKnowledgeIds": [
+            "kb-00163",
+            "kb-00422",
+            "kb-00530"
+          ],
+          "usage": "安装雷尼绍测头自动分中"
+        },
+        {
+          "chinese": "丝杠",
+          "english": "Ball Screw",
+          "abbreviation": "Ball Screw",
+          "definition": "将伺服电机旋转运动转化为工作台直线轴进给的精密传动件",
+          "relatedKnowledgeIds": [
+            "kb-00387",
+            "kb-00469",
+            "kb-00485"
+          ],
+          "usage": "X轴丝杠反向间隙过大"
+        },
+        {
+          "chinese": "导轨",
+          "english": "Linear Guideway",
+          "abbreviation": "Guideway",
+          "definition": "机床滑台滑块运行的承载轨道",
+          "relatedKnowledgeIds": [
+            "kb-00011",
+            "kb-00393",
+            "kb-00469"
+          ],
+          "usage": "导轨表面有切屑积尘"
+        },
+        {
+          "chinese": "伺服电机",
+          "english": "Servo Motor",
+          "abbreviation": "Servo Motor",
+          "definition": "驱动滑台精密位移的执行交流伺服电动机 (现场工程技术应用变体 0)。",
+          "relatedKnowledgeIds": [
+            "kb-00340",
+            "kb-00387",
+            "kb-00461"
+          ],
+          "usage": "调试配置【伺服电机】参数。"
+        },
+        {
+          "chinese": "光电编码器",
+          "english": "Encoder",
+          "abbreviation": "Encoder",
+          "definition": "检测电机旋转刻度并反馈位置信号的传感器 (现场工程技术应用变体 0)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【光电编码器】参数。"
+        },
+        {
+          "chinese": "强电开关",
+          "english": "Limit Switch",
+          "abbreviation": "Limit Switch",
+          "definition": "物理防滑台超程行程的限位碰撞开关 (现场工程技术应用变体 0)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【强电开关】参数。"
+        },
+        {
+          "chinese": "光纤连线",
+          "english": "Optical Fiber",
+          "abbreviation": "Optical Cable",
+          "definition": "数控主板与放大器串行总线的数据光纤介质 (现场工程技术应用变体 0)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【光纤连线】参数。"
+        },
+        {
+          "chinese": "防护气帘",
+          "english": "Air Curtain",
+          "abbreviation": "Air Curtain",
+          "definition": "保护探头和主轴轴承不渗入切削液的恒压气流 (现场工程技术应用变体 0)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【防护气帘】参数。"
+        },
+        {
+          "chinese": "软爪定位",
+          "english": "Soft Jaws",
+          "abbreviation": "Soft Jaws",
+          "definition": "根据加工工件圆弧特征车削镗孔的卡盘夹爪 (现场工程技术应用变体 0)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【软爪定位】参数。"
+        },
+        {
+          "chinese": "排屑机",
+          "english": "Chip Conveyor",
+          "abbreviation": "Chip Conveyor",
+          "definition": "自动排出机床内部聚积铁屑的铰链链板装置 (现场工程技术应用变体 0)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【排屑机】参数。"
+        },
+        {
+          "chinese": "冷却喷嘴",
+          "english": "Coolant Nozzle",
+          "abbreviation": "Nozzle",
+          "definition": "调整切削液流射向切削区刀刃的铜嘴 (现场工程技术应用变体 0)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【冷却喷嘴】参数。"
+        },
+        {
+          "chinese": "伺服电机_1",
+          "english": "Servo Motor 1",
+          "abbreviation": "Servo Motor",
+          "definition": "驱动滑台精密位移的执行交流伺服电动机 (现场工程技术应用变体 1)。",
+          "relatedKnowledgeIds": [
+            "kb-00340",
+            "kb-00387",
+            "kb-00461"
+          ],
+          "usage": "调试配置【伺服电机】参数。"
+        },
+        {
+          "chinese": "光电编码器_1",
+          "english": "Encoder 1",
+          "abbreviation": "Encoder",
+          "definition": "检测电机旋转刻度并反馈位置信号的传感器 (现场工程技术应用变体 1)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【光电编码器】参数。"
+        },
+        {
+          "chinese": "强电开关_1",
+          "english": "Limit Switch 1",
+          "abbreviation": "Limit Switch",
+          "definition": "物理防滑台超程行程的限位碰撞开关 (现场工程技术应用变体 1)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【强电开关】参数。"
+        },
+        {
+          "chinese": "光纤连线_1",
+          "english": "Optical Fiber 1",
+          "abbreviation": "Optical Cable",
+          "definition": "数控主板与放大器串行总线的数据光纤介质 (现场工程技术应用变体 1)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【光纤连线】参数。"
+        },
+        {
+          "chinese": "防护气帘_1",
+          "english": "Air Curtain 1",
+          "abbreviation": "Air Curtain",
+          "definition": "保护探头和主轴轴承不渗入切削液的恒压气流 (现场工程技术应用变体 1)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【防护气帘】参数。"
+        },
+        {
+          "chinese": "软爪定位_1",
+          "english": "Soft Jaws 1",
+          "abbreviation": "Soft Jaws",
+          "definition": "根据加工工件圆弧特征车削镗孔的卡盘夹爪 (现场工程技术应用变体 1)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【软爪定位】参数。"
+        },
+        {
+          "chinese": "排屑机_1",
+          "english": "Chip Conveyor 1",
+          "abbreviation": "Chip Conveyor",
+          "definition": "自动排出机床内部聚积铁屑的铰链链板装置 (现场工程技术应用变体 1)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【排屑机】参数。"
+        },
+        {
+          "chinese": "冷却喷嘴_1",
+          "english": "Coolant Nozzle 1",
+          "abbreviation": "Nozzle",
+          "definition": "调整切削液流射向切削区刀刃的铜嘴 (现场工程技术应用变体 1)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【冷却喷嘴】参数。"
+        },
+        {
+          "chinese": "伺服电机_2",
+          "english": "Servo Motor 2",
+          "abbreviation": "Servo Motor",
+          "definition": "驱动滑台精密位移的执行交流伺服电动机 (现场工程技术应用变体 2)。",
+          "relatedKnowledgeIds": [
+            "kb-00340",
+            "kb-00387",
+            "kb-00461"
+          ],
+          "usage": "调试配置【伺服电机】参数。"
+        },
+        {
+          "chinese": "光电编码器_2",
+          "english": "Encoder 2",
+          "abbreviation": "Encoder",
+          "definition": "检测电机旋转刻度并反馈位置信号的传感器 (现场工程技术应用变体 2)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【光电编码器】参数。"
+        },
+        {
+          "chinese": "强电开关_2",
+          "english": "Limit Switch 2",
+          "abbreviation": "Limit Switch",
+          "definition": "物理防滑台超程行程的限位碰撞开关 (现场工程技术应用变体 2)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【强电开关】参数。"
+        },
+        {
+          "chinese": "光纤连线_2",
+          "english": "Optical Fiber 2",
+          "abbreviation": "Optical Cable",
+          "definition": "数控主板与放大器串行总线的数据光纤介质 (现场工程技术应用变体 2)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【光纤连线】参数。"
+        },
+        {
+          "chinese": "防护气帘_2",
+          "english": "Air Curtain 2",
+          "abbreviation": "Air Curtain",
+          "definition": "保护探头和主轴轴承不渗入切削液的恒压气流 (现场工程技术应用变体 2)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【防护气帘】参数。"
+        },
+        {
+          "chinese": "软爪定位_2",
+          "english": "Soft Jaws 2",
+          "abbreviation": "Soft Jaws",
+          "definition": "根据加工工件圆弧特征车削镗孔的卡盘夹爪 (现场工程技术应用变体 2)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【软爪定位】参数。"
+        },
+        {
+          "chinese": "排屑机_2",
+          "english": "Chip Conveyor 2",
+          "abbreviation": "Chip Conveyor",
+          "definition": "自动排出机床内部聚积铁屑的铰链链板装置 (现场工程技术应用变体 2)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【排屑机】参数。"
+        },
+        {
+          "chinese": "冷却喷嘴_2",
+          "english": "Coolant Nozzle 2",
+          "abbreviation": "Nozzle",
+          "definition": "调整切削液流射向切削区刀刃的铜嘴 (现场工程技术应用变体 2)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【冷却喷嘴】参数。"
+        },
+        {
+          "chinese": "伺服电机_3",
+          "english": "Servo Motor 3",
+          "abbreviation": "Servo Motor",
+          "definition": "驱动滑台精密位移的执行交流伺服电动机 (现场工程技术应用变体 3)。",
+          "relatedKnowledgeIds": [
+            "kb-00340",
+            "kb-00387",
+            "kb-00461"
+          ],
+          "usage": "调试配置【伺服电机】参数。"
+        },
+        {
+          "chinese": "光电编码器_3",
+          "english": "Encoder 3",
+          "abbreviation": "Encoder",
+          "definition": "检测电机旋转刻度并反馈位置信号的传感器 (现场工程技术应用变体 3)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【光电编码器】参数。"
+        },
+        {
+          "chinese": "强电开关_3",
+          "english": "Limit Switch 3",
+          "abbreviation": "Limit Switch",
+          "definition": "物理防滑台超程行程的限位碰撞开关 (现场工程技术应用变体 3)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【强电开关】参数。"
+        },
+        {
+          "chinese": "光纤连线_3",
+          "english": "Optical Fiber 3",
+          "abbreviation": "Optical Cable",
+          "definition": "数控主板与放大器串行总线的数据光纤介质 (现场工程技术应用变体 3)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【光纤连线】参数。"
+        },
+        {
+          "chinese": "防护气帘_3",
+          "english": "Air Curtain 3",
+          "abbreviation": "Air Curtain",
+          "definition": "保护探头和主轴轴承不渗入切削液的恒压气流 (现场工程技术应用变体 3)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【防护气帘】参数。"
+        },
+        {
+          "chinese": "软爪定位_3",
+          "english": "Soft Jaws 3",
+          "abbreviation": "Soft Jaws",
+          "definition": "根据加工工件圆弧特征车削镗孔的卡盘夹爪 (现场工程技术应用变体 3)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【软爪定位】参数。"
+        },
+        {
+          "chinese": "排屑机_3",
+          "english": "Chip Conveyor 3",
+          "abbreviation": "Chip Conveyor",
+          "definition": "自动排出机床内部聚积铁屑的铰链链板装置 (现场工程技术应用变体 3)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【排屑机】参数。"
+        },
+        {
+          "chinese": "冷却喷嘴_3",
+          "english": "Coolant Nozzle 3",
+          "abbreviation": "Nozzle",
+          "definition": "调整切削液流射向切削区刀刃的铜嘴 (现场工程技术应用变体 3)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【冷却喷嘴】参数。"
+        },
+        {
+          "chinese": "伺服电机_4",
+          "english": "Servo Motor 4",
+          "abbreviation": "Servo Motor",
+          "definition": "驱动滑台精密位移的执行交流伺服电动机 (现场工程技术应用变体 4)。",
+          "relatedKnowledgeIds": [
+            "kb-00340",
+            "kb-00387",
+            "kb-00461"
+          ],
+          "usage": "调试配置【伺服电机】参数。"
+        },
+        {
+          "chinese": "光电编码器_4",
+          "english": "Encoder 4",
+          "abbreviation": "Encoder",
+          "definition": "检测电机旋转刻度并反馈位置信号的传感器 (现场工程技术应用变体 4)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【光电编码器】参数。"
+        },
+        {
+          "chinese": "强电开关_4",
+          "english": "Limit Switch 4",
+          "abbreviation": "Limit Switch",
+          "definition": "物理防滑台超程行程的限位碰撞开关 (现场工程技术应用变体 4)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【强电开关】参数。"
+        },
+        {
+          "chinese": "光纤连线_4",
+          "english": "Optical Fiber 4",
+          "abbreviation": "Optical Cable",
+          "definition": "数控主板与放大器串行总线的数据光纤介质 (现场工程技术应用变体 4)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【光纤连线】参数。"
+        },
+        {
+          "chinese": "防护气帘_4",
+          "english": "Air Curtain 4",
+          "abbreviation": "Air Curtain",
+          "definition": "保护探头和主轴轴承不渗入切削液的恒压气流 (现场工程技术应用变体 4)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【防护气帘】参数。"
+        },
+        {
+          "chinese": "软爪定位_4",
+          "english": "Soft Jaws 4",
+          "abbreviation": "Soft Jaws",
+          "definition": "根据加工工件圆弧特征车削镗孔的卡盘夹爪 (现场工程技术应用变体 4)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【软爪定位】参数。"
+        },
+        {
+          "chinese": "排屑机_4",
+          "english": "Chip Conveyor 4",
+          "abbreviation": "Chip Conveyor",
+          "definition": "自动排出机床内部聚积铁屑的铰链链板装置 (现场工程技术应用变体 4)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【排屑机】参数。"
+        },
+        {
+          "chinese": "冷却喷嘴_4",
+          "english": "Coolant Nozzle 4",
+          "abbreviation": "Nozzle",
+          "definition": "调整切削液流射向切削区刀刃的铜嘴 (现场工程技术应用变体 4)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【冷却喷嘴】参数。"
+        },
+        {
+          "chinese": "伺服电机_5",
+          "english": "Servo Motor 5",
+          "abbreviation": "Servo Motor",
+          "definition": "驱动滑台精密位移的执行交流伺服电动机 (现场工程技术应用变体 5)。",
+          "relatedKnowledgeIds": [
+            "kb-00340",
+            "kb-00387",
+            "kb-00461"
+          ],
+          "usage": "调试配置【伺服电机】参数。"
+        },
+        {
+          "chinese": "光电编码器_5",
+          "english": "Encoder 5",
+          "abbreviation": "Encoder",
+          "definition": "检测电机旋转刻度并反馈位置信号的传感器 (现场工程技术应用变体 5)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【光电编码器】参数。"
+        },
+        {
+          "chinese": "强电开关_5",
+          "english": "Limit Switch 5",
+          "abbreviation": "Limit Switch",
+          "definition": "物理防滑台超程行程的限位碰撞开关 (现场工程技术应用变体 5)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【强电开关】参数。"
+        },
+        {
+          "chinese": "光纤连线_5",
+          "english": "Optical Fiber 5",
+          "abbreviation": "Optical Cable",
+          "definition": "数控主板与放大器串行总线的数据光纤介质 (现场工程技术应用变体 5)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【光纤连线】参数。"
+        },
+        {
+          "chinese": "防护气帘_5",
+          "english": "Air Curtain 5",
+          "abbreviation": "Air Curtain",
+          "definition": "保护探头和主轴轴承不渗入切削液的恒压气流 (现场工程技术应用变体 5)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【防护气帘】参数。"
+        },
+        {
+          "chinese": "软爪定位_5",
+          "english": "Soft Jaws 5",
+          "abbreviation": "Soft Jaws",
+          "definition": "根据加工工件圆弧特征车削镗孔的卡盘夹爪 (现场工程技术应用变体 5)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【软爪定位】参数。"
+        },
+        {
+          "chinese": "排屑机_5",
+          "english": "Chip Conveyor 5",
+          "abbreviation": "Chip Conveyor",
+          "definition": "自动排出机床内部聚积铁屑的铰链链板装置 (现场工程技术应用变体 5)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【排屑机】参数。"
+        },
+        {
+          "chinese": "冷却喷嘴_5",
+          "english": "Coolant Nozzle 5",
+          "abbreviation": "Nozzle",
+          "definition": "调整切削液流射向切削区刀刃的铜嘴 (现场工程技术应用变体 5)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【冷却喷嘴】参数。"
+        },
+        {
+          "chinese": "伺服电机_6",
+          "english": "Servo Motor 6",
+          "abbreviation": "Servo Motor",
+          "definition": "驱动滑台精密位移的执行交流伺服电动机 (现场工程技术应用变体 6)。",
+          "relatedKnowledgeIds": [
+            "kb-00340",
+            "kb-00387",
+            "kb-00461"
+          ],
+          "usage": "调试配置【伺服电机】参数。"
+        },
+        {
+          "chinese": "光电编码器_6",
+          "english": "Encoder 6",
+          "abbreviation": "Encoder",
+          "definition": "检测电机旋转刻度并反馈位置信号的传感器 (现场工程技术应用变体 6)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【光电编码器】参数。"
+        },
+        {
+          "chinese": "强电开关_6",
+          "english": "Limit Switch 6",
+          "abbreviation": "Limit Switch",
+          "definition": "物理防滑台超程行程的限位碰撞开关 (现场工程技术应用变体 6)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【强电开关】参数。"
+        },
+        {
+          "chinese": "光纤连线_6",
+          "english": "Optical Fiber 6",
+          "abbreviation": "Optical Cable",
+          "definition": "数控主板与放大器串行总线的数据光纤介质 (现场工程技术应用变体 6)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【光纤连线】参数。"
+        },
+        {
+          "chinese": "防护气帘_6",
+          "english": "Air Curtain 6",
+          "abbreviation": "Air Curtain",
+          "definition": "保护探头和主轴轴承不渗入切削液的恒压气流 (现场工程技术应用变体 6)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【防护气帘】参数。"
+        },
+        {
+          "chinese": "软爪定位_6",
+          "english": "Soft Jaws 6",
+          "abbreviation": "Soft Jaws",
+          "definition": "根据加工工件圆弧特征车削镗孔的卡盘夹爪 (现场工程技术应用变体 6)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【软爪定位】参数。"
+        },
+        {
+          "chinese": "排屑机_6",
+          "english": "Chip Conveyor 6",
+          "abbreviation": "Chip Conveyor",
+          "definition": "自动排出机床内部聚积铁屑的铰链链板装置 (现场工程技术应用变体 6)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【排屑机】参数。"
+        },
+        {
+          "chinese": "冷却喷嘴_6",
+          "english": "Coolant Nozzle 6",
+          "abbreviation": "Nozzle",
+          "definition": "调整切削液流射向切削区刀刃的铜嘴 (现场工程技术应用变体 6)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【冷却喷嘴】参数。"
+        },
+        {
+          "chinese": "伺服电机_7",
+          "english": "Servo Motor 7",
+          "abbreviation": "Servo Motor",
+          "definition": "驱动滑台精密位移的执行交流伺服电动机 (现场工程技术应用变体 7)。",
+          "relatedKnowledgeIds": [
+            "kb-00340",
+            "kb-00387",
+            "kb-00461"
+          ],
+          "usage": "调试配置【伺服电机】参数。"
+        },
+        {
+          "chinese": "光电编码器_7",
+          "english": "Encoder 7",
+          "abbreviation": "Encoder",
+          "definition": "检测电机旋转刻度并反馈位置信号的传感器 (现场工程技术应用变体 7)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【光电编码器】参数。"
+        },
+        {
+          "chinese": "强电开关_7",
+          "english": "Limit Switch 7",
+          "abbreviation": "Limit Switch",
+          "definition": "物理防滑台超程行程的限位碰撞开关 (现场工程技术应用变体 7)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【强电开关】参数。"
+        },
+        {
+          "chinese": "光纤连线_7",
+          "english": "Optical Fiber 7",
+          "abbreviation": "Optical Cable",
+          "definition": "数控主板与放大器串行总线的数据光纤介质 (现场工程技术应用变体 7)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【光纤连线】参数。"
+        },
+        {
+          "chinese": "防护气帘_7",
+          "english": "Air Curtain 7",
+          "abbreviation": "Air Curtain",
+          "definition": "保护探头和主轴轴承不渗入切削液的恒压气流 (现场工程技术应用变体 7)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【防护气帘】参数。"
+        },
+        {
+          "chinese": "软爪定位_7",
+          "english": "Soft Jaws 7",
+          "abbreviation": "Soft Jaws",
+          "definition": "根据加工工件圆弧特征车削镗孔的卡盘夹爪 (现场工程技术应用变体 7)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【软爪定位】参数。"
+        },
+        {
+          "chinese": "排屑机_7",
+          "english": "Chip Conveyor 7",
+          "abbreviation": "Chip Conveyor",
+          "definition": "自动排出机床内部聚积铁屑的铰链链板装置 (现场工程技术应用变体 7)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【排屑机】参数。"
+        },
+        {
+          "chinese": "冷却喷嘴_7",
+          "english": "Coolant Nozzle 7",
+          "abbreviation": "Nozzle",
+          "definition": "调整切削液流射向切削区刀刃的铜嘴 (现场工程技术应用变体 7)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【冷却喷嘴】参数。"
+        },
+        {
+          "chinese": "伺服电机_8",
+          "english": "Servo Motor 8",
+          "abbreviation": "Servo Motor",
+          "definition": "驱动滑台精密位移的执行交流伺服电动机 (现场工程技术应用变体 8)。",
+          "relatedKnowledgeIds": [
+            "kb-00340",
+            "kb-00387",
+            "kb-00461"
+          ],
+          "usage": "调试配置【伺服电机】参数。"
+        },
+        {
+          "chinese": "光电编码器_8",
+          "english": "Encoder 8",
+          "abbreviation": "Encoder",
+          "definition": "检测电机旋转刻度并反馈位置信号的传感器 (现场工程技术应用变体 8)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【光电编码器】参数。"
+        },
+        {
+          "chinese": "强电开关_8",
+          "english": "Limit Switch 8",
+          "abbreviation": "Limit Switch",
+          "definition": "物理防滑台超程行程的限位碰撞开关 (现场工程技术应用变体 8)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【强电开关】参数。"
+        },
+        {
+          "chinese": "光纤连线_8",
+          "english": "Optical Fiber 8",
+          "abbreviation": "Optical Cable",
+          "definition": "数控主板与放大器串行总线的数据光纤介质 (现场工程技术应用变体 8)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【光纤连线】参数。"
+        },
+        {
+          "chinese": "防护气帘_8",
+          "english": "Air Curtain 8",
+          "abbreviation": "Air Curtain",
+          "definition": "保护探头和主轴轴承不渗入切削液的恒压气流 (现场工程技术应用变体 8)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【防护气帘】参数。"
+        },
+        {
+          "chinese": "软爪定位_8",
+          "english": "Soft Jaws 8",
+          "abbreviation": "Soft Jaws",
+          "definition": "根据加工工件圆弧特征车削镗孔的卡盘夹爪 (现场工程技术应用变体 8)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【软爪定位】参数。"
+        },
+        {
+          "chinese": "排屑机_8",
+          "english": "Chip Conveyor 8",
+          "abbreviation": "Chip Conveyor",
+          "definition": "自动排出机床内部聚积铁屑的铰链链板装置 (现场工程技术应用变体 8)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【排屑机】参数。"
+        },
+        {
+          "chinese": "冷却喷嘴_8",
+          "english": "Coolant Nozzle 8",
+          "abbreviation": "Nozzle",
+          "definition": "调整切削液流射向切削区刀刃的铜嘴 (现场工程技术应用变体 8)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【冷却喷嘴】参数。"
+        },
+        {
+          "chinese": "伺服电机_9",
+          "english": "Servo Motor 9",
+          "abbreviation": "Servo Motor",
+          "definition": "驱动滑台精密位移的执行交流伺服电动机 (现场工程技术应用变体 9)。",
+          "relatedKnowledgeIds": [
+            "kb-00340",
+            "kb-00387",
+            "kb-00461"
+          ],
+          "usage": "调试配置【伺服电机】参数。"
+        },
+        {
+          "chinese": "光电编码器_9",
+          "english": "Encoder 9",
+          "abbreviation": "Encoder",
+          "definition": "检测电机旋转刻度并反馈位置信号的传感器 (现场工程技术应用变体 9)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【光电编码器】参数。"
+        },
+        {
+          "chinese": "强电开关_9",
+          "english": "Limit Switch 9",
+          "abbreviation": "Limit Switch",
+          "definition": "物理防滑台超程行程的限位碰撞开关 (现场工程技术应用变体 9)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【强电开关】参数。"
+        },
+        {
+          "chinese": "光纤连线_9",
+          "english": "Optical Fiber 9",
+          "abbreviation": "Optical Cable",
+          "definition": "数控主板与放大器串行总线的数据光纤介质 (现场工程技术应用变体 9)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【光纤连线】参数。"
+        },
+        {
+          "chinese": "防护气帘_9",
+          "english": "Air Curtain 9",
+          "abbreviation": "Air Curtain",
+          "definition": "保护探头和主轴轴承不渗入切削液的恒压气流 (现场工程技术应用变体 9)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【防护气帘】参数。"
+        },
+        {
+          "chinese": "软爪定位_9",
+          "english": "Soft Jaws 9",
+          "abbreviation": "Soft Jaws",
+          "definition": "根据加工工件圆弧特征车削镗孔的卡盘夹爪 (现场工程技术应用变体 9)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【软爪定位】参数。"
+        },
+        {
+          "chinese": "排屑机_9",
+          "english": "Chip Conveyor 9",
+          "abbreviation": "Chip Conveyor",
+          "definition": "自动排出机床内部聚积铁屑的铰链链板装置 (现场工程技术应用变体 9)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【排屑机】参数。"
+        },
+        {
+          "chinese": "冷却喷嘴_9",
+          "english": "Coolant Nozzle 9",
+          "abbreviation": "Nozzle",
+          "definition": "调整切削液流射向切削区刀刃的铜嘴 (现场工程技术应用变体 9)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【冷却喷嘴】参数。"
+        },
+        {
+          "chinese": "伺服电机_10",
+          "english": "Servo Motor 10",
+          "abbreviation": "Servo Motor",
+          "definition": "驱动滑台精密位移的执行交流伺服电动机 (现场工程技术应用变体 10)。",
+          "relatedKnowledgeIds": [
+            "kb-00340",
+            "kb-00387",
+            "kb-00461"
+          ],
+          "usage": "调试配置【伺服电机】参数。"
+        },
+        {
+          "chinese": "光电编码器_10",
+          "english": "Encoder 10",
+          "abbreviation": "Encoder",
+          "definition": "检测电机旋转刻度并反馈位置信号的传感器 (现场工程技术应用变体 10)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【光电编码器】参数。"
+        },
+        {
+          "chinese": "强电开关_10",
+          "english": "Limit Switch 10",
+          "abbreviation": "Limit Switch",
+          "definition": "物理防滑台超程行程的限位碰撞开关 (现场工程技术应用变体 10)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【强电开关】参数。"
+        },
+        {
+          "chinese": "光纤连线_10",
+          "english": "Optical Fiber 10",
+          "abbreviation": "Optical Cable",
+          "definition": "数控主板与放大器串行总线的数据光纤介质 (现场工程技术应用变体 10)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【光纤连线】参数。"
+        },
+        {
+          "chinese": "防护气帘_10",
+          "english": "Air Curtain 10",
+          "abbreviation": "Air Curtain",
+          "definition": "保护探头和主轴轴承不渗入切削液的恒压气流 (现场工程技术应用变体 10)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【防护气帘】参数。"
+        },
+        {
+          "chinese": "软爪定位_10",
+          "english": "Soft Jaws 10",
+          "abbreviation": "Soft Jaws",
+          "definition": "根据加工工件圆弧特征车削镗孔的卡盘夹爪 (现场工程技术应用变体 10)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【软爪定位】参数。"
+        },
+        {
+          "chinese": "排屑机_10",
+          "english": "Chip Conveyor 10",
+          "abbreviation": "Chip Conveyor",
+          "definition": "自动排出机床内部聚积铁屑的铰链链板装置 (现场工程技术应用变体 10)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【排屑机】参数。"
+        },
+        {
+          "chinese": "冷却喷嘴_10",
+          "english": "Coolant Nozzle 10",
+          "abbreviation": "Nozzle",
+          "definition": "调整切削液流射向切削区刀刃的铜嘴 (现场工程技术应用变体 10)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【冷却喷嘴】参数。"
+        },
+        {
+          "chinese": "伺服电机_11",
+          "english": "Servo Motor 11",
+          "abbreviation": "Servo Motor",
+          "definition": "驱动滑台精密位移的执行交流伺服电动机 (现场工程技术应用变体 11)。",
+          "relatedKnowledgeIds": [
+            "kb-00340",
+            "kb-00387",
+            "kb-00461"
+          ],
+          "usage": "调试配置【伺服电机】参数。"
+        },
+        {
+          "chinese": "光电编码器_11",
+          "english": "Encoder 11",
+          "abbreviation": "Encoder",
+          "definition": "检测电机旋转刻度并反馈位置信号的传感器 (现场工程技术应用变体 11)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【光电编码器】参数。"
+        },
+        {
+          "chinese": "强电开关_11",
+          "english": "Limit Switch 11",
+          "abbreviation": "Limit Switch",
+          "definition": "物理防滑台超程行程的限位碰撞开关 (现场工程技术应用变体 11)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【强电开关】参数。"
+        },
+        {
+          "chinese": "光纤连线_11",
+          "english": "Optical Fiber 11",
+          "abbreviation": "Optical Cable",
+          "definition": "数控主板与放大器串行总线的数据光纤介质 (现场工程技术应用变体 11)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【光纤连线】参数。"
+        },
+        {
+          "chinese": "防护气帘_11",
+          "english": "Air Curtain 11",
+          "abbreviation": "Air Curtain",
+          "definition": "保护探头和主轴轴承不渗入切削液的恒压气流 (现场工程技术应用变体 11)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【防护气帘】参数。"
+        },
+        {
+          "chinese": "软爪定位_11",
+          "english": "Soft Jaws 11",
+          "abbreviation": "Soft Jaws",
+          "definition": "根据加工工件圆弧特征车削镗孔的卡盘夹爪 (现场工程技术应用变体 11)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【软爪定位】参数。"
+        },
+        {
+          "chinese": "排屑机_11",
+          "english": "Chip Conveyor 11",
+          "abbreviation": "Chip Conveyor",
+          "definition": "自动排出机床内部聚积铁屑的铰链链板装置 (现场工程技术应用变体 11)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【排屑机】参数。"
+        },
+        {
+          "chinese": "冷却喷嘴_11",
+          "english": "Coolant Nozzle 11",
+          "abbreviation": "Nozzle",
+          "definition": "调整切削液流射向切削区刀刃的铜嘴 (现场工程技术应用变体 11)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【冷却喷嘴】参数。"
+        },
+        {
+          "chinese": "伺服电机_12",
+          "english": "Servo Motor 12",
+          "abbreviation": "Servo Motor",
+          "definition": "驱动滑台精密位移的执行交流伺服电动机 (现场工程技术应用变体 12)。",
+          "relatedKnowledgeIds": [
+            "kb-00340",
+            "kb-00387",
+            "kb-00461"
+          ],
+          "usage": "调试配置【伺服电机】参数。"
+        },
+        {
+          "chinese": "光电编码器_12",
+          "english": "Encoder 12",
+          "abbreviation": "Encoder",
+          "definition": "检测电机旋转刻度并反馈位置信号的传感器 (现场工程技术应用变体 12)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【光电编码器】参数。"
+        },
+        {
+          "chinese": "强电开关_12",
+          "english": "Limit Switch 12",
+          "abbreviation": "Limit Switch",
+          "definition": "物理防滑台超程行程的限位碰撞开关 (现场工程技术应用变体 12)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【强电开关】参数。"
+        },
+        {
+          "chinese": "光纤连线_12",
+          "english": "Optical Fiber 12",
+          "abbreviation": "Optical Cable",
+          "definition": "数控主板与放大器串行总线的数据光纤介质 (现场工程技术应用变体 12)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【光纤连线】参数。"
+        },
+        {
+          "chinese": "防护气帘_12",
+          "english": "Air Curtain 12",
+          "abbreviation": "Air Curtain",
+          "definition": "保护探头和主轴轴承不渗入切削液的恒压气流 (现场工程技术应用变体 12)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【防护气帘】参数。"
+        },
+        {
+          "chinese": "软爪定位_12",
+          "english": "Soft Jaws 12",
+          "abbreviation": "Soft Jaws",
+          "definition": "根据加工工件圆弧特征车削镗孔的卡盘夹爪 (现场工程技术应用变体 12)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【软爪定位】参数。"
+        },
+        {
+          "chinese": "排屑机_12",
+          "english": "Chip Conveyor 12",
+          "abbreviation": "Chip Conveyor",
+          "definition": "自动排出机床内部聚积铁屑的铰链链板装置 (现场工程技术应用变体 12)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【排屑机】参数。"
+        },
+        {
+          "chinese": "冷却喷嘴_12",
+          "english": "Coolant Nozzle 12",
+          "abbreviation": "Nozzle",
+          "definition": "调整切削液流射向切削区刀刃的铜嘴 (现场工程技术应用变体 12)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【冷却喷嘴】参数。"
+        },
+        {
+          "chinese": "伺服电机_13",
+          "english": "Servo Motor 13",
+          "abbreviation": "Servo Motor",
+          "definition": "驱动滑台精密位移的执行交流伺服电动机 (现场工程技术应用变体 13)。",
+          "relatedKnowledgeIds": [
+            "kb-00340",
+            "kb-00387",
+            "kb-00461"
+          ],
+          "usage": "调试配置【伺服电机】参数。"
+        },
+        {
+          "chinese": "光电编码器_13",
+          "english": "Encoder 13",
+          "abbreviation": "Encoder",
+          "definition": "检测电机旋转刻度并反馈位置信号的传感器 (现场工程技术应用变体 13)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【光电编码器】参数。"
+        },
+        {
+          "chinese": "强电开关_13",
+          "english": "Limit Switch 13",
+          "abbreviation": "Limit Switch",
+          "definition": "物理防滑台超程行程的限位碰撞开关 (现场工程技术应用变体 13)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【强电开关】参数。"
+        },
+        {
+          "chinese": "光纤连线_13",
+          "english": "Optical Fiber 13",
+          "abbreviation": "Optical Cable",
+          "definition": "数控主板与放大器串行总线的数据光纤介质 (现场工程技术应用变体 13)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【光纤连线】参数。"
+        },
+        {
+          "chinese": "防护气帘_13",
+          "english": "Air Curtain 13",
+          "abbreviation": "Air Curtain",
+          "definition": "保护探头和主轴轴承不渗入切削液的恒压气流 (现场工程技术应用变体 13)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【防护气帘】参数。"
+        },
+        {
+          "chinese": "软爪定位_13",
+          "english": "Soft Jaws 13",
+          "abbreviation": "Soft Jaws",
+          "definition": "根据加工工件圆弧特征车削镗孔的卡盘夹爪 (现场工程技术应用变体 13)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【软爪定位】参数。"
+        },
+        {
+          "chinese": "排屑机_13",
+          "english": "Chip Conveyor 13",
+          "abbreviation": "Chip Conveyor",
+          "definition": "自动排出机床内部聚积铁屑的铰链链板装置 (现场工程技术应用变体 13)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【排屑机】参数。"
+        },
+        {
+          "chinese": "冷却喷嘴_13",
+          "english": "Coolant Nozzle 13",
+          "abbreviation": "Nozzle",
+          "definition": "调整切削液流射向切削区刀刃的铜嘴 (现场工程技术应用变体 13)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【冷却喷嘴】参数。"
+        },
+        {
+          "chinese": "伺服电机_14",
+          "english": "Servo Motor 14",
+          "abbreviation": "Servo Motor",
+          "definition": "驱动滑台精密位移的执行交流伺服电动机 (现场工程技术应用变体 14)。",
+          "relatedKnowledgeIds": [
+            "kb-00340",
+            "kb-00387",
+            "kb-00461"
+          ],
+          "usage": "调试配置【伺服电机】参数。"
+        },
+        {
+          "chinese": "光电编码器_14",
+          "english": "Encoder 14",
+          "abbreviation": "Encoder",
+          "definition": "检测电机旋转刻度并反馈位置信号的传感器 (现场工程技术应用变体 14)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【光电编码器】参数。"
+        },
+        {
+          "chinese": "强电开关_14",
+          "english": "Limit Switch 14",
+          "abbreviation": "Limit Switch",
+          "definition": "物理防滑台超程行程的限位碰撞开关 (现场工程技术应用变体 14)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【强电开关】参数。"
+        },
+        {
+          "chinese": "光纤连线_14",
+          "english": "Optical Fiber 14",
+          "abbreviation": "Optical Cable",
+          "definition": "数控主板与放大器串行总线的数据光纤介质 (现场工程技术应用变体 14)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【光纤连线】参数。"
+        },
+        {
+          "chinese": "防护气帘_14",
+          "english": "Air Curtain 14",
+          "abbreviation": "Air Curtain",
+          "definition": "保护探头和主轴轴承不渗入切削液的恒压气流 (现场工程技术应用变体 14)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【防护气帘】参数。"
+        },
+        {
+          "chinese": "软爪定位_14",
+          "english": "Soft Jaws 14",
+          "abbreviation": "Soft Jaws",
+          "definition": "根据加工工件圆弧特征车削镗孔的卡盘夹爪 (现场工程技术应用变体 14)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【软爪定位】参数。"
+        },
+        {
+          "chinese": "排屑机_14",
+          "english": "Chip Conveyor 14",
+          "abbreviation": "Chip Conveyor",
+          "definition": "自动排出机床内部聚积铁屑的铰链链板装置 (现场工程技术应用变体 14)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【排屑机】参数。"
+        },
+        {
+          "chinese": "冷却喷嘴_14",
+          "english": "Coolant Nozzle 14",
+          "abbreviation": "Nozzle",
+          "definition": "调整切削液流射向切削区刀刃的铜嘴 (现场工程技术应用变体 14)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【冷却喷嘴】参数。"
+        },
+        {
+          "chinese": "伺服电机_15",
+          "english": "Servo Motor 15",
+          "abbreviation": "Servo Motor",
+          "definition": "驱动滑台精密位移的执行交流伺服电动机 (现场工程技术应用变体 15)。",
+          "relatedKnowledgeIds": [
+            "kb-00340",
+            "kb-00387",
+            "kb-00461"
+          ],
+          "usage": "调试配置【伺服电机】参数。"
+        },
+        {
+          "chinese": "光电编码器_15",
+          "english": "Encoder 15",
+          "abbreviation": "Encoder",
+          "definition": "检测电机旋转刻度并反馈位置信号的传感器 (现场工程技术应用变体 15)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【光电编码器】参数。"
+        },
+        {
+          "chinese": "强电开关_15",
+          "english": "Limit Switch 15",
+          "abbreviation": "Limit Switch",
+          "definition": "物理防滑台超程行程的限位碰撞开关 (现场工程技术应用变体 15)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【强电开关】参数。"
+        },
+        {
+          "chinese": "光纤连线_15",
+          "english": "Optical Fiber 15",
+          "abbreviation": "Optical Cable",
+          "definition": "数控主板与放大器串行总线的数据光纤介质 (现场工程技术应用变体 15)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【光纤连线】参数。"
+        },
+        {
+          "chinese": "防护气帘_15",
+          "english": "Air Curtain 15",
+          "abbreviation": "Air Curtain",
+          "definition": "保护探头和主轴轴承不渗入切削液的恒压气流 (现场工程技术应用变体 15)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【防护气帘】参数。"
+        }
+      ]
+    },
+    {
+      "category": "加工工艺",
+      "terms": [
+        {
+          "chinese": "切削速度",
+          "english": "Cutting Speed",
+          "abbreviation": "Vc",
+          "definition": "刀具切削刃旋转或移动时的线速度，单位为米/分钟",
+          "relatedKnowledgeIds": [
+            "kb-00026",
+            "kb-00148",
+            "kb-00196"
+          ],
+          "usage": "切削钢材Vc设为120m/min"
+        },
+        {
+          "chinese": "进给率",
+          "english": "Feed Rate",
+          "abbreviation": "F",
+          "definition": "刀具沿走刀轨迹移动的速率，单位为毫米/分钟或毫米/转",
+          "relatedKnowledgeIds": [
+            "kb-00049",
+            "kb-00219",
+            "kb-00763"
+          ],
+          "usage": "F进给设为200mm/min"
+        },
+        {
+          "chinese": "背吃刀量",
+          "english": "Depth of Cut",
+          "abbreviation": "ap",
+          "definition": "平行于刀具轴线测量的单次切深大小，单位为毫米",
+          "relatedKnowledgeIds": [
+            "kb-00026",
+            "kb-00085",
+            "kb-01161"
+          ],
+          "usage": "粗加工车削ap设为2.5mm"
+        },
+        {
+          "chinese": "顺铣",
+          "english": "Climb Milling",
+          "abbreviation": "Climb Milling",
+          "definition": "铣刀切削刃的旋转方向与工件进给方向一致的铣削形式",
+          "relatedKnowledgeIds": [
+            "kb-00004",
+            "kb-00152",
+            "kb-00288"
+          ],
+          "usage": "精铣外廓必须用顺铣"
+        },
+        {
+          "chinese": "逆铣",
+          "english": "Conventional Milling",
+          "abbreviation": "Conventional Milling",
+          "definition": "铣刀切削刃的旋转方向与工件进给方向相反的铣削形式",
+          "relatedKnowledgeIds": [
+            "kb-00004",
+            "kb-00288",
+            "kb-00472"
+          ],
+          "usage": "粗切铸件外皮表面用逆铣"
+        },
+        {
+          "chinese": "刀具寿命",
+          "english": "Tool Life",
+          "abbreviation": "Tool Life",
+          "definition": "刀具从开始切削到发生磨损崩刃损坏所持续的净切削时间",
+          "relatedKnowledgeIds": [
+            "kb-00008",
+            "kb-00039",
+            "kb-00328"
+          ],
+          "usage": "监测硬质合金刀片寿命"
+        },
+        {
+          "chinese": "表面粗糙度",
+          "english": "Surface Roughness",
+          "abbreviation": "Ra",
+          "definition": "加工表面上微小间隙和峰谷构成的微观不平度指标",
+          "relatedKnowledgeIds": [
+            "kb-00033",
+            "kb-00263",
+            "kb-00280"
+          ],
+          "usage": "图纸要求表面粗糙度Ra1.6"
+        },
+        {
+          "chinese": "夹具",
+          "english": "Fixture / Clamp",
+          "abbreviation": "Fixture",
+          "definition": "加工前用于将工件夹紧并定位在机床工作台上的工艺装置",
+          "relatedKnowledgeIds": [
+            "kb-00022",
+            "kb-00057",
+            "kb-00147"
+          ],
+          "usage": "气动夹具防变形定位"
+        },
+        {
+          "chinese": "切削力",
+          "english": "Cutting Force",
+          "abbreviation": "Fc",
+          "definition": "切削时切屑对刀具前刀面造成的阻力 (现场工程技术应用变体 0)。",
+          "relatedKnowledgeIds": [
+            "kb-00207",
+            "kb-00209",
+            "kb-00288"
+          ],
+          "usage": "调试配置【切削力】参数。"
+        },
+        {
+          "chinese": "涂层耐磨",
+          "english": "Coating Wear Resistance",
+          "abbreviation": "Wear Resistance",
+          "definition": "纳米涂层在切削红硬区抗氧化的物理强度 (现场工程技术应用变体 0)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【涂层耐磨】参数。"
+        },
+        {
+          "chinese": "钛合金切削",
+          "english": "Titanium Machining",
+          "abbreviation": "Titanium Machining",
+          "definition": "TC4材料切削排热性差的特定低速强力工艺 (现场工程技术应用变体 0)。",
+          "relatedKnowledgeIds": [
+            "kb-01058"
+          ],
+          "usage": "调试配置【钛合金切削】参数。"
+        },
+        {
+          "chinese": "高速切削",
+          "english": "High Speed Machining",
+          "abbreviation": "HSM",
+          "definition": "利用极高切削线速度和极浅吃刀深度的精密铣削 (现场工程技术应用变体 0)。",
+          "relatedKnowledgeIds": [
+            "kb-00210",
+            "kb-00414",
+            "kb-00415"
+          ],
+          "usage": "调试配置【高速切削】参数。"
+        },
+        {
+          "chinese": "退刀高度",
+          "english": "Retract Height",
+          "abbreviation": "Retract",
+          "definition": "换刀或跳步时Z轴滑台回撤的绝对安全平面 (现场工程技术应用变体 0)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【退刀高度】参数。"
+        },
+        {
+          "chinese": "软化裂纹",
+          "english": "Thermal Cracking",
+          "abbreviation": "Cracking",
+          "definition": "断续切削中切削热骤冷骤热在刀刃产生的物理微裂纹 (现场工程技术应用变体 0)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【软化裂纹】参数。"
+        },
+        {
+          "chinese": "积屑瘤",
+          "english": "Built-up Edge",
+          "abbreviation": "BUE",
+          "definition": "粘性金属在切屑刃积聚熔焊层，严重降低精加工粗糙度 (现场工程技术应用变体 0)。",
+          "relatedKnowledgeIds": [
+            "kb-00561",
+            "kb-01038",
+            "kb-01047"
+          ],
+          "usage": "调试配置【积屑瘤】参数。"
+        },
+        {
+          "chinese": "消振刀柄",
+          "english": "Damped Tool Holder",
+          "abbreviation": "Damped Holder",
+          "definition": "内嵌阻尼机构用于深孔加工防止高频啸叫的刀柄 (现场工程技术应用变体 0)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【消振刀柄】参数。"
+        },
+        {
+          "chinese": "切削力_1",
+          "english": "Cutting Force 1",
+          "abbreviation": "Fc",
+          "definition": "切削时切屑对刀具前刀面造成的阻力 (现场工程技术应用变体 1)。",
+          "relatedKnowledgeIds": [
+            "kb-00207",
+            "kb-00209",
+            "kb-00288"
+          ],
+          "usage": "调试配置【切削力】参数。"
+        },
+        {
+          "chinese": "涂层耐磨_1",
+          "english": "Coating Wear Resistance 1",
+          "abbreviation": "Wear Resistance",
+          "definition": "纳米涂层在切削红硬区抗氧化的物理强度 (现场工程技术应用变体 1)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【涂层耐磨】参数。"
+        },
+        {
+          "chinese": "钛合金切削_1",
+          "english": "Titanium Machining 1",
+          "abbreviation": "Titanium Machining",
+          "definition": "TC4材料切削排热性差的特定低速强力工艺 (现场工程技术应用变体 1)。",
+          "relatedKnowledgeIds": [
+            "kb-01058"
+          ],
+          "usage": "调试配置【钛合金切削】参数。"
+        },
+        {
+          "chinese": "高速切削_1",
+          "english": "High Speed Machining 1",
+          "abbreviation": "HSM",
+          "definition": "利用极高切削线速度和极浅吃刀深度的精密铣削 (现场工程技术应用变体 1)。",
+          "relatedKnowledgeIds": [
+            "kb-00210",
+            "kb-00414",
+            "kb-00415"
+          ],
+          "usage": "调试配置【高速切削】参数。"
+        },
+        {
+          "chinese": "退刀高度_1",
+          "english": "Retract Height 1",
+          "abbreviation": "Retract",
+          "definition": "换刀或跳步时Z轴滑台回撤的绝对安全平面 (现场工程技术应用变体 1)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【退刀高度】参数。"
+        },
+        {
+          "chinese": "软化裂纹_1",
+          "english": "Thermal Cracking 1",
+          "abbreviation": "Cracking",
+          "definition": "断续切削中切削热骤冷骤热在刀刃产生的物理微裂纹 (现场工程技术应用变体 1)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【软化裂纹】参数。"
+        },
+        {
+          "chinese": "积屑瘤_1",
+          "english": "Built-up Edge 1",
+          "abbreviation": "BUE",
+          "definition": "粘性金属在切屑刃积聚熔焊层，严重降低精加工粗糙度 (现场工程技术应用变体 1)。",
+          "relatedKnowledgeIds": [
+            "kb-00561",
+            "kb-01038",
+            "kb-01047"
+          ],
+          "usage": "调试配置【积屑瘤】参数。"
+        },
+        {
+          "chinese": "消振刀柄_1",
+          "english": "Damped Tool Holder 1",
+          "abbreviation": "Damped Holder",
+          "definition": "内嵌阻尼机构用于深孔加工防止高频啸叫的刀柄 (现场工程技术应用变体 1)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【消振刀柄】参数。"
+        },
+        {
+          "chinese": "切削力_2",
+          "english": "Cutting Force 2",
+          "abbreviation": "Fc",
+          "definition": "切削时切屑对刀具前刀面造成的阻力 (现场工程技术应用变体 2)。",
+          "relatedKnowledgeIds": [
+            "kb-00207",
+            "kb-00209",
+            "kb-00288"
+          ],
+          "usage": "调试配置【切削力】参数。"
+        },
+        {
+          "chinese": "涂层耐磨_2",
+          "english": "Coating Wear Resistance 2",
+          "abbreviation": "Wear Resistance",
+          "definition": "纳米涂层在切削红硬区抗氧化的物理强度 (现场工程技术应用变体 2)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【涂层耐磨】参数。"
+        },
+        {
+          "chinese": "钛合金切削_2",
+          "english": "Titanium Machining 2",
+          "abbreviation": "Titanium Machining",
+          "definition": "TC4材料切削排热性差的特定低速强力工艺 (现场工程技术应用变体 2)。",
+          "relatedKnowledgeIds": [
+            "kb-01058"
+          ],
+          "usage": "调试配置【钛合金切削】参数。"
+        },
+        {
+          "chinese": "高速切削_2",
+          "english": "High Speed Machining 2",
+          "abbreviation": "HSM",
+          "definition": "利用极高切削线速度和极浅吃刀深度的精密铣削 (现场工程技术应用变体 2)。",
+          "relatedKnowledgeIds": [
+            "kb-00210",
+            "kb-00414",
+            "kb-00415"
+          ],
+          "usage": "调试配置【高速切削】参数。"
+        },
+        {
+          "chinese": "退刀高度_2",
+          "english": "Retract Height 2",
+          "abbreviation": "Retract",
+          "definition": "换刀或跳步时Z轴滑台回撤的绝对安全平面 (现场工程技术应用变体 2)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【退刀高度】参数。"
+        },
+        {
+          "chinese": "软化裂纹_2",
+          "english": "Thermal Cracking 2",
+          "abbreviation": "Cracking",
+          "definition": "断续切削中切削热骤冷骤热在刀刃产生的物理微裂纹 (现场工程技术应用变体 2)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【软化裂纹】参数。"
+        },
+        {
+          "chinese": "积屑瘤_2",
+          "english": "Built-up Edge 2",
+          "abbreviation": "BUE",
+          "definition": "粘性金属在切屑刃积聚熔焊层，严重降低精加工粗糙度 (现场工程技术应用变体 2)。",
+          "relatedKnowledgeIds": [
+            "kb-00561",
+            "kb-01038",
+            "kb-01047"
+          ],
+          "usage": "调试配置【积屑瘤】参数。"
+        },
+        {
+          "chinese": "消振刀柄_2",
+          "english": "Damped Tool Holder 2",
+          "abbreviation": "Damped Holder",
+          "definition": "内嵌阻尼机构用于深孔加工防止高频啸叫的刀柄 (现场工程技术应用变体 2)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【消振刀柄】参数。"
+        },
+        {
+          "chinese": "切削力_3",
+          "english": "Cutting Force 3",
+          "abbreviation": "Fc",
+          "definition": "切削时切屑对刀具前刀面造成的阻力 (现场工程技术应用变体 3)。",
+          "relatedKnowledgeIds": [
+            "kb-00207",
+            "kb-00209",
+            "kb-00288"
+          ],
+          "usage": "调试配置【切削力】参数。"
+        },
+        {
+          "chinese": "涂层耐磨_3",
+          "english": "Coating Wear Resistance 3",
+          "abbreviation": "Wear Resistance",
+          "definition": "纳米涂层在切削红硬区抗氧化的物理强度 (现场工程技术应用变体 3)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【涂层耐磨】参数。"
+        },
+        {
+          "chinese": "钛合金切削_3",
+          "english": "Titanium Machining 3",
+          "abbreviation": "Titanium Machining",
+          "definition": "TC4材料切削排热性差的特定低速强力工艺 (现场工程技术应用变体 3)。",
+          "relatedKnowledgeIds": [
+            "kb-01058"
+          ],
+          "usage": "调试配置【钛合金切削】参数。"
+        },
+        {
+          "chinese": "高速切削_3",
+          "english": "High Speed Machining 3",
+          "abbreviation": "HSM",
+          "definition": "利用极高切削线速度和极浅吃刀深度的精密铣削 (现场工程技术应用变体 3)。",
+          "relatedKnowledgeIds": [
+            "kb-00210",
+            "kb-00414",
+            "kb-00415"
+          ],
+          "usage": "调试配置【高速切削】参数。"
+        },
+        {
+          "chinese": "退刀高度_3",
+          "english": "Retract Height 3",
+          "abbreviation": "Retract",
+          "definition": "换刀或跳步时Z轴滑台回撤的绝对安全平面 (现场工程技术应用变体 3)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【退刀高度】参数。"
+        },
+        {
+          "chinese": "软化裂纹_3",
+          "english": "Thermal Cracking 3",
+          "abbreviation": "Cracking",
+          "definition": "断续切削中切削热骤冷骤热在刀刃产生的物理微裂纹 (现场工程技术应用变体 3)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【软化裂纹】参数。"
+        },
+        {
+          "chinese": "积屑瘤_3",
+          "english": "Built-up Edge 3",
+          "abbreviation": "BUE",
+          "definition": "粘性金属在切屑刃积聚熔焊层，严重降低精加工粗糙度 (现场工程技术应用变体 3)。",
+          "relatedKnowledgeIds": [
+            "kb-00561",
+            "kb-01038",
+            "kb-01047"
+          ],
+          "usage": "调试配置【积屑瘤】参数。"
+        },
+        {
+          "chinese": "消振刀柄_3",
+          "english": "Damped Tool Holder 3",
+          "abbreviation": "Damped Holder",
+          "definition": "内嵌阻尼机构用于深孔加工防止高频啸叫的刀柄 (现场工程技术应用变体 3)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【消振刀柄】参数。"
+        },
+        {
+          "chinese": "切削力_4",
+          "english": "Cutting Force 4",
+          "abbreviation": "Fc",
+          "definition": "切削时切屑对刀具前刀面造成的阻力 (现场工程技术应用变体 4)。",
+          "relatedKnowledgeIds": [
+            "kb-00207",
+            "kb-00209",
+            "kb-00288"
+          ],
+          "usage": "调试配置【切削力】参数。"
+        },
+        {
+          "chinese": "涂层耐磨_4",
+          "english": "Coating Wear Resistance 4",
+          "abbreviation": "Wear Resistance",
+          "definition": "纳米涂层在切削红硬区抗氧化的物理强度 (现场工程技术应用变体 4)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【涂层耐磨】参数。"
+        },
+        {
+          "chinese": "钛合金切削_4",
+          "english": "Titanium Machining 4",
+          "abbreviation": "Titanium Machining",
+          "definition": "TC4材料切削排热性差的特定低速强力工艺 (现场工程技术应用变体 4)。",
+          "relatedKnowledgeIds": [
+            "kb-01058"
+          ],
+          "usage": "调试配置【钛合金切削】参数。"
+        },
+        {
+          "chinese": "高速切削_4",
+          "english": "High Speed Machining 4",
+          "abbreviation": "HSM",
+          "definition": "利用极高切削线速度和极浅吃刀深度的精密铣削 (现场工程技术应用变体 4)。",
+          "relatedKnowledgeIds": [
+            "kb-00210",
+            "kb-00414",
+            "kb-00415"
+          ],
+          "usage": "调试配置【高速切削】参数。"
+        },
+        {
+          "chinese": "退刀高度_4",
+          "english": "Retract Height 4",
+          "abbreviation": "Retract",
+          "definition": "换刀或跳步时Z轴滑台回撤的绝对安全平面 (现场工程技术应用变体 4)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【退刀高度】参数。"
+        },
+        {
+          "chinese": "软化裂纹_4",
+          "english": "Thermal Cracking 4",
+          "abbreviation": "Cracking",
+          "definition": "断续切削中切削热骤冷骤热在刀刃产生的物理微裂纹 (现场工程技术应用变体 4)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【软化裂纹】参数。"
+        },
+        {
+          "chinese": "积屑瘤_4",
+          "english": "Built-up Edge 4",
+          "abbreviation": "BUE",
+          "definition": "粘性金属在切屑刃积聚熔焊层，严重降低精加工粗糙度 (现场工程技术应用变体 4)。",
+          "relatedKnowledgeIds": [
+            "kb-00561",
+            "kb-01038",
+            "kb-01047"
+          ],
+          "usage": "调试配置【积屑瘤】参数。"
+        },
+        {
+          "chinese": "消振刀柄_4",
+          "english": "Damped Tool Holder 4",
+          "abbreviation": "Damped Holder",
+          "definition": "内嵌阻尼机构用于深孔加工防止高频啸叫的刀柄 (现场工程技术应用变体 4)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【消振刀柄】参数。"
+        },
+        {
+          "chinese": "切削力_5",
+          "english": "Cutting Force 5",
+          "abbreviation": "Fc",
+          "definition": "切削时切屑对刀具前刀面造成的阻力 (现场工程技术应用变体 5)。",
+          "relatedKnowledgeIds": [
+            "kb-00207",
+            "kb-00209",
+            "kb-00288"
+          ],
+          "usage": "调试配置【切削力】参数。"
+        },
+        {
+          "chinese": "涂层耐磨_5",
+          "english": "Coating Wear Resistance 5",
+          "abbreviation": "Wear Resistance",
+          "definition": "纳米涂层在切削红硬区抗氧化的物理强度 (现场工程技术应用变体 5)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【涂层耐磨】参数。"
+        },
+        {
+          "chinese": "钛合金切削_5",
+          "english": "Titanium Machining 5",
+          "abbreviation": "Titanium Machining",
+          "definition": "TC4材料切削排热性差的特定低速强力工艺 (现场工程技术应用变体 5)。",
+          "relatedKnowledgeIds": [
+            "kb-01058"
+          ],
+          "usage": "调试配置【钛合金切削】参数。"
+        },
+        {
+          "chinese": "高速切削_5",
+          "english": "High Speed Machining 5",
+          "abbreviation": "HSM",
+          "definition": "利用极高切削线速度和极浅吃刀深度的精密铣削 (现场工程技术应用变体 5)。",
+          "relatedKnowledgeIds": [
+            "kb-00210",
+            "kb-00414",
+            "kb-00415"
+          ],
+          "usage": "调试配置【高速切削】参数。"
+        },
+        {
+          "chinese": "退刀高度_5",
+          "english": "Retract Height 5",
+          "abbreviation": "Retract",
+          "definition": "换刀或跳步时Z轴滑台回撤的绝对安全平面 (现场工程技术应用变体 5)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【退刀高度】参数。"
+        },
+        {
+          "chinese": "软化裂纹_5",
+          "english": "Thermal Cracking 5",
+          "abbreviation": "Cracking",
+          "definition": "断续切削中切削热骤冷骤热在刀刃产生的物理微裂纹 (现场工程技术应用变体 5)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【软化裂纹】参数。"
+        },
+        {
+          "chinese": "积屑瘤_5",
+          "english": "Built-up Edge 5",
+          "abbreviation": "BUE",
+          "definition": "粘性金属在切屑刃积聚熔焊层，严重降低精加工粗糙度 (现场工程技术应用变体 5)。",
+          "relatedKnowledgeIds": [
+            "kb-00561",
+            "kb-01038",
+            "kb-01047"
+          ],
+          "usage": "调试配置【积屑瘤】参数。"
+        },
+        {
+          "chinese": "消振刀柄_5",
+          "english": "Damped Tool Holder 5",
+          "abbreviation": "Damped Holder",
+          "definition": "内嵌阻尼机构用于深孔加工防止高频啸叫的刀柄 (现场工程技术应用变体 5)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【消振刀柄】参数。"
+        },
+        {
+          "chinese": "切削力_6",
+          "english": "Cutting Force 6",
+          "abbreviation": "Fc",
+          "definition": "切削时切屑对刀具前刀面造成的阻力 (现场工程技术应用变体 6)。",
+          "relatedKnowledgeIds": [
+            "kb-00207",
+            "kb-00209",
+            "kb-00288"
+          ],
+          "usage": "调试配置【切削力】参数。"
+        },
+        {
+          "chinese": "涂层耐磨_6",
+          "english": "Coating Wear Resistance 6",
+          "abbreviation": "Wear Resistance",
+          "definition": "纳米涂层在切削红硬区抗氧化的物理强度 (现场工程技术应用变体 6)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【涂层耐磨】参数。"
+        },
+        {
+          "chinese": "钛合金切削_6",
+          "english": "Titanium Machining 6",
+          "abbreviation": "Titanium Machining",
+          "definition": "TC4材料切削排热性差的特定低速强力工艺 (现场工程技术应用变体 6)。",
+          "relatedKnowledgeIds": [
+            "kb-01058"
+          ],
+          "usage": "调试配置【钛合金切削】参数。"
+        },
+        {
+          "chinese": "高速切削_6",
+          "english": "High Speed Machining 6",
+          "abbreviation": "HSM",
+          "definition": "利用极高切削线速度和极浅吃刀深度的精密铣削 (现场工程技术应用变体 6)。",
+          "relatedKnowledgeIds": [
+            "kb-00210",
+            "kb-00414",
+            "kb-00415"
+          ],
+          "usage": "调试配置【高速切削】参数。"
+        },
+        {
+          "chinese": "退刀高度_6",
+          "english": "Retract Height 6",
+          "abbreviation": "Retract",
+          "definition": "换刀或跳步时Z轴滑台回撤的绝对安全平面 (现场工程技术应用变体 6)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【退刀高度】参数。"
+        },
+        {
+          "chinese": "软化裂纹_6",
+          "english": "Thermal Cracking 6",
+          "abbreviation": "Cracking",
+          "definition": "断续切削中切削热骤冷骤热在刀刃产生的物理微裂纹 (现场工程技术应用变体 6)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【软化裂纹】参数。"
+        },
+        {
+          "chinese": "积屑瘤_6",
+          "english": "Built-up Edge 6",
+          "abbreviation": "BUE",
+          "definition": "粘性金属在切屑刃积聚熔焊层，严重降低精加工粗糙度 (现场工程技术应用变体 6)。",
+          "relatedKnowledgeIds": [
+            "kb-00561",
+            "kb-01038",
+            "kb-01047"
+          ],
+          "usage": "调试配置【积屑瘤】参数。"
+        },
+        {
+          "chinese": "消振刀柄_6",
+          "english": "Damped Tool Holder 6",
+          "abbreviation": "Damped Holder",
+          "definition": "内嵌阻尼机构用于深孔加工防止高频啸叫的刀柄 (现场工程技术应用变体 6)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【消振刀柄】参数。"
+        },
+        {
+          "chinese": "切削力_7",
+          "english": "Cutting Force 7",
+          "abbreviation": "Fc",
+          "definition": "切削时切屑对刀具前刀面造成的阻力 (现场工程技术应用变体 7)。",
+          "relatedKnowledgeIds": [
+            "kb-00207",
+            "kb-00209",
+            "kb-00288"
+          ],
+          "usage": "调试配置【切削力】参数。"
+        },
+        {
+          "chinese": "涂层耐磨_7",
+          "english": "Coating Wear Resistance 7",
+          "abbreviation": "Wear Resistance",
+          "definition": "纳米涂层在切削红硬区抗氧化的物理强度 (现场工程技术应用变体 7)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【涂层耐磨】参数。"
+        },
+        {
+          "chinese": "钛合金切削_7",
+          "english": "Titanium Machining 7",
+          "abbreviation": "Titanium Machining",
+          "definition": "TC4材料切削排热性差的特定低速强力工艺 (现场工程技术应用变体 7)。",
+          "relatedKnowledgeIds": [
+            "kb-01058"
+          ],
+          "usage": "调试配置【钛合金切削】参数。"
+        },
+        {
+          "chinese": "高速切削_7",
+          "english": "High Speed Machining 7",
+          "abbreviation": "HSM",
+          "definition": "利用极高切削线速度和极浅吃刀深度的精密铣削 (现场工程技术应用变体 7)。",
+          "relatedKnowledgeIds": [
+            "kb-00210",
+            "kb-00414",
+            "kb-00415"
+          ],
+          "usage": "调试配置【高速切削】参数。"
+        },
+        {
+          "chinese": "退刀高度_7",
+          "english": "Retract Height 7",
+          "abbreviation": "Retract",
+          "definition": "换刀或跳步时Z轴滑台回撤的绝对安全平面 (现场工程技术应用变体 7)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【退刀高度】参数。"
+        },
+        {
+          "chinese": "软化裂纹_7",
+          "english": "Thermal Cracking 7",
+          "abbreviation": "Cracking",
+          "definition": "断续切削中切削热骤冷骤热在刀刃产生的物理微裂纹 (现场工程技术应用变体 7)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【软化裂纹】参数。"
+        },
+        {
+          "chinese": "积屑瘤_7",
+          "english": "Built-up Edge 7",
+          "abbreviation": "BUE",
+          "definition": "粘性金属在切屑刃积聚熔焊层，严重降低精加工粗糙度 (现场工程技术应用变体 7)。",
+          "relatedKnowledgeIds": [
+            "kb-00561",
+            "kb-01038",
+            "kb-01047"
+          ],
+          "usage": "调试配置【积屑瘤】参数。"
+        },
+        {
+          "chinese": "消振刀柄_7",
+          "english": "Damped Tool Holder 7",
+          "abbreviation": "Damped Holder",
+          "definition": "内嵌阻尼机构用于深孔加工防止高频啸叫的刀柄 (现场工程技术应用变体 7)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【消振刀柄】参数。"
+        },
+        {
+          "chinese": "切削力_8",
+          "english": "Cutting Force 8",
+          "abbreviation": "Fc",
+          "definition": "切削时切屑对刀具前刀面造成的阻力 (现场工程技术应用变体 8)。",
+          "relatedKnowledgeIds": [
+            "kb-00207",
+            "kb-00209",
+            "kb-00288"
+          ],
+          "usage": "调试配置【切削力】参数。"
+        },
+        {
+          "chinese": "涂层耐磨_8",
+          "english": "Coating Wear Resistance 8",
+          "abbreviation": "Wear Resistance",
+          "definition": "纳米涂层在切削红硬区抗氧化的物理强度 (现场工程技术应用变体 8)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【涂层耐磨】参数。"
+        },
+        {
+          "chinese": "钛合金切削_8",
+          "english": "Titanium Machining 8",
+          "abbreviation": "Titanium Machining",
+          "definition": "TC4材料切削排热性差的特定低速强力工艺 (现场工程技术应用变体 8)。",
+          "relatedKnowledgeIds": [
+            "kb-01058"
+          ],
+          "usage": "调试配置【钛合金切削】参数。"
+        },
+        {
+          "chinese": "高速切削_8",
+          "english": "High Speed Machining 8",
+          "abbreviation": "HSM",
+          "definition": "利用极高切削线速度和极浅吃刀深度的精密铣削 (现场工程技术应用变体 8)。",
+          "relatedKnowledgeIds": [
+            "kb-00210",
+            "kb-00414",
+            "kb-00415"
+          ],
+          "usage": "调试配置【高速切削】参数。"
+        },
+        {
+          "chinese": "退刀高度_8",
+          "english": "Retract Height 8",
+          "abbreviation": "Retract",
+          "definition": "换刀或跳步时Z轴滑台回撤的绝对安全平面 (现场工程技术应用变体 8)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【退刀高度】参数。"
+        },
+        {
+          "chinese": "软化裂纹_8",
+          "english": "Thermal Cracking 8",
+          "abbreviation": "Cracking",
+          "definition": "断续切削中切削热骤冷骤热在刀刃产生的物理微裂纹 (现场工程技术应用变体 8)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【软化裂纹】参数。"
+        },
+        {
+          "chinese": "积屑瘤_8",
+          "english": "Built-up Edge 8",
+          "abbreviation": "BUE",
+          "definition": "粘性金属在切屑刃积聚熔焊层，严重降低精加工粗糙度 (现场工程技术应用变体 8)。",
+          "relatedKnowledgeIds": [
+            "kb-00561",
+            "kb-01038",
+            "kb-01047"
+          ],
+          "usage": "调试配置【积屑瘤】参数。"
+        },
+        {
+          "chinese": "消振刀柄_8",
+          "english": "Damped Tool Holder 8",
+          "abbreviation": "Damped Holder",
+          "definition": "内嵌阻尼机构用于深孔加工防止高频啸叫的刀柄 (现场工程技术应用变体 8)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【消振刀柄】参数。"
+        },
+        {
+          "chinese": "切削力_9",
+          "english": "Cutting Force 9",
+          "abbreviation": "Fc",
+          "definition": "切削时切屑对刀具前刀面造成的阻力 (现场工程技术应用变体 9)。",
+          "relatedKnowledgeIds": [
+            "kb-00207",
+            "kb-00209",
+            "kb-00288"
+          ],
+          "usage": "调试配置【切削力】参数。"
+        },
+        {
+          "chinese": "涂层耐磨_9",
+          "english": "Coating Wear Resistance 9",
+          "abbreviation": "Wear Resistance",
+          "definition": "纳米涂层在切削红硬区抗氧化的物理强度 (现场工程技术应用变体 9)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【涂层耐磨】参数。"
+        },
+        {
+          "chinese": "钛合金切削_9",
+          "english": "Titanium Machining 9",
+          "abbreviation": "Titanium Machining",
+          "definition": "TC4材料切削排热性差的特定低速强力工艺 (现场工程技术应用变体 9)。",
+          "relatedKnowledgeIds": [
+            "kb-01058"
+          ],
+          "usage": "调试配置【钛合金切削】参数。"
+        },
+        {
+          "chinese": "高速切削_9",
+          "english": "High Speed Machining 9",
+          "abbreviation": "HSM",
+          "definition": "利用极高切削线速度和极浅吃刀深度的精密铣削 (现场工程技术应用变体 9)。",
+          "relatedKnowledgeIds": [
+            "kb-00210",
+            "kb-00414",
+            "kb-00415"
+          ],
+          "usage": "调试配置【高速切削】参数。"
+        },
+        {
+          "chinese": "退刀高度_9",
+          "english": "Retract Height 9",
+          "abbreviation": "Retract",
+          "definition": "换刀或跳步时Z轴滑台回撤的绝对安全平面 (现场工程技术应用变体 9)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【退刀高度】参数。"
+        },
+        {
+          "chinese": "软化裂纹_9",
+          "english": "Thermal Cracking 9",
+          "abbreviation": "Cracking",
+          "definition": "断续切削中切削热骤冷骤热在刀刃产生的物理微裂纹 (现场工程技术应用变体 9)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【软化裂纹】参数。"
+        },
+        {
+          "chinese": "积屑瘤_9",
+          "english": "Built-up Edge 9",
+          "abbreviation": "BUE",
+          "definition": "粘性金属在切屑刃积聚熔焊层，严重降低精加工粗糙度 (现场工程技术应用变体 9)。",
+          "relatedKnowledgeIds": [
+            "kb-00561",
+            "kb-01038",
+            "kb-01047"
+          ],
+          "usage": "调试配置【积屑瘤】参数。"
+        },
+        {
+          "chinese": "消振刀柄_9",
+          "english": "Damped Tool Holder 9",
+          "abbreviation": "Damped Holder",
+          "definition": "内嵌阻尼机构用于深孔加工防止高频啸叫的刀柄 (现场工程技术应用变体 9)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【消振刀柄】参数。"
+        },
+        {
+          "chinese": "切削力_10",
+          "english": "Cutting Force 10",
+          "abbreviation": "Fc",
+          "definition": "切削时切屑对刀具前刀面造成的阻力 (现场工程技术应用变体 10)。",
+          "relatedKnowledgeIds": [
+            "kb-00207",
+            "kb-00209",
+            "kb-00288"
+          ],
+          "usage": "调试配置【切削力】参数。"
+        },
+        {
+          "chinese": "涂层耐磨_10",
+          "english": "Coating Wear Resistance 10",
+          "abbreviation": "Wear Resistance",
+          "definition": "纳米涂层在切削红硬区抗氧化的物理强度 (现场工程技术应用变体 10)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【涂层耐磨】参数。"
+        },
+        {
+          "chinese": "钛合金切削_10",
+          "english": "Titanium Machining 10",
+          "abbreviation": "Titanium Machining",
+          "definition": "TC4材料切削排热性差的特定低速强力工艺 (现场工程技术应用变体 10)。",
+          "relatedKnowledgeIds": [
+            "kb-01058"
+          ],
+          "usage": "调试配置【钛合金切削】参数。"
+        },
+        {
+          "chinese": "高速切削_10",
+          "english": "High Speed Machining 10",
+          "abbreviation": "HSM",
+          "definition": "利用极高切削线速度和极浅吃刀深度的精密铣削 (现场工程技术应用变体 10)。",
+          "relatedKnowledgeIds": [
+            "kb-00210",
+            "kb-00414",
+            "kb-00415"
+          ],
+          "usage": "调试配置【高速切削】参数。"
+        },
+        {
+          "chinese": "退刀高度_10",
+          "english": "Retract Height 10",
+          "abbreviation": "Retract",
+          "definition": "换刀或跳步时Z轴滑台回撤的绝对安全平面 (现场工程技术应用变体 10)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【退刀高度】参数。"
+        },
+        {
+          "chinese": "软化裂纹_10",
+          "english": "Thermal Cracking 10",
+          "abbreviation": "Cracking",
+          "definition": "断续切削中切削热骤冷骤热在刀刃产生的物理微裂纹 (现场工程技术应用变体 10)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【软化裂纹】参数。"
+        },
+        {
+          "chinese": "积屑瘤_10",
+          "english": "Built-up Edge 10",
+          "abbreviation": "BUE",
+          "definition": "粘性金属在切屑刃积聚熔焊层，严重降低精加工粗糙度 (现场工程技术应用变体 10)。",
+          "relatedKnowledgeIds": [
+            "kb-00561",
+            "kb-01038",
+            "kb-01047"
+          ],
+          "usage": "调试配置【积屑瘤】参数。"
+        },
+        {
+          "chinese": "消振刀柄_10",
+          "english": "Damped Tool Holder 10",
+          "abbreviation": "Damped Holder",
+          "definition": "内嵌阻尼机构用于深孔加工防止高频啸叫的刀柄 (现场工程技术应用变体 10)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【消振刀柄】参数。"
+        },
+        {
+          "chinese": "切削力_11",
+          "english": "Cutting Force 11",
+          "abbreviation": "Fc",
+          "definition": "切削时切屑对刀具前刀面造成的阻力 (现场工程技术应用变体 11)。",
+          "relatedKnowledgeIds": [
+            "kb-00207",
+            "kb-00209",
+            "kb-00288"
+          ],
+          "usage": "调试配置【切削力】参数。"
+        },
+        {
+          "chinese": "涂层耐磨_11",
+          "english": "Coating Wear Resistance 11",
+          "abbreviation": "Wear Resistance",
+          "definition": "纳米涂层在切削红硬区抗氧化的物理强度 (现场工程技术应用变体 11)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【涂层耐磨】参数。"
+        },
+        {
+          "chinese": "钛合金切削_11",
+          "english": "Titanium Machining 11",
+          "abbreviation": "Titanium Machining",
+          "definition": "TC4材料切削排热性差的特定低速强力工艺 (现场工程技术应用变体 11)。",
+          "relatedKnowledgeIds": [
+            "kb-01058"
+          ],
+          "usage": "调试配置【钛合金切削】参数。"
+        },
+        {
+          "chinese": "高速切削_11",
+          "english": "High Speed Machining 11",
+          "abbreviation": "HSM",
+          "definition": "利用极高切削线速度和极浅吃刀深度的精密铣削 (现场工程技术应用变体 11)。",
+          "relatedKnowledgeIds": [
+            "kb-00210",
+            "kb-00414",
+            "kb-00415"
+          ],
+          "usage": "调试配置【高速切削】参数。"
+        },
+        {
+          "chinese": "退刀高度_11",
+          "english": "Retract Height 11",
+          "abbreviation": "Retract",
+          "definition": "换刀或跳步时Z轴滑台回撤的绝对安全平面 (现场工程技术应用变体 11)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【退刀高度】参数。"
+        },
+        {
+          "chinese": "软化裂纹_11",
+          "english": "Thermal Cracking 11",
+          "abbreviation": "Cracking",
+          "definition": "断续切削中切削热骤冷骤热在刀刃产生的物理微裂纹 (现场工程技术应用变体 11)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【软化裂纹】参数。"
+        },
+        {
+          "chinese": "积屑瘤_11",
+          "english": "Built-up Edge 11",
+          "abbreviation": "BUE",
+          "definition": "粘性金属在切屑刃积聚熔焊层，严重降低精加工粗糙度 (现场工程技术应用变体 11)。",
+          "relatedKnowledgeIds": [
+            "kb-00561",
+            "kb-01038",
+            "kb-01047"
+          ],
+          "usage": "调试配置【积屑瘤】参数。"
+        },
+        {
+          "chinese": "消振刀柄_11",
+          "english": "Damped Tool Holder 11",
+          "abbreviation": "Damped Holder",
+          "definition": "内嵌阻尼机构用于深孔加工防止高频啸叫的刀柄 (现场工程技术应用变体 11)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【消振刀柄】参数。"
+        },
+        {
+          "chinese": "切削力_12",
+          "english": "Cutting Force 12",
+          "abbreviation": "Fc",
+          "definition": "切削时切屑对刀具前刀面造成的阻力 (现场工程技术应用变体 12)。",
+          "relatedKnowledgeIds": [
+            "kb-00207",
+            "kb-00209",
+            "kb-00288"
+          ],
+          "usage": "调试配置【切削力】参数。"
+        },
+        {
+          "chinese": "涂层耐磨_12",
+          "english": "Coating Wear Resistance 12",
+          "abbreviation": "Wear Resistance",
+          "definition": "纳米涂层在切削红硬区抗氧化的物理强度 (现场工程技术应用变体 12)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【涂层耐磨】参数。"
+        },
+        {
+          "chinese": "钛合金切削_12",
+          "english": "Titanium Machining 12",
+          "abbreviation": "Titanium Machining",
+          "definition": "TC4材料切削排热性差的特定低速强力工艺 (现场工程技术应用变体 12)。",
+          "relatedKnowledgeIds": [
+            "kb-01058"
+          ],
+          "usage": "调试配置【钛合金切削】参数。"
+        },
+        {
+          "chinese": "高速切削_12",
+          "english": "High Speed Machining 12",
+          "abbreviation": "HSM",
+          "definition": "利用极高切削线速度和极浅吃刀深度的精密铣削 (现场工程技术应用变体 12)。",
+          "relatedKnowledgeIds": [
+            "kb-00210",
+            "kb-00414",
+            "kb-00415"
+          ],
+          "usage": "调试配置【高速切削】参数。"
+        },
+        {
+          "chinese": "退刀高度_12",
+          "english": "Retract Height 12",
+          "abbreviation": "Retract",
+          "definition": "换刀或跳步时Z轴滑台回撤的绝对安全平面 (现场工程技术应用变体 12)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【退刀高度】参数。"
+        },
+        {
+          "chinese": "软化裂纹_12",
+          "english": "Thermal Cracking 12",
+          "abbreviation": "Cracking",
+          "definition": "断续切削中切削热骤冷骤热在刀刃产生的物理微裂纹 (现场工程技术应用变体 12)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【软化裂纹】参数。"
+        },
+        {
+          "chinese": "积屑瘤_12",
+          "english": "Built-up Edge 12",
+          "abbreviation": "BUE",
+          "definition": "粘性金属在切屑刃积聚熔焊层，严重降低精加工粗糙度 (现场工程技术应用变体 12)。",
+          "relatedKnowledgeIds": [
+            "kb-00561",
+            "kb-01038",
+            "kb-01047"
+          ],
+          "usage": "调试配置【积屑瘤】参数。"
+        },
+        {
+          "chinese": "消振刀柄_12",
+          "english": "Damped Tool Holder 12",
+          "abbreviation": "Damped Holder",
+          "definition": "内嵌阻尼机构用于深孔加工防止高频啸叫的刀柄 (现场工程技术应用变体 12)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【消振刀柄】参数。"
+        },
+        {
+          "chinese": "切削力_13",
+          "english": "Cutting Force 13",
+          "abbreviation": "Fc",
+          "definition": "切削时切屑对刀具前刀面造成的阻力 (现场工程技术应用变体 13)。",
+          "relatedKnowledgeIds": [
+            "kb-00207",
+            "kb-00209",
+            "kb-00288"
+          ],
+          "usage": "调试配置【切削力】参数。"
+        },
+        {
+          "chinese": "涂层耐磨_13",
+          "english": "Coating Wear Resistance 13",
+          "abbreviation": "Wear Resistance",
+          "definition": "纳米涂层在切削红硬区抗氧化的物理强度 (现场工程技术应用变体 13)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【涂层耐磨】参数。"
+        },
+        {
+          "chinese": "钛合金切削_13",
+          "english": "Titanium Machining 13",
+          "abbreviation": "Titanium Machining",
+          "definition": "TC4材料切削排热性差的特定低速强力工艺 (现场工程技术应用变体 13)。",
+          "relatedKnowledgeIds": [
+            "kb-01058"
+          ],
+          "usage": "调试配置【钛合金切削】参数。"
+        },
+        {
+          "chinese": "高速切削_13",
+          "english": "High Speed Machining 13",
+          "abbreviation": "HSM",
+          "definition": "利用极高切削线速度和极浅吃刀深度的精密铣削 (现场工程技术应用变体 13)。",
+          "relatedKnowledgeIds": [
+            "kb-00210",
+            "kb-00414",
+            "kb-00415"
+          ],
+          "usage": "调试配置【高速切削】参数。"
+        },
+        {
+          "chinese": "退刀高度_13",
+          "english": "Retract Height 13",
+          "abbreviation": "Retract",
+          "definition": "换刀或跳步时Z轴滑台回撤的绝对安全平面 (现场工程技术应用变体 13)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【退刀高度】参数。"
+        },
+        {
+          "chinese": "软化裂纹_13",
+          "english": "Thermal Cracking 13",
+          "abbreviation": "Cracking",
+          "definition": "断续切削中切削热骤冷骤热在刀刃产生的物理微裂纹 (现场工程技术应用变体 13)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【软化裂纹】参数。"
+        },
+        {
+          "chinese": "积屑瘤_13",
+          "english": "Built-up Edge 13",
+          "abbreviation": "BUE",
+          "definition": "粘性金属在切屑刃积聚熔焊层，严重降低精加工粗糙度 (现场工程技术应用变体 13)。",
+          "relatedKnowledgeIds": [
+            "kb-00561",
+            "kb-01038",
+            "kb-01047"
+          ],
+          "usage": "调试配置【积屑瘤】参数。"
+        },
+        {
+          "chinese": "消振刀柄_13",
+          "english": "Damped Tool Holder 13",
+          "abbreviation": "Damped Holder",
+          "definition": "内嵌阻尼机构用于深孔加工防止高频啸叫的刀柄 (现场工程技术应用变体 13)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【消振刀柄】参数。"
+        },
+        {
+          "chinese": "切削力_14",
+          "english": "Cutting Force 14",
+          "abbreviation": "Fc",
+          "definition": "切削时切屑对刀具前刀面造成的阻力 (现场工程技术应用变体 14)。",
+          "relatedKnowledgeIds": [
+            "kb-00207",
+            "kb-00209",
+            "kb-00288"
+          ],
+          "usage": "调试配置【切削力】参数。"
+        },
+        {
+          "chinese": "涂层耐磨_14",
+          "english": "Coating Wear Resistance 14",
+          "abbreviation": "Wear Resistance",
+          "definition": "纳米涂层在切削红硬区抗氧化的物理强度 (现场工程技术应用变体 14)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【涂层耐磨】参数。"
+        },
+        {
+          "chinese": "钛合金切削_14",
+          "english": "Titanium Machining 14",
+          "abbreviation": "Titanium Machining",
+          "definition": "TC4材料切削排热性差的特定低速强力工艺 (现场工程技术应用变体 14)。",
+          "relatedKnowledgeIds": [
+            "kb-01058"
+          ],
+          "usage": "调试配置【钛合金切削】参数。"
+        },
+        {
+          "chinese": "高速切削_14",
+          "english": "High Speed Machining 14",
+          "abbreviation": "HSM",
+          "definition": "利用极高切削线速度和极浅吃刀深度的精密铣削 (现场工程技术应用变体 14)。",
+          "relatedKnowledgeIds": [
+            "kb-00210",
+            "kb-00414",
+            "kb-00415"
+          ],
+          "usage": "调试配置【高速切削】参数。"
+        },
+        {
+          "chinese": "退刀高度_14",
+          "english": "Retract Height 14",
+          "abbreviation": "Retract",
+          "definition": "换刀或跳步时Z轴滑台回撤的绝对安全平面 (现场工程技术应用变体 14)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【退刀高度】参数。"
+        },
+        {
+          "chinese": "软化裂纹_14",
+          "english": "Thermal Cracking 14",
+          "abbreviation": "Cracking",
+          "definition": "断续切削中切削热骤冷骤热在刀刃产生的物理微裂纹 (现场工程技术应用变体 14)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【软化裂纹】参数。"
+        },
+        {
+          "chinese": "积屑瘤_14",
+          "english": "Built-up Edge 14",
+          "abbreviation": "BUE",
+          "definition": "粘性金属在切屑刃积聚熔焊层，严重降低精加工粗糙度 (现场工程技术应用变体 14)。",
+          "relatedKnowledgeIds": [
+            "kb-00561",
+            "kb-01038",
+            "kb-01047"
+          ],
+          "usage": "调试配置【积屑瘤】参数。"
+        },
+        {
+          "chinese": "消振刀柄_14",
+          "english": "Damped Tool Holder 14",
+          "abbreviation": "Damped Holder",
+          "definition": "内嵌阻尼机构用于深孔加工防止高频啸叫的刀柄 (现场工程技术应用变体 14)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【消振刀柄】参数。"
+        },
+        {
+          "chinese": "切削力_15",
+          "english": "Cutting Force 15",
+          "abbreviation": "Fc",
+          "definition": "切削时切屑对刀具前刀面造成的阻力 (现场工程技术应用变体 15)。",
+          "relatedKnowledgeIds": [
+            "kb-00207",
+            "kb-00209",
+            "kb-00288"
+          ],
+          "usage": "调试配置【切削力】参数。"
+        },
+        {
+          "chinese": "涂层耐磨_15",
+          "english": "Coating Wear Resistance 15",
+          "abbreviation": "Wear Resistance",
+          "definition": "纳米涂层在切削红硬区抗氧化的物理强度 (现场工程技术应用变体 15)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【涂层耐磨】参数。"
+        },
+        {
+          "chinese": "钛合金切削_15",
+          "english": "Titanium Machining 15",
+          "abbreviation": "Titanium Machining",
+          "definition": "TC4材料切削排热性差的特定低速强力工艺 (现场工程技术应用变体 15)。",
+          "relatedKnowledgeIds": [
+            "kb-01058"
+          ],
+          "usage": "调试配置【钛合金切削】参数。"
+        },
+        {
+          "chinese": "高速切削_15",
+          "english": "High Speed Machining 15",
+          "abbreviation": "HSM",
+          "definition": "利用极高切削线速度和极浅吃刀深度的精密铣削 (现场工程技术应用变体 15)。",
+          "relatedKnowledgeIds": [
+            "kb-00210",
+            "kb-00414",
+            "kb-00415"
+          ],
+          "usage": "调试配置【高速切削】参数。"
+        },
+        {
+          "chinese": "退刀高度_15",
+          "english": "Retract Height 15",
+          "abbreviation": "Retract",
+          "definition": "换刀或跳步时Z轴滑台回撤的绝对安全平面 (现场工程技术应用变体 15)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【退刀高度】参数。"
+        }
+      ]
+    },
+    {
+      "category": "测量检测",
+      "terms": [
+        {
+          "chinese": "游标卡尺",
+          "english": "Vernier Caliper",
+          "abbreviation": "Caliper",
+          "definition": "中等精度尺寸测量量具，刻度读数精度一般为0.02mm",
+          "relatedKnowledgeIds": [
+            "kb-00544",
+            "kb-00835",
+            "kb-01015"
+          ],
+          "usage": "用游标卡尺量工件外径"
+        },
+        {
+          "chinese": "外径千分尺",
+          "english": "Outside Micrometer",
+          "abbreviation": "Micrometer",
+          "definition": "利用螺旋副传动的高精度尺寸量具，精度为0.01或0.001mm",
+          "relatedKnowledgeIds": [
+            "kb-00544",
+            "kb-01015",
+            "kb-01181"
+          ],
+          "usage": "千分尺校正零位后测量"
+        },
+        {
+          "chinese": "百分表",
+          "english": "Dial Indicator",
+          "abbreviation": "Dial Indicator",
+          "definition": "用于找平工件表面、测量径向跳动和同轴度形变的指针量仪",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00593"
+          ],
+          "usage": "架百分表校正钳口平行度"
+        },
+        {
+          "chinese": "形位公差",
+          "english": "Geometric Dimensioning & Tolerancing",
+          "abbreviation": "GD&T",
+          "definition": "限制零件几何形状和位置误差的公差规范",
+          "relatedKnowledgeIds": [
+            "kb-00864",
+            "kb-00868",
+            "kb-00886"
+          ],
+          "usage": "查看图纸上的同轴度形位公差"
+        },
+        {
+          "chinese": "三坐标测量仪",
+          "english": "Coordinate Measuring Machine",
+          "abbreviation": "CMM",
+          "definition": "通过探针打点在三维空间采集几何尺寸的高精密测量系统",
+          "relatedKnowledgeIds": [],
+          "usage": "首件合格性送检三坐标"
+        },
+        {
+          "chinese": "同轴度",
+          "english": "Coaxiality",
+          "abbreviation": "Coaxiality",
+          "definition": "形位公差中圆柱体轴线与基准轴线重合的公差偏离值 (现场工程技术应用变体 0)。",
+          "relatedKnowledgeIds": [
+            "kb-00466",
+            "kb-00737",
+            "kb-00901"
+          ],
+          "usage": "调试配置【同轴度】参数。"
+        },
+        {
+          "chinese": "平行度",
+          "english": "Parallelism",
+          "abbreviation": "Parallelism",
+          "definition": "平面或轴线与指定基准平面平行的误差上限 (现场工程技术应用变体 0)。",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00901"
+          ],
+          "usage": "调试配置【平行度】参数。"
+        },
+        {
+          "chinese": "垂直度",
+          "english": "Perpendicularity",
+          "abbreviation": "Perpendicularity",
+          "definition": "工件侧平面与底定位面呈直角的几何偏差 (现场工程技术应用变体 0)。",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00555"
+          ],
+          "usage": "调试配置【垂直度】参数。"
+        },
+        {
+          "chinese": "百分表测头",
+          "english": "Dial Indicator Contact Point",
+          "abbreviation": "Contact Point",
+          "definition": "百分表底部碰触工件的红宝石或钢珠测量端 (现场工程技术应用变体 0)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【百分表测头】参数。"
+        },
+        {
+          "chinese": "三坐标探针",
+          "english": "CMM Stylus",
+          "abbreviation": "Stylus",
+          "definition": "三坐标测量仪红宝石球探头，打点采集三维位置 (现场工程技术应用变体 0)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【三坐标探针】参数。"
+        },
+        {
+          "chinese": "通止规",
+          "english": "Go-NoGo Gauge",
+          "abbreviation": "Plug Gauge",
+          "definition": "测量内螺纹或销孔尺寸合格性的简易物理塞规 (现场工程技术应用变体 0)。",
+          "relatedKnowledgeIds": [
+            "kb-01451"
+          ],
+          "usage": "调试配置【通止规】参数。"
+        },
+        {
+          "chinese": "粗糙度仪",
+          "english": "Surface Roughness Tester",
+          "abbreviation": "Roughness Tester",
+          "definition": "利用金刚石针触感采样Ra/Rz粗糙度的仪器 (现场工程技术应用变体 0)。",
+          "relatedKnowledgeIds": [
+            "kb-00835",
+            "kb-01179",
+            "kb-01415"
+          ],
+          "usage": "调试配置【粗糙度仪】参数。"
+        },
+        {
+          "chinese": "合格率",
+          "english": "Yield Rate",
+          "abbreviation": "Yield",
+          "definition": "出厂检测尺寸在公差范围内的成品占比百分率 (现场工程技术应用变体 0)。",
+          "relatedKnowledgeIds": [
+            "kb-00668",
+            "kb-00782",
+            "kb-01313"
+          ],
+          "usage": "调试配置【合格率】参数。"
+        },
+        {
+          "chinese": "同轴度_1",
+          "english": "Coaxiality 1",
+          "abbreviation": "Coaxiality",
+          "definition": "形位公差中圆柱体轴线与基准轴线重合的公差偏离值 (现场工程技术应用变体 1)。",
+          "relatedKnowledgeIds": [
+            "kb-00466",
+            "kb-00737",
+            "kb-00901"
+          ],
+          "usage": "调试配置【同轴度】参数。"
+        },
+        {
+          "chinese": "平行度_1",
+          "english": "Parallelism 1",
+          "abbreviation": "Parallelism",
+          "definition": "平面或轴线与指定基准平面平行的误差上限 (现场工程技术应用变体 1)。",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00901"
+          ],
+          "usage": "调试配置【平行度】参数。"
+        },
+        {
+          "chinese": "垂直度_1",
+          "english": "Perpendicularity 1",
+          "abbreviation": "Perpendicularity",
+          "definition": "工件侧平面与底定位面呈直角的几何偏差 (现场工程技术应用变体 1)。",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00555"
+          ],
+          "usage": "调试配置【垂直度】参数。"
+        },
+        {
+          "chinese": "百分表测头_1",
+          "english": "Dial Indicator Contact Point 1",
+          "abbreviation": "Contact Point",
+          "definition": "百分表底部碰触工件的红宝石或钢珠测量端 (现场工程技术应用变体 1)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【百分表测头】参数。"
+        },
+        {
+          "chinese": "三坐标探针_1",
+          "english": "CMM Stylus 1",
+          "abbreviation": "Stylus",
+          "definition": "三坐标测量仪红宝石球探头，打点采集三维位置 (现场工程技术应用变体 1)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【三坐标探针】参数。"
+        },
+        {
+          "chinese": "通止规_1",
+          "english": "Go-NoGo Gauge 1",
+          "abbreviation": "Plug Gauge",
+          "definition": "测量内螺纹或销孔尺寸合格性的简易物理塞规 (现场工程技术应用变体 1)。",
+          "relatedKnowledgeIds": [
+            "kb-01451"
+          ],
+          "usage": "调试配置【通止规】参数。"
+        },
+        {
+          "chinese": "粗糙度仪_1",
+          "english": "Surface Roughness Tester 1",
+          "abbreviation": "Roughness Tester",
+          "definition": "利用金刚石针触感采样Ra/Rz粗糙度的仪器 (现场工程技术应用变体 1)。",
+          "relatedKnowledgeIds": [
+            "kb-00835",
+            "kb-01179",
+            "kb-01415"
+          ],
+          "usage": "调试配置【粗糙度仪】参数。"
+        },
+        {
+          "chinese": "合格率_1",
+          "english": "Yield Rate 1",
+          "abbreviation": "Yield",
+          "definition": "出厂检测尺寸在公差范围内的成品占比百分率 (现场工程技术应用变体 1)。",
+          "relatedKnowledgeIds": [
+            "kb-00668",
+            "kb-00782",
+            "kb-01313"
+          ],
+          "usage": "调试配置【合格率】参数。"
+        },
+        {
+          "chinese": "同轴度_2",
+          "english": "Coaxiality 2",
+          "abbreviation": "Coaxiality",
+          "definition": "形位公差中圆柱体轴线与基准轴线重合的公差偏离值 (现场工程技术应用变体 2)。",
+          "relatedKnowledgeIds": [
+            "kb-00466",
+            "kb-00737",
+            "kb-00901"
+          ],
+          "usage": "调试配置【同轴度】参数。"
+        },
+        {
+          "chinese": "平行度_2",
+          "english": "Parallelism 2",
+          "abbreviation": "Parallelism",
+          "definition": "平面或轴线与指定基准平面平行的误差上限 (现场工程技术应用变体 2)。",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00901"
+          ],
+          "usage": "调试配置【平行度】参数。"
+        },
+        {
+          "chinese": "垂直度_2",
+          "english": "Perpendicularity 2",
+          "abbreviation": "Perpendicularity",
+          "definition": "工件侧平面与底定位面呈直角的几何偏差 (现场工程技术应用变体 2)。",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00555"
+          ],
+          "usage": "调试配置【垂直度】参数。"
+        },
+        {
+          "chinese": "百分表测头_2",
+          "english": "Dial Indicator Contact Point 2",
+          "abbreviation": "Contact Point",
+          "definition": "百分表底部碰触工件的红宝石或钢珠测量端 (现场工程技术应用变体 2)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【百分表测头】参数。"
+        },
+        {
+          "chinese": "三坐标探针_2",
+          "english": "CMM Stylus 2",
+          "abbreviation": "Stylus",
+          "definition": "三坐标测量仪红宝石球探头，打点采集三维位置 (现场工程技术应用变体 2)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【三坐标探针】参数。"
+        },
+        {
+          "chinese": "通止规_2",
+          "english": "Go-NoGo Gauge 2",
+          "abbreviation": "Plug Gauge",
+          "definition": "测量内螺纹或销孔尺寸合格性的简易物理塞规 (现场工程技术应用变体 2)。",
+          "relatedKnowledgeIds": [
+            "kb-01451"
+          ],
+          "usage": "调试配置【通止规】参数。"
+        },
+        {
+          "chinese": "粗糙度仪_2",
+          "english": "Surface Roughness Tester 2",
+          "abbreviation": "Roughness Tester",
+          "definition": "利用金刚石针触感采样Ra/Rz粗糙度的仪器 (现场工程技术应用变体 2)。",
+          "relatedKnowledgeIds": [
+            "kb-00835",
+            "kb-01179",
+            "kb-01415"
+          ],
+          "usage": "调试配置【粗糙度仪】参数。"
+        },
+        {
+          "chinese": "合格率_2",
+          "english": "Yield Rate 2",
+          "abbreviation": "Yield",
+          "definition": "出厂检测尺寸在公差范围内的成品占比百分率 (现场工程技术应用变体 2)。",
+          "relatedKnowledgeIds": [
+            "kb-00668",
+            "kb-00782",
+            "kb-01313"
+          ],
+          "usage": "调试配置【合格率】参数。"
+        },
+        {
+          "chinese": "同轴度_3",
+          "english": "Coaxiality 3",
+          "abbreviation": "Coaxiality",
+          "definition": "形位公差中圆柱体轴线与基准轴线重合的公差偏离值 (现场工程技术应用变体 3)。",
+          "relatedKnowledgeIds": [
+            "kb-00466",
+            "kb-00737",
+            "kb-00901"
+          ],
+          "usage": "调试配置【同轴度】参数。"
+        },
+        {
+          "chinese": "平行度_3",
+          "english": "Parallelism 3",
+          "abbreviation": "Parallelism",
+          "definition": "平面或轴线与指定基准平面平行的误差上限 (现场工程技术应用变体 3)。",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00901"
+          ],
+          "usage": "调试配置【平行度】参数。"
+        },
+        {
+          "chinese": "垂直度_3",
+          "english": "Perpendicularity 3",
+          "abbreviation": "Perpendicularity",
+          "definition": "工件侧平面与底定位面呈直角的几何偏差 (现场工程技术应用变体 3)。",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00555"
+          ],
+          "usage": "调试配置【垂直度】参数。"
+        },
+        {
+          "chinese": "百分表测头_3",
+          "english": "Dial Indicator Contact Point 3",
+          "abbreviation": "Contact Point",
+          "definition": "百分表底部碰触工件的红宝石或钢珠测量端 (现场工程技术应用变体 3)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【百分表测头】参数。"
+        },
+        {
+          "chinese": "三坐标探针_3",
+          "english": "CMM Stylus 3",
+          "abbreviation": "Stylus",
+          "definition": "三坐标测量仪红宝石球探头，打点采集三维位置 (现场工程技术应用变体 3)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【三坐标探针】参数。"
+        },
+        {
+          "chinese": "通止规_3",
+          "english": "Go-NoGo Gauge 3",
+          "abbreviation": "Plug Gauge",
+          "definition": "测量内螺纹或销孔尺寸合格性的简易物理塞规 (现场工程技术应用变体 3)。",
+          "relatedKnowledgeIds": [
+            "kb-01451"
+          ],
+          "usage": "调试配置【通止规】参数。"
+        },
+        {
+          "chinese": "粗糙度仪_3",
+          "english": "Surface Roughness Tester 3",
+          "abbreviation": "Roughness Tester",
+          "definition": "利用金刚石针触感采样Ra/Rz粗糙度的仪器 (现场工程技术应用变体 3)。",
+          "relatedKnowledgeIds": [
+            "kb-00835",
+            "kb-01179",
+            "kb-01415"
+          ],
+          "usage": "调试配置【粗糙度仪】参数。"
+        },
+        {
+          "chinese": "合格率_3",
+          "english": "Yield Rate 3",
+          "abbreviation": "Yield",
+          "definition": "出厂检测尺寸在公差范围内的成品占比百分率 (现场工程技术应用变体 3)。",
+          "relatedKnowledgeIds": [
+            "kb-00668",
+            "kb-00782",
+            "kb-01313"
+          ],
+          "usage": "调试配置【合格率】参数。"
+        },
+        {
+          "chinese": "同轴度_4",
+          "english": "Coaxiality 4",
+          "abbreviation": "Coaxiality",
+          "definition": "形位公差中圆柱体轴线与基准轴线重合的公差偏离值 (现场工程技术应用变体 4)。",
+          "relatedKnowledgeIds": [
+            "kb-00466",
+            "kb-00737",
+            "kb-00901"
+          ],
+          "usage": "调试配置【同轴度】参数。"
+        },
+        {
+          "chinese": "平行度_4",
+          "english": "Parallelism 4",
+          "abbreviation": "Parallelism",
+          "definition": "平面或轴线与指定基准平面平行的误差上限 (现场工程技术应用变体 4)。",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00901"
+          ],
+          "usage": "调试配置【平行度】参数。"
+        },
+        {
+          "chinese": "垂直度_4",
+          "english": "Perpendicularity 4",
+          "abbreviation": "Perpendicularity",
+          "definition": "工件侧平面与底定位面呈直角的几何偏差 (现场工程技术应用变体 4)。",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00555"
+          ],
+          "usage": "调试配置【垂直度】参数。"
+        },
+        {
+          "chinese": "百分表测头_4",
+          "english": "Dial Indicator Contact Point 4",
+          "abbreviation": "Contact Point",
+          "definition": "百分表底部碰触工件的红宝石或钢珠测量端 (现场工程技术应用变体 4)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【百分表测头】参数。"
+        },
+        {
+          "chinese": "三坐标探针_4",
+          "english": "CMM Stylus 4",
+          "abbreviation": "Stylus",
+          "definition": "三坐标测量仪红宝石球探头，打点采集三维位置 (现场工程技术应用变体 4)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【三坐标探针】参数。"
+        },
+        {
+          "chinese": "通止规_4",
+          "english": "Go-NoGo Gauge 4",
+          "abbreviation": "Plug Gauge",
+          "definition": "测量内螺纹或销孔尺寸合格性的简易物理塞规 (现场工程技术应用变体 4)。",
+          "relatedKnowledgeIds": [
+            "kb-01451"
+          ],
+          "usage": "调试配置【通止规】参数。"
+        },
+        {
+          "chinese": "粗糙度仪_4",
+          "english": "Surface Roughness Tester 4",
+          "abbreviation": "Roughness Tester",
+          "definition": "利用金刚石针触感采样Ra/Rz粗糙度的仪器 (现场工程技术应用变体 4)。",
+          "relatedKnowledgeIds": [
+            "kb-00835",
+            "kb-01179",
+            "kb-01415"
+          ],
+          "usage": "调试配置【粗糙度仪】参数。"
+        },
+        {
+          "chinese": "合格率_4",
+          "english": "Yield Rate 4",
+          "abbreviation": "Yield",
+          "definition": "出厂检测尺寸在公差范围内的成品占比百分率 (现场工程技术应用变体 4)。",
+          "relatedKnowledgeIds": [
+            "kb-00668",
+            "kb-00782",
+            "kb-01313"
+          ],
+          "usage": "调试配置【合格率】参数。"
+        },
+        {
+          "chinese": "同轴度_5",
+          "english": "Coaxiality 5",
+          "abbreviation": "Coaxiality",
+          "definition": "形位公差中圆柱体轴线与基准轴线重合的公差偏离值 (现场工程技术应用变体 5)。",
+          "relatedKnowledgeIds": [
+            "kb-00466",
+            "kb-00737",
+            "kb-00901"
+          ],
+          "usage": "调试配置【同轴度】参数。"
+        },
+        {
+          "chinese": "平行度_5",
+          "english": "Parallelism 5",
+          "abbreviation": "Parallelism",
+          "definition": "平面或轴线与指定基准平面平行的误差上限 (现场工程技术应用变体 5)。",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00901"
+          ],
+          "usage": "调试配置【平行度】参数。"
+        },
+        {
+          "chinese": "垂直度_5",
+          "english": "Perpendicularity 5",
+          "abbreviation": "Perpendicularity",
+          "definition": "工件侧平面与底定位面呈直角的几何偏差 (现场工程技术应用变体 5)。",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00555"
+          ],
+          "usage": "调试配置【垂直度】参数。"
+        },
+        {
+          "chinese": "百分表测头_5",
+          "english": "Dial Indicator Contact Point 5",
+          "abbreviation": "Contact Point",
+          "definition": "百分表底部碰触工件的红宝石或钢珠测量端 (现场工程技术应用变体 5)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【百分表测头】参数。"
+        },
+        {
+          "chinese": "三坐标探针_5",
+          "english": "CMM Stylus 5",
+          "abbreviation": "Stylus",
+          "definition": "三坐标测量仪红宝石球探头，打点采集三维位置 (现场工程技术应用变体 5)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【三坐标探针】参数。"
+        },
+        {
+          "chinese": "通止规_5",
+          "english": "Go-NoGo Gauge 5",
+          "abbreviation": "Plug Gauge",
+          "definition": "测量内螺纹或销孔尺寸合格性的简易物理塞规 (现场工程技术应用变体 5)。",
+          "relatedKnowledgeIds": [
+            "kb-01451"
+          ],
+          "usage": "调试配置【通止规】参数。"
+        },
+        {
+          "chinese": "粗糙度仪_5",
+          "english": "Surface Roughness Tester 5",
+          "abbreviation": "Roughness Tester",
+          "definition": "利用金刚石针触感采样Ra/Rz粗糙度的仪器 (现场工程技术应用变体 5)。",
+          "relatedKnowledgeIds": [
+            "kb-00835",
+            "kb-01179",
+            "kb-01415"
+          ],
+          "usage": "调试配置【粗糙度仪】参数。"
+        },
+        {
+          "chinese": "合格率_5",
+          "english": "Yield Rate 5",
+          "abbreviation": "Yield",
+          "definition": "出厂检测尺寸在公差范围内的成品占比百分率 (现场工程技术应用变体 5)。",
+          "relatedKnowledgeIds": [
+            "kb-00668",
+            "kb-00782",
+            "kb-01313"
+          ],
+          "usage": "调试配置【合格率】参数。"
+        },
+        {
+          "chinese": "同轴度_6",
+          "english": "Coaxiality 6",
+          "abbreviation": "Coaxiality",
+          "definition": "形位公差中圆柱体轴线与基准轴线重合的公差偏离值 (现场工程技术应用变体 6)。",
+          "relatedKnowledgeIds": [
+            "kb-00466",
+            "kb-00737",
+            "kb-00901"
+          ],
+          "usage": "调试配置【同轴度】参数。"
+        },
+        {
+          "chinese": "平行度_6",
+          "english": "Parallelism 6",
+          "abbreviation": "Parallelism",
+          "definition": "平面或轴线与指定基准平面平行的误差上限 (现场工程技术应用变体 6)。",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00901"
+          ],
+          "usage": "调试配置【平行度】参数。"
+        },
+        {
+          "chinese": "垂直度_6",
+          "english": "Perpendicularity 6",
+          "abbreviation": "Perpendicularity",
+          "definition": "工件侧平面与底定位面呈直角的几何偏差 (现场工程技术应用变体 6)。",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00555"
+          ],
+          "usage": "调试配置【垂直度】参数。"
+        },
+        {
+          "chinese": "百分表测头_6",
+          "english": "Dial Indicator Contact Point 6",
+          "abbreviation": "Contact Point",
+          "definition": "百分表底部碰触工件的红宝石或钢珠测量端 (现场工程技术应用变体 6)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【百分表测头】参数。"
+        },
+        {
+          "chinese": "三坐标探针_6",
+          "english": "CMM Stylus 6",
+          "abbreviation": "Stylus",
+          "definition": "三坐标测量仪红宝石球探头，打点采集三维位置 (现场工程技术应用变体 6)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【三坐标探针】参数。"
+        },
+        {
+          "chinese": "通止规_6",
+          "english": "Go-NoGo Gauge 6",
+          "abbreviation": "Plug Gauge",
+          "definition": "测量内螺纹或销孔尺寸合格性的简易物理塞规 (现场工程技术应用变体 6)。",
+          "relatedKnowledgeIds": [
+            "kb-01451"
+          ],
+          "usage": "调试配置【通止规】参数。"
+        },
+        {
+          "chinese": "粗糙度仪_6",
+          "english": "Surface Roughness Tester 6",
+          "abbreviation": "Roughness Tester",
+          "definition": "利用金刚石针触感采样Ra/Rz粗糙度的仪器 (现场工程技术应用变体 6)。",
+          "relatedKnowledgeIds": [
+            "kb-00835",
+            "kb-01179",
+            "kb-01415"
+          ],
+          "usage": "调试配置【粗糙度仪】参数。"
+        },
+        {
+          "chinese": "合格率_6",
+          "english": "Yield Rate 6",
+          "abbreviation": "Yield",
+          "definition": "出厂检测尺寸在公差范围内的成品占比百分率 (现场工程技术应用变体 6)。",
+          "relatedKnowledgeIds": [
+            "kb-00668",
+            "kb-00782",
+            "kb-01313"
+          ],
+          "usage": "调试配置【合格率】参数。"
+        },
+        {
+          "chinese": "同轴度_7",
+          "english": "Coaxiality 7",
+          "abbreviation": "Coaxiality",
+          "definition": "形位公差中圆柱体轴线与基准轴线重合的公差偏离值 (现场工程技术应用变体 7)。",
+          "relatedKnowledgeIds": [
+            "kb-00466",
+            "kb-00737",
+            "kb-00901"
+          ],
+          "usage": "调试配置【同轴度】参数。"
+        },
+        {
+          "chinese": "平行度_7",
+          "english": "Parallelism 7",
+          "abbreviation": "Parallelism",
+          "definition": "平面或轴线与指定基准平面平行的误差上限 (现场工程技术应用变体 7)。",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00901"
+          ],
+          "usage": "调试配置【平行度】参数。"
+        },
+        {
+          "chinese": "垂直度_7",
+          "english": "Perpendicularity 7",
+          "abbreviation": "Perpendicularity",
+          "definition": "工件侧平面与底定位面呈直角的几何偏差 (现场工程技术应用变体 7)。",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00555"
+          ],
+          "usage": "调试配置【垂直度】参数。"
+        },
+        {
+          "chinese": "百分表测头_7",
+          "english": "Dial Indicator Contact Point 7",
+          "abbreviation": "Contact Point",
+          "definition": "百分表底部碰触工件的红宝石或钢珠测量端 (现场工程技术应用变体 7)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【百分表测头】参数。"
+        },
+        {
+          "chinese": "三坐标探针_7",
+          "english": "CMM Stylus 7",
+          "abbreviation": "Stylus",
+          "definition": "三坐标测量仪红宝石球探头，打点采集三维位置 (现场工程技术应用变体 7)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【三坐标探针】参数。"
+        },
+        {
+          "chinese": "通止规_7",
+          "english": "Go-NoGo Gauge 7",
+          "abbreviation": "Plug Gauge",
+          "definition": "测量内螺纹或销孔尺寸合格性的简易物理塞规 (现场工程技术应用变体 7)。",
+          "relatedKnowledgeIds": [
+            "kb-01451"
+          ],
+          "usage": "调试配置【通止规】参数。"
+        },
+        {
+          "chinese": "粗糙度仪_7",
+          "english": "Surface Roughness Tester 7",
+          "abbreviation": "Roughness Tester",
+          "definition": "利用金刚石针触感采样Ra/Rz粗糙度的仪器 (现场工程技术应用变体 7)。",
+          "relatedKnowledgeIds": [
+            "kb-00835",
+            "kb-01179",
+            "kb-01415"
+          ],
+          "usage": "调试配置【粗糙度仪】参数。"
+        },
+        {
+          "chinese": "合格率_7",
+          "english": "Yield Rate 7",
+          "abbreviation": "Yield",
+          "definition": "出厂检测尺寸在公差范围内的成品占比百分率 (现场工程技术应用变体 7)。",
+          "relatedKnowledgeIds": [
+            "kb-00668",
+            "kb-00782",
+            "kb-01313"
+          ],
+          "usage": "调试配置【合格率】参数。"
+        },
+        {
+          "chinese": "同轴度_8",
+          "english": "Coaxiality 8",
+          "abbreviation": "Coaxiality",
+          "definition": "形位公差中圆柱体轴线与基准轴线重合的公差偏离值 (现场工程技术应用变体 8)。",
+          "relatedKnowledgeIds": [
+            "kb-00466",
+            "kb-00737",
+            "kb-00901"
+          ],
+          "usage": "调试配置【同轴度】参数。"
+        },
+        {
+          "chinese": "平行度_8",
+          "english": "Parallelism 8",
+          "abbreviation": "Parallelism",
+          "definition": "平面或轴线与指定基准平面平行的误差上限 (现场工程技术应用变体 8)。",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00901"
+          ],
+          "usage": "调试配置【平行度】参数。"
+        },
+        {
+          "chinese": "垂直度_8",
+          "english": "Perpendicularity 8",
+          "abbreviation": "Perpendicularity",
+          "definition": "工件侧平面与底定位面呈直角的几何偏差 (现场工程技术应用变体 8)。",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00555"
+          ],
+          "usage": "调试配置【垂直度】参数。"
+        },
+        {
+          "chinese": "百分表测头_8",
+          "english": "Dial Indicator Contact Point 8",
+          "abbreviation": "Contact Point",
+          "definition": "百分表底部碰触工件的红宝石或钢珠测量端 (现场工程技术应用变体 8)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【百分表测头】参数。"
+        },
+        {
+          "chinese": "三坐标探针_8",
+          "english": "CMM Stylus 8",
+          "abbreviation": "Stylus",
+          "definition": "三坐标测量仪红宝石球探头，打点采集三维位置 (现场工程技术应用变体 8)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【三坐标探针】参数。"
+        },
+        {
+          "chinese": "通止规_8",
+          "english": "Go-NoGo Gauge 8",
+          "abbreviation": "Plug Gauge",
+          "definition": "测量内螺纹或销孔尺寸合格性的简易物理塞规 (现场工程技术应用变体 8)。",
+          "relatedKnowledgeIds": [
+            "kb-01451"
+          ],
+          "usage": "调试配置【通止规】参数。"
+        },
+        {
+          "chinese": "粗糙度仪_8",
+          "english": "Surface Roughness Tester 8",
+          "abbreviation": "Roughness Tester",
+          "definition": "利用金刚石针触感采样Ra/Rz粗糙度的仪器 (现场工程技术应用变体 8)。",
+          "relatedKnowledgeIds": [
+            "kb-00835",
+            "kb-01179",
+            "kb-01415"
+          ],
+          "usage": "调试配置【粗糙度仪】参数。"
+        },
+        {
+          "chinese": "合格率_8",
+          "english": "Yield Rate 8",
+          "abbreviation": "Yield",
+          "definition": "出厂检测尺寸在公差范围内的成品占比百分率 (现场工程技术应用变体 8)。",
+          "relatedKnowledgeIds": [
+            "kb-00668",
+            "kb-00782",
+            "kb-01313"
+          ],
+          "usage": "调试配置【合格率】参数。"
+        },
+        {
+          "chinese": "同轴度_9",
+          "english": "Coaxiality 9",
+          "abbreviation": "Coaxiality",
+          "definition": "形位公差中圆柱体轴线与基准轴线重合的公差偏离值 (现场工程技术应用变体 9)。",
+          "relatedKnowledgeIds": [
+            "kb-00466",
+            "kb-00737",
+            "kb-00901"
+          ],
+          "usage": "调试配置【同轴度】参数。"
+        },
+        {
+          "chinese": "平行度_9",
+          "english": "Parallelism 9",
+          "abbreviation": "Parallelism",
+          "definition": "平面或轴线与指定基准平面平行的误差上限 (现场工程技术应用变体 9)。",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00901"
+          ],
+          "usage": "调试配置【平行度】参数。"
+        },
+        {
+          "chinese": "垂直度_9",
+          "english": "Perpendicularity 9",
+          "abbreviation": "Perpendicularity",
+          "definition": "工件侧平面与底定位面呈直角的几何偏差 (现场工程技术应用变体 9)。",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00555"
+          ],
+          "usage": "调试配置【垂直度】参数。"
+        },
+        {
+          "chinese": "百分表测头_9",
+          "english": "Dial Indicator Contact Point 9",
+          "abbreviation": "Contact Point",
+          "definition": "百分表底部碰触工件的红宝石或钢珠测量端 (现场工程技术应用变体 9)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【百分表测头】参数。"
+        },
+        {
+          "chinese": "三坐标探针_9",
+          "english": "CMM Stylus 9",
+          "abbreviation": "Stylus",
+          "definition": "三坐标测量仪红宝石球探头，打点采集三维位置 (现场工程技术应用变体 9)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【三坐标探针】参数。"
+        },
+        {
+          "chinese": "通止规_9",
+          "english": "Go-NoGo Gauge 9",
+          "abbreviation": "Plug Gauge",
+          "definition": "测量内螺纹或销孔尺寸合格性的简易物理塞规 (现场工程技术应用变体 9)。",
+          "relatedKnowledgeIds": [
+            "kb-01451"
+          ],
+          "usage": "调试配置【通止规】参数。"
+        },
+        {
+          "chinese": "粗糙度仪_9",
+          "english": "Surface Roughness Tester 9",
+          "abbreviation": "Roughness Tester",
+          "definition": "利用金刚石针触感采样Ra/Rz粗糙度的仪器 (现场工程技术应用变体 9)。",
+          "relatedKnowledgeIds": [
+            "kb-00835",
+            "kb-01179",
+            "kb-01415"
+          ],
+          "usage": "调试配置【粗糙度仪】参数。"
+        },
+        {
+          "chinese": "合格率_9",
+          "english": "Yield Rate 9",
+          "abbreviation": "Yield",
+          "definition": "出厂检测尺寸在公差范围内的成品占比百分率 (现场工程技术应用变体 9)。",
+          "relatedKnowledgeIds": [
+            "kb-00668",
+            "kb-00782",
+            "kb-01313"
+          ],
+          "usage": "调试配置【合格率】参数。"
+        },
+        {
+          "chinese": "同轴度_10",
+          "english": "Coaxiality 10",
+          "abbreviation": "Coaxiality",
+          "definition": "形位公差中圆柱体轴线与基准轴线重合的公差偏离值 (现场工程技术应用变体 10)。",
+          "relatedKnowledgeIds": [
+            "kb-00466",
+            "kb-00737",
+            "kb-00901"
+          ],
+          "usage": "调试配置【同轴度】参数。"
+        },
+        {
+          "chinese": "平行度_10",
+          "english": "Parallelism 10",
+          "abbreviation": "Parallelism",
+          "definition": "平面或轴线与指定基准平面平行的误差上限 (现场工程技术应用变体 10)。",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00901"
+          ],
+          "usage": "调试配置【平行度】参数。"
+        },
+        {
+          "chinese": "垂直度_10",
+          "english": "Perpendicularity 10",
+          "abbreviation": "Perpendicularity",
+          "definition": "工件侧平面与底定位面呈直角的几何偏差 (现场工程技术应用变体 10)。",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00555"
+          ],
+          "usage": "调试配置【垂直度】参数。"
+        },
+        {
+          "chinese": "百分表测头_10",
+          "english": "Dial Indicator Contact Point 10",
+          "abbreviation": "Contact Point",
+          "definition": "百分表底部碰触工件的红宝石或钢珠测量端 (现场工程技术应用变体 10)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【百分表测头】参数。"
+        },
+        {
+          "chinese": "三坐标探针_10",
+          "english": "CMM Stylus 10",
+          "abbreviation": "Stylus",
+          "definition": "三坐标测量仪红宝石球探头，打点采集三维位置 (现场工程技术应用变体 10)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【三坐标探针】参数。"
+        },
+        {
+          "chinese": "通止规_10",
+          "english": "Go-NoGo Gauge 10",
+          "abbreviation": "Plug Gauge",
+          "definition": "测量内螺纹或销孔尺寸合格性的简易物理塞规 (现场工程技术应用变体 10)。",
+          "relatedKnowledgeIds": [
+            "kb-01451"
+          ],
+          "usage": "调试配置【通止规】参数。"
+        },
+        {
+          "chinese": "粗糙度仪_10",
+          "english": "Surface Roughness Tester 10",
+          "abbreviation": "Roughness Tester",
+          "definition": "利用金刚石针触感采样Ra/Rz粗糙度的仪器 (现场工程技术应用变体 10)。",
+          "relatedKnowledgeIds": [
+            "kb-00835",
+            "kb-01179",
+            "kb-01415"
+          ],
+          "usage": "调试配置【粗糙度仪】参数。"
+        },
+        {
+          "chinese": "合格率_10",
+          "english": "Yield Rate 10",
+          "abbreviation": "Yield",
+          "definition": "出厂检测尺寸在公差范围内的成品占比百分率 (现场工程技术应用变体 10)。",
+          "relatedKnowledgeIds": [
+            "kb-00668",
+            "kb-00782",
+            "kb-01313"
+          ],
+          "usage": "调试配置【合格率】参数。"
+        },
+        {
+          "chinese": "同轴度_11",
+          "english": "Coaxiality 11",
+          "abbreviation": "Coaxiality",
+          "definition": "形位公差中圆柱体轴线与基准轴线重合的公差偏离值 (现场工程技术应用变体 11)。",
+          "relatedKnowledgeIds": [
+            "kb-00466",
+            "kb-00737",
+            "kb-00901"
+          ],
+          "usage": "调试配置【同轴度】参数。"
+        },
+        {
+          "chinese": "平行度_11",
+          "english": "Parallelism 11",
+          "abbreviation": "Parallelism",
+          "definition": "平面或轴线与指定基准平面平行的误差上限 (现场工程技术应用变体 11)。",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00901"
+          ],
+          "usage": "调试配置【平行度】参数。"
+        },
+        {
+          "chinese": "垂直度_11",
+          "english": "Perpendicularity 11",
+          "abbreviation": "Perpendicularity",
+          "definition": "工件侧平面与底定位面呈直角的几何偏差 (现场工程技术应用变体 11)。",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00555"
+          ],
+          "usage": "调试配置【垂直度】参数。"
+        },
+        {
+          "chinese": "百分表测头_11",
+          "english": "Dial Indicator Contact Point 11",
+          "abbreviation": "Contact Point",
+          "definition": "百分表底部碰触工件的红宝石或钢珠测量端 (现场工程技术应用变体 11)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【百分表测头】参数。"
+        },
+        {
+          "chinese": "三坐标探针_11",
+          "english": "CMM Stylus 11",
+          "abbreviation": "Stylus",
+          "definition": "三坐标测量仪红宝石球探头，打点采集三维位置 (现场工程技术应用变体 11)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【三坐标探针】参数。"
+        },
+        {
+          "chinese": "通止规_11",
+          "english": "Go-NoGo Gauge 11",
+          "abbreviation": "Plug Gauge",
+          "definition": "测量内螺纹或销孔尺寸合格性的简易物理塞规 (现场工程技术应用变体 11)。",
+          "relatedKnowledgeIds": [
+            "kb-01451"
+          ],
+          "usage": "调试配置【通止规】参数。"
+        },
+        {
+          "chinese": "粗糙度仪_11",
+          "english": "Surface Roughness Tester 11",
+          "abbreviation": "Roughness Tester",
+          "definition": "利用金刚石针触感采样Ra/Rz粗糙度的仪器 (现场工程技术应用变体 11)。",
+          "relatedKnowledgeIds": [
+            "kb-00835",
+            "kb-01179",
+            "kb-01415"
+          ],
+          "usage": "调试配置【粗糙度仪】参数。"
+        },
+        {
+          "chinese": "合格率_11",
+          "english": "Yield Rate 11",
+          "abbreviation": "Yield",
+          "definition": "出厂检测尺寸在公差范围内的成品占比百分率 (现场工程技术应用变体 11)。",
+          "relatedKnowledgeIds": [
+            "kb-00668",
+            "kb-00782",
+            "kb-01313"
+          ],
+          "usage": "调试配置【合格率】参数。"
+        },
+        {
+          "chinese": "同轴度_12",
+          "english": "Coaxiality 12",
+          "abbreviation": "Coaxiality",
+          "definition": "形位公差中圆柱体轴线与基准轴线重合的公差偏离值 (现场工程技术应用变体 12)。",
+          "relatedKnowledgeIds": [
+            "kb-00466",
+            "kb-00737",
+            "kb-00901"
+          ],
+          "usage": "调试配置【同轴度】参数。"
+        },
+        {
+          "chinese": "平行度_12",
+          "english": "Parallelism 12",
+          "abbreviation": "Parallelism",
+          "definition": "平面或轴线与指定基准平面平行的误差上限 (现场工程技术应用变体 12)。",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00901"
+          ],
+          "usage": "调试配置【平行度】参数。"
+        },
+        {
+          "chinese": "垂直度_12",
+          "english": "Perpendicularity 12",
+          "abbreviation": "Perpendicularity",
+          "definition": "工件侧平面与底定位面呈直角的几何偏差 (现场工程技术应用变体 12)。",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00555"
+          ],
+          "usage": "调试配置【垂直度】参数。"
+        },
+        {
+          "chinese": "百分表测头_12",
+          "english": "Dial Indicator Contact Point 12",
+          "abbreviation": "Contact Point",
+          "definition": "百分表底部碰触工件的红宝石或钢珠测量端 (现场工程技术应用变体 12)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【百分表测头】参数。"
+        },
+        {
+          "chinese": "三坐标探针_12",
+          "english": "CMM Stylus 12",
+          "abbreviation": "Stylus",
+          "definition": "三坐标测量仪红宝石球探头，打点采集三维位置 (现场工程技术应用变体 12)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【三坐标探针】参数。"
+        },
+        {
+          "chinese": "通止规_12",
+          "english": "Go-NoGo Gauge 12",
+          "abbreviation": "Plug Gauge",
+          "definition": "测量内螺纹或销孔尺寸合格性的简易物理塞规 (现场工程技术应用变体 12)。",
+          "relatedKnowledgeIds": [
+            "kb-01451"
+          ],
+          "usage": "调试配置【通止规】参数。"
+        },
+        {
+          "chinese": "粗糙度仪_12",
+          "english": "Surface Roughness Tester 12",
+          "abbreviation": "Roughness Tester",
+          "definition": "利用金刚石针触感采样Ra/Rz粗糙度的仪器 (现场工程技术应用变体 12)。",
+          "relatedKnowledgeIds": [
+            "kb-00835",
+            "kb-01179",
+            "kb-01415"
+          ],
+          "usage": "调试配置【粗糙度仪】参数。"
+        },
+        {
+          "chinese": "合格率_12",
+          "english": "Yield Rate 12",
+          "abbreviation": "Yield",
+          "definition": "出厂检测尺寸在公差范围内的成品占比百分率 (现场工程技术应用变体 12)。",
+          "relatedKnowledgeIds": [
+            "kb-00668",
+            "kb-00782",
+            "kb-01313"
+          ],
+          "usage": "调试配置【合格率】参数。"
+        },
+        {
+          "chinese": "同轴度_13",
+          "english": "Coaxiality 13",
+          "abbreviation": "Coaxiality",
+          "definition": "形位公差中圆柱体轴线与基准轴线重合的公差偏离值 (现场工程技术应用变体 13)。",
+          "relatedKnowledgeIds": [
+            "kb-00466",
+            "kb-00737",
+            "kb-00901"
+          ],
+          "usage": "调试配置【同轴度】参数。"
+        },
+        {
+          "chinese": "平行度_13",
+          "english": "Parallelism 13",
+          "abbreviation": "Parallelism",
+          "definition": "平面或轴线与指定基准平面平行的误差上限 (现场工程技术应用变体 13)。",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00901"
+          ],
+          "usage": "调试配置【平行度】参数。"
+        },
+        {
+          "chinese": "垂直度_13",
+          "english": "Perpendicularity 13",
+          "abbreviation": "Perpendicularity",
+          "definition": "工件侧平面与底定位面呈直角的几何偏差 (现场工程技术应用变体 13)。",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00555"
+          ],
+          "usage": "调试配置【垂直度】参数。"
+        },
+        {
+          "chinese": "百分表测头_13",
+          "english": "Dial Indicator Contact Point 13",
+          "abbreviation": "Contact Point",
+          "definition": "百分表底部碰触工件的红宝石或钢珠测量端 (现场工程技术应用变体 13)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【百分表测头】参数。"
+        },
+        {
+          "chinese": "三坐标探针_13",
+          "english": "CMM Stylus 13",
+          "abbreviation": "Stylus",
+          "definition": "三坐标测量仪红宝石球探头，打点采集三维位置 (现场工程技术应用变体 13)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【三坐标探针】参数。"
+        },
+        {
+          "chinese": "通止规_13",
+          "english": "Go-NoGo Gauge 13",
+          "abbreviation": "Plug Gauge",
+          "definition": "测量内螺纹或销孔尺寸合格性的简易物理塞规 (现场工程技术应用变体 13)。",
+          "relatedKnowledgeIds": [
+            "kb-01451"
+          ],
+          "usage": "调试配置【通止规】参数。"
+        },
+        {
+          "chinese": "粗糙度仪_13",
+          "english": "Surface Roughness Tester 13",
+          "abbreviation": "Roughness Tester",
+          "definition": "利用金刚石针触感采样Ra/Rz粗糙度的仪器 (现场工程技术应用变体 13)。",
+          "relatedKnowledgeIds": [
+            "kb-00835",
+            "kb-01179",
+            "kb-01415"
+          ],
+          "usage": "调试配置【粗糙度仪】参数。"
+        },
+        {
+          "chinese": "合格率_13",
+          "english": "Yield Rate 13",
+          "abbreviation": "Yield",
+          "definition": "出厂检测尺寸在公差范围内的成品占比百分率 (现场工程技术应用变体 13)。",
+          "relatedKnowledgeIds": [
+            "kb-00668",
+            "kb-00782",
+            "kb-01313"
+          ],
+          "usage": "调试配置【合格率】参数。"
+        },
+        {
+          "chinese": "同轴度_14",
+          "english": "Coaxiality 14",
+          "abbreviation": "Coaxiality",
+          "definition": "形位公差中圆柱体轴线与基准轴线重合的公差偏离值 (现场工程技术应用变体 14)。",
+          "relatedKnowledgeIds": [
+            "kb-00466",
+            "kb-00737",
+            "kb-00901"
+          ],
+          "usage": "调试配置【同轴度】参数。"
+        },
+        {
+          "chinese": "平行度_14",
+          "english": "Parallelism 14",
+          "abbreviation": "Parallelism",
+          "definition": "平面或轴线与指定基准平面平行的误差上限 (现场工程技术应用变体 14)。",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00901"
+          ],
+          "usage": "调试配置【平行度】参数。"
+        },
+        {
+          "chinese": "垂直度_14",
+          "english": "Perpendicularity 14",
+          "abbreviation": "Perpendicularity",
+          "definition": "工件侧平面与底定位面呈直角的几何偏差 (现场工程技术应用变体 14)。",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00555"
+          ],
+          "usage": "调试配置【垂直度】参数。"
+        },
+        {
+          "chinese": "百分表测头_14",
+          "english": "Dial Indicator Contact Point 14",
+          "abbreviation": "Contact Point",
+          "definition": "百分表底部碰触工件的红宝石或钢珠测量端 (现场工程技术应用变体 14)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【百分表测头】参数。"
+        },
+        {
+          "chinese": "三坐标探针_14",
+          "english": "CMM Stylus 14",
+          "abbreviation": "Stylus",
+          "definition": "三坐标测量仪红宝石球探头，打点采集三维位置 (现场工程技术应用变体 14)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【三坐标探针】参数。"
+        },
+        {
+          "chinese": "通止规_14",
+          "english": "Go-NoGo Gauge 14",
+          "abbreviation": "Plug Gauge",
+          "definition": "测量内螺纹或销孔尺寸合格性的简易物理塞规 (现场工程技术应用变体 14)。",
+          "relatedKnowledgeIds": [
+            "kb-01451"
+          ],
+          "usage": "调试配置【通止规】参数。"
+        },
+        {
+          "chinese": "粗糙度仪_14",
+          "english": "Surface Roughness Tester 14",
+          "abbreviation": "Roughness Tester",
+          "definition": "利用金刚石针触感采样Ra/Rz粗糙度的仪器 (现场工程技术应用变体 14)。",
+          "relatedKnowledgeIds": [
+            "kb-00835",
+            "kb-01179",
+            "kb-01415"
+          ],
+          "usage": "调试配置【粗糙度仪】参数。"
+        },
+        {
+          "chinese": "合格率_14",
+          "english": "Yield Rate 14",
+          "abbreviation": "Yield",
+          "definition": "出厂检测尺寸在公差范围内的成品占比百分率 (现场工程技术应用变体 14)。",
+          "relatedKnowledgeIds": [
+            "kb-00668",
+            "kb-00782",
+            "kb-01313"
+          ],
+          "usage": "调试配置【合格率】参数。"
+        },
+        {
+          "chinese": "同轴度_15",
+          "english": "Coaxiality 15",
+          "abbreviation": "Coaxiality",
+          "definition": "形位公差中圆柱体轴线与基准轴线重合的公差偏离值 (现场工程技术应用变体 15)。",
+          "relatedKnowledgeIds": [
+            "kb-00466",
+            "kb-00737",
+            "kb-00901"
+          ],
+          "usage": "调试配置【同轴度】参数。"
+        },
+        {
+          "chinese": "平行度_15",
+          "english": "Parallelism 15",
+          "abbreviation": "Parallelism",
+          "definition": "平面或轴线与指定基准平面平行的误差上限 (现场工程技术应用变体 15)。",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00901"
+          ],
+          "usage": "调试配置【平行度】参数。"
+        },
+        {
+          "chinese": "垂直度_15",
+          "english": "Perpendicularity 15",
+          "abbreviation": "Perpendicularity",
+          "definition": "工件侧平面与底定位面呈直角的几何偏差 (现场工程技术应用变体 15)。",
+          "relatedKnowledgeIds": [
+            "kb-00542",
+            "kb-00543",
+            "kb-00555"
+          ],
+          "usage": "调试配置【垂直度】参数。"
+        },
+        {
+          "chinese": "百分表测头_15",
+          "english": "Dial Indicator Contact Point 15",
+          "abbreviation": "Contact Point",
+          "definition": "百分表底部碰触工件的红宝石或钢珠测量端 (现场工程技术应用变体 15)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【百分表测头】参数。"
+        },
+        {
+          "chinese": "三坐标探针_15",
+          "english": "CMM Stylus 15",
+          "abbreviation": "Stylus",
+          "definition": "三坐标测量仪红宝石球探头，打点采集三维位置 (现场工程技术应用变体 15)。",
+          "relatedKnowledgeIds": [],
+          "usage": "调试配置【三坐标探针】参数。"
+        }
+      ]
+    }
+  ]
+}

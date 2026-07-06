@@ -1,0 +1,32 @@
+/* ============================================
+   styles-analytics.css
+   分析仪表盘样式
+   ============================================ */
+.analytics-dashboard { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.analytics-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.analytics-header h3 { margin: 0; font-size: 18px; color: #2d2d2d; }
+.analytics-updated { font-size: 12px; color: #6b7280; }
+.analytics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.analytics-stat-card { display: flex; align-items: center; gap: 12px; padding: 14px; background: #f9f7f5; border-radius: 10px; }
+.stat-icon { font-size: 24px; }
+.stat-body strong { display: block; font-size: 22px; color: #2d2d2d; }
+.stat-body span { font-size: 12px; color: #6b7280; }
+.analytics-section h4 { font-size: 14px; margin: 0 0 10px; color: #2d2d2d; }
+.analytics-barchart .bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.bar-label { width: 80px; font-size: 13px; color: #6b7280; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bar-track { flex: 1; height: 18px; background: #f0ece8; border-radius: 4px; overflow: hidden; }
+.bar-fill { height: 100%; background: linear-gradient(90deg, #cf6d36, #e8945a); border-radius: 4px; transition: width 0.5s; min-width: 4px; }
+.bar-value { width: 30px; font-size: 13px; color: #2d2d2d; font-weight: 600; }
+.analytics-timeline { font-size: 13px; color: #6b7280; line-height: 1.8; }
+.analytics-empty { text-align: center; color: #6b7280; padding: 20px; font-size: 14px; }
+.analytics-hotkeywords { display: flex; flex-wrap: wrap; gap: 6px; }
+.hotkeyword-badge { padding: 4px 10px; background: #fef5e7; color: #92400e; border-radius: 12px; font-size: 13px; }
+.analytics-journey { background: #f9f7f5; border-radius: 10px; padding: 14px; }
+.analytics-journey h4 { margin: 0 0 10px; font-size: 14px; }
+.journey-list { max-height: 300px; overflow-y: auto; }
+.journey-item { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid #f0ece8; font-size: 13px; }
+.journey-item:last-child { border-bottom: none; }
+.journey-icon { flex-shrink: 0; }
+.journey-detail { flex: 1; color: #2d2d2d; }
+.journey-time { font-size: 11px; color: #6b7280; flex-shrink: 0; }
+@media (max-width: 640px) { .analytics-grid { grid-template-columns: repeat(2, 1fr); } .bar-label { width: 60px; } }

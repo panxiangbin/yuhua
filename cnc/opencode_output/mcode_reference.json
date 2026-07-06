@@ -1,0 +1,1514 @@
+[
+  {
+    "code": "M00",
+    "title": "程序停止（无条件）",
+    "category": "程序控制",
+    "summary": "程序执行到M00时无条件停止，需按启动键才能继续。",
+    "usage": "用于换刀、测量、排屑等需要人工干预的中途停顿",
+    "commonMistakes": [
+      "忘记M00后需手动启动导致误以为程序中断"
+    ],
+    "relatedTerms": [
+      "M01",
+      "程序停止"
+    ],
+    "difficulty": "入门",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M01",
+    "title": "程序选择停止",
+    "category": "程序控制",
+    "summary": "仅在机床面板「选择停止」开关打开时生效，否则跳过。",
+    "usage": "用于首件试切、抽检时的可选停顿点",
+    "commonMistakes": [
+      "M01不生效时未检查面板选择停止开关"
+    ],
+    "relatedTerms": [
+      "M00",
+      "选择停止"
+    ],
+    "difficulty": "入门",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M02",
+    "title": "程序结束",
+    "category": "程序控制",
+    "summary": "程序运行结束，光标停留在程序末尾。",
+    "usage": "用于简单程序结尾，不自动回程序开头",
+    "commonMistakes": [
+      "M02与M30混淆，M02不会自动复位到程序开头"
+    ],
+    "relatedTerms": [
+      "M30",
+      "程序结束"
+    ],
+    "difficulty": "入门",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M03",
+    "title": "主轴正转（顺时针）",
+    "category": "主轴控制",
+    "summary": "启动主轴顺时针方向旋转（从主轴端看）。",
+    "usage": "右旋刀具（如立铣刀、钻头）加工时使用",
+    "commonMistakes": [
+      "M03/M04方向搞反导致刀具崩刃"
+    ],
+    "relatedTerms": [
+      "M04",
+      "M05",
+      "主轴",
+      "S代码"
+    ],
+    "difficulty": "入门",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M04",
+    "title": "主轴反转（逆时针）",
+    "category": "主轴控制",
+    "summary": "启动主轴逆时针方向旋转（从主轴端看）。",
+    "usage": "左旋刀具加工或反镗、反攻丝时使用",
+    "commonMistakes": [
+      "M03/M04方向搞反导致刀具崩刃或工件松动"
+    ],
+    "relatedTerms": [
+      "M03",
+      "M05",
+      "主轴",
+      "S代码"
+    ],
+    "difficulty": "入门",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M05",
+    "title": "主轴停止",
+    "category": "主轴控制",
+    "summary": "停止主轴旋转，通常配合换刀或程序结束使用。",
+    "usage": "换刀前停止主轴、程序结束前停止主轴",
+    "commonMistakes": [
+      "主轴未完全停止就执行换刀导致刀柄损坏"
+    ],
+    "relatedTerms": [
+      "M03",
+      "M04",
+      "主轴"
+    ],
+    "difficulty": "入门",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M06",
+    "title": "换刀指令",
+    "category": "换刀",
+    "summary": "执行自动换刀动作，将指定刀具装入主轴。",
+    "usage": "加工中心自动换刀，配合T代码使用",
+    "commonMistakes": [
+      "T代码与M06顺序错误导致换刀异常",
+      "换刀后未重新建立刀长补偿G43"
+    ],
+    "relatedTerms": [
+      "T代码",
+      "G43",
+      "换刀",
+      "刀库"
+    ],
+    "difficulty": "初级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M07",
+    "title": "切削液打开（雾状）",
+    "category": "冷却",
+    "summary": "打开切削液喷雾冷却，用于需要雾气冷却的加工场景。",
+    "usage": "铝合金加工、高速加工中需要喷雾冷却时",
+    "commonMistakes": [
+      "M07与M08混淆导致冷却方式不对"
+    ],
+    "relatedTerms": [
+      "M08",
+      "M09",
+      "切削液",
+      "冷却"
+    ],
+    "difficulty": "入门",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M08",
+    "title": "切削液打开（浇注）",
+    "category": "冷却",
+    "summary": "打开切削液浇注冷却，向切削区域喷射冷却液。",
+    "usage": "一般金属切削加工中常规冷却使用",
+    "commonMistakes": [
+      "切削液方向未对准切削区域导致冷却效果差"
+    ],
+    "relatedTerms": [
+      "M07",
+      "M09",
+      "切削液",
+      "冷却"
+    ],
+    "difficulty": "入门",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M09",
+    "title": "切削液关闭",
+    "category": "冷却",
+    "summary": "关闭所有切削液（包括浇注和喷雾）。",
+    "usage": "加工完成或换刀前关闭冷却液",
+    "commonMistakes": [
+      "忘记关闭切削液导致浪费"
+    ],
+    "relatedTerms": [
+      "M07",
+      "M08",
+      "切削液",
+      "冷却"
+    ],
+    "difficulty": "入门",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M10",
+    "title": "夹具夹紧（第4轴制动）",
+    "category": "其他",
+    "summary": "夹紧夹具或分度工作台制动，防止加工中松动。",
+    "usage": "分度加工时夹紧旋转轴、工件夹紧确认",
+    "commonMistakes": [
+      "M10/M11与气动夹具逻辑混淆"
+    ],
+    "relatedTerms": [
+      "M11",
+      "夹具",
+      "分度"
+    ],
+    "difficulty": "初级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M11",
+    "title": "夹具松开（第4轴松开）",
+    "category": "其他",
+    "summary": "松开夹具或分度工作台制动，允许旋转轴转动。",
+    "usage": "分度加工前松开旋转轴、工件装卸时松开夹具",
+    "commonMistakes": [
+      "未松开旋转轴就转动导致机械损坏"
+    ],
+    "relatedTerms": [
+      "M10",
+      "夹具",
+      "分度"
+    ],
+    "difficulty": "初级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M13",
+    "title": "主轴正转+切削液开",
+    "category": "主轴控制",
+    "summary": "组合指令：同时启动主轴正转和打开切削液浇注。",
+    "usage": "常规铣削加工中同时启主轴和冷却",
+    "commonMistakes": [
+      "部分系统不支持组合指令需分两行写"
+    ],
+    "relatedTerms": [
+      "M03",
+      "M08",
+      "主轴",
+      "冷却"
+    ],
+    "difficulty": "入门",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M14",
+    "title": "主轴反转+切削液开",
+    "category": "主轴控制",
+    "summary": "组合指令：同时启动主轴反转和打开切削液浇注。",
+    "usage": "特定需要反转且同时冷却的加工场景",
+    "commonMistakes": [
+      "部分系统不支持组合指令需分两行写"
+    ],
+    "relatedTerms": [
+      "M04",
+      "M08",
+      "主轴",
+      "冷却"
+    ],
+    "difficulty": "入门",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M17",
+    "title": "主轴停止+切削液关",
+    "category": "主轴控制",
+    "summary": "组合指令：同时停止主轴和关闭切削液。",
+    "usage": "程序段结束时同时关闭主轴和冷却",
+    "commonMistakes": [
+      "部分系统M17定义不同需确认"
+    ],
+    "relatedTerms": [
+      "M05",
+      "M09"
+    ],
+    "difficulty": "入门",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M19",
+    "title": "主轴定向停止",
+    "category": "主轴控制",
+    "summary": "主轴旋转到指定角度后精确停止，用于换刀或镗孔退刀。",
+    "usage": "加工中心换刀时主轴定向、精镗孔退刀避让",
+    "commonMistakes": [
+      "主轴定向角度未正确设定导致换刀失败"
+    ],
+    "relatedTerms": [
+      "M06",
+      "换刀",
+      "主轴定向"
+    ],
+    "difficulty": "中级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M21",
+    "title": "镜像开启",
+    "category": "其他",
+    "summary": "启用镜像加工功能，使坐标轴方向取反。",
+    "usage": "用于对称零件编程，减少程序量",
+    "commonMistakes": [
+      "镜像开启后刀补方向需调整"
+    ],
+    "relatedTerms": [
+      "M22",
+      "G51",
+      "镜像"
+    ],
+    "difficulty": "中级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M22",
+    "title": "镜像关闭",
+    "category": "其他",
+    "summary": "关闭镜像加工功能。",
+    "usage": "镜像加工结束后恢复正常坐标方向",
+    "commonMistakes": [
+      "未关闭镜像导致后续加工位置错误"
+    ],
+    "relatedTerms": [
+      "M21",
+      "镜像"
+    ],
+    "difficulty": "中级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M23",
+    "title": "螺纹加工中退出倒角开",
+    "category": "车床循环",
+    "summary": "在螺纹加工循环结束时自动执行倒角退刀。",
+    "usage": "车床螺纹加工中需要倒角退刀时使用",
+    "commonMistakes": [
+      "M23/M24状态与螺纹参数不匹配"
+    ],
+    "relatedTerms": [
+      "M24",
+      "G76",
+      "螺纹",
+      "车削"
+    ],
+    "difficulty": "中级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M24",
+    "title": "螺纹加工中退出倒角关",
+    "category": "车床循环",
+    "summary": "取消螺纹加工循环中的自动倒角退刀功能。",
+    "usage": "不需要倒角退刀时恢复标准退刀",
+    "commonMistakes": [
+      "M23/M24状态与螺纹参数不匹配"
+    ],
+    "relatedTerms": [
+      "M23",
+      "G76",
+      "螺纹",
+      "车削"
+    ],
+    "difficulty": "中级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M28",
+    "title": "返回参考点",
+    "category": "程序控制",
+    "summary": "使机床自动返回参考点（与G28配合使用）。",
+    "usage": "换刀前回参考点或程序结束回零",
+    "commonMistakes": [
+      "M28执行前未抬刀到安全高度"
+    ],
+    "relatedTerms": [
+      "G28",
+      "回零",
+      "参考点"
+    ],
+    "difficulty": "初级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M29",
+    "title": "刚性攻丝模式",
+    "category": "主轴控制",
+    "summary": "切换主轴为刚性攻丝模式，主轴与Z轴进给严格同步。",
+    "usage": "刚性攻丝加工前启用，保证螺距精度",
+    "commonMistakes": [
+      "刚性攻丝模式下主轴转速与螺距不匹配导致丝锥断裂"
+    ],
+    "relatedTerms": [
+      "G84",
+      "攻丝",
+      "刚性攻丝"
+    ],
+    "difficulty": "中级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M30",
+    "title": "程序结束并返回开头",
+    "category": "程序控制",
+    "summary": "程序运行结束，复位到程序开头并清除模态信息。",
+    "usage": "所有正式程序的标准结尾，保证下次运行从第一段开始",
+    "commonMistakes": [
+      "M02与M30混淆，M30会重置模态代码"
+    ],
+    "relatedTerms": [
+      "M02",
+      "程序结束",
+      "复位"
+    ],
+    "difficulty": "入门",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M31",
+    "title": "互锁旁路",
+    "category": "其他",
+    "summary": "暂时绕过机床互锁信号，允许特殊操作。",
+    "usage": "调试或手动干预时需要临时旁路安全互锁",
+    "commonMistakes": [
+      "正常加工中禁用，否则可能发生安全事故"
+    ],
+    "relatedTerms": [
+      "互锁",
+      "安全"
+    ],
+    "difficulty": "高级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M32",
+    "title": "恒表面速度控制（特定系统）",
+    "category": "主轴控制",
+    "summary": "特定系统中用于启用恒表面速度控制功能。",
+    "usage": "车床恒线速切削控制",
+    "commonMistakes": [
+      "M32在不同系统中功能差异较大，需查阅具体手册"
+    ],
+    "relatedTerms": [
+      "G96",
+      "G50",
+      "恒线速"
+    ],
+    "difficulty": "中级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M33",
+    "title": "恒表面速度控制取消（特定系统）",
+    "category": "主轴控制",
+    "summary": "特定系统中用于取消恒表面速度控制功能。",
+    "usage": "车床恒线速切削结束后恢复恒转速",
+    "commonMistakes": [
+      "M33在不同系统中功能差异较大"
+    ],
+    "relatedTerms": [
+      "G97",
+      "M32"
+    ],
+    "difficulty": "中级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M34",
+    "title": "主轴低速档（特定系统）",
+    "category": "主轴控制",
+    "summary": "将主轴变速箱切换至低速档，获得高扭矩低转速。",
+    "usage": "重切削、大扭矩加工时使用低速档",
+    "commonMistakes": [
+      "主轴变速前未先停止主轴导致齿轮损坏"
+    ],
+    "relatedTerms": [
+      "M35",
+      "M36",
+      "M37",
+      "M38",
+      "M39",
+      "主轴档位"
+    ],
+    "difficulty": "初级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M35",
+    "title": "主轴中低速档（特定系统）",
+    "category": "主轴控制",
+    "summary": "将主轴变速箱切换至中低速档。",
+    "usage": "中等扭矩加工时使用",
+    "commonMistakes": [
+      "主轴变速前未先停止主轴导致齿轮损坏"
+    ],
+    "relatedTerms": [
+      "M34",
+      "M36",
+      "主轴档位"
+    ],
+    "difficulty": "初级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M36",
+    "title": "主轴中高速档（特定系统）",
+    "category": "主轴控制",
+    "summary": "将主轴变速箱切换至中高速档。",
+    "usage": "中速精加工时使用",
+    "commonMistakes": [
+      "主轴变速前未先停止主轴导致齿轮损坏"
+    ],
+    "relatedTerms": [
+      "M35",
+      "M37",
+      "主轴档位"
+    ],
+    "difficulty": "初级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M37",
+    "title": "主轴高速档（特定系统）",
+    "category": "主轴控制",
+    "summary": "将主轴变速箱切换至高速档，获得高转速。",
+    "usage": "高速精加工、小直径刀具加工时使用",
+    "commonMistakes": [
+      "高速档扭矩小不适合重切削"
+    ],
+    "relatedTerms": [
+      "M36",
+      "M38",
+      "M39",
+      "主轴档位"
+    ],
+    "difficulty": "初级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M38",
+    "title": "主轴档位选择（中间档1）",
+    "category": "主轴控制",
+    "summary": "特定多档位主轴箱中选择对应齿轮档位。",
+    "usage": "多档变速箱的中间档位选择",
+    "commonMistakes": [
+      "M38/M39定义因机床厂家差异大"
+    ],
+    "relatedTerms": [
+      "M37",
+      "M39",
+      "主轴档位"
+    ],
+    "difficulty": "初级",
+    "systemScope": "特定系统，需查阅机床手册"
+  },
+  {
+    "code": "M39",
+    "title": "主轴档位选择（中间档2）",
+    "category": "主轴控制",
+    "summary": "特定多档位主轴箱中选择对应齿轮档位。",
+    "usage": "多档变速箱的中间档位选择",
+    "commonMistakes": [
+      "M38/M39定义因机床厂家差异大"
+    ],
+    "relatedTerms": [
+      "M37",
+      "M38",
+      "主轴档位"
+    ],
+    "difficulty": "初级",
+    "systemScope": "特定系统，需查阅机床手册"
+  },
+  {
+    "code": "M40",
+    "title": "主轴齿轮档（低速）",
+    "category": "主轴控制",
+    "summary": "选择最低速齿轮档位，最大扭矩输出。",
+    "usage": "重载切削、大螺纹车削等需要大扭矩的场景",
+    "commonMistakes": [
+      "齿轮换档前必须M05停止主轴"
+    ],
+    "relatedTerms": [
+      "M41",
+      "M42",
+      "M43",
+      "M44",
+      "M45",
+      "M46",
+      "齿轮档"
+    ],
+    "difficulty": "初级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M41",
+    "title": "主轴齿轮档（中低速）",
+    "category": "主轴控制",
+    "summary": "选择中低速齿轮档位。",
+    "usage": "中等负荷切削",
+    "commonMistakes": [
+      "齿轮换档前必须M05停止主轴"
+    ],
+    "relatedTerms": [
+      "M40",
+      "M42",
+      "齿轮档"
+    ],
+    "difficulty": "初级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M42",
+    "title": "主轴齿轮档（中高速）",
+    "category": "主轴控制",
+    "summary": "选择中高速齿轮档位。",
+    "usage": "中高速精加工",
+    "commonMistakes": [
+      "齿轮换档前必须M05停止主轴"
+    ],
+    "relatedTerms": [
+      "M41",
+      "M43",
+      "齿轮档"
+    ],
+    "difficulty": "初级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M43",
+    "title": "主轴齿轮档（高速）",
+    "category": "主轴控制",
+    "summary": "选择高速齿轮档位。",
+    "usage": "高速精加工、小径刀具加工",
+    "commonMistakes": [
+      "齿轮换档前必须M05停止主轴"
+    ],
+    "relatedTerms": [
+      "M42",
+      "M44",
+      "齿轮档"
+    ],
+    "difficulty": "初级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M44",
+    "title": "主轴齿轮档（超高速1）",
+    "category": "主轴控制",
+    "summary": "选择超高速齿轮档位（如5档变速箱）。",
+    "usage": "超高速精加工",
+    "commonMistakes": [
+      "齿轮换档前必须M05停止主轴"
+    ],
+    "relatedTerms": [
+      "M43",
+      "M45",
+      "齿轮档"
+    ],
+    "difficulty": "初级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M45",
+    "title": "主轴齿轮档（超高速2）",
+    "category": "主轴控制",
+    "summary": "选择超高速齿轮档位（如6档变速箱）。",
+    "usage": "最高速精加工",
+    "commonMistakes": [
+      "齿轮换档前必须M05停止主轴"
+    ],
+    "relatedTerms": [
+      "M44",
+      "M46",
+      "齿轮档"
+    ],
+    "difficulty": "初级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M46",
+    "title": "主轴齿轮档（最高速）",
+    "category": "主轴控制",
+    "summary": "选择最高速齿轮档位。",
+    "usage": "极限高速加工",
+    "commonMistakes": [
+      "齿轮换档前必须M05停止主轴"
+    ],
+    "relatedTerms": [
+      "M45",
+      "齿轮档"
+    ],
+    "difficulty": "初级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M47",
+    "title": "程序段跳过（取消）",
+    "category": "程序控制",
+    "summary": "取消程序段删除（跳过）功能，恢复所有程序段执行。",
+    "usage": "控制程序选择性执行特定程序段",
+    "commonMistakes": [
+      "M47/M48的使用需配合面板跳过开关"
+    ],
+    "relatedTerms": [
+      "M48",
+      "M49",
+      "程序段跳过"
+    ],
+    "difficulty": "中级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M48",
+    "title": "进给倍率有效",
+    "category": "进给模式",
+    "summary": "恢复进给倍率调节功能（取消M49的限制）。",
+    "usage": "在需要操作人员可调节进给率的加工段使用",
+    "commonMistakes": [
+      "M48/M49与安全区域相关需谨慎"
+    ],
+    "relatedTerms": [
+      "M49",
+      "进给倍率"
+    ],
+    "difficulty": "中级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M49",
+    "title": "进给倍率无效",
+    "category": "进给模式",
+    "summary": "使进给倍率调节旋钮失效，固定为100%进给。",
+    "usage": "攻丝、螺纹加工等需要精确进给的场景",
+    "commonMistakes": [
+      "M49后忘记恢复M48导致后续操作不便"
+    ],
+    "relatedTerms": [
+      "M48",
+      "进给倍率"
+    ],
+    "difficulty": "中级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M50",
+    "title": "吹气控制开",
+    "category": "冷却",
+    "summary": "打开气冷/吹气装置，用于清理切屑或辅助冷却。",
+    "usage": "深孔钻削排屑、清理加工区域切屑",
+    "commonMistakes": [
+      "M50/M51定义因机床厂家差异较大"
+    ],
+    "relatedTerms": [
+      "M51",
+      "吹气"
+    ],
+    "difficulty": "初级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M51",
+    "title": "吹气控制关",
+    "category": "冷却",
+    "summary": "关闭气冷/吹气装置。",
+    "usage": "吹气任务结束后关闭",
+    "commonMistakes": [
+      "M50/M51定义因机床厂家差异较大"
+    ],
+    "relatedTerms": [
+      "M50",
+      "吹气"
+    ],
+    "difficulty": "初级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M52",
+    "title": "尾座前进/夹紧",
+    "category": "其他",
+    "summary": "控制车床尾座前进顶紧工件。",
+    "usage": "车床加工长轴类零件时顶紧工件",
+    "commonMistakes": [
+      "尾座压力过大导致工件弯曲变形"
+    ],
+    "relatedTerms": [
+      "M53",
+      "尾座"
+    ],
+    "difficulty": "初级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M53",
+    "title": "尾座后退/松开",
+    "category": "其他",
+    "summary": "控制车床尾座后退，松开工件。",
+    "usage": "工件加工完成后松开尾座",
+    "commonMistakes": [
+      "尾座未松开就移动导致顶尖划伤工件"
+    ],
+    "relatedTerms": [
+      "M52",
+      "尾座"
+    ],
+    "difficulty": "初级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M54",
+    "title": "自动送料器开/夹紧",
+    "category": "其他",
+    "summary": "控制自动送料器夹紧或启动送料动作。",
+    "usage": "自动棒料送料机的夹紧控制",
+    "commonMistakes": [
+      "M54/M55定义因送料机厂家差异大"
+    ],
+    "relatedTerms": [
+      "M55",
+      "自动送料"
+    ],
+    "difficulty": "中级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M55",
+    "title": "自动送料器关/松开",
+    "category": "其他",
+    "summary": "控制自动送料器松开或停止送料动作。",
+    "usage": "棒料用完或更换材料时松开送料器",
+    "commonMistakes": [
+      "M54/M55定义因送料机厂家差异大"
+    ],
+    "relatedTerms": [
+      "M54",
+      "自动送料"
+    ],
+    "difficulty": "中级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M56",
+    "title": "自动送料/上料控制",
+    "category": "其他",
+    "summary": "扩展自动送料或上料控制指令。",
+    "usage": "自动化生产线中物料输送控制",
+    "commonMistakes": [
+      "M56功能因机床差异大需查阅手册"
+    ],
+    "relatedTerms": [
+      "M54",
+      "M55",
+      "自动送料"
+    ],
+    "difficulty": "中级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M57",
+    "title": "限位旁路/特殊功能",
+    "category": "其他",
+    "summary": "临时旁路软件限位或执行特定扩展功能。",
+    "usage": "调试或特殊操作时旁路限位",
+    "commonMistakes": [
+      "正常加工中不应使用"
+    ],
+    "relatedTerms": [
+      "限位旁路",
+      "安全"
+    ],
+    "difficulty": "高级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M58",
+    "title": "扩展功能控制1",
+    "category": "其他",
+    "summary": "特定系统或机床的扩展辅助功能控制。",
+    "usage": "根据机床厂家自定义功能使用",
+    "commonMistakes": [
+      "M58-M59定义因机床厂家差异极大"
+    ],
+    "relatedTerms": [
+      "M59"
+    ],
+    "difficulty": "中级",
+    "systemScope": "特定系统，需查阅机床手册"
+  },
+  {
+    "code": "M59",
+    "title": "扩展功能控制2",
+    "category": "其他",
+    "summary": "特定系统或机床的扩展辅助功能控制。",
+    "usage": "根据机床厂家自定义功能使用",
+    "commonMistakes": [
+      "M58-M59定义因机床厂家差异极大"
+    ],
+    "relatedTerms": [
+      "M58"
+    ],
+    "difficulty": "中级",
+    "systemScope": "特定系统，需查阅机床手册"
+  },
+  {
+    "code": "M60",
+    "title": "自动工件交换",
+    "category": "其他",
+    "summary": "执行自动交换工作台或工件装卸动作。",
+    "usage": "带APC（自动交换工作台）的加工中心使用",
+    "commonMistakes": [
+      "交换工作台前未确认安全区域导致碰撞"
+    ],
+    "relatedTerms": [
+      "APC",
+      "工作台交换"
+    ],
+    "difficulty": "中级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M61",
+    "title": "工件夹紧确认",
+    "category": "其他",
+    "summary": "确认工件已被正确夹紧到位。",
+    "usage": "自动生产线中工件夹紧状态检测",
+    "commonMistakes": [
+      "夹紧信号未到位时启动加工导致工件飞出"
+    ],
+    "relatedTerms": [
+      "M10",
+      "M62",
+      "夹具"
+    ],
+    "difficulty": "中级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M62",
+    "title": "工件松开确认",
+    "category": "其他",
+    "summary": "确认工件已被松开，允许进行装卸操作。",
+    "usage": "自动生产线中工件松开状态检测",
+    "commonMistakes": [
+      "松开信号异常时进行交换导致掉落"
+    ],
+    "relatedTerms": [
+      "M11",
+      "M61",
+      "夹具"
+    ],
+    "difficulty": "中级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M63",
+    "title": "输出信号1（扩展）",
+    "category": "其他",
+    "summary": "通过M代码输出指定的扩展控制信号（如指示灯、转台等）。",
+    "usage": "自动化设备控制信号输出",
+    "commonMistakes": [
+      "M63-M68地址分配因机床厂家而异"
+    ],
+    "relatedTerms": [
+      "M64",
+      "M65",
+      "扩展输出"
+    ],
+    "difficulty": "中级",
+    "systemScope": "特定系统，需查阅机床手册"
+  },
+  {
+    "code": "M64",
+    "title": "输出信号2（扩展）",
+    "category": "其他",
+    "summary": "通过M代码输出指定的扩展控制信号。",
+    "usage": "自动化设备控制信号输出",
+    "commonMistakes": [
+      "输出地址与已有功能冲突"
+    ],
+    "relatedTerms": [
+      "M63",
+      "M65",
+      "扩展输出"
+    ],
+    "difficulty": "中级",
+    "systemScope": "特定系统，需查阅机床手册"
+  },
+  {
+    "code": "M65",
+    "title": "输出信号3（扩展）",
+    "category": "其他",
+    "summary": "通过M代码输出指定的扩展控制信号。",
+    "usage": "自动化设备控制信号输出",
+    "commonMistakes": [
+      "输出地址与已有功能冲突"
+    ],
+    "relatedTerms": [
+      "M63",
+      "M64",
+      "扩展输出"
+    ],
+    "difficulty": "中级",
+    "systemScope": "特定系统，需查阅机床手册"
+  },
+  {
+    "code": "M66",
+    "title": "输入信号等待1",
+    "category": "其他",
+    "summary": "等待指定的输入信号到达后继续执行程序。",
+    "usage": "自动化设备信号同步等待",
+    "commonMistakes": [
+      "等待信号超时无保护导致程序卡死"
+    ],
+    "relatedTerms": [
+      "M67",
+      "M68",
+      "扩展输入"
+    ],
+    "difficulty": "中级",
+    "systemScope": "特定系统，需查阅机床手册"
+  },
+  {
+    "code": "M67",
+    "title": "输入信号等待2",
+    "category": "其他",
+    "summary": "等待指定的输入信号到达后继续执行程序。",
+    "usage": "自动化设备信号同步等待",
+    "commonMistakes": [
+      "等待信号超时无保护导致程序卡死"
+    ],
+    "relatedTerms": [
+      "M66",
+      "M68",
+      "扩展输入"
+    ],
+    "difficulty": "中级",
+    "systemScope": "特定系统，需查阅机床手册"
+  },
+  {
+    "code": "M68",
+    "title": "输入信号等待3",
+    "category": "其他",
+    "summary": "等待指定的输入信号到达后继续执行程序。",
+    "usage": "自动化设备信号同步等待",
+    "commonMistakes": [
+      "等待信号超时无保护导致程序卡死"
+    ],
+    "relatedTerms": [
+      "M66",
+      "M67",
+      "扩展输入"
+    ],
+    "difficulty": "中级",
+    "systemScope": "特定系统，需查阅机床手册"
+  },
+  {
+    "code": "M69",
+    "title": "辅助功能复位",
+    "category": "程序控制",
+    "summary": "复位所有M代码辅助功能输出到初始状态。",
+    "usage": "程序开始前初始化所有辅助功能状态",
+    "commonMistakes": [
+      "M69复位范围因机床而异"
+    ],
+    "relatedTerms": [
+      "辅助功能",
+      "复位"
+    ],
+    "difficulty": "中级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M70",
+    "title": "自动门开",
+    "category": "其他",
+    "summary": "打开机床防护门或安全门。",
+    "usage": "自动装卸工件时打开防护门",
+    "commonMistakes": [
+      "M70/M71未与安全互锁配合使用"
+    ],
+    "relatedTerms": [
+      "M71",
+      "防护门",
+      "安全"
+    ],
+    "difficulty": "初级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M71",
+    "title": "自动门关",
+    "category": "其他",
+    "summary": "关闭机床防护门或安全门。",
+    "usage": "工件装卸完成后关闭防护门",
+    "commonMistakes": [
+      "门未关到位即启动加工属于安全隐患"
+    ],
+    "relatedTerms": [
+      "M70",
+      "防护门",
+      "安全"
+    ],
+    "difficulty": "初级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M72",
+    "title": "油雾冷却开（特定系统）",
+    "category": "冷却",
+    "summary": "打开油雾冷却装置，用于微量润滑（MQL）加工。",
+    "usage": "铝合金加工、难加工材料的微量润滑冷却",
+    "commonMistakes": [
+      "M72/M73定义因机床厂家差异大"
+    ],
+    "relatedTerms": [
+      "M73",
+      "油雾冷却",
+      "MQL"
+    ],
+    "difficulty": "初级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M73",
+    "title": "油雾冷却关（特定系统）",
+    "category": "冷却",
+    "summary": "关闭油雾冷却装置。",
+    "usage": "油雾冷却任务结束后关闭",
+    "commonMistakes": [
+      "M72/M73定义因机床厂家差异大"
+    ],
+    "relatedTerms": [
+      "M72",
+      "油雾冷却"
+    ],
+    "difficulty": "初级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M74",
+    "title": "扩展控制（辅助1）",
+    "category": "其他",
+    "summary": "机床厂家自定义的扩展辅助控制功能。",
+    "usage": "根据机床配置使用",
+    "commonMistakes": [
+      "M74-M79需查阅具体机床说明书"
+    ],
+    "relatedTerms": [
+      "M75",
+      "M76"
+    ],
+    "difficulty": "中级",
+    "systemScope": "特定系统，需查阅机床手册"
+  },
+  {
+    "code": "M75",
+    "title": "扩展控制（辅助2）",
+    "category": "其他",
+    "summary": "机床厂家自定义的扩展辅助控制功能。",
+    "usage": "根据机床配置使用",
+    "commonMistakes": [
+      "M74-M79需查阅具体机床说明书"
+    ],
+    "relatedTerms": [
+      "M74",
+      "M76"
+    ],
+    "difficulty": "中级",
+    "systemScope": "特定系统，需查阅机床手册"
+  },
+  {
+    "code": "M76",
+    "title": "扩展控制（辅助3）",
+    "category": "其他",
+    "summary": "机床厂家自定义的扩展辅助控制功能。",
+    "usage": "根据机床配置使用",
+    "commonMistakes": [
+      "M74-M79需查阅具体机床说明书"
+    ],
+    "relatedTerms": [
+      "M75",
+      "M77"
+    ],
+    "difficulty": "中级",
+    "systemScope": "特定系统，需查阅机床手册"
+  },
+  {
+    "code": "M77",
+    "title": "扩展控制（辅助4）",
+    "category": "其他",
+    "summary": "机床厂家自定义的扩展辅助控制功能。",
+    "usage": "根据机床配置使用",
+    "commonMistakes": [
+      "M74-M79需查阅具体机床说明书"
+    ],
+    "relatedTerms": [
+      "M76",
+      "M78"
+    ],
+    "difficulty": "中级",
+    "systemScope": "特定系统，需查阅机床手册"
+  },
+  {
+    "code": "M78",
+    "title": "扩展控制（辅助5）",
+    "category": "其他",
+    "summary": "机床厂家自定义的扩展辅助控制功能。",
+    "usage": "根据机床配置使用",
+    "commonMistakes": [
+      "M74-M79需查阅具体机床说明书"
+    ],
+    "relatedTerms": [
+      "M77",
+      "M79"
+    ],
+    "difficulty": "中级",
+    "systemScope": "特定系统，需查阅机床手册"
+  },
+  {
+    "code": "M79",
+    "title": "扩展控制（辅助6）",
+    "category": "其他",
+    "summary": "机床厂家自定义的扩展辅助控制功能。",
+    "usage": "根据机床配置使用",
+    "commonMistakes": [
+      "M74-M79需查阅具体机床说明书"
+    ],
+    "relatedTerms": [
+      "M78",
+      "扩展辅助"
+    ],
+    "difficulty": "中级",
+    "systemScope": "特定系统，需查阅机床手册"
+  },
+  {
+    "code": "M80",
+    "title": "自动送料/收料控制",
+    "category": "其他",
+    "summary": "控制自动送料或收料装置，用于自动化生产线。",
+    "usage": "棒料送料机、自动上下料装置控制",
+    "commonMistakes": [
+      "M80-M82功能定义因机床厂家差异大"
+    ],
+    "relatedTerms": [
+      "M81",
+      "M82",
+      "自动送料"
+    ],
+    "difficulty": "中级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M81",
+    "title": "自动送料/收料控制2",
+    "category": "其他",
+    "summary": "控制自动送料或收料装置的第二步动作。",
+    "usage": "多工步送料/收料控制",
+    "commonMistakes": [
+      "M80-M82功能定义因机床厂家差异大"
+    ],
+    "relatedTerms": [
+      "M80",
+      "M82",
+      "自动送料"
+    ],
+    "difficulty": "中级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M82",
+    "title": "自动送料/收料控制3",
+    "category": "其他",
+    "summary": "控制自动送料或收料装置的第三步动作。",
+    "usage": "多工步送料/收料控制",
+    "commonMistakes": [
+      "M80-M82功能定义因机床厂家差异大"
+    ],
+    "relatedTerms": [
+      "M80",
+      "M81",
+      "自动送料"
+    ],
+    "difficulty": "中级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M85",
+    "title": "行程限位检查（特定系统）",
+    "category": "其他",
+    "summary": "启动或激活软件行程限位检查功能。",
+    "usage": "需要启用软件限位保护时使用",
+    "commonMistakes": [
+      "M85在不同系统中功能不同需核实"
+    ],
+    "relatedTerms": [
+      "G22",
+      "行程限位"
+    ],
+    "difficulty": "中级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M86",
+    "title": "行程限位取消（特定系统）",
+    "category": "其他",
+    "summary": "取消软件行程限位检查功能。",
+    "usage": "调试或特殊操作时旁路软件限位",
+    "commonMistakes": [
+      "M86在不同系统中功能不同需核实"
+    ],
+    "relatedTerms": [
+      "G23",
+      "M85"
+    ],
+    "difficulty": "中级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M87",
+    "title": "扩展输出/信号控制",
+    "category": "其他",
+    "summary": "机床厂家自定义的扩展输出或信号控制。",
+    "usage": "自动化设备扩展控制",
+    "commonMistakes": [
+      "M87-M89需查阅具体机床说明书"
+    ],
+    "relatedTerms": [
+      "M88",
+      "M89"
+    ],
+    "difficulty": "中级",
+    "systemScope": "特定系统，需查阅机床手册"
+  },
+  {
+    "code": "M88",
+    "title": "扩展输出/信号控制",
+    "category": "其他",
+    "summary": "机床厂家自定义的扩展输出或信号控制。",
+    "usage": "自动化设备扩展控制",
+    "commonMistakes": [
+      "M87-M89需查阅具体机床说明书"
+    ],
+    "relatedTerms": [
+      "M87",
+      "M89"
+    ],
+    "difficulty": "中级",
+    "systemScope": "特定系统，需查阅机床手册"
+  },
+  {
+    "code": "M89",
+    "title": "扩展输出/信号控制",
+    "category": "其他",
+    "summary": "机床厂家自定义的扩展输出或信号控制。",
+    "usage": "自动化设备扩展控制",
+    "commonMistakes": [
+      "M87-M89需查阅具体机床说明书"
+    ],
+    "relatedTerms": [
+      "M87",
+      "M88"
+    ],
+    "difficulty": "中级",
+    "systemScope": "特定系统，需查阅机床手册"
+  },
+  {
+    "code": "M90",
+    "title": "自适应控制/扩展功能",
+    "category": "其他",
+    "summary": "启用自适应控制功能或扩展辅助控制。",
+    "usage": "根据机床配置使用",
+    "commonMistakes": [
+      "M90-M99中部分代码在标准FANUC中未定义，需核实"
+    ],
+    "relatedTerms": [
+      "M91",
+      "M92"
+    ],
+    "difficulty": "高级",
+    "systemScope": "特定系统，需查阅机床手册"
+  },
+  {
+    "code": "M91",
+    "title": "扩展辅助控制",
+    "category": "其他",
+    "summary": "机床厂家自定义的扩展辅助控制功能。",
+    "usage": "根据机床配置使用",
+    "commonMistakes": [
+      "M91-M95需查阅具体机床说明书"
+    ],
+    "relatedTerms": [
+      "M90",
+      "M92"
+    ],
+    "difficulty": "高级",
+    "systemScope": "特定系统，需查阅机床手册"
+  },
+  {
+    "code": "M92",
+    "title": "扩展辅助控制",
+    "category": "其他",
+    "summary": "机床厂家自定义的扩展辅助控制功能。",
+    "usage": "根据机床配置使用",
+    "commonMistakes": [
+      "M91-M95需查阅具体机床说明书"
+    ],
+    "relatedTerms": [
+      "M91",
+      "M93"
+    ],
+    "difficulty": "高级",
+    "systemScope": "特定系统，需查阅机床手册"
+  },
+  {
+    "code": "M93",
+    "title": "扩展辅助控制",
+    "category": "其他",
+    "summary": "机床厂家自定义的扩展辅助控制功能。",
+    "usage": "根据机床配置使用",
+    "commonMistakes": [
+      "M91-M95需查阅具体机床说明书"
+    ],
+    "relatedTerms": [
+      "M92",
+      "M94"
+    ],
+    "difficulty": "高级",
+    "systemScope": "特定系统，需查阅机床手册"
+  },
+  {
+    "code": "M94",
+    "title": "扩展辅助控制",
+    "category": "其他",
+    "summary": "机床厂家自定义的扩展辅助控制功能。",
+    "usage": "根据机床配置使用",
+    "commonMistakes": [
+      "M91-M95需查阅具体机床说明书"
+    ],
+    "relatedTerms": [
+      "M93",
+      "M95"
+    ],
+    "difficulty": "高级",
+    "systemScope": "特定系统，需查阅机床手册"
+  },
+  {
+    "code": "M95",
+    "title": "扩展辅助控制",
+    "category": "其他",
+    "summary": "机床厂家自定义的扩展辅助控制功能。",
+    "usage": "根据机床配置使用",
+    "commonMistakes": [
+      "M91-M95需查阅具体机床说明书"
+    ],
+    "relatedTerms": [
+      "M94",
+      "扩展辅助"
+    ],
+    "difficulty": "高级",
+    "systemScope": "特定系统，需查阅机床手册"
+  },
+  {
+    "code": "M96",
+    "title": "子程序调用跳转条件",
+    "category": "程序控制",
+    "summary": "当条件满足时跳转子程序调用，否则跳过。",
+    "usage": "条件判断后选择性调用子程序",
+    "commonMistakes": [
+      "M96/M97的跳转逻辑与宏程序IF语句混淆"
+    ],
+    "relatedTerms": [
+      "M97",
+      "M98",
+      "M99",
+      "子程序"
+    ],
+    "difficulty": "中级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M97",
+    "title": "子程序调用（条件满足时）",
+    "category": "程序控制",
+    "summary": "当M96条件满足时调用指定子程序。",
+    "usage": "条件判断后的子程序调用",
+    "commonMistakes": [
+      "M96/M97的跳转逻辑容易混淆"
+    ],
+    "relatedTerms": [
+      "M96",
+      "M98",
+      "M99",
+      "子程序"
+    ],
+    "difficulty": "中级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M98",
+    "title": "子程序调用",
+    "category": "程序控制",
+    "summary": "调用指定的子程序，可指定调用次数。",
+    "usage": "重复加工相同轮廓、多工件加工时调用子程序",
+    "commonMistakes": [
+      "子程序号P指定错误",
+      "调用次数L忘记设定或设定为0"
+    ],
+    "relatedTerms": [
+      "M99",
+      "子程序",
+      "嵌套"
+    ],
+    "difficulty": "初级",
+    "systemScope": "FANUC为主，通用兼容"
+  },
+  {
+    "code": "M99",
+    "title": "子程序返回",
+    "category": "程序控制",
+    "summary": "子程序执行结束返回主程序，或无条件跳转到指定程序段。",
+    "usage": "子程序结尾返回主程序；也可用于制造循环效果",
+    "commonMistakes": [
+      "子程序嵌套层数超过系统限制",
+      "M99跳转地址指定错误导致死循环"
+    ],
+    "relatedTerms": [
+      "M98",
+      "子程序",
+      "返回"
+    ],
+    "difficulty": "初级",
+    "systemScope": "FANUC为主，通用兼容"
+  }
+]

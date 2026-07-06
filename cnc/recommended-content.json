@@ -1,0 +1,904 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-07-03T02:12:26.522Z",
+  "scenarios": [
+    {
+      "scenario": "查看了G54工件坐标系",
+      "recommendations": [
+        {
+          "type": "entry",
+          "id": "g55-g59-coordinate",
+          "knowledgeId": "kb-00001",
+          "title": "G55-G59其他工件坐标系",
+          "reason": "同类扩展",
+          "confidence": 0.95
+        },
+        {
+          "type": "entry",
+          "id": "tool-offset-setup",
+          "knowledgeId": "kb-00003",
+          "title": "刀具偏置设定方法",
+          "reason": "相关操作",
+          "confidence": 0.88
+        },
+        {
+          "type": "entry",
+          "id": "coordinate-case",
+          "knowledgeId": "kb-00007",
+          "title": "多工件坐标系加工案例",
+          "reason": "实战应用",
+          "confidence": 0.82
+        }
+      ]
+    },
+    {
+      "scenario": "查看了报警代码",
+      "recommendations": [
+        {
+          "type": "entry",
+          "id": "alarm-flow",
+          "knowledgeId": "kb-00002",
+          "title": "报警排查流程",
+          "reason": "问题解决",
+          "confidence": 0.92
+        },
+        {
+          "type": "entry",
+          "id": "common-alarms",
+          "knowledgeId": "kb-00012",
+          "title": "常见报警速查",
+          "reason": "快速定位",
+          "confidence": 0.89
+        },
+        {
+          "type": "entry",
+          "id": "alarm-action-card",
+          "knowledgeId": "kb-00013",
+          "title": "故障复位断电规程",
+          "reason": "安全确认",
+          "confidence": 0.85
+        }
+      ]
+    },
+    {
+      "scenario": "查看了刀具补偿 (G41/G42)",
+      "recommendations": [
+        {
+          "type": "entry",
+          "id": "tool-radius-comp",
+          "knowledgeId": "kb-00002",
+          "title": "刀尖半径补偿建立安全路径",
+          "reason": "同类扩展",
+          "confidence": 0.96
+        },
+        {
+          "type": "entry",
+          "id": "milling-finish-outline",
+          "knowledgeId": "kb-00004",
+          "title": "铣削外轮廓精加工工艺",
+          "reason": "相关操作",
+          "confidence": 0.9
+        },
+        {
+          "type": "entry",
+          "id": "case-undercut",
+          "knowledgeId": "kb-00012",
+          "title": "过切干涉报警排查案例",
+          "reason": "实战应用",
+          "confidence": 0.84
+        }
+      ]
+    },
+    {
+      "scenario": "查看了切削速度与进给公式",
+      "recommendations": [
+        {
+          "type": "entry",
+          "id": "rpm-vc-formula",
+          "knowledgeId": "kb-00002",
+          "title": "主轴RPM转速快速换算",
+          "reason": "同类扩展",
+          "confidence": 0.94
+        },
+        {
+          "type": "entry",
+          "id": "carbide-feed-rate",
+          "knowledgeId": "kb-00003",
+          "title": "硬质合金铣刀进给系数",
+          "reason": "相关操作",
+          "confidence": 0.87
+        },
+        {
+          "type": "entry",
+          "id": "milling-steel-param",
+          "knowledgeId": "kb-00011",
+          "title": "45号钢铣削切削用量卡",
+          "reason": "实战应用",
+          "confidence": 0.81
+        }
+      ]
+    },
+    {
+      "scenario": "查看了游标卡尺读数方法",
+      "recommendations": [
+        {
+          "type": "entry",
+          "id": "micrometer-scale-read",
+          "knowledgeId": "kb-00544",
+          "title": "外径千分尺高精对零读数",
+          "reason": "同类扩展",
+          "confidence": 0.93
+        },
+        {
+          "type": "entry",
+          "id": "tolerance-fitting-chart",
+          "knowledgeId": "kb-00835",
+          "title": "零件公差配合偏差对照表",
+          "reason": "相关操作",
+          "confidence": 0.89
+        },
+        {
+          "type": "entry",
+          "id": "case-bearing-fit",
+          "knowledgeId": "kb-00876",
+          "title": "轴承位装配尺寸量测案例",
+          "reason": "实战应用",
+          "confidence": 0.78
+        }
+      ]
+    },
+    {
+      "scenario": "查看了开机回零超程报警",
+      "recommendations": [
+        {
+          "type": "entry",
+          "id": "rec-gen-0-0",
+          "knowledgeId": "kb-00028",
+          "title": "G28回参考点指令",
+          "reason": "同类扩展",
+          "confidence": 0.95
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-0-1",
+          "knowledgeId": "kb-00060",
+          "title": "超程释放按键操作",
+          "reason": "相关操作",
+          "confidence": 0.88
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-0-2",
+          "knowledgeId": "kb-00368",
+          "title": "减速开关物理清理",
+          "reason": "实战应用",
+          "confidence": 0.81
+        }
+      ]
+    },
+    {
+      "scenario": "查看了攻丝容易断丝锥",
+      "recommendations": [
+        {
+          "type": "entry",
+          "id": "rec-gen-1-0",
+          "knowledgeId": "kb-00034",
+          "title": "G84刚性攻丝编码器同步",
+          "reason": "同类扩展",
+          "confidence": 0.94
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-1-1",
+          "knowledgeId": "kb-00040",
+          "title": "攻丝螺纹底孔小径表",
+          "reason": "相关操作",
+          "confidence": 0.87
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-1-2",
+          "knowledgeId": "kb-00074",
+          "title": "螺旋槽丝锥排屑案例",
+          "reason": "实战应用",
+          "confidence": 0.8
+        }
+      ]
+    },
+    {
+      "scenario": "查看了精车表面粗糙度差",
+      "recommendations": [
+        {
+          "type": "entry",
+          "id": "rec-gen-2-0",
+          "knowledgeId": "kb-00033",
+          "title": "刀尖半径R0.4/R0.8选择",
+          "reason": "同类扩展",
+          "confidence": 0.94
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-2-1",
+          "knowledgeId": "kb-00263",
+          "title": "恒线速度G96切削计算",
+          "reason": "相关操作",
+          "confidence": 0.87
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-2-2",
+          "knowledgeId": "kb-00280",
+          "title": "铝件切削积屑瘤防护",
+          "reason": "实战应用",
+          "confidence": 0.8
+        }
+      ]
+    },
+    {
+      "scenario": "查看了薄壁套筒件装夹变形",
+      "recommendations": [
+        {
+          "type": "entry",
+          "id": "rec-gen-3-0",
+          "knowledgeId": "kb-00022",
+          "title": "卡盘软爪精密镗孔车爪",
+          "reason": "同类扩展",
+          "confidence": 0.93
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-3-1",
+          "knowledgeId": "kb-00057",
+          "title": "多点气动夹具限压防变",
+          "reason": "相关操作",
+          "confidence": 0.86
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-3-2",
+          "knowledgeId": "kb-00147",
+          "title": "辅爪夹套物理定位案例",
+          "reason": "实战应用",
+          "confidence": 0.79
+        }
+      ]
+    },
+    {
+      "scenario": "查看了Mastercam软件轨迹碰撞",
+      "recommendations": [
+        {
+          "type": "entry",
+          "id": "rec-gen-4-0",
+          "knowledgeId": "kb-00023",
+          "title": "加工仿真干涉检查",
+          "reason": "同类扩展",
+          "confidence": 0.93
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-4-1",
+          "knowledgeId": "kb-00036",
+          "title": "进退刀安全高度设置",
+          "reason": "相关操作",
+          "confidence": 0.86
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-4-2",
+          "knowledgeId": "kb-00107",
+          "title": "后处理通用指令过滤",
+          "reason": "实战应用",
+          "confidence": 0.79
+        }
+      ]
+    },
+    {
+      "scenario": "查看了雷尼绍在机测头触发异常",
+      "recommendations": [
+        {
+          "type": "entry",
+          "id": "rec-gen-5-0",
+          "knowledgeId": "kb-00039",
+          "title": "G31碰壁跳跃宏指令",
+          "reason": "同类扩展",
+          "confidence": 0.92
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-5-1",
+          "knowledgeId": "kb-00163",
+          "title": "测针标定与几何差修正",
+          "reason": "相关操作",
+          "confidence": 0.85
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-5-2",
+          "knowledgeId": "kb-00367",
+          "title": "自动分中测量偏置覆盖",
+          "reason": "实战应用",
+          "confidence": 0.78
+        }
+      ]
+    },
+    {
+      "scenario": "查看了不锈钢孔钻孔过热烧刀",
+      "recommendations": [
+        {
+          "type": "entry",
+          "id": "rec-gen-6-0",
+          "knowledgeId": "kb-00032",
+          "title": "G83深孔啄钻Q值设计",
+          "reason": "同类扩展",
+          "confidence": 0.92
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-6-1",
+          "knowledgeId": "kb-00086",
+          "title": "高压内冷主轴供液阀",
+          "reason": "相关操作",
+          "confidence": 0.85
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-6-2",
+          "knowledgeId": "kb-00088",
+          "title": "钴钻头耐热切深建议",
+          "reason": "实战应用",
+          "confidence": 0.78
+        }
+      ]
+    },
+    {
+      "scenario": "查看了主轴轴承温度高限报警",
+      "recommendations": [
+        {
+          "type": "entry",
+          "id": "rec-gen-7-0",
+          "knowledgeId": "kb-00002",
+          "title": "主轴恒温冷却油箱点检",
+          "reason": "同类扩展",
+          "confidence": 0.91
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-7-1",
+          "knowledgeId": "kb-00008",
+          "title": "润滑周期油气混合阀",
+          "reason": "相关操作",
+          "confidence": 0.84
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-7-2",
+          "knowledgeId": "kb-00009",
+          "title": "主轴电机过载故障排查",
+          "reason": "实战应用",
+          "confidence": 0.77
+        }
+      ]
+    },
+    {
+      "scenario": "查看了G00/G01快速插补切换",
+      "recommendations": [
+        {
+          "type": "entry",
+          "id": "rec-gen-8-0",
+          "knowledgeId": "kb-00001",
+          "title": "快速移刀防撞规程",
+          "reason": "同类扩展",
+          "confidence": 0.91
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-8-1",
+          "knowledgeId": "kb-00003",
+          "title": "直线进给F值配置",
+          "reason": "相关操作",
+          "confidence": 0.84
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-8-2",
+          "knowledgeId": "kb-00004",
+          "title": "G00快速进给极限参数",
+          "reason": "实战应用",
+          "confidence": 0.77
+        }
+      ]
+    },
+    {
+      "scenario": "查看了G43长度补偿扎刀",
+      "recommendations": [
+        {
+          "type": "entry",
+          "id": "rec-gen-9-0",
+          "knowledgeId": "kb-00003",
+          "title": "Z轴高度量块对准法",
+          "reason": "同类扩展",
+          "confidence": 0.9
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-9-1",
+          "knowledgeId": "kb-00020",
+          "title": "H寄存器编号核对",
+          "reason": "相关操作",
+          "confidence": 0.83
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-9-2",
+          "knowledgeId": "kb-00021",
+          "title": "多刀长度参数偏置写入",
+          "reason": "实战应用",
+          "confidence": 0.76
+        }
+      ]
+    },
+    {
+      "scenario": "查看了加工中心刚性攻丝拔丝",
+      "recommendations": [
+        {
+          "type": "entry",
+          "id": "rec-gen-10-0",
+          "knowledgeId": "kb-00011",
+          "title": "G84刚性攻丝参数配对",
+          "reason": "同类扩展",
+          "confidence": 0.9
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-10-1",
+          "knowledgeId": "kb-00025",
+          "title": "主轴同步编码器校准",
+          "reason": "相关操作",
+          "confidence": 0.83
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-10-2",
+          "knowledgeId": "kb-00032",
+          "title": "螺纹规通规止规点检",
+          "reason": "实战应用",
+          "confidence": 0.76
+        }
+      ]
+    },
+    {
+      "scenario": "查看了45号钢重载铣削振刀",
+      "recommendations": [
+        {
+          "type": "entry",
+          "id": "rec-gen-11-0",
+          "knowledgeId": "kb-00013",
+          "title": "阻尼防振刀柄选用",
+          "reason": "同类扩展",
+          "confidence": 0.89
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-11-1",
+          "knowledgeId": "kb-00027",
+          "title": "ap背吃刀量分配计算",
+          "reason": "相关操作",
+          "confidence": 0.82
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-11-2",
+          "knowledgeId": "kb-00032",
+          "title": "立铣刀几何夹角前角",
+          "reason": "实战应用",
+          "confidence": 0.75
+        }
+      ]
+    },
+    {
+      "scenario": "查看了切断车刀崩刃损坏",
+      "recommendations": [
+        {
+          "type": "entry",
+          "id": "rec-gen-12-0",
+          "knowledgeId": "kb-00024",
+          "title": "切断速度转速恒线速",
+          "reason": "同类扩展",
+          "confidence": 0.89
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-12-1",
+          "knowledgeId": "kb-00170",
+          "title": "切宽断屑槽型选择",
+          "reason": "相关操作",
+          "confidence": 0.82
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-12-2",
+          "knowledgeId": "kb-00270",
+          "title": "水嘴排屑对准校准",
+          "reason": "实战应用",
+          "confidence": 0.75
+        }
+      ]
+    },
+    {
+      "scenario": "查看了工件平面度不达标",
+      "recommendations": [
+        {
+          "type": "entry",
+          "id": "rec-gen-13-0",
+          "knowledgeId": "kb-00054",
+          "title": "面铣刀切削轨迹顺铣",
+          "reason": "同类扩展",
+          "confidence": 0.89
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-13-1",
+          "knowledgeId": "kb-00737",
+          "title": "工作台多点触测宏程序",
+          "reason": "相关操作",
+          "confidence": 0.81
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-13-2",
+          "knowledgeId": "kb-00785",
+          "title": "百分表找正装夹形变",
+          "reason": "实战应用",
+          "confidence": 0.74
+        }
+      ]
+    },
+    {
+      "scenario": "查看了零件垂直度超差",
+      "recommendations": [
+        {
+          "type": "entry",
+          "id": "rec-gen-14-0",
+          "knowledgeId": "kb-00001",
+          "title": "三坐标测量基准对齐",
+          "reason": "同类扩展",
+          "confidence": 0.88
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-14-1",
+          "knowledgeId": "kb-00097",
+          "title": "虎钳夹持底面平行度",
+          "reason": "相关操作",
+          "confidence": 0.81
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-14-2",
+          "knowledgeId": "kb-00205",
+          "title": "形位公差GD&T定义表",
+          "reason": "实战应用",
+          "confidence": 0.74
+        }
+      ]
+    },
+    {
+      "scenario": "查看了机床缺少导轨滑油报警",
+      "recommendations": [
+        {
+          "type": "entry",
+          "id": "rec-gen-15-0",
+          "knowledgeId": "kb-00116",
+          "title": "润滑油壶低油位报警",
+          "reason": "同类扩展",
+          "confidence": 0.88
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-15-1",
+          "knowledgeId": "kb-00117",
+          "title": "气泡打压螺塞排空",
+          "reason": "相关操作",
+          "confidence": 0.8
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-15-2",
+          "knowledgeId": "kb-00129",
+          "title": "润滑分配分流管路点检",
+          "reason": "实战应用",
+          "confidence": 0.73
+        }
+      ]
+    },
+    {
+      "scenario": "查看了PLC安全连锁无法松刀",
+      "recommendations": [
+        {
+          "type": "entry",
+          "id": "rec-gen-16-0",
+          "knowledgeId": "kb-00379",
+          "title": "换刀点Z轴限位接近开关",
+          "reason": "同类扩展",
+          "confidence": 0.87
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-16-1",
+          "knowledgeId": "kb-00534",
+          "title": "安全门钥匙插脚打磨",
+          "reason": "相关操作",
+          "confidence": 0.8
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-16-2",
+          "knowledgeId": "kb-00537",
+          "title": "主轴松刀气阀电磁吸合",
+          "reason": "实战应用",
+          "confidence": 0.73
+        }
+      ]
+    },
+    {
+      "scenario": "查看了数控系统后备电池BAT闪烁",
+      "recommendations": [
+        {
+          "type": "entry",
+          "id": "rec-gen-17-0",
+          "knowledgeId": "kb-00037",
+          "title": "主板后备锂电池带电更换",
+          "reason": "同类扩展",
+          "confidence": 0.86
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-17-1",
+          "knowledgeId": "kb-00505",
+          "title": "SRAM系统参数一键备份",
+          "reason": "相关操作",
+          "confidence": 0.79
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-17-2",
+          "knowledgeId": "kb-00558",
+          "title": "数据DNC传输接口定义",
+          "reason": "实战应用",
+          "confidence": 0.72
+        }
+      ]
+    },
+    {
+      "scenario": "查看了Mastercam高速摆线开粗",
+      "recommendations": [
+        {
+          "type": "entry",
+          "id": "rec-gen-18-0",
+          "knowledgeId": "kb-00124",
+          "title": "高速切削开粗吃刀步距",
+          "reason": "同类扩展",
+          "confidence": 0.86
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-18-1",
+          "knowledgeId": "kb-00210",
+          "title": "摆线切入角与退刀高度",
+          "reason": "相关操作",
+          "confidence": 0.79
+        },
+        {
+          "type": "entry",
+          "id": "rec-gen-18-2",
+          "knowledgeId": "kb-00302",
+          "title": "CAM加工中心仿真碰撞",
+          "reason": "实战应用",
+          "confidence": 0.72
+        }
+      ]
+    }
+  ],
+  "popular": [
+    {
+      "id": "pop-item-001",
+      "knowledgeId": "kb-00001",
+      "title": "B站数控教程知识点",
+      "category": "编程基础",
+      "views": 1807,
+      "lastViewed": "2026-07-03"
+    },
+    {
+      "id": "pop-item-002",
+      "knowledgeId": "kb-00002",
+      "title": "CNC数控编程英汉术语对照表",
+      "category": "编程基础",
+      "views": 1762,
+      "lastViewed": "2026-07-02"
+    },
+    {
+      "id": "pop-item-003",
+      "knowledgeId": "kb-00003",
+      "title": "G00G01快速定位与直线插补",
+      "category": "编程基础",
+      "views": 1700,
+      "lastViewed": "2026-07-01"
+    },
+    {
+      "id": "pop-item-004",
+      "knowledgeId": "kb-00004",
+      "title": "G02G03圆弧插补详解",
+      "category": "编程基础",
+      "views": 1651,
+      "lastViewed": "2026-07-03"
+    },
+    {
+      "id": "pop-item-005",
+      "knowledgeId": "kb-00005",
+      "title": "G代码模态机制详解",
+      "category": "编程基础",
+      "views": 1600,
+      "lastViewed": "2026-07-02"
+    },
+    {
+      "id": "pop-item-006",
+      "knowledgeId": "kb-00006",
+      "title": "NotebookLM_FANUC加工中心G代码M代码完整手册",
+      "category": "编程基础",
+      "views": 1551,
+      "lastViewed": "2026-07-01"
+    },
+    {
+      "id": "pop-item-007",
+      "knowledgeId": "kb-00007",
+      "title": "QClaw测试_G代码速查手册",
+      "category": "编程基础",
+      "views": 1507,
+      "lastViewed": "2026-07-03"
+    },
+    {
+      "id": "pop-item-008",
+      "knowledgeId": "kb-00008",
+      "title": "QClaw测试_刀具寿命管理",
+      "category": "编程基础",
+      "views": 1465,
+      "lastViewed": "2026-07-02"
+    },
+    {
+      "id": "pop-item-009",
+      "knowledgeId": "kb-00009",
+      "title": "QClaw测试_分中对刀",
+      "category": "编程基础",
+      "views": 1406,
+      "lastViewed": "2026-07-01"
+    },
+    {
+      "id": "pop-item-010",
+      "knowledgeId": "kb-00010",
+      "title": "QClaw测试_坐标系详解",
+      "category": "编程基础",
+      "views": 1359,
+      "lastViewed": "2026-07-03"
+    },
+    {
+      "id": "pop-item-011",
+      "knowledgeId": "kb-00011",
+      "title": "QClaw测试_尾座使用",
+      "category": "编程基础",
+      "views": 1317,
+      "lastViewed": "2026-07-02"
+    },
+    {
+      "id": "pop-item-012",
+      "knowledgeId": "kb-00012",
+      "title": "QClaw测试_编程报警解决方案",
+      "category": "编程基础",
+      "views": 1261,
+      "lastViewed": "2026-07-01"
+    },
+    {
+      "id": "pop-item-013",
+      "knowledgeId": "kb-00013",
+      "title": "README",
+      "category": "编程基础",
+      "views": 1201,
+      "lastViewed": "2026-07-03"
+    },
+    {
+      "id": "pop-item-014",
+      "knowledgeId": "kb-00014",
+      "title": "test_macro",
+      "category": "编程基础",
+      "views": 1152,
+      "lastViewed": "2026-07-02"
+    },
+    {
+      "id": "pop-item-015",
+      "knowledgeId": "kb-00015",
+      "title": "Web_CNC编程基础教程",
+      "category": "编程基础",
+      "views": 1112,
+      "lastViewed": "2026-07-01"
+    },
+    {
+      "id": "pop-item-016",
+      "knowledgeId": "kb-00016",
+      "title": "Web_G代码M代码完整手册",
+      "category": "编程基础",
+      "views": 1066,
+      "lastViewed": "2026-07-03"
+    },
+    {
+      "id": "pop-item-017",
+      "knowledgeId": "kb-00017",
+      "title": "Web_G代码中文维基",
+      "category": "编程基础",
+      "views": 1018,
+      "lastViewed": "2026-07-02"
+    },
+    {
+      "id": "pop-item-018",
+      "knowledgeId": "kb-00018",
+      "title": "Web_G代码编程参考手册",
+      "category": "编程基础",
+      "views": 955,
+      "lastViewed": "2026-07-01"
+    },
+    {
+      "id": "pop-item-019",
+      "knowledgeId": "kb-00019",
+      "title": "Web_数控技术基础原理",
+      "category": "编程基础",
+      "views": 906,
+      "lastViewed": "2026-07-03"
+    },
+    {
+      "id": "pop-item-020",
+      "knowledgeId": "kb-00020",
+      "title": "五轴加工与RTCP刀尖跟随完全指南",
+      "category": "编程基础",
+      "views": 868,
+      "lastViewed": "2026-07-02"
+    },
+    {
+      "id": "pop-item-021",
+      "knowledgeId": "kb-00021",
+      "title": "五轴加工技术完整指南",
+      "category": "编程基础",
+      "views": 808,
+      "lastViewed": "2026-07-01"
+    },
+    {
+      "id": "pop-item-022",
+      "knowledgeId": "kb-00022",
+      "title": "五轴加工碰撞检测与仿真",
+      "category": "编程基础",
+      "views": 751,
+      "lastViewed": "2026-07-03"
+    },
+    {
+      "id": "pop-item-023",
+      "knowledgeId": "kb-00023",
+      "title": "五轴加工编程",
+      "category": "编程基础",
+      "views": 719,
+      "lastViewed": "2026-07-02"
+    },
+    {
+      "id": "pop-item-024",
+      "knowledgeId": "kb-00024",
+      "title": "刀尖圆弧补偿与精密加工",
+      "category": "编程基础",
+      "views": 652,
+      "lastViewed": "2026-07-01"
+    },
+    {
+      "id": "pop-item-025",
+      "knowledgeId": "kb-00025",
+      "title": "切削参数选择指南",
+      "category": "编程基础",
+      "views": 614,
+      "lastViewed": "2026-07-03"
+    }
+  ]
+}

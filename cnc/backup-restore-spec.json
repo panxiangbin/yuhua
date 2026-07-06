@@ -1,0 +1,114 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-07-03T03:16:39.310Z",
+  "backupFormat": {
+    "version": "1.0",
+    "timestamp": "ISO8601",
+    "data": {
+      "userData": {
+        "favorites": [
+          "kb-00001",
+          "kb-00008"
+        ],
+        "history": [
+          "kb-00003",
+          "kb-00160"
+        ],
+        "notes": [
+          {
+            "entryId": "kb-00001",
+            "noteText": "车间对刀注意：必须将偏置写入G54的Z轴偏置栏而不是外置坐标系中。"
+          }
+        ],
+        "settings": {
+          "theme": "dark",
+          "language": "zh-CN",
+          "hapticFeedback": true
+        }
+      },
+      "learningProgress": {
+        "completedPaths": [
+          "path-beginner"
+        ],
+        "completedModules": [
+          "module-intro",
+          "module-coordinate"
+        ],
+        "studyTime": {
+          "2026-07-01": 3600,
+          "2026-07-02": 4200
+        }
+      },
+      "customData": {
+        "calculatorHistory": [
+          {
+            "type": "cutting_speed",
+            "rpm": 2500,
+            "feed": 300,
+            "date": "2026-07-03"
+          }
+        ],
+        "customCollections": []
+      }
+    },
+    "checksum": "SHA256"
+  },
+  "backupStrategies": [
+    {
+      "type": "manual",
+      "description": "用户在设置面板手动点击触发数据备份。",
+      "trigger": "user-action",
+      "format": "json-zip",
+      "location": "user-selected"
+    },
+    {
+      "type": "automatic",
+      "description": "APP每星期日后台自动创建快照备份。",
+      "trigger": "weekly",
+      "format": "json-zip",
+      "location": "app-data-folder",
+      "retention": "keep-last-4"
+    },
+    {
+      "type": "export",
+      "description": "导出为未压缩、纯文本易读格式的 JSON 数据。",
+      "trigger": "user-action",
+      "format": "json-readable",
+      "location": "user-selected"
+    }
+  ],
+  "restoreProcess": {
+    "steps": [
+      "1. 解密并验证备份包 SHA256 校验和",
+      "2. 检测备份 JSON 版本号与当前 APP 兼容性",
+      "3. 弹窗提示用户确认（警示：该导入会完全覆盖本机当前所有数据）",
+      "4. 为本地当前数据自动创建临时快照 (snapshot_temp)",
+      "5. 覆盖写入 userData 与 learningProgress 字段",
+      "6. 执行热重启应用刷新缓存"
+    ],
+    "rollback": {
+      "enabled": true,
+      "description": "在写入或热重启过程中捕获一切异常时，自动回滚至 snapshot_temp 并提示导入失败。"
+    }
+  },
+  "migrationScenarios": [
+    {
+      "scenario": "换设备",
+      "steps": [
+        "1. 旧设备：设置 -> 安全与备份 -> 点击‘导出数据备份包’",
+        "2. 将导出的 cnc-backup.zip 拷贝发送至新手机",
+        "3. 新手机：下载并安装《数控工程师工作平台》最新版本",
+        "4. 新手机：设置 -> 安全与备份 -> 点击‘从备份包导入恢复’"
+      ]
+    },
+    {
+      "scenario": "版本跨越升级",
+      "steps": [
+        "1. APP 升级包下载完毕，安装前静默执行一次自动备份",
+        "2. 运行安装升级",
+        "3. APP 首次启动，数据兼容迁移引擎对旧版 JSON 数据进行平滑字段升级",
+        "4. 检验数据读取完整性，注销静默备份"
+      ]
+    }
+  ]
+}

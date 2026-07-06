@@ -1,0 +1,3703 @@
+{
+  "nodes": [
+    {
+      "id": "learn-coordinate-system",
+      "label": "坐标系与对刀详解",
+      "category": "入门基础",
+      "type": "core",
+      "difficulty": 3,
+      "estimatedTime": 8,
+      "relatedIds": [
+        "learn-absolute-incremental",
+        "learn-program-structure"
+      ],
+      "imageUrl": "./assets/images/batch01_core/beginner-coordinate-001.webp"
+    },
+    {
+      "id": "learn-absolute-incremental",
+      "label": "G90 / G91 绝对值与增量编程",
+      "category": "入门基础",
+      "type": "core",
+      "difficulty": 4,
+      "estimatedTime": 8,
+      "relatedIds": [
+        "learn-program-structure",
+        "learn-coordinate-system"
+      ],
+      "imageUrl": "./assets/images/batch01_core/beginner-g90-g91-001.webp"
+    },
+    {
+      "id": "learn-g54-g59",
+      "label": "G54-G59 工件坐标系",
+      "category": "常用代码",
+      "type": "core",
+      "difficulty": 4,
+      "estimatedTime": 12,
+      "relatedIds": [
+        "learn-g17-g18-g19",
+        "learn-g41-g42"
+      ],
+      "imageUrl": "./assets/images/batch01_core/gcode-g54-g59-001.webp"
+    },
+    {
+      "id": "learn-g17-g18-g19",
+      "label": "G17 / G18 / G19 平面选择",
+      "category": "常用代码",
+      "type": "core",
+      "difficulty": 3,
+      "estimatedTime": 12,
+      "relatedIds": [
+        "learn-g41-g42",
+        "learn-g43-g44-g49"
+      ],
+      "imageUrl": "./assets/images/batch01_core/gcode-g17-g18-g19-001.webp"
+    },
+    {
+      "id": "learn-g41-g42",
+      "label": "G41 / G42 刀具补偿",
+      "category": "常用代码",
+      "type": "core",
+      "difficulty": 4,
+      "estimatedTime": 12,
+      "relatedIds": [
+        "learn-g43-g44-g49",
+        "learn-g71-g72-g73"
+      ],
+      "imageUrl": "./assets/images/batch01_core/gcode-g41-g42-001.webp"
+    },
+    {
+      "id": "learn-g43-g44-g49",
+      "label": "G43 / G44 / G49 刀长补偿",
+      "category": "常用代码",
+      "type": "core",
+      "difficulty": 4,
+      "estimatedTime": 12,
+      "relatedIds": [
+        "learn-g71-g72-g73",
+        "learn-g81-g83"
+      ],
+      "imageUrl": "./assets/images/batch01_core/gcode-g43-g49-001.webp"
+    },
+    {
+      "id": "learn-g71-g72-g73",
+      "label": "G71 / G72 / G73 车床循环",
+      "category": "常用代码",
+      "type": "core",
+      "difficulty": 3,
+      "estimatedTime": 12,
+      "relatedIds": [
+        "learn-g81-g83",
+        "learn-g84"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "learn-g81-g83",
+      "label": "G81 / G83 钻孔与啄钻循环",
+      "category": "常用代码",
+      "type": "core",
+      "difficulty": 3,
+      "estimatedTime": 12,
+      "relatedIds": [
+        "learn-g84",
+        "g04-dwell"
+      ],
+      "imageUrl": "./assets/images/batch01_core/cycle-g81-001.webp"
+    },
+    {
+      "id": "learn-g84",
+      "label": "G84 攻丝循环",
+      "category": "常用代码",
+      "type": "core",
+      "difficulty": 4,
+      "estimatedTime": 12,
+      "relatedIds": [
+        "g04-dwell",
+        "g20-g21-unit"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "fanuc-param-backup",
+      "label": "FANUC 参数备份与恢复",
+      "category": "FANUC参数",
+      "type": "auxiliary",
+      "difficulty": 4,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "fanuc-rigid-tap"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "fanuc-rigid-tap",
+      "label": "FANUC 刚性攻丝编程与参数",
+      "category": "FANUC参数",
+      "type": "auxiliary",
+      "difficulty": 4,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "fanuc-param-backup"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "alarm-servo",
+      "label": "伺服系统常见故障与排除",
+      "category": "报警排查",
+      "type": "auxiliary",
+      "difficulty": 4,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "alarm-spindle",
+        "alarm-atc"
+      ],
+      "imageUrl": "./assets/images/batch01_core/alarm-servo-001.webp"
+    },
+    {
+      "id": "alarm-spindle",
+      "label": "主轴常见故障与排除",
+      "category": "报警排查",
+      "type": "auxiliary",
+      "difficulty": 4,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "alarm-atc",
+        "fault-limit-switch"
+      ],
+      "imageUrl": "./assets/images/batch01_core/alarm-spindle-001.webp"
+    },
+    {
+      "id": "alarm-atc",
+      "label": "ATC 自动换刀故障诊断",
+      "category": "报警排查",
+      "type": "auxiliary",
+      "difficulty": 4,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "fault-limit-switch",
+        "fault-home-fail"
+      ],
+      "imageUrl": "./assets/images/batch05_alarm_drawing_material/atc-alarm-flow-001.webp"
+    },
+    {
+      "id": "tool-life",
+      "label": "刀具寿命管理",
+      "category": "刀具工艺",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "tool-coating",
+        "tool-insert-brand"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "tool-coating",
+      "label": "刀具涂层技术",
+      "category": "刀具工艺",
+      "type": "auxiliary",
+      "difficulty": 2,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "tool-insert-brand",
+        "tool-drill-selection"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "material-stainless",
+      "label": "不锈钢加工完整方案",
+      "category": "材料加工",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "material-aluminum",
+        "material-high-temp"
+      ],
+      "imageUrl": "./assets/images/batch05_alarm_drawing_material/material-stainless-cutting-001.webp"
+    },
+    {
+      "id": "material-aluminum",
+      "label": "铝合金加工基础",
+      "category": "材料加工",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "material-high-temp",
+        "material-carbon-steel"
+      ],
+      "imageUrl": "./assets/images/batch05_alarm_drawing_material/material-aluminum-cutting-001.webp"
+    },
+    {
+      "id": "material-high-temp",
+      "label": "高温合金加工专项",
+      "category": "材料加工",
+      "type": "auxiliary",
+      "difficulty": 4,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "material-carbon-steel",
+        "material-plastic"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "case-thin-wall",
+      "label": "薄壁零件加工案例",
+      "category": "加工案例",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "case-axis",
+        "case-thread-part"
+      ],
+      "imageUrl": "./assets/images/batch03_turning_process/turning-thin-wall-001.webp"
+    },
+    {
+      "id": "case-axis",
+      "label": "车削阶梯轴案例",
+      "category": "加工案例",
+      "type": "auxiliary",
+      "difficulty": 2,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "case-thread-part",
+        "case-flange"
+      ],
+      "imageUrl": "./assets/images/batch03_turning_process/step-shaft-case-001.webp"
+    },
+    {
+      "id": "case-thread-part",
+      "label": "螺纹零件加工案例",
+      "category": "加工案例",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "case-flange",
+        "case-gear"
+      ],
+      "imageUrl": "./assets/images/batch03_turning_process/thread-part-case-001.webp"
+    },
+    {
+      "id": "quick-fanuc-param",
+      "label": "FANUC 参数修改速查",
+      "category": "速查图卡",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "quick-fanuc-alarm",
+        "quick-gcode"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "quick-fanuc-alarm",
+      "label": "FANUC 报警代码速查表",
+      "category": "速查图卡",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "quick-gcode",
+        "quick-g96"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "quick-gcode",
+      "label": "G代码与编程速查",
+      "category": "速查图卡",
+      "type": "auxiliary",
+      "difficulty": 2,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "quick-g96",
+        "quick-thread"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "quick-g96",
+      "label": "G96 恒线速速查表",
+      "category": "速查图卡",
+      "type": "auxiliary",
+      "difficulty": 4,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "quick-thread",
+        "quick-measure"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "quick-thread",
+      "label": "螺纹与规格速查",
+      "category": "速查图卡",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "quick-measure",
+        "quick-allowance-card"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "quick-measure",
+      "label": "量具使用速查表",
+      "category": "速查图卡",
+      "type": "auxiliary",
+      "difficulty": 2,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "quick-allowance-card",
+        "quick-insert-card"
+      ],
+      "imageUrl": "./assets/images/batch05_alarm_drawing_material/vernier-caliper-detail-001.webp"
+    },
+    {
+      "id": "learn-program-structure",
+      "label": "程序结构与常见地址符",
+      "category": "入门基础",
+      "type": "core",
+      "difficulty": 2,
+      "estimatedTime": 8,
+      "relatedIds": [
+        "learn-coordinate-system",
+        "learn-absolute-incremental"
+      ],
+      "imageUrl": "./assets/images/batch02_operation_basics/program-structure-basic-001.webp"
+    },
+    {
+      "id": "machine-home-return",
+      "label": "回零操作与参考点概念",
+      "category": "机床操作",
+      "type": "auxiliary",
+      "difficulty": 4,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "machine-tool-setting",
+        "machine-panel-english"
+      ],
+      "imageUrl": "./assets/images/batch01_core/home-safe-path-001.webp"
+    },
+    {
+      "id": "machine-tool-setting",
+      "label": "FANUC 对刀完整操作流程",
+      "category": "机床操作",
+      "type": "auxiliary",
+      "difficulty": 4,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "machine-panel-english",
+        "machine-home-return"
+      ],
+      "imageUrl": "./assets/images/batch02_operation_basics/work-offset-setting-001.webp"
+    },
+    {
+      "id": "machine-panel-english",
+      "label": "机床面板常见英文单词",
+      "category": "机床操作",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "machine-home-return",
+        "machine-tool-setting"
+      ],
+      "imageUrl": "./assets/images/batch02_operation_basics/panel-control-overview-001.webp"
+    },
+    {
+      "id": "g04-dwell",
+      "label": "G04 暂停指令",
+      "category": "常用代码",
+      "type": "auxiliary",
+      "difficulty": 2,
+      "estimatedTime": 12,
+      "relatedIds": [
+        "g20-g21-unit",
+        "g28-g29-reference"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "g20-g21-unit",
+      "label": "G20 / G21 英制与公制切换",
+      "category": "常用代码",
+      "type": "auxiliary",
+      "difficulty": 4,
+      "estimatedTime": 12,
+      "relatedIds": [
+        "g28-g29-reference",
+        "g00-g01-motion"
+      ],
+      "imageUrl": "./assets/images/batch01_core/unit-g20-g21-001.webp"
+    },
+    {
+      "id": "g28-g29-reference",
+      "label": "G28 / G29 参考点返回",
+      "category": "常用代码",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 12,
+      "relatedIds": [
+        "g00-g01-motion",
+        "g02-g03-arc"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "g00-g01-motion",
+      "label": "G00 / G01 快移与直线切削",
+      "category": "常用代码",
+      "type": "core",
+      "difficulty": 3,
+      "estimatedTime": 12,
+      "relatedIds": [
+        "g02-g03-arc",
+        "g40-cancel-comp"
+      ],
+      "imageUrl": "./assets/images/batch01_core/gcode-g00-g01-001.webp"
+    },
+    {
+      "id": "g02-g03-arc",
+      "label": "G02 / G03 圆弧插补",
+      "category": "常用代码",
+      "type": "core",
+      "difficulty": 4,
+      "estimatedTime": 12,
+      "relatedIds": [
+        "g40-cancel-comp",
+        "g53-machine-coordinate"
+      ],
+      "imageUrl": "./assets/images/batch01_core/gcode-g02-g03-001.webp"
+    },
+    {
+      "id": "g40-cancel-comp",
+      "label": "G40 取消刀补",
+      "category": "常用代码",
+      "type": "auxiliary",
+      "difficulty": 4,
+      "estimatedTime": 12,
+      "relatedIds": [
+        "g53-machine-coordinate",
+        "g94-g95-feed"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "g53-machine-coordinate",
+      "label": "G53 机床坐标调用",
+      "category": "常用代码",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 12,
+      "relatedIds": [
+        "g94-g95-feed",
+        "g76-thread-cycle"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "g94-g95-feed",
+      "label": "G94 / G95 进给方式",
+      "category": "常用代码",
+      "type": "auxiliary",
+      "difficulty": 4,
+      "estimatedTime": 12,
+      "relatedIds": [
+        "g76-thread-cycle",
+        "g80-cancel-cycle"
+      ],
+      "imageUrl": "./assets/images/batch01_core/feed-g94-g95-001.webp"
+    },
+    {
+      "id": "g76-thread-cycle",
+      "label": "G76 螺纹循环",
+      "category": "常用代码",
+      "type": "auxiliary",
+      "difficulty": 4,
+      "estimatedTime": 12,
+      "relatedIds": [
+        "g80-cancel-cycle",
+        "g98-g99-return"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "g80-cancel-cycle",
+      "label": "G80 取消固定循环",
+      "category": "常用代码",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 12,
+      "relatedIds": [
+        "g98-g99-return",
+        "g96-g97-spindle"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "g98-g99-return",
+      "label": "G98 / G99 返回平面",
+      "category": "常用代码",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 12,
+      "relatedIds": [
+        "g96-g97-spindle",
+        "m30-program-end"
+      ],
+      "imageUrl": "./assets/images/batch01_core/cycle-g98-g99-001.webp"
+    },
+    {
+      "id": "g96-g97-spindle",
+      "label": "G96 / G97 恒线速与固定转速",
+      "category": "常用代码",
+      "type": "auxiliary",
+      "difficulty": 4,
+      "estimatedTime": 12,
+      "relatedIds": [
+        "m30-program-end",
+        "m03-m04-m05"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "m30-program-end",
+      "label": "M30 程序结束与复位",
+      "category": "常用代码",
+      "type": "core",
+      "difficulty": 3,
+      "estimatedTime": 12,
+      "relatedIds": [
+        "m03-m04-m05",
+        "m06-tool-change"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "m03-m04-m05",
+      "label": "M03 / M04 / M05 主轴控制",
+      "category": "常用代码",
+      "type": "core",
+      "difficulty": 4,
+      "estimatedTime": 12,
+      "relatedIds": [
+        "m06-tool-change",
+        "m08-m09-coolant"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "m06-tool-change",
+      "label": "M06 自动换刀",
+      "category": "常用代码",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 12,
+      "relatedIds": [
+        "m08-m09-coolant",
+        "m00-m01-stop"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "m08-m09-coolant",
+      "label": "M08 / M09 冷却液控制",
+      "category": "常用代码",
+      "type": "auxiliary",
+      "difficulty": 2,
+      "estimatedTime": 12,
+      "relatedIds": [
+        "m00-m01-stop",
+        "learn-g54-g59"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "m00-m01-stop",
+      "label": "M00 / M01 程序停止",
+      "category": "常用代码",
+      "type": "auxiliary",
+      "difficulty": 2,
+      "estimatedTime": 12,
+      "relatedIds": [
+        "learn-g54-g59",
+        "learn-g17-g18-g19"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "fanuc-alarm-common",
+      "label": "FANUC 常见报警代码解析",
+      "category": "FANUC报警",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "learn-fanuc-alarm-common"
+      ],
+      "imageUrl": "./assets/images/batch02_operation_basics/alarm-category-overview-001.webp"
+    },
+    {
+      "id": "fault-limit-switch",
+      "label": "限位与超程类问题排查",
+      "category": "报警排查",
+      "type": "auxiliary",
+      "difficulty": 4,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "fault-home-fail",
+        "fault-home-reference"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "fault-home-fail",
+      "label": "回不了零点时先查什么",
+      "category": "报警排查",
+      "type": "auxiliary",
+      "difficulty": 4,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "fault-home-reference",
+        "alarm-servo"
+      ],
+      "imageUrl": "./assets/images/batch01_core/fault-home-fail-001.webp"
+    },
+    {
+      "id": "fault-home-reference",
+      "label": "回零失败与参考点异常",
+      "category": "报警排查",
+      "type": "auxiliary",
+      "difficulty": 4,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "alarm-servo",
+        "alarm-spindle"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "process-allowance-basics",
+      "label": "粗加工 / 半精加工 / 精加工余量逻辑",
+      "category": "加工工艺",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "process-surface-roughness"
+      ],
+      "imageUrl": "./assets/images/batch03_turning_process/turning-allowance-flow-001.webp"
+    },
+    {
+      "id": "process-surface-roughness",
+      "label": "表面粗糙度标准与选用",
+      "category": "加工工艺",
+      "type": "auxiliary",
+      "difficulty": 2,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "process-allowance-basics"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "drawing-symbol",
+      "label": "图纸符号与尺寸标注入门",
+      "category": "图纸识读",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [],
+      "imageUrl": "./assets/images/batch05_alarm_drawing_material/drawing-gdt-basic-001.webp"
+    },
+    {
+      "id": "tool-insert-brand",
+      "label": "刀具品牌与牌号认知入门",
+      "category": "刀具工艺",
+      "type": "auxiliary",
+      "difficulty": 2,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "tool-drill-selection",
+        "tool-thread-tap"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "tool-drill-selection",
+      "label": "钻头选型与切削基础",
+      "category": "刀具工艺",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "tool-thread-tap",
+        "tool-life"
+      ],
+      "imageUrl": "./assets/images/batch04_milling_tooling/drill-types-overview-001.webp"
+    },
+    {
+      "id": "tool-thread-tap",
+      "label": "丝锥攻丝入门",
+      "category": "刀具工艺",
+      "type": "auxiliary",
+      "difficulty": 4,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "tool-life",
+        "tool-coating"
+      ],
+      "imageUrl": "./assets/images/batch04_milling_tooling/milling-drill-ream-tap-001.webp"
+    },
+    {
+      "id": "material-carbon-steel",
+      "label": "常见钢材加工基础",
+      "category": "材料加工",
+      "type": "auxiliary",
+      "difficulty": 2,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "material-plastic",
+        "material-stainless"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "material-plastic",
+      "label": "工程塑料加工特点",
+      "category": "材料加工",
+      "type": "auxiliary",
+      "difficulty": 2,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "material-stainless",
+        "material-aluminum"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "case-flange",
+      "label": "法兰盘加工案例",
+      "category": "加工案例",
+      "type": "auxiliary",
+      "difficulty": 2,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "case-gear",
+        "case-thin-wall"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "case-gear",
+      "label": "精密齿轮加工案例",
+      "category": "加工案例",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "case-thin-wall",
+        "case-axis"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "quick-allowance-card",
+      "label": "加工余量标准速查表",
+      "category": "速查图卡",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "quick-insert-card",
+        "quick-cutting-card"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "quick-insert-card",
+      "label": "刀片型号解读速查表",
+      "category": "速查图卡",
+      "type": "auxiliary",
+      "difficulty": 2,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "quick-cutting-card",
+        "quick-fanuc-param"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "quick-cutting-card",
+      "label": "切削参数速查",
+      "category": "速查图卡",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "quick-fanuc-param",
+        "quick-fanuc-alarm"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "learn-g17-g18-g19",
+      "label": "G17 / G18 / G19 平面选择",
+      "category": "G代码编程",
+      "type": "core",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "learn-g41-g42",
+        "learn-g43-g44-g49"
+      ],
+      "imageUrl": "./assets/images/batch01_core/gcode-g17-g18-g19-001.webp"
+    },
+    {
+      "id": "learn-g41-g42",
+      "label": "G41 / G42 刀具补偿",
+      "category": "G代码编程",
+      "type": "core",
+      "difficulty": 4,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "learn-g43-g44-g49",
+        "learn-g20-g21"
+      ],
+      "imageUrl": "./assets/images/batch01_core/gcode-g41-g42-001.webp"
+    },
+    {
+      "id": "learn-g43-g44-g49",
+      "label": "G43 / G44 / G49 刀长补偿",
+      "category": "G代码编程",
+      "type": "core",
+      "difficulty": 4,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "learn-g20-g21",
+        "learn-g28-g29"
+      ],
+      "imageUrl": "./assets/images/batch01_core/gcode-g43-g49-001.webp"
+    },
+    {
+      "id": "learn-g20-g21",
+      "label": "G20 / G21 英制与公制切换",
+      "category": "G代码编程",
+      "type": "core",
+      "difficulty": 4,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "learn-g28-g29",
+        "learn-m03-m05"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "learn-g28-g29",
+      "label": "G28 / G29 参考点返回",
+      "category": "G代码编程",
+      "type": "core",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "learn-m03-m05",
+        "learn-m06"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "learn-m03-m05",
+      "label": "M03 / M04 / M05 主轴控制",
+      "category": "G代码编程",
+      "type": "core",
+      "difficulty": 4,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "learn-m06",
+        "learn-m08-m09"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "learn-m06",
+      "label": "M06 自动换刀",
+      "category": "G代码编程",
+      "type": "core",
+      "difficulty": 4,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "learn-m08-m09",
+        "learn-g84"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "learn-m08-m09",
+      "label": "M08 / M09 冷却液控制",
+      "category": "G代码编程",
+      "type": "core",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "learn-g84",
+        "learn-g17-g18-g19"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "learn-g84",
+      "label": "G84 攻丝循环",
+      "category": "G代码编程",
+      "type": "core",
+      "difficulty": 4,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "learn-g17-g18-g19",
+        "learn-g41-g42"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "learn-fanuc-alarm-common",
+      "label": "FANUC 常见报警代码解析",
+      "category": "FANUC报警",
+      "type": "core",
+      "difficulty": 4,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "fanuc-alarm-common"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "calc-vc-rpm",
+      "label": "线速度、转速换算",
+      "category": "参数换算",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "calc-feed",
+        "calc-thread-pitch"
+      ],
+      "imageUrl": "./assets/images/batch03_turning_process/turning-facing-001.webp"
+    },
+    {
+      "id": "calc-feed",
+      "label": "进给速度换算",
+      "category": "参数换算",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "calc-thread-pitch",
+        "calc-radius-diameter"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "calc-thread-pitch",
+      "label": "螺距与 TPI 换算",
+      "category": "参数换算",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "calc-radius-diameter",
+        "calc-vc-rpm"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "calc-radius-diameter",
+      "label": "半径与直径换算",
+      "category": "参数换算",
+      "type": "auxiliary",
+      "difficulty": 2,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "calc-vc-rpm",
+        "calc-feed"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-coordinate",
+      "label": "坐标系教学配图提示词",
+      "category": "图解提示词",
+      "type": "auxiliary",
+      "difficulty": 2,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-g02",
+        "diagram-prompt-compensation"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-g02",
+      "label": "G02 / G03 圆弧配图提示词",
+      "category": "图解提示词",
+      "type": "core",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-compensation",
+        "diagram-prompt-cycle"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-compensation",
+      "label": "刀补教学配图提示词",
+      "category": "图解提示词",
+      "type": "core",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-cycle",
+        "diagram-prompt-plane"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-cycle",
+      "label": "钻孔与攻丝循环提示词",
+      "category": "图解提示词",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-plane",
+        "diagram-prompt-offset"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-plane",
+      "label": "G17 / G18 / G19 平面提示词",
+      "category": "图解提示词",
+      "type": "auxiliary",
+      "difficulty": 2,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-offset",
+        "diagram-prompt-home"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-offset",
+      "label": "G54 / G59 工件坐标提示词",
+      "category": "图解提示词",
+      "type": "core",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-home",
+        "diagram-prompt-thread"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-home",
+      "label": "G28 回零与安全退刀提示词",
+      "category": "图解提示词",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-thread",
+        "diagram-prompt-alarm"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-thread",
+      "label": "G76 螺纹循环提示词",
+      "category": "图解提示词",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-alarm",
+        "diagram-prompt-gauge"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-alarm",
+      "label": "报警排查流程提示词",
+      "category": "图解提示词",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-gauge",
+        "diagram-prompt-tool-life"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-gauge",
+      "label": "量具识别与读数提示词",
+      "category": "图解提示词",
+      "type": "auxiliary",
+      "difficulty": 2,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-tool-life",
+        "diagram-prompt-tolerance"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-tool-life",
+      "label": "刀具寿命与涂层提示词",
+      "category": "图解提示词",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-tolerance",
+        "diagram-prompt-roughness"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-tolerance",
+      "label": "公差与配合提示词",
+      "category": "图解提示词",
+      "type": "auxiliary",
+      "difficulty": 2,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-roughness",
+        "diagram-prompt-cutting"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-roughness",
+      "label": "表面粗糙度提示词",
+      "category": "图解提示词",
+      "type": "auxiliary",
+      "difficulty": 2,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-cutting",
+        "diagram-prompt-parameter-sheet"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-cutting",
+      "label": "切削参数提示词",
+      "category": "图解提示词",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-parameter-sheet",
+        "diagram-prompt-material"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-parameter-sheet",
+      "label": "现场参数速查提示词",
+      "category": "图解提示词",
+      "type": "auxiliary",
+      "difficulty": 2,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-material",
+        "diagram-prompt-startup"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-material",
+      "label": "材料切削与刀具选择提示词",
+      "category": "图解提示词",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-startup",
+        "diagram-prompt-atc"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-startup",
+      "label": "开机检查与安全准备提示词",
+      "category": "图解提示词",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-atc",
+        "diagram-prompt-compensation-flow"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-atc",
+      "label": "ATC 换刀与刀库提示词",
+      "category": "图解提示词",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-compensation-flow",
+        "diagram-prompt-feed-mode"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-compensation-flow",
+      "label": "刀补流程与对刀提示词",
+      "category": "图解提示词",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-feed-mode",
+        "diagram-prompt-return-plane"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-feed-mode",
+      "label": "G94 / G95 进给模式提示词",
+      "category": "图解提示词",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-return-plane",
+        "diagram-prompt-unit-switch"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-return-plane",
+      "label": "G98 / G99 返回平面提示词",
+      "category": "图解提示词",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-unit-switch",
+        "diagram-prompt-tool-length"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-unit-switch",
+      "label": "G20 / G21 单位切换提示词",
+      "category": "图解提示词",
+      "type": "auxiliary",
+      "difficulty": 2,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-tool-length",
+        "diagram-prompt-fixed-cycle"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-tool-length",
+      "label": "G43 / G49 刀长补偿提示词",
+      "category": "图解提示词",
+      "type": "core",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-fixed-cycle",
+        "diagram-prompt-alarm-servo"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-fixed-cycle",
+      "label": "G81 / G83 / G84 固定循环提示词",
+      "category": "图解提示词",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-alarm-servo",
+        "diagram-prompt-alarm-spindle"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-alarm-servo",
+      "label": "伺服报警排查提示词",
+      "category": "图解提示词",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-alarm-spindle",
+        "diagram-prompt-alarm-limit"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-alarm-spindle",
+      "label": "主轴报警排查提示词",
+      "category": "图解提示词",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-alarm-limit",
+        "diagram-prompt-home-fail"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-alarm-limit",
+      "label": "限位与超程报警提示词",
+      "category": "图解提示词",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-home-fail",
+        "diagram-prompt-touchoff-fail"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-home-fail",
+      "label": "回零失败与参考点异常提示词",
+      "category": "图解提示词",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-touchoff-fail",
+        "diagram-prompt-parameter-backup"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-touchoff-fail",
+      "label": "对刀失败与基准异常提示词",
+      "category": "图解提示词",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-parameter-backup",
+        "diagram-prompt-home-parameter"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-parameter-backup",
+      "label": "参数备份与初始化提示词",
+      "category": "图解提示词",
+      "type": "auxiliary",
+      "difficulty": 4,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-home-parameter",
+        "diagram-prompt-init"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-home-parameter",
+      "label": "回零参数与参考点设定提示词",
+      "category": "图解提示词",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-init",
+        "diagram-prompt-high-risk-params"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-init",
+      "label": "机床初始化与上电流程提示词",
+      "category": "图解提示词",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-high-risk-params",
+        "diagram-prompt-init-checklist"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-high-risk-params",
+      "label": "高风险参数类别提示词",
+      "category": "图解提示词",
+      "type": "auxiliary",
+      "difficulty": 4,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-init-checklist",
+        "diagram-prompt-alarm-overview"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-init-checklist",
+      "label": "机床初始化检查清单提示词",
+      "category": "图解提示词",
+      "type": "auxiliary",
+      "difficulty": 3,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-alarm-overview",
+        "diagram-prompt-coordinate"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    },
+    {
+      "id": "diagram-prompt-alarm-overview",
+      "label": "报警总览与分类图卡提示词",
+      "category": "图解提示词",
+      "type": "auxiliary",
+      "difficulty": 2,
+      "estimatedTime": 10,
+      "relatedIds": [
+        "diagram-prompt-coordinate",
+        "diagram-prompt-g02"
+      ],
+      "imageUrl": "./assets/images/batch01_core/placeholder.svg"
+    }
+  ],
+  "links": [
+    {
+      "source": "learn-coordinate-system",
+      "target": "learn-absolute-incremental",
+      "type": "recommendation"
+    },
+    {
+      "source": "learn-coordinate-system",
+      "target": "learn-absolute-incremental",
+      "type": "related"
+    },
+    {
+      "source": "learn-coordinate-system",
+      "target": "learn-program-structure",
+      "type": "related"
+    },
+    {
+      "source": "learn-coordinate-system",
+      "target": "learn-absolute-incremental",
+      "type": "prerequisite"
+    },
+    {
+      "source": "learn-absolute-incremental",
+      "target": "learn-program-structure",
+      "type": "recommendation"
+    },
+    {
+      "source": "learn-absolute-incremental",
+      "target": "learn-program-structure",
+      "type": "related"
+    },
+    {
+      "source": "learn-absolute-incremental",
+      "target": "learn-coordinate-system",
+      "type": "related"
+    },
+    {
+      "source": "learn-coordinate-system",
+      "target": "learn-g54-g59",
+      "type": "prerequisite"
+    },
+    {
+      "source": "learn-g54-g59",
+      "target": "learn-g17-g18-g19",
+      "type": "recommendation"
+    },
+    {
+      "source": "learn-g54-g59",
+      "target": "learn-g17-g18-g19",
+      "type": "related"
+    },
+    {
+      "source": "learn-g54-g59",
+      "target": "learn-g41-g42",
+      "type": "related"
+    },
+    {
+      "source": "learn-g54-g59",
+      "target": "learn-g17-g18-g19",
+      "type": "prerequisite"
+    },
+    {
+      "source": "learn-g17-g18-g19",
+      "target": "learn-g41-g42",
+      "type": "recommendation"
+    },
+    {
+      "source": "learn-g17-g18-g19",
+      "target": "learn-g41-g42",
+      "type": "related"
+    },
+    {
+      "source": "learn-g17-g18-g19",
+      "target": "learn-g43-g44-g49",
+      "type": "related"
+    },
+    {
+      "source": "learn-absolute-incremental",
+      "target": "learn-g41-g42",
+      "type": "prerequisite"
+    },
+    {
+      "source": "learn-g41-g42",
+      "target": "learn-g43-g44-g49",
+      "type": "recommendation"
+    },
+    {
+      "source": "learn-g41-g42",
+      "target": "learn-g43-g44-g49",
+      "type": "related"
+    },
+    {
+      "source": "learn-g41-g42",
+      "target": "learn-g71-g72-g73",
+      "type": "related"
+    },
+    {
+      "source": "learn-g54-g59",
+      "target": "learn-g43-g44-g49",
+      "type": "prerequisite"
+    },
+    {
+      "source": "learn-g43-g44-g49",
+      "target": "learn-g71-g72-g73",
+      "type": "recommendation"
+    },
+    {
+      "source": "learn-g43-g44-g49",
+      "target": "learn-g71-g72-g73",
+      "type": "related"
+    },
+    {
+      "source": "learn-g43-g44-g49",
+      "target": "learn-g81-g83",
+      "type": "related"
+    },
+    {
+      "source": "learn-g43-g44-g49",
+      "target": "learn-g71-g72-g73",
+      "type": "prerequisite"
+    },
+    {
+      "source": "learn-g71-g72-g73",
+      "target": "learn-g81-g83",
+      "type": "recommendation"
+    },
+    {
+      "source": "learn-g71-g72-g73",
+      "target": "learn-g81-g83",
+      "type": "related"
+    },
+    {
+      "source": "learn-g71-g72-g73",
+      "target": "learn-g84",
+      "type": "related"
+    },
+    {
+      "source": "learn-g71-g72-g73",
+      "target": "learn-g81-g83",
+      "type": "prerequisite"
+    },
+    {
+      "source": "learn-g81-g83",
+      "target": "learn-g84",
+      "type": "recommendation"
+    },
+    {
+      "source": "learn-g81-g83",
+      "target": "learn-g84",
+      "type": "related"
+    },
+    {
+      "source": "learn-g81-g83",
+      "target": "g04-dwell",
+      "type": "related"
+    },
+    {
+      "source": "learn-g81-g83",
+      "target": "learn-g84",
+      "type": "prerequisite"
+    },
+    {
+      "source": "learn-g84",
+      "target": "g04-dwell",
+      "type": "recommendation"
+    },
+    {
+      "source": "learn-g84",
+      "target": "g04-dwell",
+      "type": "related"
+    },
+    {
+      "source": "learn-g84",
+      "target": "g20-g21-unit",
+      "type": "related"
+    },
+    {
+      "source": "fanuc-param-backup",
+      "target": "fanuc-rigid-tap",
+      "type": "recommendation"
+    },
+    {
+      "source": "fanuc-param-backup",
+      "target": "fanuc-rigid-tap",
+      "type": "related"
+    },
+    {
+      "source": "fanuc-param-backup",
+      "target": "fanuc-rigid-tap",
+      "type": "prerequisite"
+    },
+    {
+      "source": "fanuc-rigid-tap",
+      "target": "alarm-servo",
+      "type": "recommendation"
+    },
+    {
+      "source": "fanuc-rigid-tap",
+      "target": "fanuc-param-backup",
+      "type": "related"
+    },
+    {
+      "source": "alarm-servo",
+      "target": "alarm-spindle",
+      "type": "recommendation"
+    },
+    {
+      "source": "alarm-servo",
+      "target": "alarm-spindle",
+      "type": "related"
+    },
+    {
+      "source": "alarm-servo",
+      "target": "alarm-atc",
+      "type": "related"
+    },
+    {
+      "source": "alarm-servo",
+      "target": "alarm-spindle",
+      "type": "prerequisite"
+    },
+    {
+      "source": "alarm-spindle",
+      "target": "alarm-atc",
+      "type": "recommendation"
+    },
+    {
+      "source": "alarm-spindle",
+      "target": "alarm-atc",
+      "type": "related"
+    },
+    {
+      "source": "alarm-spindle",
+      "target": "fault-limit-switch",
+      "type": "related"
+    },
+    {
+      "source": "alarm-spindle",
+      "target": "alarm-atc",
+      "type": "prerequisite"
+    },
+    {
+      "source": "alarm-atc",
+      "target": "fault-limit-switch",
+      "type": "recommendation"
+    },
+    {
+      "source": "alarm-atc",
+      "target": "fault-limit-switch",
+      "type": "related"
+    },
+    {
+      "source": "alarm-atc",
+      "target": "fault-home-fail",
+      "type": "related"
+    },
+    {
+      "source": "tool-life",
+      "target": "tool-coating",
+      "type": "recommendation"
+    },
+    {
+      "source": "tool-life",
+      "target": "tool-coating",
+      "type": "related"
+    },
+    {
+      "source": "tool-life",
+      "target": "tool-insert-brand",
+      "type": "related"
+    },
+    {
+      "source": "tool-life",
+      "target": "tool-coating",
+      "type": "prerequisite"
+    },
+    {
+      "source": "tool-coating",
+      "target": "tool-insert-brand",
+      "type": "recommendation"
+    },
+    {
+      "source": "tool-coating",
+      "target": "tool-insert-brand",
+      "type": "related"
+    },
+    {
+      "source": "tool-coating",
+      "target": "tool-drill-selection",
+      "type": "related"
+    },
+    {
+      "source": "material-stainless",
+      "target": "material-aluminum",
+      "type": "recommendation"
+    },
+    {
+      "source": "material-stainless",
+      "target": "material-aluminum",
+      "type": "related"
+    },
+    {
+      "source": "material-stainless",
+      "target": "material-high-temp",
+      "type": "related"
+    },
+    {
+      "source": "material-stainless",
+      "target": "material-aluminum",
+      "type": "prerequisite"
+    },
+    {
+      "source": "material-aluminum",
+      "target": "material-high-temp",
+      "type": "recommendation"
+    },
+    {
+      "source": "material-aluminum",
+      "target": "material-high-temp",
+      "type": "related"
+    },
+    {
+      "source": "material-aluminum",
+      "target": "material-carbon-steel",
+      "type": "related"
+    },
+    {
+      "source": "material-aluminum",
+      "target": "material-high-temp",
+      "type": "prerequisite"
+    },
+    {
+      "source": "material-high-temp",
+      "target": "material-carbon-steel",
+      "type": "recommendation"
+    },
+    {
+      "source": "material-high-temp",
+      "target": "material-carbon-steel",
+      "type": "related"
+    },
+    {
+      "source": "material-high-temp",
+      "target": "material-plastic",
+      "type": "related"
+    },
+    {
+      "source": "case-thin-wall",
+      "target": "case-axis",
+      "type": "recommendation"
+    },
+    {
+      "source": "case-thin-wall",
+      "target": "case-axis",
+      "type": "related"
+    },
+    {
+      "source": "case-thin-wall",
+      "target": "case-thread-part",
+      "type": "related"
+    },
+    {
+      "source": "case-thin-wall",
+      "target": "case-axis",
+      "type": "prerequisite"
+    },
+    {
+      "source": "case-axis",
+      "target": "case-thread-part",
+      "type": "recommendation"
+    },
+    {
+      "source": "case-axis",
+      "target": "case-thread-part",
+      "type": "related"
+    },
+    {
+      "source": "case-axis",
+      "target": "case-flange",
+      "type": "related"
+    },
+    {
+      "source": "case-axis",
+      "target": "case-thread-part",
+      "type": "prerequisite"
+    },
+    {
+      "source": "case-thread-part",
+      "target": "case-flange",
+      "type": "recommendation"
+    },
+    {
+      "source": "case-thread-part",
+      "target": "case-flange",
+      "type": "related"
+    },
+    {
+      "source": "case-thread-part",
+      "target": "case-gear",
+      "type": "related"
+    },
+    {
+      "source": "quick-fanuc-param",
+      "target": "quick-fanuc-alarm",
+      "type": "recommendation"
+    },
+    {
+      "source": "quick-fanuc-param",
+      "target": "quick-fanuc-alarm",
+      "type": "related"
+    },
+    {
+      "source": "quick-fanuc-param",
+      "target": "quick-gcode",
+      "type": "related"
+    },
+    {
+      "source": "quick-fanuc-param",
+      "target": "quick-fanuc-alarm",
+      "type": "prerequisite"
+    },
+    {
+      "source": "quick-fanuc-alarm",
+      "target": "quick-gcode",
+      "type": "recommendation"
+    },
+    {
+      "source": "quick-fanuc-alarm",
+      "target": "quick-gcode",
+      "type": "related"
+    },
+    {
+      "source": "quick-fanuc-alarm",
+      "target": "quick-g96",
+      "type": "related"
+    },
+    {
+      "source": "quick-fanuc-alarm",
+      "target": "quick-gcode",
+      "type": "prerequisite"
+    },
+    {
+      "source": "quick-gcode",
+      "target": "quick-g96",
+      "type": "recommendation"
+    },
+    {
+      "source": "quick-gcode",
+      "target": "quick-g96",
+      "type": "related"
+    },
+    {
+      "source": "quick-gcode",
+      "target": "quick-thread",
+      "type": "related"
+    },
+    {
+      "source": "quick-gcode",
+      "target": "quick-g96",
+      "type": "prerequisite"
+    },
+    {
+      "source": "quick-g96",
+      "target": "quick-thread",
+      "type": "recommendation"
+    },
+    {
+      "source": "quick-g96",
+      "target": "quick-thread",
+      "type": "related"
+    },
+    {
+      "source": "quick-g96",
+      "target": "quick-measure",
+      "type": "related"
+    },
+    {
+      "source": "quick-g96",
+      "target": "quick-thread",
+      "type": "prerequisite"
+    },
+    {
+      "source": "quick-thread",
+      "target": "quick-measure",
+      "type": "recommendation"
+    },
+    {
+      "source": "quick-thread",
+      "target": "quick-measure",
+      "type": "related"
+    },
+    {
+      "source": "quick-thread",
+      "target": "quick-allowance-card",
+      "type": "related"
+    },
+    {
+      "source": "quick-thread",
+      "target": "quick-measure",
+      "type": "prerequisite"
+    },
+    {
+      "source": "quick-measure",
+      "target": "quick-allowance-card",
+      "type": "recommendation"
+    },
+    {
+      "source": "quick-measure",
+      "target": "quick-allowance-card",
+      "type": "related"
+    },
+    {
+      "source": "quick-measure",
+      "target": "quick-insert-card",
+      "type": "related"
+    },
+    {
+      "source": "learn-absolute-incremental",
+      "target": "learn-program-structure",
+      "type": "prerequisite"
+    },
+    {
+      "source": "learn-program-structure",
+      "target": "learn-g54-g59",
+      "type": "recommendation"
+    },
+    {
+      "source": "learn-program-structure",
+      "target": "learn-coordinate-system",
+      "type": "related"
+    },
+    {
+      "source": "learn-program-structure",
+      "target": "learn-absolute-incremental",
+      "type": "related"
+    },
+    {
+      "source": "machine-home-return",
+      "target": "machine-tool-setting",
+      "type": "recommendation"
+    },
+    {
+      "source": "machine-home-return",
+      "target": "machine-tool-setting",
+      "type": "related"
+    },
+    {
+      "source": "machine-home-return",
+      "target": "machine-panel-english",
+      "type": "related"
+    },
+    {
+      "source": "machine-home-return",
+      "target": "machine-tool-setting",
+      "type": "prerequisite"
+    },
+    {
+      "source": "machine-tool-setting",
+      "target": "machine-panel-english",
+      "type": "recommendation"
+    },
+    {
+      "source": "machine-tool-setting",
+      "target": "machine-panel-english",
+      "type": "related"
+    },
+    {
+      "source": "machine-tool-setting",
+      "target": "machine-home-return",
+      "type": "related"
+    },
+    {
+      "source": "machine-tool-setting",
+      "target": "machine-panel-english",
+      "type": "prerequisite"
+    },
+    {
+      "source": "machine-panel-english",
+      "target": "fanuc-alarm-common",
+      "type": "recommendation"
+    },
+    {
+      "source": "machine-panel-english",
+      "target": "machine-home-return",
+      "type": "related"
+    },
+    {
+      "source": "machine-panel-english",
+      "target": "machine-tool-setting",
+      "type": "related"
+    },
+    {
+      "source": "learn-g84",
+      "target": "g04-dwell",
+      "type": "prerequisite"
+    },
+    {
+      "source": "g04-dwell",
+      "target": "g20-g21-unit",
+      "type": "recommendation"
+    },
+    {
+      "source": "g04-dwell",
+      "target": "g20-g21-unit",
+      "type": "related"
+    },
+    {
+      "source": "g04-dwell",
+      "target": "g28-g29-reference",
+      "type": "related"
+    },
+    {
+      "source": "g04-dwell",
+      "target": "g20-g21-unit",
+      "type": "prerequisite"
+    },
+    {
+      "source": "g20-g21-unit",
+      "target": "g28-g29-reference",
+      "type": "recommendation"
+    },
+    {
+      "source": "g20-g21-unit",
+      "target": "g28-g29-reference",
+      "type": "related"
+    },
+    {
+      "source": "g20-g21-unit",
+      "target": "g00-g01-motion",
+      "type": "related"
+    },
+    {
+      "source": "g20-g21-unit",
+      "target": "g28-g29-reference",
+      "type": "prerequisite"
+    },
+    {
+      "source": "g28-g29-reference",
+      "target": "g00-g01-motion",
+      "type": "recommendation"
+    },
+    {
+      "source": "g28-g29-reference",
+      "target": "g00-g01-motion",
+      "type": "related"
+    },
+    {
+      "source": "g28-g29-reference",
+      "target": "g02-g03-arc",
+      "type": "related"
+    },
+    {
+      "source": "g28-g29-reference",
+      "target": "g00-g01-motion",
+      "type": "prerequisite"
+    },
+    {
+      "source": "g00-g01-motion",
+      "target": "g02-g03-arc",
+      "type": "recommendation"
+    },
+    {
+      "source": "g00-g01-motion",
+      "target": "g02-g03-arc",
+      "type": "related"
+    },
+    {
+      "source": "g00-g01-motion",
+      "target": "g40-cancel-comp",
+      "type": "related"
+    },
+    {
+      "source": "g00-g01-motion",
+      "target": "g02-g03-arc",
+      "type": "prerequisite"
+    },
+    {
+      "source": "g02-g03-arc",
+      "target": "g40-cancel-comp",
+      "type": "recommendation"
+    },
+    {
+      "source": "g02-g03-arc",
+      "target": "g40-cancel-comp",
+      "type": "related"
+    },
+    {
+      "source": "g02-g03-arc",
+      "target": "g53-machine-coordinate",
+      "type": "related"
+    },
+    {
+      "source": "g02-g03-arc",
+      "target": "g40-cancel-comp",
+      "type": "prerequisite"
+    },
+    {
+      "source": "g40-cancel-comp",
+      "target": "g53-machine-coordinate",
+      "type": "recommendation"
+    },
+    {
+      "source": "g40-cancel-comp",
+      "target": "g53-machine-coordinate",
+      "type": "related"
+    },
+    {
+      "source": "g40-cancel-comp",
+      "target": "g94-g95-feed",
+      "type": "related"
+    },
+    {
+      "source": "g40-cancel-comp",
+      "target": "g53-machine-coordinate",
+      "type": "prerequisite"
+    },
+    {
+      "source": "g53-machine-coordinate",
+      "target": "g94-g95-feed",
+      "type": "recommendation"
+    },
+    {
+      "source": "g53-machine-coordinate",
+      "target": "g94-g95-feed",
+      "type": "related"
+    },
+    {
+      "source": "g53-machine-coordinate",
+      "target": "g76-thread-cycle",
+      "type": "related"
+    },
+    {
+      "source": "g53-machine-coordinate",
+      "target": "g94-g95-feed",
+      "type": "prerequisite"
+    },
+    {
+      "source": "g94-g95-feed",
+      "target": "g76-thread-cycle",
+      "type": "recommendation"
+    },
+    {
+      "source": "g94-g95-feed",
+      "target": "g76-thread-cycle",
+      "type": "related"
+    },
+    {
+      "source": "g94-g95-feed",
+      "target": "g80-cancel-cycle",
+      "type": "related"
+    },
+    {
+      "source": "g94-g95-feed",
+      "target": "g76-thread-cycle",
+      "type": "prerequisite"
+    },
+    {
+      "source": "g76-thread-cycle",
+      "target": "g80-cancel-cycle",
+      "type": "recommendation"
+    },
+    {
+      "source": "g76-thread-cycle",
+      "target": "g80-cancel-cycle",
+      "type": "related"
+    },
+    {
+      "source": "g76-thread-cycle",
+      "target": "g98-g99-return",
+      "type": "related"
+    },
+    {
+      "source": "g76-thread-cycle",
+      "target": "g80-cancel-cycle",
+      "type": "prerequisite"
+    },
+    {
+      "source": "g80-cancel-cycle",
+      "target": "g98-g99-return",
+      "type": "recommendation"
+    },
+    {
+      "source": "g80-cancel-cycle",
+      "target": "g98-g99-return",
+      "type": "related"
+    },
+    {
+      "source": "g80-cancel-cycle",
+      "target": "g96-g97-spindle",
+      "type": "related"
+    },
+    {
+      "source": "g80-cancel-cycle",
+      "target": "g98-g99-return",
+      "type": "prerequisite"
+    },
+    {
+      "source": "g98-g99-return",
+      "target": "g96-g97-spindle",
+      "type": "recommendation"
+    },
+    {
+      "source": "g98-g99-return",
+      "target": "g96-g97-spindle",
+      "type": "related"
+    },
+    {
+      "source": "g98-g99-return",
+      "target": "m30-program-end",
+      "type": "related"
+    },
+    {
+      "source": "g98-g99-return",
+      "target": "g96-g97-spindle",
+      "type": "prerequisite"
+    },
+    {
+      "source": "g96-g97-spindle",
+      "target": "m30-program-end",
+      "type": "recommendation"
+    },
+    {
+      "source": "g96-g97-spindle",
+      "target": "m30-program-end",
+      "type": "related"
+    },
+    {
+      "source": "g96-g97-spindle",
+      "target": "m03-m04-m05",
+      "type": "related"
+    },
+    {
+      "source": "g96-g97-spindle",
+      "target": "m30-program-end",
+      "type": "prerequisite"
+    },
+    {
+      "source": "m30-program-end",
+      "target": "m03-m04-m05",
+      "type": "recommendation"
+    },
+    {
+      "source": "m30-program-end",
+      "target": "m03-m04-m05",
+      "type": "related"
+    },
+    {
+      "source": "m30-program-end",
+      "target": "m06-tool-change",
+      "type": "related"
+    },
+    {
+      "source": "m30-program-end",
+      "target": "m03-m04-m05",
+      "type": "prerequisite"
+    },
+    {
+      "source": "m03-m04-m05",
+      "target": "m06-tool-change",
+      "type": "recommendation"
+    },
+    {
+      "source": "m03-m04-m05",
+      "target": "m06-tool-change",
+      "type": "related"
+    },
+    {
+      "source": "m03-m04-m05",
+      "target": "m08-m09-coolant",
+      "type": "related"
+    },
+    {
+      "source": "m03-m04-m05",
+      "target": "m06-tool-change",
+      "type": "prerequisite"
+    },
+    {
+      "source": "m06-tool-change",
+      "target": "m08-m09-coolant",
+      "type": "recommendation"
+    },
+    {
+      "source": "m06-tool-change",
+      "target": "m08-m09-coolant",
+      "type": "related"
+    },
+    {
+      "source": "m06-tool-change",
+      "target": "m00-m01-stop",
+      "type": "related"
+    },
+    {
+      "source": "m06-tool-change",
+      "target": "m08-m09-coolant",
+      "type": "prerequisite"
+    },
+    {
+      "source": "m08-m09-coolant",
+      "target": "m00-m01-stop",
+      "type": "recommendation"
+    },
+    {
+      "source": "m08-m09-coolant",
+      "target": "m00-m01-stop",
+      "type": "related"
+    },
+    {
+      "source": "m08-m09-coolant",
+      "target": "learn-g54-g59",
+      "type": "related"
+    },
+    {
+      "source": "m08-m09-coolant",
+      "target": "m00-m01-stop",
+      "type": "prerequisite"
+    },
+    {
+      "source": "m00-m01-stop",
+      "target": "fanuc-param-backup",
+      "type": "recommendation"
+    },
+    {
+      "source": "m00-m01-stop",
+      "target": "learn-g54-g59",
+      "type": "related"
+    },
+    {
+      "source": "m00-m01-stop",
+      "target": "learn-g17-g18-g19",
+      "type": "related"
+    },
+    {
+      "source": "fanuc-alarm-common",
+      "target": "learn-fanuc-alarm-common",
+      "type": "recommendation"
+    },
+    {
+      "source": "fanuc-alarm-common",
+      "target": "learn-fanuc-alarm-common",
+      "type": "related"
+    },
+    {
+      "source": "alarm-atc",
+      "target": "fault-limit-switch",
+      "type": "prerequisite"
+    },
+    {
+      "source": "fault-limit-switch",
+      "target": "fault-home-fail",
+      "type": "recommendation"
+    },
+    {
+      "source": "fault-limit-switch",
+      "target": "fault-home-fail",
+      "type": "related"
+    },
+    {
+      "source": "fault-limit-switch",
+      "target": "fault-home-reference",
+      "type": "related"
+    },
+    {
+      "source": "fault-limit-switch",
+      "target": "fault-home-fail",
+      "type": "prerequisite"
+    },
+    {
+      "source": "fault-home-fail",
+      "target": "fault-home-reference",
+      "type": "recommendation"
+    },
+    {
+      "source": "fault-home-fail",
+      "target": "fault-home-reference",
+      "type": "related"
+    },
+    {
+      "source": "fault-home-fail",
+      "target": "alarm-servo",
+      "type": "related"
+    },
+    {
+      "source": "fault-home-fail",
+      "target": "fault-home-reference",
+      "type": "prerequisite"
+    },
+    {
+      "source": "fault-home-reference",
+      "target": "tool-life",
+      "type": "recommendation"
+    },
+    {
+      "source": "fault-home-reference",
+      "target": "alarm-servo",
+      "type": "related"
+    },
+    {
+      "source": "fault-home-reference",
+      "target": "alarm-spindle",
+      "type": "related"
+    },
+    {
+      "source": "process-allowance-basics",
+      "target": "process-surface-roughness",
+      "type": "recommendation"
+    },
+    {
+      "source": "process-allowance-basics",
+      "target": "process-surface-roughness",
+      "type": "related"
+    },
+    {
+      "source": "process-allowance-basics",
+      "target": "process-surface-roughness",
+      "type": "prerequisite"
+    },
+    {
+      "source": "process-surface-roughness",
+      "target": "drawing-symbol",
+      "type": "recommendation"
+    },
+    {
+      "source": "process-surface-roughness",
+      "target": "process-allowance-basics",
+      "type": "related"
+    },
+    {
+      "source": "drawing-symbol",
+      "target": "learn-g17-g18-g19",
+      "type": "recommendation"
+    },
+    {
+      "source": "tool-coating",
+      "target": "tool-insert-brand",
+      "type": "prerequisite"
+    },
+    {
+      "source": "tool-insert-brand",
+      "target": "tool-drill-selection",
+      "type": "recommendation"
+    },
+    {
+      "source": "tool-insert-brand",
+      "target": "tool-drill-selection",
+      "type": "related"
+    },
+    {
+      "source": "tool-insert-brand",
+      "target": "tool-thread-tap",
+      "type": "related"
+    },
+    {
+      "source": "tool-insert-brand",
+      "target": "tool-drill-selection",
+      "type": "prerequisite"
+    },
+    {
+      "source": "tool-drill-selection",
+      "target": "tool-thread-tap",
+      "type": "recommendation"
+    },
+    {
+      "source": "tool-drill-selection",
+      "target": "tool-thread-tap",
+      "type": "related"
+    },
+    {
+      "source": "tool-drill-selection",
+      "target": "tool-life",
+      "type": "related"
+    },
+    {
+      "source": "tool-drill-selection",
+      "target": "tool-thread-tap",
+      "type": "prerequisite"
+    },
+    {
+      "source": "tool-thread-tap",
+      "target": "material-stainless",
+      "type": "recommendation"
+    },
+    {
+      "source": "tool-thread-tap",
+      "target": "tool-life",
+      "type": "related"
+    },
+    {
+      "source": "tool-thread-tap",
+      "target": "tool-coating",
+      "type": "related"
+    },
+    {
+      "source": "material-high-temp",
+      "target": "material-carbon-steel",
+      "type": "prerequisite"
+    },
+    {
+      "source": "material-carbon-steel",
+      "target": "material-plastic",
+      "type": "recommendation"
+    },
+    {
+      "source": "material-carbon-steel",
+      "target": "material-plastic",
+      "type": "related"
+    },
+    {
+      "source": "material-carbon-steel",
+      "target": "material-stainless",
+      "type": "related"
+    },
+    {
+      "source": "material-carbon-steel",
+      "target": "material-plastic",
+      "type": "prerequisite"
+    },
+    {
+      "source": "material-plastic",
+      "target": "case-thin-wall",
+      "type": "recommendation"
+    },
+    {
+      "source": "material-plastic",
+      "target": "material-stainless",
+      "type": "related"
+    },
+    {
+      "source": "material-plastic",
+      "target": "material-aluminum",
+      "type": "related"
+    },
+    {
+      "source": "case-thread-part",
+      "target": "case-flange",
+      "type": "prerequisite"
+    },
+    {
+      "source": "case-flange",
+      "target": "case-gear",
+      "type": "recommendation"
+    },
+    {
+      "source": "case-flange",
+      "target": "case-gear",
+      "type": "related"
+    },
+    {
+      "source": "case-flange",
+      "target": "case-thin-wall",
+      "type": "related"
+    },
+    {
+      "source": "case-flange",
+      "target": "case-gear",
+      "type": "prerequisite"
+    },
+    {
+      "source": "case-gear",
+      "target": "quick-fanuc-param",
+      "type": "recommendation"
+    },
+    {
+      "source": "case-gear",
+      "target": "case-thin-wall",
+      "type": "related"
+    },
+    {
+      "source": "case-gear",
+      "target": "case-axis",
+      "type": "related"
+    },
+    {
+      "source": "quick-measure",
+      "target": "quick-allowance-card",
+      "type": "prerequisite"
+    },
+    {
+      "source": "quick-allowance-card",
+      "target": "quick-insert-card",
+      "type": "recommendation"
+    },
+    {
+      "source": "quick-allowance-card",
+      "target": "quick-insert-card",
+      "type": "related"
+    },
+    {
+      "source": "quick-allowance-card",
+      "target": "quick-cutting-card",
+      "type": "related"
+    },
+    {
+      "source": "quick-allowance-card",
+      "target": "quick-insert-card",
+      "type": "prerequisite"
+    },
+    {
+      "source": "quick-insert-card",
+      "target": "quick-cutting-card",
+      "type": "recommendation"
+    },
+    {
+      "source": "quick-insert-card",
+      "target": "quick-cutting-card",
+      "type": "related"
+    },
+    {
+      "source": "quick-insert-card",
+      "target": "quick-fanuc-param",
+      "type": "related"
+    },
+    {
+      "source": "quick-insert-card",
+      "target": "quick-cutting-card",
+      "type": "prerequisite"
+    },
+    {
+      "source": "quick-cutting-card",
+      "target": "machine-home-return",
+      "type": "recommendation"
+    },
+    {
+      "source": "quick-cutting-card",
+      "target": "quick-fanuc-param",
+      "type": "related"
+    },
+    {
+      "source": "quick-cutting-card",
+      "target": "quick-fanuc-alarm",
+      "type": "related"
+    },
+    {
+      "source": "learn-g17-g18-g19",
+      "target": "learn-g41-g42",
+      "type": "recommendation"
+    },
+    {
+      "source": "learn-g17-g18-g19",
+      "target": "learn-g41-g42",
+      "type": "related"
+    },
+    {
+      "source": "learn-g17-g18-g19",
+      "target": "learn-g43-g44-g49",
+      "type": "related"
+    },
+    {
+      "source": "learn-absolute-incremental",
+      "target": "learn-g41-g42",
+      "type": "prerequisite"
+    },
+    {
+      "source": "learn-g41-g42",
+      "target": "learn-g43-g44-g49",
+      "type": "recommendation"
+    },
+    {
+      "source": "learn-g41-g42",
+      "target": "learn-g43-g44-g49",
+      "type": "related"
+    },
+    {
+      "source": "learn-g41-g42",
+      "target": "learn-g20-g21",
+      "type": "related"
+    },
+    {
+      "source": "learn-g54-g59",
+      "target": "learn-g43-g44-g49",
+      "type": "prerequisite"
+    },
+    {
+      "source": "learn-g43-g44-g49",
+      "target": "learn-g20-g21",
+      "type": "recommendation"
+    },
+    {
+      "source": "learn-g43-g44-g49",
+      "target": "learn-g20-g21",
+      "type": "related"
+    },
+    {
+      "source": "learn-g43-g44-g49",
+      "target": "learn-g28-g29",
+      "type": "related"
+    },
+    {
+      "source": "learn-g43-g44-g49",
+      "target": "learn-g20-g21",
+      "type": "prerequisite"
+    },
+    {
+      "source": "learn-g20-g21",
+      "target": "learn-g28-g29",
+      "type": "recommendation"
+    },
+    {
+      "source": "learn-g20-g21",
+      "target": "learn-g28-g29",
+      "type": "related"
+    },
+    {
+      "source": "learn-g20-g21",
+      "target": "learn-m03-m05",
+      "type": "related"
+    },
+    {
+      "source": "learn-g20-g21",
+      "target": "learn-g28-g29",
+      "type": "prerequisite"
+    },
+    {
+      "source": "learn-g28-g29",
+      "target": "learn-m03-m05",
+      "type": "recommendation"
+    },
+    {
+      "source": "learn-g28-g29",
+      "target": "learn-m03-m05",
+      "type": "related"
+    },
+    {
+      "source": "learn-g28-g29",
+      "target": "learn-m06",
+      "type": "related"
+    },
+    {
+      "source": "learn-g28-g29",
+      "target": "learn-m03-m05",
+      "type": "prerequisite"
+    },
+    {
+      "source": "learn-m03-m05",
+      "target": "learn-m06",
+      "type": "recommendation"
+    },
+    {
+      "source": "learn-m03-m05",
+      "target": "learn-m06",
+      "type": "related"
+    },
+    {
+      "source": "learn-m03-m05",
+      "target": "learn-m08-m09",
+      "type": "related"
+    },
+    {
+      "source": "learn-m03-m05",
+      "target": "learn-m06",
+      "type": "prerequisite"
+    },
+    {
+      "source": "learn-m06",
+      "target": "learn-m08-m09",
+      "type": "recommendation"
+    },
+    {
+      "source": "learn-m06",
+      "target": "learn-m08-m09",
+      "type": "related"
+    },
+    {
+      "source": "learn-m06",
+      "target": "learn-g84",
+      "type": "related"
+    },
+    {
+      "source": "learn-m06",
+      "target": "learn-m08-m09",
+      "type": "prerequisite"
+    },
+    {
+      "source": "learn-m08-m09",
+      "target": "learn-g84",
+      "type": "recommendation"
+    },
+    {
+      "source": "learn-m08-m09",
+      "target": "learn-g84",
+      "type": "related"
+    },
+    {
+      "source": "learn-m08-m09",
+      "target": "learn-g17-g18-g19",
+      "type": "related"
+    },
+    {
+      "source": "learn-m08-m09",
+      "target": "learn-g84",
+      "type": "prerequisite"
+    },
+    {
+      "source": "learn-g84",
+      "target": "calc-vc-rpm",
+      "type": "recommendation"
+    },
+    {
+      "source": "learn-g84",
+      "target": "learn-g17-g18-g19",
+      "type": "related"
+    },
+    {
+      "source": "learn-g84",
+      "target": "learn-g41-g42",
+      "type": "related"
+    },
+    {
+      "source": "fanuc-alarm-common",
+      "target": "learn-fanuc-alarm-common",
+      "type": "prerequisite"
+    },
+    {
+      "source": "learn-fanuc-alarm-common",
+      "target": "process-allowance-basics",
+      "type": "recommendation"
+    },
+    {
+      "source": "learn-fanuc-alarm-common",
+      "target": "fanuc-alarm-common",
+      "type": "related"
+    },
+    {
+      "source": "calc-vc-rpm",
+      "target": "calc-feed",
+      "type": "recommendation"
+    },
+    {
+      "source": "calc-vc-rpm",
+      "target": "calc-feed",
+      "type": "related"
+    },
+    {
+      "source": "calc-vc-rpm",
+      "target": "calc-thread-pitch",
+      "type": "related"
+    },
+    {
+      "source": "calc-vc-rpm",
+      "target": "calc-feed",
+      "type": "prerequisite"
+    },
+    {
+      "source": "calc-feed",
+      "target": "calc-thread-pitch",
+      "type": "recommendation"
+    },
+    {
+      "source": "calc-feed",
+      "target": "calc-thread-pitch",
+      "type": "related"
+    },
+    {
+      "source": "calc-feed",
+      "target": "calc-radius-diameter",
+      "type": "related"
+    },
+    {
+      "source": "calc-feed",
+      "target": "calc-thread-pitch",
+      "type": "prerequisite"
+    },
+    {
+      "source": "calc-thread-pitch",
+      "target": "calc-radius-diameter",
+      "type": "recommendation"
+    },
+    {
+      "source": "calc-thread-pitch",
+      "target": "calc-radius-diameter",
+      "type": "related"
+    },
+    {
+      "source": "calc-thread-pitch",
+      "target": "calc-vc-rpm",
+      "type": "related"
+    },
+    {
+      "source": "calc-thread-pitch",
+      "target": "calc-radius-diameter",
+      "type": "prerequisite"
+    },
+    {
+      "source": "calc-radius-diameter",
+      "target": "diagram-prompt-coordinate",
+      "type": "recommendation"
+    },
+    {
+      "source": "calc-radius-diameter",
+      "target": "calc-vc-rpm",
+      "type": "related"
+    },
+    {
+      "source": "calc-radius-diameter",
+      "target": "calc-feed",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-coordinate",
+      "target": "diagram-prompt-g02",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-coordinate",
+      "target": "diagram-prompt-g02",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-coordinate",
+      "target": "diagram-prompt-compensation",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-coordinate",
+      "target": "diagram-prompt-g02",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-g02",
+      "target": "diagram-prompt-compensation",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-g02",
+      "target": "diagram-prompt-compensation",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-g02",
+      "target": "diagram-prompt-cycle",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-g02",
+      "target": "diagram-prompt-compensation",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-compensation",
+      "target": "diagram-prompt-cycle",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-compensation",
+      "target": "diagram-prompt-cycle",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-compensation",
+      "target": "diagram-prompt-plane",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-compensation",
+      "target": "diagram-prompt-cycle",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-cycle",
+      "target": "diagram-prompt-plane",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-cycle",
+      "target": "diagram-prompt-plane",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-cycle",
+      "target": "diagram-prompt-offset",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-cycle",
+      "target": "diagram-prompt-plane",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-plane",
+      "target": "diagram-prompt-offset",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-plane",
+      "target": "diagram-prompt-offset",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-plane",
+      "target": "diagram-prompt-home",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-plane",
+      "target": "diagram-prompt-offset",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-offset",
+      "target": "diagram-prompt-home",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-offset",
+      "target": "diagram-prompt-home",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-offset",
+      "target": "diagram-prompt-thread",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-offset",
+      "target": "diagram-prompt-home",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-home",
+      "target": "diagram-prompt-thread",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-home",
+      "target": "diagram-prompt-thread",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-home",
+      "target": "diagram-prompt-alarm",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-home",
+      "target": "diagram-prompt-thread",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-thread",
+      "target": "diagram-prompt-alarm",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-thread",
+      "target": "diagram-prompt-alarm",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-thread",
+      "target": "diagram-prompt-gauge",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-thread",
+      "target": "diagram-prompt-alarm",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-alarm",
+      "target": "diagram-prompt-gauge",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-alarm",
+      "target": "diagram-prompt-gauge",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-alarm",
+      "target": "diagram-prompt-tool-life",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-alarm",
+      "target": "diagram-prompt-gauge",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-gauge",
+      "target": "diagram-prompt-tool-life",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-gauge",
+      "target": "diagram-prompt-tool-life",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-gauge",
+      "target": "diagram-prompt-tolerance",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-gauge",
+      "target": "diagram-prompt-tool-life",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-tool-life",
+      "target": "diagram-prompt-tolerance",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-tool-life",
+      "target": "diagram-prompt-tolerance",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-tool-life",
+      "target": "diagram-prompt-roughness",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-tool-life",
+      "target": "diagram-prompt-tolerance",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-tolerance",
+      "target": "diagram-prompt-roughness",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-tolerance",
+      "target": "diagram-prompt-roughness",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-tolerance",
+      "target": "diagram-prompt-cutting",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-tolerance",
+      "target": "diagram-prompt-roughness",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-roughness",
+      "target": "diagram-prompt-cutting",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-roughness",
+      "target": "diagram-prompt-cutting",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-roughness",
+      "target": "diagram-prompt-parameter-sheet",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-roughness",
+      "target": "diagram-prompt-cutting",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-cutting",
+      "target": "diagram-prompt-parameter-sheet",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-cutting",
+      "target": "diagram-prompt-parameter-sheet",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-cutting",
+      "target": "diagram-prompt-material",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-cutting",
+      "target": "diagram-prompt-parameter-sheet",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-parameter-sheet",
+      "target": "diagram-prompt-material",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-parameter-sheet",
+      "target": "diagram-prompt-material",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-parameter-sheet",
+      "target": "diagram-prompt-startup",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-parameter-sheet",
+      "target": "diagram-prompt-material",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-material",
+      "target": "diagram-prompt-startup",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-material",
+      "target": "diagram-prompt-startup",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-material",
+      "target": "diagram-prompt-atc",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-material",
+      "target": "diagram-prompt-startup",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-startup",
+      "target": "diagram-prompt-atc",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-startup",
+      "target": "diagram-prompt-atc",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-startup",
+      "target": "diagram-prompt-compensation-flow",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-startup",
+      "target": "diagram-prompt-atc",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-atc",
+      "target": "diagram-prompt-compensation-flow",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-atc",
+      "target": "diagram-prompt-compensation-flow",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-atc",
+      "target": "diagram-prompt-feed-mode",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-atc",
+      "target": "diagram-prompt-compensation-flow",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-compensation-flow",
+      "target": "diagram-prompt-feed-mode",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-compensation-flow",
+      "target": "diagram-prompt-feed-mode",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-compensation-flow",
+      "target": "diagram-prompt-return-plane",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-compensation-flow",
+      "target": "diagram-prompt-feed-mode",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-feed-mode",
+      "target": "diagram-prompt-return-plane",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-feed-mode",
+      "target": "diagram-prompt-return-plane",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-feed-mode",
+      "target": "diagram-prompt-unit-switch",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-feed-mode",
+      "target": "diagram-prompt-return-plane",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-return-plane",
+      "target": "diagram-prompt-unit-switch",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-return-plane",
+      "target": "diagram-prompt-unit-switch",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-return-plane",
+      "target": "diagram-prompt-tool-length",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-return-plane",
+      "target": "diagram-prompt-unit-switch",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-unit-switch",
+      "target": "diagram-prompt-tool-length",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-unit-switch",
+      "target": "diagram-prompt-tool-length",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-unit-switch",
+      "target": "diagram-prompt-fixed-cycle",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-unit-switch",
+      "target": "diagram-prompt-tool-length",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-tool-length",
+      "target": "diagram-prompt-fixed-cycle",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-tool-length",
+      "target": "diagram-prompt-fixed-cycle",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-tool-length",
+      "target": "diagram-prompt-alarm-servo",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-tool-length",
+      "target": "diagram-prompt-fixed-cycle",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-fixed-cycle",
+      "target": "diagram-prompt-alarm-servo",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-fixed-cycle",
+      "target": "diagram-prompt-alarm-servo",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-fixed-cycle",
+      "target": "diagram-prompt-alarm-spindle",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-fixed-cycle",
+      "target": "diagram-prompt-alarm-servo",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-alarm-servo",
+      "target": "diagram-prompt-alarm-spindle",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-alarm-servo",
+      "target": "diagram-prompt-alarm-spindle",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-alarm-servo",
+      "target": "diagram-prompt-alarm-limit",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-alarm-servo",
+      "target": "diagram-prompt-alarm-spindle",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-alarm-spindle",
+      "target": "diagram-prompt-alarm-limit",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-alarm-spindle",
+      "target": "diagram-prompt-alarm-limit",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-alarm-spindle",
+      "target": "diagram-prompt-home-fail",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-alarm-spindle",
+      "target": "diagram-prompt-alarm-limit",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-alarm-limit",
+      "target": "diagram-prompt-home-fail",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-alarm-limit",
+      "target": "diagram-prompt-home-fail",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-alarm-limit",
+      "target": "diagram-prompt-touchoff-fail",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-alarm-limit",
+      "target": "diagram-prompt-home-fail",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-home-fail",
+      "target": "diagram-prompt-touchoff-fail",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-home-fail",
+      "target": "diagram-prompt-touchoff-fail",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-home-fail",
+      "target": "diagram-prompt-parameter-backup",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-home-fail",
+      "target": "diagram-prompt-touchoff-fail",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-touchoff-fail",
+      "target": "diagram-prompt-parameter-backup",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-touchoff-fail",
+      "target": "diagram-prompt-parameter-backup",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-touchoff-fail",
+      "target": "diagram-prompt-home-parameter",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-touchoff-fail",
+      "target": "diagram-prompt-parameter-backup",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-parameter-backup",
+      "target": "diagram-prompt-home-parameter",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-parameter-backup",
+      "target": "diagram-prompt-home-parameter",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-parameter-backup",
+      "target": "diagram-prompt-init",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-parameter-backup",
+      "target": "diagram-prompt-home-parameter",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-home-parameter",
+      "target": "diagram-prompt-init",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-home-parameter",
+      "target": "diagram-prompt-init",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-home-parameter",
+      "target": "diagram-prompt-high-risk-params",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-home-parameter",
+      "target": "diagram-prompt-init",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-init",
+      "target": "diagram-prompt-high-risk-params",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-init",
+      "target": "diagram-prompt-high-risk-params",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-init",
+      "target": "diagram-prompt-init-checklist",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-init",
+      "target": "diagram-prompt-high-risk-params",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-high-risk-params",
+      "target": "diagram-prompt-init-checklist",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-high-risk-params",
+      "target": "diagram-prompt-init-checklist",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-high-risk-params",
+      "target": "diagram-prompt-alarm-overview",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-high-risk-params",
+      "target": "diagram-prompt-init-checklist",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-init-checklist",
+      "target": "diagram-prompt-alarm-overview",
+      "type": "recommendation"
+    },
+    {
+      "source": "diagram-prompt-init-checklist",
+      "target": "diagram-prompt-alarm-overview",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-init-checklist",
+      "target": "diagram-prompt-coordinate",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-init-checklist",
+      "target": "diagram-prompt-alarm-overview",
+      "type": "prerequisite"
+    },
+    {
+      "source": "diagram-prompt-alarm-overview",
+      "target": "diagram-prompt-coordinate",
+      "type": "related"
+    },
+    {
+      "source": "diagram-prompt-alarm-overview",
+      "target": "diagram-prompt-g02",
+      "type": "related"
+    }
+  ],
+  "categories": {
+    "入门基础": {
+      "level": 1,
+      "parent": null
+    },
+    "常用代码": {
+      "level": 2,
+      "parent": "入门基础"
+    },
+    "车床编程": {
+      "level": 3,
+      "parent": "常用代码"
+    },
+    "铣床编程": {
+      "level": 3,
+      "parent": "常用代码"
+    },
+    "加工工艺": {
+      "level": 2,
+      "parent": "入门基础"
+    },
+    "故障维修": {
+      "level": 4,
+      "parent": "常用代码"
+    }
+  }
+}

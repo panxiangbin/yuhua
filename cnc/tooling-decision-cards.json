@@ -1,0 +1,2162 @@
+[
+  {
+    "id": "tool-card-001",
+    "title": "铝合金加工用_外圆车刀选用工艺决策卡",
+    "toolType": "外圆车刀",
+    "workMaterial": "铝合金",
+    "recommendedUse": "选择大前角、宽排屑槽的无涂层硬质合金刀片（如K类硬质合金）。",
+    "avoidUse": "避免使用含Ti高涂层刀具，易发生化学粘附。",
+    "selectionReason": "铝合金材质软黏，要求排屑极度通畅以防止积屑瘤导致崩刃。",
+    "commonWearSignal": "刀面粘铝、切屑呈碎条状黏连。",
+    "relatedEntryIds": [
+      "kb-00116",
+      "kb-00129",
+      "kb-00222",
+      "kb-00239"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-002",
+    "title": "不锈钢加工用_立铣刀选用工艺决策卡",
+    "toolType": "立铣刀",
+    "workMaterial": "不锈钢",
+    "recommendedUse": "选用含钴硬质合金或超细微粒硬质合金，表面加覆TiAlN纳米涂层，逆铣切削。",
+    "avoidUse": "避免干式切削，切忌低切速干切导致严重粘刀。",
+    "selectionReason": "不锈钢加工硬化极强，且切削热极高，纳米涂层在高温下产生氧化铝保护膜保护刀体。",
+    "commonWearSignal": "主切削刃崩刃、刀尖严重涂层脱落。",
+    "relatedEntryIds": [
+      "kb-00138",
+      "kb-00222",
+      "kb-00231",
+      "kb-00239"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-003",
+    "title": "45号钢加工用_丝锥选用工艺决策卡",
+    "toolType": "丝锥",
+    "workMaterial": "45号钢",
+    "recommendedUse": "使用螺旋槽丝锥攻丝，配合高压乳化液或攻丝油润滑，进给转速严格同步。",
+    "avoidUse": "避免钻底孔偏小，禁止使用普通直槽丝锥盲孔攻丝。",
+    "selectionReason": "螺旋槽能自动将铁屑往孔口方向排出，防孔底堆积挤碎丝锥。",
+    "commonWearSignal": "螺纹规止规能通，螺距出现拉伸拔丝。",
+    "relatedEntryIds": [
+      "kb-00096",
+      "kb-00188",
+      "kb-00222",
+      "kb-00259"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-004",
+    "title": "铸铁切削专用_面铣刀性能偏好工艺决策卡_第1组",
+    "toolType": "面铣刀",
+    "workMaterial": "铸铁",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铸铁 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00148",
+      "kb-00199",
+      "kb-00536"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-005",
+    "title": "钛合金切削专用_立铣刀性能偏好工艺决策卡_第1组",
+    "toolType": "立铣刀",
+    "workMaterial": "钛合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 钛合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00138",
+      "kb-00222",
+      "kb-00282"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-006",
+    "title": "高温合金切削专用_球刀性能偏好工艺决策卡_第1组",
+    "toolType": "球刀",
+    "workMaterial": "高温合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 高温合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00223",
+      "kb-00413",
+      "kb-00735"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-007",
+    "title": "铝合金切削专用_钻头性能偏好工艺决策卡_第1组",
+    "toolType": "钻头",
+    "workMaterial": "铝合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铝合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00116",
+      "kb-00129",
+      "kb-00140"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-008",
+    "title": "45号钢切削专用_铰刀性能偏好工艺决策卡_第1组",
+    "toolType": "铰刀",
+    "workMaterial": "45号钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 45号钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00280",
+      "kb-00284",
+      "kb-00907"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-009",
+    "title": "不锈钢切削专用_镗刀性能偏好工艺决策卡_第1组",
+    "toolType": "镗刀",
+    "workMaterial": "不锈钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 不锈钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00140",
+      "kb-00231",
+      "kb-00239"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-010",
+    "title": "铸铁切削专用_丝锥性能偏好工艺决策卡_第1组",
+    "toolType": "丝锥",
+    "workMaterial": "铸铁",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铸铁 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00096",
+      "kb-00148",
+      "kb-00188"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-011",
+    "title": "钛合金切削专用_外圆车刀性能偏好工艺决策卡_第1组",
+    "toolType": "外圆车刀",
+    "workMaterial": "钛合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 钛合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00354",
+      "kb-00410",
+      "kb-00413"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-012",
+    "title": "高温合金切削专用_切断刀性能偏好工艺决策卡_第1组",
+    "toolType": "切断刀",
+    "workMaterial": "高温合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 高温合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00149",
+      "kb-00413",
+      "kb-00735"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-013",
+    "title": "铝合金切削专用_螺纹刀性能偏好工艺决策卡_第1组",
+    "toolType": "螺纹刀",
+    "workMaterial": "铝合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铝合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00116",
+      "kb-00129",
+      "kb-00222"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-014",
+    "title": "45号钢切削专用_面铣刀性能偏好工艺决策卡_第1组",
+    "toolType": "面铣刀",
+    "workMaterial": "45号钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 45号钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00199",
+      "kb-00846",
+      "kb-00896"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-015",
+    "title": "不锈钢切削专用_立铣刀性能偏好工艺决策卡_第1组",
+    "toolType": "立铣刀",
+    "workMaterial": "不锈钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 不锈钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00138",
+      "kb-00222",
+      "kb-00231"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-016",
+    "title": "铸铁切削专用_球刀性能偏好工艺决策卡_第1组",
+    "toolType": "球刀",
+    "workMaterial": "铸铁",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铸铁 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00148",
+      "kb-00223",
+      "kb-00536"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-017",
+    "title": "钛合金切削专用_钻头性能偏好工艺决策卡_第1组",
+    "toolType": "钻头",
+    "workMaterial": "钛合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 钛合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00140",
+      "kb-00222",
+      "kb-00276"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-018",
+    "title": "高温合金切削专用_铰刀性能偏好工艺决策卡_第1组",
+    "toolType": "铰刀",
+    "workMaterial": "高温合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 高温合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00280",
+      "kb-00284",
+      "kb-00413"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-019",
+    "title": "铝合金切削专用_镗刀性能偏好工艺决策卡_第2组",
+    "toolType": "镗刀",
+    "workMaterial": "铝合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铝合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00116",
+      "kb-00129",
+      "kb-00140"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-020",
+    "title": "45号钢切削专用_丝锥性能偏好工艺决策卡_第2组",
+    "toolType": "丝锥",
+    "workMaterial": "45号钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 45号钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00096",
+      "kb-00188",
+      "kb-00222"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-021",
+    "title": "不锈钢切削专用_外圆车刀性能偏好工艺决策卡_第2组",
+    "toolType": "外圆车刀",
+    "workMaterial": "不锈钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 不锈钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00231",
+      "kb-00239",
+      "kb-00277"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-022",
+    "title": "铸铁切削专用_切断刀性能偏好工艺决策卡_第2组",
+    "toolType": "切断刀",
+    "workMaterial": "铸铁",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铸铁 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00148",
+      "kb-00149",
+      "kb-00536"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-023",
+    "title": "钛合金切削专用_螺纹刀性能偏好工艺决策卡_第2组",
+    "toolType": "螺纹刀",
+    "workMaterial": "钛合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 钛合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00354",
+      "kb-00413",
+      "kb-00735"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-024",
+    "title": "高温合金切削专用_面铣刀性能偏好工艺决策卡_第2组",
+    "toolType": "面铣刀",
+    "workMaterial": "高温合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 高温合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00199",
+      "kb-00413",
+      "kb-00735"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-025",
+    "title": "铝合金切削专用_立铣刀性能偏好工艺决策卡_第2组",
+    "toolType": "立铣刀",
+    "workMaterial": "铝合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铝合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00116",
+      "kb-00129",
+      "kb-00138"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-026",
+    "title": "45号钢切削专用_球刀性能偏好工艺决策卡_第2组",
+    "toolType": "球刀",
+    "workMaterial": "45号钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 45号钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00223",
+      "kb-00907",
+      "kb-00914"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-027",
+    "title": "不锈钢切削专用_钻头性能偏好工艺决策卡_第2组",
+    "toolType": "钻头",
+    "workMaterial": "不锈钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 不锈钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00140",
+      "kb-00222",
+      "kb-00231"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-028",
+    "title": "铸铁切削专用_铰刀性能偏好工艺决策卡_第2组",
+    "toolType": "铰刀",
+    "workMaterial": "铸铁",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铸铁 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00148",
+      "kb-00280",
+      "kb-00284"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-029",
+    "title": "钛合金切削专用_镗刀性能偏好工艺决策卡_第2组",
+    "toolType": "镗刀",
+    "workMaterial": "钛合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 钛合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00140",
+      "kb-00284",
+      "kb-00354"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-030",
+    "title": "高温合金切削专用_丝锥性能偏好工艺决策卡_第2组",
+    "toolType": "丝锥",
+    "workMaterial": "高温合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 高温合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00096",
+      "kb-00188",
+      "kb-00222"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-031",
+    "title": "铝合金切削专用_外圆车刀性能偏好工艺决策卡_第2组",
+    "toolType": "外圆车刀",
+    "workMaterial": "铝合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铝合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00116",
+      "kb-00129",
+      "kb-00222"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-032",
+    "title": "45号钢切削专用_切断刀性能偏好工艺决策卡_第2组",
+    "toolType": "切断刀",
+    "workMaterial": "45号钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 45号钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00149",
+      "kb-00907"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-033",
+    "title": "不锈钢切削专用_螺纹刀性能偏好工艺决策卡_第2组",
+    "toolType": "螺纹刀",
+    "workMaterial": "不锈钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 不锈钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00231",
+      "kb-00239",
+      "kb-00277"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-034",
+    "title": "铸铁切削专用_面铣刀性能偏好工艺决策卡_第2组",
+    "toolType": "面铣刀",
+    "workMaterial": "铸铁",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铸铁 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00148",
+      "kb-00199",
+      "kb-00536"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-035",
+    "title": "钛合金切削专用_立铣刀性能偏好工艺决策卡_第2组",
+    "toolType": "立铣刀",
+    "workMaterial": "钛合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 钛合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00138",
+      "kb-00222",
+      "kb-00282"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-036",
+    "title": "高温合金切削专用_球刀性能偏好工艺决策卡_第2组",
+    "toolType": "球刀",
+    "workMaterial": "高温合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 高温合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00223",
+      "kb-00413",
+      "kb-00735"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-037",
+    "title": "铝合金切削专用_钻头性能偏好工艺决策卡_第3组",
+    "toolType": "钻头",
+    "workMaterial": "铝合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铝合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00116",
+      "kb-00129",
+      "kb-00140"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-038",
+    "title": "45号钢切削专用_铰刀性能偏好工艺决策卡_第3组",
+    "toolType": "铰刀",
+    "workMaterial": "45号钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 45号钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00280",
+      "kb-00284",
+      "kb-00907"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-039",
+    "title": "不锈钢切削专用_镗刀性能偏好工艺决策卡_第3组",
+    "toolType": "镗刀",
+    "workMaterial": "不锈钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 不锈钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00140",
+      "kb-00231",
+      "kb-00239"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-040",
+    "title": "铸铁切削专用_丝锥性能偏好工艺决策卡_第3组",
+    "toolType": "丝锥",
+    "workMaterial": "铸铁",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铸铁 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00096",
+      "kb-00148",
+      "kb-00188"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-041",
+    "title": "钛合金切削专用_外圆车刀性能偏好工艺决策卡_第3组",
+    "toolType": "外圆车刀",
+    "workMaterial": "钛合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 钛合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00354",
+      "kb-00410",
+      "kb-00413"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-042",
+    "title": "高温合金切削专用_切断刀性能偏好工艺决策卡_第3组",
+    "toolType": "切断刀",
+    "workMaterial": "高温合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 高温合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00149",
+      "kb-00413",
+      "kb-00735"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-043",
+    "title": "铝合金切削专用_螺纹刀性能偏好工艺决策卡_第3组",
+    "toolType": "螺纹刀",
+    "workMaterial": "铝合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铝合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00116",
+      "kb-00129",
+      "kb-00222"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-044",
+    "title": "45号钢切削专用_面铣刀性能偏好工艺决策卡_第3组",
+    "toolType": "面铣刀",
+    "workMaterial": "45号钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 45号钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00199",
+      "kb-00846",
+      "kb-00896"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-045",
+    "title": "不锈钢切削专用_立铣刀性能偏好工艺决策卡_第3组",
+    "toolType": "立铣刀",
+    "workMaterial": "不锈钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 不锈钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00138",
+      "kb-00222",
+      "kb-00231"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-046",
+    "title": "铸铁切削专用_球刀性能偏好工艺决策卡_第3组",
+    "toolType": "球刀",
+    "workMaterial": "铸铁",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铸铁 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00148",
+      "kb-00223",
+      "kb-00536"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-047",
+    "title": "钛合金切削专用_钻头性能偏好工艺决策卡_第3组",
+    "toolType": "钻头",
+    "workMaterial": "钛合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 钛合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00140",
+      "kb-00222",
+      "kb-00276"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-048",
+    "title": "高温合金切削专用_铰刀性能偏好工艺决策卡_第3组",
+    "toolType": "铰刀",
+    "workMaterial": "高温合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 高温合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00280",
+      "kb-00284",
+      "kb-00413"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-049",
+    "title": "铝合金切削专用_镗刀性能偏好工艺决策卡_第3组",
+    "toolType": "镗刀",
+    "workMaterial": "铝合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铝合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00116",
+      "kb-00129",
+      "kb-00140"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-050",
+    "title": "45号钢切削专用_丝锥性能偏好工艺决策卡_第3组",
+    "toolType": "丝锥",
+    "workMaterial": "45号钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 45号钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00096",
+      "kb-00188",
+      "kb-00222"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-051",
+    "title": "不锈钢切削专用_外圆车刀性能偏好工艺决策卡_第3组",
+    "toolType": "外圆车刀",
+    "workMaterial": "不锈钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 不锈钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00231",
+      "kb-00239",
+      "kb-00277"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-052",
+    "title": "铸铁切削专用_切断刀性能偏好工艺决策卡_第3组",
+    "toolType": "切断刀",
+    "workMaterial": "铸铁",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铸铁 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00148",
+      "kb-00149",
+      "kb-00536"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-053",
+    "title": "钛合金切削专用_螺纹刀性能偏好工艺决策卡_第3组",
+    "toolType": "螺纹刀",
+    "workMaterial": "钛合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 钛合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00354",
+      "kb-00413",
+      "kb-00735"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-054",
+    "title": "高温合金切削专用_面铣刀性能偏好工艺决策卡_第3组",
+    "toolType": "面铣刀",
+    "workMaterial": "高温合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 高温合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00199",
+      "kb-00413",
+      "kb-00735"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-055",
+    "title": "铝合金切削专用_立铣刀性能偏好工艺决策卡_第4组",
+    "toolType": "立铣刀",
+    "workMaterial": "铝合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铝合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00116",
+      "kb-00129",
+      "kb-00138"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-056",
+    "title": "45号钢切削专用_球刀性能偏好工艺决策卡_第4组",
+    "toolType": "球刀",
+    "workMaterial": "45号钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 45号钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00223",
+      "kb-00907",
+      "kb-00914"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-057",
+    "title": "不锈钢切削专用_钻头性能偏好工艺决策卡_第4组",
+    "toolType": "钻头",
+    "workMaterial": "不锈钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 不锈钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00140",
+      "kb-00222",
+      "kb-00231"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-058",
+    "title": "铸铁切削专用_铰刀性能偏好工艺决策卡_第4组",
+    "toolType": "铰刀",
+    "workMaterial": "铸铁",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铸铁 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00148",
+      "kb-00280",
+      "kb-00284"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-059",
+    "title": "钛合金切削专用_镗刀性能偏好工艺决策卡_第4组",
+    "toolType": "镗刀",
+    "workMaterial": "钛合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 钛合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00140",
+      "kb-00284",
+      "kb-00354"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-060",
+    "title": "高温合金切削专用_丝锥性能偏好工艺决策卡_第4组",
+    "toolType": "丝锥",
+    "workMaterial": "高温合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 高温合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00096",
+      "kb-00188",
+      "kb-00222"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-061",
+    "title": "铝合金切削专用_外圆车刀性能偏好工艺决策卡_第4组",
+    "toolType": "外圆车刀",
+    "workMaterial": "铝合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铝合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00116",
+      "kb-00129",
+      "kb-00222"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-062",
+    "title": "45号钢切削专用_切断刀性能偏好工艺决策卡_第4组",
+    "toolType": "切断刀",
+    "workMaterial": "45号钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 45号钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00149",
+      "kb-00907"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-063",
+    "title": "不锈钢切削专用_螺纹刀性能偏好工艺决策卡_第4组",
+    "toolType": "螺纹刀",
+    "workMaterial": "不锈钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 不锈钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00231",
+      "kb-00239",
+      "kb-00277"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-064",
+    "title": "铸铁切削专用_面铣刀性能偏好工艺决策卡_第4组",
+    "toolType": "面铣刀",
+    "workMaterial": "铸铁",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铸铁 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00148",
+      "kb-00199",
+      "kb-00536"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-065",
+    "title": "钛合金切削专用_立铣刀性能偏好工艺决策卡_第4组",
+    "toolType": "立铣刀",
+    "workMaterial": "钛合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 钛合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00138",
+      "kb-00222",
+      "kb-00282"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-066",
+    "title": "高温合金切削专用_球刀性能偏好工艺决策卡_第4组",
+    "toolType": "球刀",
+    "workMaterial": "高温合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 高温合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00223",
+      "kb-00413",
+      "kb-00735"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-067",
+    "title": "铝合金切削专用_钻头性能偏好工艺决策卡_第4组",
+    "toolType": "钻头",
+    "workMaterial": "铝合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铝合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00116",
+      "kb-00129",
+      "kb-00140"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-068",
+    "title": "45号钢切削专用_铰刀性能偏好工艺决策卡_第4组",
+    "toolType": "铰刀",
+    "workMaterial": "45号钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 45号钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00280",
+      "kb-00284",
+      "kb-00907"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-069",
+    "title": "不锈钢切削专用_镗刀性能偏好工艺决策卡_第4组",
+    "toolType": "镗刀",
+    "workMaterial": "不锈钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 不锈钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00140",
+      "kb-00231",
+      "kb-00239"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-070",
+    "title": "铸铁切削专用_丝锥性能偏好工艺决策卡_第4组",
+    "toolType": "丝锥",
+    "workMaterial": "铸铁",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铸铁 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00096",
+      "kb-00148",
+      "kb-00188"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-071",
+    "title": "钛合金切削专用_外圆车刀性能偏好工艺决策卡_第4组",
+    "toolType": "外圆车刀",
+    "workMaterial": "钛合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 钛合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00354",
+      "kb-00410",
+      "kb-00413"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-072",
+    "title": "高温合金切削专用_切断刀性能偏好工艺决策卡_第4组",
+    "toolType": "切断刀",
+    "workMaterial": "高温合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 高温合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00149",
+      "kb-00413",
+      "kb-00735"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-073",
+    "title": "铝合金切削专用_螺纹刀性能偏好工艺决策卡_第5组",
+    "toolType": "螺纹刀",
+    "workMaterial": "铝合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铝合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00116",
+      "kb-00129",
+      "kb-00222"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-074",
+    "title": "45号钢切削专用_面铣刀性能偏好工艺决策卡_第5组",
+    "toolType": "面铣刀",
+    "workMaterial": "45号钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 45号钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00199",
+      "kb-00846",
+      "kb-00896"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-075",
+    "title": "不锈钢切削专用_立铣刀性能偏好工艺决策卡_第5组",
+    "toolType": "立铣刀",
+    "workMaterial": "不锈钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 不锈钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00138",
+      "kb-00222",
+      "kb-00231"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-076",
+    "title": "铸铁切削专用_球刀性能偏好工艺决策卡_第5组",
+    "toolType": "球刀",
+    "workMaterial": "铸铁",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铸铁 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00148",
+      "kb-00223",
+      "kb-00536"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-077",
+    "title": "钛合金切削专用_钻头性能偏好工艺决策卡_第5组",
+    "toolType": "钻头",
+    "workMaterial": "钛合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 钛合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00140",
+      "kb-00222",
+      "kb-00276"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-078",
+    "title": "高温合金切削专用_铰刀性能偏好工艺决策卡_第5组",
+    "toolType": "铰刀",
+    "workMaterial": "高温合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 高温合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00280",
+      "kb-00284",
+      "kb-00413"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-079",
+    "title": "铝合金切削专用_镗刀性能偏好工艺决策卡_第5组",
+    "toolType": "镗刀",
+    "workMaterial": "铝合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铝合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00116",
+      "kb-00129",
+      "kb-00140"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-080",
+    "title": "45号钢切削专用_丝锥性能偏好工艺决策卡_第5组",
+    "toolType": "丝锥",
+    "workMaterial": "45号钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 45号钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00096",
+      "kb-00188",
+      "kb-00222"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-081",
+    "title": "不锈钢切削专用_外圆车刀性能偏好工艺决策卡_第5组",
+    "toolType": "外圆车刀",
+    "workMaterial": "不锈钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 不锈钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00231",
+      "kb-00239",
+      "kb-00277"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-082",
+    "title": "铸铁切削专用_切断刀性能偏好工艺决策卡_第5组",
+    "toolType": "切断刀",
+    "workMaterial": "铸铁",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铸铁 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00148",
+      "kb-00149",
+      "kb-00536"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-083",
+    "title": "钛合金切削专用_螺纹刀性能偏好工艺决策卡_第5组",
+    "toolType": "螺纹刀",
+    "workMaterial": "钛合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 钛合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00354",
+      "kb-00413",
+      "kb-00735"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-084",
+    "title": "高温合金切削专用_面铣刀性能偏好工艺决策卡_第5组",
+    "toolType": "面铣刀",
+    "workMaterial": "高温合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 高温合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00199",
+      "kb-00413",
+      "kb-00735"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-085",
+    "title": "铝合金切削专用_立铣刀性能偏好工艺决策卡_第5组",
+    "toolType": "立铣刀",
+    "workMaterial": "铝合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铝合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00116",
+      "kb-00129",
+      "kb-00138"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-086",
+    "title": "45号钢切削专用_球刀性能偏好工艺决策卡_第5组",
+    "toolType": "球刀",
+    "workMaterial": "45号钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 45号钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00223",
+      "kb-00907",
+      "kb-00914"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-087",
+    "title": "不锈钢切削专用_钻头性能偏好工艺决策卡_第5组",
+    "toolType": "钻头",
+    "workMaterial": "不锈钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 不锈钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00140",
+      "kb-00222",
+      "kb-00231"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-088",
+    "title": "铸铁切削专用_铰刀性能偏好工艺决策卡_第5组",
+    "toolType": "铰刀",
+    "workMaterial": "铸铁",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铸铁 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00148",
+      "kb-00280",
+      "kb-00284"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-089",
+    "title": "钛合金切削专用_镗刀性能偏好工艺决策卡_第5组",
+    "toolType": "镗刀",
+    "workMaterial": "钛合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 钛合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00140",
+      "kb-00284",
+      "kb-00354"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-090",
+    "title": "高温合金切削专用_丝锥性能偏好工艺决策卡_第5组",
+    "toolType": "丝锥",
+    "workMaterial": "高温合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 高温合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00096",
+      "kb-00188",
+      "kb-00222"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-091",
+    "title": "铝合金切削专用_外圆车刀性能偏好工艺决策卡_第6组",
+    "toolType": "外圆车刀",
+    "workMaterial": "铝合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铝合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00116",
+      "kb-00129",
+      "kb-00222"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-092",
+    "title": "45号钢切削专用_切断刀性能偏好工艺决策卡_第6组",
+    "toolType": "切断刀",
+    "workMaterial": "45号钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 45号钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00149",
+      "kb-00907"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-093",
+    "title": "不锈钢切削专用_螺纹刀性能偏好工艺决策卡_第6组",
+    "toolType": "螺纹刀",
+    "workMaterial": "不锈钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 不锈钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00231",
+      "kb-00239",
+      "kb-00277"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-094",
+    "title": "铸铁切削专用_面铣刀性能偏好工艺决策卡_第6组",
+    "toolType": "面铣刀",
+    "workMaterial": "铸铁",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铸铁 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00148",
+      "kb-00199",
+      "kb-00536"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-095",
+    "title": "钛合金切削专用_立铣刀性能偏好工艺决策卡_第6组",
+    "toolType": "立铣刀",
+    "workMaterial": "钛合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 钛合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00138",
+      "kb-00222",
+      "kb-00282"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-096",
+    "title": "高温合金切削专用_球刀性能偏好工艺决策卡_第6组",
+    "toolType": "球刀",
+    "workMaterial": "高温合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 高温合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00223",
+      "kb-00413",
+      "kb-00735"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-097",
+    "title": "铝合金切削专用_钻头性能偏好工艺决策卡_第6组",
+    "toolType": "钻头",
+    "workMaterial": "铝合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铝合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00116",
+      "kb-00129",
+      "kb-00140"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-098",
+    "title": "45号钢切削专用_铰刀性能偏好工艺决策卡_第6组",
+    "toolType": "铰刀",
+    "workMaterial": "45号钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 45号钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00280",
+      "kb-00284",
+      "kb-00907"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-099",
+    "title": "不锈钢切削专用_镗刀性能偏好工艺决策卡_第6组",
+    "toolType": "镗刀",
+    "workMaterial": "不锈钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 不锈钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00140",
+      "kb-00231",
+      "kb-00239"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-100",
+    "title": "铸铁切削专用_丝锥性能偏好工艺决策卡_第6组",
+    "toolType": "丝锥",
+    "workMaterial": "铸铁",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铸铁 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00096",
+      "kb-00148",
+      "kb-00188"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-101",
+    "title": "钛合金切削专用_外圆车刀性能偏好工艺决策卡_第6组",
+    "toolType": "外圆车刀",
+    "workMaterial": "钛合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 钛合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00354",
+      "kb-00410",
+      "kb-00413"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-102",
+    "title": "高温合金切削专用_切断刀性能偏好工艺决策卡_第6组",
+    "toolType": "切断刀",
+    "workMaterial": "高温合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 高温合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00149",
+      "kb-00413",
+      "kb-00735"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-103",
+    "title": "铝合金切削专用_螺纹刀性能偏好工艺决策卡_第6组",
+    "toolType": "螺纹刀",
+    "workMaterial": "铝合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铝合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00116",
+      "kb-00129",
+      "kb-00222"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-104",
+    "title": "45号钢切削专用_面铣刀性能偏好工艺决策卡_第6组",
+    "toolType": "面铣刀",
+    "workMaterial": "45号钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 45号钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00199",
+      "kb-00846",
+      "kb-00896"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-105",
+    "title": "不锈钢切削专用_立铣刀性能偏好工艺决策卡_第6组",
+    "toolType": "立铣刀",
+    "workMaterial": "不锈钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 不锈钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00138",
+      "kb-00222",
+      "kb-00231"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-106",
+    "title": "铸铁切削专用_球刀性能偏好工艺决策卡_第6组",
+    "toolType": "球刀",
+    "workMaterial": "铸铁",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铸铁 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00148",
+      "kb-00223",
+      "kb-00536"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-107",
+    "title": "钛合金切削专用_钻头性能偏好工艺决策卡_第6组",
+    "toolType": "钻头",
+    "workMaterial": "钛合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 钛合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00140",
+      "kb-00222",
+      "kb-00276"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-108",
+    "title": "高温合金切削专用_铰刀性能偏好工艺决策卡_第6组",
+    "toolType": "铰刀",
+    "workMaterial": "高温合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 高温合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00280",
+      "kb-00284",
+      "kb-00413"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-109",
+    "title": "铝合金切削专用_镗刀性能偏好工艺决策卡_第7组",
+    "toolType": "镗刀",
+    "workMaterial": "铝合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铝合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00116",
+      "kb-00129",
+      "kb-00140"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-110",
+    "title": "45号钢切削专用_丝锥性能偏好工艺决策卡_第7组",
+    "toolType": "丝锥",
+    "workMaterial": "45号钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 45号钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00096",
+      "kb-00188",
+      "kb-00222"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-111",
+    "title": "不锈钢切削专用_外圆车刀性能偏好工艺决策卡_第7组",
+    "toolType": "外圆车刀",
+    "workMaterial": "不锈钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 不锈钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00231",
+      "kb-00239",
+      "kb-00277"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-112",
+    "title": "铸铁切削专用_切断刀性能偏好工艺决策卡_第7组",
+    "toolType": "切断刀",
+    "workMaterial": "铸铁",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铸铁 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00148",
+      "kb-00149",
+      "kb-00536"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-113",
+    "title": "钛合金切削专用_螺纹刀性能偏好工艺决策卡_第7组",
+    "toolType": "螺纹刀",
+    "workMaterial": "钛合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 钛合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00354",
+      "kb-00413",
+      "kb-00735"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-114",
+    "title": "高温合金切削专用_面铣刀性能偏好工艺决策卡_第7组",
+    "toolType": "面铣刀",
+    "workMaterial": "高温合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 高温合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00199",
+      "kb-00413",
+      "kb-00735"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-115",
+    "title": "铝合金切削专用_立铣刀性能偏好工艺决策卡_第7组",
+    "toolType": "立铣刀",
+    "workMaterial": "铝合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铝合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00116",
+      "kb-00129",
+      "kb-00138"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-116",
+    "title": "45号钢切削专用_球刀性能偏好工艺决策卡_第7组",
+    "toolType": "球刀",
+    "workMaterial": "45号钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 45号钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00223",
+      "kb-00907",
+      "kb-00914"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-117",
+    "title": "不锈钢切削专用_钻头性能偏好工艺决策卡_第7组",
+    "toolType": "钻头",
+    "workMaterial": "不锈钢",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 不锈钢 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00140",
+      "kb-00222",
+      "kb-00231"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-118",
+    "title": "铸铁切削专用_铰刀性能偏好工艺决策卡_第7组",
+    "toolType": "铰刀",
+    "workMaterial": "铸铁",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 铸铁 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00148",
+      "kb-00280",
+      "kb-00284"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-119",
+    "title": "钛合金切削专用_镗刀性能偏好工艺决策卡_第7组",
+    "toolType": "镗刀",
+    "workMaterial": "钛合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 钛合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00140",
+      "kb-00284",
+      "kb-00354"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  },
+  {
+    "id": "tool-card-120",
+    "title": "高温合金切削专用_丝锥性能偏好工艺决策卡_第7组",
+    "toolType": "丝锥",
+    "workMaterial": "高温合金",
+    "recommendedUse": "粗加工选用大进给、耐冲击型槽型刀片；精加工选用抛光槽、高耐磨小圆角切削刃。",
+    "avoidUse": "避免超负荷进给或冷却液供液断续（热震会导致硬质合金刀片开裂碎裂）。",
+    "selectionReason": "该刀具针对 高温合金 的物理热导率与机械硬度特性设计，能有效减少加工硬化影响。",
+    "commonWearSignal": "工件切削表面出现毛刺、产生刺耳的高频尖叫声，主轴电流表读数升高。",
+    "relatedEntryIds": [
+      "kb-00096",
+      "kb-00188",
+      "kb-00222"
+    ],
+    "relatedImageIds": [
+      "tool-nose-radius-basic-001"
+    ]
+  }
+]

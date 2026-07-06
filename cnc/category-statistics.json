@@ -1,0 +1,492 @@
+{
+  "categories": [
+    {
+      "name": "编程基础",
+      "totalFiles": 524,
+      "totalSize": "2.28MB",
+      "breakdown": {
+        "知识类": 113,
+        "教学类": 258,
+        "案例类": 0,
+        "题库类": 0,
+        "其他": 153
+      },
+      "qualityDistribution": {
+        "high": 5,
+        "medium": 242,
+        "low": 277
+      },
+      "topKeywords": [
+        "G54",
+        "G59",
+        "G92",
+        "G00",
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G17",
+        "G18",
+        "编程",
+        "G90",
+        "G91",
+        "G41",
+        "G42"
+      ],
+      "recommendedStarting": [
+        "kb-00001",
+        "kb-00002",
+        "kb-00003",
+        "kb-00004",
+        "kb-00005"
+      ],
+      "averageReadingTime": 4
+    },
+    {
+      "name": "出图指令",
+      "totalFiles": 2,
+      "totalSize": "0.02MB",
+      "breakdown": {
+        "知识类": 0,
+        "教学类": 0,
+        "案例类": 0,
+        "题库类": 0,
+        "其他": 2
+      },
+      "qualityDistribution": {
+        "high": 0,
+        "medium": 2,
+        "low": 0
+      },
+      "topKeywords": [
+        "G31",
+        "G10",
+        "G54",
+        "G65",
+        "主轴",
+        "刀补",
+        "宏程序"
+      ],
+      "recommendedStarting": [
+        "kb-01798",
+        "kb-01799"
+      ],
+      "averageReadingTime": 10
+    },
+    {
+      "name": "刀具工艺",
+      "totalFiles": 381,
+      "totalSize": "1.42MB",
+      "breakdown": {
+        "知识类": 12,
+        "教学类": 182,
+        "案例类": 4,
+        "题库类": 0,
+        "其他": 183
+      },
+      "qualityDistribution": {
+        "high": 4,
+        "medium": 113,
+        "low": 264
+      },
+      "topKeywords": [
+        "切削",
+        "主轴",
+        "粗加工",
+        "精加工",
+        "铣削",
+        "对刀",
+        "刀补",
+        "夹具",
+        "车削",
+        "M08",
+        "坐标系",
+        "冷却",
+        "刚性",
+        "偏置",
+        "仿真"
+      ],
+      "recommendedStarting": [
+        "kb-00812",
+        "kb-00813",
+        "kb-00814",
+        "kb-00815",
+        "kb-00816"
+      ],
+      "averageReadingTime": 4
+    },
+    {
+      "name": "故障维修",
+      "totalFiles": 193,
+      "totalSize": "0.62MB",
+      "breakdown": {
+        "知识类": 23,
+        "教学类": 104,
+        "案例类": 0,
+        "题库类": 0,
+        "其他": 66
+      },
+      "qualityDistribution": {
+        "high": 4,
+        "medium": 42,
+        "low": 147
+      },
+      "topKeywords": [
+        "FANUC",
+        "G255",
+        "主轴",
+        "冷却",
+        "报警",
+        "切削",
+        "进给",
+        "宏程序",
+        "G41",
+        "对刀",
+        "刀补",
+        "编程",
+        "M03",
+        "M08",
+        "故障维修"
+      ],
+      "recommendedStarting": [
+        "kb-01193",
+        "kb-01194",
+        "kb-01195",
+        "kb-01196",
+        "kb-01197"
+      ],
+      "averageReadingTime": 3
+    },
+    {
+      "name": "机床操作",
+      "totalFiles": 216,
+      "totalSize": "0.79MB",
+      "breakdown": {
+        "知识类": 15,
+        "教学类": 103,
+        "案例类": 0,
+        "题库类": 0,
+        "其他": 98
+      },
+      "qualityDistribution": {
+        "high": 4,
+        "medium": 63,
+        "low": 149
+      },
+      "topKeywords": [
+        "FANUC",
+        "西门子",
+        "M03",
+        "对刀",
+        "主轴",
+        "进给",
+        "报警",
+        "偏置",
+        "刀补",
+        "坐标系",
+        "G68",
+        "G69",
+        "G43",
+        "G01",
+        "G49"
+      ],
+      "recommendedStarting": [
+        "kb-00476",
+        "kb-00477",
+        "kb-00478",
+        "kb-00479",
+        "kb-00480"
+      ],
+      "averageReadingTime": 4
+    },
+    {
+      "name": "加工案例",
+      "totalFiles": 130,
+      "totalSize": "0.43MB",
+      "breakdown": {
+        "知识类": 1,
+        "教学类": 38,
+        "案例类": 62,
+        "题库类": 0,
+        "其他": 29
+      },
+      "qualityDistribution": {
+        "high": 1,
+        "medium": 41,
+        "low": 88
+      },
+      "topKeywords": [
+        "螺纹",
+        "车削",
+        "进给",
+        "冷却",
+        "粗加工",
+        "精加工",
+        "夹具",
+        "磨损",
+        "FANUC",
+        "M128",
+        "M114",
+        "编程",
+        "G28",
+        "M08",
+        "G97"
+      ],
+      "recommendedStarting": [
+        "kb-01668",
+        "kb-01669",
+        "kb-01670",
+        "kb-01671",
+        "kb-01672"
+      ],
+      "averageReadingTime": 3
+    },
+    {
+      "name": "检测质量",
+      "totalFiles": 78,
+      "totalSize": "0.25MB",
+      "breakdown": {
+        "知识类": 11,
+        "教学类": 7,
+        "案例类": 0,
+        "题库类": 0,
+        "其他": 60
+      },
+      "qualityDistribution": {
+        "high": 0,
+        "medium": 22,
+        "low": 56
+      },
+      "topKeywords": [
+        "进给",
+        "螺纹",
+        "磨损",
+        "铣削",
+        "编程",
+        "夹具",
+        "车削",
+        "检测质量",
+        "数控参数",
+        "报警",
+        "坐标系",
+        "宏程序",
+        "主轴",
+        "G65",
+        "M99"
+      ],
+      "recommendedStarting": [
+        "kb-01386",
+        "kb-01387",
+        "kb-01388",
+        "kb-01389",
+        "kb-01390"
+      ],
+      "averageReadingTime": 4
+    },
+    {
+      "name": "考证职业",
+      "totalFiles": 40446,
+      "totalSize": "34.56MB",
+      "breakdown": {
+        "知识类": 0,
+        "教学类": 0,
+        "案例类": 0,
+        "题库类": 40446,
+        "其他": 0
+      },
+      "qualityDistribution": {
+        "high": 0,
+        "medium": 0,
+        "low": 40446
+      },
+      "topKeywords": [
+        "职业考证",
+        "模拟题",
+        "理论考试"
+      ],
+      "recommendedStarting": [
+        "kb-01849",
+        "kb-01850",
+        "kb-01851",
+        "kb-01852",
+        "kb-01853"
+      ],
+      "averageReadingTime": 2
+    },
+    {
+      "name": "行业资讯",
+      "totalFiles": 204,
+      "totalSize": "0.83MB",
+      "breakdown": {
+        "知识类": 37,
+        "教学类": 78,
+        "案例类": 0,
+        "题库类": 0,
+        "其他": 89
+      },
+      "qualityDistribution": {
+        "high": 2,
+        "medium": 70,
+        "low": 132
+      },
+      "topKeywords": [
+        "冷却",
+        "精加工",
+        "磨损",
+        "精雕",
+        "夹具",
+        "对刀",
+        "刀补",
+        "报警",
+        "仿真",
+        "编程",
+        "热处理",
+        "车削",
+        "行业资讯",
+        "数控参数",
+        "主轴"
+      ],
+      "recommendedStarting": [
+        "kb-01464",
+        "kb-01465",
+        "kb-01466",
+        "kb-01467",
+        "kb-01468"
+      ],
+      "averageReadingTime": 4
+    },
+    {
+      "name": "CAM软件",
+      "totalFiles": 120,
+      "totalSize": "0.52MB",
+      "breakdown": {
+        "知识类": 10,
+        "教学类": 58,
+        "案例类": 0,
+        "题库类": 0,
+        "其他": 52
+      },
+      "qualityDistribution": {
+        "high": 3,
+        "medium": 45,
+        "low": 72
+      },
+      "topKeywords": [
+        "G81",
+        "G83",
+        "G84",
+        "主轴",
+        "进给",
+        "M80",
+        "G43",
+        "仿真",
+        "FANUC",
+        "坐标系",
+        "切削",
+        "螺纹",
+        "粗加工",
+        "精加工",
+        "编程"
+      ],
+      "recommendedStarting": [
+        "kb-00692",
+        "kb-00693",
+        "kb-00694",
+        "kb-00695",
+        "kb-00696"
+      ],
+      "averageReadingTime": 4
+    }
+  ],
+  "globalStats": {
+    "mostCommonKeywords": [
+      {
+        "keyword": "职业考证",
+        "count": 40446
+      },
+      {
+        "keyword": "模拟题",
+        "count": 40446
+      },
+      {
+        "keyword": "理论考试",
+        "count": 40446
+      },
+      {
+        "keyword": "切削",
+        "count": 728
+      },
+      {
+        "keyword": "主轴",
+        "count": 523
+      },
+      {
+        "keyword": "冷却",
+        "count": 442
+      },
+      {
+        "keyword": "进给",
+        "count": 438
+      },
+      {
+        "keyword": "编程",
+        "count": 432
+      },
+      {
+        "keyword": "G00",
+        "count": 406
+      },
+      {
+        "keyword": "精加工",
+        "count": 382
+      },
+      {
+        "keyword": "磨损",
+        "count": 341
+      },
+      {
+        "keyword": "粗加工",
+        "count": 310
+      },
+      {
+        "keyword": "G01",
+        "count": 308
+      },
+      {
+        "keyword": "G54",
+        "count": 299
+      },
+      {
+        "keyword": "铣削",
+        "count": 274
+      },
+      {
+        "keyword": "G90",
+        "count": 252
+      },
+      {
+        "keyword": "M03",
+        "count": 247
+      },
+      {
+        "keyword": "FANUC",
+        "count": 237
+      },
+      {
+        "keyword": "报警",
+        "count": 225
+      },
+      {
+        "keyword": "夹具",
+        "count": 223
+      }
+    ],
+    "fileTypeDistribution": {
+      "知识类": 222,
+      "教学类": 828,
+      "案例类": 66,
+      "题库类": 40446,
+      "其他": 732
+    }
+  }
+}

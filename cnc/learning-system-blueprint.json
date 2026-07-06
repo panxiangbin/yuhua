@@ -1,0 +1,63 @@
+{
+  "learning_system": {
+    "version": "1.0",
+    "target_audience_tiers": [
+      {
+        "tier_id": "level_1",
+        "name": "小白层",
+        "description": "零基础，需建立基本概念",
+        "unlocked_by_default": true
+      },
+      {
+        "tier_id": "level_2",
+        "name": "操作层",
+        "description": "有实操经验，需理解原理",
+        "unlocked_by_default": true
+      },
+      {
+        "tier_id": "level_3",
+        "name": "进阶层",
+        "description": "想学编程与参数调试",
+        "unlocked_by_default": false
+      }
+    ],
+    "learning_map": [
+      {
+        "module_id": "m01",
+        "title": "机床的东南西北",
+        "topics": ["坐标系概念", "机床回零"],
+        "estimated_mins": 10,
+        "visual_type": "3D空间示意图",
+        "interactive_tool": null,
+        "roadblock_addressed": ["分不清机床零点与工件零点"]
+      },
+      {
+        "module_id": "m02",
+        "title": "让机床动起来",
+        "topics": ["G00快速定位", "G01直线插补", "G02/G03圆弧"],
+        "estimated_mins": 15,
+        "visual_type": "GIF动态轨迹图",
+        "interactive_tool": "绝对/增量代码对比器",
+        "roadblock_addressed": ["G00撞刀风险", "坐标系混淆"]
+      },
+      {
+        "module_id": "m03",
+        "title": "干活的节奏",
+        "topics": ["主轴转速S", "进给速度F"],
+        "estimated_mins": 12,
+        "visual_type": "仪表盘与切屑对比图",
+        "interactive_tool": "转速进给换算计算器",
+        "roadblock_addressed": ["转速进给凭感觉瞎配"]
+      },
+      {
+        "module_id": "m04",
+        "title": "机床报警大白话",
+        "topics": ["常见系统报警", "机械报警排除"],
+        "estimated_mins": 20,
+        "visual_type": "情景插画",
+        "interactive_tool": "报警大白话翻译机",
+        "roadblock_addressed": ["看不懂官方报警手册"]
+      }
+    ]
+  }
+}

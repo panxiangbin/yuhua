@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="面向数控新手的速查与学习助手，支持目录树导航、知识库检索、图卡学习和参数换算。">
+  <meta name="theme-color" content="#cf6d36">
+  <title>数控速查与学习助手</title>
+  <meta property="og:title" content="数控速查与学习助手">
+  <meta property="og:description" content="像软件一样使用的数控学习网页，支持参数、G代码、报警、工艺、图纸、量具与知识库检索。">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="./share-card.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="./share-card.svg">
+  <link rel="icon" href="./icon-192.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icon-192.svg">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./styles-enhanced.css">
+</head>
+<body>
+  <div class="gate-backdrop" id="access-gate" hidden>
+    <div class="gate-card">
+      <p class="gate-kicker">受控访问</p>
+      <h1>这是给指定人群看的数控资料站</h1>
+      <p class="gate-text">
+        你可以把它理解成“粉丝资料库入口”。只有拿到你发出去的邀请码或私密链接的人，才能进入查看。
+      </p>
+      <form class="gate-form" id="access-form">
+        <label>
+          <span>输入邀请码</span>
+          <input id="access-code-input" type="password" placeholder="请输入你发出去的邀请码" autocomplete="off">
+        </label>
+        <button type="submit" class="primary-button">进入资料库</button>
+      </form>
+      <p class="gate-hint" id="access-message">如果你是通过私密链接进入，页面会自动放行。</p>
+    </div>
+  </div>
+
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <div>
+          <p class="brand-kicker">CNC LEARN HUB</p>
+          <h1>数控速查与学习助手</h1>
+        </div>
+        <button class="sidebar-close" id="sidebar-close" type="button" aria-label="关闭目录">×</button>
+      </div>
+
+      <div class="sidebar-status">
+        <span class="status-pill status-pill-strong" id="lock-pill">访问受控</span>
+        <span class="status-pill" id="knowledge-pill">知识库待加载</span>
+      </div>
+
+      <nav class="tree-nav" id="tree-nav">
+        <section class="tree-group">
+          <button class="tree-item tree-item-standalone" data-route="dashboard" type="button">总览面板</button>
+        </section>
+
+        <section class="tree-group" data-tree-group="study">
+          <button class="tree-parent" data-tree-toggle="study" type="button">
+            <span>新手路线</span>
+            <span class="tree-caret">▾</span>
+          </button>
+          <div class="tree-children open" data-tree-panel="study">
+            <button class="tree-item" data-route="study" type="button">路线总览</button>
+            <button class="tree-item" data-entry-id="learn-coordinate-system" type="button">先学坐标与回零</button>
+            <button class="tree-item" data-entry-id="g02-g03-arc" type="button">先学 G00 G01 G02</button>
+            <button class="tree-item" data-entry-id="fanuc-alarm-common" type="button">再学报警排查</button>
+            <button class="tree-item" data-entry-id="calc-vc-rpm" type="button">最后学参数换算</button>
+          </div>
+        </section>
+
+        <section class="tree-group" data-tree-group="workspace">
+          <button class="tree-parent" data-tree-toggle="workspace" type="button">
+            <span>快速查询目录</span>
+            <span class="tree-caret">▾</span>
+          </button>
+          <div class="tree-children open" data-tree-panel="workspace">
+            <button class="tree-item" data-route="workspace" data-filter="all" type="button">全部条目</button>
+            <button class="tree-item" data-route="workspace" data-filter="gcode" type="button">G代码 / M代码</button>
+            <button class="tree-item" data-route="workspace" data-filter="params" type="button">参数 / 报警 / 故障</button>
+            <button class="tree-item" data-route="workspace" data-filter="operation" type="button">机床操作 / 回零 / 对刀</button>
+            <button class="tree-item" data-route="workspace" data-filter="tooling" type="button">刀具 / 工艺 / 材料</button>
+            <button class="tree-item" data-route="workspace" data-filter="drawing" type="button">图纸 / 量具 / 质量</button>
+            <button class="tree-item" data-route="workspace" data-filter="cases" type="button">案例 / 实战</button>
+          </div>
+        </section>
+
+        <section class="tree-group" data-tree-group="tools">
+          <button class="tree-parent" data-tree-toggle="tools" type="button">
+            <span>软件功能</span>
+            <span class="tree-caret">▾</span>
+          </button>
+          <div class="tree-children open" data-tree-panel="tools">
+            <button class="tree-item" data-route="learning-map" type="button">🗺 知识地图</button>
+            <button class="tree-item" data-route="gallery" type="button">🖼 图片图库</button>
+            <button class="tree-item" data-route="calculator" type="button">🧮 参数换算</button>
+            <button class="tree-item" data-route="library" type="button">📚 知识库管理</button>
+            <button class="tree-item" data-route="favorites" type="button">⭐ 收藏记录</button>
+            <button class="tree-item" data-route="access" type="button">🔒 访问控制</button>
+          </div>
+        </section>
+      </nav>
+    </aside>
+
+    <div class="sidebar-mask" id="sidebar-mask" hidden></div>
+
+    <main class="main-shell">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="menu-button" id="sidebar-open" type="button" aria-label="打开目录">☰</button>
+          <div>
+            <p class="topbar-kicker" id="topbar-kicker">总览面板</p>
+            <h2 id="topbar-title">把网页改成像软件一样用</h2>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <button class="quick-pill" data-jump-keyword="G02" type="button">搜 G02</button>
+          <button class="quick-pill" data-jump-keyword="1815" type="button">搜 1815</button>
+          <button class="quick-pill" data-jump-keyword="对刀" type="button">搜 对刀</button>
+          <button class="quick-pill" data-jump-keyword="报警" type="button">搜 报警</button>
+        </div>
+      </header>
+
+      <section class=”view active” id=”view-dashboard”>
+        <!-- 软件启动台 Hero 区 -->
+        <div class=”launchpad-hero”>
+          <div class=”launchpad-brand”>
+            <div class=”launchpad-icon”>⚙</div>
+            <div>
+              <p class=”launchpad-label”>CNC ENGINEER WORKBENCH</p>
+              <h2>数控工程师工作平台</h2>
+              <p class=”launchpad-tagline”>专业图文资料库 · 智能学习路径 · 实时参数换算</p>
+            </div>
+          </div>
+          <div class=”launchpad-stats” id=”launchpad-stats”>
+            <div class=”stat-item”>
+              <strong id=”stat-entries”>0</strong>
+              <span>知识条目</span>
+            </div>
+            <div class=”stat-item”>
+              <strong id=”stat-images”>125</strong>
+              <span>教学图片</span>
+            </div>
+            <div class=”stat-item”>
+              <strong id=”stat-recents”>0</strong>
+              <span>最近查看</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 快速启动区 -->
+        <div class=”launchpad-grid”>
+          <article class=”launchpad-card primary” data-route=”workspace” data-filter=”all”>
+            <div class=”launchpad-card-icon”>📚</div>
+            <div>
+              <h3>知识库查询</h3>
+              <p>G代码、报警、工艺、刀具参数快速检索</p>
+              <span class=”launchpad-badge”>→ 进入工作区</span>
+            </div>
+          </article>
+
+          <article class=”launchpad-card” data-route=”study”>
+            <div class=”launchpad-card-icon”>🎯</div>
+            <div>
+              <h3>新手学习路线</h3>
+              <p>从零开始，系统化学习数控编程</p>
+              <span class=”launchpad-badge”>→ 查看路线</span>
+            </div>
+          </article>
+
+          <article class=”launchpad-card” data-route=”gallery”>
+            <div class=”launchpad-card-icon”>🖼</div>
+            <div>
+              <h3>图文资料库</h3>
+              <p>125张专业教学图片，图文并茂学习</p>
+              <span class=”launchpad-badge”>→ 浏览图库</span>
+            </div>
+          </article>
+
+          <article class=”launchpad-card” data-route=”learning-map”>
+            <div class=”launchpad-card-icon”>🗺</div>
+            <div>
+              <h3>知识地图</h3>
+              <p>可视化知识结构，快速定位学习方向</p>
+              <span class=”launchpad-badge”>→ 打开地图</span>
+            </div>
+          </article>
+
+          <article class=”launchpad-card” data-route=”calculator”>
+            <div class=”launchpad-card-icon”>🧮</div>
+            <div>
+              <h3>参数计算器</h3>
+              <p>线速度、进给、切削参数在线换算</p>
+              <span class=”launchpad-badge”>→ 开始计算</span>
+            </div>
+          </article>
+
+          <article class=”launchpad-card” data-route=”favorites”>
+            <div class=”launchpad-card-icon”>⭐</div>
+            <div>
+              <h3>我的收藏</h3>
+              <p>查看收藏和最近浏览的内容</p>
+              <span class=”launchpad-badge”>→ 查看记录</span>
+            </div>
+          </article>
+        </div>
+
+        <!-- 快速搜索入口 -->
+        <div class=”launchpad-search”>
+          <div class=”launchpad-search-header”>
+            <h3>快速搜索</h3>
+            <p>输入G代码、报警号、关键词快速定位</p>
+          </div>
+          <div class=”launchpad-search-bar”>
+            <input type=”search” id=”quick-search-input” placeholder=”例如：G02、1815、对刀、报警、螺距...” />
+            <button class=”primary-button” id=”quick-search-btn”>搜索</button>
+          </div>
+          <div class=”quick-keywords”>
+            <span class=”keyword-label”>热门:</span>
+            <button class=”keyword-chip” data-jump-keyword=”G54”>G54</button>
+            <button class=”keyword-chip” data-jump-keyword=”G02”>G02</button>
+            <button class=”keyword-chip” data-jump-keyword=”对刀”>对刀</button>
+            <button class=”keyword-chip” data-jump-keyword=”报警”>报警</button>
+            <button class=”keyword-chip” data-jump-keyword=”1815”>1815</button>
+            <button class=”keyword-chip” data-jump-keyword=”刀具”>刀具</button>
+          </div>
+        </div>
+
+        <!-- 精选图库预览 -->
+        <div class="featured-images-preview">
+          <div class="featured-images-header">
+            <div>
+              <p class="eyebrow">FEATURED IMAGES</p>
+              <h3>精选教学图片</h3>
+            </div>
+            <button class="ghost-button" data-route="gallery">查看全部 →</button>
+          </div>
+          <div class="featured-images-grid" id="featuredImagesPreview"></div>
+        </div>
+      </section>
+
+      <!-- 知识地图视图 -->
+      <section class="view" id="view-learning-map">
+        <div class="section-panel">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">KNOWLEDGE MAP</p>
+              <h3>数控知识地图</h3>
+            </div>
+            <p>可视化知识结构，快速定位学习方向与路径</p>
+          </div>
+
+          <div class="knowledge-map-toolbar">
+            <button class="chip active" data-map-view="tree">树状图</button>
+            <button class="chip" data-map-view="categories">分类视图</button>
+            <button class="chip" data-map-view="paths">学习路径</button>
+          </div>
+
+          <!-- 树状知识地图 -->
+          <div class="knowledge-tree-container" id="knowledgeTreeContainer">
+            <div class="knowledge-tree-placeholder">
+              <div class="placeholder-icon">🗺</div>
+              <p>正在加载知识地图...</p>
+              <small>如果数据文件就绪，这里会显示完整的知识树结构</small>
+            </div>
+            <div class="knowledge-tree-canvas" id="knowledgeTreeCanvas" hidden></div>
+          </div>
+
+          <!-- 分类视图 -->
+          <div class="knowledge-categories-grid" id="knowledgeCategoriesGrid" hidden>
+            <!-- 由 JS 动态填充 -->
+          </div>
+
+          <!-- 学习路径视图 -->
+          <div class="learning-paths-grid" id="learningPathsGrid" hidden>
+            <!-- 由 JS 动态填充 -->
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="view-study">
+        <div class="section-panel">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">学习路线</p>
+              <h3>新手先学这 4 步</h3>
+            </div>
+            <p>别一上来背参数。先把运动、坐标、常用代码、报警和换算逻辑理清楚。</p>
+          </div>
+
+          <div class="route-grid">
+            <article class="route-card actionable" data-entry-id="learn-coordinate-system">
+              <span class="route-step">01</span>
+              <h4>先懂机床怎么动</h4>
+              <p>先学坐标轴、回零、工件坐标、绝对值与增量。</p>
+            </article>
+            <article class="route-card actionable" data-entry-id="g02-g03-arc">
+              <span class="route-step">02</span>
+              <h4>先学最常用代码</h4>
+              <p>优先学 G00、G01、G02、G03、G90、G91、G54-G59。</p>
+            </article>
+            <article class="route-card actionable" data-entry-id="fanuc-alarm-common">
+              <span class="route-step">03</span>
+              <h4>再学参数和报警</h4>
+              <p>参数别乱改，先知道作用和风险，再学排查顺序。</p>
+            </article>
+            <article class="route-card actionable" data-entry-id="calc-vc-rpm">
+              <span class="route-step">04</span>
+              <h4>最后学工艺和换算</h4>
+              <p>线速度、转速、进给、螺距、余量，这些才是现场常用。</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="view-workspace">
+        <div class="workspace-layout">
+          <!-- 左侧：搜索与列表区 -->
+          <section class="workspace-panel search-panel">
+            <div class="workspace-header">
+              <div>
+                <p class="eyebrow">KNOWLEDGE BASE</p>
+                <h3>知识库工作区</h3>
+              </div>
+              <div class="workspace-status-bar">
+                <span class="status-indicator" id="workspace-status-indicator">●</span>
+                <span id="workspace-status-text">基础条目已加载</span>
+              </div>
+            </div>
+
+            <div class="search-toolbar">
+              <div class="search-input-group">
+                <label>
+                  <span>搜索</span>
+                  <input id="search-input" type="search" placeholder="G代码 · 报警 · 对刀 · 刀具...">
+                </label>
+                <button class="icon-button" id="search-clear-btn" title="清除搜索">×</button>
+              </div>
+              <label class="filter-select-group">
+                <span>分类</span>
+                <select id="category-select"></select>
+              </label>
+            </div>
+
+            <div class="chip-row" id="preset-chip-row"></div>
+            <div class="chip-row" id="knowledge-chip-row"></div>
+
+            <div class="view-mode-toolbar">
+              <div class="view-mode-group">
+                <button class="mode-btn" data-workspace-mode="list" title="列表模式">
+                  <span class="mode-icon">☰</span>
+                  <span>列表</span>
+                </button>
+                <button class="mode-btn active" data-workspace-mode="visual" title="图文模式">
+                  <span class="mode-icon">▦</span>
+                  <span>图文</span>
+                </button>
+              </div>
+              <button class="filter-btn" data-workspace-flag="with-images" title="只看带图">
+                <span class="filter-icon">🖼</span>
+                <span>仅带图</span>
+              </button>
+            </div>
+
+            <div class="search-meta" id="search-meta"></div>
+            <div class="result-list" id="result-list"></div>
+          </section>
+
+          <!-- 右侧：详情区 -->
+          <section class="workspace-panel detail-panel">
+            <div class="detail-header">
+              <div>
+                <p class="eyebrow">DETAIL VIEW</p>
+                <h3 id="detail-title">选择左侧条目查看详情</h3>
+              </div>
+              <div class="detail-toolbar">
+                <button class="icon-button" id="detail-prev" title="上一条">←</button>
+                <button class="icon-button" id="detail-next-button" title="下一条">→</button>
+                <button class="icon-button" id="favorite-toggle" title="收藏">⭐</button>
+                <button class="icon-button" id="detail-share" title="分享">↗</button>
+              </div>
+            </div>
+
+            <div class="detail-content-grid">
+              <!-- 主要信息卡片 -->
+              <article class="detail-card detail-card-primary">
+                <div class="detail-card-header">
+                  <span class="detail-label" id="detail-category">知识条目</span>
+                  <span class="detail-badge" id="detail-risk-badge">未选择</span>
+                </div>
+                <h4 class="detail-code" id="detail-code">请选择左侧内容</h4>
+                <p class="detail-summary" id="detail-summary">这里会显示核心说明和使用场景</p>
+              </article>
+
+              <!-- 图片展示卡片 - 优先显示 -->
+              <article class="detail-card detail-card-images" id="detail-image-card" hidden>
+                <div class="detail-card-header">
+                  <h4>配图说明</h4>
+                  <span class="image-count-badge" id="image-count-badge">0 张</span>
+                </div>
+                <div class="detail-image-gallery" id="detail-image-stage"></div>
+              </article>
+
+              <!-- 新手理解 -->
+              <article class="detail-card">
+                <h4>💡 新手先这样理解</h4>
+                <p id="detail-beginner">概念和场景优先，参数和代码其次</p>
+              </article>
+
+              <!-- 使用场景 -->
+              <article class="detail-card">
+                <h4>🎯 适合什么时候查</h4>
+                <p id="detail-usage">遇到不懂的代码或参数时快速定位</p>
+              </article>
+
+              <!-- 易错提醒 -->
+              <article class="detail-card detail-card-warning">
+                <h4>⚠️ 最容易错的地方</h4>
+                <p id="detail-warning">查到之后要注意的风险点和验证方法</p>
+              </article>
+
+              <!-- 代码示例 -->
+              <article class="detail-card detail-card-code">
+                <h4>📝 代码示例</h4>
+                <pre id="detail-example">从简单示例开始理解</pre>
+              </article>
+
+              <!-- 学习路径 -->
+              <article class="detail-card">
+                <h4>➡️ 下一步学什么</h4>
+                <p id="detail-next">相关内容的推荐学习顺序</p>
+              </article>
+
+              <!-- 知识库原文 -->
+              <article class="detail-card detail-card-preview">
+                <div class="detail-card-header">
+                  <h4>📚 知识库原文摘录</h4>
+                  <button class="ghost-button small" id="load-preview-button">加载原文</button>
+                </div>
+                <p class="detail-preview-status" id="detail-preview-status">点击按钮加载完整知识库内容</p>
+                <pre id="detail-preview" hidden></pre>
+              </article>
+
+              <!-- 推荐内容 -->
+              <article class="detail-card">
+                <h4>🔗 相关推荐</h4>
+                <div class="related-links-grid" id="related-links"></div>
+              </article>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" id="view-gallery">
+        <div class="section-panel">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Gemini 图片图卡</p>
+              <h3>首批图片直接在站内显示</h3>
+            </div>
+            <p>这部分专门解决“已经画完了，但网页里根本看不到”的问题。</p>
+          </div>
+
+          <div class="gallery-grid" id="gallery-grid"></div>
+        </div>
+      </section>
+
+      <section class="view" id="view-calculator">
+        <div class="section-panel">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">参数换算</p>
+              <h3>现场最常用的 5 个计算</h3>
+            </div>
+            <p>不再在一长页底部翻找，单独做成工作区。</p>
+          </div>
+
+          <div class="calculator-grid">
+            <article class="calc-card">
+              <h4>线速度转转速</h4>
+              <label><span>线速度 Vc (m/min)</span><input id="vc-input" type="number" min="0" step="0.1" value="120"></label>
+              <label><span>直径 D (mm)</span><input id="diameter-input" type="number" min="0" step="0.1" value="50"></label>
+              <button class="primary-button" data-calc="rpm" type="button">计算转速</button>
+              <p class="calc-result" id="rpm-result">结果显示在这里</p>
+            </article>
+
+            <article class="calc-card">
+              <h4>转速转线速度</h4>
+              <label><span>转速 n (rpm)</span><input id="rpm-back-input" type="number" min="0" step="1" value="800"></label>
+              <label><span>直径 D (mm)</span><input id="diameter-back-input" type="number" min="0" step="0.1" value="50"></label>
+              <button class="primary-button" data-calc="vc" type="button">计算线速度</button>
+              <p class="calc-result" id="vc-result">结果显示在这里</p>
+            </article>
+
+            <article class="calc-card">
+              <h4>每转进给转每分钟进给</h4>
+              <label><span>每转进给 f (mm/rev)</span><input id="feed-per-rev-input" type="number" min="0" step="0.001" value="0.2"></label>
+              <label><span>转速 n (rpm)</span><input id="feed-rpm-input" type="number" min="0" step="1" value="600"></label>
+              <button class="primary-button" data-calc="feed" type="button">计算进给</button>
+              <p class="calc-result" id="feed-result">结果显示在这里</p>
+            </article>
+
+            <article class="calc-card">
+              <h4>英制牙数转螺距</h4>
+              <label><span>TPI</span><input id="tpi-input" type="number" min="0" step="0.1" value="20"></label>
+              <button class="primary-button" data-calc="pitch" type="button">计算螺距</button>
+              <p class="calc-result" id="pitch-result">结果显示在这里</p>
+            </article>
+
+            <article class="calc-card">
+              <h4>半径转直径</h4>
+              <label><span>半径 R (mm)</span><input id="radius-input" type="number" min="0" step="0.01" value="12.5"></label>
+              <button class="primary-button" data-calc="diameter" type="button">计算直径</button>
+              <p class="calc-result" id="diameter-result">结果显示在这里</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="view-library">
+        <div class="section-panel">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">本地知识库并入</p>
+              <h3>把本地数据库内容逐步接成网页可查</h3>
+            </div>
+            <p>先把核心数控知识包并入，再按需拆分超大档案，避免一打开就卡死。</p>
+          </div>
+
+          <div class="library-grid">
+            <article class="library-card">
+              <span class="card-kicker">基础条目</span>
+              <strong id="base-count">0</strong>
+              <p>来自 `data.js` 和 `kb-extra.js` 的结构化条目。</p>
+            </article>
+
+            <article class="library-card">
+              <span class="card-kicker">知识库核心包</span>
+              <strong id="core-count">待加载</strong>
+              <p>优先接入真正有用的编程、操作、刀具、故障、案例类知识。</p>
+            </article>
+
+            <article class="library-card">
+              <span class="card-kicker">超大本地档案</span>
+              <strong id="archive-count">待尝试</strong>
+              <p>本地完整索引量很大，需要分块接入，不能粗暴整包塞进首页。</p>
+            </article>
+          </div>
+
+          <div class="library-actions">
+            <button class="primary-button" id="load-core-library" type="button">加载核心知识库包</button>
+            <button class="ghost-button" id="load-full-library" type="button">尝试加载完整本地索引</button>
+          </div>
+
+          <article class="library-browser-card">
+            <div class="section-head compact">
+              <div>
+                <p class="eyebrow">分类浏览</p>
+                <h3>按知识库目录直接进入</h3>
+              </div>
+              <p>不想搜的时候，可以直接按分类点进去。点一下就跳到对应条目区。</p>
+            </div>
+            <div class="library-browser" id="library-browser"></div>
+          </article>
+
+          <article class="library-log-card">
+            <h4>当前并入状态</h4>
+            <div class="library-log" id="library-log"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="view" id="view-favorites">
+        <div class="section-panel">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">最近查看 / 收藏</p>
+              <h3>像软件一样接着学，不用每次重找</h3>
+            </div>
+            <p>退出后回来还能继续接着学。</p>
+          </div>
+
+          <div class="favorites-grid">
+            <article class="detail-card">
+              <h4>最近查看</h4>
+              <div class="link-cloud" id="recent-links"></div>
+            </article>
+            <article class="detail-card">
+              <h4>我的收藏</h4>
+              <div class="link-cloud" id="favorite-links"></div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="view-access">
+        <div class="section-panel">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">访问控制</p>
+              <h3>只让你授权的人看到完整资料</h3>
+            </div>
+            <p>这一页现在不只是说明，而是直接给你成品化分享入口。你可以把正式网址或授权链接发给指定的人。</p>
+          </div>
+
+          <div class="access-grid">
+            <article class="access-card">
+              <h4>现在怎么放行</h4>
+              <p>网页会先显示受控访问层。输入邀请码，或者直接通过你发出去的授权链接，才会进入资料区。</p>
+            </article>
+            <article class="access-card">
+              <h4>适合抖音粉丝</h4>
+              <p>你可以只在视频、私信、群或直播里发授权链接。外部人看不到链接，自然就进不来完整内容。</p>
+            </article>
+            <article class="access-card">
+              <h4>更强方案</h4>
+              <p>真正强控制要上 Cloudflare Access 或带登录后端。当前这版先把“你发出去的人能直接打开”的正式入口先做稳。</p>
+            </article>
+          </div>
+
+          <div class="access-share-panel">
+            <div class="section-head compact">
+              <div>
+                <p class="eyebrow">分享中心</p>
+                <h3>可以直接发人的公网入口</h3>
+              </div>
+              <p id="access-share-status">这里会显示正式公网地址和已整理好的授权链接。</p>
+            </div>
+
+            <article class="share-card hero">
+              <div class="share-card-text">
+                <h4>正式公网地址</h4>
+                <p>这是你以后对外统一发的主入口。别人打开后，会先进入受控访问页。</p>
+              </div>
+              <div class="share-url-row">
+                <code id="access-public-url">https://panxiangbin.github.io/yuhua/cnc/</code>
+                <button class="ghost-button" id="copy-public-url" type="button">复制网址</button>
+              </div>
+            </article>
+
+            <div class="access-link-list" id="access-share-links"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="./data.js"></script>
+  <script src="./kb-extra.js"></script>
+  <script src="./featured-images.js"></script>
+  <script src="./featured-images-extended.js"></script>
+  <script src="./featured-images-part2.js"></script>
+  <script src="./featured-images-supplement.js"></script>
+  <script src="./gallery-library.js"></script>
+  <script src="./gallery-library-enhanced.js"></script>
+  <script src="./kb-content-manifest.js"></script>
+  <script src="./ui-knowledge-tree.js"></script>
+  <script src="./ui-recommendations.js"></script>
+  <script src="./app.js"></script>
+  <script src="./gallery-featured.js"></script>
+
+  <!-- 图片放大弹窗 -->
+  <div class="cnc-gallery-modal" id="cncGalleryModal" aria-hidden="true">
+    <div class="cnc-gallery-modal-mask" data-close="true"></div>
+
+    <div class="cnc-gallery-modal-panel">
+      <button class="cnc-gallery-modal-close" id="cncGalleryClose" aria-label="关闭">×</button>
+
+      <button class="cnc-gallery-nav cnc-gallery-prev" id="cncGalleryPrev" aria-label="上一张">‹</button>
+
+      <figure class="cnc-gallery-preview">
+        <img id="cncGalleryPreviewImg" src="" alt="">
+        <figcaption>
+          <h3 id="cncGalleryPreviewTitle"></h3>
+          <p id="cncGalleryPreviewDesc"></p>
+          <span id="cncGalleryPreviewIndex"></span>
+        </figcaption>
+      </figure>
+
+      <button class="cnc-gallery-nav cnc-gallery-next" id="cncGalleryNext" aria-label="下一张">›</button>
+    </div>
+  </div>
+</body>
+</html>

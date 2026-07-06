@@ -1,0 +1,2972 @@
+﻿[
+    {
+        "canonical":  "G00",
+        "aliases":  [
+                        "G0",
+                        "G零零",
+                        "rapid positioning",
+                        "rapid traverse",
+                        "快速定位",
+                        "快速移动",
+                        "快移"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "用户常用简写和中文叫法",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G01",
+        "aliases":  [
+                        "G1",
+                        "G零一",
+                        "linear interpolation",
+                        "直线插补",
+                        "直线切削",
+                        "直线走刀"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "FANUC/西门子通用",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G02",
+        "aliases":  [
+                        "clockwise arc",
+                        "G2",
+                        "顺时针圆弧",
+                        "顺圆",
+                        "圆弧插补顺时针"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "CW圆弧",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G03",
+        "aliases":  [
+                        "counterclockwise arc",
+                        "G3",
+                        "逆时针圆弧",
+                        "逆圆",
+                        "圆弧插补逆时针"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "CCW圆弧",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G04",
+        "aliases":  [
+                        "dwell",
+                        "G零四",
+                        "停顿",
+                        "延时",
+                        "暂停"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "暂停指令",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G10",
+        "aliases":  [
+                        "programmable data input",
+                        "参数输入",
+                        "刀补写入",
+                        "可编程参数输入",
+                        "坐标写入"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "高级应用",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G11",
+        "aliases":  [
+                        "data input cancel",
+                        "取消参数输入"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G15",
+        "aliases":  [
+                        "polar coordinate cancel",
+                        "取消极坐标"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G16",
+        "aliases":  [
+                        "polar coordinate",
+                        "极坐标",
+                        "极坐标编程",
+                        "圆周阵列"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "常用于圆周孔",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G17",
+        "aliases":  [
+                        "XY plane",
+                        "XY平面",
+                        "平面选择XY"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "默认平面",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G18",
+        "aliases":  [
+                        "XZ plane",
+                        "XZ平面",
+                        "平面选择XZ"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "常用于车床",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G19",
+        "aliases":  [
+                        "YZ plane",
+                        "YZ平面",
+                        "平面选择YZ"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G20",
+        "aliases":  [
+                        "in",
+                        "inch mode",
+                        "英制",
+                        "英制编程"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "单位切换",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G21",
+        "aliases":  [
+                        "metric mode",
+                        "mm模式",
+                        "公制",
+                        "公制编程",
+                        "毫米编程"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "国内默认",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G28",
+        "aliases":  [
+                        "reference point return",
+                        "返回参考点",
+                        "回参考点",
+                        "自动回零"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "经中间点返回",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G29",
+        "aliases":  [
+                        "return from reference",
+                        "从参考点返回"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G30",
+        "aliases":  [
+                        "2nd reference point",
+                        "第2参考点",
+                        "第2参考点返回"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "常用于换刀",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G31",
+        "aliases":  [
+                        "skip function",
+                        "跳过",
+                        "跳转指令"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "测头用",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G32",
+        "aliases":  [
+                        "G32螺纹",
+                        "thread cutting",
+                        "单段螺纹",
+                        "螺纹切削"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "车床螺纹",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G33",
+        "aliases":  [
+                        "constant lead thread",
+                        "恒螺距",
+                        "恒螺距螺纹"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "西门子系统",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G34",
+        "aliases":  [
+                        "variable lead thread",
+                        "变螺距螺纹"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G35",
+        "aliases":  [
+                        "automatic tool setting",
+                        "自动对刀"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G36",
+        "aliases":  [
+                        "automatic tool compensation",
+                        "自动刀具补偿"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G37",
+        "aliases":  [
+                        "auto tool length measurement",
+                        "自动刀具长度测量"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G40",
+        "aliases":  [
+                        "cutter compensation cancel",
+                        "半径补偿取消",
+                        "刀补取消",
+                        "取消刀补",
+                        "取消刀具补偿"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "必须记得取消",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G41",
+        "aliases":  [
+                        "cutter compensation left",
+                        "刀补左",
+                        "刀具半径左补偿",
+                        "左补偿",
+                        "左刀补"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "顺铣",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G42",
+        "aliases":  [
+                        "cutter compensation right",
+                        "刀补右",
+                        "刀具半径右补偿",
+                        "右补偿",
+                        "右刀补"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "逆铣",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G43",
+        "aliases":  [
+                        "H值",
+                        "tool length compensation",
+                        "刀长补偿",
+                        "刀长补偿正",
+                        "刀长正",
+                        "长度补偿",
+                        "长度补偿正"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "正补偿",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G44",
+        "aliases":  [
+                        "length compensation negative",
+                        "刀长补偿负",
+                        "刀长负"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "负补偿",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G45",
+        "aliases":  [
+                        "刀具偏置加大",
+                        "刀具偏置增加"
+                    ],
+        "category":  "gcode",
+        "priority":  3,
+        "notes":  "较少用",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G46",
+        "aliases":  [
+                        "刀具偏置减少",
+                        "刀具偏置减小"
+                    ],
+        "category":  "gcode",
+        "priority":  3,
+        "notes":  "较少用",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G49",
+        "aliases":  [
+                        "G49取消",
+                        "tool length cancel",
+                        "取消刀长",
+                        "取消刀长补偿",
+                        "长度补偿取消"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "换刀前后注意",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G50",
+        "aliases":  [
+                        "G50车床",
+                        "spindle speed clamp",
+                        "主轴限速",
+                        "最高转速限制",
+                        "坐标系设定"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "车床常用",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G51",
+        "aliases":  [
+                        "scaling",
+                        "比例缩放",
+                        "缩放"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G52",
+        "aliases":  [
+                        "G52偏置",
+                        "local coordinate",
+                        "局部坐标",
+                        "局部坐标系"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "临时偏置",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G53",
+        "aliases":  [
+                        "G53调用",
+                        "machine coordinate",
+                        "机床坐标系",
+                        "机械坐标"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "调用机床坐标",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G54",
+        "aliases":  [
+                        "G54坐标",
+                        "work offset 1",
+                        "第一工件坐标",
+                        "对刀G54",
+                        "工件零点",
+                        "工件坐标系1"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "最常用",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G55",
+        "aliases":  [
+                        "G55坐标",
+                        "work offset 2",
+                        "第二工件坐标",
+                        "工件坐标系2"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "多工位",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G56",
+        "aliases":  [
+                        "G56坐标",
+                        "work offset 3",
+                        "第三工件坐标",
+                        "工件坐标系3"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G57",
+        "aliases":  [
+                        "G57坐标",
+                        "work offset 4",
+                        "第四工件坐标",
+                        "工件坐标系4"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G58",
+        "aliases":  [
+                        "G58坐标",
+                        "work offset 5",
+                        "第五工件坐标",
+                        "工件坐标系5"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G59",
+        "aliases":  [
+                        "G59坐标",
+                        "work offset 6",
+                        "第六工件坐标",
+                        "工件坐标系6"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G61",
+        "aliases":  [
+                        "exact stop",
+                        "精确停止",
+                        "准停"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "拐角精度",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G62",
+        "aliases":  [
+                        "corner deceleration",
+                        "拐角减速"
+                    ],
+        "category":  "gcode",
+        "priority":  3,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G63",
+        "aliases":  [
+                        "tapping mode",
+                        "攻丝模式"
+                    ],
+        "category":  "gcode",
+        "priority":  3,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G64",
+        "aliases":  [
+                        "continuous path",
+                        "连续路径",
+                        "连续切削",
+                        "轮廓加工"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "默认模式",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G65",
+        "aliases":  [
+                        "macro call",
+                        "宏程序调用",
+                        "宏调用",
+                        "自定义循环"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "非模态",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G66",
+        "aliases":  [
+                        "modal macro call",
+                        "模态宏",
+                        "模态宏调用"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G67",
+        "aliases":  [
+                        "cancel modal macro",
+                        "取消模态宏"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G68",
+        "aliases":  [
+                        "coordinate rotation",
+                        "旋转坐标系",
+                        "坐标旋转"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G69",
+        "aliases":  [
+                        "cancel coordinate rotation",
+                        "取消旋转",
+                        "取消坐标旋转"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G70",
+        "aliases":  [
+                        "finishing cycle",
+                        "精车循环",
+                        "精加工循环"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "车床",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G71",
+        "aliases":  [
+                        "rough turning cycle",
+                        "粗车外圆",
+                        "粗车循环",
+                        "外圆粗车循环"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "车床",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G72",
+        "aliases":  [
+                        "rough facing cycle",
+                        "端面粗车",
+                        "端面粗车循环"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "车床",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G73",
+        "aliases":  [
+                        "pattern repeating cycle",
+                        "仿形粗车循环",
+                        "封闭切削循环",
+                        "啄钻"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "车床/铣床",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G74",
+        "aliases":  [
+                        "face drilling",
+                        "端面啄钻循环",
+                        "端面钻孔",
+                        "左旋攻丝"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G75",
+        "aliases":  [
+                        "grooving cycle",
+                        "切槽循环",
+                        "外径切槽"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "车床",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G76",
+        "aliases":  [
+                        "boring cycle",
+                        "thread cutting cycle",
+                        "精镗循环",
+                        "螺纹车削",
+                        "螺纹循环"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "注意区分车床/铣床用法",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G80",
+        "aliases":  [
+                        "cancel canned cycle",
+                        "G80取消",
+                        "固定循环取消",
+                        "取消固定循环"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "钻孔后必须取消",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G81",
+        "aliases":  [
+                        "drilling cycle",
+                        "spot drilling",
+                        "普通钻孔",
+                        "钻孔",
+                        "钻孔循环"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "浅孔",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G82",
+        "aliases":  [
+                        "counterboring",
+                        "沉孔",
+                        "锪孔循环",
+                        "镗阶梯孔"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "孔底暂停",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G83",
+        "aliases":  [
+                        "deep hole drilling",
+                        "G83啄钻",
+                        "排屑钻孔",
+                        "深孔啄钻",
+                        "啄式钻孔",
+                        "啄钻循环"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "深孔",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G84",
+        "aliases":  [
+                        "G84攻丝",
+                        "tapping cycle",
+                        "刚性攻丝",
+                        "攻丝",
+                        "攻丝循环"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "注意同步",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G85",
+        "aliases":  [
+                        "boring cycle",
+                        "镗孔",
+                        "镗孔循环1"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "进退同进给",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G86",
+        "aliases":  [
+                        "boring cycle 2",
+                        "镗孔循环2"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "孔底停主轴",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G87",
+        "aliases":  [
+                        "back boring cycle",
+                        "背镗循环",
+                        "反镗"
+                    ],
+        "category":  "gcode",
+        "priority":  3,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G88",
+        "aliases":  [
+                        "boring cycle 4",
+                        "镗孔循环4"
+                    ],
+        "category":  "gcode",
+        "priority":  3,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G89",
+        "aliases":  [
+                        "boring cycle 5",
+                        "镗孔循环5"
+                    ],
+        "category":  "gcode",
+        "priority":  3,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G90",
+        "aliases":  [
+                        "absolute programming",
+                        "G90绝对",
+                        "绝对值",
+                        "绝对值编程",
+                        "绝对坐标"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "默认模式",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G91",
+        "aliases":  [
+                        "G91增量",
+                        "incremental programming",
+                        "增量",
+                        "增量值编程",
+                        "增量坐标"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "注意模式切换",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G92",
+        "aliases":  [
+                        "coordinate preset",
+                        "G92坐标",
+                        "螺纹循环",
+                        "坐标预设"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "不同系统意义不同",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G94",
+        "aliases":  [
+                        "feed per minute",
+                        "mm/min",
+                        "每分进给",
+                        "每分钟进给"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "铣床常用",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G95",
+        "aliases":  [
+                        "feed per revolution",
+                        "mm/rev",
+                        "每转进给"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "车床常用",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G96",
+        "aliases":  [
+                        "constant surface speed",
+                        "CSS",
+                        "G96恒线速",
+                        "恒线速",
+                        "恒线速度控制"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "车削",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G97",
+        "aliases":  [
+                        "constant rpm",
+                        "定转速",
+                        "固定转速",
+                        "取消恒线速"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G98",
+        "aliases":  [
+                        "return to initial level",
+                        "初始平面返回",
+                        "返回初始平面",
+                        "返回起始点"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "固定循环退刀",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G99",
+        "aliases":  [
+                        "return to R level",
+                        "R平面返回",
+                        "返回R平面"
+                    ],
+        "category":  "gcode",
+        "priority":  1,
+        "notes":  "固定循环退刀",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "M00",
+        "aliases":  [
+                        "program stop",
+                        "程序暂停",
+                        "无条件停止",
+                        "暂停"
+                    ],
+        "category":  "mcode",
+        "priority":  1,
+        "notes":  "需再启动",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "M01",
+        "aliases":  [
+                        "optional stop",
+                        "条件暂停",
+                        "选择性暂停"
+                    ],
+        "category":  "mcode",
+        "priority":  1,
+        "notes":  "面板打开才生效",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "M02",
+        "aliases":  [
+                        "program end",
+                        "程序结束",
+                        "主程序结束"
+                    ],
+        "category":  "mcode",
+        "priority":  1,
+        "notes":  "不回卷",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "M03",
+        "aliases":  [
+                        "spindle forward",
+                        "正转",
+                        "主轴正转",
+                        "主轴正转CW"
+                    ],
+        "category":  "mcode",
+        "priority":  1,
+        "notes":  "CW",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "M04",
+        "aliases":  [
+                        "spindle reverse",
+                        "反转",
+                        "主轴反转",
+                        "主轴反转CCW"
+                    ],
+        "category":  "mcode",
+        "priority":  1,
+        "notes":  "CCW",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "M05",
+        "aliases":  [
+                        "spindle stop",
+                        "停车",
+                        "主轴停",
+                        "主轴停止"
+                    ],
+        "category":  "mcode",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "M06",
+        "aliases":  [
+                        "ATC",
+                        "M6",
+                        "tool change",
+                        "换刀",
+                        "换刀指令",
+                        "自动换刀"
+                    ],
+        "category":  "mcode",
+        "priority":  1,
+        "notes":  "加工中心",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "M07",
+        "aliases":  [
+                        "mist coolant",
+                        "喷雾冷却",
+                        "雾状冷却"
+                    ],
+        "category":  "mcode",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "M08",
+        "aliases":  [
+                        "coolant on",
+                        "开冷却",
+                        "冷却开",
+                        "冷却液开",
+                        "切削液开"
+                    ],
+        "category":  "mcode",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "M09",
+        "aliases":  [
+                        "coolant off",
+                        "关冷却",
+                        "冷却关",
+                        "冷却液关"
+                    ],
+        "category":  "mcode",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "M10",
+        "aliases":  [
+                        "clamp",
+                        "clamp on",
+                        "夹紧"
+                    ],
+        "category":  "mcode",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "M11",
+        "aliases":  [
+                        "unclamp",
+                        "unclamp on",
+                        "松开"
+                    ],
+        "category":  "mcode",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "M13",
+        "aliases":  [
+                        "spindle forward coolant on",
+                        "主轴正转+冷却"
+                    ],
+        "category":  "mcode",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "M14",
+        "aliases":  [
+                        "spindle reverse coolant on",
+                        "主轴反转+冷却"
+                    ],
+        "category":  "mcode",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "M17",
+        "aliases":  [
+                        "spindle orientation cancel",
+                        "主轴定向取消"
+                    ],
+        "category":  "mcode",
+        "priority":  3,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "M19",
+        "aliases":  [
+                        "M19定向",
+                        "spindle orientation",
+                        "定向",
+                        "主轴定位",
+                        "主轴定向"
+                    ],
+        "category":  "mcode",
+        "priority":  1,
+        "notes":  "换刀前常用",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "M21",
+        "aliases":  [
+                        "mirror image cancel",
+                        "镜像取消"
+                    ],
+        "category":  "mcode",
+        "priority":  3,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "M22",
+        "aliases":  [
+                        "mirror image on",
+                        "镜像开"
+                    ],
+        "category":  "mcode",
+        "priority":  3,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "M23",
+        "aliases":  [
+                        "thread unwind",
+                        "螺纹退出"
+                    ],
+        "category":  "mcode",
+        "priority":  3,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "M30",
+        "aliases":  [
+                        "M30复位",
+                        "program end and rewind",
+                        "程序结束并返回",
+                        "程序结束复位",
+                        "主程序结束返回"
+                    ],
+        "category":  "mcode",
+        "priority":  1,
+        "notes":  "回卷到开头",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "M41",
+        "aliases":  [
+                        "low gear",
+                        "主轴低速",
+                        "主轴低速档"
+                    ],
+        "category":  "mcode",
+        "priority":  2,
+        "notes":  "变速箱",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "M42",
+        "aliases":  [
+                        "high gear",
+                        "主轴高速",
+                        "主轴高速档"
+                    ],
+        "category":  "mcode",
+        "priority":  2,
+        "notes":  "变速箱",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "M48",
+        "aliases":  [
+                        "override cancel cancel",
+                        "取消倍率取消"
+                    ],
+        "category":  "mcode",
+        "priority":  3,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "M49",
+        "aliases":  [
+                        "override cancel",
+                        "取消倍率",
+                        "取消倍率取消"
+                    ],
+        "category":  "mcode",
+        "priority":  3,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "M78",
+        "aliases":  [
+                        "tailstock forward",
+                        "尾座进",
+                        "尾座前进"
+                    ],
+        "category":  "mcode",
+        "priority":  3,
+        "notes":  "车床",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "M79",
+        "aliases":  [
+                        "tailstock backward",
+                        "尾座后退",
+                        "尾座退"
+                    ],
+        "category":  "mcode",
+        "priority":  3,
+        "notes":  "车床",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "M94",
+        "aliases":  [
+                        "mirror cancel",
+                        "镜像取消"
+                    ],
+        "category":  "mcode",
+        "priority":  3,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "M98",
+        "aliases":  [
+                        "M98调用",
+                        "subprogram call",
+                        "调用子程序",
+                        "子程序",
+                        "子程序调用"
+                    ],
+        "category":  "mcode",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "M99",
+        "aliases":  [
+                        "subprogram return",
+                        "返回主程序",
+                        "循环返回",
+                        "子程序返回"
+                    ],
+        "category":  "mcode",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "回零",
+        "aliases":  [
+                        "home",
+                        "home return",
+                        "reference return",
+                        "复位",
+                        "归零",
+                        "回参考点",
+                        "回机械原点",
+                        "开机回零"
+                    ],
+        "category":  "operation",
+        "priority":  1,
+        "notes":  "新手最基础",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "对刀",
+        "aliases":  [
+                        "tool presetting",
+                        "tool setting",
+                        "work offset setting",
+                        "刀补设定",
+                        "分中",
+                        "碰数",
+                        "设定工件原点",
+                        "校表",
+                        "寻边",
+                        "找零点"
+                    ],
+        "category":  "operation",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G54对刀",
+        "aliases":  [
+                        "G54录入",
+                        "work zero setting",
+                        "工件零点设定",
+                        "工件坐标设定",
+                        "设定G54"
+                    ],
+        "category":  "operation",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "刀长补偿",
+        "aliases":  [
+                        "H补偿",
+                        "H值",
+                        "tool length offset",
+                        "刀具长度补偿",
+                        "刀长偏置",
+                        "长度补偿"
+                    ],
+        "category":  "operation",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "刀补",
+        "aliases":  [
+                        "cutter compensation",
+                        "D补偿",
+                        "D值",
+                        "半径补偿",
+                        "刀具半径补偿",
+                        "刀具补偿"
+                    ],
+        "category":  "operation",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "超程",
+        "aliases":  [
+                        "OT报警",
+                        "over travel",
+                        "超限",
+                        "超行程",
+                        "软限位",
+                        "限位",
+                        "硬限位"
+                    ],
+        "category":  "alarm",
+        "priority":  1,
+        "notes":  "常见操作报警",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "伺服报警",
+        "aliases":  [
+                        "servo alarm",
+                        "SV报警",
+                        "伺服故障",
+                        "伺服驱动",
+                        "伺服异常",
+                        "驱动器报警",
+                        "轴报警"
+                    ],
+        "category":  "alarm",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "主轴报警",
+        "aliases":  [
+                        "spindle alarm",
+                        "SP报警",
+                        "主轴不转",
+                        "主轴故障",
+                        "主轴驱动",
+                        "主轴异常"
+                    ],
+        "category":  "alarm",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "换刀故障",
+        "aliases":  [
+                        "ATC alarm",
+                        "ATC错误",
+                        "ATC故障",
+                        "刀库报警",
+                        "刀库故障",
+                        "换刀报警",
+                        "换刀卡住",
+                        "换刀失败"
+                    ],
+        "category":  "alarm",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "回零失败",
+        "aliases":  [
+                        "home fail",
+                        "reference fail",
+                        "不回零",
+                        "回参考点失败",
+                        "回零报警",
+                        "找不到零点"
+                    ],
+        "category":  "alarm",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "PS报警",
+        "aliases":  [
+                        "program alarm",
+                        "PS code",
+                        "编程报警",
+                        "编程错误",
+                        "程序错误"
+                    ],
+        "category":  "alarm",
+        "priority":  2,
+        "notes":  "编程相关",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "OT报警",
+        "aliases":  [
+                        "over travel alarm",
+                        "超程报警",
+                        "限位报警",
+                        "行程超限"
+                    ],
+        "category":  "alarm",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "强制换刀",
+        "aliases":  [
+                        "manual tool change",
+                        "刀库调试",
+                        "刀库手动操作",
+                        "刀库维护",
+                        "手动换刀"
+                    ],
+        "category":  "operation",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "加工中心",
+        "aliases":  [
+                        "CNC铣床",
+                        "HMC",
+                        "machining center",
+                        "MC",
+                        "VMC",
+                        "加工中心机",
+                        "立加",
+                        "卧加"
+                    ],
+        "category":  "machine",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "数控车床",
+        "aliases":  [
+                        "CNC车床",
+                        "lathe",
+                        "turning center",
+                        "车床",
+                        "车削中心",
+                        "平导轨车床",
+                        "数控车",
+                        "斜导轨车床"
+                    ],
+        "category":  "machine",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "数控铣床",
+        "aliases":  [
+                        "CNC铣床",
+                        "milling machine",
+                        "数控铣",
+                        "铣床"
+                    ],
+        "category":  "machine",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "五轴",
+        "aliases":  [
+                        "5-axis",
+                        "5轴",
+                        "五轴机床",
+                        "五轴加工中心",
+                        "五轴联动"
+                    ],
+        "category":  "machine",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "顺铣",
+        "aliases":  [
+                        "climb milling",
+                        "down milling",
+                        "顺铣加工",
+                        "同向铣"
+                    ],
+        "category":  "process",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "逆铣",
+        "aliases":  [
+                        "conventional milling",
+                        "up milling",
+                        "反向铣",
+                        "逆铣加工"
+                    ],
+        "category":  "process",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "粗加工",
+        "aliases":  [
+                        "roughing",
+                        "粗车",
+                        "粗加工阶段",
+                        "粗铣",
+                        "开粗"
+                    ],
+        "category":  "process",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "精加工",
+        "aliases":  [
+                        "finish",
+                        "finishing",
+                        "光刀",
+                        "精车",
+                        "精加工阶段",
+                        "精铣"
+                    ],
+        "category":  "process",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "半精加工",
+        "aliases":  [
+                        "semi-finishing",
+                        "半精车",
+                        "半精铣"
+                    ],
+        "category":  "process",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "刚性强力铣削",
+        "aliases":  [
+                        "heavy cutting",
+                        "heavy milling",
+                        "大切削量",
+                        "重切削"
+                    ],
+        "category":  "process",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "高速切削",
+        "aliases":  [
+                        "high speed machining",
+                        "HSM",
+                        "高速加工",
+                        "高速铣削"
+                    ],
+        "category":  "process",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "干切",
+        "aliases":  [
+                        "dry machining",
+                        "干切削",
+                        "无冷却加工"
+                    ],
+        "category":  "process",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "湿切",
+        "aliases":  [
+                        "wet machining",
+                        "冷却液加工",
+                        "湿切削"
+                    ],
+        "category":  "process",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "不锈钢",
+        "aliases":  [
+                        "304",
+                        "316",
+                        "stainless steel",
+                        "SUS",
+                        "sus304",
+                        "sus316",
+                        "不锈钢材料",
+                        "不锈钢加工"
+                    ],
+        "category":  "material",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "铝合金",
+        "aliases":  [
+                        "6061",
+                        "7075",
+                        "ADC12",
+                        "aluminium",
+                        "aluminum",
+                        "铝",
+                        "铝材",
+                        "铝加工",
+                        "铝件",
+                        "压铸铝"
+                    ],
+        "category":  "material",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "45号钢",
+        "aliases":  [
+                        "45#",
+                        "45钢",
+                        "C45",
+                        "S45C",
+                        "碳钢",
+                        "碳素钢",
+                        "中碳钢"
+                    ],
+        "category":  "material",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "模具钢",
+        "aliases":  [
+                        "Cr12",
+                        "Cr12MoV",
+                        "DC53",
+                        "H13",
+                        "P20",
+                        "SKD11",
+                        "tool steel",
+                        "模钢",
+                        "模具钢材"
+                    ],
+        "category":  "material",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "高温合金",
+        "aliases":  [
+                        "inconel",
+                        "Ti6Al4V",
+                        "titanium",
+                        "超合金",
+                        "哈氏合金",
+                        "耐热合金",
+                        "镍基合金",
+                        "钛",
+                        "钛合金"
+                    ],
+        "category":  "material",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "铸铁",
+        "aliases":  [
+                        "cast iron",
+                        "FC",
+                        "HT200",
+                        "QT500",
+                        "灰口铸铁",
+                        "球墨铸铁",
+                        "铸铁件"
+                    ],
+        "category":  "material",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "铜",
+        "aliases":  [
+                        "brass",
+                        "copper",
+                        "Cu",
+                        "黄铜",
+                        "铍铜",
+                        "青铜",
+                        "铜合金",
+                        "紫铜"
+                    ],
+        "category":  "material",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "塑料",
+        "aliases":  [
+                        "peek",
+                        "POM",
+                        "PTFE",
+                        "PVC",
+                        "工程塑料",
+                        "尼龙",
+                        "塑料件",
+                        "特氟龙",
+                        "亚克力",
+                        "有机玻璃"
+                    ],
+        "category":  "material",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "硬质合金",
+        "aliases":  [
+                        "carbide",
+                        "cemented carbide",
+                        "合金刀刃",
+                        "钨钢",
+                        "硬质合金刀片"
+                    ],
+        "category":  "tool",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "涂层",
+        "aliases":  [
+                        "AlTiN",
+                        "coating",
+                        "DLC",
+                        "TiAlN",
+                        "TiN",
+                        "氮化钛",
+                        "氮铝钛",
+                        "刀具涂层",
+                        "类金刚石"
+                    ],
+        "category":  "tool",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "球刀",
+        "aliases":  [
+                        "ball end mill",
+                        "ballnose",
+                        "R刀",
+                        "球头刀",
+                        "球头铣刀"
+                    ],
+        "category":  "tool",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "立铣刀",
+        "aliases":  [
+                        "end mill",
+                        "方肩铣刀",
+                        "平刀",
+                        "平底刀",
+                        "平底铣刀",
+                        "直柄铣刀"
+                    ],
+        "category":  "tool",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "钻头",
+        "aliases":  [
+                        "center drill",
+                        "twist drill",
+                        "定心钻",
+                        "麻花钻",
+                        "直柄钻头",
+                        "钻花",
+                        "钻尖"
+                    ],
+        "category":  "tool",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "丝锥",
+        "aliases":  [
+                        "tap",
+                        "机用丝锥",
+                        "挤压丝锥",
+                        "螺攻",
+                        "螺旋丝锥",
+                        "手用丝锥",
+                        "丝攻",
+                        "先端丝锥"
+                    ],
+        "category":  "tool",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "镗刀",
+        "aliases":  [
+                        "boring bar",
+                        "boring tool",
+                        "粗镗刀",
+                        "精镗刀",
+                        "微调镗刀"
+                    ],
+        "category":  "tool",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "刀柄",
+        "aliases":  [
+                        "BT30",
+                        "BT40",
+                        "BT50",
+                        "ER夹头",
+                        "HSK",
+                        "HSK100",
+                        "HSK63",
+                        "tool holder",
+                        "弹簧夹头",
+                        "刀把",
+                        "强力铣夹",
+                        "筒夹"
+                    ],
+        "category":  "tool",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "刀盘",
+        "aliases":  [
+                        "face mill",
+                        "shell mill",
+                        "面铣刀",
+                        "铣刀盘"
+                    ],
+        "category":  "tool",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "车刀",
+        "aliases":  [
+                        "turning tool",
+                        "成型刀",
+                        "螺纹车刀",
+                        "内孔车刀",
+                        "切槽刀",
+                        "切断刀",
+                        "外圆车刀"
+                    ],
+        "category":  "tool",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "刀片",
+        "aliases":  [
+                        "APMT",
+                        "CNMG",
+                        "insert",
+                        "RPMT",
+                        "TNMG",
+                        "WNMG",
+                        "车刀片",
+                        "机夹刀片",
+                        "可转位刀片",
+                        "铣刀片"
+                    ],
+        "category":  "tool",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "寻边器",
+        "aliases":  [
+                        "edge finder",
+                        "电子寻边器",
+                        "碰数器",
+                        "偏心寻边器",
+                        "找边器"
+                    ],
+        "category":  "tool",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "对刀仪",
+        "aliases":  [
+                        "tool presetter",
+                        "Z轴设定器",
+                        "对刀规",
+                        "对刀块"
+                    ],
+        "category":  "tool",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "转速",
+        "aliases":  [
+                        "r/min",
+                        "RPM",
+                        "S值",
+                        "S指令",
+                        "主轴转速",
+                        "转每分钟",
+                        "转数"
+                    ],
+        "category":  "common",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "进给",
+        "aliases":  [
+                        "feed rate",
+                        "F值",
+                        "F指令",
+                        "进给量",
+                        "进给率",
+                        "进给速度",
+                        "走刀速度"
+                    ],
+        "category":  "common",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "切深",
+        "aliases":  [
+                        "ae",
+                        "ap",
+                        "depth of cut",
+                        "DOC",
+                        "背吃刀量",
+                        "吃刀量",
+                        "径向切深",
+                        "切深量",
+                        "切削宽度",
+                        "切削深度",
+                        "轴向切深"
+                    ],
+        "category":  "common",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "线速度",
+        "aliases":  [
+                        "cutting speed",
+                        "m/min",
+                        "surface speed",
+                        "Vc",
+                        "米每分钟",
+                        "切削速度",
+                        "切削线速度"
+                    ],
+        "category":  "common",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "每齿进给",
+        "aliases":  [
+                        "feed per tooth",
+                        "Fz",
+                        "mm/z",
+                        "mm/齿",
+                        "进给每齿",
+                        "每刃进给"
+                    ],
+        "category":  "common",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "工件坐标",
+        "aliases":  [
+                        "program zero",
+                        "WCS",
+                        "work coordinate",
+                        "工件零点",
+                        "工件坐标系",
+                        "零件坐标"
+                    ],
+        "category":  "common",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "机床坐标",
+        "aliases":  [
+                        "machine coordinate",
+                        "machine zero",
+                        "MCS",
+                        "机床坐标系",
+                        "机械坐标",
+                        "绝对坐标"
+                    ],
+        "category":  "common",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "参考点",
+        "aliases":  [
+                        "home position",
+                        "reference point",
+                        "机床零点",
+                        "机械原点",
+                        "零点",
+                        "零位",
+                        "原点"
+                    ],
+        "category":  "common",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G92螺纹",
+        "aliases":  [
+                        "FANUC螺纹",
+                        "G92螺纹循环",
+                        "螺纹车削循环",
+                        "螺纹固定循环"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G76螺纹",
+        "aliases":  [
+                        "G76精镗",
+                        "G76螺纹循环",
+                        "复合螺纹循环"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "攻丝",
+        "aliases":  [
+                        "M牙",
+                        "tapping",
+                        "攻螺纹",
+                        "螺孔加工",
+                        "螺纹孔",
+                        "套丝"
+                    ],
+        "category":  "process",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "螺纹底孔",
+        "aliases":  [
+                        "tap drill",
+                        "底孔",
+                        "底孔直径",
+                        "螺纹底径",
+                        "预钻孔"
+                    ],
+        "category":  "common",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "螺距",
+        "aliases":  [
+                        "pitch",
+                        "螺纹导程",
+                        "螺纹螺距",
+                        "丝距",
+                        "牙距"
+                    ],
+        "category":  "common",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G71粗车",
+        "aliases":  [
+                        "FANUC粗车",
+                        "G71车削循环",
+                        "G71外圆粗车",
+                        "G71循环"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G73啄钻",
+        "aliases":  [
+                        "G73断屑",
+                        "G73深孔啄钻",
+                        "G73循环"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G81钻孔",
+        "aliases":  [
+                        "G81点孔",
+                        "G81浅孔",
+                        "G81循环"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G83深孔",
+        "aliases":  [
+                        "G83排屑钻孔",
+                        "G83循环",
+                        "G83啄式深孔"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G84攻丝",
+        "aliases":  [
+                        "G84刚性攻丝",
+                        "G84同步攻丝",
+                        "G84循环"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G98返回",
+        "aliases":  [
+                        "G98初始平面",
+                        "G98平面",
+                        "G98退刀"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G99返回",
+        "aliases":  [
+                        "G99R平面",
+                        "G99平面",
+                        "G99退刀"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G52偏置",
+        "aliases":  [
+                        "G52工件偏置",
+                        "G52局部坐标系",
+                        "G52临时偏置"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G53坐标",
+        "aliases":  [
+                        "G53调用",
+                        "G53非模态",
+                        "G53机床坐标",
+                        "G53绝对机床"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "G28G29",
+        "aliases":  [
+                        "G28参考点",
+                        "G28回零",
+                        "G28经中间点",
+                        "G29返回"
+                    ],
+        "category":  "gcode",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "刚性攻丝",
+        "aliases":  [
+                        "M29",
+                        "rigid tap",
+                        "刚攻",
+                        "刚性攻牙",
+                        "同步攻丝"
+                    ],
+        "category":  "process",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "弹性攻丝",
+        "aliases":  [
+                        "flexible tap",
+                        "浮动攻丝",
+                        "浮动夹头攻丝",
+                        "普通攻丝"
+                    ],
+        "category":  "process",
+        "priority":  3,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "撞刀",
+        "aliases":  [
+                        "crash",
+                        "tool crash",
+                        "刀具碰撞",
+                        "机床碰撞",
+                        "碰撞",
+                        "撞车",
+                        "撞机"
+                    ],
+        "category":  "common",
+        "priority":  1,
+        "notes":  "新手高频",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "过切",
+        "aliases":  [
+                        "overcut",
+                        "尺寸超差",
+                        "过量切削",
+                        "切过头"
+                    ],
+        "category":  "common",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "振纹",
+        "aliases":  [
+                        "chatter",
+                        "chatter mark",
+                        "颤振",
+                        "加工振纹",
+                        "切削振动",
+                        "震动纹"
+                    ],
+        "category":  "common",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "毛刺",
+        "aliases":  [
+                        "burr",
+                        "deburr",
+                        "飞边",
+                        "毛边",
+                        "披锋",
+                        "去毛刺",
+                        "锐边"
+                    ],
+        "category":  "common",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "公差",
+        "aliases":  [
+                        "±",
+                        "GD\u0026T",
+                        "tolerance",
+                        "尺寸公差",
+                        "精度要求",
+                        "形位公差",
+                        "允许偏差"
+                    ],
+        "category":  "common",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "粗糙度",
+        "aliases":  [
+                        "Ra",
+                        "Rz",
+                        "surface roughness",
+                        "表面粗糙度",
+                        "表面质量",
+                        "粗糙度等级",
+                        "光洁度"
+                    ],
+        "category":  "common",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "同轴度",
+        "aliases":  [
+                        "coaxiality",
+                        "concentricity",
+                        "同心",
+                        "同心度",
+                        "同轴"
+                    ],
+        "category":  "common",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "垂直度",
+        "aliases":  [
+                        "perpendicularity",
+                        "squareness",
+                        "垂直"
+                    ],
+        "category":  "common",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "平行度",
+        "aliases":  [
+                        "parallelism",
+                        "平行"
+                    ],
+        "category":  "common",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "位置度",
+        "aliases":  [
+                        "position",
+                        "position tolerance",
+                        "位置公差"
+                    ],
+        "category":  "common",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "圆跳动",
+        "aliases":  [
+                        "circular runout",
+                        "runout",
+                        "偏摆",
+                        "跳动"
+                    ],
+        "category":  "common",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "卡尺",
+        "aliases":  [
+                        "dial caliper",
+                        "vernier caliper",
+                        "带表卡尺",
+                        "电子卡尺",
+                        "数显卡尺",
+                        "游标卡尺"
+                    ],
+        "category":  "tool",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "千分尺",
+        "aliases":  [
+                        "micrometer",
+                        "分厘卡",
+                        "内径千分尺",
+                        "数显千分尺",
+                        "外径千分尺",
+                        "微分筒"
+                    ],
+        "category":  "tool",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "百分表",
+        "aliases":  [
+                        "dial gauge",
+                        "dial indicator",
+                        "电子百分表",
+                        "杠杆百分表",
+                        "杠杆表",
+                        "千分表"
+                    ],
+        "category":  "tool",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "FANUC",
+        "aliases":  [
+                        "Fanuc",
+                        "FANUC数控",
+                        "FANUC系统",
+                        "发那科",
+                        "发那科系统",
+                        "法兰克",
+                        "法那科"
+                    ],
+        "category":  "system",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "西门子",
+        "aliases":  [
+                        "802D",
+                        "828D",
+                        "840D",
+                        "siemens",
+                        "SINUMERIK",
+                        "西门子系统"
+                    ],
+        "category":  "system",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "三菱",
+        "aliases":  [
+                        "M70",
+                        "M80",
+                        "MELDAS",
+                        "mitsubishi",
+                        "三菱数控",
+                        "三菱系統"
+                    ],
+        "category":  "system",
+        "priority":  1,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "广数",
+        "aliases":  [
+                        "980TDi",
+                        "GSK",
+                        "GSK980",
+                        "GSK数控",
+                        "广数系统",
+                        "广州数控"
+                    ],
+        "category":  "system",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "华中数控",
+        "aliases":  [
+                        "HNC",
+                        "HuaZhong",
+                        "华中",
+                        "华中世纪星",
+                        "华中系统"
+                    ],
+        "category":  "system",
+        "priority":  3,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "新代",
+        "aliases":  [
+                        "Syntec",
+                        "新代数控",
+                        "新代系统"
+                    ],
+        "category":  "system",
+        "priority":  3,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "海德汉",
+        "aliases":  [
+                        "heidenhain",
+                        "iTNC",
+                        "TNC",
+                        "海德汉系统"
+                    ],
+        "category":  "system",
+        "priority":  3,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "宝元",
+        "aliases":  [
+                        "LNC",
+                        "宝元数控",
+                        "宝元系统"
+                    ],
+        "category":  "system",
+        "priority":  3,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "凯恩帝",
+        "aliases":  [
+                        "KND",
+                        "KND数控",
+                        "凯恩帝系统"
+                    ],
+        "category":  "system",
+        "priority":  3,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "哈斯",
+        "aliases":  [
+                        "Haas",
+                        "HAAS数控",
+                        "哈斯系统"
+                    ],
+        "category":  "system",
+        "priority":  3,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "OKUMA",
+        "aliases":  [
+                        "okuma",
+                        "OKUMA数控",
+                        "OKUMA系统",
+                        "大隈",
+                        "欧克马"
+                    ],
+        "category":  "system",
+        "priority":  3,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "马扎克",
+        "aliases":  [
+                        "mazak",
+                        "Mazatrol",
+                        "对话式编程",
+                        "马扎克系统"
+                    ],
+        "category":  "system",
+        "priority":  3,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "参数1815",
+        "aliases":  [
+                        "#1815",
+                        "1815号参数",
+                        "APC设定",
+                        "FANUC1815",
+                        "PRM1815",
+                        "绝对编码器设置"
+                    ],
+        "category":  "param",
+        "priority":  2,
+        "notes":  "回零相关高频参数",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "参数1320",
+        "aliases":  [
+                        "#1320",
+                        "1320号参数",
+                        "PRM1320",
+                        "存储行程极限正",
+                        "行程极限"
+                    ],
+        "category":  "param",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "参数1321",
+        "aliases":  [
+                        "#1321",
+                        "1321号参数",
+                        "PRM1321",
+                        "行程极限负"
+                    ],
+        "category":  "param",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "参数1420",
+        "aliases":  [
+                        "#1420",
+                        "1420号参数",
+                        "PRM1420",
+                        "rapid traverse",
+                        "快速进给速度",
+                        "快移速度"
+                    ],
+        "category":  "param",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "参数1421",
+        "aliases":  [
+                        "#1421",
+                        "1421号参数",
+                        "PRM1421",
+                        "快速进给倍率"
+                    ],
+        "category":  "param",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "参数1422",
+        "aliases":  [
+                        "#1422",
+                        "1422号参数",
+                        "PRM1422",
+                        "最大切削进给速度"
+                    ],
+        "category":  "param",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "参数1423",
+        "aliases":  [
+                        "#1423",
+                        "1423号参数",
+                        "PRM1423",
+                        "手动进给速度"
+                    ],
+        "category":  "param",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "参数1424",
+        "aliases":  [
+                        "#1424",
+                        "1424号参数",
+                        "PRM1424",
+                        "手动快速进给速度"
+                    ],
+        "category":  "param",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "参数1850",
+        "aliases":  [
+                        "#1850",
+                        "1850号参数",
+                        "backlash",
+                        "PRM1850",
+                        "反向间隙",
+                        "丝杠间隙补偿"
+                    ],
+        "category":  "param",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "参数1851",
+        "aliases":  [
+                        "#1851",
+                        "1851号参数",
+                        "PRM1851",
+                        "反向间隙2"
+                    ],
+        "category":  "param",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "参数1936",
+        "aliases":  [
+                        "#1936",
+                        "1936号参数",
+                        "position loop gain",
+                        "PRM1936",
+                        "位置环路增益"
+                    ],
+        "category":  "param",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "参数1825",
+        "aliases":  [
+                        "#1825",
+                        "1825号参数",
+                        "PRM1825",
+                        "servo gain",
+                        "伺服增益"
+                    ],
+        "category":  "param",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "参数2021",
+        "aliases":  [
+                        "#2021",
+                        "2021号参数",
+                        "PRM2021",
+                        "速度环路增益"
+                    ],
+        "category":  "param",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "参数2022",
+        "aliases":  [
+                        "#2022",
+                        "2022号参数",
+                        "PRM2022",
+                        "速度环积分增益"
+                    ],
+        "category":  "param",
+        "priority":  2,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    },
+    {
+        "canonical":  "参数2060",
+        "aliases":  [
+                        "2060号参数",
+                        "PRM2060"
+                    ],
+        "category":  "param",
+        "priority":  3,
+        "notes":  "",
+        "reviewStatus":  "draft"
+    }
+]

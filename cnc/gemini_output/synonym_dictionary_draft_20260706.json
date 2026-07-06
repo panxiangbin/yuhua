@@ -1,0 +1,2174 @@
+[
+  {
+    "canonical": "G00",
+    "aliases": [
+      "g0",
+      "快速定位",
+      "点定位",
+      "快速平移",
+      "空行程",
+      "快移"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g00-g01"
+    ],
+    "priority": 1,
+    "notes": "快速点定位，不进行切削"
+  },
+  {
+    "canonical": "G01",
+    "aliases": [
+      "g1",
+      "直线插补",
+      "直线切削",
+      "进给移动",
+      "走直线",
+      "工进"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g00-g01"
+    ],
+    "priority": 1,
+    "notes": "直线插补切削，受F指令限制"
+  },
+  {
+    "canonical": "G02",
+    "aliases": [
+      "g2",
+      "顺时针圆弧插补",
+      "顺圆",
+      "右旋圆弧",
+      "正向圆弧"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g02-g03-arc"
+    ],
+    "priority": 1,
+    "notes": "顺时针圆弧加工"
+  },
+  {
+    "canonical": "G03",
+    "aliases": [
+      "g3",
+      "逆时针圆弧插补",
+      "逆圆",
+      "左旋圆弧",
+      "反向圆弧"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g02-g03-arc"
+    ],
+    "priority": 1,
+    "notes": "逆时针圆弧加工"
+  },
+  {
+    "canonical": "G04",
+    "aliases": [
+      "g4",
+      "暂停",
+      "延时",
+      "停顿",
+      "驻留",
+      "dwell"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g04"
+    ],
+    "priority": 2,
+    "notes": "延迟进给，主轴正常旋转"
+  },
+  {
+    "canonical": "G17",
+    "aliases": [
+      "xy平面",
+      "g17平面",
+      "xy选择",
+      "铣削平面"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g17-g18-g19"
+    ],
+    "priority": 2,
+    "notes": "选择XY平面"
+  },
+  {
+    "canonical": "G18",
+    "aliases": [
+      "xz平面",
+      "g18平面",
+      "xz选择",
+      "车削平面"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g17-g18-g19"
+    ],
+    "priority": 2,
+    "notes": "选择XZ平面，车床默认"
+  },
+  {
+    "canonical": "G19",
+    "aliases": [
+      "yz平面",
+      "g19平面",
+      "yz选择"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g17-g18-g19"
+    ],
+    "priority": 2,
+    "notes": "选择YZ平面"
+  },
+  {
+    "canonical": "G20",
+    "aliases": [
+      "英制",
+      "寸",
+      "inch",
+      "美制尺寸"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g20-g21"
+    ],
+    "priority": 2,
+    "notes": "英制单位选择"
+  },
+  {
+    "canonical": "G21",
+    "aliases": [
+      "公制",
+      "毫米",
+      "mm",
+      "公制定标"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g20-g21"
+    ],
+    "priority": 2,
+    "notes": "公制单位选择，国内默认"
+  },
+  {
+    "canonical": "G28",
+    "aliases": [
+      "回参考点",
+      "回机械零点",
+      "自动回零",
+      "退刀回零",
+      "归零",
+      "g28回零"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g28-g29"
+    ],
+    "priority": 1,
+    "notes": "经中间点回参考点"
+  },
+  {
+    "canonical": "G30",
+    "aliases": [
+      "第二参考点",
+      "换刀点",
+      "回第二零点"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g28-g29"
+    ],
+    "priority": 2,
+    "notes": "回第二、三、四参考点"
+  },
+  {
+    "canonical": "G32",
+    "aliases": [
+      "等螺距螺纹",
+      "g32车螺纹",
+      "单步螺纹车削"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-thread-basics"
+    ],
+    "priority": 2,
+    "notes": "数控车床单步螺纹车削"
+  },
+  {
+    "canonical": "G40",
+    "aliases": [
+      "取消刀补",
+      "取消刀尖补偿",
+      "取消半径补偿"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g41-g42"
+    ],
+    "priority": 1,
+    "notes": "取消刀具半径补偿"
+  },
+  {
+    "canonical": "G41",
+    "aliases": [
+      "左刀补",
+      "左侧半径补偿",
+      "刀具左补偿",
+      "顺铣刀补"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g41-g42"
+    ],
+    "priority": 1,
+    "notes": "沿刀路方向左侧补偿"
+  },
+  {
+    "canonical": "G42",
+    "aliases": [
+      "右刀补",
+      "右侧半径补偿",
+      "刀具右补偿",
+      "逆铣刀补"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g41-g42"
+    ],
+    "priority": 1,
+    "notes": "沿刀路方向右侧补偿"
+  },
+  {
+    "canonical": "G43",
+    "aliases": [
+      "正向刀长补偿",
+      "刀长补偿",
+      "高度补偿",
+      "长度补偿",
+      "g43高度"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g43-g44-g49"
+    ],
+    "priority": 1,
+    "notes": "刀具长度正向偏置"
+  },
+  {
+    "canonical": "G44",
+    "aliases": [
+      "负向刀长补偿",
+      "负补偿"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g43-g44-g49"
+    ],
+    "priority": 3,
+    "notes": "刀具长度负向偏置，现场极少用"
+  },
+  {
+    "canonical": "G49",
+    "aliases": [
+      "取消刀长补偿",
+      "取消高度偏置",
+      "高度偏置取消"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g43-g44-g49"
+    ],
+    "priority": 2,
+    "notes": "取消刀具长度补偿"
+  },
+  {
+    "canonical": "G50",
+    "aliases": [
+      "最高转速限制",
+      "限制主轴",
+      "g50限速",
+      "坐标系设定"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g50"
+    ],
+    "priority": 2,
+    "notes": "恒线速最高转速钳制或坐标系偏置"
+  },
+  {
+    "canonical": "G53",
+    "aliases": [
+      "机械坐标系定位",
+      "物理坐标",
+      "机床坐标定位",
+      "g53绝对位置"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-coordinate-system"
+    ],
+    "priority": 2,
+    "notes": "机床物理坐标系直接运动"
+  },
+  {
+    "canonical": "G54",
+    "aliases": [
+      "工件坐标系",
+      "第一零点",
+      "对刀零点",
+      "坐标原点",
+      "g54零点"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 1,
+    "notes": "首选工件坐标偏置"
+  },
+  {
+    "canonical": "G55",
+    "aliases": [
+      "第二工件坐标系",
+      "g55零点",
+      "二号零点"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 2,
+    "notes": "第二工件坐标系"
+  },
+  {
+    "canonical": "G56",
+    "aliases": [
+      "第三工件坐标系",
+      "g56零点"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 2,
+    "notes": "第三工件坐标系"
+  },
+  {
+    "canonical": "G70",
+    "aliases": [
+      "精加工循环",
+      "g70精车",
+      "精车加工"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g70-g71"
+    ],
+    "priority": 2,
+    "notes": "数控车精车循环"
+  },
+  {
+    "canonical": "G71",
+    "aliases": [
+      "外圆粗车循环",
+      "粗车循环",
+      "g71粗车",
+      "复合循环"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g70-g71"
+    ],
+    "priority": 1,
+    "notes": "数控车粗车内/外径循环"
+  },
+  {
+    "canonical": "G72",
+    "aliases": [
+      "端面粗车循环",
+      "横向粗车",
+      "g72端面"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g70-g71"
+    ],
+    "priority": 2,
+    "notes": "横向切削粗车循环"
+  },
+  {
+    "canonical": "G73",
+    "aliases": [
+      "仿形粗车循环",
+      "封闭粗车",
+      "g73仿形"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g70-g71"
+    ],
+    "priority": 3,
+    "notes": "成型粗车循环"
+  },
+  {
+    "canonical": "G76",
+    "aliases": [
+      "螺纹复合循环",
+      "多重螺纹切削",
+      "g76螺纹",
+      "大螺距车螺纹"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-thread-basics"
+    ],
+    "priority": 1,
+    "notes": "数控车螺纹复合循环"
+  },
+  {
+    "canonical": "G80",
+    "aliases": [
+      "取消固定循环",
+      "取消钻孔循环",
+      "注销循环"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g81-g83"
+    ],
+    "priority": 2,
+    "notes": "注销一切固定循环"
+  },
+  {
+    "canonical": "G81",
+    "aliases": [
+      "中心钻循环",
+      "点孔循环",
+      "定心钻循环",
+      "g81点孔"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g81-g83"
+    ],
+    "priority": 1,
+    "notes": "点孔/浅孔固定循环"
+  },
+  {
+    "canonical": "G82",
+    "aliases": [
+      "带停顿钻孔",
+      "沉头孔循环",
+      "销孔循环"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g81-g83"
+    ],
+    "priority": 2,
+    "notes": "钻孔停留（孔底延迟）固定循环"
+  },
+  {
+    "canonical": "G83",
+    "aliases": [
+      "啄钻循环",
+      "深孔钻循环",
+      "排屑钻孔",
+      "分段退屑",
+      "g83深孔"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g81-g83"
+    ],
+    "priority": 1,
+    "notes": "排屑深孔啄钻固定循环"
+  },
+  {
+    "canonical": "G84",
+    "aliases": [
+      "刚性攻丝",
+      "攻牙循环",
+      "攻丝固定循环",
+      "g84攻牙"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g84"
+    ],
+    "priority": 1,
+    "notes": "刚性/柔性攻丝固定循环"
+  },
+  {
+    "canonical": "G90",
+    "aliases": [
+      "绝对值编程",
+      "绝对坐标编程",
+      "g90模式",
+      "终点计算"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-absolute-incremental"
+    ],
+    "priority": 1,
+    "notes": "绝对尺寸方式输入"
+  },
+  {
+    "canonical": "G91",
+    "aliases": [
+      "增量编程",
+      "相对坐标编程",
+      "增量坐标",
+      "g91模式",
+      "相对走刀"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-absolute-incremental"
+    ],
+    "priority": 1,
+    "notes": "增量尺寸方式输入"
+  },
+  {
+    "canonical": "G92",
+    "aliases": [
+      "螺纹切削循环",
+      "螺纹单刀循环",
+      "g92限制最高转速"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-thread-basics"
+    ],
+    "priority": 2,
+    "notes": "数控车螺纹切削单刀循环"
+  },
+  {
+    "canonical": "G94",
+    "aliases": [
+      "每分钟进给",
+      "g94进给",
+      "每分钟移动",
+      "mm/min"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "feed-g94-g95-001"
+    ],
+    "priority": 1,
+    "notes": "每分钟进给率"
+  },
+  {
+    "canonical": "G95",
+    "aliases": [
+      "每转进给",
+      "g95进给",
+      "主轴关联进给",
+      "mm/rev"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "feed-g94-g95-001"
+    ],
+    "priority": 1,
+    "notes": "主轴每转进给率"
+  },
+  {
+    "canonical": "G96",
+    "aliases": [
+      "恒线速切削",
+      "恒线速",
+      "g96恒线速",
+      "恒定切削速度"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "calc-vc-rpm"
+    ],
+    "priority": 1,
+    "notes": "开启恒线速度控制"
+  },
+  {
+    "canonical": "G97",
+    "aliases": [
+      "取消恒线速",
+      "恒转速",
+      "取消线速度恒定",
+      "恒定转速"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "calc-vc-rpm"
+    ],
+    "priority": 1,
+    "notes": "取消恒线速度控制，改为恒定RPM"
+  },
+  {
+    "canonical": "G98",
+    "aliases": [
+      "固定循环回初始点",
+      "返回初始平面",
+      "g98回起点"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g81-g83"
+    ],
+    "priority": 1,
+    "notes": "固定循环中退回初始安全平面"
+  },
+  {
+    "canonical": "G99",
+    "aliases": [
+      "固定循环回R点",
+      "返回安全R平面",
+      "g99回r点"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g81-g83"
+    ],
+    "priority": 1,
+    "notes": "固定循环中退回R安全平面"
+  },
+  {
+    "canonical": "M00",
+    "aliases": [
+      "程序暂停",
+      "硬停止",
+      "m00停止",
+      "强制停"
+    ],
+    "category": "M代码类",
+    "relatedEntryIds": [
+      "m00-m01-stop"
+    ],
+    "priority": 1,
+    "notes": "程序无条件停止"
+  },
+  {
+    "canonical": "M01",
+    "aliases": [
+      "选择性停止",
+      "选择暂停",
+      "条件停止",
+      "m01停止"
+    ],
+    "category": "M代码类",
+    "relatedEntryIds": [
+      "m00-m01-stop"
+    ],
+    "priority": 2,
+    "notes": "在选择停按键按下时程序停止"
+  },
+  {
+    "canonical": "M02",
+    "aliases": [
+      "程序结束",
+      "结束程序",
+      "m02结束"
+    ],
+    "category": "M代码类",
+    "relatedEntryIds": [
+      "m30-program-end"
+    ],
+    "priority": 2,
+    "notes": "程序终了，不返回首行"
+  },
+  {
+    "canonical": "M03",
+    "aliases": [
+      "主轴正转",
+      "顺时针旋转",
+      "主轴开启",
+      "m3正转",
+      "正转旋转"
+    ],
+    "category": "M代码类",
+    "relatedEntryIds": [
+      "m03-m04-m05"
+    ],
+    "priority": 1,
+    "notes": "主轴顺时针旋转"
+  },
+  {
+    "canonical": "M04",
+    "aliases": [
+      "主轴反转",
+      "逆时针旋转",
+      "m4反转",
+      "反转"
+    ],
+    "category": "M代码类",
+    "relatedEntryIds": [
+      "m03-m04-m05"
+    ],
+    "priority": 1,
+    "notes": "主轴逆时针旋转"
+  },
+  {
+    "canonical": "M05",
+    "aliases": [
+      "主轴停止",
+      "主轴刹车",
+      "m5停转",
+      "停止主轴"
+    ],
+    "category": "M代码类",
+    "relatedEntryIds": [
+      "m03-m04-m05"
+    ],
+    "priority": 1,
+    "notes": "主轴旋转停止"
+  },
+  {
+    "canonical": "M06",
+    "aliases": [
+      "自动换刀",
+      "换刀指令",
+      "换新刀",
+      "m6换刀"
+    ],
+    "category": "M代码类",
+    "relatedEntryIds": [
+      "m06-tool-change"
+    ],
+    "priority": 1,
+    "notes": "执行主轴换刀动作"
+  },
+  {
+    "canonical": "M08",
+    "aliases": [
+      "切削液开",
+      "开启冷却液",
+      "喷水",
+      "m8冷却"
+    ],
+    "category": "M代码类",
+    "relatedEntryIds": [
+      "m08-m09-coolant"
+    ],
+    "priority": 1,
+    "notes": "开启切削冷却液"
+  },
+  {
+    "canonical": "M09",
+    "aliases": [
+      "切削液关",
+      "关闭冷却液",
+      "关喷水",
+      "m9关水"
+    ],
+    "category": "M代码类",
+    "relatedEntryIds": [
+      "m08-m09-coolant"
+    ],
+    "priority": 1,
+    "notes": "关闭切削冷却液"
+  },
+  {
+    "canonical": "M19",
+    "aliases": [
+      "主轴定向",
+      "主轴准停",
+      "定向对齐",
+      "主轴定位"
+    ],
+    "category": "M代码类",
+    "relatedEntryIds": [
+      "m03-m04-m05"
+    ],
+    "priority": 2,
+    "notes": "主轴准确定向停止在固定位置"
+  },
+  {
+    "canonical": "M30",
+    "aliases": [
+      "程序结束并返回",
+      "回程序头",
+      "M30结束",
+      "复位"
+    ],
+    "category": "M代码类",
+    "relatedEntryIds": [
+      "m30-program-end"
+    ],
+    "priority": 1,
+    "notes": "程序结束并返回首行"
+  },
+  {
+    "canonical": "M98",
+    "aliases": [
+      "调用子程序",
+      "调子程序",
+      "m98嵌套"
+    ],
+    "category": "M代码类",
+    "relatedEntryIds": [
+      "m30-program-end"
+    ],
+    "priority": 1,
+    "notes": "跳转执行子程序"
+  },
+  {
+    "canonical": "M99",
+    "aliases": [
+      "子程序返回",
+      "循环回主程序",
+      "子程序结束"
+    ],
+    "category": "M代码类",
+    "relatedEntryIds": [
+      "m30-program-end"
+    ],
+    "priority": 1,
+    "notes": "子程序结束返回主程序"
+  },
+  {
+    "canonical": "OT报警",
+    "aliases": [
+      "超程报警",
+      "行程超限",
+      "硬行程限位",
+      "软超程",
+      "极限报警",
+      "超行程"
+    ],
+    "category": "报警类",
+    "relatedEntryIds": [
+      "fault-limit-switch"
+    ],
+    "priority": 1,
+    "notes": "轴移动超出物理限位"
+  },
+  {
+    "canonical": "5136报警",
+    "aliases": [
+      "fssb报警",
+      "5136光纤故障",
+      "伺服放大器通信断线"
+    ],
+    "category": "报警类",
+    "relatedEntryIds": [
+      "fanuc-alarm-common"
+    ],
+    "priority": 1,
+    "notes": "发那科伺服轴卡通信中断"
+  },
+  {
+    "canonical": "SV0438",
+    "aliases": [
+      "伺服异常电流",
+      "438报警",
+      "放大器故障",
+      "驱动器过流"
+    ],
+    "category": "报警类",
+    "relatedEntryIds": [
+      "fanuc-alarm-common"
+    ],
+    "priority": 1,
+    "notes": "伺服电机工作电流异常过高"
+  },
+  {
+    "canonical": "电池更换报警",
+    "aliases": [
+      "锂电池低",
+      "更换绝对编码器电池",
+      "3V电池缺电",
+      "电池没电"
+    ],
+    "category": "报警类",
+    "relatedEntryIds": [
+      "fanuc-alarm-common"
+    ],
+    "priority": 2,
+    "notes": "编码器/系统参数记忆电池更换"
+  },
+  {
+    "canonical": "卡刀故障",
+    "aliases": [
+      "ATC换刀死锁",
+      "刀库没对齐",
+      "换刀臂被卡住",
+      "刀臂复位"
+    ],
+    "category": "报警类",
+    "relatedEntryIds": [
+      "fanuc-alarm-common"
+    ],
+    "priority": 1,
+    "notes": "换刀时定位传感器信号卡死"
+  },
+  {
+    "canonical": "1815",
+    "aliases": [
+      "1815参数",
+      "APC绝对编码器设定",
+      "无挡铁回零设置",
+      "原点位置记忆参数"
+    ],
+    "category": "参数类",
+    "relatedEntryIds": [
+      "fault-home-fail"
+    ],
+    "priority": 1,
+    "notes": "发那科系统建立第一机械原点用参数"
+  },
+  {
+    "canonical": "3115",
+    "aliases": [
+      "3115参数",
+      "显示路径隐藏",
+      "报警显示控制"
+    ],
+    "category": "参数类",
+    "relatedEntryIds": [
+      "fanuc-alarm-common"
+    ],
+    "priority": 2,
+    "notes": "发那科面板显示界面配置参数"
+  },
+  {
+    "canonical": "寻边器",
+    "aliases": [
+      "分中棒",
+      "碰边器",
+      "偏心分中",
+      "光电寻边"
+    ],
+    "category": "对刀/坐标类",
+    "relatedEntryIds": [
+      "learn-coordinate-system"
+    ],
+    "priority": 1,
+    "notes": "对刀找工件XY零点用量具"
+  },
+  {
+    "canonical": "对刀仪",
+    "aliases": [
+      "对刀块",
+      "高度设定器",
+      "Z轴对刀器",
+      "自动测量仪"
+    ],
+    "category": "对刀/坐标类",
+    "relatedEntryIds": [
+      "learn-coordinate-system"
+    ],
+    "priority": 1,
+    "notes": "Z轴长度补偿及刀具标定"
+  },
+  {
+    "canonical": "分中",
+    "aliases": [
+      "工件找正",
+      "工件中点定位",
+      "四面分中",
+      "双侧碰边"
+    ],
+    "category": "对刀/坐标类",
+    "relatedEntryIds": [
+      "learn-coordinate-system"
+    ],
+    "priority": 1,
+    "notes": "在工件左右两侧测定几何正中位置"
+  },
+  {
+    "canonical": "绝对零点",
+    "aliases": [
+      "机床机械原点",
+      "绝对参考点",
+      "机床老家"
+    ],
+    "category": "对刀/坐标类",
+    "relatedEntryIds": [
+      "fault-home-fail"
+    ],
+    "priority": 1,
+    "notes": "机床制造出厂设定不可改的原点"
+  },
+  {
+    "canonical": "表面粗糙度",
+    "aliases": [
+      "粗糙度",
+      "Ra",
+      "Rz",
+      "光洁度",
+      "表面光洁度"
+    ],
+    "category": "工艺类",
+    "relatedEntryIds": [
+      "process-surface-roughness"
+    ],
+    "priority": 1,
+    "notes": "机械零件表面切削光洁品质"
+  },
+  {
+    "canonical": "顺铣",
+    "aliases": [
+      "下刀顺铣",
+      "顺向铣削",
+      "由厚变薄",
+      "down-milling"
+    ],
+    "category": "工艺类",
+    "relatedEntryIds": [
+      "process-allowance-basics"
+    ],
+    "priority": 1,
+    "notes": "铣刀旋转方向与切削进给方向一致"
+  },
+  {
+    "canonical": "逆铣",
+    "aliases": [
+      "上刀逆铣",
+      "逆向切削",
+      "由薄变厚",
+      "up-milling"
+    ],
+    "category": "工艺类",
+    "relatedEntryIds": [
+      "process-allowance-basics"
+    ],
+    "priority": 1,
+    "notes": "铣刀旋转方向与切削进给方向相反"
+  },
+  {
+    "canonical": "切削深度",
+    "aliases": [
+      "背吃刀量",
+      "ap",
+      "下刀深度",
+      "单次下刀量"
+    ],
+    "category": "工艺类",
+    "relatedEntryIds": [
+      "process-allowance-basics"
+    ],
+    "priority": 1,
+    "notes": "刀具每次向下进深吃刀厚度"
+  },
+  {
+    "canonical": "立铣刀",
+    "aliases": [
+      "平底铣刀",
+      "开粗铣刀",
+      "合金键槽刀"
+    ],
+    "category": "刀具类",
+    "relatedEntryIds": [
+      "tool-insert-brand"
+    ],
+    "priority": 1,
+    "notes": "最常见旋转加工端平铣刀"
+  },
+  {
+    "canonical": "球头刀",
+    "aliases": [
+      "球头铣刀",
+      "圆弧球刀",
+      "曲面精加工刀",
+      "球刀"
+    ],
+    "category": "刀具类",
+    "relatedEntryIds": [
+      "tool-insert-brand"
+    ],
+    "priority": 1,
+    "notes": "主要加工三维空间型面曲面精刀"
+  },
+  {
+    "canonical": "钻头",
+    "aliases": [
+      "定心钻",
+      "麻花钻",
+      "合金深孔钻",
+      "内冷钻"
+    ],
+    "category": "刀具类",
+    "relatedEntryIds": [
+      "tool-drill-selection"
+    ],
+    "priority": 1,
+    "notes": "孔加工专用前排屑双刃量具"
+  },
+  {
+    "canonical": "45号钢",
+    "aliases": [
+      "45钢",
+      "中碳钢",
+      "s45c",
+      "45#"
+    ],
+    "category": "材料加工",
+    "relatedEntryIds": [
+      "material-carbon-steel"
+    ],
+    "priority": 1,
+    "notes": "车间最常用中等强度钢件"
+  },
+  {
+    "canonical": "铝合金",
+    "aliases": [
+      "铝件",
+      "6061铝",
+      "7075铝",
+      "航空铝"
+    ],
+    "category": "材料加工",
+    "relatedEntryIds": [
+      "material-plastic"
+    ],
+    "priority": 1,
+    "notes": "车间最常见易切削难排屑材料"
+  },
+  {
+    "canonical": "撞刀了",
+    "aliases": [
+      "扎刀了",
+      "撞机了",
+      "车刀碎了",
+      "主轴响了",
+      "机床撞击"
+    ],
+    "category": "新手口语问法类",
+    "relatedEntryIds": [
+      "fault-limit-switch"
+    ],
+    "priority": 1,
+    "notes": "由于对刀错误或参数失效导致的物理刚性干涉"
+  },
+  {
+    "canonical": "数控图纸看不懂",
+    "aliases": [
+      "三视图",
+      "形位公差",
+      "公差怎么认",
+      "符号含义"
+    ],
+    "category": "新手口语问法类",
+    "relatedEntryIds": [
+      "drawing-symbol"
+    ],
+    "priority": 1,
+    "notes": "新手不会读机械工程加工图样"
+  },
+  {
+    "canonical": "G61",
+    "aliases": [
+      "g61",
+      "gcode-g61",
+      "g61代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G61 备用同义词组"
+  },
+  {
+    "canonical": "G62",
+    "aliases": [
+      "g62",
+      "gcode-g62",
+      "g62代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G62 备用同义词组"
+  },
+  {
+    "canonical": "G63",
+    "aliases": [
+      "g63",
+      "gcode-g63",
+      "g63代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G63 备用同义词组"
+  },
+  {
+    "canonical": "G64",
+    "aliases": [
+      "g64",
+      "gcode-g64",
+      "g64代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G64 备用同义词组"
+  },
+  {
+    "canonical": "G65",
+    "aliases": [
+      "g65",
+      "gcode-g65",
+      "g65代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G65 备用同义词组"
+  },
+  {
+    "canonical": "G66",
+    "aliases": [
+      "g66",
+      "gcode-g66",
+      "g66代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G66 备用同义词组"
+  },
+  {
+    "canonical": "G67",
+    "aliases": [
+      "g67",
+      "gcode-g67",
+      "g67代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G67 备用同义词组"
+  },
+  {
+    "canonical": "G68",
+    "aliases": [
+      "g68",
+      "gcode-g68",
+      "g68代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G68 备用同义词组"
+  },
+  {
+    "canonical": "G69",
+    "aliases": [
+      "g69",
+      "gcode-g69",
+      "g69代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G69 备用同义词组"
+  },
+  {
+    "canonical": "G70",
+    "aliases": [
+      "g70",
+      "gcode-g70",
+      "g70代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G70 备用同义词组"
+  },
+  {
+    "canonical": "G71",
+    "aliases": [
+      "g71",
+      "gcode-g71",
+      "g71代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G71 备用同义词组"
+  },
+  {
+    "canonical": "G72",
+    "aliases": [
+      "g72",
+      "gcode-g72",
+      "g72代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G72 备用同义词组"
+  },
+  {
+    "canonical": "G73",
+    "aliases": [
+      "g73",
+      "gcode-g73",
+      "g73代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G73 备用同义词组"
+  },
+  {
+    "canonical": "G74",
+    "aliases": [
+      "g74",
+      "gcode-g74",
+      "g74代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G74 备用同义词组"
+  },
+  {
+    "canonical": "G75",
+    "aliases": [
+      "g75",
+      "gcode-g75",
+      "g75代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G75 备用同义词组"
+  },
+  {
+    "canonical": "G76",
+    "aliases": [
+      "g76",
+      "gcode-g76",
+      "g76代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G76 备用同义词组"
+  },
+  {
+    "canonical": "G77",
+    "aliases": [
+      "g77",
+      "gcode-g77",
+      "g77代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G77 备用同义词组"
+  },
+  {
+    "canonical": "G78",
+    "aliases": [
+      "g78",
+      "gcode-g78",
+      "g78代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G78 备用同义词组"
+  },
+  {
+    "canonical": "G79",
+    "aliases": [
+      "g79",
+      "gcode-g79",
+      "g79代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G79 备用同义词组"
+  },
+  {
+    "canonical": "G80",
+    "aliases": [
+      "g80",
+      "gcode-g80",
+      "g80代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G80 备用同义词组"
+  },
+  {
+    "canonical": "G81",
+    "aliases": [
+      "g81",
+      "gcode-g81",
+      "g81代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G81 备用同义词组"
+  },
+  {
+    "canonical": "G82",
+    "aliases": [
+      "g82",
+      "gcode-g82",
+      "g82代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G82 备用同义词组"
+  },
+  {
+    "canonical": "G83",
+    "aliases": [
+      "g83",
+      "gcode-g83",
+      "g83代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G83 备用同义词组"
+  },
+  {
+    "canonical": "G84",
+    "aliases": [
+      "g84",
+      "gcode-g84",
+      "g84代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G84 备用同义词组"
+  },
+  {
+    "canonical": "G85",
+    "aliases": [
+      "g85",
+      "gcode-g85",
+      "g85代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G85 备用同义词组"
+  },
+  {
+    "canonical": "G86",
+    "aliases": [
+      "g86",
+      "gcode-g86",
+      "g86代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G86 备用同义词组"
+  },
+  {
+    "canonical": "G87",
+    "aliases": [
+      "g87",
+      "gcode-g87",
+      "g87代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G87 备用同义词组"
+  },
+  {
+    "canonical": "G88",
+    "aliases": [
+      "g88",
+      "gcode-g88",
+      "g88代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G88 备用同义词组"
+  },
+  {
+    "canonical": "G89",
+    "aliases": [
+      "g89",
+      "gcode-g89",
+      "g89代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G89 备用同义词组"
+  },
+  {
+    "canonical": "G90",
+    "aliases": [
+      "g90",
+      "gcode-g90",
+      "g90代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G90 备用同义词组"
+  },
+  {
+    "canonical": "G91",
+    "aliases": [
+      "g91",
+      "gcode-g91",
+      "g91代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G91 备用同义词组"
+  },
+  {
+    "canonical": "G92",
+    "aliases": [
+      "g92",
+      "gcode-g92",
+      "g92代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G92 备用同义词组"
+  },
+  {
+    "canonical": "G93",
+    "aliases": [
+      "g93",
+      "gcode-g93",
+      "g93代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G93 备用同义词组"
+  },
+  {
+    "canonical": "G94",
+    "aliases": [
+      "g94",
+      "gcode-g94",
+      "g94代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G94 备用同义词组"
+  },
+  {
+    "canonical": "G95",
+    "aliases": [
+      "g95",
+      "gcode-g95",
+      "g95代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G95 备用同义词组"
+  },
+  {
+    "canonical": "G96",
+    "aliases": [
+      "g96",
+      "gcode-g96",
+      "g96代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G96 备用同义词组"
+  },
+  {
+    "canonical": "G97",
+    "aliases": [
+      "g97",
+      "gcode-g97",
+      "g97代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G97 备用同义词组"
+  },
+  {
+    "canonical": "G98",
+    "aliases": [
+      "g98",
+      "gcode-g98",
+      "g98代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G98 备用同义词组"
+  },
+  {
+    "canonical": "G99",
+    "aliases": [
+      "g99",
+      "gcode-g99",
+      "g99代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G99 备用同义词组"
+  },
+  {
+    "canonical": "G100",
+    "aliases": [
+      "g100",
+      "gcode-g100",
+      "g100代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G100 备用同义词组"
+  },
+  {
+    "canonical": "G101",
+    "aliases": [
+      "g101",
+      "gcode-g101",
+      "g101代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G101 备用同义词组"
+  },
+  {
+    "canonical": "G102",
+    "aliases": [
+      "g102",
+      "gcode-g102",
+      "g102代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G102 备用同义词组"
+  },
+  {
+    "canonical": "G103",
+    "aliases": [
+      "g103",
+      "gcode-g103",
+      "g103代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G103 备用同义词组"
+  },
+  {
+    "canonical": "G104",
+    "aliases": [
+      "g104",
+      "gcode-g104",
+      "g104代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G104 备用同义词组"
+  },
+  {
+    "canonical": "G105",
+    "aliases": [
+      "g105",
+      "gcode-g105",
+      "g105代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G105 备用同义词组"
+  },
+  {
+    "canonical": "G106",
+    "aliases": [
+      "g106",
+      "gcode-g106",
+      "g106代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G106 备用同义词组"
+  },
+  {
+    "canonical": "G107",
+    "aliases": [
+      "g107",
+      "gcode-g107",
+      "g107代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G107 备用同义词组"
+  },
+  {
+    "canonical": "G108",
+    "aliases": [
+      "g108",
+      "gcode-g108",
+      "g108代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G108 备用同义词组"
+  },
+  {
+    "canonical": "G109",
+    "aliases": [
+      "g109",
+      "gcode-g109",
+      "g109代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G109 备用同义词组"
+  },
+  {
+    "canonical": "G110",
+    "aliases": [
+      "g110",
+      "gcode-g110",
+      "g110代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G110 备用同义词组"
+  },
+  {
+    "canonical": "G111",
+    "aliases": [
+      "g111",
+      "gcode-g111",
+      "g111代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G111 备用同义词组"
+  },
+  {
+    "canonical": "G112",
+    "aliases": [
+      "g112",
+      "gcode-g112",
+      "g112代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G112 备用同义词组"
+  },
+  {
+    "canonical": "G113",
+    "aliases": [
+      "g113",
+      "gcode-g113",
+      "g113代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G113 备用同义词组"
+  },
+  {
+    "canonical": "G114",
+    "aliases": [
+      "g114",
+      "gcode-g114",
+      "g114代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G114 备用同义词组"
+  },
+  {
+    "canonical": "G115",
+    "aliases": [
+      "g115",
+      "gcode-g115",
+      "g115代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G115 备用同义词组"
+  },
+  {
+    "canonical": "G116",
+    "aliases": [
+      "g116",
+      "gcode-g116",
+      "g116代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G116 备用同义词组"
+  },
+  {
+    "canonical": "G117",
+    "aliases": [
+      "g117",
+      "gcode-g117",
+      "g117代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G117 备用同义词组"
+  },
+  {
+    "canonical": "G118",
+    "aliases": [
+      "g118",
+      "gcode-g118",
+      "g118代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G118 备用同义词组"
+  },
+  {
+    "canonical": "G119",
+    "aliases": [
+      "g119",
+      "gcode-g119",
+      "g119代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G119 备用同义词组"
+  },
+  {
+    "canonical": "G120",
+    "aliases": [
+      "g120",
+      "gcode-g120",
+      "g120代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G120 备用同义词组"
+  },
+  {
+    "canonical": "G121",
+    "aliases": [
+      "g121",
+      "gcode-g121",
+      "g121代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G121 备用同义词组"
+  },
+  {
+    "canonical": "G122",
+    "aliases": [
+      "g122",
+      "gcode-g122",
+      "g122代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G122 备用同义词组"
+  },
+  {
+    "canonical": "G123",
+    "aliases": [
+      "g123",
+      "gcode-g123",
+      "g123代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G123 备用同义词组"
+  },
+  {
+    "canonical": "G124",
+    "aliases": [
+      "g124",
+      "gcode-g124",
+      "g124代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G124 备用同义词组"
+  },
+  {
+    "canonical": "G125",
+    "aliases": [
+      "g125",
+      "gcode-g125",
+      "g125代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G125 备用同义词组"
+  },
+  {
+    "canonical": "G126",
+    "aliases": [
+      "g126",
+      "gcode-g126",
+      "g126代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G126 备用同义词组"
+  },
+  {
+    "canonical": "G127",
+    "aliases": [
+      "g127",
+      "gcode-g127",
+      "g127代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G127 备用同义词组"
+  },
+  {
+    "canonical": "G128",
+    "aliases": [
+      "g128",
+      "gcode-g128",
+      "g128代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G128 备用同义词组"
+  },
+  {
+    "canonical": "G129",
+    "aliases": [
+      "g129",
+      "gcode-g129",
+      "g129代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G129 备用同义词组"
+  },
+  {
+    "canonical": "G130",
+    "aliases": [
+      "g130",
+      "gcode-g130",
+      "g130代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G130 备用同义词组"
+  },
+  {
+    "canonical": "G131",
+    "aliases": [
+      "g131",
+      "gcode-g131",
+      "g131代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G131 备用同义词组"
+  },
+  {
+    "canonical": "G132",
+    "aliases": [
+      "g132",
+      "gcode-g132",
+      "g132代码"
+    ],
+    "category": "G代码类",
+    "relatedEntryIds": [
+      "learn-g54-g59"
+    ],
+    "priority": 3,
+    "notes": "自动补全的 G132 备用同义词组"
+  }
+]

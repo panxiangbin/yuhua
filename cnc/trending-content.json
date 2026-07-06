@@ -1,0 +1,1506 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-07-03T02:23:52.031Z",
+  "rankings": {
+    "mostViewed": [
+      {
+        "rank": 1,
+        "id": "kb-00001",
+        "title": "B站数控教程知识点",
+        "category": "G代码与M代码",
+        "views": 1800,
+        "icon": "🔥"
+      },
+      {
+        "rank": 2,
+        "id": "kb-00003",
+        "title": "G00G01快速定位与直线插补",
+        "category": "G代码与M代码",
+        "views": 1775,
+        "icon": "🔥"
+      },
+      {
+        "rank": 3,
+        "id": "kb-00138",
+        "title": "倒角加工",
+        "category": "G代码与M代码",
+        "views": 1750,
+        "icon": "🔥"
+      },
+      {
+        "rank": 4,
+        "id": "kb-00139",
+        "title": "倒角去毛刺编程",
+        "category": "G代码与M代码",
+        "views": 1725,
+        "icon": "⭐"
+      },
+      {
+        "rank": 5,
+        "id": "kb-00278",
+        "title": "钻孔攻丝固定循环",
+        "category": "G代码与M代码",
+        "views": 1700,
+        "icon": "⭐"
+      },
+      {
+        "rank": 6,
+        "id": "kb-00280",
+        "title": "铰孔加工",
+        "category": "G代码与M代码",
+        "views": 1675,
+        "icon": "⭐"
+      },
+      {
+        "rank": 7,
+        "id": "kb-00440",
+        "title": "车铣复合加工中心编程完全指南",
+        "category": "G代码与M代码",
+        "views": 1650,
+        "icon": "⭐"
+      },
+      {
+        "rank": 8,
+        "id": "kb-00443",
+        "title": "采集_FANUC常见报警代码解析",
+        "category": "G代码与M代码",
+        "views": 1625,
+        "icon": "⭐"
+      },
+      {
+        "rank": 9,
+        "id": "kb-00090",
+        "title": "G76G87精镗循环详解",
+        "category": "G代码与M代码",
+        "views": 1600,
+        "icon": "⭐"
+      },
+      {
+        "rank": 10,
+        "id": "kb-00091",
+        "title": "G76复合螺纹循环",
+        "category": "G代码与M代码",
+        "views": 1575,
+        "icon": "⭐"
+      },
+      {
+        "rank": 11,
+        "id": "kb-00294",
+        "title": "数控编程基础",
+        "category": "G代码与M代码",
+        "views": 1550,
+        "icon": "⭐"
+      },
+      {
+        "rank": 12,
+        "id": "kb-00295",
+        "title": "数控编程教学合集",
+        "category": "G代码与M代码",
+        "views": 1525,
+        "icon": "⭐"
+      },
+      {
+        "rank": 13,
+        "id": "kb-00721",
+        "title": "UG_NX_SiemensNX_CAM编程指南",
+        "category": "G代码与M代码",
+        "views": 1500,
+        "icon": "⭐"
+      },
+      {
+        "rank": 14,
+        "id": "kb-00723",
+        "title": "UG_NX编程进阶",
+        "category": "G代码与M代码",
+        "views": 1475,
+        "icon": "⭐"
+      },
+      {
+        "rank": 15,
+        "id": "kb-00154",
+        "title": "参数化编程",
+        "category": "G代码与M代码",
+        "views": 1450,
+        "icon": "⭐"
+      },
+      {
+        "rank": 16,
+        "id": "kb-00155",
+        "title": "参数化编程G10",
+        "category": "G代码与M代码",
+        "views": 1425,
+        "icon": "⭐"
+      },
+      {
+        "rank": 17,
+        "id": "kb-00748",
+        "title": "CAM编程验收标准",
+        "category": "G代码与M代码",
+        "views": 1400,
+        "icon": "⭐"
+      },
+      {
+        "rank": 18,
+        "id": "kb-00760",
+        "title": "Mastercam多轴加工",
+        "category": "G代码与M代码",
+        "views": 1375,
+        "icon": "⭐"
+      },
+      {
+        "rank": 19,
+        "id": "kb-00422",
+        "title": "编程练习276-290题",
+        "category": "G代码与M代码",
+        "views": 1350,
+        "icon": "⭐"
+      },
+      {
+        "rank": 20,
+        "id": "kb-00426",
+        "title": "网采_固定循环编程详解",
+        "category": "G代码与M代码",
+        "views": 1325,
+        "icon": "⭐"
+      },
+      {
+        "rank": 21,
+        "id": "kb-00043",
+        "title": "FANUC宏程序B类编程完全手册",
+        "category": "G代码与M代码",
+        "views": 1300,
+        "icon": "⭐"
+      },
+      {
+        "rank": 22,
+        "id": "kb-00071",
+        "title": "G52局部坐标系详解",
+        "category": "G代码与M代码",
+        "views": 1275,
+        "icon": "⭐"
+      },
+      {
+        "rank": 23,
+        "id": "kb-00375",
+        "title": "数控车削编程与工艺进阶",
+        "category": "G代码与M代码",
+        "views": 1250,
+        "icon": "⭐"
+      },
+      {
+        "rank": 24,
+        "id": "kb-00394",
+        "title": "精密镗孔技术",
+        "category": "G代码与M代码",
+        "views": 1225,
+        "icon": "⭐"
+      },
+      {
+        "rank": 25,
+        "id": "kb-00708",
+        "title": "Mastercam编程进阶",
+        "category": "G代码与M代码",
+        "views": 1200,
+        "icon": "⭐"
+      },
+      {
+        "rank": 26,
+        "id": "kb-00709",
+        "title": "Mastercam高速加工策略详解",
+        "category": "G代码与M代码",
+        "views": 1175,
+        "icon": "⭐"
+      },
+      {
+        "rank": 27,
+        "id": "kb-01236",
+        "title": "伺服驱动维修",
+        "category": "参数与报警",
+        "views": 1150,
+        "icon": "⭐"
+      },
+      {
+        "rank": 28,
+        "id": "kb-01237",
+        "title": "典型电气元件",
+        "category": "参数与报警",
+        "views": 1125,
+        "icon": "⭐"
+      },
+      {
+        "rank": 29,
+        "id": "kb-01217",
+        "title": "FANUC报警代码分详解",
+        "category": "参数与报警",
+        "views": 1100,
+        "icon": "⭐"
+      },
+      {
+        "rank": 30,
+        "id": "kb-01229",
+        "title": "主轴驱动器故障",
+        "category": "参数与报警",
+        "views": 1075,
+        "icon": "⭐"
+      },
+      {
+        "rank": 31,
+        "id": "kb-01277",
+        "title": "液压气动系统维修",
+        "category": "参数与报警",
+        "views": 1050,
+        "icon": "⭐"
+      },
+      {
+        "rank": 32,
+        "id": "kb-01278",
+        "title": "液压站维修",
+        "category": "参数与报警",
+        "views": 1025,
+        "icon": "⭐"
+      },
+      {
+        "rank": 33,
+        "id": "kb-01249",
+        "title": "常见机械故障排查",
+        "category": "参数与报警",
+        "views": 1000,
+        "icon": "⭐"
+      },
+      {
+        "rank": 34,
+        "id": "kb-01250",
+        "title": "年度保养计划",
+        "category": "参数与报警",
+        "views": 975,
+        "icon": "⭐"
+      },
+      {
+        "rank": 35,
+        "id": "kb-00594",
+        "title": "精度检验方法",
+        "category": "机床操作",
+        "views": 950,
+        "icon": "⭐"
+      },
+      {
+        "rank": 36,
+        "id": "kb-00602",
+        "title": "铣床对刀与找正方法大全",
+        "category": "机床操作",
+        "views": 925,
+        "icon": "⭐"
+      },
+      {
+        "rank": 37,
+        "id": "kb-00646",
+        "title": "维护_数控机床年度大修方案",
+        "category": "机床操作",
+        "views": 900,
+        "icon": "⭐"
+      },
+      {
+        "rank": 38,
+        "id": "kb-00647",
+        "title": "维护_数控机床振动分析与抑制完全指南",
+        "category": "机床操作",
+        "views": 875,
+        "icon": "⭐"
+      },
+      {
+        "rank": 39,
+        "id": "kb-00845",
+        "title": "刀具寿命管理方法",
+        "category": "刀具工艺",
+        "views": 850,
+        "icon": "⭐"
+      },
+      {
+        "rank": 40,
+        "id": "kb-00847",
+        "title": "刀具成本控制方法",
+        "category": "刀具工艺",
+        "views": 825,
+        "icon": "⭐"
+      },
+      {
+        "rank": 41,
+        "id": "kb-00889",
+        "title": "夹具_薄壁件铣削夹具设计",
+        "category": "刀具工艺",
+        "views": 800,
+        "icon": "⭐"
+      },
+      {
+        "rank": 42,
+        "id": "kb-00892",
+        "title": "夹具_铣刀夹具设计详解",
+        "category": "刀具工艺",
+        "views": 775,
+        "icon": "⭐"
+      },
+      {
+        "rank": 43,
+        "id": "kb-01131",
+        "title": "材料专项_不锈钢对比",
+        "category": "刀具工艺",
+        "views": 750,
+        "icon": "⭐"
+      },
+      {
+        "rank": 44,
+        "id": "kb-01139",
+        "title": "正交试验DOE参数优化",
+        "category": "刀具工艺",
+        "views": 725,
+        "icon": "⭐"
+      },
+      {
+        "rank": 45,
+        "id": "kb-00892",
+        "title": "夹具_铣刀夹具设计详解",
+        "category": "刀具工艺",
+        "views": 700,
+        "icon": "⭐"
+      },
+      {
+        "rank": 46,
+        "id": "kb-00893",
+        "title": "夹具_铣削夹具设计手册",
+        "category": "刀具工艺",
+        "views": 675,
+        "icon": "⭐"
+      },
+      {
+        "rank": 47,
+        "id": "kb-01004",
+        "title": "数控加工切削液选择与维护管理",
+        "category": "刀具工艺",
+        "views": 650,
+        "icon": "⭐"
+      },
+      {
+        "rank": 48,
+        "id": "kb-01022",
+        "title": "热变形控制",
+        "category": "刀具工艺",
+        "views": 625,
+        "icon": "⭐"
+      },
+      {
+        "rank": 49,
+        "id": "kb-01069",
+        "title": "铸铁加工",
+        "category": "刀具工艺",
+        "views": 600,
+        "icon": "⭐"
+      },
+      {
+        "rank": 50,
+        "id": "kb-01070",
+        "title": "锻件毛坯加工",
+        "category": "刀具工艺",
+        "views": 575,
+        "icon": "⭐"
+      }
+    ],
+    "beginner": [
+      {
+        "rank": 1,
+        "id": "kb-00001",
+        "title": "B站数控教程知识点",
+        "category": "G代码与M代码",
+        "difficulty": "beginner",
+        "icon": "🌱"
+      },
+      {
+        "rank": 2,
+        "id": "kb-00003",
+        "title": "G00G01快速定位与直线插补",
+        "category": "G代码与M代码",
+        "difficulty": "beginner",
+        "icon": "🌱"
+      },
+      {
+        "rank": 3,
+        "id": "kb-00138",
+        "title": "倒角加工",
+        "category": "G代码与M代码",
+        "difficulty": "beginner",
+        "icon": "🌱"
+      },
+      {
+        "rank": 4,
+        "id": "kb-00139",
+        "title": "倒角去毛刺编程",
+        "category": "G代码与M代码",
+        "difficulty": "beginner",
+        "icon": "🌱"
+      },
+      {
+        "rank": 5,
+        "id": "kb-00278",
+        "title": "钻孔攻丝固定循环",
+        "category": "G代码与M代码",
+        "difficulty": "beginner",
+        "icon": "🌱"
+      },
+      {
+        "rank": 6,
+        "id": "kb-00280",
+        "title": "铰孔加工",
+        "category": "G代码与M代码",
+        "difficulty": "beginner",
+        "icon": "🌱"
+      },
+      {
+        "rank": 7,
+        "id": "kb-00440",
+        "title": "车铣复合加工中心编程完全指南",
+        "category": "G代码与M代码",
+        "difficulty": "beginner",
+        "icon": "🌱"
+      },
+      {
+        "rank": 8,
+        "id": "kb-00443",
+        "title": "采集_FANUC常见报警代码解析",
+        "category": "G代码与M代码",
+        "difficulty": "beginner",
+        "icon": "🌱"
+      },
+      {
+        "rank": 9,
+        "id": "kb-00090",
+        "title": "G76G87精镗循环详解",
+        "category": "G代码与M代码",
+        "difficulty": "beginner",
+        "icon": "🌱"
+      },
+      {
+        "rank": 10,
+        "id": "kb-00091",
+        "title": "G76复合螺纹循环",
+        "category": "G代码与M代码",
+        "difficulty": "beginner",
+        "icon": "🌱"
+      },
+      {
+        "rank": 11,
+        "id": "kb-00294",
+        "title": "数控编程基础",
+        "category": "G代码与M代码",
+        "difficulty": "beginner",
+        "icon": "🌱"
+      },
+      {
+        "rank": 12,
+        "id": "kb-00295",
+        "title": "数控编程教学合集",
+        "category": "G代码与M代码",
+        "difficulty": "beginner",
+        "icon": "🌱"
+      },
+      {
+        "rank": 13,
+        "id": "kb-00721",
+        "title": "UG_NX_SiemensNX_CAM编程指南",
+        "category": "G代码与M代码",
+        "difficulty": "beginner",
+        "icon": "🌱"
+      },
+      {
+        "rank": 14,
+        "id": "kb-00723",
+        "title": "UG_NX编程进阶",
+        "category": "G代码与M代码",
+        "difficulty": "beginner",
+        "icon": "🌱"
+      },
+      {
+        "rank": 15,
+        "id": "kb-00154",
+        "title": "参数化编程",
+        "category": "G代码与M代码",
+        "difficulty": "beginner",
+        "icon": "🌱"
+      },
+      {
+        "rank": 16,
+        "id": "kb-00155",
+        "title": "参数化编程G10",
+        "category": "G代码与M代码",
+        "difficulty": "beginner",
+        "icon": "🌱"
+      },
+      {
+        "rank": 17,
+        "id": "kb-00748",
+        "title": "CAM编程验收标准",
+        "category": "G代码与M代码",
+        "difficulty": "beginner",
+        "icon": "🌱"
+      },
+      {
+        "rank": 18,
+        "id": "kb-00760",
+        "title": "Mastercam多轴加工",
+        "category": "G代码与M代码",
+        "difficulty": "beginner",
+        "icon": "🌱"
+      },
+      {
+        "rank": 19,
+        "id": "kb-00422",
+        "title": "编程练习276-290题",
+        "category": "G代码与M代码",
+        "difficulty": "beginner",
+        "icon": "🌱"
+      },
+      {
+        "rank": 20,
+        "id": "kb-00426",
+        "title": "网采_固定循环编程详解",
+        "category": "G代码与M代码",
+        "difficulty": "beginner",
+        "icon": "🌱"
+      },
+      {
+        "rank": 21,
+        "id": "kb-00071",
+        "title": "G52局部坐标系详解",
+        "category": "G代码与M代码",
+        "difficulty": "beginner",
+        "icon": "🌱"
+      },
+      {
+        "rank": 22,
+        "id": "kb-00375",
+        "title": "数控车削编程与工艺进阶",
+        "category": "G代码与M代码",
+        "difficulty": "beginner",
+        "icon": "🌱"
+      },
+      {
+        "rank": 23,
+        "id": "kb-00394",
+        "title": "精密镗孔技术",
+        "category": "G代码与M代码",
+        "difficulty": "beginner",
+        "icon": "🌱"
+      },
+      {
+        "rank": 24,
+        "id": "kb-00708",
+        "title": "Mastercam编程进阶",
+        "category": "G代码与M代码",
+        "difficulty": "beginner",
+        "icon": "🌱"
+      },
+      {
+        "rank": 25,
+        "id": "kb-00709",
+        "title": "Mastercam高速加工策略详解",
+        "category": "G代码与M代码",
+        "difficulty": "beginner",
+        "icon": "🌱"
+      },
+      {
+        "rank": 26,
+        "id": "kb-00594",
+        "title": "精度检验方法",
+        "category": "机床操作",
+        "difficulty": "beginner",
+        "icon": "🌱"
+      },
+      {
+        "rank": 27,
+        "id": "kb-00602",
+        "title": "铣床对刀与找正方法大全",
+        "category": "机床操作",
+        "difficulty": "beginner",
+        "icon": "🌱"
+      },
+      {
+        "rank": 28,
+        "id": "kb-00646",
+        "title": "维护_数控机床年度大修方案",
+        "category": "机床操作",
+        "difficulty": "beginner",
+        "icon": "🌱"
+      },
+      {
+        "rank": 29,
+        "id": "kb-00647",
+        "title": "维护_数控机床振动分析与抑制完全指南",
+        "category": "机床操作",
+        "difficulty": "beginner",
+        "icon": "🌱"
+      },
+      {
+        "rank": 30,
+        "id": "kb-00004",
+        "title": "G02G03圆弧插补详解",
+        "category": "G代码与M代码",
+        "difficulty": "beginner",
+        "icon": "🌱"
+      }
+    ],
+    "advanced": [
+      {
+        "rank": 1,
+        "id": "kb-00043",
+        "title": "FANUC宏程序B类编程完全手册",
+        "category": "G代码与M代码",
+        "difficulty": "advanced",
+        "icon": "🚀"
+      },
+      {
+        "rank": 2,
+        "id": "kb-00727",
+        "title": "五轴加工与RTCP刀尖跟随完全指南",
+        "category": "G代码与M代码",
+        "difficulty": "advanced",
+        "icon": "🚀"
+      },
+      {
+        "rank": 3,
+        "id": "kb-00159",
+        "title": "四五轴编程入门",
+        "category": "G代码与M代码",
+        "difficulty": "advanced",
+        "icon": "🚀"
+      },
+      {
+        "rank": 4,
+        "id": "kb-00778",
+        "title": "五轴后处理开发与机床运动学配置",
+        "category": "G代码与M代码",
+        "difficulty": "advanced",
+        "icon": "🚀"
+      },
+      {
+        "rank": 5,
+        "id": "kb-00075",
+        "title": "G65G66G67宏程序调用详解",
+        "category": "G代码与M代码",
+        "difficulty": "advanced",
+        "icon": "🚀"
+      },
+      {
+        "rank": 6,
+        "id": "kb-00076",
+        "title": "G65宏程序调用详解",
+        "category": "G代码与M代码",
+        "difficulty": "advanced",
+        "icon": "🚀"
+      },
+      {
+        "rank": 7,
+        "id": "kb-00718",
+        "title": "UGNX五轴加工策略详解",
+        "category": "G代码与M代码",
+        "difficulty": "advanced",
+        "icon": "🚀"
+      },
+      {
+        "rank": 8,
+        "id": "kb-00799",
+        "title": "五轴后处理定制",
+        "category": "G代码与M代码",
+        "difficulty": "advanced",
+        "icon": "🚀"
+      },
+      {
+        "rank": 9,
+        "id": "kb-00144",
+        "title": "刀具补偿宏程序应用",
+        "category": "G代码与M代码",
+        "difficulty": "advanced",
+        "icon": "🚀"
+      },
+      {
+        "rank": 10,
+        "id": "kb-01478",
+        "title": "五轴加工技术发展趋势",
+        "category": "加工案例",
+        "difficulty": "advanced",
+        "icon": "🚀"
+      },
+      {
+        "rank": 11,
+        "id": "kb-00183",
+        "title": "宏程序参数化编程与家族零件",
+        "category": "G代码与M代码",
+        "difficulty": "advanced",
+        "icon": "🚀"
+      },
+      {
+        "rank": 12,
+        "id": "kb-00020",
+        "title": "五轴加工与RTCP刀尖跟随完全指南",
+        "category": "G代码与M代码",
+        "difficulty": "advanced",
+        "icon": "🚀"
+      },
+      {
+        "rank": 13,
+        "id": "kb-00021",
+        "title": "五轴加工技术完整指南",
+        "category": "G代码与M代码",
+        "difficulty": "advanced",
+        "icon": "🚀"
+      },
+      {
+        "rank": 14,
+        "id": "kb-00023",
+        "title": "五轴加工编程",
+        "category": "G代码与M代码",
+        "difficulty": "advanced",
+        "icon": "🚀"
+      },
+      {
+        "rank": 15,
+        "id": "kb-00182",
+        "title": "宏程序刀具补偿动态调整",
+        "category": "G代码与M代码",
+        "difficulty": "advanced",
+        "icon": "🚀"
+      },
+      {
+        "rank": 16,
+        "id": "kb-00186",
+        "title": "宏程序固定循环自定义开发",
+        "category": "G代码与M代码",
+        "difficulty": "advanced",
+        "icon": "🚀"
+      },
+      {
+        "rank": 17,
+        "id": "kb-00191",
+        "title": "宏程序高级变量应用",
+        "category": "G代码与M代码",
+        "difficulty": "advanced",
+        "icon": "🚀"
+      },
+      {
+        "rank": 18,
+        "id": "kb-00192",
+        "title": "宏程序高级应用自定义循环",
+        "category": "G代码与M代码",
+        "difficulty": "advanced",
+        "icon": "🚀"
+      },
+      {
+        "rank": 19,
+        "id": "kb-00159",
+        "title": "四五轴编程入门",
+        "category": "G代码与M代码",
+        "difficulty": "advanced",
+        "icon": "🚀"
+      },
+      {
+        "rank": 20,
+        "id": "kb-00765",
+        "title": "PowerMill五轴加工编程指南",
+        "category": "G代码与M代码",
+        "difficulty": "advanced",
+        "icon": "🚀"
+      },
+      {
+        "rank": 21,
+        "id": "kb-00186",
+        "title": "宏程序固定循环自定义开发",
+        "category": "G代码与M代码",
+        "difficulty": "advanced",
+        "icon": "🚀"
+      },
+      {
+        "rank": 22,
+        "id": "kb-00021",
+        "title": "五轴加工技术完整指南",
+        "category": "G代码与M代码",
+        "difficulty": "advanced",
+        "icon": "🚀"
+      },
+      {
+        "rank": 23,
+        "id": "kb-00193",
+        "title": "宏程序高级接口与自定义G代码",
+        "category": "G代码与M代码",
+        "difficulty": "advanced",
+        "icon": "🚀"
+      },
+      {
+        "rank": 24,
+        "id": "kb-01759",
+        "title": "航空叶片五轴加工",
+        "category": "加工案例",
+        "difficulty": "advanced",
+        "icon": "🚀"
+      },
+      {
+        "rank": 25,
+        "id": "kb-00041",
+        "title": "FANUC宏程序B类变量详解",
+        "category": "G代码与M代码",
+        "difficulty": "advanced",
+        "icon": "🚀"
+      },
+      {
+        "rank": 26,
+        "id": "kb-00042",
+        "title": "FANUC宏程序B类完全指南",
+        "category": "G代码与M代码",
+        "difficulty": "advanced",
+        "icon": "🚀"
+      },
+      {
+        "rank": 27,
+        "id": "kb-00135",
+        "title": "五轴刀具矢量控制",
+        "category": "G代码与M代码",
+        "difficulty": "advanced",
+        "icon": "🚀"
+      },
+      {
+        "rank": 28,
+        "id": "kb-00043",
+        "title": "FANUC宏程序B类编程完全手册",
+        "category": "G代码与M代码",
+        "difficulty": "advanced",
+        "icon": "🚀"
+      },
+      {
+        "rank": 29,
+        "id": "kb-01770",
+        "title": "钛合金航空叶片五轴加工",
+        "category": "加工案例",
+        "difficulty": "advanced",
+        "icon": "🚀"
+      },
+      {
+        "rank": 30,
+        "id": "kb-01784",
+        "title": "网采_五轴加工典型案例分析",
+        "category": "加工案例",
+        "difficulty": "advanced",
+        "icon": "🚀"
+      }
+    ],
+    "mustLearn": [
+      {
+        "rank": 1,
+        "id": "kb-00001",
+        "title": "B站数控教程知识点",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 2,
+        "id": "kb-00003",
+        "title": "G00G01快速定位与直线插补",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 3,
+        "id": "kb-00138",
+        "title": "倒角加工",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 4,
+        "id": "kb-00139",
+        "title": "倒角去毛刺编程",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 5,
+        "id": "kb-00278",
+        "title": "钻孔攻丝固定循环",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 6,
+        "id": "kb-00280",
+        "title": "铰孔加工",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 7,
+        "id": "kb-00440",
+        "title": "车铣复合加工中心编程完全指南",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 8,
+        "id": "kb-00443",
+        "title": "采集_FANUC常见报警代码解析",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 9,
+        "id": "kb-00090",
+        "title": "G76G87精镗循环详解",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 10,
+        "id": "kb-00091",
+        "title": "G76复合螺纹循环",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 11,
+        "id": "kb-00294",
+        "title": "数控编程基础",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 12,
+        "id": "kb-00295",
+        "title": "数控编程教学合集",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 13,
+        "id": "kb-00721",
+        "title": "UG_NX_SiemensNX_CAM编程指南",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 14,
+        "id": "kb-00723",
+        "title": "UG_NX编程进阶",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 15,
+        "id": "kb-00154",
+        "title": "参数化编程",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 16,
+        "id": "kb-00155",
+        "title": "参数化编程G10",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 17,
+        "id": "kb-00748",
+        "title": "CAM编程验收标准",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 18,
+        "id": "kb-00760",
+        "title": "Mastercam多轴加工",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 19,
+        "id": "kb-00422",
+        "title": "编程练习276-290题",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 20,
+        "id": "kb-00426",
+        "title": "网采_固定循环编程详解",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 21,
+        "id": "kb-00043",
+        "title": "FANUC宏程序B类编程完全手册",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 22,
+        "id": "kb-00071",
+        "title": "G52局部坐标系详解",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 23,
+        "id": "kb-00375",
+        "title": "数控车削编程与工艺进阶",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 24,
+        "id": "kb-00394",
+        "title": "精密镗孔技术",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 25,
+        "id": "kb-00708",
+        "title": "Mastercam编程进阶",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 26,
+        "id": "kb-00709",
+        "title": "Mastercam高速加工策略详解",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 27,
+        "id": "kb-00594",
+        "title": "精度检验方法",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 28,
+        "id": "kb-00602",
+        "title": "铣床对刀与找正方法大全",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 29,
+        "id": "kb-00646",
+        "title": "维护_数控机床年度大修方案",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 30,
+        "id": "kb-00647",
+        "title": "维护_数控机床振动分析与抑制完全指南",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 31,
+        "id": "kb-00004",
+        "title": "G02G03圆弧插补详解",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 32,
+        "id": "kb-00005",
+        "title": "G代码模态机制详解",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 33,
+        "id": "kb-00006",
+        "title": "NotebookLM_FANUC加工中心G代码M代码完整手册",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 34,
+        "id": "kb-00140",
+        "title": "内孔加工",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 35,
+        "id": "kb-00141",
+        "title": "刀具半径补偿",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 36,
+        "id": "kb-00142",
+        "title": "刀具补偿",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 37,
+        "id": "kb-00281",
+        "title": "锥面加工",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 38,
+        "id": "kb-00282",
+        "title": "键槽加工",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 39,
+        "id": "kb-00283",
+        "title": "键槽铣削加工",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 40,
+        "id": "kb-00444",
+        "title": "采集_G00快速定位完全指南",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 41,
+        "id": "kb-00445",
+        "title": "采集_G01直线插补完全指南",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 42,
+        "id": "kb-00446",
+        "title": "采集_G02G03圆弧插补完全指南",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 43,
+        "id": "kb-00093",
+        "title": "G81G83钻孔循环教学",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 44,
+        "id": "kb-00094",
+        "title": "G81钻孔循环",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 45,
+        "id": "kb-00096",
+        "title": "G84刚性攻丝循环",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 46,
+        "id": "kb-00296",
+        "title": "数控计算公式大全",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 47,
+        "id": "kb-00302",
+        "title": "电火花线切割编程",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 48,
+        "id": "kb-00305",
+        "title": "CAD_CAM数据交换与后处理",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 49,
+        "id": "kb-00724",
+        "title": "VTNC虚拟机床仿真调试指南",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      },
+      {
+        "rank": 50,
+        "id": "kb-00727",
+        "title": "五轴加工与RTCP刀尖跟随完全指南",
+        "tags": [
+          "必学"
+        ],
+        "icon": "⭐"
+      }
+    ],
+    "trending": [
+      {
+        "rank": 1,
+        "id": "kb-00721",
+        "title": "UG_NX_SiemensNX_CAM编程指南",
+        "trendScore": 0.98,
+        "reason": "行业前沿标准热点",
+        "icon": "📈"
+      },
+      {
+        "rank": 2,
+        "id": "kb-00748",
+        "title": "CAM编程验收标准",
+        "trendScore": 0.96,
+        "reason": "车间高频调试技能",
+        "icon": "📈"
+      },
+      {
+        "rank": 3,
+        "id": "kb-00043",
+        "title": "FANUC宏程序B类编程完全手册",
+        "trendScore": 0.94,
+        "reason": "自动化闭环加工热度上升",
+        "icon": "📈"
+      },
+      {
+        "rank": 4,
+        "id": "kb-00305",
+        "title": "CAD_CAM数据交换与后处理",
+        "trendScore": 0.92,
+        "reason": "行业前沿标准热点",
+        "icon": "📈"
+      },
+      {
+        "rank": 5,
+        "id": "kb-00727",
+        "title": "五轴加工与RTCP刀尖跟随完全指南",
+        "trendScore": 0.9,
+        "reason": "车间高频调试技能",
+        "icon": "📈"
+      },
+      {
+        "rank": 6,
+        "id": "kb-00159",
+        "title": "四五轴编程入门",
+        "trendScore": 0.88,
+        "reason": "自动化闭环加工热度上升",
+        "icon": "📈"
+      },
+      {
+        "rank": 7,
+        "id": "kb-00778",
+        "title": "五轴后处理开发与机床运动学配置",
+        "trendScore": 0.86,
+        "reason": "行业前沿标准热点",
+        "icon": "📈"
+      },
+      {
+        "rank": 8,
+        "id": "kb-00075",
+        "title": "G65G66G67宏程序调用详解",
+        "trendScore": 0.84,
+        "reason": "车间高频调试技能",
+        "icon": "📈"
+      },
+      {
+        "rank": 9,
+        "id": "kb-00076",
+        "title": "G65宏程序调用详解",
+        "trendScore": 0.82,
+        "reason": "自动化闭环加工热度上升",
+        "icon": "📈"
+      },
+      {
+        "rank": 10,
+        "id": "kb-00077",
+        "title": "G66模态宏调用详解",
+        "trendScore": 0.8,
+        "reason": "行业前沿标准热点",
+        "icon": "📈"
+      },
+      {
+        "rank": 11,
+        "id": "kb-00718",
+        "title": "UGNX五轴加工策略详解",
+        "trendScore": 0.78,
+        "reason": "车间高频调试技能",
+        "icon": "📈"
+      },
+      {
+        "rank": 12,
+        "id": "kb-00794",
+        "title": "CAM后处理开发完全手册",
+        "trendScore": 0.76,
+        "reason": "自动化闭环加工热度上升",
+        "icon": "📈"
+      },
+      {
+        "rank": 13,
+        "id": "kb-00796",
+        "title": "MasterCAM编程入门",
+        "trendScore": 0.74,
+        "reason": "行业前沿标准热点",
+        "icon": "📈"
+      },
+      {
+        "rank": 14,
+        "id": "kb-00799",
+        "title": "五轴后处理定制",
+        "trendScore": 0.72,
+        "reason": "车间高频调试技能",
+        "icon": "📈"
+      },
+      {
+        "rank": 15,
+        "id": "kb-00144",
+        "title": "刀具补偿宏程序应用",
+        "trendScore": 0.7,
+        "reason": "自动化闭环加工热度上升",
+        "icon": "📈"
+      },
+      {
+        "rank": 16,
+        "id": "kb-00720",
+        "title": "UG_NX_CAM注塑模加工策略详解",
+        "trendScore": 0.68,
+        "reason": "行业前沿标准热点",
+        "icon": "📈"
+      },
+      {
+        "rank": 17,
+        "id": "kb-00721",
+        "title": "UG_NX_SiemensNX_CAM编程指南",
+        "trendScore": 0.66,
+        "reason": "车间高频调试技能",
+        "icon": "📈"
+      },
+      {
+        "rank": 18,
+        "id": "kb-01158",
+        "title": "切削参数计算手册",
+        "trendScore": 0.64,
+        "reason": "自动化闭环加工热度上升",
+        "icon": "📈"
+      },
+      {
+        "rank": 19,
+        "id": "kb-01478",
+        "title": "五轴加工技术发展趋势",
+        "trendScore": 0.62,
+        "reason": "行业前沿标准热点",
+        "icon": "📈"
+      },
+      {
+        "rank": 20,
+        "id": "kb-00745",
+        "title": "CAM仿真验证",
+        "trendScore": 0.6,
+        "reason": "车间高频调试技能",
+        "icon": "📈"
+      }
+    ]
+  }
+}

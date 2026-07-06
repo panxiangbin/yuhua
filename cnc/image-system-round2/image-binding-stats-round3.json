@@ -1,0 +1,23 @@
+{
+  "totalBindingKeys": 510,
+  "statisticsTimestamp": "2026-07-06",
+  "bindingAuditLevel": "v2.1-Extended",
+  "counts": {
+    "ENTRY_LEVEL": 491,
+    "SECTION_LEVEL": 7,
+    "PLACEHOLDER_LEVEL": 0,
+    "UNRESOLVED": 12
+  },
+  "percentages": {
+    "ENTRY_LEVEL": "96.27%",
+    "SECTION_LEVEL": "1.37%",
+    "placeholderLevel": "0.00%",
+    "unresolved": "2.35%"
+  },
+  "engineeringMetrics": {
+    "batch003Count": 120,
+    "batch004Count": 120,
+    "missingQueueCount": 110,
+    "pushedIncrementCount": 30
+  }
+}

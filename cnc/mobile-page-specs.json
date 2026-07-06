@@ -1,0 +1,340 @@
+[
+  {
+    "pageId": "dashboard",
+    "modules": [
+      {
+        "moduleName": "顶部导航",
+        "purpose": "提供轻量化返回首页或设置操作区。",
+        "renderOrder": 1,
+        "isRequiredAboveFold": true,
+        "recommendedItemCount": 1,
+        "maxTextLines": 1,
+        "forceImage": false,
+        "imageFallbackStrategy": "不适用",
+        "targetUser": "通用"
+      },
+      {
+        "moduleName": "页面标题区",
+        "purpose": "简短醒目标题，展示当前状态与收录量。",
+        "renderOrder": 2,
+        "isRequiredAboveFold": true,
+        "recommendedItemCount": 1,
+        "maxTextLines": 1,
+        "forceImage": false,
+        "imageFallbackStrategy": "不适用",
+        "targetUser": "通用"
+      },
+      {
+        "moduleName": "搜索区",
+        "purpose": "秒级输入联想，提供快捷清除输入按钮。",
+        "renderOrder": 3,
+        "isRequiredAboveFold": true,
+        "recommendedItemCount": 1,
+        "maxTextLines": 1,
+        "forceImage": false,
+        "imageFallbackStrategy": "不适用",
+        "targetUser": "通用"
+      },
+      {
+        "moduleName": "卡片列表区",
+        "purpose": "快捷启动磁贴与报警高频入口列表。",
+        "renderOrder": 4,
+        "isRequiredAboveFold": true,
+        "recommendedItemCount": 8,
+        "maxTextLines": 2,
+        "forceImage": false,
+        "imageFallbackStrategy": "隐藏图框，文字拉伸自适应。",
+        "targetUser": "通用"
+      },
+      {
+        "moduleName": "推荐区",
+        "purpose": "根据历史查看记录推荐关联操作。",
+        "renderOrder": 5,
+        "isRequiredAboveFold": false,
+        "recommendedItemCount": 3,
+        "maxTextLines": 1,
+        "forceImage": false,
+        "imageFallbackStrategy": "不适用",
+        "targetUser": "通用"
+      }
+    ]
+  },
+  {
+    "pageId": "study-map",
+    "modules": [
+      {
+        "moduleName": "顶部导航",
+        "purpose": "返回或退出学习路径模块。",
+        "renderOrder": 1,
+        "isRequiredAboveFold": true,
+        "recommendedItemCount": 1,
+        "maxTextLines": 1,
+        "forceImage": false,
+        "imageFallbackStrategy": "不适用",
+        "targetUser": "通用"
+      },
+      {
+        "moduleName": "页面标题区",
+        "purpose": "展示学习路线的大标题与预估课时比例。",
+        "renderOrder": 2,
+        "isRequiredAboveFold": true,
+        "recommendedItemCount": 1,
+        "maxTextLines": 2,
+        "forceImage": false,
+        "imageFallbackStrategy": "不适用",
+        "targetUser": "通用"
+      },
+      {
+        "moduleName": "学习路径区",
+        "purpose": "渲染学习步进路线图及当前所处阶段。",
+        "renderOrder": 3,
+        "isRequiredAboveFold": true,
+        "recommendedItemCount": 3,
+        "maxTextLines": 2,
+        "forceImage": true,
+        "imageFallbackStrategy": "使用齿轮或工序矢量微标兜底。",
+        "targetUser": "新手"
+      },
+      {
+        "moduleName": "卡片列表区",
+        "purpose": "展示该阶段下包含的子模块微课列表。",
+        "renderOrder": 4,
+        "isRequiredAboveFold": false,
+        "recommendedItemCount": 4,
+        "maxTextLines": 2,
+        "forceImage": false,
+        "imageFallbackStrategy": "隐藏图片，纯文本展示。",
+        "targetUser": "通用"
+      },
+      {
+        "moduleName": "推荐区",
+        "purpose": "推荐后继进阶学习路径以形成闭环。",
+        "renderOrder": 5,
+        "isRequiredAboveFold": false,
+        "recommendedItemCount": 2,
+        "maxTextLines": 1,
+        "forceImage": false,
+        "imageFallbackStrategy": "不适用",
+        "targetUser": "通用"
+      }
+    ]
+  },
+  {
+    "pageId": "workspace",
+    "modules": [
+      {
+        "moduleName": "顶部导航",
+        "purpose": "返回或重置工作区状态。",
+        "renderOrder": 1,
+        "isRequiredAboveFold": true,
+        "recommendedItemCount": 1,
+        "maxTextLines": 1,
+        "forceImage": false,
+        "imageFallbackStrategy": "不适用",
+        "targetUser": "通用"
+      },
+      {
+        "moduleName": "页面标题区",
+        "purpose": "展示工作区的大分类与筛选卡片数量。",
+        "renderOrder": 2,
+        "isRequiredAboveFold": true,
+        "recommendedItemCount": 1,
+        "maxTextLines": 1,
+        "forceImage": false,
+        "imageFallbackStrategy": "不适用",
+        "targetUser": "通用"
+      },
+      {
+        "moduleName": "分类筛选区",
+        "purpose": "横向滑块式提供材料、刀具、系统的胶囊按钮。",
+        "renderOrder": 3,
+        "isRequiredAboveFold": true,
+        "recommendedItemCount": 6,
+        "maxTextLines": 1,
+        "forceImage": false,
+        "imageFallbackStrategy": "不适用",
+        "targetUser": "通用"
+      },
+      {
+        "moduleName": "卡片列表区",
+        "purpose": "以紧凑列表形式展示筛选出切削参数与补偿量。",
+        "renderOrder": 4,
+        "isRequiredAboveFold": true,
+        "recommendedItemCount": 10,
+        "maxTextLines": 2,
+        "forceImage": false,
+        "imageFallbackStrategy": "隐藏图片，表格自适应拉伸。",
+        "targetUser": "通用"
+      },
+      {
+        "moduleName": "推荐区",
+        "purpose": "展示关联螺纹或刀具加工技巧。",
+        "renderOrder": 5,
+        "isRequiredAboveFold": false,
+        "recommendedItemCount": 3,
+        "maxTextLines": 1,
+        "forceImage": false,
+        "imageFallbackStrategy": "不适用",
+        "targetUser": "通用"
+      }
+    ]
+  },
+  {
+    "pageId": "library",
+    "modules": [
+      {
+        "moduleName": "顶部导航",
+        "purpose": "返回或跳转至搜索页。",
+        "renderOrder": 1,
+        "isRequiredAboveFold": true,
+        "recommendedItemCount": 1,
+        "maxTextLines": 1,
+        "forceImage": false,
+        "imageFallbackStrategy": "不适用",
+        "targetUser": "通用"
+      },
+      {
+        "moduleName": "页面标题区",
+        "purpose": "声明当前目录及收录总数。",
+        "renderOrder": 2,
+        "isRequiredAboveFold": true,
+        "recommendedItemCount": 1,
+        "maxTextLines": 1,
+        "forceImage": false,
+        "imageFallbackStrategy": "不适用",
+        "targetUser": "通用"
+      },
+      {
+        "moduleName": "搜索区",
+        "purpose": "提供快速关键字过滤入口。",
+        "renderOrder": 3,
+        "isRequiredAboveFold": true,
+        "recommendedItemCount": 1,
+        "maxTextLines": 1,
+        "forceImage": false,
+        "imageFallbackStrategy": "不适用",
+        "targetUser": "通用"
+      },
+      {
+        "moduleName": "分类筛选区",
+        "purpose": "展示树状折叠分类过滤器。",
+        "renderOrder": 4,
+        "isRequiredAboveFold": true,
+        "recommendedItemCount": 4,
+        "maxTextLines": 1,
+        "forceImage": false,
+        "imageFallbackStrategy": "不适用",
+        "targetUser": "通用"
+      },
+      {
+        "moduleName": "卡片列表区",
+        "purpose": "流式排布图文卡片。",
+        "renderOrder": 5,
+        "isRequiredAboveFold": false,
+        "recommendedItemCount": 6,
+        "maxTextLines": 2,
+        "forceImage": false,
+        "imageFallbackStrategy": "使用占位色块，文本宽度拉伸。",
+        "targetUser": "通用"
+      }
+    ]
+  },
+  {
+    "pageId": "calculator",
+    "modules": [
+      {
+        "moduleName": "顶部导航",
+        "purpose": "返回工作区及一键重置输入数据。",
+        "renderOrder": 1,
+        "isRequiredAboveFold": true,
+        "recommendedItemCount": 1,
+        "maxTextLines": 1,
+        "forceImage": false,
+        "imageFallbackStrategy": "不适用",
+        "targetUser": "通用"
+      },
+      {
+        "moduleName": "页面标题区",
+        "purpose": "计算器大类切换（如转速/孔公差）。",
+        "renderOrder": 2,
+        "isRequiredAboveFold": true,
+        "recommendedItemCount": 1,
+        "maxTextLines": 1,
+        "forceImage": false,
+        "imageFallbackStrategy": "不适用",
+        "targetUser": "通用"
+      },
+      {
+        "moduleName": "计算器输入区",
+        "purpose": "输入直径、齿数、进给等数字表单。",
+        "renderOrder": 3,
+        "isRequiredAboveFold": true,
+        "recommendedItemCount": 4,
+        "maxTextLines": 1,
+        "forceImage": false,
+        "imageFallbackStrategy": "不适用",
+        "targetUser": "进阶"
+      },
+      {
+        "moduleName": "结果解释区",
+        "purpose": "大字号高对比度计算结果及超负荷警示卡片。",
+        "renderOrder": 4,
+        "isRequiredAboveFold": true,
+        "recommendedItemCount": 1,
+        "maxTextLines": 3,
+        "forceImage": false,
+        "imageFallbackStrategy": "以底色红黄变化做高亮警告。",
+        "targetUser": "进阶"
+      },
+      {
+        "moduleName": "推荐区",
+        "purpose": "计算完成后相关材料切屑刃补偿建议。",
+        "renderOrder": 5,
+        "isRequiredAboveFold": false,
+        "recommendedItemCount": 2,
+        "maxTextLines": 1,
+        "forceImage": false,
+        "imageFallbackStrategy": "不适用",
+        "targetUser": "通用"
+      }
+    ]
+  },
+  {
+    "pageId": "detail-panel",
+    "modules": [
+      {
+        "moduleName": "顶部导航",
+        "purpose": "返回上一页，提供一键收藏操作。",
+        "renderOrder": 1,
+        "isRequiredAboveFold": true,
+        "recommendedItemCount": 1,
+        "maxTextLines": 1,
+        "forceImage": false,
+        "imageFallbackStrategy": "不适用",
+        "targetUser": "通用"
+      },
+      {
+        "moduleName": "详情区",
+        "purpose": "口语化总结、防错红线与三步现场动作展示区。",
+        "renderOrder": 2,
+        "isRequiredAboveFold": true,
+        "recommendedItemCount": 1,
+        "maxTextLines": 4,
+        "forceImage": true,
+        "imageFallbackStrategy": "隐藏图框，拉伸文字至100%并置顶黄色警示文字。",
+        "targetUser": "通用"
+      },
+      {
+        "moduleName": "推荐区",
+        "purpose": "展示跟本条内容相关的实操案例或故障排查FAQ。",
+        "renderOrder": 3,
+        "isRequiredAboveFold": false,
+        "recommendedItemCount": 3,
+        "maxTextLines": 1,
+        "forceImage": false,
+        "imageFallbackStrategy": "不适用",
+        "targetUser": "通用"
+      }
+    ]
+  }
+]

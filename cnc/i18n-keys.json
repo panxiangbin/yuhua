@@ -1,0 +1,148 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-07-03T03:16:39.308Z",
+  "supportedLanguages": [
+    "zh-CN",
+    "en-US",
+    "ja-JP",
+    "de-DE"
+  ],
+  "translations": {
+    "zh-CN": {
+      "app": {
+        "name": "数控工程师工作平台",
+        "tagline": "专业图文资料库 · 智能学习路径 · 实时参数换算"
+      },
+      "navigation": {
+        "home": "首页",
+        "workspace": "工作区",
+        "learningMap": "知识地图",
+        "gallery": "图库",
+        "favorites": "收藏",
+        "settings": "设置"
+      },
+      "search": {
+        "placeholder": "搜索G代码、报警、工艺、刀具...",
+        "button": "搜索",
+        "noResults": "未找到相关内容",
+        "suggestions": "搜索建议"
+      },
+      "common": {
+        "save": "保存",
+        "cancel": "取消",
+        "delete": "删除",
+        "edit": "编辑",
+        "loading": "加载中...",
+        "error": "错误",
+        "success": "成功"
+      }
+    },
+    "en-US": {
+      "app": {
+        "name": "CNC Engineer Workbench",
+        "tagline": "Professional Knowledge Base · Smart Learning Paths · Real-time Calculators"
+      },
+      "navigation": {
+        "home": "Home",
+        "workspace": "Workspace",
+        "learningMap": "Knowledge Map",
+        "gallery": "Gallery",
+        "favorites": "Favorites",
+        "settings": "Settings"
+      },
+      "search": {
+        "placeholder": "Search G-code, alarms, processes, tools...",
+        "button": "Search",
+        "noResults": "No results found",
+        "suggestions": "Suggestions"
+      },
+      "common": {
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "edit": "Edit",
+        "loading": "Loading...",
+        "error": "Error",
+        "success": "Success"
+      }
+    },
+    "ja-JP": {
+      "app": {
+        "name": "CNCエンジニアワークプラットフォーム",
+        "tagline": "プロフェッショナル図面データベース・スマート学習パス・リアルタイムパラメータ計算"
+      },
+      "navigation": {
+        "home": "ホーム",
+        "workspace": "ワークスペース",
+        "learningMap": "ナレッジマップ",
+        "gallery": "ギャラリー",
+        "favorites": "お気に入り",
+        "settings": "設定"
+      },
+      "search": {
+        "placeholder": "Gコード、アラーム、プロセス、工具を検索...",
+        "button": "検索",
+        "noResults": "関連コンテンツが見つかりませんでした",
+        "suggestions": "検索候補"
+      },
+      "common": {
+        "save": "保存",
+        "cancel": "キャンセル",
+        "delete": "削除",
+        "edit": "編集",
+        "loading": "読み込み中...",
+        "error": "エラー",
+        "success": "成功"
+      }
+    },
+    "de-DE": {
+      "app": {
+        "name": "CNC-Ingenieur-Arbeitsplattform",
+        "tagline": "Professionelle Zeichnungsdatenbank · Intelligente Lernpfade · Echtzeit-Parameterberechnung"
+      },
+      "navigation": {
+        "home": "Startseite",
+        "workspace": "Arbeitsbereich",
+        "learningMap": "Wissenskarte",
+        "gallery": "Galerie",
+        "favorites": "Favoriten",
+        "settings": "Einstellungen"
+      },
+      "search": {
+        "placeholder": "Suche nach G-Code, Alarmen, Prozessen, Werkzeugen...",
+        "button": "Suche",
+        "noResults": "Keine Ergebnisse gefunden",
+        "suggestions": "Vorschläge"
+      },
+      "common": {
+        "save": "Speichern",
+        "cancel": "Abbrechen",
+        "delete": "Löschen",
+        "edit": "Bearbeiten",
+        "loading": "Laden...",
+        "error": "Fehler",
+        "success": "Erfolg"
+      }
+    }
+  },
+  "technicalTerms": {
+    "preserveInAllLanguages": [
+      "G代码",
+      "G-code",
+      "Gコード",
+      "M代码",
+      "M-code",
+      "Mコード",
+      "FANUC",
+      "Siemens",
+      "Mitsubishi",
+      "GSK",
+      "Heidenhain",
+      "CNC",
+      "G54",
+      "G43",
+      "G00",
+      "G01"
+    ]
+  }
+}

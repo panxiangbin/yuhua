@@ -1,0 +1,171 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-07-03T03:16:38.094Z",
+  "templates": {
+    "pdfReport": {
+      "name": "学习报告（PDF）",
+      "format": "pdf",
+      "sections": [
+        {
+          "section": "封面",
+          "content": {
+            "title": "数控学习与工艺实操评估报告",
+            "userName": "{{userName}}",
+            "dateRange": "{{startDate}} - {{endDate}}",
+            "logo": true
+          }
+        },
+        {
+          "section": "学习统计",
+          "content": {
+            "totalHours": "{{totalHours}}",
+            "entriesViewed": "{{entriesViewed}}",
+            "categoriesCompleted": "{{categoriesCompleted}}",
+            "charts": [
+              "学习时长曲线",
+              "分类分布饼图",
+              "难度能力蛛网图"
+            ]
+          }
+        },
+        {
+          "section": "已学内容清单",
+          "content": {
+            "format": "table",
+            "columns": [
+              "日期",
+              "知识点",
+              "分类",
+              "学习时长",
+              "质量系数"
+            ],
+            "data": "{{learnedEntries}}"
+          }
+        },
+        {
+          "section": "收藏列表",
+          "content": {
+            "format": "list",
+            "data": "{{favorites}}"
+          }
+        }
+      ],
+      "styling": {
+        "theme": "professional",
+        "colors": [
+          "#1e3a8a",
+          "#3b82f6",
+          "#10b981"
+        ],
+        "fonts": [
+          "Arial",
+          "SimSun",
+          "Microsoft YaHei"
+        ]
+      }
+    },
+    "excelWorkbook": {
+      "name": "知识库数据（Excel）",
+      "format": "xlsx",
+      "sheets": [
+        {
+          "sheetName": "G代码清单",
+          "headers": [
+            "代码",
+            "名称",
+            "格式",
+            "说明",
+            "使用频率"
+          ],
+          "dataSource": "gcode-entries"
+        },
+        {
+          "sheetName": "M代码清单",
+          "headers": [
+            "代码",
+            "名称",
+            "格式",
+            "说明",
+            "使用频率"
+          ],
+          "dataSource": "mcode-entries"
+        },
+        {
+          "sheetName": "报警代码",
+          "headers": [
+            "代码",
+            "系统",
+            "原因",
+            "解决方法",
+            "严重度"
+          ],
+          "dataSource": "alarm-entries"
+        },
+        {
+          "sheetName": "我的收藏",
+          "headers": [
+            "标题",
+            "分类",
+            "收藏时间",
+            "查看次数"
+          ],
+          "dataSource": "user-favorites"
+        }
+      ]
+    },
+    "markdownNotes": {
+      "name": "学习笔记（Markdown）",
+      "format": "md",
+      "template": "# {{entryTitle}}\n\n## 基本信息\n- 分类: {{category}}\n- 难度: {{difficulty}}\n- 学习时间: {{learnedAt}}\n\n## 核心内容摘要\n{{content}}\n\n## 我的避坑笔记\n{{userNotes}}\n\n## 关联推荐与后继学习\n{{recommendations}}"
+    },
+    "printableCheatSheet": {
+      "name": "速查卡（可打印）",
+      "format": "pdf",
+      "layout": "A4",
+      "content": {
+        "front": {
+          "title": "G代码常用速查卡",
+          "entries": [
+            "G00",
+            "G01",
+            "G02",
+            "G03",
+            "G17",
+            "G18",
+            "G19",
+            "G28",
+            "G40",
+            "G41",
+            "G42",
+            "G43",
+            "G54-G59",
+            "G90",
+            "G91"
+          ],
+          "format": "compact-table"
+        },
+        "back": {
+          "title": "M代码与报警常用速查卡",
+          "entries": [
+            "M00",
+            "M01",
+            "M02",
+            "M03",
+            "M04",
+            "M05",
+            "M06",
+            "M08",
+            "M09",
+            "M19",
+            "M30",
+            "SV0438",
+            "SV0411",
+            "5136",
+            "OT0001"
+          ],
+          "format": "compact-table"
+        }
+      }
+    }
+  }
+}

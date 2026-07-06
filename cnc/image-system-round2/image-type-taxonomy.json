@@ -1,0 +1,63 @@
+{
+  "taxonomyName": "数控教学辅助系统图片库分类大纲 (Taxonomy)",
+  "version": "2.0",
+  "lastUpdated": "2026-07-06",
+  "categories": [
+    {
+      "imageType": "坐标示意图",
+      "abbr": "coord",
+      "definition": "用于展示三维空间位置、方向、右手定则轴向关系以及 MCS/WCS 的矢量图解。",
+      "primaryStyle": "2.5D等角投影，红黄蓝三轴箭头高对比度，灰白简约底色。",
+      "mobileCropSafety": "是，中心留白 20%，边缘不允许有核心标注线。"
+    },
+    {
+      "imageType": "刀路轨迹图",
+      "abbr": "path",
+      "definition": "演示 G00 快速定位、G01 直线插补、G02/G03 圆弧走刀切削轨迹的发光走势渲染图。",
+      "primaryStyle": "45度俯视微距，合金铣刀正在切削亮面铝板，带红绿发光走刀线。",
+      "mobileCropSafety": "是，边缘留空 15%，确保刀尖和切入点不超出屏幕。"
+    },
+    {
+      "imageType": "报警情景图",
+      "abbr": "alarm",
+      "definition": "用于伺服超程、发热、FSSB光纤连线、气压不足等停机故障面板及物理指示特写图。",
+      "primaryStyle": "实物极窄景深特写，醒目 LED 红色报警代码配黄色三角警告标志。",
+      "mobileCropSafety": "否，允许全幅画面渲染，保证车间临场急救感。"
+    },
+    {
+      "imageType": "对比图",
+      "abbr": "comp",
+      "definition": "用于粗精切削刀片区别、2刃与4刃铣刀排屑空间、钛合金与铝板切屑形貌的双向比对。",
+      "primaryStyle": "左右双分屏或上下分屏，高清晰棚拍冷暖反差对比。",
+      "mobileCropSafety": "是，左右分栏居中对齐，单侧不越界。"
+    },
+    {
+      "imageType": "对刀步骤图",
+      "abbr": "toff",
+      "definition": "指示寻边器分中碰边、Z轴高度设定器压表、试切法量具对零的手动操作过程物理特写。",
+      "primaryStyle": "特写微距视角，突出触碰界面的金属光泽与偏置方向箭头标尺。",
+      "mobileCropSafety": "是，触碰接触点强行居中。"
+    },
+    {
+      "imageType": "参数仪表图",
+      "abbr": "calc",
+      "definition": "展示线速度 Vc 与 RPM RPM 关系图、进给 Fz 与转速 S 对应图以及公英制对照图表。",
+      "primaryStyle": "科技感扁平矢量图表设计，标尺清晰，高反差明亮色调。",
+      "mobileCropSafety": "是，图表边框居中，确保刻度数字手机端清晰可见。"
+    },
+    {
+      "imageType": "图纸实物对比图",
+      "abbr": "draw",
+      "definition": "将二维蓝底 CAD 三视图工程公差/粗糙度符号与三维加工出的零件物理形貌连接起来的对比示意。",
+      "primaryStyle": "左纸右物科学对比制图风格，半透明黄色引导线连接公差标记。",
+      "mobileCropSafety": "是，左右对称布置，边缘预留 10% 剪切安全带。"
+    },
+    {
+      "imageType": "流程图",
+      "abbr": "flow",
+      "definition": "用带有序号标记的立体流程卡片，指示换刀卡死复位、开机上电回零等顺序逻辑的图解卡片。",
+      "primaryStyle": "2.5D立体阶梯卡片，标有 ①, ②, ③ 清晰动作指引，大量留白。",
+      "mobileCropSafety": "是，流程步进轴中心对齐，手机端自适应。"
+    }
+  ]
+}

@@ -1,0 +1,290 @@
+[
+  {
+    "id": "pad-lathe-beginner",
+    "title": "数控车削编程与操作",
+    "subtitle": "新手先学",
+    "description": "数控车床基础、常用G代码编程、面板按键与对刀操作指引",
+    "type": "新手先学",
+    "priority": 9.8,
+    "entryIds": [
+      "kb-00001",
+      "kb-00003",
+      "kb-00004",
+      "kb-00005",
+      "kb-00006",
+      "kb-00007"
+    ],
+    "imageHint": "assets/images/batch03_turning_process/turning-facing-001.webp",
+    "recommendedView": "study_pack_lathe"
+  },
+  {
+    "id": "pad-mill-beginner",
+    "title": "铣削与加工中心编程",
+    "subtitle": "新手先学",
+    "description": "加工中心基准设定、G54工件坐标系原点偏置与孔加工固定循环",
+    "type": "新手先学",
+    "priority": 9.7,
+    "entryIds": [
+      "kb-00001",
+      "kb-00003",
+      "kb-00006",
+      "kb-00007",
+      "kb-00008",
+      "kb-00009"
+    ],
+    "imageHint": "assets/images/batch04_milling_tooling/milling-face-milling-001.webp",
+    "recommendedView": "study_pack_mill"
+  },
+  {
+    "id": "pad-coord-touchoff",
+    "title": "对刀与坐标系设定",
+    "subtitle": "新手先学",
+    "description": "机械零点与工件零点对比、对刀仪与偏置、磨损表补偿值录入详解",
+    "type": "新手先学",
+    "priority": 9.6,
+    "entryIds": [
+      "kb-00001",
+      "kb-00009",
+      "kb-00010",
+      "kb-00013",
+      "kb-00028",
+      "kb-00029"
+    ],
+    "imageHint": "assets/images/batch02_operation_basics/work-offset-setting-001.webp",
+    "recommendedView": "study_pack_coordinates"
+  },
+  {
+    "id": "pad-calc-speed",
+    "title": "切削参数与换算工具",
+    "subtitle": "参数换算",
+    "description": "主轴转速S、每齿进给量Fz、吃刀量ap与切削速度Vc的高效计算工具",
+    "type": "参数换算",
+    "priority": 9.2,
+    "entryIds": [
+      "kb-00002",
+      "kb-00003",
+      "kb-00011",
+      "kb-00024",
+      "kb-00025",
+      "kb-00026"
+    ],
+    "imageHint": "assets/images/batch01_core/feed-g94-g95-001.webp",
+    "recommendedView": "calc_view_feed"
+  },
+  {
+    "id": "pad-thread-ref",
+    "title": "螺纹规格与分刀工艺",
+    "subtitle": "热门速查",
+    "description": "公制普通螺纹、英制螺纹大径/小径参数与G76复合循环分刀次数查询",
+    "type": "热门速查",
+    "priority": 9.1,
+    "entryIds": [
+      "kb-00008",
+      "kb-00013",
+      "kb-00030",
+      "kb-00034",
+      "kb-00040",
+      "kb-00063"
+    ],
+    "imageHint": "assets/images/batch01_core/cycle-g84-001.webp",
+    "recommendedView": "lookup_thread"
+  },
+  {
+    "id": "pad-gcode-ref",
+    "title": "G代码快速查询字典",
+    "subtitle": "热门速查",
+    "description": "FANUC、西门子与哈斯系统常用G代码功能格式与应用实例详解",
+    "type": "热门速查",
+    "priority": 9.5,
+    "entryIds": [
+      "kb-00001",
+      "kb-00002",
+      "kb-00003",
+      "kb-00004",
+      "kb-00005",
+      "kb-00006"
+    ],
+    "imageHint": "assets/images/batch01_core/gcode-g00-g01-001.webp",
+    "recommendedView": "lookup_gcode"
+  },
+  {
+    "id": "pad-mcode-ref",
+    "title": "M代码辅助功能查询",
+    "subtitle": "热门速查",
+    "description": "冷却液开关、主轴正反转与制动、自动换刀等常用M指令对照",
+    "type": "热门速查",
+    "priority": 9,
+    "entryIds": [
+      "kb-00006",
+      "kb-00007",
+      "kb-00013",
+      "kb-00016",
+      "kb-00018",
+      "kb-00039"
+    ],
+    "imageHint": "assets/images/batch02_operation_basics/panel-control-overview-001.webp",
+    "recommendedView": "lookup_mcode"
+  },
+  {
+    "id": "pad-fanuc-alarm",
+    "title": "FANUC 系统故障排查",
+    "subtitle": "报警排查",
+    "description": "轴行程超程报警、伺服过载、主轴负载过大与PLC连锁故障定位",
+    "type": "报警排查",
+    "priority": 9.4,
+    "entryIds": [
+      "kb-00002",
+      "kb-00006",
+      "kb-00007",
+      "kb-00008",
+      "kb-00009",
+      "kb-00010"
+    ],
+    "imageHint": "assets/images/batch01_core/alarm-limit-overtravel-001.webp",
+    "recommendedView": "alarm_flow_fanuc"
+  },
+  {
+    "id": "pad-siemens-alarm",
+    "title": "西门子 840D 故障诊断",
+    "subtitle": "报警排查",
+    "description": "西门子系统轴伺服监测、编码器断线与 PLC 输入输出信号诊断",
+    "type": "报警排查",
+    "priority": 8.8,
+    "entryIds": [
+      "kb-00002",
+      "kb-00007",
+      "kb-00012",
+      "kb-00019",
+      "kb-00044",
+      "kb-00133"
+    ],
+    "imageHint": "assets/images/batch01_core/alarm-limit-overtravel-001.webp",
+    "recommendedView": "alarm_flow_siemens"
+  },
+  {
+    "id": "pad-probe-macro",
+    "title": "在机探测与宏程序专题",
+    "subtitle": "图文专题",
+    "description": "雷尼绍测头G31跳跃指令、自动分中对准与刀补偏置参数自动写入",
+    "type": "图文专题",
+    "priority": 8.9,
+    "entryIds": [
+      "kb-00013",
+      "kb-00014",
+      "kb-00030",
+      "kb-00039",
+      "kb-00041",
+      "kb-00042"
+    ],
+    "imageHint": "assets/images/batch01_core/probe-overview-001.webp",
+    "recommendedView": "topic_probe"
+  },
+  {
+    "id": "pad-mastercam-entry",
+    "title": "Mastercam 轨迹编程",
+    "subtitle": "CAM 软件",
+    "description": "2D挖槽与外形铣削、安全高度配置、高速摆线开粗与刀具库管理",
+    "type": "CAM 软件",
+    "priority": 8.7,
+    "entryIds": [
+      "kb-00013",
+      "kb-00022",
+      "kb-00023",
+      "kb-00036",
+      "kb-00096",
+      "kb-00107"
+    ],
+    "imageHint": "assets/images/batch02_operation_basics/safe-tool-approach-001.webp",
+    "recommendedView": "topic_mastercam"
+  },
+  {
+    "id": "pad-ug-nx",
+    "title": "UG/NX 三维多轴编程",
+    "subtitle": "CAM 软件",
+    "description": "NX三维粗加工、同步五轴联动加工（RTCP）与后处理定制技术",
+    "type": "CAM 软件",
+    "priority": 8.6,
+    "entryIds": [
+      "kb-00020",
+      "kb-00021",
+      "kb-00022",
+      "kb-00023",
+      "kb-00035",
+      "kb-00135"
+    ],
+    "imageHint": "assets/images/batch02_operation_basics/safe-tool-approach-001.webp",
+    "recommendedView": "topic_ug"
+  },
+  {
+    "id": "pad-tool-select",
+    "title": "立铣刀与车刀片选型",
+    "subtitle": "刀具工艺",
+    "description": "硬质合金刀具槽型选择、纳米涂层(TiAlN)与白钢刀对有色金属加工建议",
+    "type": "刀具工艺",
+    "priority": 9.3,
+    "entryIds": [
+      "kb-00024",
+      "kb-00025",
+      "kb-00138",
+      "kb-00141",
+      "kb-00143",
+      "kb-00170"
+    ],
+    "imageHint": "assets/images/batch02_operation_basics/tool-nose-radius-basic-001.webp",
+    "recommendedView": "topic_tool_select"
+  },
+  {
+    "id": "pad-workholding",
+    "title": "夹具定位与软爪卡盘",
+    "subtitle": "刀具工艺",
+    "description": "液压卡盘软爪修爪工艺、气动夹具多点夹紧与薄壁件装夹变形控制",
+    "type": "刀具工艺",
+    "priority": 8.5,
+    "entryIds": [
+      "kb-00003",
+      "kb-00011",
+      "kb-00022",
+      "kb-00046",
+      "kb-00047",
+      "kb-00057"
+    ],
+    "imageHint": "assets/images/batch02_operation_basics/work-offset-setting-001.webp",
+    "recommendedView": "topic_workholding"
+  },
+  {
+    "id": "pad-cert-prep",
+    "title": "国家职业技能鉴定题库",
+    "subtitle": "资料树入口",
+    "description": "数控车工、数控铣工、加工中心操作工考证理论刷题专区与真题模拟",
+    "type": "资料树入口",
+    "priority": 8,
+    "entryIds": [
+      "kb-01850",
+      "kb-01851",
+      "kb-01852",
+      "kb-01853",
+      "kb-01854",
+      "kb-01855"
+    ],
+    "imageHint": "assets/images/batch02_operation_basics/panel-control-overview-001.webp",
+    "recommendedView": "study_pack_exam"
+  },
+  {
+    "id": "pad-process-card",
+    "title": "加工工艺规程卡编制",
+    "subtitle": "新手先学",
+    "description": "零件工序卡、工步划分原则、刀具表填写以及工艺卡经典编制范例",
+    "type": "新手先学",
+    "priority": 8.4,
+    "entryIds": [
+      "kb-00027",
+      "kb-00036",
+      "kb-00152",
+      "kb-00214",
+      "kb-00243",
+      "kb-00253"
+    ],
+    "imageHint": "assets/images/batch02_operation_basics/safe-tool-approach-001.webp",
+    "recommendedView": "topic_process_card"
+  }
+]

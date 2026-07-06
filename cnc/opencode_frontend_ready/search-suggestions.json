@@ -1,0 +1,2606 @@
+[
+    {
+        "keyword":  "G00",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "运动指令"
+    },
+    {
+        "keyword":  "快速定位",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "运动指令"
+    },
+    {
+        "keyword":  "G01",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "运动指令"
+    },
+    {
+        "keyword":  "直线插补",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "运动指令"
+    },
+    {
+        "keyword":  "G02",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "运动指令"
+    },
+    {
+        "keyword":  "顺时针圆弧插补",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "运动指令"
+    },
+    {
+        "keyword":  "G03",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "运动指令"
+    },
+    {
+        "keyword":  "逆时针圆弧插补",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "运动指令"
+    },
+    {
+        "keyword":  "G04",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "运动指令"
+    },
+    {
+        "keyword":  "暂停指令",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "运动指令"
+    },
+    {
+        "keyword":  "G10",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "可编程数据输入",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "G15",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "极坐标取消",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "G16",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "极坐标设定",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "G17",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "平面选择"
+    },
+    {
+        "keyword":  "XY平面选择",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "平面选择"
+    },
+    {
+        "keyword":  "G18",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "平面选择"
+    },
+    {
+        "keyword":  "ZX平面选择",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "平面选择"
+    },
+    {
+        "keyword":  "G19",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "平面选择"
+    },
+    {
+        "keyword":  "YZ平面选择",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "平面选择"
+    },
+    {
+        "keyword":  "G20",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "单位切换"
+    },
+    {
+        "keyword":  "英制单位设定",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "单位切换"
+    },
+    {
+        "keyword":  "G21",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "单位切换"
+    },
+    {
+        "keyword":  "公制单位设定",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "单位切换"
+    },
+    {
+        "keyword":  "G28",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "自动返回参考点",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "G29",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "从参考点返回",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "G30",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "返回第二参考点",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "G31",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "运动指令"
+    },
+    {
+        "keyword":  "跳跃功能",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "运动指令"
+    },
+    {
+        "keyword":  "G32",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "车床循环"
+    },
+    {
+        "keyword":  "螺纹切削（等距）",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "车床循环"
+    },
+    {
+        "keyword":  "G33",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "车床循环"
+    },
+    {
+        "keyword":  "螺纹切削（等距，恒定导程）",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "车床循环"
+    },
+    {
+        "keyword":  "G34",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "车床循环"
+    },
+    {
+        "keyword":  "变螺距螺纹切削",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "车床循环"
+    },
+    {
+        "keyword":  "G40",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "刀补"
+    },
+    {
+        "keyword":  "刀具半径补偿取消",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "刀补"
+    },
+    {
+        "keyword":  "G41",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "刀补"
+    },
+    {
+        "keyword":  "刀具半径左补偿",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "刀补"
+    },
+    {
+        "keyword":  "G42",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "刀补"
+    },
+    {
+        "keyword":  "刀具半径右补偿",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "刀补"
+    },
+    {
+        "keyword":  "G43",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "刀补"
+    },
+    {
+        "keyword":  "刀具长度正补偿",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "刀补"
+    },
+    {
+        "keyword":  "G44",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "刀补"
+    },
+    {
+        "keyword":  "刀具长度负补偿",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "刀补"
+    },
+    {
+        "keyword":  "G45",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "刀补"
+    },
+    {
+        "keyword":  "刀具偏置值增加",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "刀补"
+    },
+    {
+        "keyword":  "G46",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "刀补"
+    },
+    {
+        "keyword":  "刀具偏置值减小",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "刀补"
+    },
+    {
+        "keyword":  "G47",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "刀补"
+    },
+    {
+        "keyword":  "刀具偏置（双倍增加）",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "刀补"
+    },
+    {
+        "keyword":  "G48",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "刀补"
+    },
+    {
+        "keyword":  "刀具偏置（双倍减小）",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "刀补"
+    },
+    {
+        "keyword":  "G49",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "刀补"
+    },
+    {
+        "keyword":  "刀具长度补偿取消",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "刀补"
+    },
+    {
+        "keyword":  "G50",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "单位切换"
+    },
+    {
+        "keyword":  "主轴最高转速限制/坐标缩放取消",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "单位切换"
+    },
+    {
+        "keyword":  "G51",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "坐标比例缩放",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "G52",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "局部坐标系设定",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "G53",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "机床坐标系选择",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "G54",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "工件坐标系1",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "G55",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "工件坐标系2",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "G56",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "工件坐标系3",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "G57",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "工件坐标系4",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "G58",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "工件坐标系5",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "G59",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "工件坐标系6",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "G61",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "进给模式"
+    },
+    {
+        "keyword":  "精确停检查模式",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "进给模式"
+    },
+    {
+        "keyword":  "G62",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "进给模式"
+    },
+    {
+        "keyword":  "自动拐角倍率",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "进给模式"
+    },
+    {
+        "keyword":  "G63",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "进给模式"
+    },
+    {
+        "keyword":  "攻丝模式",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "进给模式"
+    },
+    {
+        "keyword":  "G64",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "进给模式"
+    },
+    {
+        "keyword":  "切削模式（连续进给）",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "进给模式"
+    },
+    {
+        "keyword":  "G65",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "程序控制"
+    },
+    {
+        "keyword":  "宏程序调用（非模态）",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "程序控制"
+    },
+    {
+        "keyword":  "G66",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "程序控制"
+    },
+    {
+        "keyword":  "宏程序模态调用",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "程序控制"
+    },
+    {
+        "keyword":  "G67",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "程序控制"
+    },
+    {
+        "keyword":  "宏程序模态调用取消",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "程序控制"
+    },
+    {
+        "keyword":  "G68",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "坐标系旋转",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "G69",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "坐标系旋转取消",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "G70",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "车床循环"
+    },
+    {
+        "keyword":  "精加工循环",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "车床循环"
+    },
+    {
+        "keyword":  "G71",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "车床循环"
+    },
+    {
+        "keyword":  "外圆/内孔粗车循环",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "车床循环"
+    },
+    {
+        "keyword":  "G72",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "车床循环"
+    },
+    {
+        "keyword":  "端面粗车循环",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "车床循环"
+    },
+    {
+        "keyword":  "G73",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "车床循环"
+    },
+    {
+        "keyword":  "仿形粗车循环",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "车床循环"
+    },
+    {
+        "keyword":  "G74",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "固定循环"
+    },
+    {
+        "keyword":  "左旋攻丝循环/深孔钻循环",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "固定循环"
+    },
+    {
+        "keyword":  "G75",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "车床循环"
+    },
+    {
+        "keyword":  "切槽循环",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "车床循环"
+    },
+    {
+        "keyword":  "G76",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "车床循环"
+    },
+    {
+        "keyword":  "螺纹复合循环",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "车床循环"
+    },
+    {
+        "keyword":  "G77",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "车床循环"
+    },
+    {
+        "keyword":  "螺纹切削简单循环",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "车床循环"
+    },
+    {
+        "keyword":  "G78",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "车床循环"
+    },
+    {
+        "keyword":  "螺纹切削循环",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "车床循环"
+    },
+    {
+        "keyword":  "G79",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "车床循环"
+    },
+    {
+        "keyword":  "螺纹切削循环（端面）",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "车床循环"
+    },
+    {
+        "keyword":  "G80",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "固定循环"
+    },
+    {
+        "keyword":  "固定循环取消",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "固定循环"
+    },
+    {
+        "keyword":  "G81",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "固定循环"
+    },
+    {
+        "keyword":  "钻孔循环（浅孔）",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "固定循环"
+    },
+    {
+        "keyword":  "G82",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "固定循环"
+    },
+    {
+        "keyword":  "镗阶梯孔循环/沉孔循环",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "固定循环"
+    },
+    {
+        "keyword":  "G83",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "固定循环"
+    },
+    {
+        "keyword":  "深孔啄钻循环",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "固定循环"
+    },
+    {
+        "keyword":  "G84",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "固定循环"
+    },
+    {
+        "keyword":  "攻丝循环（右旋）",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "固定循环"
+    },
+    {
+        "keyword":  "G85",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "固定循环"
+    },
+    {
+        "keyword":  "镗孔循环（进给返回）",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "固定循环"
+    },
+    {
+        "keyword":  "G86",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "固定循环"
+    },
+    {
+        "keyword":  "镗孔循环（主轴停返回）",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "固定循环"
+    },
+    {
+        "keyword":  "G87",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "固定循环"
+    },
+    {
+        "keyword":  "背面镗孔循环",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "固定循环"
+    },
+    {
+        "keyword":  "G88",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "固定循环"
+    },
+    {
+        "keyword":  "镗孔循环（手动）",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "固定循环"
+    },
+    {
+        "keyword":  "G89",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "固定循环"
+    },
+    {
+        "keyword":  "镗孔循环（进给返回+暂停）",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "固定循环"
+    },
+    {
+        "keyword":  "G90",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "绝对坐标编程",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "G91",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "增量坐标编程",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "G92",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "工件坐标系设定/主轴最高转速限制",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "G94",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "进给模式"
+    },
+    {
+        "keyword":  "每分进给模式",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "进给模式"
+    },
+    {
+        "keyword":  "G95",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "进给模式"
+    },
+    {
+        "keyword":  "每转进给模式",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "进给模式"
+    },
+    {
+        "keyword":  "G96",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "进给模式"
+    },
+    {
+        "keyword":  "恒表面速度控制",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "进给模式"
+    },
+    {
+        "keyword":  "G97",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "进给模式"
+    },
+    {
+        "keyword":  "恒转速控制",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "进给模式"
+    },
+    {
+        "keyword":  "G98",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "固定循环"
+    },
+    {
+        "keyword":  "固定循环返回初始平面",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "固定循环"
+    },
+    {
+        "keyword":  "G99",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "固定循环"
+    },
+    {
+        "keyword":  "固定循环返回R平面",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "固定循环"
+    },
+    {
+        "keyword":  "G05.1",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "进给模式"
+    },
+    {
+        "keyword":  "AI轮廓控制/高速高精度加工",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "进给模式"
+    },
+    {
+        "keyword":  "G07.1",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "运动指令"
+    },
+    {
+        "keyword":  "圆柱插补",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "运动指令"
+    },
+    {
+        "keyword":  "G08",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "进给模式"
+    },
+    {
+        "keyword":  "预读控制（加速/减速）",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "进给模式"
+    },
+    {
+        "keyword":  "G09",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "进给模式"
+    },
+    {
+        "keyword":  "精确停（单段）",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "进给模式"
+    },
+    {
+        "keyword":  "G12.1",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "运动指令"
+    },
+    {
+        "keyword":  "极坐标插补模式",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "运动指令"
+    },
+    {
+        "keyword":  "G13.1",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "运动指令"
+    },
+    {
+        "keyword":  "极坐标插补取消",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "运动指令"
+    },
+    {
+        "keyword":  "G22",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "行程限位检查设定",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "G23",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "行程限位检查取消",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "G36",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "刀补"
+    },
+    {
+        "keyword":  "自动刀具补偿（X方向）",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "刀补"
+    },
+    {
+        "keyword":  "G37",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "刀补"
+    },
+    {
+        "keyword":  "自动刀具补偿（Z方向）",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "刀补"
+    },
+    {
+        "keyword":  "G160",
+        "type":  "gcode",
+        "priority":  1,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "特定系统扩展指令",
+        "type":  "gcode",
+        "priority":  2,
+        "category":  "坐标系"
+    },
+    {
+        "keyword":  "M00",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "程序控制"
+    },
+    {
+        "keyword":  "程序停止（无条件）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "程序控制"
+    },
+    {
+        "keyword":  "M01",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "程序控制"
+    },
+    {
+        "keyword":  "程序选择停止",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "程序控制"
+    },
+    {
+        "keyword":  "M02",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "程序控制"
+    },
+    {
+        "keyword":  "程序结束",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "程序控制"
+    },
+    {
+        "keyword":  "M03",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "主轴正转（顺时针）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "M04",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "主轴反转（逆时针）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "M05",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "主轴停止",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "M06",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "换刀"
+    },
+    {
+        "keyword":  "换刀指令",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "换刀"
+    },
+    {
+        "keyword":  "M07",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "冷却"
+    },
+    {
+        "keyword":  "切削液打开（雾状）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "冷却"
+    },
+    {
+        "keyword":  "M08",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "冷却"
+    },
+    {
+        "keyword":  "切削液打开（浇注）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "冷却"
+    },
+    {
+        "keyword":  "M09",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "冷却"
+    },
+    {
+        "keyword":  "切削液关闭",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "冷却"
+    },
+    {
+        "keyword":  "M10",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "夹具夹紧（第4轴制动）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M11",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "夹具松开（第4轴松开）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M13",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "主轴正转+切削液开",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "M14",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "主轴反转+切削液开",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "M17",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "主轴停止+切削液关",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "M19",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "主轴定向停止",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "M21",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "镜像开启",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M22",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "镜像关闭",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M23",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "车床循环"
+    },
+    {
+        "keyword":  "螺纹加工中退出倒角开",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "车床循环"
+    },
+    {
+        "keyword":  "M24",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "车床循环"
+    },
+    {
+        "keyword":  "螺纹加工中退出倒角关",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "车床循环"
+    },
+    {
+        "keyword":  "M28",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "程序控制"
+    },
+    {
+        "keyword":  "返回参考点",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "程序控制"
+    },
+    {
+        "keyword":  "M29",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "刚性攻丝模式",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "M30",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "程序控制"
+    },
+    {
+        "keyword":  "程序结束并返回开头",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "程序控制"
+    },
+    {
+        "keyword":  "M31",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "互锁旁路",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M32",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "恒表面速度控制（特定系统）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "M33",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "恒表面速度控制取消（特定系统）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "M34",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "主轴低速档（特定系统）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "M35",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "主轴中低速档（特定系统）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "M36",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "主轴中高速档（特定系统）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "M37",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "主轴高速档（特定系统）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "M38",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "主轴档位选择（中间档1）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "M39",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "主轴档位选择（中间档2）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "M40",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "主轴齿轮档（低速）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "M41",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "主轴齿轮档（中低速）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "M42",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "主轴齿轮档（中高速）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "M43",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "主轴齿轮档（高速）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "M44",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "主轴齿轮档（超高速1）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "M45",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "主轴齿轮档（超高速2）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "M46",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "主轴齿轮档（最高速）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "主轴控制"
+    },
+    {
+        "keyword":  "M47",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "程序控制"
+    },
+    {
+        "keyword":  "程序段跳过（取消）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "程序控制"
+    },
+    {
+        "keyword":  "M48",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "进给模式"
+    },
+    {
+        "keyword":  "进给倍率有效",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "进给模式"
+    },
+    {
+        "keyword":  "M49",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "进给模式"
+    },
+    {
+        "keyword":  "进给倍率无效",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "进给模式"
+    },
+    {
+        "keyword":  "M50",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "冷却"
+    },
+    {
+        "keyword":  "吹气控制开",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "冷却"
+    },
+    {
+        "keyword":  "M51",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "冷却"
+    },
+    {
+        "keyword":  "吹气控制关",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "冷却"
+    },
+    {
+        "keyword":  "M52",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "尾座前进/夹紧",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M53",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "尾座后退/松开",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M54",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "自动送料器开/夹紧",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M55",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "自动送料器关/松开",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M56",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "自动送料/上料控制",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M57",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "限位旁路/特殊功能",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M58",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "扩展功能控制1",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M59",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "扩展功能控制2",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M60",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "自动工件交换",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M61",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "工件夹紧确认",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M62",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "工件松开确认",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M63",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "输出信号1（扩展）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M64",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "输出信号2（扩展）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M65",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "输出信号3（扩展）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M66",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "输入信号等待1",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M67",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "输入信号等待2",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M68",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "输入信号等待3",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M69",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "程序控制"
+    },
+    {
+        "keyword":  "辅助功能复位",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "程序控制"
+    },
+    {
+        "keyword":  "M70",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "自动门开",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M71",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "自动门关",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M72",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "冷却"
+    },
+    {
+        "keyword":  "油雾冷却开（特定系统）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "冷却"
+    },
+    {
+        "keyword":  "M73",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "冷却"
+    },
+    {
+        "keyword":  "油雾冷却关（特定系统）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "冷却"
+    },
+    {
+        "keyword":  "M74",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "扩展控制（辅助1）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M75",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "扩展控制（辅助2）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M76",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "扩展控制（辅助3）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M77",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "扩展控制（辅助4）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M78",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "扩展控制（辅助5）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M79",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "扩展控制（辅助6）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M80",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "自动送料/收料控制",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M81",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "自动送料/收料控制2",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M82",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "自动送料/收料控制3",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M85",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "行程限位检查（特定系统）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M86",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "行程限位取消（特定系统）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M87",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "扩展输出/信号控制",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M88",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M89",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M90",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "自适应控制/扩展功能",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M91",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "扩展辅助控制",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M92",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M93",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M94",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M95",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "其他"
+    },
+    {
+        "keyword":  "M96",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "程序控制"
+    },
+    {
+        "keyword":  "子程序调用跳转条件",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "程序控制"
+    },
+    {
+        "keyword":  "M97",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "程序控制"
+    },
+    {
+        "keyword":  "子程序调用（条件满足时）",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "程序控制"
+    },
+    {
+        "keyword":  "M98",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "程序控制"
+    },
+    {
+        "keyword":  "子程序调用",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "程序控制"
+    },
+    {
+        "keyword":  "M99",
+        "type":  "mcode",
+        "priority":  1,
+        "category":  "程序控制"
+    },
+    {
+        "keyword":  "子程序返回",
+        "type":  "mcode",
+        "priority":  2,
+        "category":  "程序控制"
+    },
+    {
+        "keyword":  "回零",
+        "type":  "operation",
+        "priority":  2,
+        "category":  "operation"
+    },
+    {
+        "keyword":  "对刀",
+        "type":  "operation",
+        "priority":  2,
+        "category":  "operation"
+    },
+    {
+        "keyword":  "分中",
+        "type":  "operation",
+        "priority":  2,
+        "category":  "operation"
+    },
+    {
+        "keyword":  "刀补",
+        "type":  "operation",
+        "priority":  2,
+        "category":  "operation"
+    },
+    {
+        "keyword":  "刀长补偿",
+        "type":  "operation",
+        "priority":  2,
+        "category":  "operation"
+    },
+    {
+        "keyword":  "换刀",
+        "type":  "operation",
+        "priority":  2,
+        "category":  "operation"
+    },
+    {
+        "keyword":  "空运行",
+        "type":  "operation",
+        "priority":  2,
+        "category":  "operation"
+    },
+    {
+        "keyword":  "单段",
+        "type":  "operation",
+        "priority":  2,
+        "category":  "operation"
+    },
+    {
+        "keyword":  "手轮",
+        "type":  "operation",
+        "priority":  2,
+        "category":  "operation"
+    },
+    {
+        "keyword":  "寻边器",
+        "type":  "operation",
+        "priority":  2,
+        "category":  "operation"
+    },
+    {
+        "keyword":  "碰数",
+        "type":  "operation",
+        "priority":  2,
+        "category":  "operation"
+    },
+    {
+        "keyword":  "校表",
+        "type":  "operation",
+        "priority":  2,
+        "category":  "operation"
+    },
+    {
+        "keyword":  "超程",
+        "type":  "operation",
+        "priority":  2,
+        "category":  "operation"
+    },
+    {
+        "keyword":  "紧急停止",
+        "type":  "operation",
+        "priority":  2,
+        "category":  "operation"
+    },
+    {
+        "keyword":  "急停",
+        "type":  "operation",
+        "priority":  2,
+        "category":  "operation"
+    },
+    {
+        "keyword":  "不锈钢",
+        "type":  "material",
+        "priority":  3,
+        "category":  "material"
+    },
+    {
+        "keyword":  "铝合金",
+        "type":  "material",
+        "priority":  3,
+        "category":  "material"
+    },
+    {
+        "keyword":  "45号钢",
+        "type":  "material",
+        "priority":  3,
+        "category":  "material"
+    },
+    {
+        "keyword":  "模具钢",
+        "type":  "material",
+        "priority":  3,
+        "category":  "material"
+    },
+    {
+        "keyword":  "钛合金",
+        "type":  "material",
+        "priority":  3,
+        "category":  "material"
+    },
+    {
+        "keyword":  "铸铁",
+        "type":  "material",
+        "priority":  3,
+        "category":  "material"
+    },
+    {
+        "keyword":  "高温合金",
+        "type":  "material",
+        "priority":  3,
+        "category":  "material"
+    },
+    {
+        "keyword":  "碳钢",
+        "type":  "material",
+        "priority":  3,
+        "category":  "material"
+    },
+    {
+        "keyword":  "铜",
+        "type":  "material",
+        "priority":  3,
+        "category":  "material"
+    },
+    {
+        "keyword":  "铝",
+        "type":  "material",
+        "priority":  3,
+        "category":  "material"
+    },
+    {
+        "keyword":  "钢",
+        "type":  "material",
+        "priority":  3,
+        "category":  "material"
+    },
+    {
+        "keyword":  "顺铣",
+        "type":  "process",
+        "priority":  3,
+        "category":  "process"
+    },
+    {
+        "keyword":  "逆铣",
+        "type":  "process",
+        "priority":  3,
+        "category":  "process"
+    },
+    {
+        "keyword":  "粗加工",
+        "type":  "process",
+        "priority":  3,
+        "category":  "process"
+    },
+    {
+        "keyword":  "精加工",
+        "type":  "process",
+        "priority":  3,
+        "category":  "process"
+    },
+    {
+        "keyword":  "高速切削",
+        "type":  "process",
+        "priority":  3,
+        "category":  "process"
+    },
+    {
+        "keyword":  "攻丝",
+        "type":  "process",
+        "priority":  3,
+        "category":  "process"
+    },
+    {
+        "keyword":  "钻孔",
+        "type":  "process",
+        "priority":  3,
+        "category":  "process"
+    },
+    {
+        "keyword":  "镗孔",
+        "type":  "process",
+        "priority":  3,
+        "category":  "process"
+    },
+    {
+        "keyword":  "铰孔",
+        "type":  "process",
+        "priority":  3,
+        "category":  "process"
+    },
+    {
+        "keyword":  "车削",
+        "type":  "process",
+        "priority":  3,
+        "category":  "process"
+    },
+    {
+        "keyword":  "铣削",
+        "type":  "process",
+        "priority":  3,
+        "category":  "process"
+    },
+    {
+        "keyword":  "SV0401",
+        "type":  "alarm",
+        "priority":  2,
+        "category":  "alarm"
+    },
+    {
+        "keyword":  "SV0410",
+        "type":  "alarm",
+        "priority":  2,
+        "category":  "alarm"
+    },
+    {
+        "keyword":  "SV0435",
+        "type":  "alarm",
+        "priority":  2,
+        "category":  "alarm"
+    },
+    {
+        "keyword":  "SV0440",
+        "type":  "alarm",
+        "priority":  2,
+        "category":  "alarm"
+    },
+    {
+        "keyword":  "SP0101",
+        "type":  "alarm",
+        "priority":  2,
+        "category":  "alarm"
+    },
+    {
+        "keyword":  "PS0001",
+        "type":  "alarm",
+        "priority":  2,
+        "category":  "alarm"
+    },
+    {
+        "keyword":  "PS0120",
+        "type":  "alarm",
+        "priority":  2,
+        "category":  "alarm"
+    },
+    {
+        "keyword":  "报警",
+        "type":  "alarm",
+        "priority":  2,
+        "category":  "alarm"
+    },
+    {
+        "keyword":  "伺服报警",
+        "type":  "alarm",
+        "priority":  2,
+        "category":  "alarm"
+    },
+    {
+        "keyword":  "主轴报警",
+        "type":  "alarm",
+        "priority":  2,
+        "category":  "alarm"
+    },
+    {
+        "keyword":  "回零失败",
+        "type":  "alarm",
+        "priority":  2,
+        "category":  "alarm"
+    },
+    {
+        "keyword":  "过载",
+        "type":  "alarm",
+        "priority":  2,
+        "category":  "alarm"
+    },
+    {
+        "keyword":  "伺服",
+        "type":  "alarm",
+        "priority":  2,
+        "category":  "alarm"
+    },
+    {
+        "keyword":  "过电流",
+        "type":  "alarm",
+        "priority":  2,
+        "category":  "alarm"
+    },
+    {
+        "keyword":  "编码器",
+        "type":  "alarm",
+        "priority":  2,
+        "category":  "alarm"
+    },
+    {
+        "keyword":  "G代码",
+        "type":  "beginner",
+        "priority":  2,
+        "category":  "learning"
+    },
+    {
+        "keyword":  "M代码",
+        "type":  "beginner",
+        "priority":  2,
+        "category":  "learning"
+    },
+    {
+        "keyword":  "坐标系",
+        "type":  "beginner",
+        "priority":  2,
+        "category":  "learning"
+    },
+    {
+        "keyword":  "主轴转速",
+        "type":  "beginner",
+        "priority":  2,
+        "category":  "learning"
+    },
+    {
+        "keyword":  "进给速度",
+        "type":  "beginner",
+        "priority":  2,
+        "category":  "learning"
+    },
+    {
+        "keyword":  "表面光洁度",
+        "type":  "beginner",
+        "priority":  2,
+        "category":  "learning"
+    },
+    {
+        "keyword":  "公差",
+        "type":  "beginner",
+        "priority":  2,
+        "category":  "learning"
+    },
+    {
+        "keyword":  "图纸",
+        "type":  "beginner",
+        "priority":  2,
+        "category":  "learning"
+    },
+    {
+        "keyword":  "冷却液",
+        "type":  "beginner",
+        "priority":  2,
+        "category":  "learning"
+    },
+    {
+        "keyword":  "刀库",
+        "type":  "beginner",
+        "priority":  2,
+        "category":  "learning"
+    },
+    {
+        "keyword":  "自动换刀",
+        "type":  "beginner",
+        "priority":  2,
+        "category":  "learning"
+    },
+    {
+        "keyword":  "撞刀",
+        "type":  "beginner",
+        "priority":  2,
+        "category":  "learning"
+    },
+    {
+        "keyword":  "DNC",
+        "type":  "beginner",
+        "priority":  2,
+        "category":  "learning"
+    },
+    {
+        "keyword":  "刚性攻丝",
+        "type":  "beginner",
+        "priority":  2,
+        "category":  "learning"
+    },
+    {
+        "keyword":  "绝对坐标",
+        "type":  "beginner",
+        "priority":  2,
+        "category":  "learning"
+    },
+    {
+        "keyword":  "增量坐标",
+        "type":  "beginner",
+        "priority":  2,
+        "category":  "learning"
+    },
+    {
+        "keyword":  "模态指令",
+        "type":  "beginner",
+        "priority":  2,
+        "category":  "learning"
+    },
+    {
+        "keyword":  "复位",
+        "type":  "beginner",
+        "priority":  2,
+        "category":  "learning"
+    },
+    {
+        "keyword":  "参数1815",
+        "type":  "param",
+        "priority":  2,
+        "category":  "system"
+    },
+    {
+        "keyword":  "参数1420",
+        "type":  "param",
+        "priority":  2,
+        "category":  "system"
+    },
+    {
+        "keyword":  "参数1320",
+        "type":  "param",
+        "priority":  2,
+        "category":  "system"
+    },
+    {
+        "keyword":  "参数1850",
+        "type":  "param",
+        "priority":  2,
+        "category":  "system"
+    },
+    {
+        "keyword":  "参数1821",
+        "type":  "param",
+        "priority":  2,
+        "category":  "system"
+    },
+    {
+        "keyword":  "参数1005",
+        "type":  "param",
+        "priority":  2,
+        "category":  "system"
+    },
+    {
+        "keyword":  "参数3003",
+        "type":  "param",
+        "priority":  2,
+        "category":  "system"
+    },
+    {
+        "keyword":  "参数3741",
+        "type":  "param",
+        "priority":  2,
+        "category":  "system"
+    },
+    {
+        "keyword":  "参数3751",
+        "type":  "param",
+        "priority":  2,
+        "category":  "system"
+    },
+    {
+        "keyword":  "参数3401",
+        "type":  "param",
+        "priority":  2,
+        "category":  "system"
+    },
+    {
+        "keyword":  "参数8130",
+        "type":  "param",
+        "priority":  2,
+        "category":  "system"
+    },
+    {
+        "keyword":  "参数1020",
+        "type":  "param",
+        "priority":  2,
+        "category":  "system"
+    }
+]

@@ -1,0 +1,315 @@
+[
+  {
+    "id": "pack-coordinate",
+    "title": "数控坐标系基础",
+    "summary": "建立空间几何认知。掌握机床参考点（物理机械零点）与工件零点的概念，理清坐标方向。",
+    "difficulty": "入门",
+    "estimatedMinutes": 60,
+    "entryIds": [
+      "kb-00001",
+      "kb-00002",
+      "kb-00005",
+      "kb-00009",
+      "kb-00010",
+      "kb-00013"
+    ],
+    "mustLearnIds": [
+      "kb-00001",
+      "kb-00028"
+    ],
+    "relatedImageIds": [
+      "beginner-coordinate-001",
+      "beginner-machine-zero-vs-work-zero-001"
+    ],
+    "nextPackIds": [
+      "pack-homing",
+      "pack-g54-offset"
+    ]
+  },
+  {
+    "id": "pack-homing",
+    "title": "机床手动回零与安全规程",
+    "summary": "开机首要作业。学习机床回零的操作流程、安全防碰撞措施以及回零网格点异常的排查。",
+    "difficulty": "入门",
+    "estimatedMinutes": 40,
+    "entryIds": [
+      "kb-00028",
+      "kb-00031",
+      "kb-00060",
+      "kb-00061",
+      "kb-00072",
+      "kb-00108"
+    ],
+    "mustLearnIds": [
+      "kb-00616"
+    ],
+    "relatedImageIds": [
+      "zero-return-sequence-001",
+      "alarm-limit-overtravel-001"
+    ],
+    "nextPackIds": [
+      "pack-coordinate",
+      "pack-touchoff"
+    ]
+  },
+  {
+    "id": "pack-touchoff",
+    "title": "数控手动对刀实操指南",
+    "summary": "掌握车床试切对刀与加工中心对刀规程。包括寻边器对位、Z轴对刀仪与坐标参数表的录入。",
+    "difficulty": "中级",
+    "estimatedMinutes": 90,
+    "entryIds": [
+      "kb-00009",
+      "kb-00028",
+      "kb-00029",
+      "kb-00062",
+      "kb-00065",
+      "kb-00067"
+    ],
+    "mustLearnIds": [
+      "kb-00029",
+      "kb-00408"
+    ],
+    "relatedImageIds": [
+      "work-offset-setting-001",
+      "beginner-touchoff-flow-001"
+    ],
+    "nextPackIds": [
+      "pack-g54-offset",
+      "pack-length-comp"
+    ]
+  },
+  {
+    "id": "pack-gbasic",
+    "title": "G00 与 G01 插补指令",
+    "summary": "最基础的走刀指令。深入学习快速定位G00、直线插补G01及F进给速度的格式、轨迹差异与安全高度。",
+    "difficulty": "入门",
+    "estimatedMinutes": 50,
+    "entryIds": [
+      "kb-00001",
+      "kb-00002",
+      "kb-00003",
+      "kb-00004",
+      "kb-00005",
+      "kb-00006"
+    ],
+    "mustLearnIds": [
+      "kb-00003",
+      "kb-00046"
+    ],
+    "relatedImageIds": [
+      "gcode-g00-g01-001",
+      "feed-g94-g95-001"
+    ],
+    "nextPackIds": [
+      "pack-gcircle",
+      "pack-radius-comp"
+    ]
+  },
+  {
+    "id": "pack-gcircle",
+    "title": "G02 与 G03 圆弧插补",
+    "summary": "圆弧切削技能。掌握顺时针G02、逆时针G03圆弧插补的R半径格式与I、J、K圆心矢量格式计算。",
+    "difficulty": "中级",
+    "estimatedMinutes": 70,
+    "entryIds": [
+      "kb-00001",
+      "kb-00003",
+      "kb-00004",
+      "kb-00005",
+      "kb-00006",
+      "kb-00007"
+    ],
+    "mustLearnIds": [],
+    "relatedImageIds": [
+      "gcode-g02-g03-001",
+      "gcode-g17-g18-g19-001"
+    ],
+    "nextPackIds": [
+      "pack-gbasic",
+      "pack-cycles"
+    ]
+  },
+  {
+    "id": "pack-g54-offset",
+    "title": "G54-G59 工件偏置管理",
+    "summary": "多坐标系管理。掌握G54第一工件坐标系至G59坐标系的切换、G10参数化更新偏置值以及工件零点平移。",
+    "difficulty": "中级",
+    "estimatedMinutes": 50,
+    "entryIds": [
+      "kb-00001",
+      "kb-00003",
+      "kb-00007",
+      "kb-00009",
+      "kb-00010",
+      "kb-00020"
+    ],
+    "mustLearnIds": [],
+    "relatedImageIds": [
+      "gcode-g54-g59-001",
+      "work-offset-setting-001"
+    ],
+    "nextPackIds": [
+      "pack-touchoff",
+      "pack-length-comp"
+    ]
+  },
+  {
+    "id": "pack-radius-comp",
+    "title": "G41 与 G42 刀尖半径补偿",
+    "summary": "保证加工轮廓精度的法宝。精通左补偿G41、右补偿G42、取消G40的切入与切出安全轨迹规划，防止过切。",
+    "difficulty": "高级",
+    "estimatedMinutes": 80,
+    "entryIds": [
+      "kb-00002",
+      "kb-00004",
+      "kb-00012",
+      "kb-00024",
+      "kb-00059",
+      "kb-00066"
+    ],
+    "mustLearnIds": [
+      "kb-00424"
+    ],
+    "relatedImageIds": [
+      "gcode-g41-g42-001",
+      "tool-nose-radius-basic-001"
+    ],
+    "nextPackIds": [
+      "pack-gbasic",
+      "pack-length-comp"
+    ]
+  },
+  {
+    "id": "pack-length-comp",
+    "title": "G43 与 G49 刀具长度补偿",
+    "summary": "多刀加工的基石。掌握G43长度正补偿、G44负补偿及G49注销操作，理解H偏置号与机床对刀零点关系。",
+    "difficulty": "中级",
+    "estimatedMinutes": 60,
+    "entryIds": [
+      "kb-00003",
+      "kb-00015",
+      "kb-00020",
+      "kb-00021",
+      "kb-00023",
+      "kb-00036"
+    ],
+    "mustLearnIds": [
+      "kb-00143"
+    ],
+    "relatedImageIds": [
+      "gcode-g43-g49-001",
+      "safe-tool-approach-001"
+    ],
+    "nextPackIds": [
+      "pack-touchoff",
+      "pack-radius-comp"
+    ]
+  },
+  {
+    "id": "pack-feed-mode",
+    "title": "G94 与 G95 进给模式切换",
+    "summary": "理清进给率控制。理解每分钟进给G94与每转进给G95的使用差异，特别是在车削、铣削与攻丝中的工艺选择。",
+    "difficulty": "中级",
+    "estimatedMinutes": 45,
+    "entryIds": [
+      "kb-00003",
+      "kb-00015",
+      "kb-00026",
+      "kb-00035",
+      "kb-00049",
+      "kb-00096"
+    ],
+    "mustLearnIds": [],
+    "relatedImageIds": [
+      "feed-g94-g95-001",
+      "unit-g20-g21-001"
+    ],
+    "nextPackIds": [
+      "pack-gbasic",
+      "pack-cycles"
+    ]
+  },
+  {
+    "id": "pack-cycles",
+    "title": "钻孔与攻丝固定循环",
+    "summary": "孔加工提效。熟悉G81简单钻孔、G83 Pecking深孔啄钻、G84攻丝循环的R退刀点与G98/G99退刀高度选择。",
+    "difficulty": "中级",
+    "estimatedMinutes": 80,
+    "entryIds": [
+      "kb-00002",
+      "kb-00018",
+      "kb-00021",
+      "kb-00034",
+      "kb-00040",
+      "kb-00043"
+    ],
+    "mustLearnIds": [
+      "kb-00096",
+      "kb-00324"
+    ],
+    "relatedImageIds": [
+      "cycle-g81-001",
+      "cycle-g83-001",
+      "cycle-g84-001",
+      "cycle-g98-g99-001"
+    ],
+    "nextPackIds": [
+      "pack-feed-mode",
+      "pack-drawing"
+    ]
+  },
+  {
+    "id": "pack-drawing",
+    "title": "机械图纸与形位公差基础",
+    "summary": "读懂图纸是加工的前置条件。学习三视图、尺寸公差、表面粗糙度及典型 GD&T 形位公差符号的识别。",
+    "difficulty": "入门",
+    "estimatedMinutes": 60,
+    "entryIds": [
+      "kb-00074",
+      "kb-00214",
+      "kb-00217",
+      "kb-00263",
+      "kb-00341",
+      "kb-00342"
+    ],
+    "mustLearnIds": [
+      "kb-00217",
+      "kb-00263"
+    ],
+    "relatedImageIds": [
+      "drawing-gdt-basic-001",
+      "vernier-caliper-detail-001"
+    ],
+    "nextPackIds": [
+      "pack-measurement",
+      "pack-cycles"
+    ]
+  },
+  {
+    "id": "pack-measurement",
+    "title": "精密量具使用与尺寸检验",
+    "summary": "保证产品合格的终关。实操学习游标卡尺、数显千分尺、百分表与高度规的使用读数、校准与偏差记录。",
+    "difficulty": "入门",
+    "estimatedMinutes": 50,
+    "entryIds": [
+      "kb-00002",
+      "kb-00065",
+      "kb-00067",
+      "kb-00163",
+      "kb-00182",
+      "kb-00187"
+    ],
+    "mustLearnIds": [
+      "kb-01456"
+    ],
+    "relatedImageIds": [
+      "vernier-caliper-detail-001",
+      "drawing-gdt-basic-001"
+    ],
+    "nextPackIds": [
+      "pack-drawing",
+      "pack-touchoff"
+    ]
+  }
+]

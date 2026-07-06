@@ -1,0 +1,2417 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-07-03T02:23:52.285Z",
+  "tables": {
+    "gCodes": [
+      {
+        "code": "G00",
+        "name": "快速定位",
+        "category": "运动控制",
+        "format": "G00 X_ Y_ Z_",
+        "description": "滑台以机床额定最高速度移至坐标，不作一切切削运动，防切入撞击。",
+        "relatedKnowledgeId": "kb-00003",
+        "frequency": "very-high"
+      },
+      {
+        "code": "G01",
+        "name": "直线插补",
+        "category": "运动控制",
+        "format": "G01 X_ Y_ Z_ F_",
+        "description": "以给定的进给率F直线切削走刀。",
+        "relatedKnowledgeId": "kb-00003",
+        "frequency": "very-high"
+      },
+      {
+        "code": "G02",
+        "name": "顺时针圆弧插补",
+        "category": "运动控制",
+        "format": "G02 X_ Y_ Z_ R_ (或 I_ J_ K_)",
+        "description": "在切削平面内进行顺时针方向的弧线运动切削。",
+        "relatedKnowledgeId": "kb-00004",
+        "frequency": "high"
+      },
+      {
+        "code": "G03",
+        "name": "逆时针圆弧插补",
+        "category": "运动控制",
+        "format": "G03 X_ Y_ Z_ R_ (或 I_ J_ K_)",
+        "description": "在切削平面内进行逆时针方向的弧线运动切削。",
+        "relatedKnowledgeId": "kb-00004",
+        "frequency": "high"
+      },
+      {
+        "code": "G17",
+        "name": "XY平面选择",
+        "category": "坐标系",
+        "format": "G17",
+        "description": "设定圆弧插补、刀鼻半径补偿在 XY 投影平面上进行。",
+        "relatedKnowledgeId": "kb-00015",
+        "frequency": "medium"
+      },
+      {
+        "code": "G28",
+        "name": "自动返回机械参考点",
+        "category": "运动控制",
+        "format": "G28 G91 X0 Y0 Z0",
+        "description": "滑台先自动回到中间安全点再退至机床机械零位建系统零位。",
+        "relatedKnowledgeId": "kb-00001",
+        "frequency": "high"
+      },
+      {
+        "code": "G31",
+        "name": "碰壁跳跃触发检测",
+        "category": "在机测量",
+        "format": "G31 X_ Y_ Z_ F_",
+        "description": "碰触金属瞬间停止进给并记录坐标点至系统变量中。",
+        "relatedKnowledgeId": "kb-00390",
+        "frequency": "medium"
+      },
+      {
+        "code": "G40",
+        "name": "注销刀具半径补偿",
+        "category": "刀具补偿",
+        "format": "G40",
+        "description": "取消G41/G42的左右半径偏置状态，恢复正常中心路径。",
+        "relatedKnowledgeId": "kb-00002",
+        "frequency": "high"
+      },
+      {
+        "code": "G41",
+        "name": "刀具半径左补偿",
+        "category": "刀具补偿",
+        "format": "G41 G01 X_ D_",
+        "description": "沿切削路线左侧偏置一个刀具实际半径，用于精铣轮廓。",
+        "relatedKnowledgeId": "kb-00002",
+        "frequency": "high"
+      },
+      {
+        "code": "G42",
+        "name": "刀具半径右补偿",
+        "category": "刀具补偿",
+        "format": "G42 G01 X_ D_",
+        "description": "沿切削路线右侧偏置一个刀具实际半径。",
+        "relatedKnowledgeId": "kb-00002",
+        "frequency": "high"
+      },
+      {
+        "code": "G43",
+        "name": "刀具长度正补偿",
+        "category": "刀具补偿",
+        "format": "G43 G00 Z_ H_",
+        "description": "读入H寄存器建立长度偏差补正，防Z轴扎刀换刀必用。",
+        "relatedKnowledgeId": "kb-00008",
+        "frequency": "very-high"
+      },
+      {
+        "code": "G49",
+        "name": "注销长度补偿",
+        "category": "刀具补偿",
+        "format": "G49",
+        "description": "注销主轴上刀具的长度偏置状态。",
+        "relatedKnowledgeId": "kb-00008",
+        "frequency": "medium"
+      },
+      {
+        "code": "G54",
+        "name": "第一工件坐标系选择",
+        "category": "坐标系",
+        "format": "G54",
+        "description": "以对刀录入的G54偏置数据设定工件原点坐标。",
+        "relatedKnowledgeId": "kb-00001",
+        "frequency": "very-high"
+      },
+      {
+        "code": "G80",
+        "name": "注销固定循环",
+        "category": "固定循环",
+        "format": "G80",
+        "description": "取消G81-G89等孔切削循环状态，恢复正常G00/G01状态。",
+        "relatedKnowledgeId": "kb-00081",
+        "frequency": "high"
+      },
+      {
+        "code": "G81",
+        "name": "定心孔钻削循环",
+        "category": "固定循环",
+        "format": "G81 X_ Y_ Z_ R_ F_",
+        "description": "刀具进刀至指定孔深Z后，直接快速退回安全点R平面。",
+        "relatedKnowledgeId": "kb-00081",
+        "frequency": "high"
+      },
+      {
+        "code": "G83",
+        "name": "深孔啄钻循环",
+        "category": "固定循环",
+        "format": "G83 X_ Y_ Z_ R_ Q_ F_",
+        "description": "每次向下切削Q深度后退刀回R平面排屑，防钻头熔断。",
+        "relatedKnowledgeId": "kb-00081",
+        "frequency": "very-high"
+      },
+      {
+        "code": "G84",
+        "name": "刚性攻丝右牙循环",
+        "category": "固定循环",
+        "format": "G84 X_ Y_ Z_ R_ F_",
+        "description": "主轴正转下进给，到孔底换向主轴反转进给退回，螺距与速同步。",
+        "relatedKnowledgeId": "kb-00081",
+        "frequency": "very-high"
+      },
+      {
+        "code": "G90",
+        "name": "绝对坐标系编程",
+        "category": "坐标系",
+        "format": "G90",
+        "description": "后继所有指令坐标值均以G54等工件坐标系原点为基准计算。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "very-high"
+      },
+      {
+        "code": "G91",
+        "name": "增量坐标系编程",
+        "category": "坐标系",
+        "format": "G91",
+        "description": "后继位移直接相对于当前主轴刀尖端面坐标算差值。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "high"
+      },
+      {
+        "code": "G94",
+        "name": "每分钟进给率",
+        "category": "运动控制",
+        "format": "G94",
+        "description": "设定进给速度F单位为毫米/分钟，铣削及加工中心默认制式。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "very-high"
+      },
+      {
+        "code": "G95",
+        "name": "每转进给率",
+        "category": "运动控制",
+        "format": "G95",
+        "description": "设定进给速度F单位为毫米/转，车床切螺纹及攻丝默认制式。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "very-high"
+      },
+      {
+        "code": "G31",
+        "name": "数控偏置指令G31",
+        "category": "运动辅助",
+        "format": "G31 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G32",
+        "name": "数控偏置指令G32",
+        "category": "运动辅助",
+        "format": "G32 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G33",
+        "name": "数控偏置指令G33",
+        "category": "运动辅助",
+        "format": "G33 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G34",
+        "name": "数控偏置指令G34",
+        "category": "运动辅助",
+        "format": "G34 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G35",
+        "name": "数控偏置指令G35",
+        "category": "运动辅助",
+        "format": "G35 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G36",
+        "name": "数控偏置指令G36",
+        "category": "运动辅助",
+        "format": "G36 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G37",
+        "name": "数控偏置指令G37",
+        "category": "运动辅助",
+        "format": "G37 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G38",
+        "name": "数控偏置指令G38",
+        "category": "运动辅助",
+        "format": "G38 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G39",
+        "name": "数控偏置指令G39",
+        "category": "运动辅助",
+        "format": "G39 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G40",
+        "name": "数控偏置指令G40",
+        "category": "运动辅助",
+        "format": "G40 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G41",
+        "name": "数控偏置指令G41",
+        "category": "运动辅助",
+        "format": "G41 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G42",
+        "name": "数控偏置指令G42",
+        "category": "运动辅助",
+        "format": "G42 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G43",
+        "name": "数控偏置指令G43",
+        "category": "运动辅助",
+        "format": "G43 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G44",
+        "name": "数控偏置指令G44",
+        "category": "运动辅助",
+        "format": "G44 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G45",
+        "name": "数控偏置指令G45",
+        "category": "运动辅助",
+        "format": "G45 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G46",
+        "name": "数控偏置指令G46",
+        "category": "运动辅助",
+        "format": "G46 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G47",
+        "name": "数控偏置指令G47",
+        "category": "运动辅助",
+        "format": "G47 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G48",
+        "name": "数控偏置指令G48",
+        "category": "运动辅助",
+        "format": "G48 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G49",
+        "name": "数控偏置指令G49",
+        "category": "运动辅助",
+        "format": "G49 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G50",
+        "name": "数控偏置指令G50",
+        "category": "运动辅助",
+        "format": "G50 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G51",
+        "name": "数控偏置指令G51",
+        "category": "运动辅助",
+        "format": "G51 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G52",
+        "name": "数控偏置指令G52",
+        "category": "运动辅助",
+        "format": "G52 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G53",
+        "name": "数控偏置指令G53",
+        "category": "运动辅助",
+        "format": "G53 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G54",
+        "name": "数控偏置指令G54",
+        "category": "运动辅助",
+        "format": "G54 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G55",
+        "name": "数控偏置指令G55",
+        "category": "运动辅助",
+        "format": "G55 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G56",
+        "name": "数控偏置指令G56",
+        "category": "运动辅助",
+        "format": "G56 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G57",
+        "name": "数控偏置指令G57",
+        "category": "运动辅助",
+        "format": "G57 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G58",
+        "name": "数控偏置指令G58",
+        "category": "运动辅助",
+        "format": "G58 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G59",
+        "name": "数控偏置指令G59",
+        "category": "运动辅助",
+        "format": "G59 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G60",
+        "name": "数控偏置指令G60",
+        "category": "运动辅助",
+        "format": "G60 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G61",
+        "name": "数控偏置指令G61",
+        "category": "运动辅助",
+        "format": "G61 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G62",
+        "name": "数控偏置指令G62",
+        "category": "运动辅助",
+        "format": "G62 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G63",
+        "name": "数控偏置指令G63",
+        "category": "运动辅助",
+        "format": "G63 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      },
+      {
+        "code": "G64",
+        "name": "数控偏置指令G64",
+        "category": "运动辅助",
+        "format": "G64 X_ Y_",
+        "description": "数控系统辅助坐标平移或镜像，请查阅详细机床说明书。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "medium"
+      }
+    ],
+    "mCodes": [
+      {
+        "code": "M00",
+        "name": "程序无条件停止",
+        "category": "程序控制",
+        "format": "M00",
+        "description": "程序执行到此暂停进给与主轴，方便现场进行零件尺寸测量或换向。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "medium"
+      },
+      {
+        "code": "M01",
+        "name": "程序选择性停止",
+        "category": "程序控制",
+        "format": "M01",
+        "description": "当面板上的‘选择停止’开关打开时，程序在此段执行暂停，关闭则忽略跳过。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "high"
+      },
+      {
+        "code": "M02",
+        "name": "主程序结束",
+        "category": "程序控制",
+        "format": "M02",
+        "description": "表示主程序运行终止，主轴与切削液关闭，但光标不回首行。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "medium"
+      },
+      {
+        "code": "M03",
+        "name": "主轴正转启动",
+        "category": "主轴控制",
+        "format": "M03 S_",
+        "description": "主轴顺时针方向开启切削运动，S指定转速RPM。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "very-high"
+      },
+      {
+        "code": "M04",
+        "name": "主轴反转启动",
+        "category": "主轴控制",
+        "format": "M04 S_",
+        "description": "主轴逆时针方向开启旋转，螺纹车削及反手刀具必备。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "high"
+      },
+      {
+        "code": "M05",
+        "name": "主轴切削停止",
+        "category": "主轴控制",
+        "format": "M05",
+        "description": "切断主轴电机供电，主轴减速停转。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "very-high"
+      },
+      {
+        "code": "M06",
+        "name": "自动换刀执行",
+        "category": "换刀控制",
+        "format": "T_ M06",
+        "description": "换刀臂执行自动交换主轴与刀库刀柄动作，Z轴必须置于零位。",
+        "relatedKnowledgeId": "kb-00085",
+        "frequency": "very-high"
+      },
+      {
+        "code": "M08",
+        "name": "冷却液开启",
+        "category": "冷却控制",
+        "format": "M08",
+        "description": "打开切削液泵及电磁阀，开启水冷或冲液。",
+        "relatedKnowledgeId": "kb-00085",
+        "frequency": "very-high"
+      },
+      {
+        "code": "M09",
+        "name": "冷却液关闭",
+        "category": "冷却控制",
+        "format": "M09",
+        "description": "关闭切削液泵与电磁阀。",
+        "relatedKnowledgeId": "kb-00085",
+        "frequency": "very-high"
+      },
+      {
+        "code": "M19",
+        "name": "主轴准停定位",
+        "category": "主轴控制",
+        "format": "M19",
+        "description": "主轴定向制动停在磁铁卡槽特定刻度，为机械手换刀作物理准备。",
+        "relatedKnowledgeId": "kb-00085",
+        "frequency": "high"
+      },
+      {
+        "code": "M30",
+        "name": "主程序结束且复位",
+        "category": "程序控制",
+        "format": "M30",
+        "description": "主程序彻底结束，关闭水油主轴，并将光标返回第一行以备下一件加工。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "very-high"
+      },
+      {
+        "code": "M98",
+        "name": "调用子程序",
+        "category": "子程序",
+        "format": "M98 P_ L_",
+        "description": "跳入执行指定子程序号，L指定循环重复次数。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "high"
+      },
+      {
+        "code": "M99",
+        "name": "子程序结束返回",
+        "category": "子程序",
+        "format": "M99",
+        "description": "表示子程序结束，将控制光标回弹至主程序调用段下一行。",
+        "relatedKnowledgeId": "kb-00012",
+        "frequency": "high"
+      },
+      {
+        "code": "M28",
+        "name": "辅助动作代码M28",
+        "category": "辅助控制",
+        "format": "M28",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M29",
+        "name": "辅助动作代码M29",
+        "category": "辅助控制",
+        "format": "M29",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M30",
+        "name": "辅助动作代码M30",
+        "category": "辅助控制",
+        "format": "M30",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M31",
+        "name": "辅助动作代码M31",
+        "category": "辅助控制",
+        "format": "M31",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M32",
+        "name": "辅助动作代码M32",
+        "category": "辅助控制",
+        "format": "M32",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M33",
+        "name": "辅助动作代码M33",
+        "category": "辅助控制",
+        "format": "M33",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M34",
+        "name": "辅助动作代码M34",
+        "category": "辅助控制",
+        "format": "M34",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M35",
+        "name": "辅助动作代码M35",
+        "category": "辅助控制",
+        "format": "M35",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M36",
+        "name": "辅助动作代码M36",
+        "category": "辅助控制",
+        "format": "M36",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M37",
+        "name": "辅助动作代码M37",
+        "category": "辅助控制",
+        "format": "M37",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M38",
+        "name": "辅助动作代码M38",
+        "category": "辅助控制",
+        "format": "M38",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M39",
+        "name": "辅助动作代码M39",
+        "category": "辅助控制",
+        "format": "M39",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M40",
+        "name": "辅助动作代码M40",
+        "category": "辅助控制",
+        "format": "M40",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M41",
+        "name": "辅助动作代码M41",
+        "category": "辅助控制",
+        "format": "M41",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M42",
+        "name": "辅助动作代码M42",
+        "category": "辅助控制",
+        "format": "M42",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M43",
+        "name": "辅助动作代码M43",
+        "category": "辅助控制",
+        "format": "M43",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M44",
+        "name": "辅助动作代码M44",
+        "category": "辅助控制",
+        "format": "M44",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M45",
+        "name": "辅助动作代码M45",
+        "category": "辅助控制",
+        "format": "M45",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M46",
+        "name": "辅助动作代码M46",
+        "category": "辅助控制",
+        "format": "M46",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M47",
+        "name": "辅助动作代码M47",
+        "category": "辅助控制",
+        "format": "M47",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M48",
+        "name": "辅助动作代码M48",
+        "category": "辅助控制",
+        "format": "M48",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M49",
+        "name": "辅助动作代码M49",
+        "category": "辅助控制",
+        "format": "M49",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M50",
+        "name": "辅助动作代码M50",
+        "category": "辅助控制",
+        "format": "M50",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M51",
+        "name": "辅助动作代码M51",
+        "category": "辅助控制",
+        "format": "M51",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M52",
+        "name": "辅助动作代码M52",
+        "category": "辅助控制",
+        "format": "M52",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M53",
+        "name": "辅助动作代码M53",
+        "category": "辅助控制",
+        "format": "M53",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M54",
+        "name": "辅助动作代码M54",
+        "category": "辅助控制",
+        "format": "M54",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M55",
+        "name": "辅助动作代码M55",
+        "category": "辅助控制",
+        "format": "M55",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M56",
+        "name": "辅助动作代码M56",
+        "category": "辅助控制",
+        "format": "M56",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M57",
+        "name": "辅助动作代码M57",
+        "category": "辅助控制",
+        "format": "M57",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M58",
+        "name": "辅助动作代码M58",
+        "category": "辅助控制",
+        "format": "M58",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M59",
+        "name": "辅助动作代码M59",
+        "category": "辅助控制",
+        "format": "M59",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M60",
+        "name": "辅助动作代码M60",
+        "category": "辅助控制",
+        "format": "M60",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M61",
+        "name": "辅助动作代码M61",
+        "category": "辅助控制",
+        "format": "M61",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M62",
+        "name": "辅助动作代码M62",
+        "category": "辅助控制",
+        "format": "M62",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M63",
+        "name": "辅助动作代码M63",
+        "category": "辅助控制",
+        "format": "M63",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M64",
+        "name": "辅助动作代码M64",
+        "category": "辅助控制",
+        "format": "M64",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M65",
+        "name": "辅助动作代码M65",
+        "category": "辅助控制",
+        "format": "M65",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      },
+      {
+        "code": "M66",
+        "name": "辅助动作代码M66",
+        "category": "辅助控制",
+        "format": "M66",
+        "description": "数控系统厂自定义辅助辅助按键逻辑，请查阅对应PLC卡片。",
+        "relatedKnowledgeId": "kb-00010",
+        "frequency": "low"
+      }
+    ],
+    "alarmCodes": [
+      {
+        "code": "090",
+        "system": "FANUC",
+        "name": "主轴过载 SPN 90",
+        "cause": "主轴电机连续重负荷切削，电流超出额定功率，电机温升触发保护。",
+        "solution": "降低吃刀量及进给速度，检查切削刃崩刀情况并更换。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "5136",
+        "system": "FANUC",
+        "name": "FSSB通信放大器通信断线",
+        "cause": "控制主板到放大器之间的光纤连线破损、弯曲过大或积灰通信异常。",
+        "solution": "断电重新插紧光纤，保证弯曲半径大于50mm。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "OT0001",
+        "system": "FANUC",
+        "name": "X轴正向行程超程极限",
+        "cause": "程序走刀位置超出参数设定的限位。",
+        "solution": "按下超程释放按键并手动反向摇离碰块。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "low"
+      },
+      {
+        "code": "SV404",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV404",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV405",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV405",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV406",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV406",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV407",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV407",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV408",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV408",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV409",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV409",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV410",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV410",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV411",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV411",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV412",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV412",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV413",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV413",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV414",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV414",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV415",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV415",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV416",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV416",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV417",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV417",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV418",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV418",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV419",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV419",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV420",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV420",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV421",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV421",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV422",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV422",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV423",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV423",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV424",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV424",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV425",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV425",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV426",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV426",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV427",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV427",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV428",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV428",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV429",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV429",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV430",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV430",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV431",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV431",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV432",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV432",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV433",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV433",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV434",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV434",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV435",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV435",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV436",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV436",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV437",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV437",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV438",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV438",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV439",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV439",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV440",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV440",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV441",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV441",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV442",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV442",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV443",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV443",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV444",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV444",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV445",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV445",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV446",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV446",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV447",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV447",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV448",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV448",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV449",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV449",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "SV450",
+        "system": "FANUC",
+        "name": "FANUC 轴定位跟踪超差 SV450",
+        "cause": "丝杠内部存在硬卡阻或导轨缺润滑油，导致伺服电流激增。",
+        "solution": "手动摇动滑台判定是否有机械卡阻，并点检自动润滑油位是否正常。",
+        "relatedKnowledgeId": "kb-00086",
+        "severity": "high"
+      },
+      {
+        "code": "25000",
+        "system": "西门子",
+        "name": "SIEMENS 伺服轴测量监测故障",
+        "cause": "反馈位置编码器通信断线或渗入切削液造成接脚漏电。",
+        "solution": "拔下反馈插头使用电子清洗剂冲洗并烘干，必要时更换线缆。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "high"
+      },
+      {
+        "code": "300608",
+        "system": "西门子",
+        "name": "SIEMENS 主轴电机温度极限限",
+        "cause": "冷却风机损坏或变频驱动过负荷。",
+        "solution": "确认主轴恒温油冷工作正常，冷却风扇是否转动。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "high"
+      },
+      {
+        "code": "700013",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700013",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700014",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700014",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700015",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700015",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700016",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700016",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700017",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700017",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700018",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700018",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700019",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700019",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700020",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700020",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700021",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700021",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700022",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700022",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700023",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700023",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700024",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700024",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700025",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700025",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700026",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700026",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700027",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700027",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700028",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700028",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700029",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700029",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700030",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700030",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700031",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700031",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700032",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700032",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700033",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700033",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700034",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700034",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700035",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700035",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700036",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700036",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700037",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700037",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700038",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700038",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700039",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700039",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700040",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700040",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700041",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700041",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700042",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700042",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700043",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700043",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700044",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700044",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700045",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700045",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700046",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700046",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700047",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700047",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700048",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700048",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700049",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700049",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700050",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700050",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700051",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700051",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700052",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700052",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700053",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700053",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700054",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700054",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700055",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700055",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700056",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700056",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700057",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700057",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700058",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700058",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700059",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700059",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "700060",
+        "system": "西门子",
+        "name": "SIEMENS 轴硬件限位报警 700060",
+        "cause": "滑台超越硬限位微动开关或防护门电气安全钥匙发生偏斜。",
+        "solution": "检查防护门合缝处接触钥匙，并在手动下反向点动退回。",
+        "relatedKnowledgeId": "kb-00087",
+        "severity": "medium"
+      },
+      {
+        "code": "Y01",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服过载报警",
+        "cause": "切削用量过大，主轴过载。",
+        "solution": "暂停进给，降低切深度ap。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "Z01",
+        "system": "三菱",
+        "name": "MITSUBISHI 控制电池低电压报警",
+        "cause": "主板后备电池低于警戒线，断电参数有丢失可能。",
+        "solution": "保持机床开机状态下带电更换同型号后备锂电池。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "medium"
+      },
+      {
+        "code": "S01-103",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-103",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-104",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-104",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-105",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-105",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-106",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-106",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-107",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-107",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-108",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-108",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-109",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-109",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-110",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-110",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-111",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-111",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-112",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-112",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-113",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-113",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-114",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-114",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-115",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-115",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-116",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-116",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-117",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-117",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-118",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-118",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-119",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-119",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-120",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-120",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-121",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-121",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-122",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-122",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-123",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-123",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-124",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-124",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-125",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-125",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-126",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-126",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-127",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-127",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-128",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-128",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-129",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-129",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-130",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-130",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-131",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-131",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-132",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-132",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-133",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-133",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-134",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-134",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-135",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-135",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-136",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-136",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-137",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-137",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-138",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-138",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-139",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-139",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-140",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-140",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-141",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-141",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-142",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-142",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-143",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-143",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-144",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-144",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-145",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-145",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-146",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-146",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-147",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-147",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-148",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-148",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-149",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-149",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      },
+      {
+        "code": "S01-150",
+        "system": "三菱",
+        "name": "MITSUBISHI 伺服轴异常 S01-150",
+        "cause": "驱动器反馈与母线电压抖动。",
+        "solution": "核准强电柜空开接头，检查伺服输出线缆。",
+        "relatedKnowledgeId": "kb-00085",
+        "severity": "high"
+      }
+    ],
+    "cuttingParams": [
+      {
+        "material": "铝合金 (6061)",
+        "toolType": "无涂层硬质合金铣刀",
+        "operation": "平面精铣",
+        "cuttingSpeed": "300-600 m/min",
+        "feedRate": "0.08-0.15 mm/tooth",
+        "depthOfCut": "0.2-0.5 mm",
+        "relatedKnowledgeId": "kb-00390"
+      },
+      {
+        "material": "铝合金 (7075)",
+        "toolType": "DLC涂层硬质合金铣刀",
+        "operation": "型腔开粗",
+        "cuttingSpeed": "250-450 m/min",
+        "feedRate": "0.10-0.20 mm/tooth",
+        "depthOfCut": "2.0-4.0 mm",
+        "relatedKnowledgeId": "kb-00390"
+      },
+      {
+        "material": "45号钢 (退火)",
+        "toolType": "TiAlN涂层立铣刀",
+        "operation": "槽铣削",
+        "cuttingSpeed": "120-180 m/min",
+        "feedRate": "0.05-0.10 mm/tooth",
+        "depthOfCut": "1.0-2.5 mm",
+        "relatedKnowledgeId": "kb-00390"
+      },
+      {
+        "material": "45号钢 (调质)",
+        "toolType": "AlTiN涂层立铣刀",
+        "operation": "外圆车削",
+        "cuttingSpeed": "100-150 m/min",
+        "feedRate": "0.12-0.25 mm/rev",
+        "depthOfCut": "1.5-3.0 mm",
+        "relatedKnowledgeId": "kb-00390"
+      },
+      {
+        "material": "不锈钢 (304)",
+        "toolType": "含钴涂层硬质合金铣刀",
+        "operation": "精铣侧面",
+        "cuttingSpeed": "70-110 m/min",
+        "feedRate": "0.04-0.08 mm/tooth",
+        "depthOfCut": "0.3-1.0 mm",
+        "relatedKnowledgeId": "kb-00390"
+      },
+      {
+        "material": "不锈钢 (316)",
+        "toolType": "超细微粒硬质合金车刀",
+        "operation": "精车外圆",
+        "cuttingSpeed": "60-90 m/min",
+        "feedRate": "0.08-0.15 mm/rev",
+        "depthOfCut": "0.1-0.3 mm",
+        "relatedKnowledgeId": "kb-00390"
+      },
+      {
+        "material": "灰口铸铁 (HT250)",
+        "toolType": "陶瓷或涂层硬质合金车刀",
+        "operation": "粗车外圆",
+        "cuttingSpeed": "150-220 m/min",
+        "feedRate": "0.15-0.30 mm/rev",
+        "depthOfCut": "2.0-4.0 mm",
+        "relatedKnowledgeId": "kb-00390"
+      },
+      {
+        "material": "球墨铸铁 (QT400)",
+        "toolType": "硬质合金钻头 (内冷)",
+        "operation": "浅孔钻孔",
+        "cuttingSpeed": "80-120 m/min",
+        "feedRate": "0.10-0.20 mm/rev",
+        "depthOfCut": "5.0-15.0 mm",
+        "relatedKnowledgeId": "kb-00390"
+      },
+      {
+        "material": "钛合金 (TC4)",
+        "toolType": "高韧性含钴立铣刀",
+        "operation": "高速铣削",
+        "cuttingSpeed": "45-65 m/min",
+        "feedRate": "0.03-0.07 mm/tooth",
+        "depthOfCut": "0.5-1.5 mm",
+        "relatedKnowledgeId": "kb-00390"
+      },
+      {
+        "material": "高温镍基合金 (Inconel 718)",
+        "toolType": "CBN(立方氮化硼)或陶瓷刀片",
+        "operation": "半精车",
+        "cuttingSpeed": "30-50 m/min",
+        "feedRate": "0.05-0.12 mm/rev",
+        "depthOfCut": "0.2-0.8 mm",
+        "relatedKnowledgeId": "kb-00390"
+      }
+    ]
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-07-03T03:43:56.791Z",
+  "benchmarks": {
+    "startup": {
+      "coldStart": {
+        "target": "< 3000ms",
+        "acceptable": "< 5000ms",
+        "poor": "> 5000ms"
+      },
+      "warmStart": {
+        "target": "< 1000ms",
+        "acceptable": "< 2000ms",
+        "poor": "> 2000ms"
+      }
+    },
+    "search": {
+      "simpleQuery": {
+        "target": "< 50ms",
+        "acceptable": "< 200ms",
+        "poor": "> 500ms"
+      },
+      "complexQuery": {
+        "target": "< 200ms",
+        "acceptable": "< 500ms",
+        "poor": "> 1000ms"
+      },
+      "fullTextSearch": {
+        "target": "< 500ms",
+        "acceptable": "< 1000ms",
+        "poor": "> 2000ms"
+      }
+    },
+    "navigation": {
+      "pageTransition": {
+        "target": "< 100ms",
+        "acceptable": "< 300ms",
+        "poor": "> 500ms"
+      },
+      "knowledgeTreeExpand": {
+        "target": "< 50ms",
+        "acceptable": "< 150ms",
+        "poor": "> 300ms"
+      }
+    },
+    "dataLoad": {
+      "knowledgeEntry": {
+        "target": "< 100ms",
+        "acceptable": "< 300ms",
+        "poor": "> 500ms"
+      },
+      "imageLoad": {
+        "target": "< 500ms",
+        "acceptable": "< 1000ms",
+        "poor": "> 2000ms"
+      },
+      "knowledgeGraph": {
+        "target": "< 1000ms",
+        "acceptable": "< 2000ms",
+        "poor": "> 3000ms"
+      }
+    },
+    "memory": {
+      "idleUsage": {
+        "target": "< 150MB",
+        "acceptable": "< 300MB",
+        "poor": "> 500MB"
+      },
+      "activeUsage": {
+        "target": "< 300MB",
+        "acceptable": "< 500MB",
+        "poor": "> 800MB"
+      },
+      "peakUsage": {
+        "target": "< 500MB",
+        "acceptable": "< 800MB",
+        "poor": "> 1000MB"
+      }
+    }
+  },
+  "monitoringMetrics": [
+    {
+      "metric": "searchResponseTime",
+      "unit": "ms",
+      "alertThreshold": 1000,
+      "severity": "warning"
+    },
+    {
+      "metric": "errorRate",
+      "unit": "%",
+      "alertThreshold": 1,
+      "severity": "critical"
+    },
+    {
+      "metric": "memoryUsage",
+      "unit": "MB",
+      "alertThreshold": 800,
+      "severity": "warning"
+    },
+    {
+      "metric": "crashRate",
+      "unit": "%",
+      "alertThreshold": 0.1,
+      "severity": "critical"
+    }
+  ]
+}

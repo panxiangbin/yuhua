@@ -1,0 +1,270 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-07-03T02:12:26.555Z",
+  "paths": [
+    {
+      "id": "path-beginner",
+      "title": "数控编程入门路线",
+      "description": "从零基础开始，精通右手笛卡尔坐标、基础G/M代码直线圆弧切削与手动试切对刀，达到独立编写单工步程序能力。",
+      "level": "beginner",
+      "estimatedHours": 120,
+      "icon": "🎓",
+      "stages": [
+        {
+          "stage": 1,
+          "title": "基础认知与机床结构",
+          "duration": "2周",
+          "modules": [
+            {
+              "id": "module-intro",
+              "title": "数控机床物理部件与分类",
+              "knowledgeIds": [
+                "kb-00001",
+                "kb-00002",
+                "kb-00005",
+                "kb-00006"
+              ],
+              "required": true
+            },
+            {
+              "id": "module-coordinate",
+              "title": "空间坐标系与笛卡尔右手定则",
+              "knowledgeIds": [
+                "kb-00001",
+                "kb-00009",
+                "kb-00010"
+              ],
+              "required": true
+            }
+          ]
+        },
+        {
+          "stage": 2,
+          "title": "直线与圆弧G指令切削",
+          "duration": "4周",
+          "modules": [
+            {
+              "id": "module-gcode-basic",
+              "title": "G00 快速移动与 G01 进给插补",
+              "knowledgeIds": [
+                "kb-00001",
+                "kb-00002",
+                "kb-00003"
+              ],
+              "required": true
+            },
+            {
+              "id": "module-gcode-circle",
+              "title": "G02/G03 圆弧插补 R 与 IJK 格式",
+              "knowledgeIds": [
+                "kb-00001",
+                "kb-00003",
+                "kb-00004"
+              ],
+              "required": true
+            }
+          ]
+        },
+        {
+          "stage": 3,
+          "title": "工件原点设定与对刀实操",
+          "duration": "6周",
+          "modules": [
+            {
+              "id": "module-touchoff-lathe",
+              "title": "数控车床端面试切对刀步骤",
+              "knowledgeIds": [
+                "kb-00009",
+                "kb-00028",
+                "kb-00029"
+              ],
+              "required": true
+            },
+            {
+              "id": "module-touchoff-mill",
+              "title": "加工中心寻边器分中对齐",
+              "knowledgeIds": [
+                "kb-00009",
+                "kb-00521",
+                "kb-00539"
+              ],
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "path-advanced",
+      "title": "高级编程与加工工艺优化",
+      "description": "掌握刀具半径与长度偏置补偿、G81-G84孔固定循环编程，以及高负荷切削下的刀片选型与进给倍率调整。",
+      "level": "advanced",
+      "estimatedHours": 80,
+      "icon": "🚀",
+      "stages": [
+        {
+          "stage": 1,
+          "title": "刀具偏置补偿建立",
+          "duration": "2周",
+          "modules": [
+            {
+              "id": "module-length-comp",
+              "title": "G43 刀具长度正补偿与H偏置",
+              "knowledgeIds": [
+                "kb-00003",
+                "kb-00020",
+                "kb-00021"
+              ],
+              "required": true
+            },
+            {
+              "id": "module-radius-comp",
+              "title": "G41/G42 刀鼻半径补偿与切入安全",
+              "knowledgeIds": [
+                "kb-00002",
+                "kb-00004",
+                "kb-00012"
+              ],
+              "required": true
+            }
+          ]
+        },
+        {
+          "stage": 2,
+          "title": "孔与螺纹批量循环编程",
+          "duration": "3周",
+          "modules": [
+            {
+              "id": "module-drill-cycle",
+              "title": "G83 Peck啄钻深孔排屑设计",
+              "knowledgeIds": [
+                "kb-00086",
+                "kb-00087",
+                "kb-00088"
+              ],
+              "required": true
+            },
+            {
+              "id": "module-tap-cycle",
+              "title": "G84 刚性攻丝主轴正反转同步",
+              "knowledgeIds": [
+                "kb-00034",
+                "kb-00040",
+                "kb-00044"
+              ],
+              "required": true
+            }
+          ]
+        },
+        {
+          "stage": 3,
+          "title": "切削力与材料选型工艺",
+          "duration": "3周",
+          "modules": [
+            {
+              "id": "module-tool-select",
+              "title": "硬质合金前角后角与涂层选用",
+              "knowledgeIds": [
+                "kb-00390",
+                "kb-00391",
+                "kb-00395"
+              ],
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "path-expert",
+      "title": "操机大师与系统故障自诊断",
+      "description": "面向资深操机工与电气维修师，精通伺服偏差过大、总线断线排查、在机测量雷尼绍探头宏程序编制。",
+      "level": "expert",
+      "estimatedHours": 60,
+      "icon": "🛠️",
+      "stages": [
+        {
+          "stage": 1,
+          "title": "伺服与驱动总线诊断",
+          "duration": "2周",
+          "modules": [
+            {
+              "id": "module-servo-fault",
+              "title": "SV0438 过载与 SV0411 偏差过大排故",
+              "knowledgeIds": [
+                "kb-00012",
+                "kb-00013",
+                "kb-00019"
+              ],
+              "required": true
+            },
+            {
+              "id": "module-fssb-optical",
+              "title": "FSSB 放大器总线通讯光纤断线",
+              "knowledgeIds": [
+                "kb-00044",
+                "kb-00161",
+                "kb-00309"
+              ],
+              "required": true
+            }
+          ]
+        },
+        {
+          "stage": 2,
+          "title": "在机探测自动化对刀",
+          "duration": "3周",
+          "modules": [
+            {
+              "id": "module-probe-macro",
+              "title": "G31 碰壁触发跳跃宏程序读取",
+              "knowledgeIds": [
+                "kb-00062",
+                "kb-00163",
+                "kb-00193"
+              ],
+              "required": true
+            },
+            {
+              "id": "module-autocomp",
+              "title": "检测误差自动写入磨损刀偏闭环",
+              "knowledgeIds": [
+                "kb-00009",
+                "kb-00028",
+                "kb-00037"
+              ],
+              "required": true
+            }
+          ]
+        },
+        {
+          "stage": 3,
+          "title": "高级宏程序与后处理开发",
+          "duration": "3周",
+          "modules": [
+            {
+              "id": "module-post-custom",
+              "title": "西门子/FANUC后处理开发基础",
+              "knowledgeIds": [
+                "kb-00023",
+                "kb-00135",
+                "kb-00158"
+              ],
+              "required": true
+            },
+            {
+              "id": "module-exam-prep",
+              "title": "国家职业题库模拟与技能要点",
+              "knowledgeIds": [
+                "kb-01850",
+                "kb-01851",
+                "kb-01852"
+              ],
+              "required": false
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

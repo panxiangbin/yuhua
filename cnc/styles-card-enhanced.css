@@ -1,0 +1,123 @@
+/* ============================================
+   styles-card-enhanced.css
+   卡片增强样式 — 瀑布流/动画/富文本/标签云
+   ============================================ */
+
+:root {
+  --card-bg: #ffffff;
+  --card-border: #e5e0db;
+  --card-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  --card-radius: 12px;
+  --card-hover-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  --card-text: #2d2d2d;
+  --card-text-light: #6b7280;
+  --card-primary: #cf6d36;
+  --card-primary-light: #fef5e7;
+  --card-success: #1a6b4f;
+  --card-error: #c0392b;
+  --card-warning: #c9902a;
+}
+
+/* 卡片基础样式 */
+.masonry-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--card-radius); padding: 16px; box-shadow: var(--card-shadow); transition: all 0.25s ease; overflow: hidden; }
+.masonry-card:hover { box-shadow: var(--card-hover-shadow); }
+
+/* 瀑布流容器 */
+.masonry-container { width: 100%; }
+.masonry-column { display: inline-block; vertical-align: top; box-sizing: border-box; }
+
+/* 卡片动画 */
+.card-animated { opacity: 1 !important; transform: translateY(0) !important; }
+.card-expanded .card-expandable-content { max-height: none; }
+
+/* 入场动画 */
+@keyframes cardFadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.card-entry-animate { animation: cardFadeInUp 0.3s ease forwards; }
+
+/* 悬浮效果 */
+.card-hover-lift { transition: all 0.25s ease; }
+.card-hover-lift:hover { transform: translateY(-4px); box-shadow: var(--card-hover-shadow); }
+
+/* 展开/折叠 */
+.card-expandable-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+.card-expanded .card-expandable-content { max-height: none; }
+
+/* 富文本排版 */
+.richtext-content { font-size: 15px; line-height: 1.7; color: var(--card-text); }
+.richtext-content h2 { font-size: 22px; margin: 24px 0 12px; color: var(--card-primary); border-bottom: 2px solid var(--card-border); padding-bottom: 8px; }
+.richtext-content h3 { font-size: 18px; margin: 20px 0 10px; color: #333; }
+.richtext-content h4 { font-size: 16px; margin: 16px 0 8px; color: #555; }
+.richtext-content p { margin: 8px 0; line-height: 1.7; }
+.richtext-content ul, .richtext-content ol { padding-left: 24px; margin: 8px 0; }
+.richtext-content li { margin: 4px 0; }
+.richtext-content a { color: var(--card-primary); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.2s; }
+.richtext-content a:hover { border-bottom-color: var(--card-primary); }
+.richtext-content strong { font-weight: 700; color: #333; }
+.richtext-content em { font-style: italic; }
+.richtext-content img { max-width: 100%; height: auto; border-radius: 4px; margin: 8px 0; }
+
+/* 代码块 */
+.code-block { background: #1e1e2e; border-radius: 8px; margin: 12px 0; overflow: hidden; }
+.code-block-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px; background: #181825; }
+.code-lang { font-size: 12px; color: #6c7086; text-transform: uppercase; }
+.code-copy-btn { background: transparent; border: 1px solid #45475a; color: #cdd6f4; padding: 2px 10px; border-radius: 4px; font-size: 12px; cursor: pointer; }
+.code-copy-btn:hover { background: #45475a; }
+.code-block pre { margin: 0; padding: 14px; overflow-x: auto; }
+.code-block code { font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.6; color: #cdd6f4; white-space: pre; }
+
+/* 内联代码 */
+.inline-code { background: #f4f2ef; border: 1px solid #e5e0db; border-radius: 4px; padding: 1px 6px; font-family: 'Cascadia Code', monospace; font-size: 13px; color: #c0392b; }
+
+/* 代码高亮 */
+.hl-keyword { color: #cba6f7; font-weight: 600; }
+.hl-comment { color: #6c7086; font-style: italic; }
+.hl-string { color: #a6e3a1; }
+.hl-tag { color: #89b4fa; }
+.hl-gcode { color: #f9e2af; font-weight: 600; }
+.hl-mcode { color: #89dceb; font-weight: 600; }
+.hl-axis { color: #fab387; }
+.hl-value { color: #a6e3a1; }
+
+/* 表格 */
+.table-wrapper { overflow-x: auto; margin: 12px 0; }
+.richtext-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.richtext-table th { background: #f8f6f4; padding: 10px 14px; text-align: left; font-weight: 600; border: 1px solid var(--card-border); }
+.richtext-table td { padding: 8px 14px; border: 1px solid var(--card-border); }
+.richtext-table tr:nth-child(even) { background: #faf8f6; }
+.richtext-table tr:hover { background: var(--card-primary-light); }
+
+/* 数学公式 */
+.math-formula { display: inline-block; padding: 2px 8px; background: #f8f6f4; border: 1px solid var(--card-border); border-radius: 4px; font-family: 'Times New Roman', serif; font-style: italic; font-size: 15px; }
+
+/* 标签列表 */
+.card-tag-list { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.card-tag { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; color: #fff; background: var(--tag-color, #95a5a6); cursor: pointer; transition: opacity 0.2s; user-select: none; }
+.card-tag:hover { opacity: 0.85; }
+
+/* 标签云 */
+.tag-cloud { display: flex; flex-wrap: wrap; gap: 8px 12px; padding: 16px; align-items: center; justify-content: center; }
+.tag-cloud-item { display: inline-block; color: var(--tag-color, #95a5a6); cursor: pointer; transition: all 0.2s; padding: 4px 8px; border-radius: 4px; }
+.tag-cloud-item:hover { background: var(--tag-color); color: #fff; opacity: 1 !important; }
+.tag-cloud-item small { font-size: 11px; opacity: 0.7; }
+.tag-cloud-empty { text-align: center; color: var(--card-text-light); padding: 20px; }
+
+/* 复制按钮反馈 */
+.code-copy-btn.copied { background: var(--card-success); border-color: var(--card-success); color: #fff; }
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .masonry-column { width: 50% !important; }
+  .richtext-content h2 { font-size: 20px; }
+  .richtext-content h3 { font-size: 16px; }
+  .code-block code { font-size: 12px; }
+  .tag-cloud-item { font-size: 13px !important; }
+}
+
+@media (max-width: 480px) {
+  .masonry-column { width: 100% !important; }
+  .card-tag { font-size: 11px; padding: 2px 8px; }
+  .richtext-table th, .richtext-table td { padding: 6px 8px; font-size: 13px; }
+}

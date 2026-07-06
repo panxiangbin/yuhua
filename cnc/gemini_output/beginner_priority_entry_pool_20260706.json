@@ -1,0 +1,3917 @@
+[
+  {
+    "entryId": "learn-coordinate-system",
+    "title": "坐标系与对刀详解",
+    "learningStage": "入门必学",
+    "beginnerReason": "数控识图与坐标轴右手定则是操机的大脑地基，第一阶段必学。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 1
+  },
+  {
+    "entryId": "learn-absolute-incremental",
+    "title": "G90 / G91 绝对值与增量编程",
+    "learningStage": "入门必学",
+    "beginnerReason": "数控识图与坐标轴右手定则是操机的大脑地基，第一阶段必学。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 1
+  },
+  {
+    "entryId": "learn-g54-g59",
+    "title": "G54-G59 工件坐标系",
+    "learningStage": "先学后用",
+    "beginnerReason": "常用 G/M 指令和工件偏置，直接影响走刀指令解析。",
+    "needsImage": true,
+    "riskLevel": "高",
+    "suggestedOrder": 2
+  },
+  {
+    "entryId": "learn-g17-g18-g19",
+    "title": "G17 / G18 / G19 平面选择",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "learn-g41-g42",
+    "title": "G41 / G42 刀具补偿",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "learn-g43-g44-g49",
+    "title": "G43 / G44 / G49 刀长补偿",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "learn-g71-g72-g73",
+    "title": "G71 / G72 / G73 车床循环",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "learn-g81-g83",
+    "title": "G81 / G83 钻孔与啄钻循环",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "learn-g84",
+    "title": "G84 攻丝循环",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "tool-life",
+    "title": "刀具寿命管理",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "tool-coating",
+    "title": "刀具涂层技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "material-stainless",
+    "title": "不锈钢加工完整方案",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "material-aluminum",
+    "title": "铝合金加工基础",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "material-high-temp",
+    "title": "高温合金加工专项",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "g04-dwell",
+    "title": "G04 暂停指令",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "g20-g21-unit",
+    "title": "G20 / G21 英制与公制切换",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "g28-g29-reference",
+    "title": "G28 / G29 参考点返回",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "g00-g01-motion",
+    "title": "G00 / G01 快移与直线切削",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "g02-g03-arc",
+    "title": "G02 / G03 圆弧插补",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "g40-cancel-comp",
+    "title": "G40 取消刀补",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "g53-machine-coordinate",
+    "title": "G53 机床坐标调用",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "g94-g95-feed",
+    "title": "G94 / G95 进给方式",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "g76-thread-cycle",
+    "title": "G76 螺纹循环",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "g80-cancel-cycle",
+    "title": "G80 取消固定循环",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "g98-g99-return",
+    "title": "G98 / G99 返回平面",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "g96-g97-spindle",
+    "title": "G96 / G97 恒线速与固定转速",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "m30-program-end",
+    "title": "M30 程序结束与复位",
+    "learningStage": "先学后用",
+    "beginnerReason": "常用 G/M 指令和工件偏置，直接影响走刀指令解析。",
+    "needsImage": true,
+    "riskLevel": "高",
+    "suggestedOrder": 2
+  },
+  {
+    "entryId": "m03-m04-m05",
+    "title": "M03 / M04 / M05 主轴控制",
+    "learningStage": "先学后用",
+    "beginnerReason": "常用 G/M 指令和工件偏置，直接影响走刀指令解析。",
+    "needsImage": true,
+    "riskLevel": "高",
+    "suggestedOrder": 2
+  },
+  {
+    "entryId": "m06-tool-change",
+    "title": "M06 自动换刀",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "m08-m09-coolant",
+    "title": "M08 / M09 冷却液控制",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "m00-m01-stop",
+    "title": "M00 / M01 程序停止",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "fanuc-alarm-common",
+    "title": "FANUC 常见报警代码解析",
+    "learningStage": "容易出错",
+    "beginnerReason": "超程释放与报警排除，新手防止撞机扎刀的保命绝招。",
+    "needsImage": true,
+    "riskLevel": "高",
+    "suggestedOrder": 4
+  },
+  {
+    "entryId": "fault-limit-switch",
+    "title": "限位与超程类问题排查",
+    "learningStage": "容易出错",
+    "beginnerReason": "超程释放与报警排除，新手防止撞机扎刀的保命绝招。",
+    "needsImage": true,
+    "riskLevel": "高",
+    "suggestedOrder": 4
+  },
+  {
+    "entryId": "fault-home-fail",
+    "title": "回不了零点时先查什么",
+    "learningStage": "容易出错",
+    "beginnerReason": "超程释放与报警排除，新手防止撞机扎刀的保命绝招。",
+    "needsImage": true,
+    "riskLevel": "高",
+    "suggestedOrder": 4
+  },
+  {
+    "entryId": "process-allowance-basics",
+    "title": "粗加工 / 半精加工 / 精加工余量逻辑",
+    "learningStage": "现场最常见",
+    "beginnerReason": "转速与进给口算换算，现场首件试切必备技能。",
+    "needsImage": false,
+    "riskLevel": "中",
+    "suggestedOrder": 3
+  },
+  {
+    "entryId": "drawing-symbol",
+    "title": "图纸符号与尺寸标注入门",
+    "learningStage": "入门必学",
+    "beginnerReason": "数控识图与坐标轴右手定则是操机的大脑地基，第一阶段必学。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 1
+  },
+  {
+    "entryId": "tool-insert-brand",
+    "title": "刀具品牌与牌号认知入门",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "tool-drill-selection",
+    "title": "钻头选型与切削基础",
+    "learningStage": "现场最常见",
+    "beginnerReason": "转速与进给口算换算，现场首件试切必备技能。",
+    "needsImage": false,
+    "riskLevel": "中",
+    "suggestedOrder": 3
+  },
+  {
+    "entryId": "tool-thread-tap",
+    "title": "丝锥攻丝入门",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "material-carbon-steel",
+    "title": "常见钢材加工基础",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "material-plastic",
+    "title": "工程塑料加工特点",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "learn-g20-g21",
+    "title": "G20 / G21 英制与公制切换",
+    "learningStage": "先学后用",
+    "beginnerReason": "常用 G/M 指令和工件偏置，直接影响走刀指令解析。",
+    "needsImage": true,
+    "riskLevel": "高",
+    "suggestedOrder": 2
+  },
+  {
+    "entryId": "learn-g28-g29",
+    "title": "G28 / G29 参考点返回",
+    "learningStage": "先学后用",
+    "beginnerReason": "常用 G/M 指令和工件偏置，直接影响走刀指令解析。",
+    "needsImage": true,
+    "riskLevel": "高",
+    "suggestedOrder": 2
+  },
+  {
+    "entryId": "learn-m03-m05",
+    "title": "M03 / M04 / M05 主轴控制",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "learn-m06",
+    "title": "M06 自动换刀",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "learn-m08-m09",
+    "title": "M08 / M09 冷却液控制",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "calc-vc-rpm",
+    "title": "线速度、转速换算",
+    "learningStage": "现场最常见",
+    "beginnerReason": "转速与进给口算换算，现场首件试切必备技能。",
+    "needsImage": false,
+    "riskLevel": "中",
+    "suggestedOrder": 3
+  },
+  {
+    "entryId": "calc-feed",
+    "title": "进给速度换算",
+    "learningStage": "现场最常见",
+    "beginnerReason": "转速与进给口算换算，现场首件试切必备技能。",
+    "needsImage": false,
+    "riskLevel": "中",
+    "suggestedOrder": 3
+  },
+  {
+    "entryId": "kb-tool-life",
+    "title": "刀具寿命管理",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-tool-holder",
+    "title": "刀柄与工具系统",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-tool-material",
+    "title": "刀具材料与品牌选型",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-tool-coating",
+    "title": "刀具涂层技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-material-base",
+    "title": "工件材料手册",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-process-rules",
+    "title": "加工工艺规程",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-知识类_切削参数速查大全",
+    "title": "数控切削参数速查大全",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-刀柄与工具系统",
+    "title": "数控刀柄与工具系统",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-加工质量控制",
+    "title": "加工质量控制",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-数控加工工艺规程",
+    "title": "数控加工工艺规程",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-加工成本与效率",
+    "title": "加工成本与效率",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-振动与颤振控制",
+    "title": "振动与颤振控制",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-Web_金属加工工艺大全",
+    "title": "金属加工工艺大全",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-Web_切削液技术指南",
+    "title": "切削液技术全面指南",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-Web_立铣刀技术全集",
+    "title": "立铣刀技术全集",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-Web_机械加工工艺技术",
+    "title": "机械加工工艺技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-Web_切削速度进给量计算",
+    "title": "切削速度与进给量计算指南",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-Web_冷却液技术",
+    "title": "冷却液与切削液技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-Web_激光切割技术",
+    "title": "激光切割加工技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-Web_钻头技术全集",
+    "title": "钻头技术全集",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-Web_水刀切割技术",
+    "title": "水刀切割加工技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-Web_电火花加工技术",
+    "title": "电火花加工(EDM)技术大全",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-Web_铣削加工技术大全",
+    "title": "铣削加工技术大全",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-Web_车削加工技术大全",
+    "title": "车削加工技术大全",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-数控精度与测量",
+    "title": "数控精度与测量",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-刀具管理TMS系统",
+    "title": "刀具管理TMS系统",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-切削液与冷却润滑",
+    "title": "数控加工切削液与冷却润滑",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-薄壁件加工变形控制全攻略",
+    "title": "薄壁件加工变形控制全攻略",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-刀具工艺大全",
+    "title": "刀具工艺大全",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-残余应力分析与控制",
+    "title": "残余应力分析与控制",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-Web_可转位刀片技术手册",
+    "title": "可转位刀片技术手册",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-高速切削HSC技术专题",
+    "title": "高速切削HSC技术专题",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_难加工材料切削综合指南",
+    "title": "材料 难加工材料切削综合指南",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-废品分析与预防",
+    "title": "数控加工常见废品分析与预防",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-断屑机理与切屑控制技术",
+    "title": "断屑机理与切屑控制技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-加工硬化机理与控制",
+    "title": "加工硬化机理与控制",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_金属材料热处理工艺参数速查手册",
+    "title": "材料 金属材料热处理工艺参数速查手册",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_加工工艺分析",
+    "title": "教学 加工工艺分析",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具与装夹",
+    "title": "夹具与装夹",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-难加工材料",
+    "title": "数控加工材料学：难加工材料切削",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-表面处理工艺",
+    "title": "数控加工表面处理工艺",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_刀具几何角度参数选择完全指南",
+    "title": "夹具 刀具几何角度参数选择完全指南",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-热处理工艺大全",
+    "title": "热处理工艺大全",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_数控加工工艺规程与工序卡片设计完全指南",
+    "title": "材料 数控加工工艺规程与工序卡片设计完全指南",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-微量润滑MQL与先进冷却技术",
+    "title": "微量润滑MQL与先进冷却技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-Web_切削刀具技术手册",
+    "title": "切削刀具技术手册",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_铜合金加工",
+    "title": "🔶 铜合金数控加工专项教学",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-数控加工去毛刺工艺",
+    "title": "数控加工去毛刺工艺",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_液压夹具系统设计与选型完全指南",
+    "title": "夹具 液压夹具系统设计与选型完全指南",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_精密磨削与镜面磨削工艺参数完全指南",
+    "title": "材料 精密磨削与镜面磨削工艺参数完全指南",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-正交试验DOE参数优化",
+    "title": "正交试验DOE参数优化",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_检具设计基础",
+    "title": "夹具 检具设计基础",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-高速切削技术",
+    "title": "高速切削与高效加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_数控刀具管理与RFID智能识别完全指南",
+    "title": "夹具 数控刀具管理与RFID智能识别完全指南",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_超声振动辅助CFRP加工",
+    "title": "教学 超声振动辅助CFRP加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-知识类_刀具品牌产品手册大全",
+    "title": "国内外刀具品牌与产品线完全手册",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_数控加工排屑方案",
+    "title": "教学 数控加工排屑方案",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-刀柄系统BT_HSK热装液压",
+    "title": "刀柄系统BT HSK热装液压",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_气动夹具与真空夹具设计完全指南",
+    "title": "夹具 气动夹具与真空夹具设计完全指南",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_数控加工中的刀具破损在线监测与AI预警",
+    "title": "教学 数控加工中的刀具破损在线监测与AI预警",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_数控加工中的刀具破损在线监测与自适应停机",
+    "title": "教学 数控加工中的刀具破损在线监测与自适应停机",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-图纸识读与公差",
+    "title": "数控图纸识读与公差",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_铸铁加工",
+    "title": "🏭 铸铁数控加工专项教学",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-数控加工成本核算方法",
+    "title": "数控加工成本核算方法",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-工件材料手册",
+    "title": "工件材料加工手册",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_复合材料激光辅助加工",
+    "title": "教学 复合材料激光辅助加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_盘刀加工",
+    "title": "教学 盘刀加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_数控刀柄系统完全指南_BT_HSK_热缩液压选型对比",
+    "title": "夹具 数控刀柄系统完全指南 BT HSK 热缩液压选型对比",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_薄壁件振动抑制工艺优化",
+    "title": "教学 薄壁件振动抑制工艺优化",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_数控加工表面完整性控制",
+    "title": "教学 数控加工表面完整性控制",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_铸造基础",
+    "title": "教学 铸造基础",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_绿色MQL干切削工艺与刀具选择",
+    "title": "教学 绿色MQL干切削工艺与刀具选择",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具涂层失效分析与预防",
+    "title": "教学 刀具涂层失效分析与预防",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-刀具修磨与再涂层技术",
+    "title": "刀具修磨与再涂层技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_亚克力加工",
+    "title": "教学 亚克力加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_复合材料超声辅助加工",
+    "title": "教学 复合材料超声辅助加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀片代码",
+    "title": "教学 刀片代码",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_抛光加工",
+    "title": "教学 抛光加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_数控加工中的刀具寿命预测与AI模型",
+    "title": "教学 数控加工中的刀具寿命预测与AI模型",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_数控加工中的刀具破损在线监测与AI预警高级策略",
+    "title": "教学 数控加工中的刀具破损在线监测与AI预警高级策略",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_石墨加工",
+    "title": "教学 石墨加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_石墨电极加工",
+    "title": "教学 石墨电极加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具磨损机理与预测",
+    "title": "教学 刀具磨损机理与预测",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_橡胶加工",
+    "title": "教学 橡胶加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_DIN标准",
+    "title": "教学 DIN标准",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-工艺参数数据库",
+    "title": "工艺参数数据库",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_数控加工中的刀具寿命管理与成本优化",
+    "title": "教学 数控加工中的刀具寿命管理与成本优化",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_涂层刀具",
+    "title": "教学 涂层刀具",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_数控加工切削液选择与维护管理",
+    "title": "教学 数控加工切削液选择与维护管理",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_铜电极加工",
+    "title": "教学 铜电极加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_金属陶瓷刀具",
+    "title": "教学 金属陶瓷刀具",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_热缩加工",
+    "title": "教学 热缩加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_数控加工热变形控制",
+    "title": "教学 数控加工热变形控制",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-可转位刀片选型与使用指南",
+    "title": "可转位刀片选型与使用指南",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具几何角度对加工影响",
+    "title": "教学 刀具几何角度对加工影响",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_数控加工振动抑制与工艺优化",
+    "title": "教学 数控加工振动抑制与工艺优化",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_砂轮修整",
+    "title": "教学 砂轮修整",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_高温合金加工专项",
+    "title": "教学 高温合金加工专项",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-难加工材料切削技术",
+    "title": "难加工材料切削技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具破损监控系统",
+    "title": "教学 刀具破损监控系统",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-切削参数计算与优化手册",
+    "title": "切削参数计算与优化手册",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-刀具修磨与再利用技术",
+    "title": "刀具修磨与再利用技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具预调仪使用与数据管理",
+    "title": "教学 刀具预调仪使用与数据管理",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_钛合金加工",
+    "title": "数控刀具工艺：钛合金加工教学",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_SPC统计过程控制",
+    "title": "教学 SPC统计过程控制",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-数控刀具夹持系统大全",
+    "title": "数控刀具夹持系统大全",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_数控工艺编制方法",
+    "title": "教学 数控工艺编制方法",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_加工材料手册",
+    "title": "教学 加工材料手册",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具断屑与排屑优化进阶",
+    "title": "教学 刀具断屑与排屑优化进阶",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_砂轮平衡",
+    "title": "教学 砂轮平衡",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-高速切削HSM技术指南",
+    "title": "高速切削HSM技术指南",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-网采_伊斯卡刀具技术手册",
+    "title": "伊斯卡刀具技术手册",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_公差分析基础",
+    "title": "教学 公差分析基础",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-网采_数控磨削加工技术",
+    "title": "数控磨削加工技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_硬质合金刀具涂层技术",
+    "title": "教学 硬质合金刀具涂层技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-液压夹具设计",
+    "title": "液压夹具设计",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_积屑瘤控制与预防",
+    "title": "教学 积屑瘤控制与预防",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_油雾润滑",
+    "title": "教学 油雾润滑",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-网采_常用加工材料选用指南",
+    "title": "常用机械加工材料选用指南",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-案例_不锈钢加工全攻略",
+    "title": "案例 不锈钢加工全攻略",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-知识类_刀具磨损与寿命管理",
+    "title": "数控刀具磨损与寿命管理指南",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_常见金属材料手册",
+    "title": "加工中常见金属材料手册",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-电火花与线切割加工技术",
+    "title": "电火花与线切割加工技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_石墨加工工艺",
+    "title": "教学：石墨数控加工工艺",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_切削力与切削热原理",
+    "title": "教学 切削力与切削热原理",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_常用工程材料手册",
+    "title": "常用工程材料手册",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具磨损AI监测",
+    "title": "教学 刀具磨损AI监测",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-知识类_夹具设计与快换系统",
+    "title": "数控加工夹具设计与快换系统",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_热处理基础与NC加工配合",
+    "title": "热处理基础与NC加工配合",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-网采_肯纳刀具技术手册",
+    "title": "肯纳金属刀具技术手册",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-网采_铣刀选型完全手册",
+    "title": "铣刀选型完全手册",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_珩磨与研磨加工技术",
+    "title": "珩磨与研磨加工技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-超声振动辅助加工",
+    "title": "超声振动辅助加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-案例_钛合金加工全攻略",
+    "title": "案例 钛合金加工全攻略",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_在机测量探测技术",
+    "title": "教学 在机测量探测技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-网采_丝锥攻丝完全指南",
+    "title": "丝锥攻丝完全指南",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-切削力与功率计算",
+    "title": "数控加工切削力与功率计算",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-网采_山特维克刀具技术手册",
+    "title": "山特维克可乐满刀具技术手册",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_陶瓷材料数控加工",
+    "title": "教学：陶瓷材料数控加工工艺",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-网采_刀柄系统选型指南BT40",
+    "title": "BT40刀柄系统选型指南",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-知识类_切削参数速查手册_v2",
+    "title": "数控加工切削参数速查手册",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_高压内冷参数优化",
+    "title": "教学 高压内冷参数优化",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_切削液浓度维护",
+    "title": "教学 切削液浓度维护",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_锻造基础",
+    "title": "教学 锻造基础",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-数控机床冷却系统技术",
+    "title": "数控机床冷却系统技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_Inconel高温合金加工",
+    "title": "难加工材料专题：Inconel与高温合金",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_材料去除率MRR优化",
+    "title": "材料去除率（MRR）优化",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_磨削加工基础",
+    "title": "磨削加工基础",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_深孔加工完整方案",
+    "title": "深孔加工完整方案",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_碳纤维复合材料加工",
+    "title": "教学 碳纤维复合材料加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-知识类_切削参数计算手册",
+    "title": "数控加工工艺参数与计算手册",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_卡盘与夹具选择指南",
+    "title": "卡盘与夹具选择指南",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_钛合金加工技术",
+    "title": "钛合金加工技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_切削参数优化与数据库",
+    "title": "切削参数优化与切削数据库",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-知识类_数控刀具寿命管理",
+    "title": "数控刀具寿命管理",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_HSK刀柄选型与维护",
+    "title": "教学：HSK刀柄选型与维护",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_刀具寿命管理系统",
+    "title": "刀具寿命管理系统",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_切削参数速查表",
+    "title": "教学 切削参数速查表",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_不锈钢加工完整方案",
+    "title": "不锈钢加工完整方案",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-网采_钻头选型与切削参数",
+    "title": "钻头选型与切削参数",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_切削液管理与环保",
+    "title": "切削液管理与环保",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_气动夹具设计",
+    "title": "气动夹具设计",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_工序卡片编制",
+    "title": "教学 工序卡片编制",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_液压夹具设计",
+    "title": "液压夹具设计",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-网采_株洲钻石刀具技术手册",
+    "title": "株洲钻石切削刀具技术手册",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_数控刀具涂层技术",
+    "title": "数控刀具涂层技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_齿轮加工技术",
+    "title": "齿轮加工技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-工序卡与工艺文件编制",
+    "title": "工序卡与工艺文件编制",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_切削用量选择",
+    "title": "数控加工教学：切削用量选择",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_刀具标识与存储管理",
+    "title": "数控刀具标识与存储",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_材料切削特性速查",
+    "title": "教学 材料切削特性速查",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-网采_硬质合金刀片牌号选择指南",
+    "title": "硬质合金刀片牌号选择指南",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_焊接件及热处理件加工",
+    "title": "焊接件及热处理件加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具涂层选择详解",
+    "title": "教学 刀具涂层选择详解",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_冷却液管理",
+    "title": "教学 冷却液管理",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_尺寸精度控制",
+    "title": "第一章：精度控制基础",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-知识类_刀具材料学",
+    "title": "数控刀具材料学",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-知识类_刀具涂层技术",
+    "title": "刀具涂层技术详解",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_量具保养",
+    "title": "教学 量具保养",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_真空吸盘夹具设计",
+    "title": "真空吸盘夹具设计",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_震刀分析与解决方案",
+    "title": "教学 震刀分析与解决方案",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_热处理与表面处理",
+    "title": "热处理与表面处理工艺",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_工时估算",
+    "title": "教学 工时估算",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_夹具设计与装夹方案",
+    "title": "教学 夹具设计与装夹方案",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_孔系组合夹具设计",
+    "title": "孔系组合夹具设计",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具磨损识别",
+    "title": "第一章：磨损类型与形态",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_量具使用",
+    "title": "第一章：常用量具速查",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-工艺卡片编制",
+    "title": "第一章：工艺卡片种类",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_冷加工切削力基础",
+    "title": "冷加工与切削力基础",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_铣刀夹具设计详解",
+    "title": "铣刀夹具设计详解",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_组合夹具组装工艺",
+    "title": "组合夹具组装工艺",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_表面粗糙度控制",
+    "title": "第一章：Ra值基础",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-清洗防锈与包装",
+    "title": "清洗防锈与包装",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具涂层技术详解",
+    "title": "教学 刀具涂层技术详解",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_工艺文件编制规范",
+    "title": "教学 工艺文件编制规范",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_表面质量提升",
+    "title": "教学 表面质量提升",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-山特维克CoroMill铣刀系列详解",
+    "title": "山特维克 CoroMill 铣刀系列详解",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_变形控制",
+    "title": "第一章：变形原因分析",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_压铸件锻件毛坯加工策略",
+    "title": "压铸件/锻件毛坯加工策略",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-刀具寿命管理方法",
+    "title": "刀具寿命管理方法",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具磨损与更换",
+    "title": "数控加工教学：刀具磨损识别与更换",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-切削液选用与管理完全指南",
+    "title": "切削液选用与管理完全指南",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_高光洁度加工",
+    "title": "教学 高光洁度加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_夹具基础",
+    "title": "教学 夹具基础",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-案例_铝合金高速加工详解",
+    "title": "铝合金7075薄壁件变形控制",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_材料切削参数速查",
+    "title": "教学 材料切削参数速查",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_车床夹具设计详解",
+    "title": "车床夹具设计详解",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_铣夹具典型结构",
+    "title": "铣夹具典型结构图册",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-数控刀具寿命管理与刀具监控技术",
+    "title": "数控刀具寿命管理与刀具监控技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_立铣刀选型使用",
+    "title": "教学 立铣刀选型使用",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_首件检验",
+    "title": "数控加工教学：首件检验",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_钛合金TC4加工",
+    "title": "教学 钛合金TC4加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_钻头选型使用",
+    "title": "教学 钻头选型使用",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_热处理与CNC加工",
+    "title": "教学 热处理与CNC加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_铣刀切削参数速查表",
+    "title": "教学 铣刀切削参数速查表",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-难加工材料切削参数速查",
+    "title": "难加工材料切削参数速查",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_薄壁件装夹方案",
+    "title": "教学 薄壁件装夹方案",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_薄壁件装夹技术",
+    "title": "薄壁件装夹技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_量具使用速查",
+    "title": "教学 量具使用速查",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具管理系统详解",
+    "title": "教学 刀具管理系统详解",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-高速铣削刀具路径策略",
+    "title": "高速铣削刀具路径策略",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_材料加工速查手册",
+    "title": "教学 数控加工材料手册",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_柔性夹具系统技术",
+    "title": "柔性夹具系统技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-刀具破损分析与防止",
+    "title": "刀具破损分析与防止",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_薄壁件铣削夹具设计",
+    "title": "薄壁件铣削夹具设计",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具涂层技术",
+    "title": "教学 刀具涂层技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀片材质选择",
+    "title": "教学 刀片材质选择",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_塑料加工",
+    "title": "教学 塑料加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_铣削夹具设计手册",
+    "title": "铣削夹具设计手册",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_去应力退火",
+    "title": "教学 去应力退火",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_气动液压夹具系统",
+    "title": "气动液压夹具系统",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具跳动检测",
+    "title": "教学 刀具跳动检测",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-株洲钻石刀具技术手册",
+    "title": "株洲钻石 切削刀具技术手册",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_铣刀选型指南",
+    "title": "数控铣刀选型指南教学",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具动平衡",
+    "title": "教学 刀具动平衡",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_工程塑料加工工艺特性",
+    "title": "工程塑料加工工艺特性",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_组合夹具设计指南",
+    "title": "组合夹具设计指南",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_山特维克刀具品牌详解",
+    "title": "教学 山特维克刀具品牌详解",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_难加工材料刀具选择",
+    "title": "教学 难加工材料刀具选择",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_薄壁件加工",
+    "title": "第一章：变形机理",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_磨床夹具设计",
+    "title": "磨床夹具设计",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_数控磨刀",
+    "title": "教学 数控磨刀",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_零件清洗",
+    "title": "教学 零件清洗",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_批量加工质量控制",
+    "title": "教学 批量加工质量控制",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-伊斯卡变形金刚模块化刀具",
+    "title": "伊斯卡 变形金刚（CHAMFERSHTIQ） 模块化刀具系统",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-热处理与数控加工",
+    "title": "热处理与数控加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-特固克TaeguTec刀具全系列",
+    "title": "特固克 TaeguTec 刀具全系列",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-知识类_切削用量选择指南",
+    "title": "切削用量的选择与优化指南",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_模具钢加工工艺特性",
+    "title": "模具钢加工工艺特性",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_模具钢加工",
+    "title": "教学 模具钢加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_定位基准",
+    "title": "教学 定位基准",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_冷却润滑方案选择",
+    "title": "教学 冷却润滑方案选择",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-住友电工CBN刀具详解",
+    "title": "住友电工 CBN/PCD 刀具详解",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_工艺路线拟定",
+    "title": "教学 数控加工工艺路线的拟定",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_304不锈钢加工",
+    "title": "教学 304不锈钢加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-切削液选用与维护指南",
+    "title": "切削液选用与维护指南",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_车刀几何角度",
+    "title": "数控车刀几何角度教学",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_去毛刺工艺",
+    "title": "教学 数控加工去毛刺工艺",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_研磨加工",
+    "title": "教学 研磨加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-三菱综合材料Mitsubishi刀具系列",
+    "title": "三菱综合材料Mitsubishi刀具系列",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_切削液选择与维护",
+    "title": "教学 切削液选择与维护",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-肯纳Beyond系列车刀详解",
+    "title": "肯纳金属 Beyond 系列车刀详解",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_切屑控制与断屑",
+    "title": "教学 切屑控制与断屑",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_磨削夹具设计",
+    "title": "磨削夹具设计",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_金刚石刀具",
+    "title": "教学 金刚石刀具",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-瓦尔特Tiger-tec切削材质详解",
+    "title": "瓦尔特 Tiger-tec 切削材质详解",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-BIG大昭和高精度刀柄系统",
+    "title": "BIG大昭和高精度刀柄系统",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_铝合金6061加工",
+    "title": "教学 铝合金6061加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-玛帕MAPAL精密镗刀系统",
+    "title": "玛帕 MAPAL 精密镗刀系统详解",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-热处理与表面处理技术",
+    "title": "机械零件热处理与表面处理技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-SPC统计过程控制",
+    "title": "SPC统计过程控制",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-京瓷Kyocera车刀系列详解",
+    "title": "京瓷 Kyocera 车刀系列详解",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_钻头修磨与选型",
+    "title": "数控钻头修磨与选型教学",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-NS_TOOL微径铣刀与精密加工",
+    "title": "NS TOOL 微径铣刀与精密加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_公差分析与尺寸链计算",
+    "title": "教学 公差分析与尺寸链计算",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_车床夹具设计手册",
+    "title": "车床夹具设计手册",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_切削液配比维护",
+    "title": "切削液配比与维护教学",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_电镀与镀层",
+    "title": "教学 电镀与镀层",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-刀具钝化与刃口处理技术",
+    "title": "刀具钝化与刃口处理技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_过程检验与SPC",
+    "title": "教学 数控加工过程检验",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_阳极氧化",
+    "title": "教学 阳极氧化",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-FMEA失效模式分析",
+    "title": "数控加工FMEA失效模式分析",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-OSG欧士机丝锥与钻头产品手册",
+    "title": "OSG 欧士机 丝锥与钻头产品手册",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_高速加工HSM技术",
+    "title": "教学 高速加工HSM技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_热变形控制",
+    "title": "教学 数控加工热变形控制",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-去毛刺与表面光整技术",
+    "title": "去毛刺与表面光整技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_切屑控制与排屑技术",
+    "title": "教学 切屑控制与排屑技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_检测量具实操",
+    "title": "教学 检测量具实操",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_倒角去毛刺技术",
+    "title": "教学：数控加工倒角与去毛刺技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具管理",
+    "title": "教学 数控刀具管理系统",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_镗刀加工",
+    "title": "教学 镗刀加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_复合材料加工",
+    "title": "教学 复合材料加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-难加工材料刀具选用指南",
+    "title": "难加工材料刀具选用指南",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀柄热装技术",
+    "title": "教学 刀柄热装技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-刀具寿命管理",
+    "title": "刀具寿命管理",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_45号钢加工",
+    "title": "教学 45号钢加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-三丰Mitutoyo精密量仪概览",
+    "title": "三丰 Mitutoyo 精密量仪概览",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-首件检验与试切流程",
+    "title": "首件检验与试切流程",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料专项_铝合金系列对比",
+    "title": "铝合金系列对比与加工要点",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_高速铣削加工",
+    "title": "高速铣削加工技术教学",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-涂层技术大全",
+    "title": "涂层技术大全",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_电火花EDM与CNC配合",
+    "title": "教学 电火花EDM与CNC配合",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_切削用量三要素",
+    "title": "教学 切削用量三要素",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-刀柄选用指南",
+    "title": "刀柄选用指南",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_万能磨刀机",
+    "title": "教学 万能磨刀机",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_铰刀镗刀选型",
+    "title": "教学 铰刀镗刀选型",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_冷却液系统维护详解",
+    "title": "教学 冷却液系统维护详解",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-刀具材料发展史",
+    "title": "刀具材料发展史",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_可转位刀片选型",
+    "title": "教学 可转位刀片选型",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_切削液浓度控制",
+    "title": "切削液浓度控制教学",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_陶瓷加工",
+    "title": "教学 陶瓷加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-三坐标测量编程",
+    "title": "PC-DMIS示例",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_挤压加工",
+    "title": "教学 挤压加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_冷却液选择指南",
+    "title": "教学 冷却液选择指南",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_切屑处理回收",
+    "title": "教学 数控加工切屑处理与回收",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_CBN刀具",
+    "title": "教学 CBN刀具",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_振动监测",
+    "title": "教学 数控加工振动监测",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-去应力技术",
+    "title": "去应力技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_微量润滑MQL技术",
+    "title": "微量润滑MQL技术教学",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_PCD刀具应用",
+    "title": "PCD聚晶金刚石刀具应用教学",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料切削参数速查表",
+    "title": "材料切削参数速查表",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_株洲钻石刀具品牌详解",
+    "title": "教学 株洲钻石刀具品牌详解",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_喷砂加工",
+    "title": "教学 喷砂加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_锻件毛坯加工",
+    "title": "教学 锻件毛坯数控加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_加工缺陷分析",
+    "title": "数控加工缺陷分析与对策教学",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_高压冷却技术",
+    "title": "教学 数控加工高压冷却技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_专用夹具设计案例",
+    "title": "教学 专用夹具设计案例",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料专项_Inconel高温合金",
+    "title": "Inconel高温合金数控加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-刀具涂层技术",
+    "title": "刀具涂层技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-泰珂洛Tungaloy刀具系列",
+    "title": "泰珂洛 Tungaloy 刀具系列",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_陶瓷刀具应用",
+    "title": "陶瓷刀具应用教学",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_功率监控技术",
+    "title": "数控机床功率监控技术教学",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-刀具品牌选型指南",
+    "title": "刀具品牌选型指南",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_滚压加工",
+    "title": "教学 滚压加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-机夹刀片选用指南",
+    "title": "机夹刀片选用指南",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具管理软件",
+    "title": "数控刀具管理软件教学",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-镗刀选用与调整指南",
+    "title": "镗刀选用与调整指南",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_超精密加工",
+    "title": "教学 超精密数控加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_切削力与功率计算",
+    "title": "教学 切削力与功率计算",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_肯纳刀具品牌详解",
+    "title": "教学 肯纳刀具品牌详解",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_珩磨加工",
+    "title": "教学 珩磨加工",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-NACHI不二越刀具系列",
+    "title": "NACHI 不二越 刀具系列",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_不锈钢加工",
+    "title": "切削参数推荐",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_铝合金加工",
+    "title": "切削参数推荐",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_高速钢刀具应用",
+    "title": "教学 高速钢刀具应用",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-UnionTool日东工具微孔钻削",
+    "title": "Union Tool 日东工具 微孔钻削技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_图纸标注解读",
+    "title": "数控加工图纸标注解读教学",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-铣削刀具类型与选用",
+    "title": "铣削刀具类型与选用",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_淬硬钢加工",
+    "title": "切削参数推荐",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_工装夹具设计基础",
+    "title": "教学 工装夹具设计基础",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-量检具管理与校准",
+    "title": "量检具管理与校准",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_去应力方法",
+    "title": "教学 数控加工去应力方法",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-数控刀具切削参数速查表",
+    "title": "数控刀具切削参数速查表",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_瓦尔特刀具品牌详解",
+    "title": "教学 瓦尔特刀具品牌详解",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_纳米涂层刀具",
+    "title": "教学 纳米涂层刀具",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-表面粗糙度测量",
+    "title": "表面粗糙度测量",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_切屑控制与断屑技术",
+    "title": "切屑控制与断屑技术教学",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_HSK刀柄系统",
+    "title": "HSK刀柄系统教学",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-刀具成本控制方法",
+    "title": "刀具成本控制方法",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_热处理工艺与机加工配合",
+    "title": "热处理工艺与机加工配合",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_冷却方式选择",
+    "title": "数控加工冷却方式选择教学",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_陶瓷材料加工工艺特性",
+    "title": "陶瓷材料加工工艺特性",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-日研Nikken高效铣刀系统",
+    "title": "日研 Nikken 高效铣刀系统",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_冲屑与排屑优化",
+    "title": "数控机床冲屑与排屑优化教学",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-攻丝加工工艺",
+    "title": "攻丝加工工艺",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-案例_复合材料加工详解",
+    "title": "案例 复合材料加工详解",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料专项_不锈钢对比",
+    "title": "不锈钢数控加工对比",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_孔距精度保证",
+    "title": "数控铣床孔距精度保证教学",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_快速换模系统设计",
+    "title": "快速换模系统设计",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-激光加工技术",
+    "title": "激光加工技术",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_伊斯卡刀具品牌详解",
+    "title": "教学 伊斯卡刀具品牌详解",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_对刀仪选择使用",
+    "title": "对刀仪选择与使用教学",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_工序卡编制详解",
+    "title": "数控加工工序卡编制详解教学",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_焊接式夹具设计要点",
+    "title": "焊接式夹具设计要点",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-微润滑MQL技术详解",
+    "title": "微润滑MQL技术详解",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_减振技术",
+    "title": "数控加工减振技术教学",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_夹具定位误差分析与计算",
+    "title": "夹具定位误差分析与计算",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-数控刀具国际品牌对比",
+    "title": "数控刀具国际品牌对比",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-Mastercam后处理自定义教程",
+    "title": "Mastercam后处理自定义教程",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_冷却液配比检测",
+    "title": "教学 冷却液配比与检测",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具寿命管理",
+    "title": "数控刀具寿命管理教学",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-刀片磨损标准与换刀时机",
+    "title": "刀片磨损标准与换刀时机",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_钢材加工工艺特性",
+    "title": "钢材加工工艺特性",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_工艺性审查",
+    "title": "教学 数控加工工艺性审查",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-readme-知识类_切削参数速查大全",
+    "title": "数控切削参数速查大全",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-readme-刀柄与工具系统",
+    "title": "数控刀柄与工具系统",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  },
+  {
+    "entryId": "kb-readme-加工质量控制",
+    "title": "加工质量控制",
+    "learningStage": "先学后用",
+    "beginnerReason": "数控基本指令和刀具几何形状说明，建立车间心智模型。",
+    "needsImage": true,
+    "riskLevel": "中",
+    "suggestedOrder": 10
+  }
+]

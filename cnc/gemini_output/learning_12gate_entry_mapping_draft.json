@@ -1,0 +1,134 @@
+[
+  {
+    "gateId": "gate-01",
+    "gateTitle": "认识零件的身份证",
+    "sourceVersion": "index.html (L1-1)",
+    "mappedEntryId": "drawing-symbol",
+    "mappedEntryTitle": "图纸符号与尺寸标注入门",
+    "mappingConfidence": "HIGH",
+    "needsImage": false,
+    "needsRewrite": false,
+    "notes": "标题对应 card-001。应在 app.js 显式映射到 drawing-symbol。"
+  },
+  {
+    "gateId": "gate-02",
+    "gateTitle": "机床的东南西北",
+    "sourceVersion": "index.html (L1-2)",
+    "mappedEntryId": "learn-coordinate-system",
+    "mappedEntryTitle": "坐标系与对刀详解",
+    "mappingConfidence": "HIGH",
+    "needsImage": false,
+    "needsRewrite": false,
+    "notes": "当前唯一能成功跳转的关卡，对应 card-002。"
+  },
+  {
+    "gateId": "gate-03",
+    "gateTitle": "找机床的老家",
+    "sourceVersion": "index.html (L1-3)",
+    "mappedEntryId": "learn-g28-g29",
+    "mappedEntryTitle": "G28 / G29 参考点返回",
+    "mappingConfidence": "MEDIUM",
+    "needsImage": true,
+    "needsRewrite": true,
+    "notes": "对应 card-003（手动回零）。可映射到 G28/G29，建议增加回零故障条目的联动。"
+  },
+  {
+    "gateId": "gate-04",
+    "gateTitle": "告诉机床活儿在哪",
+    "sourceVersion": "index.html (L1-4)",
+    "mappedEntryId": "learn-g54-g59",
+    "mappedEntryTitle": "G54-G59 工件坐标系",
+    "mappingConfidence": "HIGH",
+    "needsImage": false,
+    "needsRewrite": false,
+    "notes": "对应 card-004（工件坐标系设定）。需在 app.js 中改为精准 ID 映射。"
+  },
+  {
+    "gateId": "gate-05",
+    "gateTitle": "Z 轴对刀，保命绝招",
+    "sourceVersion": "index.html (L2-5)",
+    "mappedEntryId": "learn-coordinate-system",
+    "mappedEntryTitle": "坐标系与对刀详解",
+    "mappingConfidence": "MEDIUM",
+    "needsImage": true,
+    "needsRewrite": true,
+    "notes": "对应 card-005（手动对刀秘诀）。需新建专门针对 Z 轴试切法和对刀仪防撞的专题条目。"
+  },
+  {
+    "gateId": "gate-06",
+    "gateTitle": "认识你的武器",
+    "sourceVersion": "index.html (L2-6)",
+    "mappedEntryId": "tool-insert-brand",
+    "mappedEntryTitle": "刀具品牌与牌号认知入门",
+    "mappingConfidence": "LOW",
+    "needsImage": true,
+    "needsRewrite": true,
+    "notes": "对应 card-007（铣刀与车刀的选型）。现有条目只有品牌和钻头，缺少铣刀/车刀实体选型知识。"
+  },
+  {
+    "gateId": "gate-07",
+    "gateTitle": "顺着切还是逆着切",
+    "sourceVersion": "index.html (L2-7)",
+    "mappedEntryId": "process-allowance-basics",
+    "mappedEntryTitle": "粗加工 / 半精加工 / 精加工余量逻辑",
+    "mappingConfidence": "LOW",
+    "needsImage": true,
+    "needsRewrite": true,
+    "notes": "对应 card-009（顺铣与逆铣区别）。目前知识库中没有包含顺逆铣受力的独立条目，建议新建。"
+  },
+  {
+    "gateId": "gate-08",
+    "gateTitle": "S 和 F，谁跑得快",
+    "sourceVersion": "index.html (L3-8)",
+    "mappedEntryId": "calc-vc-rpm",
+    "mappedEntryTitle": "线速度、转速换算",
+    "mappingConfidence": "HIGH",
+    "needsImage": false,
+    "needsRewrite": false,
+    "notes": "对应 card-008（切削速度与进给换算）。直接映射到换算公式与计算器联动页面。"
+  },
+  {
+    "gateId": "gate-09",
+    "gateTitle": "G00 和 G01，快慢有别",
+    "sourceVersion": "index.html (L3-9)",
+    "mappedEntryId": "learn-g28-g29",
+    "mappedEntryTitle": "G28 / G29 参考点返回",
+    "mappingConfidence": "LOW",
+    "needsImage": true,
+    "needsRewrite": true,
+    "notes": "对应 card-010。现有知识库中无 G00/G01 直线插补基础说明，必须新建该条目。"
+  },
+  {
+    "gateId": "gate-10",
+    "gateTitle": "致命的小数点",
+    "sourceVersion": "index.html (L3-10)",
+    "mappedEntryId": "drawing-symbol",
+    "mappedEntryTitle": "图纸符号与尺寸标注入门",
+    "mappingConfidence": "LOW",
+    "needsImage": true,
+    "needsRewrite": true,
+    "notes": "在 learning-cards-round2.js 中没有卡片对象，在规则库中也无匹配，必须全新补充该关卡数据。"
+  },
+  {
+    "gateId": "gate-11",
+    "gateTitle": "G90 和 G91：算总账还是算小账",
+    "sourceVersion": "index.html (L3-11)",
+    "mappedEntryId": "learn-absolute-incremental",
+    "mappedEntryTitle": "G90 / G91 绝对值与增量编程",
+    "mappingConfidence": "HIGH",
+    "needsImage": false,
+    "needsRewrite": false,
+    "notes": "在 cards 中有对应内容，在 rules 中却被漏掉。修补后可直接映射到 learn-absolute-incremental。"
+  },
+  {
+    "gateId": "gate-12",
+    "gateTitle": "G81：钻孔自动化",
+    "sourceVersion": "index.html (L4-12)",
+    "mappedEntryId": "learn-g81-g83",
+    "mappedEntryTitle": "G81 / G83 普通钻孔与啄钻循环",
+    "mappingConfidence": "HIGH",
+    "needsImage": false,
+    "needsRewrite": false,
+    "notes": "对应 card-011（G83啄钻固定循环）。直接映射到 G81/G83 条目。"
+  }
+]

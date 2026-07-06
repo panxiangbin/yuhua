@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>路由测试</title>
+</head>
+<body>
+  <h1>路由测试结果</h1>
+  <div id="results"></div>
+
+  <script>
+    async function testRoute(hash) {
+      return new Promise((resolve) => {
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = `http://localhost:8791/index.html${hash}`;
+
+        iframe.onload = () => {
+          setTimeout(() => {
+            try {
+              const activeView = iframe.contentWindow.document.querySelector('.view.active');
+              const activeId = activeView ? activeView.id : 'none';
+              const currentHash = iframe.contentWindow.location.hash;
+              resolve({ hash, activeId, currentHash });
+            } catch (e) {
+              resolve({ hash, error: e.message });
+            }
+            document.body.removeChild(iframe);
+          }, 2000);
+        };
+
+        document.body.appendChild(iframe);
+      });
+    }
+
+    async function runTests() {
+      const results = document.getElementById('results');
+      results.innerHTML = '<p>测试中...</p>';
+
+      const tests = [
+        '#study-map',
+        '#workspace',
+        '#dashboard',
+        ''
+      ];
+
+      const testResults = [];
+      for (const hash of tests) {
+        const result = await testRoute(hash);
+        testResults.push(result);
+      }
+
+      results.innerHTML = '<pre>' + JSON.stringify(testResults, null, 2) + '</pre>';
+    }
+
+    runTests();
+  </script>
+</body>
+</html>

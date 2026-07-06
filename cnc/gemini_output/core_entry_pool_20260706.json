@@ -1,0 +1,6608 @@
+[
+  {
+    "entryId": "learn-coordinate-system",
+    "title": "坐标系与对刀详解",
+    "category": "入门基础",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "learn-absolute-incremental",
+    "title": "G90 / G91 绝对值与增量编程",
+    "category": "入门基础",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "learn-g54-g59",
+    "title": "G54-G59 工件坐标系",
+    "category": "常用代码",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "learn-g17-g18-g19",
+    "title": "G17 / G18 / G19 平面选择",
+    "category": "G代码编程",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "learn-g41-g42",
+    "title": "G41 / G42 刀具补偿",
+    "category": "G代码编程",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "learn-g43-g44-g49",
+    "title": "G43 / G44 / G49 刀长补偿",
+    "category": "G代码编程",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "learn-g71-g72-g73",
+    "title": "G71 / G72 / G73 车床循环",
+    "category": "常用代码",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "learn-g81-g83",
+    "title": "G81 / G83 钻孔与啄钻循环",
+    "category": "常用代码",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "learn-g84",
+    "title": "G84 攻丝循环",
+    "category": "G代码编程",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "alarm-servo",
+    "title": "伺服系统常见故障与排除",
+    "category": "报警排查",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "alarm-spindle",
+    "title": "主轴常见故障与排除",
+    "category": "报警排查",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "alarm-atc",
+    "title": "ATC 自动换刀故障诊断",
+    "category": "报警排查",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "tool-life",
+    "title": "刀具寿命管理",
+    "category": "刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "tool-coating",
+    "title": "刀具涂层技术",
+    "category": "刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "material-stainless",
+    "title": "不锈钢加工完整方案",
+    "category": "材料加工",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "material-aluminum",
+    "title": "铝合金加工基础",
+    "category": "材料加工",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "material-high-temp",
+    "title": "高温合金加工专项",
+    "category": "材料加工",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "quick-fanuc-alarm",
+    "title": "FANUC 报警代码速查表",
+    "category": "速查图卡",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "quick-g96",
+    "title": "G96 恒线速速查表",
+    "category": "速查图卡",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "g04-dwell",
+    "title": "G04 暂停指令",
+    "category": "常用代码",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "g20-g21-unit",
+    "title": "G20 / G21 英制与公制切换",
+    "category": "常用代码",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "g28-g29-reference",
+    "title": "G28 / G29 参考点返回",
+    "category": "常用代码",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "g00-g01-motion",
+    "title": "G00 / G01 快移与直线切削",
+    "category": "常用代码",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "g02-g03-arc",
+    "title": "G02 / G03 圆弧插补",
+    "category": "常用代码",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "g40-cancel-comp",
+    "title": "G40 取消刀补",
+    "category": "常用代码",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "g53-machine-coordinate",
+    "title": "G53 机床坐标调用",
+    "category": "常用代码",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "g94-g95-feed",
+    "title": "G94 / G95 进给方式",
+    "category": "常用代码",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "g76-thread-cycle",
+    "title": "G76 螺纹循环",
+    "category": "常用代码",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "g80-cancel-cycle",
+    "title": "G80 取消固定循环",
+    "category": "常用代码",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "g98-g99-return",
+    "title": "G98 / G99 返回平面",
+    "category": "常用代码",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "g96-g97-spindle",
+    "title": "G96 / G97 恒线速与固定转速",
+    "category": "常用代码",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "m30-program-end",
+    "title": "M30 程序结束与复位",
+    "category": "常用代码",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "m03-m04-m05",
+    "title": "M03 / M04 / M05 主轴控制",
+    "category": "常用代码",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "m06-tool-change",
+    "title": "M06 自动换刀",
+    "category": "常用代码",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "m08-m09-coolant",
+    "title": "M08 / M09 冷却液控制",
+    "category": "常用代码",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "m00-m01-stop",
+    "title": "M00 / M01 程序停止",
+    "category": "常用代码",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "fanuc-alarm-common",
+    "title": "FANUC 常见报警代码解析",
+    "category": "FANUC报警",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "fault-limit-switch",
+    "title": "限位与超程类问题排查",
+    "category": "报警排查",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "fault-home-fail",
+    "title": "回不了零点时先查什么",
+    "category": "报警排查",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "fault-home-reference",
+    "title": "回零失败与参考点异常",
+    "category": "报警排查",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "process-allowance-basics",
+    "title": "粗加工 / 半精加工 / 精加工余量逻辑",
+    "category": "加工工艺",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "process-surface-roughness",
+    "title": "表面粗糙度标准与选用",
+    "category": "加工工艺",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "drawing-symbol",
+    "title": "图纸符号与尺寸标注入门",
+    "category": "图纸识读",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "tool-insert-brand",
+    "title": "刀具品牌与牌号认知入门",
+    "category": "刀具工艺",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "tool-drill-selection",
+    "title": "钻头选型与切削基础",
+    "category": "刀具工艺",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "tool-thread-tap",
+    "title": "丝锥攻丝入门",
+    "category": "刀具工艺",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "material-carbon-steel",
+    "title": "常见钢材加工基础",
+    "category": "材料加工",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "material-plastic",
+    "title": "工程塑料加工特点",
+    "category": "材料加工",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "case-flange",
+    "title": "法兰盘加工案例",
+    "category": "加工案例",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "case-gear",
+    "title": "精密齿轮加工案例",
+    "category": "加工案例",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "quick-allowance-card",
+    "title": "加工余量标准速查表",
+    "category": "速查图卡",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "quick-insert-card",
+    "title": "刀片型号解读速查表",
+    "category": "速查图卡",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "quick-cutting-card",
+    "title": "切削参数速查",
+    "category": "速查图卡",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "learn-g20-g21",
+    "title": "G20 / G21 英制与公制切换",
+    "category": "G代码编程",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "learn-g28-g29",
+    "title": "G28 / G29 参考点返回",
+    "category": "G代码编程",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "learn-m03-m05",
+    "title": "M03 / M04 / M05 主轴控制",
+    "category": "G代码编程",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "learn-m06",
+    "title": "M06 自动换刀",
+    "category": "G代码编程",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "learn-m08-m09",
+    "title": "M08 / M09 冷却液控制",
+    "category": "G代码编程",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "learn-fanuc-alarm-common",
+    "title": "FANUC 常见报警代码解析",
+    "category": "FANUC报警",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "calc-vc-rpm",
+    "title": "线速度、转速换算",
+    "category": "参数换算",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "calc-feed",
+    "title": "进给速度换算",
+    "category": "参数换算",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "calc-thread-pitch",
+    "title": "螺距与 TPI 换算",
+    "category": "参数换算",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "calc-radius-diameter",
+    "title": "半径与直径换算",
+    "category": "参数换算",
+    "whyCore": "新手高频速查与保命核心条目，现场极高频。",
+    "priority": "P0",
+    "beginnerFriendly": true,
+    "searchValue": 10
+  },
+  {
+    "entryId": "diagram-prompt-g02",
+    "title": "G02 / G03 圆弧配图提示词",
+    "category": "图解提示词",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "diagram-prompt-compensation",
+    "title": "刀补教学配图提示词",
+    "category": "图解提示词",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "diagram-prompt-cycle",
+    "title": "钻孔与攻丝循环提示词",
+    "category": "图解提示词",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "diagram-prompt-plane",
+    "title": "G17 / G18 / G19 平面提示词",
+    "category": "图解提示词",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "diagram-prompt-offset",
+    "title": "G54 / G59 工件坐标提示词",
+    "category": "图解提示词",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "diagram-prompt-home",
+    "title": "G28 回零与安全退刀提示词",
+    "category": "图解提示词",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "diagram-prompt-thread",
+    "title": "G76 螺纹循环提示词",
+    "category": "图解提示词",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "diagram-prompt-alarm",
+    "title": "报警排查流程提示词",
+    "category": "图解提示词",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "diagram-prompt-feed-mode",
+    "title": "G94 / G95 进给模式提示词",
+    "category": "图解提示词",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "diagram-prompt-return-plane",
+    "title": "G98 / G99 返回平面提示词",
+    "category": "图解提示词",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "diagram-prompt-unit-switch",
+    "title": "G20 / G21 单位切换提示词",
+    "category": "图解提示词",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "diagram-prompt-tool-length",
+    "title": "G43 / G49 刀长补偿提示词",
+    "category": "图解提示词",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "diagram-prompt-fixed-cycle",
+    "title": "G81 / G83 / G84 固定循环提示词",
+    "category": "图解提示词",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "diagram-prompt-alarm-servo",
+    "title": "伺服报警排查提示词",
+    "category": "图解提示词",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "diagram-prompt-alarm-spindle",
+    "title": "主轴报警排查提示词",
+    "category": "图解提示词",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "diagram-prompt-alarm-limit",
+    "title": "限位与超程报警提示词",
+    "category": "图解提示词",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-g20-g21",
+    "title": "G20 / G21 英制公制切换",
+    "category": "编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-g28-g29",
+    "title": "G28 / G29 回参考点",
+    "category": "编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-g40-g41-g42",
+    "title": "G40 / G41 / G42 刀具半径补偿",
+    "category": "编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-g43-g44-g49",
+    "title": "G43 / G44 / G49 刀长补偿",
+    "category": "编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-g50",
+    "title": "G50 主轴限制与坐标系设定",
+    "category": "编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-g51",
+    "title": "G51 比例缩放",
+    "category": "编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-g52-g53",
+    "title": "G52 / G53 局部与机床坐标",
+    "category": "编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-g54-g59",
+    "title": "G54-G59 工件坐标系",
+    "category": "编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-g61-g64",
+    "title": "G61 / G64 精确停止与连续路径",
+    "category": "编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-g65-g66-g67",
+    "title": "G65 / G66 / G67 宏程序调用",
+    "category": "编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-g68-g69",
+    "title": "G68 / G69 坐标旋转",
+    "category": "编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-g70",
+    "title": "G70 精车循环",
+    "category": "编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-g71-g72-g73",
+    "title": "G71 / G72 / G73 外圆粗车与啄钻",
+    "category": "编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-g74-g75",
+    "title": "G74 / G75 端面与切槽循环",
+    "category": "编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-g76",
+    "title": "G76 螺纹与精镗循环",
+    "category": "编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-g81-g82-g83",
+    "title": "G81 / G82 / G83 钻孔固定循环",
+    "category": "编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-g84",
+    "title": "G84 攻丝循环",
+    "category": "编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-g85-g86-g87-g88-g89",
+    "title": "G85-G89 镗孔循环",
+    "category": "编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-g90-g91",
+    "title": "G90 / G91 绝对与增量编程",
+    "category": "编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-g94-g95",
+    "title": "G94 / G95 进给模式",
+    "category": "编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-g96-g97",
+    "title": "G96 / G97 恒线速与定转速",
+    "category": "编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-g98-g99",
+    "title": "G98 / G99 返回平面",
+    "category": "编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-m03-m05",
+    "title": "M03 / M04 / M05 主轴控制",
+    "category": "机床操作",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-m06",
+    "title": "M06 自动换刀",
+    "category": "机床操作",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-m08-m09",
+    "title": "M08 / M09 冷却控制",
+    "category": "机床操作",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-m19",
+    "title": "M19 主轴定向",
+    "category": "机床操作",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-m30-m02",
+    "title": "M30 / M02 程序结束",
+    "category": "机床操作",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-m98-m99",
+    "title": "M98 / M99 子程序调用",
+    "category": "编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-fanuc-alarm",
+    "title": "FANUC 报警代码速查",
+    "category": "故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-servo-fault",
+    "title": "伺服系统常见故障与排除",
+    "category": "故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-spindle-fault",
+    "title": "主轴常见故障与排除",
+    "category": "故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-atc-fault",
+    "title": "ATC 自动换刀故障诊断",
+    "category": "故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-home-fail",
+    "title": "回零失败排查",
+    "category": "故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-tool-life",
+    "title": "刀具寿命管理",
+    "category": "刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-g10",
+    "title": "G10 可编程参数输入",
+    "category": "编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-g16",
+    "title": "G16 极坐标编程",
+    "category": "编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-g17-g18-g19",
+    "title": "G17 / G18 / G19 平面选择",
+    "category": "编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-g04",
+    "title": "G04 暂停指令",
+    "category": "编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-g32-g33",
+    "title": "G32 / G33 螺纹切削",
+    "category": "编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-g35-g37",
+    "title": "G35 / G37 自动对刀",
+    "category": "编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-g92",
+    "title": "G92 螺纹循环与坐标预设",
+    "category": "编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-tool-holder",
+    "title": "刀柄与工具系统",
+    "category": "刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-tool-material",
+    "title": "刀具材料与品牌选型",
+    "category": "刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-tool-coating",
+    "title": "刀具涂层技术",
+    "category": "刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-material-base",
+    "title": "工件材料手册",
+    "category": "材料与工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-process-rules",
+    "title": "加工工艺规程",
+    "category": "材料与工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-common-errors",
+    "title": "编程常见错误与防范",
+    "category": "故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_G02G03圆弧插补完全指南",
+    "title": "G02/G03 圆弧插补编程完全指南",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G54-G59工件坐标系完全指南",
+    "title": "G54-G59 工件坐标系完全指南",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G04暂停指令完全指南",
+    "title": "G04 暂停指令完全指南",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G40G41G42刀补完全指南",
+    "title": "G40/G41/G42 刀具半径补偿完全指南",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G01直线插补完全指南",
+    "title": "G01 直线插补完全指南",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G00快速定位完全指南",
+    "title": "G00 快速定位完全指南",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G43G44G49刀长补偿完全指南",
+    "title": "G43/G44/G49 刀长补偿完全指南",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G81钻孔循环完全指南",
+    "title": "G81 钻孔循环完全指南",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G17G18G19平面选择完全指南",
+    "title": "G17/G18/G19 平面选择完全指南",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G83深孔啄钻循环完全指南",
+    "title": "G83 深孔啄钻循环完全指南",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G02G03圆弧插补完全指南",
+    "title": "G02/G03 圆弧插补完全指南",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G20G21英制公制切换完全指南",
+    "title": "G20/G21 英制公制切换完全指南",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G28G29参考点指令完全指南",
+    "title": "G28/G29 参考点指令完全指南",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_钻孔攻丝固定循环",
+    "title": "G81/G73/G83/G84/G76 钻孔攻丝镗孔固定循环详解",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G76精镗循环完全指南",
+    "title": "G76 精镗循环完全指南",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G85-G89镗孔循环完全指南",
+    "title": "G85/G86/G87/G88/G89 镗孔循环完全指南",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G73高速啄钻循环完全指南",
+    "title": "G73 高速啄钻循环完全指南",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G84攻螺纹循环完全指南",
+    "title": "G84 攻螺纹循环完全指南",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-G00G01快速定位与直线插补",
+    "title": "G00/G01快速定位与直线插补详解",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-知识类_G98_G99返回平面",
+    "title": "G98 / G99 返回平面详解",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-知识类_G85_G86_G82镗孔循环",
+    "title": "G85 / G86 / G82 镗孔循环详解",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_刀具半径补偿",
+    "title": "G40/G41/G42 刀具半径补偿",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-G02G03圆弧插补详解",
+    "title": "G02/G03圆弧插补指令详解",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-知识类_G71_G72_G73外圆粗车循环",
+    "title": "G71/G72/G73 外圆粗车/端面粗车/轮廓粗车循环",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-知识类_G54_G59工件坐标系",
+    "title": "G54~G59 工件坐标系选择",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-知识类_M30_M02程序结束",
+    "title": "M30/M02 程序结束与程序段号",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_恒线速主轴控制",
+    "title": "G96/G97 恒线速与主轴控制",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-知识类_M06自动换刀",
+    "title": "M06 自动换刀指令",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-知识类_G50主轴钳制与坐标系设定",
+    "title": "G50 主轴转速钳制（车床）与坐标系设定",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G74左旋螺纹攻丝完全指南",
+    "title": "G74 左旋螺纹攻丝完全指南",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_工件坐标系偏置",
+    "title": "G54-G59 工件坐标系偏置详解",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-知识类_M08_M09冷却液控制",
+    "title": "M08/M09 冷却液控制",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_M00程序停止详解",
+    "title": "M01 - 选择性停止（Optional Stop）",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_绝对增量与回参考点",
+    "title": "G90/G91/G28/G30 绝对增量编程与回参考点",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_刀具长度补偿",
+    "title": "G43/G44/G49 刀具长度补偿",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_可编程数据输入",
+    "title": "G10/G11 可编程数据输入",
+    "category": "01 编程基础",
+    "whyCore": "数控标准 G/M 编程代码，走刀轨迹必查。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 8
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-知识类_切削参数速查大全",
+    "title": "数控切削参数速查大全",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-刀柄与工具系统",
+    "title": "数控刀柄与工具系统",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-加工质量控制",
+    "title": "加工质量控制",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-数控加工工艺规程",
+    "title": "数控加工工艺规程",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-加工成本与效率",
+    "title": "加工成本与效率",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-振动与颤振控制",
+    "title": "振动与颤振控制",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-Web_金属加工工艺大全",
+    "title": "金属加工工艺大全",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-Web_切削液技术指南",
+    "title": "切削液技术全面指南",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-Web_立铣刀技术全集",
+    "title": "立铣刀技术全集",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-Web_机械加工工艺技术",
+    "title": "机械加工工艺技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-Web_切削速度进给量计算",
+    "title": "切削速度与进给量计算指南",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-Web_冷却液技术",
+    "title": "冷却液与切削液技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-Web_激光切割技术",
+    "title": "激光切割加工技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-Web_钻头技术全集",
+    "title": "钻头技术全集",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-Web_水刀切割技术",
+    "title": "水刀切割加工技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-Web_电火花加工技术",
+    "title": "电火花加工(EDM)技术大全",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-Web_铣削加工技术大全",
+    "title": "铣削加工技术大全",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-Web_车削加工技术大全",
+    "title": "车削加工技术大全",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-数控精度与测量",
+    "title": "数控精度与测量",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-刀具管理TMS系统",
+    "title": "刀具管理TMS系统",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-切削液与冷却润滑",
+    "title": "数控加工切削液与冷却润滑",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-薄壁件加工变形控制全攻略",
+    "title": "薄壁件加工变形控制全攻略",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-刀具工艺大全",
+    "title": "刀具工艺大全",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-残余应力分析与控制",
+    "title": "残余应力分析与控制",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-Web_可转位刀片技术手册",
+    "title": "可转位刀片技术手册",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-高速切削HSC技术专题",
+    "title": "高速切削HSC技术专题",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_难加工材料切削综合指南",
+    "title": "材料 难加工材料切削综合指南",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-废品分析与预防",
+    "title": "数控加工常见废品分析与预防",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-断屑机理与切屑控制技术",
+    "title": "断屑机理与切屑控制技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-加工硬化机理与控制",
+    "title": "加工硬化机理与控制",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_金属材料热处理工艺参数速查手册",
+    "title": "材料 金属材料热处理工艺参数速查手册",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_加工工艺分析",
+    "title": "教学 加工工艺分析",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具与装夹",
+    "title": "夹具与装夹",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-难加工材料",
+    "title": "数控加工材料学：难加工材料切削",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-表面处理工艺",
+    "title": "数控加工表面处理工艺",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_刀具几何角度参数选择完全指南",
+    "title": "夹具 刀具几何角度参数选择完全指南",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-热处理工艺大全",
+    "title": "热处理工艺大全",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_数控加工工艺规程与工序卡片设计完全指南",
+    "title": "材料 数控加工工艺规程与工序卡片设计完全指南",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-微量润滑MQL与先进冷却技术",
+    "title": "微量润滑MQL与先进冷却技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-Web_切削刀具技术手册",
+    "title": "切削刀具技术手册",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_铜合金加工",
+    "title": "🔶 铜合金数控加工专项教学",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-数控加工去毛刺工艺",
+    "title": "数控加工去毛刺工艺",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_液压夹具系统设计与选型完全指南",
+    "title": "夹具 液压夹具系统设计与选型完全指南",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_精密磨削与镜面磨削工艺参数完全指南",
+    "title": "材料 精密磨削与镜面磨削工艺参数完全指南",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-正交试验DOE参数优化",
+    "title": "正交试验DOE参数优化",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_检具设计基础",
+    "title": "夹具 检具设计基础",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-高速切削技术",
+    "title": "高速切削与高效加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_数控刀具管理与RFID智能识别完全指南",
+    "title": "夹具 数控刀具管理与RFID智能识别完全指南",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_超声振动辅助CFRP加工",
+    "title": "教学 超声振动辅助CFRP加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-知识类_刀具品牌产品手册大全",
+    "title": "国内外刀具品牌与产品线完全手册",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_数控加工排屑方案",
+    "title": "教学 数控加工排屑方案",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-刀柄系统BT_HSK热装液压",
+    "title": "刀柄系统BT HSK热装液压",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_气动夹具与真空夹具设计完全指南",
+    "title": "夹具 气动夹具与真空夹具设计完全指南",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_数控加工中的刀具破损在线监测与AI预警",
+    "title": "教学 数控加工中的刀具破损在线监测与AI预警",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_数控加工中的刀具破损在线监测与自适应停机",
+    "title": "教学 数控加工中的刀具破损在线监测与自适应停机",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-图纸识读与公差",
+    "title": "数控图纸识读与公差",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_铸铁加工",
+    "title": "🏭 铸铁数控加工专项教学",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-数控加工成本核算方法",
+    "title": "数控加工成本核算方法",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-工件材料手册",
+    "title": "工件材料加工手册",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_复合材料激光辅助加工",
+    "title": "教学 复合材料激光辅助加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_盘刀加工",
+    "title": "教学 盘刀加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_数控刀柄系统完全指南_BT_HSK_热缩液压选型对比",
+    "title": "夹具 数控刀柄系统完全指南 BT HSK 热缩液压选型对比",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_薄壁件振动抑制工艺优化",
+    "title": "教学 薄壁件振动抑制工艺优化",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_数控加工表面完整性控制",
+    "title": "教学 数控加工表面完整性控制",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_铸造基础",
+    "title": "教学 铸造基础",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_绿色MQL干切削工艺与刀具选择",
+    "title": "教学 绿色MQL干切削工艺与刀具选择",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具涂层失效分析与预防",
+    "title": "教学 刀具涂层失效分析与预防",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-刀具修磨与再涂层技术",
+    "title": "刀具修磨与再涂层技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_亚克力加工",
+    "title": "教学 亚克力加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_复合材料超声辅助加工",
+    "title": "教学 复合材料超声辅助加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀片代码",
+    "title": "教学 刀片代码",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_抛光加工",
+    "title": "教学 抛光加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_数控加工中的刀具寿命预测与AI模型",
+    "title": "教学 数控加工中的刀具寿命预测与AI模型",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_数控加工中的刀具破损在线监测与AI预警高级策略",
+    "title": "教学 数控加工中的刀具破损在线监测与AI预警高级策略",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_石墨加工",
+    "title": "教学 石墨加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_石墨电极加工",
+    "title": "教学 石墨电极加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具磨损机理与预测",
+    "title": "教学 刀具磨损机理与预测",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_橡胶加工",
+    "title": "教学 橡胶加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_DIN标准",
+    "title": "教学 DIN标准",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-工艺参数数据库",
+    "title": "工艺参数数据库",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_数控加工中的刀具寿命管理与成本优化",
+    "title": "教学 数控加工中的刀具寿命管理与成本优化",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_涂层刀具",
+    "title": "教学 涂层刀具",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_数控加工切削液选择与维护管理",
+    "title": "教学 数控加工切削液选择与维护管理",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_铜电极加工",
+    "title": "教学 铜电极加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_金属陶瓷刀具",
+    "title": "教学 金属陶瓷刀具",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_热缩加工",
+    "title": "教学 热缩加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_数控加工热变形控制",
+    "title": "教学 数控加工热变形控制",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-可转位刀片选型与使用指南",
+    "title": "可转位刀片选型与使用指南",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具几何角度对加工影响",
+    "title": "教学 刀具几何角度对加工影响",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_数控加工振动抑制与工艺优化",
+    "title": "教学 数控加工振动抑制与工艺优化",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_砂轮修整",
+    "title": "教学 砂轮修整",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_高温合金加工专项",
+    "title": "教学 高温合金加工专项",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-难加工材料切削技术",
+    "title": "难加工材料切削技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具破损监控系统",
+    "title": "教学 刀具破损监控系统",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-切削参数计算与优化手册",
+    "title": "切削参数计算与优化手册",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-刀具修磨与再利用技术",
+    "title": "刀具修磨与再利用技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具预调仪使用与数据管理",
+    "title": "教学 刀具预调仪使用与数据管理",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_钛合金加工",
+    "title": "数控刀具工艺：钛合金加工教学",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_SPC统计过程控制",
+    "title": "教学 SPC统计过程控制",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-数控刀具夹持系统大全",
+    "title": "数控刀具夹持系统大全",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_数控工艺编制方法",
+    "title": "教学 数控工艺编制方法",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_加工材料手册",
+    "title": "教学 加工材料手册",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具断屑与排屑优化进阶",
+    "title": "教学 刀具断屑与排屑优化进阶",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_砂轮平衡",
+    "title": "教学 砂轮平衡",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-高速切削HSM技术指南",
+    "title": "高速切削HSM技术指南",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-网采_伊斯卡刀具技术手册",
+    "title": "伊斯卡刀具技术手册",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_公差分析基础",
+    "title": "教学 公差分析基础",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-网采_数控磨削加工技术",
+    "title": "数控磨削加工技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_硬质合金刀具涂层技术",
+    "title": "教学 硬质合金刀具涂层技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-液压夹具设计",
+    "title": "液压夹具设计",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_积屑瘤控制与预防",
+    "title": "教学 积屑瘤控制与预防",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_油雾润滑",
+    "title": "教学 油雾润滑",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-网采_常用加工材料选用指南",
+    "title": "常用机械加工材料选用指南",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-案例_不锈钢加工全攻略",
+    "title": "案例 不锈钢加工全攻略",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-知识类_刀具磨损与寿命管理",
+    "title": "数控刀具磨损与寿命管理指南",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_常见金属材料手册",
+    "title": "加工中常见金属材料手册",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-电火花与线切割加工技术",
+    "title": "电火花与线切割加工技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_石墨加工工艺",
+    "title": "教学：石墨数控加工工艺",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_切削力与切削热原理",
+    "title": "教学 切削力与切削热原理",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_常用工程材料手册",
+    "title": "常用工程材料手册",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具磨损AI监测",
+    "title": "教学 刀具磨损AI监测",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-知识类_夹具设计与快换系统",
+    "title": "数控加工夹具设计与快换系统",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_热处理基础与NC加工配合",
+    "title": "热处理基础与NC加工配合",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-网采_肯纳刀具技术手册",
+    "title": "肯纳金属刀具技术手册",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-网采_铣刀选型完全手册",
+    "title": "铣刀选型完全手册",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_珩磨与研磨加工技术",
+    "title": "珩磨与研磨加工技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-超声振动辅助加工",
+    "title": "超声振动辅助加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-案例_钛合金加工全攻略",
+    "title": "案例 钛合金加工全攻略",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_在机测量探测技术",
+    "title": "教学 在机测量探测技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-网采_丝锥攻丝完全指南",
+    "title": "丝锥攻丝完全指南",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-切削力与功率计算",
+    "title": "数控加工切削力与功率计算",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-网采_山特维克刀具技术手册",
+    "title": "山特维克可乐满刀具技术手册",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_陶瓷材料数控加工",
+    "title": "教学：陶瓷材料数控加工工艺",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-网采_刀柄系统选型指南BT40",
+    "title": "BT40刀柄系统选型指南",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-知识类_切削参数速查手册_v2",
+    "title": "数控加工切削参数速查手册",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_高压内冷参数优化",
+    "title": "教学 高压内冷参数优化",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_切削液浓度维护",
+    "title": "教学 切削液浓度维护",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_锻造基础",
+    "title": "教学 锻造基础",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-数控机床冷却系统技术",
+    "title": "数控机床冷却系统技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_Inconel高温合金加工",
+    "title": "难加工材料专题：Inconel与高温合金",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_材料去除率MRR优化",
+    "title": "材料去除率（MRR）优化",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_磨削加工基础",
+    "title": "磨削加工基础",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_深孔加工完整方案",
+    "title": "深孔加工完整方案",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_碳纤维复合材料加工",
+    "title": "教学 碳纤维复合材料加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-知识类_切削参数计算手册",
+    "title": "数控加工工艺参数与计算手册",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_卡盘与夹具选择指南",
+    "title": "卡盘与夹具选择指南",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_钛合金加工技术",
+    "title": "钛合金加工技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_切削参数优化与数据库",
+    "title": "切削参数优化与切削数据库",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-知识类_数控刀具寿命管理",
+    "title": "数控刀具寿命管理",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_HSK刀柄选型与维护",
+    "title": "教学：HSK刀柄选型与维护",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_刀具寿命管理系统",
+    "title": "刀具寿命管理系统",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_切削参数速查表",
+    "title": "教学 切削参数速查表",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_不锈钢加工完整方案",
+    "title": "不锈钢加工完整方案",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-网采_钻头选型与切削参数",
+    "title": "钻头选型与切削参数",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_切削液管理与环保",
+    "title": "切削液管理与环保",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_气动夹具设计",
+    "title": "气动夹具设计",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_工序卡片编制",
+    "title": "教学 工序卡片编制",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_液压夹具设计",
+    "title": "液压夹具设计",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-网采_株洲钻石刀具技术手册",
+    "title": "株洲钻石切削刀具技术手册",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_数控刀具涂层技术",
+    "title": "数控刀具涂层技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_齿轮加工技术",
+    "title": "齿轮加工技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-工序卡与工艺文件编制",
+    "title": "工序卡与工艺文件编制",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_切削用量选择",
+    "title": "数控加工教学：切削用量选择",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_刀具标识与存储管理",
+    "title": "数控刀具标识与存储",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_材料切削特性速查",
+    "title": "教学 材料切削特性速查",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-网采_硬质合金刀片牌号选择指南",
+    "title": "硬质合金刀片牌号选择指南",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_焊接件及热处理件加工",
+    "title": "焊接件及热处理件加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具涂层选择详解",
+    "title": "教学 刀具涂层选择详解",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_冷却液管理",
+    "title": "教学 冷却液管理",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_尺寸精度控制",
+    "title": "第一章：精度控制基础",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-知识类_刀具材料学",
+    "title": "数控刀具材料学",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-知识类_刀具涂层技术",
+    "title": "刀具涂层技术详解",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_量具保养",
+    "title": "教学 量具保养",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_真空吸盘夹具设计",
+    "title": "真空吸盘夹具设计",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_震刀分析与解决方案",
+    "title": "教学 震刀分析与解决方案",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_热处理与表面处理",
+    "title": "热处理与表面处理工艺",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_工时估算",
+    "title": "教学 工时估算",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_夹具设计与装夹方案",
+    "title": "教学 夹具设计与装夹方案",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_孔系组合夹具设计",
+    "title": "孔系组合夹具设计",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具磨损识别",
+    "title": "第一章：磨损类型与形态",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_量具使用",
+    "title": "第一章：常用量具速查",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-工艺卡片编制",
+    "title": "第一章：工艺卡片种类",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_冷加工切削力基础",
+    "title": "冷加工与切削力基础",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_铣刀夹具设计详解",
+    "title": "铣刀夹具设计详解",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_组合夹具组装工艺",
+    "title": "组合夹具组装工艺",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_表面粗糙度控制",
+    "title": "第一章：Ra值基础",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-清洗防锈与包装",
+    "title": "清洗防锈与包装",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具涂层技术详解",
+    "title": "教学 刀具涂层技术详解",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_工艺文件编制规范",
+    "title": "教学 工艺文件编制规范",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_表面质量提升",
+    "title": "教学 表面质量提升",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-山特维克CoroMill铣刀系列详解",
+    "title": "山特维克 CoroMill 铣刀系列详解",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_变形控制",
+    "title": "第一章：变形原因分析",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_知识类_压铸件锻件毛坯加工策略",
+    "title": "压铸件/锻件毛坯加工策略",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-刀具寿命管理方法",
+    "title": "刀具寿命管理方法",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具磨损与更换",
+    "title": "数控加工教学：刀具磨损识别与更换",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-切削液选用与管理完全指南",
+    "title": "切削液选用与管理完全指南",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_高光洁度加工",
+    "title": "教学 高光洁度加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_夹具基础",
+    "title": "教学 夹具基础",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-案例_铝合金高速加工详解",
+    "title": "铝合金7075薄壁件变形控制",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_材料切削参数速查",
+    "title": "教学 材料切削参数速查",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_车床夹具设计详解",
+    "title": "车床夹具设计详解",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_铣夹具典型结构",
+    "title": "铣夹具典型结构图册",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-数控刀具寿命管理与刀具监控技术",
+    "title": "数控刀具寿命管理与刀具监控技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_立铣刀选型使用",
+    "title": "教学 立铣刀选型使用",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_首件检验",
+    "title": "数控加工教学：首件检验",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_钛合金TC4加工",
+    "title": "教学 钛合金TC4加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_钻头选型使用",
+    "title": "教学 钻头选型使用",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_热处理与CNC加工",
+    "title": "教学 热处理与CNC加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_铣刀切削参数速查表",
+    "title": "教学 铣刀切削参数速查表",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-难加工材料切削参数速查",
+    "title": "难加工材料切削参数速查",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_薄壁件装夹方案",
+    "title": "教学 薄壁件装夹方案",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_薄壁件装夹技术",
+    "title": "薄壁件装夹技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_量具使用速查",
+    "title": "教学 量具使用速查",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具管理系统详解",
+    "title": "教学 刀具管理系统详解",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-高速铣削刀具路径策略",
+    "title": "高速铣削刀具路径策略",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_材料加工速查手册",
+    "title": "教学 数控加工材料手册",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_柔性夹具系统技术",
+    "title": "柔性夹具系统技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-刀具破损分析与防止",
+    "title": "刀具破损分析与防止",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_薄壁件铣削夹具设计",
+    "title": "薄壁件铣削夹具设计",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具涂层技术",
+    "title": "教学 刀具涂层技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀片材质选择",
+    "title": "教学 刀片材质选择",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_塑料加工",
+    "title": "教学 塑料加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_铣削夹具设计手册",
+    "title": "铣削夹具设计手册",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_去应力退火",
+    "title": "教学 去应力退火",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_气动液压夹具系统",
+    "title": "气动液压夹具系统",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具跳动检测",
+    "title": "教学 刀具跳动检测",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-株洲钻石刀具技术手册",
+    "title": "株洲钻石 切削刀具技术手册",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_铣刀选型指南",
+    "title": "数控铣刀选型指南教学",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具动平衡",
+    "title": "教学 刀具动平衡",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_工程塑料加工工艺特性",
+    "title": "工程塑料加工工艺特性",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_组合夹具设计指南",
+    "title": "组合夹具设计指南",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_山特维克刀具品牌详解",
+    "title": "教学 山特维克刀具品牌详解",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_难加工材料刀具选择",
+    "title": "教学 难加工材料刀具选择",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_薄壁件加工",
+    "title": "第一章：变形机理",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_磨床夹具设计",
+    "title": "磨床夹具设计",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_数控磨刀",
+    "title": "教学 数控磨刀",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_零件清洗",
+    "title": "教学 零件清洗",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_批量加工质量控制",
+    "title": "教学 批量加工质量控制",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-伊斯卡变形金刚模块化刀具",
+    "title": "伊斯卡 变形金刚（CHAMFERSHTIQ） 模块化刀具系统",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-热处理与数控加工",
+    "title": "热处理与数控加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-特固克TaeguTec刀具全系列",
+    "title": "特固克 TaeguTec 刀具全系列",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-知识类_切削用量选择指南",
+    "title": "切削用量的选择与优化指南",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_模具钢加工工艺特性",
+    "title": "模具钢加工工艺特性",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_模具钢加工",
+    "title": "教学 模具钢加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_定位基准",
+    "title": "教学 定位基准",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_冷却润滑方案选择",
+    "title": "教学 冷却润滑方案选择",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-住友电工CBN刀具详解",
+    "title": "住友电工 CBN/PCD 刀具详解",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_工艺路线拟定",
+    "title": "教学 数控加工工艺路线的拟定",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_304不锈钢加工",
+    "title": "教学 304不锈钢加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-切削液选用与维护指南",
+    "title": "切削液选用与维护指南",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_车刀几何角度",
+    "title": "数控车刀几何角度教学",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_去毛刺工艺",
+    "title": "教学 数控加工去毛刺工艺",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_研磨加工",
+    "title": "教学 研磨加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-三菱综合材料Mitsubishi刀具系列",
+    "title": "三菱综合材料Mitsubishi刀具系列",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_切削液选择与维护",
+    "title": "教学 切削液选择与维护",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-肯纳Beyond系列车刀详解",
+    "title": "肯纳金属 Beyond 系列车刀详解",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_切屑控制与断屑",
+    "title": "教学 切屑控制与断屑",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_磨削夹具设计",
+    "title": "磨削夹具设计",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_金刚石刀具",
+    "title": "教学 金刚石刀具",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-瓦尔特Tiger-tec切削材质详解",
+    "title": "瓦尔特 Tiger-tec 切削材质详解",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-BIG大昭和高精度刀柄系统",
+    "title": "BIG大昭和高精度刀柄系统",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_铝合金6061加工",
+    "title": "教学 铝合金6061加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-玛帕MAPAL精密镗刀系统",
+    "title": "玛帕 MAPAL 精密镗刀系统详解",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-热处理与表面处理技术",
+    "title": "机械零件热处理与表面处理技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-SPC统计过程控制",
+    "title": "SPC统计过程控制",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-京瓷Kyocera车刀系列详解",
+    "title": "京瓷 Kyocera 车刀系列详解",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_钻头修磨与选型",
+    "title": "数控钻头修磨与选型教学",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-NS_TOOL微径铣刀与精密加工",
+    "title": "NS TOOL 微径铣刀与精密加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_公差分析与尺寸链计算",
+    "title": "教学 公差分析与尺寸链计算",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_车床夹具设计手册",
+    "title": "车床夹具设计手册",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_切削液配比维护",
+    "title": "切削液配比与维护教学",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_电镀与镀层",
+    "title": "教学 电镀与镀层",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-刀具钝化与刃口处理技术",
+    "title": "刀具钝化与刃口处理技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_过程检验与SPC",
+    "title": "教学 数控加工过程检验",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_阳极氧化",
+    "title": "教学 阳极氧化",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-FMEA失效模式分析",
+    "title": "数控加工FMEA失效模式分析",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-OSG欧士机丝锥与钻头产品手册",
+    "title": "OSG 欧士机 丝锥与钻头产品手册",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_高速加工HSM技术",
+    "title": "教学 高速加工HSM技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_热变形控制",
+    "title": "教学 数控加工热变形控制",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-去毛刺与表面光整技术",
+    "title": "去毛刺与表面光整技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_切屑控制与排屑技术",
+    "title": "教学 切屑控制与排屑技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_检测量具实操",
+    "title": "教学 检测量具实操",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_倒角去毛刺技术",
+    "title": "教学：数控加工倒角与去毛刺技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具管理",
+    "title": "教学 数控刀具管理系统",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_镗刀加工",
+    "title": "教学 镗刀加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_复合材料加工",
+    "title": "教学 复合材料加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-难加工材料刀具选用指南",
+    "title": "难加工材料刀具选用指南",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀柄热装技术",
+    "title": "教学 刀柄热装技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-刀具寿命管理",
+    "title": "刀具寿命管理",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_45号钢加工",
+    "title": "教学 45号钢加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-三丰Mitutoyo精密量仪概览",
+    "title": "三丰 Mitutoyo 精密量仪概览",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-首件检验与试切流程",
+    "title": "首件检验与试切流程",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料专项_铝合金系列对比",
+    "title": "铝合金系列对比与加工要点",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_高速铣削加工",
+    "title": "高速铣削加工技术教学",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-涂层技术大全",
+    "title": "涂层技术大全",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_电火花EDM与CNC配合",
+    "title": "教学 电火花EDM与CNC配合",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_切削用量三要素",
+    "title": "教学 切削用量三要素",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-刀柄选用指南",
+    "title": "刀柄选用指南",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_万能磨刀机",
+    "title": "教学 万能磨刀机",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_铰刀镗刀选型",
+    "title": "教学 铰刀镗刀选型",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_冷却液系统维护详解",
+    "title": "教学 冷却液系统维护详解",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-刀具材料发展史",
+    "title": "刀具材料发展史",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_可转位刀片选型",
+    "title": "教学 可转位刀片选型",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_切削液浓度控制",
+    "title": "切削液浓度控制教学",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_陶瓷加工",
+    "title": "教学 陶瓷加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-三坐标测量编程",
+    "title": "PC-DMIS示例",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_挤压加工",
+    "title": "教学 挤压加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_冷却液选择指南",
+    "title": "教学 冷却液选择指南",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_切屑处理回收",
+    "title": "教学 数控加工切屑处理与回收",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_CBN刀具",
+    "title": "教学 CBN刀具",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_振动监测",
+    "title": "教学 数控加工振动监测",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-去应力技术",
+    "title": "去应力技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_微量润滑MQL技术",
+    "title": "微量润滑MQL技术教学",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_PCD刀具应用",
+    "title": "PCD聚晶金刚石刀具应用教学",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料切削参数速查表",
+    "title": "材料切削参数速查表",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_株洲钻石刀具品牌详解",
+    "title": "教学 株洲钻石刀具品牌详解",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_喷砂加工",
+    "title": "教学 喷砂加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_锻件毛坯加工",
+    "title": "教学 锻件毛坯数控加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_加工缺陷分析",
+    "title": "数控加工缺陷分析与对策教学",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_高压冷却技术",
+    "title": "教学 数控加工高压冷却技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_专用夹具设计案例",
+    "title": "教学 专用夹具设计案例",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料专项_Inconel高温合金",
+    "title": "Inconel高温合金数控加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-刀具涂层技术",
+    "title": "刀具涂层技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-泰珂洛Tungaloy刀具系列",
+    "title": "泰珂洛 Tungaloy 刀具系列",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_陶瓷刀具应用",
+    "title": "陶瓷刀具应用教学",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_功率监控技术",
+    "title": "数控机床功率监控技术教学",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-刀具品牌选型指南",
+    "title": "刀具品牌选型指南",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_滚压加工",
+    "title": "教学 滚压加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-机夹刀片选用指南",
+    "title": "机夹刀片选用指南",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具管理软件",
+    "title": "数控刀具管理软件教学",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-镗刀选用与调整指南",
+    "title": "镗刀选用与调整指南",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_超精密加工",
+    "title": "教学 超精密数控加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_切削力与功率计算",
+    "title": "教学 切削力与功率计算",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_肯纳刀具品牌详解",
+    "title": "教学 肯纳刀具品牌详解",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_珩磨加工",
+    "title": "教学 珩磨加工",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-NACHI不二越刀具系列",
+    "title": "NACHI 不二越 刀具系列",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_不锈钢加工",
+    "title": "切削参数推荐",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_铝合金加工",
+    "title": "切削参数推荐",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_高速钢刀具应用",
+    "title": "教学 高速钢刀具应用",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-UnionTool日东工具微孔钻削",
+    "title": "Union Tool 日东工具 微孔钻削技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_图纸标注解读",
+    "title": "数控加工图纸标注解读教学",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-铣削刀具类型与选用",
+    "title": "铣削刀具类型与选用",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_淬硬钢加工",
+    "title": "切削参数推荐",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_工装夹具设计基础",
+    "title": "教学 工装夹具设计基础",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-量检具管理与校准",
+    "title": "量检具管理与校准",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_去应力方法",
+    "title": "教学 数控加工去应力方法",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-数控刀具切削参数速查表",
+    "title": "数控刀具切削参数速查表",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_瓦尔特刀具品牌详解",
+    "title": "教学 瓦尔特刀具品牌详解",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_纳米涂层刀具",
+    "title": "教学 纳米涂层刀具",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-表面粗糙度测量",
+    "title": "表面粗糙度测量",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_切屑控制与断屑技术",
+    "title": "切屑控制与断屑技术教学",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_HSK刀柄系统",
+    "title": "HSK刀柄系统教学",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-刀具成本控制方法",
+    "title": "刀具成本控制方法",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_热处理工艺与机加工配合",
+    "title": "热处理工艺与机加工配合",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_冷却方式选择",
+    "title": "数控加工冷却方式选择教学",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_陶瓷材料加工工艺特性",
+    "title": "陶瓷材料加工工艺特性",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-日研Nikken高效铣刀系统",
+    "title": "日研 Nikken 高效铣刀系统",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_冲屑与排屑优化",
+    "title": "数控机床冲屑与排屑优化教学",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-攻丝加工工艺",
+    "title": "攻丝加工工艺",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-案例_复合材料加工详解",
+    "title": "案例 复合材料加工详解",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料专项_不锈钢对比",
+    "title": "不锈钢数控加工对比",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_孔距精度保证",
+    "title": "数控铣床孔距精度保证教学",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_快速换模系统设计",
+    "title": "快速换模系统设计",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-激光加工技术",
+    "title": "激光加工技术",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_伊斯卡刀具品牌详解",
+    "title": "教学 伊斯卡刀具品牌详解",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_对刀仪选择使用",
+    "title": "对刀仪选择与使用教学",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_工序卡编制详解",
+    "title": "数控加工工序卡编制详解教学",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_焊接式夹具设计要点",
+    "title": "焊接式夹具设计要点",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-微润滑MQL技术详解",
+    "title": "微润滑MQL技术详解",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_减振技术",
+    "title": "数控加工减振技术教学",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-夹具_夹具定位误差分析与计算",
+    "title": "夹具定位误差分析与计算",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-数控刀具国际品牌对比",
+    "title": "数控刀具国际品牌对比",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-Mastercam后处理自定义教程",
+    "title": "Mastercam后处理自定义教程",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_冷却液配比检测",
+    "title": "教学 冷却液配比与检测",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_刀具寿命管理",
+    "title": "数控刀具寿命管理教学",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-刀片磨损标准与换刀时机",
+    "title": "刀片磨损标准与换刀时机",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-材料_钢材加工工艺特性",
+    "title": "钢材加工工艺特性",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_工艺性审查",
+    "title": "教学 数控加工工艺性审查",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-file-05_故障维修-伺服系统详解",
+    "title": "数控机床伺服系统详解",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-主轴系统详解",
+    "title": "数控机床主轴系统详解",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-机床维护保养",
+    "title": "机床维护保养",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床导轨丝杠",
+    "title": "数控机床导轨丝杠系统",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-故障维修手册",
+    "title": "故障维修手册",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-Web_液压系统维护",
+    "title": "液压系统在数控机床中的应用",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-机床精度检测",
+    "title": "数控机床精度检测",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_数控机床故障诊断与排除大全",
+    "title": "数控机床故障诊断与排除大全",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-液压站维修保养",
+    "title": "数控机床液压站维修保养",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-热误差补偿技术",
+    "title": "数控机床热误差补偿技术",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_主轴动平衡与高精度保持",
+    "title": "教学 主轴动平衡与高精度保持",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_伺服系统故障诊断",
+    "title": "教学 伺服系统故障诊断",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-维修_FANUC伺服驱动参数调试与优化权威指南",
+    "title": "维修 FANUC伺服驱动参数调试与优化权威指南",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_电气系统常见故障",
+    "title": "教学 电气系统常见故障",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_FANUC报警代码大全",
+    "title": "FANUC数控系统报警代码大全与解决方案",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-气动系统维护",
+    "title": "数控机床气动系统维护",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_主轴热补偿与精度保持",
+    "title": "教学 主轴热补偿与精度保持",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-滚珠丝杠副维修与预紧调整",
+    "title": "滚珠丝杠副维修与预紧调整",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_预测性维护与刀具寿命AI预警系统",
+    "title": "教学 预测性维护与刀具寿命AI预警系统",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-液压原理图识读",
+    "title": "液压原理图识读",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_进给系统丝杠故障诊断",
+    "title": "教学 进给系统丝杠故障诊断",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_液压系统常见故障",
+    "title": "教学 液压系统常见故障",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_智能刀具管理系统",
+    "title": "教学 智能刀具管理系统",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_电气驱动系统深度解析",
+    "title": "教学 电气驱动系统深度解析",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_数控加工中心ATC刀库故障诊断",
+    "title": "教学 数控加工中心ATC刀库故障诊断",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_故障维修主轴定向与编码器调试",
+    "title": "教学 故障维修主轴定向与编码器调试",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-PLC梯形图识读",
+    "title": "PLC梯形图识读",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-FANUC常见报警代码速查手册",
+    "title": "FANUC常见报警代码速查手册",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_系统报警代码详解",
+    "title": "教学 系统报警代码详解",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床故障诊断与排除指南",
+    "title": "数控机床故障诊断与排除指南",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_20种常见故障排查手册",
+    "title": "20种常见数控机床故障排查手册",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床几何精度检测与校准",
+    "title": "数控机床几何精度检测与校准",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_FANUC报警代码分详解",
+    "title": "教学 FANUC报警代码分详解",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_主轴维修技术",
+    "title": "主轴维修技术",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_CNC控制器维修诊断",
+    "title": "CNC控制器维修诊断",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-网采_液压气动系统故障排查",
+    "title": "液压气动系统故障排查",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-网采_FANUC常见报警代码解决方案",
+    "title": "FANUC常见报警代码解决方案",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-网采_数控机床精度检测与补偿",
+    "title": "数控机床精度检测与补偿",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-网采_数控机床主轴故障诊断维修",
+    "title": "数控机床主轴故障诊断维修",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-网采_伺服系统故障诊断完全手册",
+    "title": "伺服系统故障诊断完全手册",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_五轴机床维护保养",
+    "title": "五轴机床维护保养",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_增量编码器",
+    "title": "教学 增量编码器",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_主轴轴承故障诊断",
+    "title": "教学 主轴轴承故障诊断",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-网采_新机床验收标准流程",
+    "title": "新机床验收标准与流程",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_数控维修安全与基本功",
+    "title": "数控维修安全与基本功",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-精度保持技术",
+    "title": "精度保持技术",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_ATC自动换刀故障诊断",
+    "title": "自动换刀（ATC）故障诊断",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_机械故障诊断与维修",
+    "title": "教学 机械故障诊断与维修",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_CNC设备全生命周期管理",
+    "title": "CNC设备全生命周期管理",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_刀库换刀系统故障排除",
+    "title": "刀库与自动换刀系统故障排除",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_PLC基础与CNC联机",
+    "title": "PLC基础与CNC联机",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_机床电气基础与维修",
+    "title": "机床电气基础与维修",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_主轴故障诊断与维修",
+    "title": "主轴故障诊断与维修",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_电气故障诊断与维修",
+    "title": "教学 电气故障诊断与维修",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_液压气动系统维护",
+    "title": "液压与气动系统维护",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_FANUC PMC宏程序故障诊断",
+    "title": "教学：FANUC PMC 梯形图诊断与故障排查",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_故障诊断与维修方法论",
+    "title": "数控机床故障诊断与维修方法论",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_预测性维护PdM",
+    "title": "教学 预测性维护PdM",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_伺服系统调试与维修",
+    "title": "伺服系统调试与维修",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_机床导轨与进给系统",
+    "title": "机床导轨与进给系统",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_液压与气动系统维护",
+    "title": "液压与气动系统维护",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_丝杠与导轨维护",
+    "title": "丝杠与导轨维护",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-FANUC伺服驱动器SV报警代码全解",
+    "title": "FANUC伺服驱动器SV报警代码全解",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_主轴系统维修手册",
+    "title": "数控机床主轴系统维修与保养完全手册",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-FANUC伺服报警代码速查",
+    "title": "FANUC伺服报警代码速查",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床换刀故障诊断大全",
+    "title": "数控机床换刀故障诊断大全",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_电池更换",
+    "title": "教学 电池更换",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_伺服报警处理",
+    "title": "教学 伺服报警处理",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床伺服过载报警排查流程",
+    "title": "数控机床伺服过载报警排查流程",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-西门子数控系统常见报警代码手册",
+    "title": "西门子数控系统常见报警代码手册",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_机床精度检测与验收",
+    "title": "教学 机床精度检测与验收",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_冷却润滑系统维修",
+    "title": "教学 冷却润滑系统维修",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_机内清洗系统",
+    "title": "教学 机内清洗系统",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-FANUC系统报警PS0000-PS0100详解",
+    "title": "FANUC系统报警 PS0000-PS0100 详解",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-主轴常见故障排查手册",
+    "title": "主轴常见故障排查手册",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_回零故障排查",
+    "title": "教学 回零故障排查",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_主轴系统维修",
+    "title": "教学 主轴系统维修",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_换刀故障排查",
+    "title": "教学 换刀故障排查",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_自动排屑器",
+    "title": "教学 自动排屑器",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床不回参考点故障处理",
+    "title": "数控机床不回参考点故障处理",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床电气系统常见故障排查",
+    "title": "数控机床电气系统常见故障排查",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_导轨丝杠维修",
+    "title": "教学 导轨丝杠维修",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_刀库系统维修",
+    "title": "教学 刀库系统维修",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_系统报警处理",
+    "title": "教学 系统报警处理",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床主轴电气故障诊断",
+    "title": "数控机床主轴电气故障诊断",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床精度检测与激光干涉仪使用",
+    "title": "数控机床精度检测与激光干涉仪使用",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_年检与精度校准",
+    "title": "教学 年检与精度校准",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床常见故障排除速查表",
+    "title": "数控机床常见故障排除速查表",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_冷却系统故障排查",
+    "title": "教学 冷却系统故障排查",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_机械故障速查表",
+    "title": "教学 机械故障速查表",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_伺服驱动维修",
+    "title": "教学 伺服驱动维修",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_碰撞预防",
+    "title": "教学 碰撞预防",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_报警识别与处理",
+    "title": "教学 报警识别与处理",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_设备管理与点检",
+    "title": "教学 设备管理与点检",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_电气柜维护",
+    "title": "教学 电气柜维护",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-FANUC系统参数初始化与数据备份",
+    "title": "FANUC系统参数初始化与数据备份",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_电气故障排查",
+    "title": "教学 电气故障排查",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床冷却润滑故障处理",
+    "title": "数控机床冷却润滑故障处理",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_机械故障排查",
+    "title": "教学 机械故障排查",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_系统软件故障恢复",
+    "title": "教学 系统软件故障恢复",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_热补偿技术",
+    "title": "教学 热补偿技术",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_液压气动系统维修",
+    "title": "教学 液压气动系统维修",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_伺服电机维修",
+    "title": "教学 伺服电机维修",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_变频器报警处理",
+    "title": "教学 变频器报警处理",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控系统参数设置与备份",
+    "title": "数控系统参数设置与备份",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床超程OT报警处理指南",
+    "title": "数控机床超程OT报警处理指南",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_液压系统故障排查",
+    "title": "教学 液压系统故障排查",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_激光干涉仪精度校准",
+    "title": "教学 激光干涉仪精度校准",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-PMC故障排查手册",
+    "title": "PMC故障排查手册",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_润滑系统故障排查",
+    "title": "教学 润滑系统故障排查",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_电气安全",
+    "title": "教学 电气安全",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_主轴编码器维修",
+    "title": "教学 主轴编码器维修",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_加工异常处理",
+    "title": "教学 数控加工异常处理",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_进给系统",
+    "title": "教学 数控机床进给系统",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_液压系统维修",
+    "title": "教学 数控机床液压系统",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-液压气动系统维护与故障排除",
+    "title": "数控机床液压气动系统维护与故障排除",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_润滑系统原理",
+    "title": "教学 润滑系统原理",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_滚珠丝杠副维护",
+    "title": "教学 滚珠丝杠副维护",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_TPM全员维护",
+    "title": "教学 TPM全员维护",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_液压站维修",
+    "title": "教学 液压站维修",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_测头与在线测量",
+    "title": "教学 测头与在线测量",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_电气系统入门",
+    "title": "教学 数控机床电气系统入门",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_气动系统故障排查",
+    "title": "教学 气动系统故障排查",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_绝对编码器设置",
+    "title": "教学 绝对编码器设置",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_排屑器故障排查",
+    "title": "教学 排屑器故障排查",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_冷却机维修",
+    "title": "教学 冷却机维修",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_润滑系统",
+    "title": "教学 润滑系统",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_伺服电机更换调试",
+    "title": "教学 伺服电机更换调试",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_气动三联件维护",
+    "title": "教学 气动三联件维护",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-预防性维护检查表",
+    "title": "预防性维护检查表",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_联轴器维修",
+    "title": "教学 联轴器维修",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_FANUC PMC编程基础",
+    "title": "教学 FANUC PMC编程基础",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_主轴拉刀机构维修",
+    "title": "教学 主轴拉刀机构维修",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_润滑泵维修",
+    "title": "教学 润滑泵维修",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_液压系统原理与维护",
+    "title": "教学 液压系统原理与维护",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_西门子840D高级诊断",
+    "title": "教学：西门子840D sl高级诊断与故障排查",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控系统死机故障处理",
+    "title": "数控系统死机故障处理",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-主轴驱动故障排查",
+    "title": "主轴驱动故障排查",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-伺服电机故障排查",
+    "title": "伺服电机故障排查",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-FANUC报警代码大全",
+    "title": "FANUC报警代码大全",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_编码器信号故障",
+    "title": "数控机床编码器信号故障教学",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_油冷机维修",
+    "title": "教学 油冷机维修",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_主轴驱动器故障",
+    "title": "数控机床主轴驱动器故障教学",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_排故思路方法",
+    "title": "数控机床排故思路与方法教学",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-机床精度丧失修复技术",
+    "title": "机床精度丧失修复技术",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_故障判断逻辑",
+    "title": "数控机床故障判断逻辑教学",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_漏油处理",
+    "title": "数控机床漏油处理教学",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_伺服电机故障诊断",
+    "title": "伺服电机故障诊断教学",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_散热与温控系统",
+    "title": "数控机床散热与温控系统教学",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-气动系统故障排查",
+    "title": "气动系统故障排查",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-机床电气故障排查流程",
+    "title": "机床电气故障排查流程",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_冷却液过滤系统",
+    "title": "教学 数控加工冷却液过滤系统",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_PLC输入输出诊断",
+    "title": "数控机床PLC输入输出诊断教学",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-报警代码速查手册",
+    "title": "报警代码速查手册",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床常见机械故障",
+    "title": "数控机床常见机械故障",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_系统软件故障排查",
+    "title": "数控系统软件故障排查教学",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_常见机械故障排查",
+    "title": "数控机床常见机械故障排查教学",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_温度监控系统",
+    "title": "数控机床温度监控系统教学",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_编码器与光栅尺",
+    "title": "数控机床编码器与光栅尺教学",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-FANUC PMC常见故障排查",
+    "title": "FANUC PMC常见故障排查",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床通信故障排查",
+    "title": "数控机床通信故障排查",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-FANUC伺服报警400-499详解",
+    "title": "FANUC伺服报警400-499详解",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_润滑报警处理",
+    "title": "数控机床润滑报警处理教学",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_伺服驱动器调试",
+    "title": "数控机床伺服驱动器调试教学",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_电气符号识别",
+    "title": "数控机床电气符号识别教学",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-液压气动传感器",
+    "title": "液压气动传感器",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_典型电气元件",
+    "title": "数控机床典型电气元件教学",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_丝杠更换调试",
+    "title": "数控机床丝杠更换调试教学",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-FANUC主轴放大器报警代码大全",
+    "title": "FANUC主轴放大器报警代码大全",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_电磁阀故障排查",
+    "title": "数控机床电磁阀故障排查教学",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_高压内冷系统",
+    "title": "数控机床高压内冷系统教学",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_液压系统维护",
+    "title": "数控机床液压系统维护教学",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_背隙与反向误差",
+    "title": "数控机床背隙与反向误差教学",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_主轴拉刀机构",
+    "title": "数控机床主轴拉刀机构教学",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-西门子系统报警速查",
+    "title": "西门子系统报警速查",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_冷却液更换标准",
+    "title": "数控机床冷却液更换标准教学",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床限位开关故障排查",
+    "title": "数控机床限位开关故障排查",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-机床机械故障诊断技术",
+    "title": "机床机械故障诊断技术",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_精度检测工具",
+    "title": "数控机床精度检测工具教学",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_油压系统故障排查",
+    "title": "数控机床油压系统故障排查教学",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_振动检测诊断",
+    "title": "数控机床振动检测与诊断教学",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床漏油漏气排查",
+    "title": "数控机床漏油漏气排查",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床润滑报警排查",
+    "title": "数控机床润滑报警排查",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_主轴轴承与维护",
+    "title": "数控机床主轴轴承与维护教学",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-FANUC伺服放大器故障排查",
+    "title": "FANUC伺服放大器故障排查",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_年度保养计划",
+    "title": "数控机床年度保养计划教学",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_滚珠丝杠维护",
+    "title": "数控机床滚珠丝杠维护教学",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-file-05_故障维修-FANUC系统报警快速排查",
+    "title": "FANUC系统报警快速排查",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-readme-知识类_切削参数速查大全",
+    "title": "数控切削参数速查大全",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-readme-伺服系统详解",
+    "title": "数控机床伺服系统详解",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-readme-主轴系统详解",
+    "title": "数控机床主轴系统详解",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-readme-刀柄与工具系统",
+    "title": "数控刀柄与工具系统",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  },
+  {
+    "entryId": "kb-readme-机床维护保养",
+    "title": "机床维护保养",
+    "category": "05 故障维修",
+    "whyCore": "车间突发停机报警自诊断，缩短停机时间。",
+    "priority": "P1",
+    "beginnerFriendly": false,
+    "searchValue": 7
+  },
+  {
+    "entryId": "kb-readme-加工质量控制",
+    "title": "加工质量控制",
+    "category": "04 刀具工艺",
+    "whyCore": "切削参数推荐与刀具材料匹配底座。",
+    "priority": "P1",
+    "beginnerFriendly": true,
+    "searchValue": 6
+  }
+]

@@ -1,0 +1,19 @@
+请在 Gemini CLI 中执行以下命令：
+
+agy task "请严格按照 F:\AI工作台\cnc_param_quickfinder\TASK_GEMINI_CLI_MEGA.md 文件中的所有要求完成任务。这是一个超大型数据分析任务，预计需要 5-6 小时。请分阶段执行，生成所有 8 个交付文件。"
+
+或者如果上面的命令不工作，使用：
+
+agy chat
+
+然后输入：
+
+请严格按照 F:\AI工作台\cnc_param_quickfinder\TASK_GEMINI_CLI_MEGA.md 文件中的所有要求完成任务。
+
+任务概要：
+- 分析 F:\AI工作台\04_数控知识库 中的 42,294 个文件
+- 生成 8 个交付文件（7个JSON + 1个报告）
+- 预计工作时间：5-6 小时
+- 输出位置：F:\AI工作台\cnc_param_quickfinder\
+
+请开始执行。

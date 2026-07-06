@@ -1,0 +1,138 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-07-03T03:43:56.754Z",
+  "testScenarios": {
+    "searchTests": {
+      "normalQueries": [
+        "G54",
+        "FANUC报警",
+        "铣刀参数",
+        "对刀操作",
+        "螺纹切削",
+        "G43",
+        "伺服过载"
+      ],
+      "fuzzyQueries": [
+        "G5",
+        "钻孔",
+        "坐标系",
+        "切削",
+        "刀片",
+        "攻丝",
+        "探头"
+      ],
+      "edgeCaseQueries": [
+        "",
+        "！@#￥%",
+        "非常长的查询字符串重复一百次非常长的查询字符串重复一百次非常长的查询字符串重复一百次非常长的查询字符串重复一百次非常长的查询字符串重复一百次非常长的查询字符串重复一百次非常长的查询字符串重复一百次非常长的查询字符串重复一百次非常长的查询字符串重复一百次...",
+        "G999999",
+        "SQL_INJECTION_' OR '1'='1",
+        "<script>alert('xss')</script>"
+      ],
+      "multiLanguageQueries": [
+        "G-code",
+        "Gコード",
+        "G代码",
+        "G-Code",
+        "spindle",
+        "主軸"
+      ]
+    },
+    "navigationTests": {
+      "validPaths": [
+        "首页 → 工作区 → 知识详情",
+        "知识地图 → 入门路径 → 第一课",
+        "图库 → 分类筛选 → 图片详情",
+        "设置 → 数据备份与恢复 → 备份数据"
+      ],
+      "invalidPaths": [
+        "直接访问不存在的知识点ID (e.g. kb-99999)",
+        "访问已删除的收藏项",
+        "跳转到错误的路径层级 (e.g. /home/settings/profile/unknown)",
+        "非法文件路径注入访问 (e.g. ../../../etc/passwd)"
+      ]
+    },
+    "dataIntegrityTests": {
+      "knowledgeEntries": [
+        {
+          "id": "test-kb-00001",
+          "title": "测试知识点：G00快速定位",
+          "category": "编程基础",
+          "difficulty": "入门",
+          "content": "这是一个测试用的知识点内容，用于验证系统对标准字段的渲染与解析。",
+          "tags": [
+            "G代码",
+            "定位",
+            "FANUC"
+          ]
+        },
+        {
+          "id": "test-kb-00002",
+          "title": "测试知识点：空内容",
+          "category": "编程基础",
+          "difficulty": "入门",
+          "content": "",
+          "tags": []
+        },
+        {
+          "id": "test-kb-00003",
+          "title": "",
+          "category": "",
+          "difficulty": "",
+          "content": "缺少标题的知识点",
+          "tags": [
+            "异常测试"
+          ]
+        }
+      ]
+    },
+    "performanceTests": {
+      "largeDataLoad": {
+        "description": "加载1000条搜索结果",
+        "expectedTime": "< 500ms"
+      },
+      "imageLoad": {
+        "description": "加载125张图片元数据",
+        "expectedTime": "< 200ms"
+      },
+      "knowledgeGraphTraversal": {
+        "description": "遍历知识图谱10层深度",
+        "expectedTime": "< 1000ms"
+      }
+    }
+  },
+  "mockUserData": {
+    "users": [
+      {
+        "id": "mock-user-001",
+        "name": "测试用户-新手",
+        "level": "beginner",
+        "favorites": [
+          "kb-00001",
+          "kb-00003"
+        ],
+        "history": [
+          "kb-00001",
+          "kb-00002",
+          "kb-00003"
+        ],
+        "studyTime": 120
+      },
+      {
+        "id": "mock-user-002",
+        "name": "测试用户-高手",
+        "level": "expert",
+        "favorites": [
+          "kb-00100",
+          "kb-00200"
+        ],
+        "history": [
+          "kb-00050",
+          "kb-00100",
+          "kb-00150"
+        ],
+        "studyTime": 5000
+      }
+    ]
+  }
+}

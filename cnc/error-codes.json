@@ -1,0 +1,103 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-07-03T03:43:56.844Z",
+  "errorCategories": {
+    "search": {
+      "prefix": "SE",
+      "errors": [
+        {
+          "code": "SE001",
+          "message": "搜索关键词为空",
+          "userMessage": "请输入搜索关键词",
+          "severity": "info",
+          "suggestion": "在搜索框中输入G代码、M代码或其他关键词"
+        },
+        {
+          "code": "SE002",
+          "message": "搜索索引加载失败",
+          "userMessage": "搜索功能暂时不可用",
+          "severity": "error",
+          "suggestion": "请重启软件，如问题持续请联系技术支持"
+        },
+        {
+          "code": "SE003",
+          "message": "搜索结果为空",
+          "userMessage": "未找到相关内容",
+          "severity": "info",
+          "suggestion": "尝试使用其他关键词或检查拼写"
+        }
+      ]
+    },
+    "data": {
+      "prefix": "DE",
+      "errors": [
+        {
+          "code": "DE001",
+          "message": "知识库文件损坏",
+          "userMessage": "数据文件损坏，请重新安装",
+          "severity": "critical",
+          "suggestion": "卸载后重新安装软件"
+        },
+        {
+          "code": "DE002",
+          "message": "知识点ID不存在",
+          "userMessage": "您访问的内容不存在",
+          "severity": "warning",
+          "suggestion": "返回首页重新搜索"
+        },
+        {
+          "code": "DE003",
+          "message": "图片文件缺失",
+          "userMessage": "图片加载失败",
+          "severity": "warning",
+          "suggestion": "图片资源缺失，不影响文字内容查看"
+        }
+      ]
+    },
+    "system": {
+      "prefix": "SY",
+      "errors": [
+        {
+          "code": "SY001",
+          "message": "内存不足",
+          "userMessage": "系统内存不足",
+          "severity": "error",
+          "suggestion": "关闭其他程序后重试"
+        },
+        {
+          "code": "SY002",
+          "message": "权限不足",
+          "userMessage": "无法访问文件，权限不足",
+          "severity": "error",
+          "suggestion": "以管理员身份运行软件"
+        },
+        {
+          "code": "SY003",
+          "message": "配置文件损坏",
+          "userMessage": "配置文件损坏，已恢复默认设置",
+          "severity": "warning",
+          "suggestion": "您的个人设置已重置"
+        }
+      ]
+    },
+    "network": {
+      "prefix": "NE",
+      "errors": [
+        {
+          "code": "NE001",
+          "message": "许可证验证失败",
+          "userMessage": "无法验证许可证",
+          "severity": "error",
+          "suggestion": "请检查激活码或联系客服"
+        },
+        {
+          "code": "NE002",
+          "message": "更新检查失败",
+          "userMessage": "无法检查更新",
+          "severity": "info",
+          "suggestion": "请检查网络连接"
+        }
+      ]
+    }
+  }
+}

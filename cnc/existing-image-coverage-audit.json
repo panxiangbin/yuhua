@@ -1,0 +1,34 @@
+[
+  {
+    "section": "首页启动台卡片",
+    "totalItems": 16,
+    "withRealImage": 16,
+    "withFallbackImage": 0,
+    "missingImage": 0,
+    "missingItems": []
+  },
+  {
+    "section": "图文专题入口",
+    "totalItems": 40,
+    "withRealImage": 40,
+    "withFallbackImage": 0,
+    "missingImage": 0,
+    "missingItems": []
+  },
+  {
+    "section": "新手学习专题包",
+    "totalItems": 12,
+    "withRealImage": 12,
+    "withFallbackImage": 0,
+    "missingImage": 0,
+    "missingItems": []
+  },
+  {
+    "section": "速查入口集合",
+    "totalItems": 20,
+    "withRealImage": 0,
+    "withFallbackImage": 20,
+    "missingImage": 0,
+    "missingItems": []
+  }
+]

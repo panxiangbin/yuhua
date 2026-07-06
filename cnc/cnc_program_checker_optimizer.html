@@ -1,0 +1,1754 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>数控程序检查与优化工具</title>
+  <style>
+    :root {
+      --bg: #f3ebde;
+      --card: #fffaf2;
+      --primary: #cf6d36;
+      --text: #5d655f;
+      --muted: #a89c8e;
+      --editor: #2d2d2d;
+      --editor-panel: #252526;
+      --editor-line: #3b3b3b;
+      --blue: #4a9eff;
+      --green: #00a876;
+      --yellow: #d49a2f;
+      --red: #d9534f;
+      --purple: #b794f6;
+      --shadow: 0 12px 32px rgba(93, 101, 95, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    }
+
+    button, input, textarea, select {
+      font-family: inherit;
+    }
+
+    .app {
+      height: 100vh;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      background: var(--card);
+      border-right: 1px solid rgba(207, 109, 54, 0.22);
+      padding: 18px;
+      overflow: auto;
+      box-shadow: var(--shadow);
+      z-index: 2;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, #cf6d36, #f2a76e);
+      color: #fffaf2;
+      font-size: 23px;
+      box-shadow: 0 10px 22px rgba(207, 109, 54, 0.24);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.25;
+      color: var(--text);
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .menu-title {
+      margin: 18px 0 10px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 800;
+      letter-spacing: 0.06em;
+    }
+
+    .menu {
+      display: grid;
+      gap: 8px;
+    }
+
+    .menu-btn {
+      width: 100%;
+      border: 1px solid transparent;
+      border-radius: 15px;
+      padding: 12px 13px;
+      background: transparent;
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s ease;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .menu-btn:hover {
+      background: rgba(207, 109, 54, 0.08);
+      transform: translateX(2px);
+    }
+
+    .menu-btn.active {
+      background: #cf6d36;
+      color: #fffaf2;
+      box-shadow: 0 10px 22px rgba(207, 109, 54, 0.22);
+    }
+
+    .menu-icon {
+      width: 24px;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    .sidebar-card {
+      margin-top: 18px;
+      border-radius: 18px;
+      padding: 14px;
+      background: rgba(207, 109, 54, 0.08);
+      border: 1px solid rgba(207, 109, 54, 0.16);
+    }
+
+    .sidebar-card h3 {
+      margin: 0 0 8px;
+      font-size: 14px;
+      color: var(--primary);
+    }
+
+    .sidebar-card p {
+      margin: 0;
+      font-size: 12px;
+      line-height: 1.7;
+      color: #7b746d;
+    }
+
+    .main {
+      min-width: 0;
+      display: grid;
+      grid-template-rows: auto 1fr 260px;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      padding: 16px 18px;
+      border-bottom: 1px solid rgba(207, 109, 54, 0.18);
+      background: rgba(255, 250, 242, 0.76);
+      backdrop-filter: blur(10px);
+      z-index: 1;
+    }
+
+    .topbar-title h2 {
+      margin: 0 0 4px;
+      font-size: 20px;
+      color: var(--text);
+    }
+
+    .topbar-title p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .topbar-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 15px;
+      cursor: pointer;
+      font-weight: 800;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      white-space: nowrap;
+    }
+
+    .btn.primary {
+      background: var(--primary);
+      color: #fffaf2;
+      box-shadow: 0 8px 18px rgba(207, 109, 54, 0.22);
+    }
+
+    .btn.ghost {
+      background: var(--card);
+      color: var(--primary);
+      border: 1px solid rgba(207, 109, 54, 0.24);
+    }
+
+    .btn.dark {
+      background: #2d2d2d;
+      color: #fffaf2;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(93, 101, 95, 0.14);
+    }
+
+    .workspace {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 14px;
+      padding: 14px 18px;
+      overflow: hidden;
+    }
+
+    .editor-shell {
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      border-radius: 22px;
+      background: var(--editor);
+      border: 1px solid rgba(45, 45, 45, 0.7);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .editor-tabs {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #1f1f1f;
+      border-bottom: 1px solid #404040;
+    }
+
+    .editor-tab-list {
+      display: flex;
+      min-width: 0;
+    }
+
+    .editor-tab {
+      padding: 11px 15px;
+      color: #d4d4d4;
+      font-size: 13px;
+      border-right: 1px solid #3e3e3e;
+      background: #2d2d2d;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .editor-tab.secondary {
+      display: none;
+    }
+
+    .compare-mode .editor-tab.secondary {
+      display: flex;
+    }
+
+    .editor-mini-actions {
+      display: flex;
+      gap: 8px;
+      padding-right: 10px;
+    }
+
+    .mini-btn {
+      border: none;
+      border-radius: 9px;
+      padding: 6px 9px;
+      background: #3a3a3a;
+      color: #d4d4d4;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.18s ease;
+    }
+
+    .mini-btn:hover {
+      background: #4a4a4a;
+    }
+
+    .editor-layout {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 1fr;
+      position: relative;
+    }
+
+    .compare-mode .editor-layout {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .editor-panel {
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 58px 1fr;
+      background: var(--editor);
+      overflow: hidden;
+      border-right: 1px solid #464646;
+    }
+
+    .editor-panel.secondary {
+      display: none;
+    }
+
+    .compare-mode .editor-panel.secondary {
+      display: grid;
+    }
+
+    .line-numbers {
+      padding: 16px 8px 16px 0;
+      background: #252526;
+      color: #858585;
+      text-align: right;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      user-select: none;
+      overflow: hidden;
+    }
+
+    .code-input {
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      resize: none;
+      border: none;
+      outline: none;
+      padding: 16px 18px;
+      background: var(--editor);
+      color: #e6e6e6;
+      caret-color: #fffaf2;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      tab-size: 2;
+      white-space: pre;
+      overflow: auto;
+    }
+
+    .code-input::selection {
+      background: rgba(74, 158, 255, 0.35);
+    }
+
+    .side-panel {
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      background: var(--card);
+      border: 1px solid rgba(207, 109, 54, 0.22);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .side-panel-head {
+      padding: 16px;
+      border-bottom: 1px solid rgba(207, 109, 54, 0.14);
+    }
+
+    .side-panel-head h3 {
+      margin: 0 0 6px;
+      color: var(--text);
+      font-size: 17px;
+    }
+
+    .side-panel-head p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .side-content {
+      overflow: auto;
+      padding: 14px 16px 18px;
+    }
+
+    .helper-section {
+      margin-bottom: 18px;
+    }
+
+    .helper-section h4 {
+      margin: 0 0 10px;
+      color: var(--primary);
+      font-size: 14px;
+    }
+
+    .template-grid, .suggest-grid {
+      display: grid;
+      gap: 9px;
+    }
+
+    .template-card, .suggest-card {
+      border: 1px solid rgba(207, 109, 54, 0.18);
+      border-radius: 14px;
+      padding: 11px 12px;
+      background: rgba(243, 235, 222, 0.48);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .template-card:hover, .suggest-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      background: rgba(207, 109, 54, 0.08);
+    }
+
+    .template-card strong, .suggest-card strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    .template-card span, .suggest-card span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .stat-card {
+      padding: 13px;
+      border-radius: 16px;
+      background: rgba(207, 109, 54, 0.08);
+      border: 1px solid rgba(207, 109, 54, 0.14);
+    }
+
+    .stat-card b {
+      display: block;
+      color: var(--primary);
+      font-size: 22px;
+    }
+
+    .stat-card span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .code-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .code-chip {
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: rgba(45, 45, 45, 0.08);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .compare-summary {
+      display: grid;
+      gap: 8px;
+    }
+
+    .diff-item {
+      border-left: 4px solid var(--primary);
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: rgba(207, 109, 54, 0.08);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .diff-line-old {
+      color: var(--red);
+      font-family: Consolas, Monaco, monospace;
+      display: block;
+      word-break: break-all;
+    }
+
+    .diff-line-new {
+      color: var(--green);
+      font-family: Consolas, Monaco, monospace;
+      display: block;
+      word-break: break-all;
+    }
+
+    .results-panel {
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      background: var(--card);
+      border-top: 1px solid rgba(207, 109, 54, 0.22);
+      box-shadow: 0 -10px 26px rgba(93, 101, 95, 0.08);
+      overflow: hidden;
+    }
+
+    .results-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 18px;
+      border-bottom: 1px solid rgba(207, 109, 54, 0.14);
+    }
+
+    .result-tabs {
+      display: flex;
+      gap: 8px;
+      overflow: auto;
+    }
+
+    .result-tab {
+      border: 1px solid rgba(207, 109, 54, 0.18);
+      border-radius: 999px;
+      padding: 7px 11px;
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 800;
+      white-space: nowrap;
+      font-size: 12px;
+    }
+
+    .result-tab.active {
+      background: var(--primary);
+      color: #fffaf2;
+      border-color: var(--primary);
+    }
+
+    .result-counts {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .count-badge {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 900;
+      background: rgba(93, 101, 95, 0.08);
+    }
+
+    .count-error { color: var(--red); }
+    .count-warning { color: var(--yellow); }
+    .count-suggestion { color: var(--green); }
+
+    .results-body {
+      overflow: auto;
+      padding: 12px 18px 16px;
+    }
+
+    .result-list {
+      display: grid;
+      gap: 9px;
+    }
+
+    .result-item {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 10px;
+      align-items: start;
+      border: 1px solid rgba(207, 109, 54, 0.12);
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: rgba(255, 250, 242, 0.72);
+      transition: all 0.18s ease;
+    }
+
+    .result-item:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(93, 101, 95, 0.08);
+    }
+
+    .result-icon {
+      font-size: 18px;
+      line-height: 1.5;
+    }
+
+    .result-main strong {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .result-main p {
+      margin: 0;
+      color: #7b746d;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .result-line {
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(45, 45, 45, 0.07);
+      font-size: 12px;
+      font-weight: 900;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .result-item.error { border-left: 5px solid var(--red); }
+    .result-item.warning { border-left: 5px solid var(--yellow); }
+    .result-item.suggestion { border-left: 5px solid var(--green); }
+
+    .empty-results {
+      height: 100%;
+      min-height: 120px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: var(--muted);
+      border: 1px dashed rgba(207, 109, 54, 0.24);
+      border-radius: 16px;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 28px;
+      z-index: 80;
+      transform: translateX(-50%) translateY(20px);
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: #2d2d2d;
+      color: #fffaf2;
+      font-weight: 800;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s ease;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.22);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .mobile-menu-toggle {
+      display: none;
+    }
+
+    @media (max-width: 1100px) {
+      .workspace {
+        grid-template-columns: 1fr;
+        overflow: auto;
+      }
+
+      .side-panel {
+        min-height: 260px;
+      }
+
+      .main {
+        grid-template-rows: auto minmax(560px, 1fr) 280px;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: fixed;
+        inset: 0 auto 0 0;
+        width: 280px;
+        transform: translateX(-105%);
+        transition: transform 0.25s ease;
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .mobile-menu-toggle {
+        display: inline-flex;
+      }
+
+      .main {
+        grid-template-rows: auto minmax(600px, 1fr) 310px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .topbar-actions {
+        justify-content: flex-start;
+      }
+
+      .compare-mode .editor-layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 1fr;
+      }
+
+      .workspace {
+        padding: 12px;
+      }
+
+      .stat-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .results-head {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="cncProgramTool">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-icon">⚙</div>
+        <div>
+          <h1>数控程序检查<br>与优化工具</h1>
+          <p>G/M 代码 · 安全 · 效率 · 对比</p>
+        </div>
+      </div>
+
+      <div class="menu-title">核心功能</div>
+      <nav class="menu" id="menuList">
+        <button class="menu-btn active" data-mode="syntax"><span class="menu-icon">⌁</span>程序语法检查</button>
+        <button class="menu-btn" data-mode="safety"><span class="menu-icon">🛡</span>安全性检查</button>
+        <button class="menu-btn" data-mode="optimize"><span class="menu-icon">💡</span>效率优化建议</button>
+        <button class="menu-btn" data-mode="stats"><span class="menu-icon">📊</span>程序统计</button>
+        <button class="menu-btn" data-mode="format"><span class="menu-icon">✨</span>代码格式化</button>
+        <button class="menu-btn" data-mode="compare"><span class="menu-icon">⇄</span>程序对比</button>
+        <button class="menu-btn" data-mode="complete"><span class="menu-icon">⚡</span>智能补全</button>
+      </nav>
+
+      <div class="sidebar-card">
+        <h3>检查说明</h3>
+        <p>本工具适合做程序初步检查、格式整理和风险提醒，不能替代机床仿真、干运行和现场工艺确认。</p>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-title">
+          <h2 id="modeTitle">程序语法检查</h2>
+          <p id="modeDesc">检查 G/M 代码格式、未知指令、括号注释、坐标和常见语法问题。</p>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn ghost mobile-menu-toggle" id="openMenuBtn">☰ 菜单</button>
+          <button class="btn ghost" id="loadDemoBtn">载入示例</button>
+          <button class="btn ghost" id="formatBtn">格式化</button>
+          <button class="btn dark" id="copyBtn">复制程序</button>
+          <button class="btn primary" id="runBtn">开始检查</button>
+        </div>
+      </header>
+
+      <section class="workspace" id="workspace">
+        <div class="editor-shell" id="editorShell">
+          <div class="editor-tabs">
+            <div class="editor-tab-list">
+              <div class="editor-tab">● main.nc</div>
+              <div class="editor-tab secondary">● compare.nc</div>
+            </div>
+            <div class="editor-mini-actions">
+              <button class="mini-btn" id="insertTemplateBtn">插入模板</button>
+              <button class="mini-btn" id="clearBtn">清空</button>
+            </div>
+          </div>
+
+          <div class="editor-layout">
+            <div class="editor-panel primary">
+              <div class="line-numbers" id="lineNumbers">1</div>
+              <textarea class="code-input" id="codeEditor" spellcheck="false"></textarea>
+            </div>
+
+            <div class="editor-panel secondary">
+              <div class="line-numbers" id="compareLineNumbers">1</div>
+              <textarea class="code-input" id="compareEditor" spellcheck="false"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <aside class="side-panel">
+          <div class="side-panel-head">
+            <h3 id="sideTitle">智能辅助</h3>
+            <p id="sideDesc">这里会根据当前功能展示模板、统计、优化建议或对比摘要。</p>
+          </div>
+          <div class="side-content" id="sideContent"></div>
+        </aside>
+      </section>
+
+      <section class="results-panel">
+        <div class="results-head">
+          <div class="result-tabs" id="resultTabs">
+            <button class="result-tab active" data-filter="all">全部</button>
+            <button class="result-tab" data-filter="error">错误</button>
+            <button class="result-tab" data-filter="warning">警告</button>
+            <button class="result-tab" data-filter="suggestion">优化建议</button>
+          </div>
+          <div class="result-counts" id="resultCounts"></div>
+        </div>
+        <div class="results-body">
+          <div class="result-list" id="resultList"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast">操作成功</div>
+
+  <script>
+    class CncProgramCheckerOptimizer {
+      constructor(root) {
+        this.root = typeof root === "string" ? document.querySelector(root) : root;
+        this.mode = "syntax";
+        this.resultFilter = "all";
+        this.results = [];
+        this.knownGCodes = new Set([
+          "G00","G0","G01","G1","G02","G2","G03","G3","G04","G4","G17","G18","G19","G20","G21","G28","G30","G40","G41","G42","G43","G44","G49","G50","G54","G55","G56","G57","G58","G59","G68","G69","G73","G74","G76","G80","G81","G82","G83","G84","G85","G86","G87","G88","G89","G90","G91","G92","G94","G95","G96","G97","G98","G99"
+        ]);
+        this.knownMCodes = new Set([
+          "M00","M0","M01","M1","M02","M2","M03","M3","M04","M4","M05","M5","M06","M6","M08","M8","M09","M9","M19","M30","M98","M99"
+        ]);
+        this.templates = this.createTemplates();
+        this.modeInfo = this.createModeInfo();
+        this.bindDom();
+        this.bindEvents();
+        this.loadDemo();
+        this.runAllChecks();
+      }
+
+      bindDom() {
+        this.sidebar = document.getElementById("sidebar");
+        this.editorShell = document.getElementById("editorShell");
+        this.editor = document.getElementById("codeEditor");
+        this.compareEditor = document.getElementById("compareEditor");
+        this.lineNumbers = document.getElementById("lineNumbers");
+        this.compareLineNumbers = document.getElementById("compareLineNumbers");
+        this.modeTitle = document.getElementById("modeTitle");
+        this.modeDesc = document.getElementById("modeDesc");
+        this.sideTitle = document.getElementById("sideTitle");
+        this.sideDesc = document.getElementById("sideDesc");
+        this.sideContent = document.getElementById("sideContent");
+        this.resultList = document.getElementById("resultList");
+        this.resultCounts = document.getElementById("resultCounts");
+      }
+
+      bindEvents() {
+        document.getElementById("menuList").addEventListener("click", event => {
+          const btn = event.target.closest(".menu-btn");
+          if (!btn) return;
+          this.setMode(btn.dataset.mode);
+          this.sidebar.classList.remove("open");
+        });
+
+        document.getElementById("runBtn").addEventListener("click", () => this.runCurrentMode());
+        document.getElementById("formatBtn").addEventListener("click", () => this.applyFormat());
+        document.getElementById("loadDemoBtn").addEventListener("click", () => this.loadDemo());
+        document.getElementById("copyBtn").addEventListener("click", () => this.copyProgram());
+        document.getElementById("clearBtn").addEventListener("click", () => this.clearEditors());
+        document.getElementById("insertTemplateBtn").addEventListener("click", () => this.insertTemplate("safeStart"));
+        document.getElementById("openMenuBtn").addEventListener("click", () => this.sidebar.classList.add("open"));
+
+        document.getElementById("resultTabs").addEventListener("click", event => {
+          const btn = event.target.closest(".result-tab");
+          if (!btn) return;
+          this.resultFilter = btn.dataset.filter;
+          document.querySelectorAll(".result-tab").forEach(item => item.classList.remove("active"));
+          btn.classList.add("active");
+          this.renderResults();
+        });
+
+        this.editor.addEventListener("input", () => {
+          this.updateLineNumbers(this.editor, this.lineNumbers);
+          this.debouncedRun();
+        });
+
+        this.compareEditor.addEventListener("input", () => {
+          this.updateLineNumbers(this.compareEditor, this.compareLineNumbers);
+          if (this.mode === "compare") this.debouncedRun();
+        });
+
+        this.editor.addEventListener("scroll", () => {
+          this.lineNumbers.scrollTop = this.editor.scrollTop;
+        });
+
+        this.compareEditor.addEventListener("scroll", () => {
+          this.compareLineNumbers.scrollTop = this.compareEditor.scrollTop;
+        });
+
+        this.editor.addEventListener("keydown", event => this.handleEditorKeydown(event, this.editor));
+        this.compareEditor.addEventListener("keydown", event => this.handleEditorKeydown(event, this.compareEditor));
+
+        document.addEventListener("click", event => {
+          if (!event.target.closest(".sidebar") && !event.target.closest("#openMenuBtn")) {
+            this.sidebar.classList.remove("open");
+          }
+        });
+      }
+
+      debouncedRun() {
+        clearTimeout(this.runTimer);
+        this.runTimer = setTimeout(() => this.runCurrentMode(false), 260);
+      }
+
+      setMode(mode) {
+        this.mode = mode;
+        const info = this.modeInfo[mode];
+        this.modeTitle.textContent = info.title;
+        this.modeDesc.textContent = info.desc;
+        document.querySelectorAll(".menu-btn").forEach(btn => {
+          btn.classList.toggle("active", btn.dataset.mode === mode);
+        });
+        this.editorShell.classList.toggle("compare-mode", mode === "compare");
+        this.renderSidePanel();
+        this.runCurrentMode(false);
+      }
+
+      runCurrentMode(showToastMessage = true) {
+        if (this.mode === "syntax") this.results = this.checkSyntax(this.editor.value);
+        if (this.mode === "safety") this.results = this.checkSafety(this.editor.value);
+        if (this.mode === "optimize") this.results = this.checkOptimization(this.editor.value);
+        if (this.mode === "stats") this.results = this.makeStatResults(this.getProgramStats(this.editor.value));
+        if (this.mode === "format") this.results = this.previewFormatResults(this.editor.value);
+        if (this.mode === "compare") this.results = this.comparePrograms(this.editor.value, this.compareEditor.value);
+        if (this.mode === "complete") this.results = this.makeCompletionResults(this.editor.value);
+
+        this.renderSidePanel();
+        this.renderResults();
+        if (showToastMessage) this.toast("检查完成");
+      }
+
+      runAllChecks() {
+        const code = this.editor.value;
+        this.results = [
+          ...this.checkSyntax(code),
+          ...this.checkSafety(code),
+          ...this.checkOptimization(code),
+          ...this.makeStatResults(this.getProgramStats(code))
+        ];
+        this.renderSidePanel();
+        this.renderResults();
+      }
+
+      checkSyntax(code) {
+        const results = [];
+        const lines = this.getLines(code);
+        const programNo = lines.some(line => /^\s*O\d+/i.test(line.raw));
+        const hasEnd = lines.some(line => /\bM(02|2|30)\b/i.test(line.clean));
+        const hasMotion = lines.some(line => /\bG0?0\b|\bG0?1\b|\bG0?2\b|\bG0?3\b/i.test(line.clean));
+
+        if (!programNo) {
+          results.push(this.makeResult("warning", 1, "缺少程序号", "建议使用 O0001 这类程序号，方便机床和文件管理。"));
+        }
+
+        if (!hasEnd) {
+          results.push(this.makeResult("error", lines.length, "缺少结束指令", "未发现 M02 或 M30，程序结尾可能不完整。"));
+        }
+
+        if (!hasMotion) {
+          results.push(this.makeResult("warning", 1, "未发现运动指令", "程序中没有明显的 G00/G01/G02/G03 运动代码。"));
+        }
+
+        lines.forEach(line => {
+          if (!line.clean) return;
+
+          const parenLeft = (line.raw.match(/\(/g) || []).length;
+          const parenRight = (line.raw.match(/\)/g) || []).length;
+          if (parenLeft !== parenRight) {
+            results.push(this.makeResult("error", line.no, "注释括号不匹配", "括号注释需要成对出现，例如：(ROUGH CUT)。"));
+          }
+
+          const unknownG = [...line.clean.matchAll(/\bG\d+(?:\.\d+)?\b/gi)].map(m => m[0].toUpperCase()).filter(code => !this.knownGCodes.has(code));
+          unknownG.forEach(code => {
+            results.push(this.makeResult("error", line.no, "未知或不支持的 G 代码：" + code, "请确认该系统是否支持此 G 代码，或是否输入错误。"));
+          });
+
+          const unknownM = [...line.clean.matchAll(/\bM\d+\b/gi)].map(m => m[0].toUpperCase()).filter(code => !this.knownMCodes.has(code));
+          unknownM.forEach(code => {
+            results.push(this.makeResult("warning", line.no, "非常规 M 代码：" + code, "不同机床厂家 M 代码差异较大，请核对机床说明书。"));
+          });
+
+          const tokens = line.clean.match(/[A-Z][+-]?\d*(?:\.\d+)?|[A-Z]+|[^\s]+/gi) || [];
+          tokens.forEach(token => {
+            if (/^[GMTXYZIJKRFPQSNHDTO][+-]?\d*(?:\.\d+)?$/i.test(token)) return;
+            if (/^O\d+$/i.test(token)) return;
+            if (/^%$/.test(token)) return;
+            if (/^[A-Z]+$/i.test(token)) {
+              results.push(this.makeResult("error", line.no, "地址后缺少数值：" + token, "例如 X 后面应有坐标值，F 后面应有进给值。"));
+            }
+          });
+
+          if (/\bG0?2\b|\bG0?3\b/i.test(line.clean)) {
+            const hasRadius = /\bR[+-]?\d+(?:\.\d+)?\b/i.test(line.clean);
+            const hasIJ = /\bI[+-]?\d+(?:\.\d+)?\b/i.test(line.clean) || /\bJ[+-]?\d+(?:\.\d+)?\b/i.test(line.clean) || /\bK[+-]?\d+(?:\.\d+)?\b/i.test(line.clean);
+            if (!hasRadius && !hasIJ) {
+              results.push(this.makeResult("error", line.no, "圆弧插补缺少 R 或 I/J/K", "G02/G03 通常需要 R 半径或 I/J/K 圆心偏置。"));
+            }
+          }
+        });
+
+        if (!results.length) {
+          results.push(this.makeResult("suggestion", 0, "语法初检通过", "没有发现明显的 G/M 代码语法问题。"));
+        }
+
+        return results;
+      }
+
+      checkSafety(code) {
+        const results = [];
+        const lines = this.getLines(code);
+        const joined = lines.map(line => line.clean).join("\n");
+        const firstMotion = lines.find(line => /\bG0?0\b|\bG0?1\b|\bG0?2\b|\bG0?3\b/i.test(line.clean));
+        const hasWorkOffset = /\bG5[4-9]\b/i.test(joined);
+        const hasAbsInc = /\bG90\b|\bG91\b/i.test(joined);
+        const hasCancelCycle = /\bG80\b/i.test(joined);
+        const hasCancelComp = /\bG40\b/i.test(joined);
+        const hasLengthComp = /\bG43\b/i.test(joined);
+        const hasToolChange = /\bT\d+\b/i.test(joined);
+        const hasSpindle = /\bM0?3\b|\bM0?4\b/i.test(joined);
+        const hasCoolant = /\bM0?8\b/i.test(joined);
+        const usesG91 = /\bG91\b/i.test(joined);
+        const usesG96 = /\bG96\b/i.test(joined);
+        const hasG50 = /\bG50\b/i.test(joined);
+
+        if (!hasWorkOffset) {
+          results.push(this.makeResult("error", 1, "未发现 G54-G59 工件坐标系", "未调用工件坐标系时，存在坐标基准错误和撞机风险。"));
+        }
+
+        if (!hasAbsInc) {
+          results.push(this.makeResult("warning", 1, "未明确 G90/G91", "建议在安全起始段明确绝对/增量模式，避免继承上一程序模态。"));
+        }
+
+        if (usesG91) {
+          results.push(this.makeResult("warning", this.findLine(lines, /\bG91\b/i), "使用了 G91 增量编程", "G91 容易因累计距离误判导致撞机，首件务必单段低倍率。"));
+        }
+
+        if (!hasCancelCycle || !hasCancelComp) {
+          results.push(this.makeResult("warning", 1, "安全取消指令不完整", "建议开头加入 G40 G49 G80，取消刀补、长度补偿和固定循环。"));
+        }
+
+        if (hasToolChange && !hasLengthComp) {
+          results.push(this.makeResult("error", this.findLine(lines, /\bT\d+\b/i), "换刀后未发现 G43 长度补偿", "立加程序换刀后通常需要 G43 Hxx，否则 Z 向风险较高。"));
+        }
+
+        if (hasToolChange && !hasSpindle) {
+          results.push(this.makeResult("error", this.findLine(lines, /\bT\d+\b/i), "换刀后未发现主轴启动", "未发现 M03/M04，切削动作前请确认主轴状态。"));
+        }
+
+        if (hasSpindle && !hasCoolant) {
+          results.push(this.makeResult("warning", this.findLine(lines, /\bM0?3\b|\bM0?4\b/i), "未发现冷却液 M08", "需要根据材料和刀具确认是否开启冷却，干切工况除外。"));
+        }
+
+        if (usesG96 && !hasG50) {
+          results.push(this.makeResult("error", this.findLine(lines, /\bG96\b/i), "G96 恒线速缺少 G50 限速", "车床使用 G96 时建议设置 G50 主轴最高转速，防止转速过高。"));
+        }
+
+        lines.forEach(line => {
+          const z = this.getAddressValue(line.clean, "Z");
+          const f = this.getAddressValue(line.clean, "F");
+          const s = this.getAddressValue(line.clean, "S");
+          const rapid = /\bG0?0\b/i.test(line.clean);
+          const cutting = /\bG0?1\b|\bG0?2\b|\bG0?3\b/i.test(line.clean);
+
+          if (rapid && z !== null && z < 0) {
+            results.push(this.makeResult("error", line.no, "G00 快速下到负 Z", "快速移动进入负 Z 区域风险极高，请确认安全高度和工件表面。"));
+          }
+
+          if (cutting && f !== null && f > 3000) {
+            results.push(this.makeResult("warning", line.no, "进给值偏高：F" + f, "请结合材料、刀具直径、刃数和转速确认进给是否合理。"));
+          }
+
+          if (s !== null && s > 20000) {
+            results.push(this.makeResult("warning", line.no, "主轴转速偏高：S" + s, "请确认机床最高转速、刀具动平衡和夹持安全。"));
+          }
+        });
+
+        if (firstMotion && !/\bG90\b|\bG91\b/i.test(joined.slice(0, joined.indexOf(firstMotion.clean) + firstMotion.clean.length))) {
+          results.push(this.makeResult("warning", firstMotion.no, "运动前未明确 G90/G91", "建议在第一段运动前明确编程方式。"));
+        }
+
+        if (!results.length) {
+          results.push(this.makeResult("suggestion", 0, "安全初检通过", "未发现明显高风险项，但仍需干运行和仿真验证。"));
+        }
+
+        return results;
+      }
+
+      checkOptimization(code) {
+        const results = [];
+        const lines = this.getLines(code);
+        let lastMotion = null;
+        let lastTool = null;
+        let toolChanges = 0;
+        let rapidCount = 0;
+        let cuttingCount = 0;
+
+        lines.forEach(line => {
+          const clean = line.clean;
+          if (!clean) return;
+
+          const tool = clean.match(/\bT(\d+)\b/i)?.[1];
+          if (tool) {
+            toolChanges += 1;
+            if (tool === lastTool) {
+              results.push(this.makeResult("suggestion", line.no, "重复调用同一把刀 T" + tool, "可检查是否存在不必要换刀或重复刀具调用。"));
+            }
+            lastTool = tool;
+          }
+
+          if (/\bG0?0\b/i.test(clean)) rapidCount += 1;
+          if (/\bG0?1\b|\bG0?2\b|\bG0?3\b/i.test(clean)) cuttingCount += 1;
+
+          const motion = this.extractMotion(clean);
+          if (motion && lastMotion) {
+            const dist = this.distance3d(lastMotion, motion);
+            if (/\bG0?0\b/i.test(clean) && dist > 250) {
+              results.push(this.makeResult("suggestion", line.no, "快速空行程较长", "检测到较长 G00 移动，建议检查路径是否可缩短或是否需要分段避让。"));
+            }
+          }
+          if (motion) lastMotion = { ...lastMotion, ...motion };
+
+          const f = this.getAddressValue(clean, "F");
+          if (f !== null && f < 50 && /\bG0?1\b|\bG0?2\b|\bG0?3\b/i.test(clean)) {
+            results.push(this.makeResult("suggestion", line.no, "进给可能过低：F" + f, "进给过低会增加加工时间，也可能导致刀具摩擦发热。"));
+          }
+
+          if (/^\s*G0?0\s*$/i.test(clean)) {
+            results.push(this.makeResult("suggestion", line.no, "空的 G00 指令", "该行没有坐标地址，可能没有实际作用。"));
+          }
+        });
+
+        if (toolChanges > 4) {
+          results.push(this.makeResult("suggestion", 0, "换刀次数较多", "当前程序换刀 " + toolChanges + " 次，可按工序合并或调整刀具顺序。"));
+        }
+
+        if (rapidCount > cuttingCount * 2 && cuttingCount > 0) {
+          results.push(this.makeResult("suggestion", 0, "快速移动比例偏高", "G00 数量明显多于切削段，建议检查是否存在多余抬刀和空跑。"));
+        }
+
+        if (!/\bG98\b|\bG99\b/i.test(code) && /\bG8[1-9]\b/i.test(code)) {
+          results.push(this.makeResult("warning", this.findLine(lines, /\bG8[1-9]\b/i), "固定循环未明确返回平面", "钻孔循环建议明确 G98/G99，避免退刀高度不符合预期。"));
+        }
+
+        if (!results.length) {
+          results.push(this.makeResult("suggestion", 0, "暂无明显效率问题", "程序结构较简洁，可进一步结合刀具路径仿真做优化。"));
+        }
+
+        return results;
+      }
+
+      getProgramStats(code) {
+        const lines = this.getLines(code);
+        const effectiveLines = lines.filter(line => line.clean).length;
+        const commentLines = lines.filter(line => /\([^)]*\)|;/.test(line.raw)).length;
+        const toolSet = new Set();
+        const gSet = new Set();
+        const mSet = new Set();
+        let rapidMoves = 0;
+        let cuttingMoves = 0;
+        let estimatedDistance = 0;
+        let lastPos = { X: 0, Y: 0, Z: 0 };
+        let estimatedMinutes = 0;
+        let activeF = 500;
+
+        lines.forEach(line => {
+          const clean = line.clean;
+          if (!clean) return;
+
+          [...clean.matchAll(/\bG\d+(?:\.\d+)?\b/gi)].forEach(m => gSet.add(m[0].toUpperCase()));
+          [...clean.matchAll(/\bM\d+\b/gi)].forEach(m => mSet.add(m[0].toUpperCase()));
+          [...clean.matchAll(/\bT\d+\b/gi)].forEach(m => toolSet.add(m[0].toUpperCase()));
+
+          const f = this.getAddressValue(clean, "F");
+          if (f !== null && f > 0) activeF = f;
+
+          const motion = this.extractMotion(clean);
+          if (motion) {
+            const newPos = { ...lastPos, ...motion };
+            const dist = this.distance3d(lastPos, newPos);
+            estimatedDistance += dist;
+            if (/\bG0?0\b/i.test(clean)) {
+              rapidMoves += 1;
+              estimatedMinutes += dist / 8000;
+            }
+            if (/\bG0?1\b|\bG0?2\b|\bG0?3\b/i.test(clean)) {
+              cuttingMoves += 1;
+              estimatedMinutes += dist / Math.max(activeF, 1);
+            }
+            lastPos = newPos;
+          }
+        });
+
+        return {
+          totalLines: lines.length,
+          effectiveLines,
+          commentLines,
+          toolChanges: toolSet.size,
+          tools: Array.from(toolSet),
+          gCodes: Array.from(gSet).sort(),
+          mCodes: Array.from(mSet).sort(),
+          rapidMoves,
+          cuttingMoves,
+          estimatedDistance: Math.round(estimatedDistance * 100) / 100,
+          estimatedMinutes: Math.round(estimatedMinutes * 100) / 100
+        };
+      }
+
+      makeStatResults(stats) {
+        const results = [
+          this.makeResult("suggestion", 0, "程序总行数：" + stats.totalLines, "有效行 " + stats.effectiveLines + " 行，注释相关行 " + stats.commentLines + " 行。"),
+          this.makeResult("suggestion", 0, "换刀数量：" + stats.toolChanges, stats.tools.length ? "刀具清单：" + stats.tools.join("、") : "未检测到 T 代码。"),
+          this.makeResult("suggestion", 0, "估算加工时间：约 " + stats.estimatedMinutes + " 分钟", "按快速 8000 mm/min、当前 F 值粗略估算，仅供排查参考。"),
+          this.makeResult("suggestion", 0, "代码清单", "G代码：" + (stats.gCodes.join("、") || "无") + "；M代码：" + (stats.mCodes.join("、") || "无"))
+        ];
+        return results;
+      }
+
+      formatProgram(code) {
+        const lines = code.replace(/\r/g, "").split("\n");
+        return lines.map(raw => {
+          const trimmed = raw.trim();
+          if (!trimmed) return "";
+          if (trimmed === "%") return "%";
+
+          const commentParts = [];
+          let body = trimmed.replace(/\([^)]*\)/g, match => {
+            commentParts.push(match.trim());
+            return " ";
+          });
+
+          const semicolonIndex = body.indexOf(";");
+          let semicolonComment = "";
+          if (semicolonIndex !== -1) {
+            semicolonComment = body.slice(semicolonIndex).trim();
+            body = body.slice(0, semicolonIndex);
+          }
+
+          const tokens = body
+            .toUpperCase()
+            .replace(/([A-Z])\s*([+-]?\d+(?:\.\d+)?)/g, "$1$2")
+            .replace(/\s+/g, " ")
+            .trim()
+            .split(" ")
+            .filter(Boolean);
+
+          const sorted = this.sortTokens(tokens);
+          const comments = [...commentParts, semicolonComment].filter(Boolean).join(" ");
+          return comments ? sorted.join(" ") + " " + comments : sorted.join(" ");
+        }).join("\n");
+      }
+
+      sortTokens(tokens) {
+        const order = ["O", "N", "G", "T", "M", "S", "F", "X", "Y", "Z", "A", "B", "C", "I", "J", "K", "R", "P", "Q", "H", "D"];
+        return [...tokens].sort((a, b) => {
+          const aa = a[0]?.toUpperCase() || "Z";
+          const bb = b[0]?.toUpperCase() || "Z";
+          const ia = order.indexOf(aa);
+          const ib = order.indexOf(bb);
+          const va = ia === -1 ? 999 : ia;
+          const vb = ib === -1 ? 999 : ib;
+          return va - vb;
+        });
+      }
+
+      previewFormatResults(code) {
+        const formatted = this.formatProgram(code);
+        const before = code.split("\n");
+        const after = formatted.split("\n");
+        const changed = after.filter((line, index) => line !== before[index]).length;
+        return [
+          this.makeResult("suggestion", 0, "可格式化行数：" + changed, "点击顶部“格式化”按钮会统一大小写、空格、注释和地址顺序。"),
+          this.makeResult("suggestion", 0, "格式规则", "统一大写；地址与数值紧贴；按 O/N/G/T/M/S/F/X/Y/Z/I/J/K/R/P/Q/H/D 排序。")
+        ];
+      }
+
+      applyFormat() {
+        this.editor.value = this.formatProgram(this.editor.value);
+        this.updateLineNumbers(this.editor, this.lineNumbers);
+        this.runCurrentMode(false);
+        this.toast("代码已格式化");
+      }
+
+      comparePrograms(codeA, codeB) {
+        const a = codeA.replace(/\r/g, "").split("\n");
+        const b = codeB.replace(/\r/g, "").split("\n");
+        const max = Math.max(a.length, b.length);
+        const results = [];
+
+        for (let i = 0; i < max; i++) {
+          const oldLine = a[i] ?? "";
+          const newLine = b[i] ?? "";
+          if (oldLine !== newLine) {
+            if (oldLine && !newLine) {
+              results.push(this.makeResult("warning", i + 1, "第 " + (i + 1) + " 行被删除", "旧：" + oldLine));
+            } else if (!oldLine && newLine) {
+              results.push(this.makeResult("suggestion", i + 1, "第 " + (i + 1) + " 行为新增", "新：" + newLine));
+            } else {
+              results.push(this.makeResult("warning", i + 1, "第 " + (i + 1) + " 行存在差异", "旧：" + oldLine + " → 新：" + newLine));
+            }
+          }
+        }
+
+        if (!results.length) {
+          results.push(this.makeResult("suggestion", 0, "两个版本完全一致", "未发现行级差异。"));
+        }
+        return results;
+      }
+
+      makeCompletionResults(code) {
+        const lastLine = code.split("\n").pop().trim().toUpperCase();
+        const suggestions = this.getCompletions(lastLine);
+        return suggestions.map(item => this.makeResult("suggestion", 0, item.label, item.desc));
+      }
+
+      getCompletions(prefix) {
+        const list = [
+          { label: "G90 G54 G17 G40 G49 G80", desc: "铣床安全起始段，明确绝对坐标、工件坐标系、平面、取消补偿。" },
+          { label: "G43 H1 Z50.", desc: "刀具长度补偿并移动到安全高度。" },
+          { label: "G81 X0 Y0 Z-10. R2. F120", desc: "普通钻孔固定循环模板。" },
+          { label: "G83 X0 Y0 Z-30. R2. Q3. F100", desc: "深孔啄钻循环模板。" },
+          { label: "G02 X... Y... R...", desc: "顺时针圆弧插补，可使用 R 或 I/J。" },
+          { label: "G03 X... Y... I... J...", desc: "逆时针圆弧插补，I/J 表示圆心偏置。" },
+          { label: "M30", desc: "程序结束并复位。" }
+        ];
+        if (!prefix) return list;
+        return list.filter(item => item.label.toUpperCase().includes(prefix) || item.desc.includes(prefix));
+      }
+
+      renderSidePanel() {
+        if (this.mode === "stats") return this.renderStatsPanel();
+        if (this.mode === "compare") return this.renderComparePanel();
+        if (this.mode === "complete") return this.renderCompletionPanel();
+        if (this.mode === "format") return this.renderFormatPanel();
+        return this.renderHelperPanel();
+      }
+
+      renderHelperPanel() {
+        this.sideTitle.textContent = "智能辅助";
+        this.sideDesc.textContent = "常用模板和当前检查重点。";
+        this.sideContent.innerHTML = `
+          <div class="helper-section">
+            <h4>常用程序模板</h4>
+            <div class="template-grid">
+              ${Object.values(this.templates).map(item => `
+                <div class="template-card" data-template="${item.id}">
+                  <strong>${this.escape(item.title)}</strong>
+                  <span>${this.escape(item.desc)}</span>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+          <div class="helper-section">
+            <h4>当前功能重点</h4>
+            <div class="suggest-card">
+              <strong>${this.escape(this.modeInfo[this.mode].title)}</strong>
+              <span>${this.escape(this.modeInfo[this.mode].desc)}</span>
+            </div>
+          </div>
+        `;
+        this.sideContent.querySelectorAll(".template-card").forEach(card => {
+          card.addEventListener("click", () => this.insertTemplate(card.dataset.template));
+        });
+      }
+
+      renderStatsPanel() {
+        const stats = this.getProgramStats(this.editor.value);
+        this.sideTitle.textContent = "程序统计";
+        this.sideDesc.textContent = "行数、时间、换刀次数和代码清单。";
+        this.sideContent.innerHTML = `
+          <div class="helper-section">
+            <div class="stat-grid">
+              <div class="stat-card"><b>${stats.totalLines}</b><span>总行数</span></div>
+              <div class="stat-card"><b>${stats.effectiveLines}</b><span>有效行</span></div>
+              <div class="stat-card"><b>${stats.toolChanges}</b><span>换刀数量</span></div>
+              <div class="stat-card"><b>${stats.estimatedMinutes}</b><span>估算分钟</span></div>
+              <div class="stat-card"><b>${stats.rapidMoves}</b><span>快速移动</span></div>
+              <div class="stat-card"><b>${stats.cuttingMoves}</b><span>切削移动</span></div>
+            </div>
+          </div>
+          <div class="helper-section"><h4>G代码清单</h4><div class="code-list">${this.renderChips(stats.gCodes)}</div></div>
+          <div class="helper-section"><h4>M代码清单</h4><div class="code-list">${this.renderChips(stats.mCodes)}</div></div>
+          <div class="helper-section"><h4>刀具清单</h4><div class="code-list">${this.renderChips(stats.tools)}</div></div>
+        `;
+      }
+
+      renderComparePanel() {
+        const diffs = this.comparePrograms(this.editor.value, this.compareEditor.value);
+        this.sideTitle.textContent = "程序对比摘要";
+        this.sideDesc.textContent = "左侧为 main.nc，右侧为 compare.nc。";
+        this.sideContent.innerHTML = `
+          <div class="helper-section">
+            <h4>差异数量：${diffs.filter(item => item.line > 0).length}</h4>
+            <div class="compare-summary">
+              ${diffs.slice(0, 12).map(item => `
+                <div class="diff-item">
+                  <strong>${this.escape(item.title)}</strong>
+                  ${this.renderDiffDetail(item.desc)}
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        `;
+      }
+
+      renderCompletionPanel() {
+        const lastLine = this.editor.value.split("\n").pop().trim().toUpperCase();
+        const suggestions = this.getCompletions(lastLine);
+        this.sideTitle.textContent = "智能补全";
+        this.sideDesc.textContent = "根据当前行内容推荐 G 代码片段和程序模板。";
+        this.sideContent.innerHTML = `
+          <div class="helper-section">
+            <h4>推荐补全</h4>
+            <div class="suggest-grid">
+              ${suggestions.map(item => `
+                <div class="suggest-card" data-insert="${this.escapeAttr(item.label)}">
+                  <strong>${this.escape(item.label)}</strong>
+                  <span>${this.escape(item.desc)}</span>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+          <div class="helper-section">
+            <h4>使用方法</h4>
+            <div class="suggest-card"><span>在编辑器最后一行输入 G、M、G81、G83 等关键词，系统会实时缩小推荐范围。</span></div>
+          </div>
+        `;
+        this.sideContent.querySelectorAll(".suggest-card[data-insert]").forEach(card => {
+          card.addEventListener("click", () => this.insertAtCursor(card.dataset.insert));
+        });
+      }
+
+      renderFormatPanel() {
+        const formatted = this.formatProgram(this.editor.value);
+        const lines = formatted.split("\n").slice(0, 18);
+        this.sideTitle.textContent = "格式化预览";
+        this.sideDesc.textContent = "统一大小写、空格、注释和常用地址顺序。";
+        this.sideContent.innerHTML = `
+          <div class="helper-section">
+            <h4>预览前 18 行</h4>
+            <div class="template-card" style="cursor: default; white-space: pre-wrap; font-family: Consolas, Monaco, monospace; line-height: 1.7; color: #5d655f;">${this.escape(lines.join("\n"))}</div>
+          </div>
+          <button class="btn primary" style="width:100%; justify-content:center;" id="sideApplyFormat">应用格式化</button>
+        `;
+        document.getElementById("sideApplyFormat").addEventListener("click", () => this.applyFormat());
+      }
+
+      renderResults() {
+        const filtered = this.resultFilter === "all" ? this.results : this.results.filter(item => item.type === this.resultFilter);
+        const counts = {
+          error: this.results.filter(item => item.type === "error").length,
+          warning: this.results.filter(item => item.type === "warning").length,
+          suggestion: this.results.filter(item => item.type === "suggestion").length
+        };
+
+        this.resultCounts.innerHTML = `
+          <span class="count-badge count-error">错误 ${counts.error}</span>
+          <span class="count-badge count-warning">警告 ${counts.warning}</span>
+          <span class="count-badge count-suggestion">建议 ${counts.suggestion}</span>
+        `;
+
+        if (!filtered.length) {
+          this.resultList.innerHTML = `<div class="empty-results">当前筛选下没有检查结果</div>`;
+          return;
+        }
+
+        this.resultList.innerHTML = filtered.map(item => `
+          <div class="result-item ${item.type}">
+            <div class="result-icon">${this.getIcon(item.type)}</div>
+            <div class="result-main">
+              <strong>${this.escape(item.title)}</strong>
+              <p>${this.escape(item.desc)}</p>
+            </div>
+            <div class="result-line">${item.line ? "第 " + item.line + " 行" : "全局"}</div>
+          </div>
+        `).join("");
+      }
+
+      getIcon(type) {
+        if (type === "error") return "❌";
+        if (type === "warning") return "⚠";
+        return "💡";
+      }
+
+      makeResult(type, line, title, desc) {
+        return { type, line, title, desc };
+      }
+
+      getLines(code) {
+        return code.replace(/\r/g, "").split("\n").map((raw, index) => {
+          const clean = this.stripComments(raw).trim().toUpperCase();
+          return { no: index + 1, raw, clean };
+        });
+      }
+
+      stripComments(line) {
+        return String(line || "").replace(/\([^)]*\)/g, " ").replace(/;.*/g, " ");
+      }
+
+      getAddressValue(line, letter) {
+        const reg = new RegExp("\\b" + letter + "([+-]?\\d+(?:\\.\\d+)?)\\b", "i");
+        const match = line.match(reg);
+        return match ? Number(match[1]) : null;
+      }
+
+      extractMotion(line) {
+        const result = {};
+        ["X", "Y", "Z"].forEach(axis => {
+          const value = this.getAddressValue(line, axis);
+          if (value !== null) result[axis] = value;
+        });
+        return Object.keys(result).length ? result : null;
+      }
+
+      distance3d(a, b) {
+        const dx = (b.X ?? a.X ?? 0) - (a.X ?? 0);
+        const dy = (b.Y ?? a.Y ?? 0) - (a.Y ?? 0);
+        const dz = (b.Z ?? a.Z ?? 0) - (a.Z ?? 0);
+        return Math.sqrt(dx * dx + dy * dy + dz * dz);
+      }
+
+      findLine(lines, reg) {
+        return lines.find(line => reg.test(line.clean))?.no || 0;
+      }
+
+      renderChips(items) {
+        if (!items || !items.length) return `<span class="code-chip">无</span>`;
+        return items.map(item => `<span class="code-chip">${this.escape(item)}</span>`).join("");
+      }
+
+      renderDiffDetail(desc) {
+        if (desc.includes(" → ")) {
+          const [oldPart, newPart] = desc.split(" → ");
+          return `<span class="diff-line-old">${this.escape(oldPart)}</span><span class="diff-line-new">${this.escape(newPart)}</span>`;
+        }
+        return `<span>${this.escape(desc)}</span>`;
+      }
+
+      updateLineNumbers(textarea, numberEl) {
+        const count = textarea.value.split("\n").length || 1;
+        numberEl.innerHTML = Array.from({ length: count }, (_, i) => i + 1).join("<br>");
+      }
+
+      handleEditorKeydown(event, editor) {
+        if (event.key === "Tab") {
+          event.preventDefault();
+          this.insertText(editor, "  ");
+        }
+        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") {
+          event.preventDefault();
+          this.runCurrentMode();
+        }
+        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "b") {
+          event.preventDefault();
+          this.insertTemplate("safeStart");
+        }
+      }
+
+      insertText(editor, text) {
+        const start = editor.selectionStart;
+        const end = editor.selectionEnd;
+        editor.value = editor.value.slice(0, start) + text + editor.value.slice(end);
+        editor.selectionStart = editor.selectionEnd = start + text.length;
+        editor.dispatchEvent(new Event("input"));
+      }
+
+      insertAtCursor(text) {
+        this.insertText(this.editor, text);
+        this.toast("已插入补全内容");
+      }
+
+      insertTemplate(id) {
+        const item = this.templates[id] || this.templates.safeStart;
+        this.insertText(this.editor, "\n" + item.code + "\n");
+        this.toast("已插入模板：" + item.title);
+      }
+
+      loadDemo() {
+        this.editor.value = `%
+O1001 (DEMO PROGRAM)
+G90 G54 G17 G40 G49 G80
+T1 M6
+S8000 M3
+G0 X0 Y0
+G43 H1 Z50.
+G0 Z-5.
+G1 X80. F40
+G0 Z80.
+T1 M6
+G81 X20. Y20. Z-18. R2. F120
+G80
+G02 X60. Y60.
+M9
+M30
+%`;
+        this.compareEditor.value = `%
+O1001 (DEMO PROGRAM V2)
+G90 G54 G17 G40 G49 G80
+T1 M6
+S6500 M3
+M8
+G0 X0 Y0
+G43 H1 Z50.
+G1 Z-2. F200
+G1 X80. F500
+G0 Z80.
+G83 X20. Y20. Z-18. R2. Q3. F100
+G80
+G03 X60. Y60. R25.
+M9
+M30
+%`;
+        this.updateLineNumbers(this.editor, this.lineNumbers);
+        this.updateLineNumbers(this.compareEditor, this.compareLineNumbers);
+        this.runCurrentMode(false);
+        this.toast("已载入示例程序");
+      }
+
+      clearEditors() {
+        this.editor.value = "";
+        this.compareEditor.value = "";
+        this.updateLineNumbers(this.editor, this.lineNumbers);
+        this.updateLineNumbers(this.compareEditor, this.compareLineNumbers);
+        this.runCurrentMode(false);
+        this.toast("已清空编辑区");
+      }
+
+      copyProgram() {
+        const text = this.editor.value;
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(text).then(() => this.toast("程序已复制"));
+        } else {
+          const t = document.createElement("textarea");
+          t.value = text;
+          t.style.position = "fixed";
+          t.style.left = "-999px";
+          document.body.appendChild(t);
+          t.select();
+          document.execCommand("copy");
+          t.remove();
+          this.toast("程序已复制");
+        }
+      }
+
+      createTemplates() {
+        return {
+          safeStart: {
+            id: "safeStart",
+            title: "铣床安全起始段",
+            desc: "G90/G54/G17/G40/G49/G80 标准开头",
+            code: "G90 G54 G17 G40 G49 G80\nT1 M6\nS3000 M3\nG0 X0 Y0\nG43 H1 Z50.\nM8"
+          },
+          drill: {
+            id: "drill",
+            title: "普通钻孔循环",
+            desc: "G81 钻孔模板，适合浅孔",
+            code: "G98 G81 X0 Y0 Z-10. R2. F120\nX20. Y0\nX40. Y0\nG80"
+          },
+          deepDrill: {
+            id: "deepDrill",
+            title: "深孔啄钻循环",
+            desc: "G83 深孔模板，带 Q 啄钻量",
+            code: "G98 G83 X0 Y0 Z-30. R2. Q3. F90\nX20. Y0\nG80"
+          },
+          arc: {
+            id: "arc",
+            title: "圆弧插补模板",
+            desc: "G02/G03 使用 R 半径",
+            code: "G1 X20. Y0 F300\nG02 X40. Y20. R20.\nG03 X20. Y40. R20."
+          }
+        };
+      }
+
+      createModeInfo() {
+        return {
+          syntax: { title: "程序语法检查", desc: "检查 G/M 代码格式、未知指令、括号注释、坐标和常见语法问题。" },
+          safety: { title: "安全性检查", desc: "识别撞机风险、刀具损坏风险、缺少坐标系和危险移动。" },
+          optimize: { title: "效率优化建议", desc: "查找空行程、重复换刀、过低进给和路径效率问题。" },
+          stats: { title: "程序统计", desc: "统计行数、加工时间估算、换刀次数、G/M 代码清单。" },
+          format: { title: "代码格式化", desc: "统一大小写、空格、注释和常用地址顺序，提升可读性。" },
+          compare: { title: "程序对比", desc: "对比两个版本程序，按行高亮新增、删除和修改。" },
+          complete: { title: "智能补全", desc: "根据当前输入提供 G 代码提示、常用循环和安全模板。" }
+        };
+      }
+
+      escape(value) {
+        return String(value ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      escapeAttr(value) {
+        return this.escape(value);
+      }
+
+      toast(message) {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.classList.add("show");
+        clearTimeout(this.toastTimer);
+        this.toastTimer = setTimeout(() => toast.classList.remove("show"), 1500);
+      }
+    }
+
+    let cncTool;
+    document.addEventListener("DOMContentLoaded", () => {
+      cncTool = new CncProgramCheckerOptimizer("#cncProgramTool");
+      window.CncProgramTool = {
+        setMode: mode => cncTool.setMode(mode),
+        run: () => cncTool.runCurrentMode(),
+        checkSyntax: code => cncTool.checkSyntax(code),
+        checkSafety: code => cncTool.checkSafety(code),
+        checkOptimization: code => cncTool.checkOptimization(code),
+        getProgramStats: code => cncTool.getProgramStats(code),
+        formatProgram: code => cncTool.formatProgram(code),
+        comparePrograms: (a, b) => cncTool.comparePrograms(a, b),
+        insertTemplate: id => cncTool.insertTemplate(id),
+        loadDemo: () => cncTool.loadDemo()
+      };
+    });
+  </script>
+</body>
+</html>

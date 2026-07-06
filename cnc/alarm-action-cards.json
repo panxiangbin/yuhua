@@ -1,0 +1,1909 @@
+[
+  {
+    "id": "alm-card-001",
+    "title": "FANUC 090 主轴过载报警",
+    "system": "FANUC",
+    "alarmCodes": [
+      "090",
+      "SPN 90"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "主轴切削负荷长时间超出电机额定功率极限，电机发热停转。",
+    "firstThreeChecks": [
+      "1. 确认冷却液/机油有无喷洒在驱动线缆接头上。",
+      "2. 观察当前报警轴对应的伺服指示灯硬件代码是否常红。",
+      "3. 检查刀尖是否崩裂导致切削热传导至轴承。"
+    ],
+    "stopConditions": "【紧急停机】如果滑台有明显机械咬死声、电机啸叫，严禁再次RESET强行开机，必须立刻断强电。",
+    "relatedFlowId": "flow-fanuc-090",
+    "relatedEntryIds": [
+      "kb-00137",
+      "kb-01017",
+      "kb-01040"
+    ]
+  },
+  {
+    "id": "alm-card-002",
+    "title": "FANUC 5136 FSSB 通信断线",
+    "system": "FANUC",
+    "alarmCodes": [
+      "5136",
+      "FSSB 00"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "CNC控制器与伺服放大器之间的光纤网络通信故障，系统紧急刹车。",
+    "firstThreeChecks": [
+      "1. 确认冷却液/机油有无喷洒在驱动线缆接头上。",
+      "2. 观察当前报警轴对应的伺服指示灯硬件代码是否常红。",
+      "3. 检查刀尖是否崩裂导致切削热传导至轴承。"
+    ],
+    "stopConditions": "【紧急停机】如果滑台有明显机械咬死声、电机啸叫，严禁再次RESET强行开机，必须立刻断强电。",
+    "relatedFlowId": "flow-fanuc-5136",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-003",
+    "title": "Siemens 25000 测量监测故障",
+    "system": "Siemens",
+    "alarmCodes": [
+      "25000"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "编码器反馈的位置信号与实际脉冲计数不匹配，通常为插头漏油或反馈线断裂。",
+    "firstThreeChecks": [
+      "1. 确认冷却液/机油有无喷洒在驱动线缆接头上。",
+      "2. 观察当前报警轴对应的伺服指示灯硬件代码是否常红。",
+      "3. 检查刀尖是否崩裂导致切削热传导至轴承。"
+    ],
+    "stopConditions": "【紧急停机】如果滑台有明显机械咬死声、电机啸叫，严禁再次RESET强行开机，必须立刻断强电。",
+    "relatedFlowId": "flow-siemens-25000",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-004",
+    "title": "FANUC OT0001 X轴正向软超程",
+    "system": "FANUC",
+    "alarmCodes": [
+      "OT0001",
+      "500"
+    ],
+    "riskLevel": "Low",
+    "oneLineDiagnosis": "X轴进给坐标超出了参数设定的软件行程上限边界。",
+    "firstThreeChecks": [
+      "1. 确认冷却液/机油有无喷洒在驱动线缆接头上。",
+      "2. 观察当前报警轴对应的伺服指示灯硬件代码是否常红。",
+      "3. 检查刀尖是否崩裂导致切削热传导至轴承。"
+    ],
+    "stopConditions": "【紧急停机】如果滑台有明显机械咬死声、电机啸叫，严禁再次RESET强行开机，必须立刻断强电。",
+    "relatedFlowId": "flow-limit-ot-x",
+    "relatedEntryIds": [
+      "kb-00029",
+      "kb-00041",
+      "kb-00043"
+    ]
+  },
+  {
+    "id": "alm-card-005",
+    "title": "导轨润滑油压不足报警",
+    "system": "通用",
+    "alarmCodes": [
+      "ALM 05",
+      "LUBE"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "自动润滑泵压力打不到指定高度或润滑油箱油位低于标下限。",
+    "firstThreeChecks": [
+      "1. 确认冷却液/机油有无喷洒在驱动线缆接头上。",
+      "2. 观察当前报警轴对应的伺服指示灯硬件代码是否常红。",
+      "3. 检查刀尖是否崩裂导致切削热传导至轴承。"
+    ],
+    "stopConditions": "【紧急停机】如果滑台有明显机械咬死声、电机啸叫，严禁再次RESET强行开机，必须立刻断强电。",
+    "relatedFlowId": "flow-lube-fail",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-006",
+    "title": "FANUC 伺服电机过热警告 (SV0438)_代码卡2",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0438"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "伺服电机因连续粗切吃刀量大，温度触发内部热敏保护。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-007",
+    "title": "FANUC 系统电池低电压 (BATTERY LOW)_代码卡2",
+    "system": "FANUC",
+    "alarmCodes": [
+      "300",
+      "BAT LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "系统后备锂电池电量低，断电后可能会丢失机床零点参数。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": [
+      "kb-00044",
+      "kb-00171",
+      "kb-00213"
+    ]
+  },
+  {
+    "id": "alm-card-008",
+    "title": "通用 气压不足主轴锁紧故障_代码卡2",
+    "system": "通用",
+    "alarmCodes": [
+      "AIR LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "进气压力下降至 0.45 MPa 以下，导致主轴气缸无法安全松刀。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-009",
+    "title": "通用 换刀手臂定位角度错位_代码卡2",
+    "system": "通用",
+    "alarmCodes": [
+      "ATC ERR"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "机械手在中途停机，接近开关无法感应到换刀臂的原位信号。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-010",
+    "title": "FANUC 跟随误差偏差过大 (SV0411)_代码卡2",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0411"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "轴实际移动位置滞后于指令位置超出额定门限，通常是机械丝杠抱死。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-011",
+    "title": "FANUC 伺服电机过热警告 (SV0438)_代码卡3",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0438"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "伺服电机因连续粗切吃刀量大，温度触发内部热敏保护。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-012",
+    "title": "FANUC 系统电池低电压 (BATTERY LOW)_代码卡3",
+    "system": "FANUC",
+    "alarmCodes": [
+      "300",
+      "BAT LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "系统后备锂电池电量低，断电后可能会丢失机床零点参数。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": [
+      "kb-00044",
+      "kb-00171",
+      "kb-00213"
+    ]
+  },
+  {
+    "id": "alm-card-013",
+    "title": "通用 气压不足主轴锁紧故障_代码卡3",
+    "system": "通用",
+    "alarmCodes": [
+      "AIR LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "进气压力下降至 0.45 MPa 以下，导致主轴气缸无法安全松刀。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-014",
+    "title": "通用 换刀手臂定位角度错位_代码卡3",
+    "system": "通用",
+    "alarmCodes": [
+      "ATC ERR"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "机械手在中途停机，接近开关无法感应到换刀臂的原位信号。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-015",
+    "title": "FANUC 跟随误差偏差过大 (SV0411)_代码卡3",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0411"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "轴实际移动位置滞后于指令位置超出额定门限，通常是机械丝杠抱死。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-016",
+    "title": "FANUC 伺服电机过热警告 (SV0438)_代码卡4",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0438"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "伺服电机因连续粗切吃刀量大，温度触发内部热敏保护。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-017",
+    "title": "FANUC 系统电池低电压 (BATTERY LOW)_代码卡4",
+    "system": "FANUC",
+    "alarmCodes": [
+      "300",
+      "BAT LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "系统后备锂电池电量低，断电后可能会丢失机床零点参数。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": [
+      "kb-00044",
+      "kb-00171",
+      "kb-00213"
+    ]
+  },
+  {
+    "id": "alm-card-018",
+    "title": "通用 气压不足主轴锁紧故障_代码卡4",
+    "system": "通用",
+    "alarmCodes": [
+      "AIR LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "进气压力下降至 0.45 MPa 以下，导致主轴气缸无法安全松刀。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-019",
+    "title": "通用 换刀手臂定位角度错位_代码卡4",
+    "system": "通用",
+    "alarmCodes": [
+      "ATC ERR"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "机械手在中途停机，接近开关无法感应到换刀臂的原位信号。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-020",
+    "title": "FANUC 跟随误差偏差过大 (SV0411)_代码卡4",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0411"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "轴实际移动位置滞后于指令位置超出额定门限，通常是机械丝杠抱死。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-021",
+    "title": "FANUC 伺服电机过热警告 (SV0438)_代码卡5",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0438"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "伺服电机因连续粗切吃刀量大，温度触发内部热敏保护。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-022",
+    "title": "FANUC 系统电池低电压 (BATTERY LOW)_代码卡5",
+    "system": "FANUC",
+    "alarmCodes": [
+      "300",
+      "BAT LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "系统后备锂电池电量低，断电后可能会丢失机床零点参数。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": [
+      "kb-00044",
+      "kb-00171",
+      "kb-00213"
+    ]
+  },
+  {
+    "id": "alm-card-023",
+    "title": "通用 气压不足主轴锁紧故障_代码卡5",
+    "system": "通用",
+    "alarmCodes": [
+      "AIR LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "进气压力下降至 0.45 MPa 以下，导致主轴气缸无法安全松刀。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-024",
+    "title": "通用 换刀手臂定位角度错位_代码卡5",
+    "system": "通用",
+    "alarmCodes": [
+      "ATC ERR"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "机械手在中途停机，接近开关无法感应到换刀臂的原位信号。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-025",
+    "title": "FANUC 跟随误差偏差过大 (SV0411)_代码卡5",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0411"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "轴实际移动位置滞后于指令位置超出额定门限，通常是机械丝杠抱死。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-026",
+    "title": "FANUC 伺服电机过热警告 (SV0438)_代码卡6",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0438"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "伺服电机因连续粗切吃刀量大，温度触发内部热敏保护。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-027",
+    "title": "FANUC 系统电池低电压 (BATTERY LOW)_代码卡6",
+    "system": "FANUC",
+    "alarmCodes": [
+      "300",
+      "BAT LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "系统后备锂电池电量低，断电后可能会丢失机床零点参数。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": [
+      "kb-00044",
+      "kb-00171",
+      "kb-00213"
+    ]
+  },
+  {
+    "id": "alm-card-028",
+    "title": "通用 气压不足主轴锁紧故障_代码卡6",
+    "system": "通用",
+    "alarmCodes": [
+      "AIR LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "进气压力下降至 0.45 MPa 以下，导致主轴气缸无法安全松刀。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-029",
+    "title": "通用 换刀手臂定位角度错位_代码卡6",
+    "system": "通用",
+    "alarmCodes": [
+      "ATC ERR"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "机械手在中途停机，接近开关无法感应到换刀臂的原位信号。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-030",
+    "title": "FANUC 跟随误差偏差过大 (SV0411)_代码卡6",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0411"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "轴实际移动位置滞后于指令位置超出额定门限，通常是机械丝杠抱死。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-031",
+    "title": "FANUC 伺服电机过热警告 (SV0438)_代码卡7",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0438"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "伺服电机因连续粗切吃刀量大，温度触发内部热敏保护。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-032",
+    "title": "FANUC 系统电池低电压 (BATTERY LOW)_代码卡7",
+    "system": "FANUC",
+    "alarmCodes": [
+      "300",
+      "BAT LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "系统后备锂电池电量低，断电后可能会丢失机床零点参数。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": [
+      "kb-00044",
+      "kb-00171",
+      "kb-00213"
+    ]
+  },
+  {
+    "id": "alm-card-033",
+    "title": "通用 气压不足主轴锁紧故障_代码卡7",
+    "system": "通用",
+    "alarmCodes": [
+      "AIR LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "进气压力下降至 0.45 MPa 以下，导致主轴气缸无法安全松刀。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-034",
+    "title": "通用 换刀手臂定位角度错位_代码卡7",
+    "system": "通用",
+    "alarmCodes": [
+      "ATC ERR"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "机械手在中途停机，接近开关无法感应到换刀臂的原位信号。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-035",
+    "title": "FANUC 跟随误差偏差过大 (SV0411)_代码卡7",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0411"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "轴实际移动位置滞后于指令位置超出额定门限，通常是机械丝杠抱死。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-036",
+    "title": "FANUC 伺服电机过热警告 (SV0438)_代码卡8",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0438"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "伺服电机因连续粗切吃刀量大，温度触发内部热敏保护。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-037",
+    "title": "FANUC 系统电池低电压 (BATTERY LOW)_代码卡8",
+    "system": "FANUC",
+    "alarmCodes": [
+      "300",
+      "BAT LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "系统后备锂电池电量低，断电后可能会丢失机床零点参数。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": [
+      "kb-00044",
+      "kb-00171",
+      "kb-00213"
+    ]
+  },
+  {
+    "id": "alm-card-038",
+    "title": "通用 气压不足主轴锁紧故障_代码卡8",
+    "system": "通用",
+    "alarmCodes": [
+      "AIR LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "进气压力下降至 0.45 MPa 以下，导致主轴气缸无法安全松刀。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-039",
+    "title": "通用 换刀手臂定位角度错位_代码卡8",
+    "system": "通用",
+    "alarmCodes": [
+      "ATC ERR"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "机械手在中途停机，接近开关无法感应到换刀臂的原位信号。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-040",
+    "title": "FANUC 跟随误差偏差过大 (SV0411)_代码卡8",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0411"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "轴实际移动位置滞后于指令位置超出额定门限，通常是机械丝杠抱死。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-041",
+    "title": "FANUC 伺服电机过热警告 (SV0438)_代码卡9",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0438"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "伺服电机因连续粗切吃刀量大，温度触发内部热敏保护。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-042",
+    "title": "FANUC 系统电池低电压 (BATTERY LOW)_代码卡9",
+    "system": "FANUC",
+    "alarmCodes": [
+      "300",
+      "BAT LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "系统后备锂电池电量低，断电后可能会丢失机床零点参数。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": [
+      "kb-00044",
+      "kb-00171",
+      "kb-00213"
+    ]
+  },
+  {
+    "id": "alm-card-043",
+    "title": "通用 气压不足主轴锁紧故障_代码卡9",
+    "system": "通用",
+    "alarmCodes": [
+      "AIR LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "进气压力下降至 0.45 MPa 以下，导致主轴气缸无法安全松刀。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-044",
+    "title": "通用 换刀手臂定位角度错位_代码卡9",
+    "system": "通用",
+    "alarmCodes": [
+      "ATC ERR"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "机械手在中途停机，接近开关无法感应到换刀臂的原位信号。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-045",
+    "title": "FANUC 跟随误差偏差过大 (SV0411)_代码卡9",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0411"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "轴实际移动位置滞后于指令位置超出额定门限，通常是机械丝杠抱死。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-046",
+    "title": "FANUC 伺服电机过热警告 (SV0438)_代码卡10",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0438"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "伺服电机因连续粗切吃刀量大，温度触发内部热敏保护。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-047",
+    "title": "FANUC 系统电池低电压 (BATTERY LOW)_代码卡10",
+    "system": "FANUC",
+    "alarmCodes": [
+      "300",
+      "BAT LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "系统后备锂电池电量低，断电后可能会丢失机床零点参数。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": [
+      "kb-00044",
+      "kb-00171",
+      "kb-00213"
+    ]
+  },
+  {
+    "id": "alm-card-048",
+    "title": "通用 气压不足主轴锁紧故障_代码卡10",
+    "system": "通用",
+    "alarmCodes": [
+      "AIR LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "进气压力下降至 0.45 MPa 以下，导致主轴气缸无法安全松刀。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-049",
+    "title": "通用 换刀手臂定位角度错位_代码卡10",
+    "system": "通用",
+    "alarmCodes": [
+      "ATC ERR"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "机械手在中途停机，接近开关无法感应到换刀臂的原位信号。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-050",
+    "title": "FANUC 跟随误差偏差过大 (SV0411)_代码卡10",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0411"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "轴实际移动位置滞后于指令位置超出额定门限，通常是机械丝杠抱死。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-051",
+    "title": "FANUC 伺服电机过热警告 (SV0438)_代码卡11",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0438"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "伺服电机因连续粗切吃刀量大，温度触发内部热敏保护。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-052",
+    "title": "FANUC 系统电池低电压 (BATTERY LOW)_代码卡11",
+    "system": "FANUC",
+    "alarmCodes": [
+      "300",
+      "BAT LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "系统后备锂电池电量低，断电后可能会丢失机床零点参数。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": [
+      "kb-00044",
+      "kb-00171",
+      "kb-00213"
+    ]
+  },
+  {
+    "id": "alm-card-053",
+    "title": "通用 气压不足主轴锁紧故障_代码卡11",
+    "system": "通用",
+    "alarmCodes": [
+      "AIR LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "进气压力下降至 0.45 MPa 以下，导致主轴气缸无法安全松刀。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-054",
+    "title": "通用 换刀手臂定位角度错位_代码卡11",
+    "system": "通用",
+    "alarmCodes": [
+      "ATC ERR"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "机械手在中途停机，接近开关无法感应到换刀臂的原位信号。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-055",
+    "title": "FANUC 跟随误差偏差过大 (SV0411)_代码卡11",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0411"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "轴实际移动位置滞后于指令位置超出额定门限，通常是机械丝杠抱死。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-056",
+    "title": "FANUC 伺服电机过热警告 (SV0438)_代码卡12",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0438"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "伺服电机因连续粗切吃刀量大，温度触发内部热敏保护。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-057",
+    "title": "FANUC 系统电池低电压 (BATTERY LOW)_代码卡12",
+    "system": "FANUC",
+    "alarmCodes": [
+      "300",
+      "BAT LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "系统后备锂电池电量低，断电后可能会丢失机床零点参数。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": [
+      "kb-00044",
+      "kb-00171",
+      "kb-00213"
+    ]
+  },
+  {
+    "id": "alm-card-058",
+    "title": "通用 气压不足主轴锁紧故障_代码卡12",
+    "system": "通用",
+    "alarmCodes": [
+      "AIR LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "进气压力下降至 0.45 MPa 以下，导致主轴气缸无法安全松刀。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-059",
+    "title": "通用 换刀手臂定位角度错位_代码卡12",
+    "system": "通用",
+    "alarmCodes": [
+      "ATC ERR"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "机械手在中途停机，接近开关无法感应到换刀臂的原位信号。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-060",
+    "title": "FANUC 跟随误差偏差过大 (SV0411)_代码卡12",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0411"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "轴实际移动位置滞后于指令位置超出额定门限，通常是机械丝杠抱死。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-061",
+    "title": "FANUC 伺服电机过热警告 (SV0438)_代码卡13",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0438"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "伺服电机因连续粗切吃刀量大，温度触发内部热敏保护。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-062",
+    "title": "FANUC 系统电池低电压 (BATTERY LOW)_代码卡13",
+    "system": "FANUC",
+    "alarmCodes": [
+      "300",
+      "BAT LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "系统后备锂电池电量低，断电后可能会丢失机床零点参数。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": [
+      "kb-00044",
+      "kb-00171",
+      "kb-00213"
+    ]
+  },
+  {
+    "id": "alm-card-063",
+    "title": "通用 气压不足主轴锁紧故障_代码卡13",
+    "system": "通用",
+    "alarmCodes": [
+      "AIR LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "进气压力下降至 0.45 MPa 以下，导致主轴气缸无法安全松刀。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-064",
+    "title": "通用 换刀手臂定位角度错位_代码卡13",
+    "system": "通用",
+    "alarmCodes": [
+      "ATC ERR"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "机械手在中途停机，接近开关无法感应到换刀臂的原位信号。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-065",
+    "title": "FANUC 跟随误差偏差过大 (SV0411)_代码卡13",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0411"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "轴实际移动位置滞后于指令位置超出额定门限，通常是机械丝杠抱死。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-066",
+    "title": "FANUC 伺服电机过热警告 (SV0438)_代码卡14",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0438"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "伺服电机因连续粗切吃刀量大，温度触发内部热敏保护。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-067",
+    "title": "FANUC 系统电池低电压 (BATTERY LOW)_代码卡14",
+    "system": "FANUC",
+    "alarmCodes": [
+      "300",
+      "BAT LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "系统后备锂电池电量低，断电后可能会丢失机床零点参数。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": [
+      "kb-00044",
+      "kb-00171",
+      "kb-00213"
+    ]
+  },
+  {
+    "id": "alm-card-068",
+    "title": "通用 气压不足主轴锁紧故障_代码卡14",
+    "system": "通用",
+    "alarmCodes": [
+      "AIR LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "进气压力下降至 0.45 MPa 以下，导致主轴气缸无法安全松刀。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-069",
+    "title": "通用 换刀手臂定位角度错位_代码卡14",
+    "system": "通用",
+    "alarmCodes": [
+      "ATC ERR"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "机械手在中途停机，接近开关无法感应到换刀臂的原位信号。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-070",
+    "title": "FANUC 跟随误差偏差过大 (SV0411)_代码卡14",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0411"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "轴实际移动位置滞后于指令位置超出额定门限，通常是机械丝杠抱死。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-071",
+    "title": "FANUC 伺服电机过热警告 (SV0438)_代码卡15",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0438"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "伺服电机因连续粗切吃刀量大，温度触发内部热敏保护。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-072",
+    "title": "FANUC 系统电池低电压 (BATTERY LOW)_代码卡15",
+    "system": "FANUC",
+    "alarmCodes": [
+      "300",
+      "BAT LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "系统后备锂电池电量低，断电后可能会丢失机床零点参数。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": [
+      "kb-00044",
+      "kb-00171",
+      "kb-00213"
+    ]
+  },
+  {
+    "id": "alm-card-073",
+    "title": "通用 气压不足主轴锁紧故障_代码卡15",
+    "system": "通用",
+    "alarmCodes": [
+      "AIR LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "进气压力下降至 0.45 MPa 以下，导致主轴气缸无法安全松刀。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-074",
+    "title": "通用 换刀手臂定位角度错位_代码卡15",
+    "system": "通用",
+    "alarmCodes": [
+      "ATC ERR"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "机械手在中途停机，接近开关无法感应到换刀臂的原位信号。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-075",
+    "title": "FANUC 跟随误差偏差过大 (SV0411)_代码卡15",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0411"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "轴实际移动位置滞后于指令位置超出额定门限，通常是机械丝杠抱死。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-076",
+    "title": "FANUC 伺服电机过热警告 (SV0438)_代码卡16",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0438"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "伺服电机因连续粗切吃刀量大，温度触发内部热敏保护。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-077",
+    "title": "FANUC 系统电池低电压 (BATTERY LOW)_代码卡16",
+    "system": "FANUC",
+    "alarmCodes": [
+      "300",
+      "BAT LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "系统后备锂电池电量低，断电后可能会丢失机床零点参数。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": [
+      "kb-00044",
+      "kb-00171",
+      "kb-00213"
+    ]
+  },
+  {
+    "id": "alm-card-078",
+    "title": "通用 气压不足主轴锁紧故障_代码卡16",
+    "system": "通用",
+    "alarmCodes": [
+      "AIR LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "进气压力下降至 0.45 MPa 以下，导致主轴气缸无法安全松刀。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-079",
+    "title": "通用 换刀手臂定位角度错位_代码卡16",
+    "system": "通用",
+    "alarmCodes": [
+      "ATC ERR"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "机械手在中途停机，接近开关无法感应到换刀臂的原位信号。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-080",
+    "title": "FANUC 跟随误差偏差过大 (SV0411)_代码卡16",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0411"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "轴实际移动位置滞后于指令位置超出额定门限，通常是机械丝杠抱死。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-081",
+    "title": "FANUC 伺服电机过热警告 (SV0438)_代码卡17",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0438"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "伺服电机因连续粗切吃刀量大，温度触发内部热敏保护。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-082",
+    "title": "FANUC 系统电池低电压 (BATTERY LOW)_代码卡17",
+    "system": "FANUC",
+    "alarmCodes": [
+      "300",
+      "BAT LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "系统后备锂电池电量低，断电后可能会丢失机床零点参数。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": [
+      "kb-00044",
+      "kb-00171",
+      "kb-00213"
+    ]
+  },
+  {
+    "id": "alm-card-083",
+    "title": "通用 气压不足主轴锁紧故障_代码卡17",
+    "system": "通用",
+    "alarmCodes": [
+      "AIR LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "进气压力下降至 0.45 MPa 以下，导致主轴气缸无法安全松刀。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-084",
+    "title": "通用 换刀手臂定位角度错位_代码卡17",
+    "system": "通用",
+    "alarmCodes": [
+      "ATC ERR"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "机械手在中途停机，接近开关无法感应到换刀臂的原位信号。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-085",
+    "title": "FANUC 跟随误差偏差过大 (SV0411)_代码卡17",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0411"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "轴实际移动位置滞后于指令位置超出额定门限，通常是机械丝杠抱死。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-086",
+    "title": "FANUC 伺服电机过热警告 (SV0438)_代码卡18",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0438"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "伺服电机因连续粗切吃刀量大，温度触发内部热敏保护。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-087",
+    "title": "FANUC 系统电池低电压 (BATTERY LOW)_代码卡18",
+    "system": "FANUC",
+    "alarmCodes": [
+      "300",
+      "BAT LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "系统后备锂电池电量低，断电后可能会丢失机床零点参数。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": [
+      "kb-00044",
+      "kb-00171",
+      "kb-00213"
+    ]
+  },
+  {
+    "id": "alm-card-088",
+    "title": "通用 气压不足主轴锁紧故障_代码卡18",
+    "system": "通用",
+    "alarmCodes": [
+      "AIR LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "进气压力下降至 0.45 MPa 以下，导致主轴气缸无法安全松刀。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-089",
+    "title": "通用 换刀手臂定位角度错位_代码卡18",
+    "system": "通用",
+    "alarmCodes": [
+      "ATC ERR"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "机械手在中途停机，接近开关无法感应到换刀臂的原位信号。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-090",
+    "title": "FANUC 跟随误差偏差过大 (SV0411)_代码卡18",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0411"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "轴实际移动位置滞后于指令位置超出额定门限，通常是机械丝杠抱死。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-091",
+    "title": "FANUC 伺服电机过热警告 (SV0438)_代码卡19",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0438"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "伺服电机因连续粗切吃刀量大，温度触发内部热敏保护。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-092",
+    "title": "FANUC 系统电池低电压 (BATTERY LOW)_代码卡19",
+    "system": "FANUC",
+    "alarmCodes": [
+      "300",
+      "BAT LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "系统后备锂电池电量低，断电后可能会丢失机床零点参数。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": [
+      "kb-00044",
+      "kb-00171",
+      "kb-00213"
+    ]
+  },
+  {
+    "id": "alm-card-093",
+    "title": "通用 气压不足主轴锁紧故障_代码卡19",
+    "system": "通用",
+    "alarmCodes": [
+      "AIR LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "进气压力下降至 0.45 MPa 以下，导致主轴气缸无法安全松刀。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-094",
+    "title": "通用 换刀手臂定位角度错位_代码卡19",
+    "system": "通用",
+    "alarmCodes": [
+      "ATC ERR"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "机械手在中途停机，接近开关无法感应到换刀臂的原位信号。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-095",
+    "title": "FANUC 跟随误差偏差过大 (SV0411)_代码卡19",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0411"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "轴实际移动位置滞后于指令位置超出额定门限，通常是机械丝杠抱死。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-096",
+    "title": "FANUC 伺服电机过热警告 (SV0438)_代码卡20",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0438"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "伺服电机因连续粗切吃刀量大，温度触发内部热敏保护。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-097",
+    "title": "FANUC 系统电池低电压 (BATTERY LOW)_代码卡20",
+    "system": "FANUC",
+    "alarmCodes": [
+      "300",
+      "BAT LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "系统后备锂电池电量低，断电后可能会丢失机床零点参数。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": [
+      "kb-00044",
+      "kb-00171",
+      "kb-00213"
+    ]
+  },
+  {
+    "id": "alm-card-098",
+    "title": "通用 气压不足主轴锁紧故障_代码卡20",
+    "system": "通用",
+    "alarmCodes": [
+      "AIR LOW"
+    ],
+    "riskLevel": "Medium",
+    "oneLineDiagnosis": "进气压力下降至 0.45 MPa 以下，导致主轴气缸无法安全松刀。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-099",
+    "title": "通用 换刀手臂定位角度错位_代码卡20",
+    "system": "通用",
+    "alarmCodes": [
+      "ATC ERR"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "机械手在中途停机，接近开关无法感应到换刀臂的原位信号。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  },
+  {
+    "id": "alm-card-100",
+    "title": "FANUC 跟随误差偏差过大 (SV0411)_代码卡20",
+    "system": "FANUC",
+    "alarmCodes": [
+      "SV0411"
+    ],
+    "riskLevel": "High",
+    "oneLineDiagnosis": "轴实际移动位置滞后于指令位置超出额定门限，通常是机械丝杠抱死。",
+    "firstThreeChecks": [
+      "1. 检查报警显示下诊断页面 #300 诊断状态字节。",
+      "2. 触测对应电磁阀线圈是否有 24V 励磁吸合。",
+      "3. 核实外部供气或供电空开是否合上跳闸。"
+    ],
+    "stopConditions": "【注意】报警不消除切勿切换到自动切削（MEM）模式，避免刀柄松脱飞出飞刀伤人。",
+    "relatedFlowId": "flow-gen-8",
+    "relatedEntryIds": []
+  }
+]

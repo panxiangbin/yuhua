@@ -1,0 +1,2455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>学习路径系统 · Learning Path System</title>
+  <style>
+    :root {
+      --bg: #f3ebde;
+      --card: #fffaf2;
+      --primary: #cf6d36;
+      --text: #5d655f;
+      --muted: #a89c8e;
+      --blue: #4a9eff;
+      --green: #00d4aa;
+      --purple: #b794f6;
+      --locked: #9ca3af;
+      --doing: #cf6d36;
+      --done: #00a878;
+      --danger: #c94b4b;
+      --line: rgba(207, 109, 54, 0.22);
+      --shadow: 0 12px 32px rgba(93, 101, 95, 0.12);
+      --shadow-strong: 0 18px 52px rgba(93, 101, 95, 0.18);
+      --radius: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(74, 158, 255, 0.11), transparent 28%),
+        radial-gradient(circle at top right, rgba(183, 148, 246, 0.12), transparent 30%),
+        linear-gradient(135deg, #f3ebde 0%, #efe2d1 100%);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      border: none;
+    }
+
+    .lp-app {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 34px 22px 60px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 26px;
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      background:
+        linear-gradient(135deg, rgba(255, 250, 242, 0.95), rgba(255, 250, 242, 0.78)),
+        radial-gradient(circle at 90% 20%, rgba(74, 158, 255, 0.15), transparent 35%);
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -80px -120px auto;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(207, 109, 54, 0.18), transparent 65%);
+      pointer-events: none;
+    }
+
+    .hero-top {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(207, 109, 54, 0.12);
+      color: var(--primary);
+      font-weight: 800;
+      font-size: 13px;
+      margin-bottom: 14px;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 16px var(--green);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 46px);
+      letter-spacing: -0.04em;
+      color: var(--text);
+    }
+
+    .hero-desc {
+      margin: 12px 0 0;
+      max-width: 780px;
+      line-height: 1.85;
+      color: #7b746d;
+      font-size: 16px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 40px;
+      padding: 10px 15px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 800;
+      transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: var(--card);
+      box-shadow: 0 10px 22px rgba(207, 109, 54, 0.24);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 30px rgba(207, 109, 54, 0.3);
+    }
+
+    .btn-ghost {
+      border: 1px solid rgba(207, 109, 54, 0.24);
+      background: rgba(255, 250, 242, 0.72);
+      color: var(--primary);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(207, 109, 54, 0.09);
+      transform: translateY(-2px);
+    }
+
+    .nav-tabs {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      gap: 10px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding: 14px 0 18px;
+      margin-bottom: 6px;
+      backdrop-filter: blur(14px);
+    }
+
+    .nav-tab {
+      flex: 0 0 auto;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(207, 109, 54, 0.18);
+      background: rgba(255, 250, 242, 0.86);
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 800;
+      transition: all 0.22s ease;
+      box-shadow: 0 8px 20px rgba(93, 101, 95, 0.06);
+    }
+
+    .nav-tab:hover,
+    .nav-tab.active {
+      background: var(--primary);
+      color: var(--card);
+      border-color: var(--primary);
+    }
+
+    .module-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .module-card {
+      position: relative;
+      overflow: hidden;
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 250, 242, 0.92);
+      box-shadow: var(--shadow);
+    }
+
+    .module-card::before {
+      content: "";
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(74, 158, 255, 0.12), transparent 68%);
+      pointer-events: none;
+    }
+
+    .module-head {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 20px 22px 14px;
+      border-bottom: 1px solid rgba(207, 109, 54, 0.13);
+    }
+
+    .module-title {
+      margin: 0;
+      font-size: 21px;
+      color: var(--text);
+    }
+
+    .module-subtitle {
+      margin: 6px 0 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .module-tools {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .tool-btn {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      border: 1px solid rgba(207, 109, 54, 0.22);
+      background: rgba(255, 250, 242, 0.9);
+      color: var(--primary);
+      cursor: pointer;
+      font-weight: 900;
+      transition: all 0.2s ease;
+    }
+
+    .tool-btn:hover {
+      transform: translateY(-2px);
+      background: rgba(207, 109, 54, 0.1);
+    }
+
+    .module-body {
+      position: relative;
+      z-index: 1;
+      padding: 18px 22px 22px;
+    }
+
+    .canvas-wrap {
+      position: relative;
+      height: 560px;
+      border: 1px solid rgba(207, 109, 54, 0.18);
+      border-radius: 20px;
+      overflow: hidden;
+      background:
+        linear-gradient(rgba(207, 109, 54, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(207, 109, 54, 0.04) 1px, transparent 1px),
+        rgba(255, 250, 242, 0.74);
+      background-size: 28px 28px;
+    }
+
+    .canvas-wrap canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: grab;
+    }
+
+    .canvas-wrap canvas:active {
+      cursor: grabbing;
+    }
+
+    .canvas-hint {
+      position: absolute;
+      left: 14px;
+      bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      max-width: calc(100% - 28px);
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(45, 45, 45, 0.75);
+      color: var(--card);
+      font-size: 12px;
+      pointer-events: none;
+    }
+
+    .node-info {
+      position: absolute;
+      right: 14px;
+      bottom: 14px;
+      width: min(300px, calc(100% - 28px));
+      padding: 12px;
+      border-radius: 16px;
+      background: rgba(255, 250, 242, 0.92);
+      border: 1px solid rgba(207, 109, 54, 0.2);
+      box-shadow: 0 10px 30px rgba(93, 101, 95, 0.14);
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: all 0.22s ease;
+    }
+
+    .node-info.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .node-info h4 {
+      margin: 0 0 6px;
+      color: var(--primary);
+    }
+
+    .node-info p {
+      margin: 0;
+      line-height: 1.6;
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(93, 101, 95, 0.06);
+      color: #756e67;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--locked);
+    }
+
+    .dot.doing { background: var(--doing); }
+    .dot.done { background: var(--done); }
+    .dot.blue { background: var(--blue); }
+    .dot.purple { background: var(--purple); }
+    .dot.green { background: var(--green); }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .stat-card {
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(207, 109, 54, 0.16);
+      background:
+        radial-gradient(circle at top right, rgba(74, 158, 255, 0.1), transparent 42%),
+        rgba(255, 250, 242, 0.8);
+      box-shadow: 0 10px 24px rgba(93, 101, 95, 0.07);
+    }
+
+    .stat-label {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .stat-value {
+      margin: 0;
+      font-size: 27px;
+      font-weight: 900;
+      color: var(--text);
+      letter-spacing: -0.03em;
+    }
+
+    .stat-extra {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--primary);
+      font-weight: 800;
+    }
+
+    .progress-layout {
+      display: grid;
+      grid-template-columns: 1fr 250px;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .chart-box,
+    .ring-box,
+    .timeline-box {
+      border: 1px solid rgba(207, 109, 54, 0.16);
+      border-radius: 20px;
+      background: rgba(255, 250, 242, 0.72);
+      padding: 14px;
+    }
+
+    .chart-box canvas {
+      width: 100%;
+      height: 250px;
+      display: block;
+    }
+
+    .ring-box {
+      display: grid;
+      place-items: center;
+      text-align: center;
+    }
+
+    .ring-box canvas {
+      width: 210px;
+      height: 210px;
+    }
+
+    .ring-title {
+      margin: 0;
+      font-weight: 900;
+      color: var(--text);
+    }
+
+    .ring-desc {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .learning-timeline {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .timeline-record {
+      display: grid;
+      grid-template-columns: 86px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(207, 109, 54, 0.14);
+      background: rgba(255, 250, 242, 0.82);
+    }
+
+    .record-date {
+      color: var(--primary);
+      font-weight: 900;
+      font-size: 13px;
+    }
+
+    .record-title {
+      margin: 0;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .record-desc {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .record-pill {
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(0, 212, 170, 0.13);
+      color: #079778;
+      font-weight: 900;
+      font-size: 12px;
+    }
+
+    .badge-toolbar,
+    .checkin-toolbar,
+    .graph-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .select,
+    .input {
+      height: 40px;
+      padding: 0 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(207, 109, 54, 0.23);
+      background: rgba(255, 250, 242, 0.85);
+      color: var(--text);
+      outline: none;
+    }
+
+    .select:focus,
+    .input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(207, 109, 54, 0.11);
+    }
+
+    .badge-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 14px;
+    }
+
+    .badge-card {
+      min-height: 170px;
+      perspective: 900px;
+      cursor: pointer;
+    }
+
+    .badge-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 170px;
+      transform-style: preserve-3d;
+      transition: transform 0.55s cubic-bezier(.2,.7,.2,1);
+    }
+
+    .badge-card:hover .badge-inner,
+    .badge-card.flipped .badge-inner {
+      transform: rotateY(180deg);
+    }
+
+    .badge-face {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 15px;
+      border-radius: 22px;
+      border: 1px solid rgba(207, 109, 54, 0.18);
+      background:
+        radial-gradient(circle at 50% 10%, rgba(207, 109, 54, 0.18), transparent 48%),
+        rgba(255, 250, 242, 0.94);
+      box-shadow: 0 12px 28px rgba(93, 101, 95, 0.1);
+      backface-visibility: hidden;
+    }
+
+    .badge-back {
+      transform: rotateY(180deg);
+      background:
+        radial-gradient(circle at top, rgba(74, 158, 255, 0.18), transparent 52%),
+        #fffaf2;
+    }
+
+    .badge-card.unlocked .badge-face {
+      animation: badgeGlow 1.9s infinite alternate;
+    }
+
+    @keyframes badgeGlow {
+      from {
+        box-shadow: 0 12px 28px rgba(93, 101, 95, 0.1), 0 0 0 rgba(207, 109, 54, 0);
+      }
+      to {
+        box-shadow: 0 14px 36px rgba(93, 101, 95, 0.16), 0 0 24px rgba(207, 109, 54, 0.28);
+      }
+    }
+
+    .badge-icon {
+      width: 72px;
+      height: 72px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 10px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), #e59a5f);
+      color: #fffaf2;
+      font-size: 34px;
+      box-shadow: 0 12px 25px rgba(207, 109, 54, 0.25);
+    }
+
+    .badge-card.locked {
+      filter: grayscale(0.7);
+      opacity: 0.62;
+    }
+
+    .badge-card.locked .badge-icon {
+      background: linear-gradient(135deg, #9ca3af, #d1d5db);
+      box-shadow: none;
+    }
+
+    .badge-name {
+      margin: 0;
+      font-weight: 900;
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    .badge-type {
+      margin-top: 6px;
+      display: inline-flex;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(207, 109, 54, 0.12);
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .badge-back p {
+      margin: 0;
+      line-height: 1.7;
+      font-size: 13px;
+      color: #756e67;
+    }
+
+    .checkin-layout {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 18px;
+    }
+
+    .heatmap-wrap {
+      padding: 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(207, 109, 54, 0.16);
+      background: rgba(255, 250, 242, 0.72);
+      overflow-x: auto;
+    }
+
+    .heatmap {
+      display: grid;
+      grid-template-rows: repeat(7, 16px);
+      grid-auto-flow: column;
+      grid-auto-columns: 16px;
+      gap: 4px;
+      width: max-content;
+      min-height: 136px;
+    }
+
+    .heat-cell {
+      position: relative;
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      background: rgba(93, 101, 95, 0.08);
+      border: 1px solid rgba(93, 101, 95, 0.05);
+      cursor: pointer;
+      transition: transform 0.16s ease;
+    }
+
+    .heat-cell:hover {
+      transform: scale(1.35);
+      z-index: 2;
+    }
+
+    .heat-1 { background: rgba(207, 109, 54, 0.25); }
+    .heat-2 { background: rgba(207, 109, 54, 0.45); }
+    .heat-3 { background: rgba(207, 109, 54, 0.7); }
+    .heat-4 { background: rgba(0, 212, 170, 0.82); }
+
+    .checkin-side {
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+
+    .reward-card {
+      padding: 16px;
+      border-radius: 20px;
+      border: 1px solid rgba(207, 109, 54, 0.16);
+      background:
+        radial-gradient(circle at top right, rgba(0, 212, 170, 0.13), transparent 48%),
+        rgba(255, 250, 242, 0.76);
+    }
+
+    .reward-number {
+      margin: 0;
+      font-size: 36px;
+      font-weight: 950;
+      color: var(--primary);
+      letter-spacing: -0.04em;
+    }
+
+    .reward-label {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .reward-desc {
+      margin: 8px 0 0;
+      color: #756e67;
+      line-height: 1.65;
+      font-size: 13px;
+    }
+
+    .graph-filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-chip {
+      padding: 8px 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(207, 109, 54, 0.2);
+      background: rgba(255, 250, 242, 0.8);
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 800;
+      transition: all 0.2s ease;
+    }
+
+    .filter-chip.active,
+    .filter-chip:hover {
+      background: var(--primary);
+      color: var(--card);
+      border-color: var(--primary);
+    }
+
+    .api-docs {
+      margin-top: 18px;
+      padding: 22px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: rgba(255, 250, 242, 0.92);
+      box-shadow: var(--shadow);
+    }
+
+    .api-docs h2 {
+      margin: 0 0 10px;
+      color: var(--text);
+    }
+
+    .doc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .doc-block {
+      border: 1px solid rgba(207, 109, 54, 0.16);
+      border-radius: 18px;
+      padding: 14px;
+      background: rgba(255, 250, 242, 0.7);
+      min-width: 0;
+    }
+
+    .doc-block h3 {
+      margin: 0 0 10px;
+      color: var(--primary);
+    }
+
+    pre {
+      margin: 0;
+      overflow: auto;
+      padding: 14px;
+      border-radius: 14px;
+      background: #2d2d2d;
+      color: #f5f5f5;
+      line-height: 1.65;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 13px;
+    }
+
+    .toast {
+      position: fixed;
+      z-index: 100;
+      left: 50%;
+      bottom: 28px;
+      transform: translateX(-50%) translateY(20px);
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: #2d2d2d;
+      color: #fffaf2;
+      font-weight: 900;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.22s ease;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 1180px) {
+      .module-grid,
+      .progress-layout,
+      .checkin-layout,
+      .doc-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .badge-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 720px) {
+      .lp-app {
+        padding: 18px 12px 42px;
+      }
+
+      .hero {
+        padding: 20px;
+      }
+
+      .hero-top {
+        flex-direction: column;
+      }
+
+      .hero-actions {
+        justify-content: flex-start;
+      }
+
+      .module-head {
+        flex-direction: column;
+      }
+
+      .module-body {
+        padding: 14px;
+      }
+
+      .canvas-wrap {
+        height: 430px;
+      }
+
+      .stats-grid,
+      .badge-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .timeline-record {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-tabs {
+        top: 0;
+      }
+
+      .badge-card,
+      .badge-inner {
+        min-height: 145px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="lp-app" id="learningPathApp">
+    <section class="hero">
+      <div class="hero-top">
+        <div>
+          <div class="eyebrow">Learning Path System · 数据驱动学习路径</div>
+          <h1>完整学习路径系统</h1>
+          <p class="hero-desc">
+            集成技能树、学习进度、成就徽章、每日打卡、知识点关联图谱。Canvas 绘图、节点拖拽缩放、响应式布局和完整 API 都已内置。
+          </p>
+        </div>
+        <div class="hero-actions">
+          <button class="btn btn-ghost" data-action="demo-progress">模拟学习进度</button>
+          <button class="btn btn-ghost" data-action="unlock-random">解锁随机徽章</button>
+          <button class="btn btn-primary" data-action="checkin-today">今日打卡</button>
+        </div>
+      </div>
+    </section>
+
+    <nav class="nav-tabs" aria-label="模块导航">
+      <a class="nav-tab active" href="#skill-tree">技能树</a>
+      <a class="nav-tab" href="#progress-panel">学习进度</a>
+      <a class="nav-tab" href="#badge-system">成就徽章</a>
+      <a class="nav-tab" href="#checkin-system">每日打卡</a>
+      <a class="nav-tab" href="#knowledge-graph">知识图谱</a>
+      <a class="nav-tab" href="#api-docs">API 文档</a>
+    </nav>
+
+    <div class="module-grid">
+      <section class="module-card" id="skill-tree">
+        <header class="module-head">
+          <div>
+            <h2 class="module-title">1. 技能树可视化</h2>
+            <p class="module-subtitle">Canvas 树状/网状结构，支持节点状态、拖拽、缩放、节点拖动与连线流动动画。</p>
+          </div>
+          <div class="module-tools">
+            <button class="tool-btn" data-skill-zoom="in" title="放大">+</button>
+            <button class="tool-btn" data-skill-zoom="out" title="缩小">−</button>
+            <button class="tool-btn" data-skill-reset title="重置视图">↺</button>
+          </div>
+        </header>
+        <div class="module-body">
+          <div class="canvas-wrap">
+            <canvas id="skillTreeCanvas"></canvas>
+            <div class="canvas-hint">拖动画布平移 · 滚轮缩放 · 拖动节点调整位置 · 点击节点查看说明</div>
+            <div class="node-info" id="skillNodeInfo">
+              <h4>节点说明</h4>
+              <p>点击技能节点后，这里会显示知识点介绍和状态。</p>
+            </div>
+          </div>
+          <div class="legend">
+            <span class="legend-item"><span class="dot"></span>未解锁</span>
+            <span class="legend-item"><span class="dot doing"></span>进行中</span>
+            <span class="legend-item"><span class="dot done"></span>已完成</span>
+            <span class="legend-item"><span class="dot blue"></span>基础</span>
+            <span class="legend-item"><span class="dot purple"></span>进阶</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="module-card" id="progress-panel">
+        <header class="module-head">
+          <div>
+            <h2 class="module-title">2. 学习进度追踪面板</h2>
+            <p class="module-subtitle">统计卡片、学习曲线图、环形进度图、时间线记录。</p>
+          </div>
+          <div class="module-tools">
+            <button class="tool-btn" data-action="demo-progress" title="模拟进度">↗</button>
+          </div>
+        </header>
+        <div class="module-body">
+          <div class="stats-grid" id="statsGrid"></div>
+
+          <div class="progress-layout">
+            <div class="chart-box">
+              <canvas id="learningChartCanvas"></canvas>
+            </div>
+            <div class="ring-box">
+              <canvas id="progressRingCanvas"></canvas>
+              <p class="ring-title" id="ringTitle">总进度</p>
+              <p class="ring-desc" id="ringDesc">完成节点 / 全部节点</p>
+            </div>
+          </div>
+
+          <div class="learning-timeline" id="learningTimeline"></div>
+        </div>
+      </section>
+    </div>
+
+    <section class="module-card" id="badge-system" style="margin-top: 18px;">
+      <header class="module-head">
+        <div>
+          <h2 class="module-title">3. 成就徽章系统</h2>
+          <p class="module-subtitle">6 大类徽章：入门、专业、勤奋、探索、实践、社区。支持 3D 翻转与发光动画。</p>
+        </div>
+        <div class="module-tools">
+          <button class="tool-btn" data-action="unlock-random" title="解锁随机徽章">✦</button>
+        </div>
+      </header>
+      <div class="module-body">
+        <div class="badge-toolbar">
+          <select class="select" id="badgeFilter">
+            <option value="all">全部徽章</option>
+            <option value="入门">入门</option>
+            <option value="专业">专业</option>
+            <option value="勤奋">勤奋</option>
+            <option value="探索">探索</option>
+            <option value="实践">实践</option>
+            <option value="社区">社区</option>
+          </select>
+          <button class="btn btn-ghost" data-action="unlock-basic">解锁入门徽章</button>
+        </div>
+        <div class="badge-grid" id="badgeGrid"></div>
+      </div>
+    </section>
+
+    <section class="module-card" id="checkin-system" style="margin-top: 18px;">
+      <header class="module-head">
+        <div>
+          <h2 class="module-title">4. 每日打卡系统</h2>
+          <p class="module-subtitle">热力图日历、连续打卡奖励、打卡提醒。颜色越深，学习时长越长。</p>
+        </div>
+      </header>
+      <div class="module-body">
+        <div class="checkin-toolbar">
+          <input class="input" id="checkinDate" type="date" />
+          <input class="input" id="checkinDuration" type="number" min="5" max="600" value="35" placeholder="学习分钟数" />
+          <select class="select" id="reminderSelect">
+            <option value="none">不提醒</option>
+            <option value="morning">每天早上 8:00</option>
+            <option value="noon">每天中午 12:30</option>
+            <option value="night">每天晚上 20:00</option>
+          </select>
+          <button class="btn btn-primary" data-action="manual-checkin">提交打卡</button>
+        </div>
+
+        <div class="checkin-layout">
+          <div class="heatmap-wrap">
+            <div class="heatmap" id="heatmap"></div>
+          </div>
+
+          <aside class="checkin-side">
+            <div class="reward-card">
+              <p class="reward-number" id="streakDays">0</p>
+              <p class="reward-label">连续打卡天数</p>
+              <p class="reward-desc" id="streakReward">连续 3 天解锁“勤奋起步”奖励。</p>
+            </div>
+            <div class="reward-card">
+              <p class="reward-number" id="totalCheckins">0</p>
+              <p class="reward-label">累计打卡次数</p>
+              <p class="reward-desc" id="reminderText">当前未设置提醒。</p>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="module-card" id="knowledge-graph" style="margin-top: 18px;">
+      <header class="module-head">
+        <div>
+          <h2 class="module-title">5. 知识点关联图谱</h2>
+          <p class="module-subtitle">Canvas 力导向图，支持节点拖拽、分类筛选、缩放平移和关联强度展示。</p>
+        </div>
+        <div class="module-tools">
+          <button class="tool-btn" data-graph-zoom="in" title="放大">+</button>
+          <button class="tool-btn" data-graph-zoom="out" title="缩小">−</button>
+          <button class="tool-btn" data-graph-reset title="重置视图">↺</button>
+        </div>
+      </header>
+      <div class="module-body">
+        <div class="graph-toolbar">
+          <div class="graph-filters" id="graphFilters"></div>
+        </div>
+        <div class="canvas-wrap">
+          <canvas id="knowledgeGraphCanvas"></canvas>
+          <div class="canvas-hint">拖动节点改变布局 · 滚轮缩放 · 点击节点查看关联知识点</div>
+          <div class="node-info" id="graphNodeInfo">
+            <h4>知识点说明</h4>
+            <p>点击图谱节点后显示说明。</p>
+          </div>
+        </div>
+        <div class="legend">
+          <span class="legend-item"><span class="dot blue"></span>G代码</span>
+          <span class="legend-item"><span class="dot green"></span>工艺</span>
+          <span class="legend-item"><span class="dot purple"></span>安全</span>
+          <span class="legend-item"><span class="dot doing"></span>实操</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="api-docs" id="api-docs">
+      <h2>使用文档 / API 说明</h2>
+      <p class="hero-desc" style="margin-bottom: 16px;">
+        系统采用数据驱动架构，核心类为 <strong>LearningPathSystem</strong>。你可以替换 demoData，接后端接口、LocalStorage 或本地知识库。
+      </p>
+
+      <div class="doc-grid">
+        <div class="doc-block">
+          <h3>初始化</h3>
+          <pre><code>const app = new LearningPathSystem({
+  root: "#learningPathApp",
+  data: demoData
+});
+
+app.init();</code></pre>
+        </div>
+
+        <div class="doc-block">
+          <h3>核心 API</h3>
+          <pre><code>app.renderSkillTree(skillTreeData);
+app.updateNodeStatus("g54", "done");
+
+app.updateStats({
+  totalNodes: 24,
+  completedNodes: 12,
+  learningMinutes: 860,
+  streakDays: 7
+});
+
+app.renderChart(chartData);
+app.unlockBadge("starter");
+app.checkIn("2026-07-02", 45);
+app.renderHeatmap(checkins);
+
+app.renderGraph(nodes, edges);</code></pre>
+        </div>
+
+        <div class="doc-block">
+          <h3>技能树数据格式</h3>
+          <pre><code>{
+  nodes: [
+    {
+      id: "g54",
+      label: "G54坐标系",
+      x: 120,
+      y: 160,
+      status: "current",
+      category: "基础",
+      desc: "掌握工件坐标系设定。"
+    }
+  ],
+  edges: [
+    { from: "base", to: "g54" }
+  ]
+}</code></pre>
+        </div>
+
+        <div class="doc-block">
+          <h3>知识图谱数据格式</h3>
+          <pre><code>{
+  nodes: [
+    {
+      id: "g90",
+      label: "G90",
+      category: "G代码",
+      desc: "绝对编程。"
+    }
+  ],
+  edges: [
+    {
+      from: "g90",
+      to: "g91",
+      weight: 0.8
+    }
+  ]
+}</code></pre>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast">操作成功</div>
+
+  <script>
+    const demoData = {
+      skillTree: {
+        nodes: [
+          { id: "start", label: "数控入门", x: 60, y: 240, status: "done", category: "基础", desc: "理解数控加工的基本流程：图纸、工艺、坐标、刀具、程序。", level: 1 },
+          { id: "axis", label: "坐标轴", x: 250, y: 120, status: "done", category: "基础", desc: "掌握 X/Y/Z 坐标轴方向和机床坐标概念。", level: 2 },
+          { id: "g54", label: "G54坐标系", x: 250, y: 250, status: "current", category: "基础", desc: "掌握工件坐标系、对刀和零点设定。", level: 2 },
+          { id: "tool", label: "刀具补偿", x: 250, y: 380, status: "locked", category: "基础", desc: "理解 H/D 补偿、刀长补偿和半径补偿。", level: 2 },
+          { id: "g00g01", label: "G00/G01", x: 470, y: 165, status: "done", category: "G代码", desc: "快速定位和直线插补。", level: 3 },
+          { id: "arc", label: "G02/G03", x: 470, y: 300, status: "current", category: "G代码", desc: "圆弧插补，重点理解 IJK 与 R。", level: 3 },
+          { id: "cycle", label: "固定循环", x: 690, y: 150, status: "locked", category: "进阶", desc: "G81/G83/G73 等孔加工循环。", level: 4 },
+          { id: "macro", label: "宏程序", x: 690, y: 330, status: "locked", category: "进阶", desc: "变量、判断、循环和参数化加工。", level: 4 },
+          { id: "safe", label: "防撞检查", x: 900, y: 240, status: "locked", category: "安全", desc: "单段、空运行、倍率、刀补、坐标检查。", level: 5 }
+        ],
+        edges: [
+          { from: "start", to: "axis" },
+          { from: "start", to: "g54" },
+          { from: "start", to: "tool" },
+          { from: "axis", to: "g00g01" },
+          { from: "g54", to: "arc" },
+          { from: "tool", to: "arc" },
+          { from: "g00g01", to: "cycle" },
+          { from: "arc", to: "macro" },
+          { from: "cycle", to: "safe" },
+          { from: "macro", to: "safe" }
+        ]
+      },
+
+      stats: {
+        totalNodes: 36,
+        completedNodes: 14,
+        currentNodes: 5,
+        learningMinutes: 920,
+        streakDays: 6,
+        badges: 7
+      },
+
+      chartData: [
+        { label: "周一", minutes: 25, completed: 1 },
+        { label: "周二", minutes: 42, completed: 2 },
+        { label: "周三", minutes: 36, completed: 2 },
+        { label: "周四", minutes: 58, completed: 3 },
+        { label: "周五", minutes: 46, completed: 2 },
+        { label: "周六", minutes: 70, completed: 4 },
+        { label: "周日", minutes: 52, completed: 3 }
+      ],
+
+      timeline: [
+        { date: "07-02", title: "完成 G54 坐标系复习", desc: "新增 2 条笔记，完成 1 次自测。", type: "完成" },
+        { date: "07-01", title: "学习 G02/G03 圆弧插补", desc: "重点练习 IJK 圆心增量写法。", type: "进行中" },
+        { date: "06-30", title: "完成 G00/G01 基础", desc: "理解快速定位和切削进给区别。", type: "完成" }
+      ],
+
+      badges: [
+        { id: "starter", name: "开机第一步", type: "入门", icon: "🚀", unlocked: true, desc: "完成第一个知识点学习。" },
+        { id: "coordinate", name: "坐标系新手", type: "入门", icon: "📍", unlocked: true, desc: "完成坐标系相关知识点。" },
+        { id: "gcode-pro", name: "G代码熟手", type: "专业", icon: "⚙️", unlocked: false, desc: "完成 20 个 G 代码知识点。" },
+        { id: "macro-master", name: "宏程序挑战者", type: "专业", icon: "🧠", unlocked: false, desc: "完成宏程序入门训练。" },
+        { id: "three-days", name: "三天不断档", type: "勤奋", icon: "🔥", unlocked: true, desc: "连续打卡 3 天。" },
+        { id: "seven-days", name: "七天稳定输出", type: "勤奋", icon: "🌞", unlocked: false, desc: "连续打卡 7 天。" },
+        { id: "explorer", name: "知识探索者", type: "探索", icon: "🧭", unlocked: false, desc: "查看 10 个关联知识点。" },
+        { id: "hidden-link", name: "发现隐藏关联", type: "探索", icon: "🔗", unlocked: false, desc: "在知识图谱里发现跨分类关联。" },
+        { id: "practice-1", name: "首件试切", type: "实践", icon: "🛠️", unlocked: true, desc: "完成一次实操流程模拟。" },
+        { id: "safe-run", name: "安全空运行", type: "实践", icon: "🛡️", unlocked: false, desc: "完成防撞检查流程。" },
+        { id: "comment", name: "参与讨论", type: "社区", icon: "💬", unlocked: true, desc: "发布第一条学习评论。" },
+        { id: "helper", name: "帮助同学", type: "社区", icon: "🤝", unlocked: false, desc: "解答 3 个学习问题。" }
+      ],
+
+      checkins: generateDemoCheckins(),
+
+      graph: {
+        nodes: [
+          { id: "g54", label: "G54", category: "G代码", desc: "工件坐标系，用于确定零件加工基准。" },
+          { id: "tool-set", label: "对刀", category: "实操", desc: "通过刀具接触基准面，建立加工零点。" },
+          { id: "work-zero", label: "工件零点", category: "工艺", desc: "图纸基准与机床加工坐标之间的桥梁。" },
+          { id: "g90", label: "G90", category: "G代码", desc: "绝对编程，坐标以固定零点为基准。" },
+          { id: "g91", label: "G91", category: "G代码", desc: "增量编程，坐标以上一步位置为基准。" },
+          { id: "g43", label: "G43", category: "G代码", desc: "刀长补偿正向调用。" },
+          { id: "h-code", label: "H补偿", category: "实操", desc: "刀具长度补偿号。" },
+          { id: "safe-height", label: "安全高度", category: "安全", desc: "换刀、移动、下刀前必须确认安全高度。" },
+          { id: "single-block", label: "单段运行", category: "安全", desc: "首件验证时常用的安全执行方式。" },
+          { id: "arc", label: "圆弧插补", category: "工艺", desc: "G02/G03 需要确认方向、终点和圆心。" }
+        ],
+        edges: [
+          { from: "g54", to: "tool-set", weight: 0.95 },
+          { from: "tool-set", to: "work-zero", weight: 0.9 },
+          { from: "work-zero", to: "g90", weight: 0.75 },
+          { from: "g90", to: "g91", weight: 0.72 },
+          { from: "g43", to: "h-code", weight: 0.95 },
+          { from: "h-code", to: "safe-height", weight: 0.75 },
+          { from: "safe-height", to: "single-block", weight: 0.82 },
+          { from: "g54", to: "g90", weight: 0.65 },
+          { from: "g90", to: "arc", weight: 0.52 },
+          { from: "single-block", to: "arc", weight: 0.38 }
+        ]
+      }
+    };
+
+    class LearningPathSystem {
+      constructor(options = {}) {
+        this.root = typeof options.root === "string" ? document.querySelector(options.root) : options.root;
+        this.data = structuredCloneSafe(options.data || demoData);
+
+        this.colors = {
+          card: "#fffaf2",
+          primary: "#cf6d36",
+          text: "#5d655f",
+          muted: "#a89c8e",
+          blue: "#4a9eff",
+          green: "#00d4aa",
+          purple: "#b794f6",
+          locked: "#9ca3af",
+          doing: "#cf6d36",
+          done: "#00a878",
+          dark: "#2d2d2d"
+        };
+
+        this.skill = {
+          canvas: null,
+          ctx: null,
+          scale: 1,
+          offsetX: 80,
+          offsetY: 60,
+          draggingCanvas: false,
+          draggingNode: null,
+          selectedNode: null,
+          lastX: 0,
+          lastY: 0,
+          animatedOffset: 0
+        };
+
+        this.graph = {
+          canvas: null,
+          ctx: null,
+          nodes: [],
+          edges: [],
+          scale: 1,
+          offsetX: 0,
+          offsetY: 0,
+          draggingCanvas: false,
+          draggingNode: null,
+          selectedNode: null,
+          filter: "all",
+          lastX: 0,
+          lastY: 0,
+          tick: 0
+        };
+
+        this.rafId = null;
+      }
+
+      init() {
+        if (!this.root) {
+          console.warn("LearningPathSystem: root 不存在");
+          return;
+        }
+
+        this.cacheDom();
+        this.prepareCanvases();
+        this.bindEvents();
+
+        this.renderSkillTree(this.data.skillTree);
+        this.updateStats(this.data.stats);
+        this.renderChart(this.data.chartData);
+        this.renderBadges(this.data.badges);
+        this.renderHeatmap(this.data.checkins);
+        this.renderGraph(this.data.graph.nodes, this.data.graph.edges);
+        this.renderTimeline(this.data.timeline);
+        this.renderGraphFilters();
+
+        this.setTodayInput();
+        this.startAnimation();
+      }
+
+      cacheDom() {
+        this.dom = {
+          statsGrid: document.querySelector("#statsGrid"),
+          timeline: document.querySelector("#learningTimeline"),
+          badgeGrid: document.querySelector("#badgeGrid"),
+          badgeFilter: document.querySelector("#badgeFilter"),
+          heatmap: document.querySelector("#heatmap"),
+          streakDays: document.querySelector("#streakDays"),
+          totalCheckins: document.querySelector("#totalCheckins"),
+          streakReward: document.querySelector("#streakReward"),
+          reminderText: document.querySelector("#reminderText"),
+          skillNodeInfo: document.querySelector("#skillNodeInfo"),
+          graphNodeInfo: document.querySelector("#graphNodeInfo"),
+          graphFilters: document.querySelector("#graphFilters"),
+          ringTitle: document.querySelector("#ringTitle"),
+          ringDesc: document.querySelector("#ringDesc")
+        };
+
+        this.skill.canvas = document.querySelector("#skillTreeCanvas");
+        this.skill.ctx = this.skill.canvas.getContext("2d");
+
+        this.chartCanvas = document.querySelector("#learningChartCanvas");
+        this.chartCtx = this.chartCanvas.getContext("2d");
+
+        this.ringCanvas = document.querySelector("#progressRingCanvas");
+        this.ringCtx = this.ringCanvas.getContext("2d");
+
+        this.graph.canvas = document.querySelector("#knowledgeGraphCanvas");
+        this.graph.ctx = this.graph.canvas.getContext("2d");
+      }
+
+      prepareCanvases() {
+        this.resizeCanvas(this.skill.canvas);
+        this.resizeCanvas(this.chartCanvas);
+        this.resizeCanvas(this.ringCanvas);
+        this.resizeCanvas(this.graph.canvas);
+
+        window.addEventListener("resize", () => {
+          this.resizeCanvas(this.skill.canvas);
+          this.resizeCanvas(this.chartCanvas);
+          this.resizeCanvas(this.ringCanvas);
+          this.resizeCanvas(this.graph.canvas);
+          this.drawSkillTree();
+          this.renderChart(this.data.chartData);
+          this.drawProgressRing(this.data.stats);
+          this.drawKnowledgeGraph();
+        });
+      }
+
+      resizeCanvas(canvas) {
+        const rect = canvas.getBoundingClientRect();
+        const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+        canvas.width = Math.max(1, Math.floor(rect.width * dpr));
+        canvas.height = Math.max(1, Math.floor(rect.height * dpr));
+        canvas.dataset.dpr = dpr;
+      }
+
+      bindEvents() {
+        document.querySelectorAll(".nav-tab").forEach(tab => {
+          tab.addEventListener("click", () => {
+            document.querySelectorAll(".nav-tab").forEach(item => item.classList.remove("active"));
+            tab.classList.add("active");
+          });
+        });
+
+        this.root.addEventListener("click", event => {
+          const action = event.target.closest("[data-action]")?.dataset.action;
+          if (!action) return;
+
+          if (action === "checkin-today") this.checkInToday();
+          if (action === "manual-checkin") this.manualCheckIn();
+          if (action === "demo-progress") this.demoProgress();
+          if (action === "unlock-random") this.unlockRandomBadge();
+          if (action === "unlock-basic") this.unlockBadge("starter");
+        });
+
+        document.querySelector("[data-skill-zoom='in']").addEventListener("click", () => this.zoomSkill(1.15));
+        document.querySelector("[data-skill-zoom='out']").addEventListener("click", () => this.zoomSkill(0.85));
+        document.querySelector("[data-skill-reset]").addEventListener("click", () => this.resetSkillView());
+
+        document.querySelector("[data-graph-zoom='in']").addEventListener("click", () => this.zoomGraph(1.15));
+        document.querySelector("[data-graph-zoom='out']").addEventListener("click", () => this.zoomGraph(0.85));
+        document.querySelector("[data-graph-reset]").addEventListener("click", () => this.resetGraphView());
+
+        this.dom.badgeFilter.addEventListener("change", () => {
+          this.renderBadges(this.data.badges);
+        });
+
+        document.querySelector("#reminderSelect").addEventListener("change", event => {
+          this.setReminder(event.target.value);
+        });
+
+        this.bindSkillCanvasEvents();
+        this.bindGraphCanvasEvents();
+      }
+
+      bindSkillCanvasEvents() {
+        const canvas = this.skill.canvas;
+
+        canvas.addEventListener("mousedown", event => {
+          const pos = this.getCanvasPos(event, canvas);
+          const world = this.skillScreenToWorld(pos.x, pos.y);
+          const node = this.findSkillNode(world.x, world.y);
+
+          this.skill.lastX = pos.x;
+          this.skill.lastY = pos.y;
+
+          if (node) {
+            this.skill.draggingNode = node;
+            this.skill.selectedNode = node;
+            this.showSkillNodeInfo(node);
+            return;
+          }
+
+          this.skill.draggingCanvas = true;
+        });
+
+        canvas.addEventListener("mousemove", event => {
+          const pos = this.getCanvasPos(event, canvas);
+          const dx = pos.x - this.skill.lastX;
+          const dy = pos.y - this.skill.lastY;
+
+          if (this.skill.draggingNode) {
+            const world = this.skillScreenToWorld(pos.x, pos.y);
+            this.skill.draggingNode.x = world.x;
+            this.skill.draggingNode.y = world.y;
+          } else if (this.skill.draggingCanvas) {
+            this.skill.offsetX += dx;
+            this.skill.offsetY += dy;
+          }
+
+          this.skill.lastX = pos.x;
+          this.skill.lastY = pos.y;
+        });
+
+        window.addEventListener("mouseup", () => {
+          this.skill.draggingNode = null;
+          this.skill.draggingCanvas = false;
+        });
+
+        canvas.addEventListener("wheel", event => {
+          event.preventDefault();
+          const delta = event.deltaY < 0 ? 1.1 : 0.9;
+          this.zoomSkill(delta, event);
+        }, { passive: false });
+      }
+
+      bindGraphCanvasEvents() {
+        const canvas = this.graph.canvas;
+
+        canvas.addEventListener("mousedown", event => {
+          const pos = this.getCanvasPos(event, canvas);
+          const world = this.graphScreenToWorld(pos.x, pos.y);
+          const node = this.findGraphNode(world.x, world.y);
+
+          this.graph.lastX = pos.x;
+          this.graph.lastY = pos.y;
+
+          if (node) {
+            this.graph.draggingNode = node;
+            node.fx = node.x;
+            node.fy = node.y;
+            this.graph.selectedNode = node;
+            this.showGraphNodeInfo(node);
+            return;
+          }
+
+          this.graph.draggingCanvas = true;
+        });
+
+        canvas.addEventListener("mousemove", event => {
+          const pos = this.getCanvasPos(event, canvas);
+          const dx = pos.x - this.graph.lastX;
+          const dy = pos.y - this.graph.lastY;
+
+          if (this.graph.draggingNode) {
+            const world = this.graphScreenToWorld(pos.x, pos.y);
+            this.graph.draggingNode.x = world.x;
+            this.graph.draggingNode.y = world.y;
+            this.graph.draggingNode.vx = 0;
+            this.graph.draggingNode.vy = 0;
+          } else if (this.graph.draggingCanvas) {
+            this.graph.offsetX += dx;
+            this.graph.offsetY += dy;
+          }
+
+          this.graph.lastX = pos.x;
+          this.graph.lastY = pos.y;
+        });
+
+        window.addEventListener("mouseup", () => {
+          if (this.graph.draggingNode) {
+            this.graph.draggingNode.fx = null;
+            this.graph.draggingNode.fy = null;
+          }
+          this.graph.draggingNode = null;
+          this.graph.draggingCanvas = false;
+        });
+
+        canvas.addEventListener("wheel", event => {
+          event.preventDefault();
+          const delta = event.deltaY < 0 ? 1.1 : 0.9;
+          this.zoomGraph(delta, event);
+        }, { passive: false });
+      }
+
+      // ========== 技能树 API ==========
+      renderSkillTree(data) {
+        this.data.skillTree = data;
+        this.drawSkillTree();
+      }
+
+      updateNodeStatus(nodeId, status) {
+        const node = this.data.skillTree.nodes.find(item => item.id === nodeId);
+        if (!node) return false;
+
+        node.status = status;
+        this.drawSkillTree();
+
+        if (this.skill.selectedNode?.id === nodeId) {
+          this.showSkillNodeInfo(node);
+        }
+
+        return true;
+      }
+
+      drawSkillTree() {
+        const canvas = this.skill.canvas;
+        const ctx = this.skill.ctx;
+        const dpr = Number(canvas.dataset.dpr || 1);
+        const w = canvas.width / dpr;
+        const h = canvas.height / dpr;
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, w, h);
+
+        ctx.save();
+        ctx.translate(this.skill.offsetX, this.skill.offsetY);
+        ctx.scale(this.skill.scale, this.skill.scale);
+
+        this.drawSkillEdges(ctx);
+        this.drawSkillNodes(ctx);
+
+        ctx.restore();
+      }
+
+      drawSkillEdges(ctx) {
+        const nodesById = new Map(this.data.skillTree.nodes.map(node => [node.id, node]));
+
+        ctx.lineWidth = 3;
+        ctx.lineCap = "round";
+
+        this.data.skillTree.edges.forEach(edge => {
+          const a = nodesById.get(edge.from);
+          const b = nodesById.get(edge.to);
+          if (!a || !b) return;
+
+          const gradient = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+          gradient.addColorStop(0, "rgba(207, 109, 54, 0.28)");
+          gradient.addColorStop(0.5, "rgba(74, 158, 255, 0.34)");
+          gradient.addColorStop(1, "rgba(0, 212, 170, 0.24)");
+
+          ctx.strokeStyle = gradient;
+          ctx.setLineDash([14, 10]);
+          ctx.lineDashOffset = -this.skill.animatedOffset;
+
+          ctx.beginPath();
+          const midX = (a.x + b.x) / 2;
+          ctx.moveTo(a.x, a.y);
+          ctx.bezierCurveTo(midX, a.y, midX, b.y, b.x, b.y);
+          ctx.stroke();
+
+          ctx.setLineDash([]);
+        });
+      }
+
+      drawSkillNodes(ctx) {
+        this.data.skillTree.nodes.forEach(node => {
+          const color = this.getStatusColor(node.status);
+          const categoryColor = this.getCategoryColor(node.category);
+
+          ctx.save();
+
+          ctx.shadowColor = node.status === "locked" ? "rgba(156, 163, 175, 0.3)" : categoryColor;
+          ctx.shadowBlur = node.status === "locked" ? 8 : 18;
+
+          ctx.beginPath();
+          ctx.arc(node.x, node.y, 35, 0, Math.PI * 2);
+          ctx.fillStyle = node.status === "locked" ? "rgba(156, 163, 175, 0.24)" : color;
+          ctx.fill();
+
+          ctx.lineWidth = 5;
+          ctx.strokeStyle = categoryColor;
+          ctx.stroke();
+
+          ctx.shadowBlur = 0;
+
+          ctx.fillStyle = node.status === "locked" ? "#6b7280" : "#fffaf2";
+          ctx.font = "900 20px Microsoft YaHei, sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(this.getStatusIcon(node.status), node.x, node.y - 2);
+
+          ctx.fillStyle = "#5d655f";
+          ctx.font = "800 14px Microsoft YaHei, sans-serif";
+          ctx.fillText(node.label, node.x, node.y + 55);
+
+          if (this.skill.selectedNode?.id === node.id) {
+            ctx.beginPath();
+            ctx.arc(node.x, node.y, 45, 0, Math.PI * 2);
+            ctx.strokeStyle = "rgba(74, 158, 255, 0.75)";
+            ctx.lineWidth = 3;
+            ctx.setLineDash([6, 6]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+          }
+
+          ctx.restore();
+        });
+      }
+
+      findSkillNode(x, y) {
+        const nodes = [...this.data.skillTree.nodes].reverse();
+        return nodes.find(node => Math.hypot(node.x - x, node.y - y) <= 42);
+      }
+
+      showSkillNodeInfo(node) {
+        const info = this.dom.skillNodeInfo;
+        info.classList.add("show");
+        info.innerHTML = `
+          <h4>${escapeHTML(node.label)} · ${escapeHTML(this.statusText(node.status))}</h4>
+          <p>${escapeHTML(node.desc || "暂无说明")}</p>
+        `;
+      }
+
+      zoomSkill(multiplier, event) {
+        const canvas = this.skill.canvas;
+        const oldScale = this.skill.scale;
+        const newScale = clamp(oldScale * multiplier, 0.45, 2.2);
+
+        if (event) {
+          const pos = this.getCanvasPos(event, canvas);
+          const worldBefore = this.skillScreenToWorld(pos.x, pos.y);
+
+          this.skill.scale = newScale;
+
+          const worldAfterScreenX = worldBefore.x * this.skill.scale + this.skill.offsetX;
+          const worldAfterScreenY = worldBefore.y * this.skill.scale + this.skill.offsetY;
+          this.skill.offsetX += pos.x - worldAfterScreenX;
+          this.skill.offsetY += pos.y - worldAfterScreenY;
+        } else {
+          this.skill.scale = newScale;
+        }
+      }
+
+      resetSkillView() {
+        this.skill.scale = 1;
+        this.skill.offsetX = 80;
+        this.skill.offsetY = 60;
+        this.drawSkillTree();
+      }
+
+      skillScreenToWorld(x, y) {
+        return {
+          x: (x - this.skill.offsetX) / this.skill.scale,
+          y: (y - this.skill.offsetY) / this.skill.scale
+        };
+      }
+
+      // ========== 学习进度 API ==========
+      updateStats(stats) {
+        this.data.stats = { ...this.data.stats, ...stats };
+
+        const items = [
+          { label: "全部知识点", value: this.data.stats.totalNodes, extra: "当前路径总量" },
+          { label: "已完成", value: this.data.stats.completedNodes, extra: "继续保持节奏" },
+          { label: "学习时长", value: this.data.stats.learningMinutes + "m", extra: "累计分钟" },
+          { label: "已解锁徽章", value: this.data.stats.badges, extra: "成就系统" }
+        ];
+
+        this.dom.statsGrid.innerHTML = items.map(item => `
+          <div class="stat-card">
+            <p class="stat-label">${escapeHTML(item.label)}</p>
+            <p class="stat-value">${escapeHTML(item.value)}</p>
+            <div class="stat-extra">${escapeHTML(item.extra)}</div>
+          </div>
+        `).join("");
+
+        this.drawProgressRing(this.data.stats);
+      }
+
+      renderChart(chartData) {
+        this.data.chartData = chartData;
+
+        const canvas = this.chartCanvas;
+        const ctx = this.chartCtx;
+        const dpr = Number(canvas.dataset.dpr || 1);
+        const w = canvas.width / dpr;
+        const h = canvas.height / dpr;
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, w, h);
+
+        const pad = { left: 42, right: 18, top: 20, bottom: 40 };
+        const innerW = w - pad.left - pad.right;
+        const innerH = h - pad.top - pad.bottom;
+
+        const maxMinutes = Math.max(60, ...chartData.map(item => item.minutes));
+        const points = chartData.map((item, index) => {
+          const x = pad.left + (innerW / Math.max(1, chartData.length - 1)) * index;
+          const y = pad.top + innerH - (item.minutes / maxMinutes) * innerH;
+          return { x, y, ...item };
+        });
+
+        ctx.strokeStyle = "rgba(207, 109, 54, 0.12)";
+        ctx.lineWidth = 1;
+        ctx.font = "12px Microsoft YaHei, sans-serif";
+        ctx.fillStyle = "#a89c8e";
+
+        for (let i = 0; i <= 4; i++) {
+          const y = pad.top + (innerH / 4) * i;
+          ctx.beginPath();
+          ctx.moveTo(pad.left, y);
+          ctx.lineTo(w - pad.right, y);
+          ctx.stroke();
+
+          const label = Math.round(maxMinutes - (maxMinutes / 4) * i) + "m";
+          ctx.fillText(label, 4, y + 4);
+        }
+
+        const gradient = ctx.createLinearGradient(0, pad.top, 0, h - pad.bottom);
+        gradient.addColorStop(0, "rgba(207, 109, 54, 0.24)");
+        gradient.addColorStop(1, "rgba(207, 109, 54, 0)");
+
+        ctx.beginPath();
+        points.forEach((p, i) => {
+          if (i === 0) ctx.moveTo(p.x, p.y);
+          else ctx.lineTo(p.x, p.y);
+        });
+        ctx.lineTo(points[points.length - 1].x, h - pad.bottom);
+        ctx.lineTo(points[0].x, h - pad.bottom);
+        ctx.closePath();
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        ctx.beginPath();
+        points.forEach((p, i) => {
+          if (i === 0) ctx.moveTo(p.x, p.y);
+          else {
+            const prev = points[i - 1];
+            const cx = (prev.x + p.x) / 2;
+            ctx.bezierCurveTo(cx, prev.y, cx, p.y, p.x, p.y);
+          }
+        });
+        ctx.strokeStyle = "#cf6d36";
+        ctx.lineWidth = 4;
+        ctx.lineCap = "round";
+        ctx.stroke();
+
+        points.forEach(p => {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+          ctx.fillStyle = "#fffaf2";
+          ctx.fill();
+          ctx.lineWidth = 3;
+          ctx.strokeStyle = "#cf6d36";
+          ctx.stroke();
+
+          ctx.fillStyle = "#5d655f";
+          ctx.font = "800 12px Microsoft YaHei, sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText(p.label, p.x, h - 14);
+        });
+      }
+
+      drawProgressRing(stats) {
+        const canvas = this.ringCanvas;
+        const ctx = this.ringCtx;
+        const dpr = Number(canvas.dataset.dpr || 1);
+        const w = canvas.width / dpr;
+        const h = canvas.height / dpr;
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, w, h);
+
+        const cx = w / 2;
+        const cy = h / 2;
+        const r = Math.min(w, h) / 2 - 20;
+        const percent = stats.totalNodes ? stats.completedNodes / stats.totalNodes : 0;
+        const end = -Math.PI / 2 + Math.PI * 2 * percent;
+
+        ctx.lineWidth = 18;
+        ctx.lineCap = "round";
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(207, 109, 54, 0.14)";
+        ctx.stroke();
+
+        const gradient = ctx.createLinearGradient(cx - r, cy - r, cx + r, cy + r);
+        gradient.addColorStop(0, "#cf6d36");
+        gradient.addColorStop(0.55, "#4a9eff");
+        gradient.addColorStop(1, "#00d4aa");
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, -Math.PI / 2, end);
+        ctx.strokeStyle = gradient;
+        ctx.stroke();
+
+        ctx.fillStyle = "#5d655f";
+        ctx.font = "950 34px Microsoft YaHei, sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(Math.round(percent * 100) + "%", cx, cy - 5);
+
+        ctx.fillStyle = "#a89c8e";
+        ctx.font = "800 13px Microsoft YaHei, sans-serif";
+        ctx.fillText(`${stats.completedNodes}/${stats.totalNodes} 节点`, cx, cy + 30);
+
+        this.dom.ringTitle.textContent = "总进度";
+        this.dom.ringDesc.textContent = `${stats.completedNodes} 个已完成，${stats.currentNodes} 个进行中`;
+      }
+
+      renderTimeline(records) {
+        this.data.timeline = records;
+        this.dom.timeline.innerHTML = records.map(record => `
+          <div class="timeline-record">
+            <div class="record-date">${escapeHTML(record.date)}</div>
+            <div>
+              <p class="record-title">${escapeHTML(record.title)}</p>
+              <p class="record-desc">${escapeHTML(record.desc)}</p>
+            </div>
+            <span class="record-pill">${escapeHTML(record.type)}</span>
+          </div>
+        `).join("");
+      }
+
+      demoProgress() {
+        const stats = {
+          ...this.data.stats,
+          completedNodes: clamp(this.data.stats.completedNodes + 1, 0, this.data.stats.totalNodes),
+          learningMinutes: this.data.stats.learningMinutes + 35
+        };
+
+        this.updateStats(stats);
+
+        const current = this.data.skillTree.nodes.find(node => node.status === "current");
+        if (current) {
+          this.updateNodeStatus(current.id, "done");
+          const next = this.data.skillTree.nodes.find(node => node.status === "locked");
+          if (next) this.updateNodeStatus(next.id, "current");
+        }
+
+        this.toast("学习进度已更新");
+      }
+
+      // ========== 成就徽章 API ==========
+      renderBadges(badges) {
+        this.data.badges = badges;
+        const filter = this.dom.badgeFilter.value;
+        const list = filter === "all" ? badges : badges.filter(badge => badge.type === filter);
+
+        this.dom.badgeGrid.innerHTML = list.map(badge => `
+          <div class="badge-card ${badge.unlocked ? "unlocked" : "locked"}" data-badge-id="${escapeHTML(badge.id)}">
+            <div class="badge-inner">
+              <div class="badge-face badge-front">
+                <div>
+                  <div class="badge-icon">${escapeHTML(badge.unlocked ? badge.icon : "🔒")}</div>
+                  <p class="badge-name">${escapeHTML(badge.name)}</p>
+                  <span class="badge-type">${escapeHTML(badge.type)}</span>
+                </div>
+              </div>
+              <div class="badge-face badge-back">
+                <p>${escapeHTML(badge.desc)}</p>
+              </div>
+            </div>
+          </div>
+        `).join("");
+
+        this.dom.badgeGrid.querySelectorAll(".badge-card").forEach(card => {
+          card.addEventListener("click", () => card.classList.toggle("flipped"));
+        });
+      }
+
+      unlockBadge(badgeId) {
+        const badge = this.data.badges.find(item => item.id === badgeId);
+        if (!badge) return false;
+
+        badge.unlocked = true;
+        this.updateStats({
+          ...this.data.stats,
+          badges: this.data.badges.filter(item => item.unlocked).length
+        });
+        this.renderBadges(this.data.badges);
+        this.toast(`已解锁徽章：${badge.name}`);
+        return true;
+      }
+
+      unlockRandomBadge() {
+        const locked = this.data.badges.filter(badge => !badge.unlocked);
+        if (!locked.length) {
+          this.toast("所有徽章都已解锁");
+          return;
+        }
+        const badge = locked[Math.floor(Math.random() * locked.length)];
+        this.unlockBadge(badge.id);
+      }
+
+      // ========== 打卡系统 API ==========
+      checkIn(date, duration) {
+        const safeDate = date || formatDate(new Date());
+        const safeDuration = Number(duration || 30);
+
+        this.data.checkins[safeDate] = (this.data.checkins[safeDate] || 0) + safeDuration;
+
+        this.renderHeatmap(this.data.checkins);
+
+        const stats = this.calcCheckinStats(this.data.checkins);
+        this.updateStats({
+          ...this.data.stats,
+          streakDays: stats.streak
+        });
+
+        if (stats.streak >= 3) this.unlockBadge("three-days");
+        if (stats.streak >= 7) this.unlockBadge("seven-days");
+
+        this.toast(`打卡成功：${safeDuration} 分钟`);
+        return true;
+      }
+
+      renderHeatmap(data) {
+        this.data.checkins = data;
+
+        const today = new Date();
+        const start = new Date(today);
+        start.setDate(today.getDate() - 364);
+
+        const cells = [];
+        for (let i = 0; i < 365; i++) {
+          const date = new Date(start);
+          date.setDate(start.getDate() + i);
+          const key = formatDate(date);
+          const minutes = Number(data[key] || 0);
+          const level = this.getHeatLevel(minutes);
+          const title = `${key}：${minutes} 分钟`;
+
+          cells.push(`<div class="heat-cell heat-${level}" title="${escapeHTML(title)}" data-date="${key}"></div>`);
+        }
+
+        this.dom.heatmap.innerHTML = cells.join("");
+
+        const stats = this.calcCheckinStats(data);
+        this.dom.streakDays.textContent = stats.streak;
+        this.dom.totalCheckins.textContent = stats.totalDays;
+        this.dom.streakReward.textContent = this.getRewardText(stats.streak);
+      }
+
+      checkInToday() {
+        this.checkIn(formatDate(new Date()), 35);
+      }
+
+      manualCheckIn() {
+        const date = document.querySelector("#checkinDate").value || formatDate(new Date());
+        const duration = Number(document.querySelector("#checkinDuration").value || 30);
+        this.checkIn(date, duration);
+      }
+
+      setReminder(value) {
+        const textMap = {
+          none: "当前未设置提醒。",
+          morning: "已设置：每天早上 8:00 提醒打卡。",
+          noon: "已设置：每天中午 12:30 提醒打卡。",
+          night: "已设置：每天晚上 20:00 提醒打卡。"
+        };
+
+        this.dom.reminderText.textContent = textMap[value] || textMap.none;
+        this.toast(this.dom.reminderText.textContent);
+      }
+
+      setTodayInput() {
+        document.querySelector("#checkinDate").value = formatDate(new Date());
+      }
+
+      getHeatLevel(minutes) {
+        if (!minutes) return 0;
+        if (minutes < 20) return 1;
+        if (minutes < 45) return 2;
+        if (minutes < 80) return 3;
+        return 4;
+      }
+
+      calcCheckinStats(data) {
+        const keys = Object.keys(data).filter(key => data[key] > 0);
+        let streak = 0;
+        const cursor = new Date();
+
+        while (true) {
+          const key = formatDate(cursor);
+          if (data[key] > 0) {
+            streak++;
+            cursor.setDate(cursor.getDate() - 1);
+          } else {
+            break;
+          }
+        }
+
+        return {
+          totalDays: keys.length,
+          streak
+        };
+      }
+
+      getRewardText(streak) {
+        if (streak >= 30) return "连续 30 天，已进入稳定学习节奏。";
+        if (streak >= 14) return "连续 14 天，可解锁高级勤奋徽章。";
+        if (streak >= 7) return "连续 7 天，已解锁“七天稳定输出”。";
+        if (streak >= 3) return "连续 3 天，已解锁“勤奋起步”。";
+        return "连续 3 天解锁“勤奋起步”奖励。";
+      }
+
+      // ========== 知识图谱 API ==========
+      renderGraph(nodes, edges) {
+        const rect = this.graph.canvas.getBoundingClientRect();
+
+        this.data.graph.nodes = nodes;
+        this.data.graph.edges = edges;
+
+        this.graph.nodes = nodes.map((node, index) => ({
+          ...node,
+          x: node.x ?? rect.width / 2 + Math.cos(index * 1.9) * 180,
+          y: node.y ?? rect.height / 2 + Math.sin(index * 1.9) * 150,
+          vx: node.vx || 0,
+          vy: node.vy || 0,
+          radius: node.radius || 32
+        }));
+
+        this.graph.edges = edges;
+      }
+
+      drawKnowledgeGraph() {
+        const canvas = this.graph.canvas;
+        const ctx = this.graph.ctx;
+        const dpr = Number(canvas.dataset.dpr || 1);
+        const w = canvas.width / dpr;
+        const h = canvas.height / dpr;
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, w, h);
+
+        this.simulateGraph(w, h);
+
+        ctx.save();
+        ctx.translate(this.graph.offsetX, this.graph.offsetY);
+        ctx.scale(this.graph.scale, this.graph.scale);
+
+        const visibleNodes = this.getVisibleGraphNodes();
+        const visibleIds = new Set(visibleNodes.map(node => node.id));
+        const nodeMap = new Map(this.graph.nodes.map(node => [node.id, node]));
+
+        this.graph.edges.forEach(edge => {
+          if (!visibleIds.has(edge.from) || !visibleIds.has(edge.to)) return;
+          const a = nodeMap.get(edge.from);
+          const b = nodeMap.get(edge.to);
+          if (!a || !b) return;
+
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.lineWidth = 1.5 + (edge.weight || 0.5) * 3;
+          ctx.strokeStyle = `rgba(207, 109, 54, ${0.18 + (edge.weight || 0.5) * 0.32})`;
+          ctx.stroke();
+
+          const t = (Math.sin(this.graph.tick / 35 + (edge.weight || 0.5) * 4) + 1) / 2;
+          const px = a.x + (b.x - a.x) * t;
+          const py = a.y + (b.y - a.y) * t;
+          ctx.beginPath();
+          ctx.arc(px, py, 3.5, 0, Math.PI * 2);
+          ctx.fillStyle = "#4a9eff";
+          ctx.fill();
+        });
+
+        visibleNodes.forEach(node => {
+          const color = this.getCategoryColor(node.category);
+          ctx.save();
+          ctx.shadowColor = color;
+          ctx.shadowBlur = 18;
+
+          ctx.beginPath();
+          ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+          ctx.fillStyle = "rgba(255, 250, 242, 0.96)";
+          ctx.fill();
+
+          ctx.lineWidth = 5;
+          ctx.strokeStyle = color;
+          ctx.stroke();
+
+          ctx.shadowBlur = 0;
+          ctx.fillStyle = "#5d655f";
+          ctx.font = "900 13px Microsoft YaHei, sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          this.wrapCanvasText(ctx, node.label, node.x, node.y, node.radius * 1.6, 15);
+
+          if (this.graph.selectedNode?.id === node.id) {
+            ctx.beginPath();
+            ctx.arc(node.x, node.y, node.radius + 10, 0, Math.PI * 2);
+            ctx.strokeStyle = "rgba(0, 212, 170, 0.72)";
+            ctx.lineWidth = 3;
+            ctx.setLineDash([7, 7]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+          }
+
+          ctx.restore();
+        });
+
+        ctx.restore();
+      }
+
+      simulateGraph(w, h) {
+        const nodes = this.graph.nodes;
+        const edges = this.graph.edges;
+        const nodeMap = new Map(nodes.map(node => [node.id, node]));
+        const centerX = (w / 2 - this.graph.offsetX) / this.graph.scale;
+        const centerY = (h / 2 - this.graph.offsetY) / this.graph.scale;
+
+        for (let i = 0; i < nodes.length; i++) {
+          for (let j = i + 1; j < nodes.length; j++) {
+            const a = nodes[i];
+            const b = nodes[j];
+            const dx = b.x - a.x;
+            const dy = b.y - a.y;
+            const dist = Math.max(1, Math.hypot(dx, dy));
+            const force = 1100 / (dist * dist);
+            const fx = (dx / dist) * force;
+            const fy = (dy / dist) * force;
+
+            if (!a.fx) {
+              a.vx -= fx;
+              a.vy -= fy;
+            }
+            if (!b.fx) {
+              b.vx += fx;
+              b.vy += fy;
+            }
+          }
+        }
+
+        edges.forEach(edge => {
+          const a = nodeMap.get(edge.from);
+          const b = nodeMap.get(edge.to);
+          if (!a || !b) return;
+
+          const dx = b.x - a.x;
+          const dy = b.y - a.y;
+          const dist = Math.max(1, Math.hypot(dx, dy));
+          const target = 145 - (edge.weight || 0.5) * 30;
+          const force = (dist - target) * 0.006;
+          const fx = (dx / dist) * force;
+          const fy = (dy / dist) * force;
+
+          if (!a.fx) {
+            a.vx += fx;
+            a.vy += fy;
+          }
+          if (!b.fx) {
+            b.vx -= fx;
+            b.vy -= fy;
+          }
+        });
+
+        nodes.forEach(node => {
+          if (!node.fx) {
+            node.vx += (centerX - node.x) * 0.0008;
+            node.vy += (centerY - node.y) * 0.0008;
+            node.vx *= 0.88;
+            node.vy *= 0.88;
+            node.x += node.vx;
+            node.y += node.vy;
+          }
+        });
+      }
+
+      renderGraphFilters() {
+        const categories = Array.from(new Set(this.data.graph.nodes.map(node => node.category)));
+        this.dom.graphFilters.innerHTML = [
+          `<button class="filter-chip active" data-graph-filter="all">全部</button>`,
+          ...categories.map(category => `
+            <button class="filter-chip" data-graph-filter="${escapeHTML(category)}">${escapeHTML(category)}</button>
+          `)
+        ].join("");
+
+        this.dom.graphFilters.addEventListener("click", event => {
+          const chip = event.target.closest("[data-graph-filter]");
+          if (!chip) return;
+
+          this.dom.graphFilters.querySelectorAll(".filter-chip").forEach(item => item.classList.remove("active"));
+          chip.classList.add("active");
+          this.graph.filter = chip.dataset.graphFilter;
+        });
+      }
+
+      getVisibleGraphNodes() {
+        if (this.graph.filter === "all") return this.graph.nodes;
+        return this.graph.nodes.filter(node => node.category === this.graph.filter);
+      }
+
+      findGraphNode(x, y) {
+        const nodes = [...this.getVisibleGraphNodes()].reverse();
+        return nodes.find(node => Math.hypot(node.x - x, node.y - y) <= node.radius + 6);
+      }
+
+      showGraphNodeInfo(node) {
+        const info = this.dom.graphNodeInfo;
+        info.classList.add("show");
+
+        const related = this.graph.edges
+          .filter(edge => edge.from === node.id || edge.to === node.id)
+          .map(edge => edge.from === node.id ? edge.to : edge.from)
+          .slice(0, 5)
+          .join("、");
+
+        info.innerHTML = `
+          <h4>${escapeHTML(node.label)} · ${escapeHTML(node.category)}</h4>
+          <p>${escapeHTML(node.desc || "暂无说明")}</p>
+          <p style="margin-top:8px;color:#a89c8e;">关联：${escapeHTML(related || "暂无")}</p>
+        `;
+      }
+
+      zoomGraph(multiplier, event) {
+        const canvas = this.graph.canvas;
+        const oldScale = this.graph.scale;
+        const newScale = clamp(oldScale * multiplier, 0.45, 2.2);
+
+        if (event) {
+          const pos = this.getCanvasPos(event, canvas);
+          const worldBefore = this.graphScreenToWorld(pos.x, pos.y);
+          this.graph.scale = newScale;
+          const worldAfterScreenX = worldBefore.x * this.graph.scale + this.graph.offsetX;
+          const worldAfterScreenY = worldBefore.y * this.graph.scale + this.graph.offsetY;
+          this.graph.offsetX += pos.x - worldAfterScreenX;
+          this.graph.offsetY += pos.y - worldAfterScreenY;
+        } else {
+          this.graph.scale = newScale;
+        }
+      }
+
+      resetGraphView() {
+        this.graph.scale = 1;
+        this.graph.offsetX = 0;
+        this.graph.offsetY = 0;
+        this.graph.selectedNode = null;
+        this.dom.graphNodeInfo.classList.remove("show");
+      }
+
+      graphScreenToWorld(x, y) {
+        return {
+          x: (x - this.graph.offsetX) / this.graph.scale,
+          y: (y - this.graph.offsetY) / this.graph.scale
+        };
+      }
+
+      // ========== 通用方法 ==========
+      startAnimation() {
+        const loop = () => {
+          this.skill.animatedOffset += 0.35;
+          this.graph.tick += 1;
+
+          this.drawSkillTree();
+          this.drawKnowledgeGraph();
+
+          this.rafId = requestAnimationFrame(loop);
+        };
+
+        loop();
+      }
+
+      destroy() {
+        if (this.rafId) cancelAnimationFrame(this.rafId);
+      }
+
+      getCanvasPos(event, canvas) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+          x: event.clientX - rect.left,
+          y: event.clientY - rect.top
+        };
+      }
+
+      getStatusColor(status) {
+        if (status === "done") return "#00a878";
+        if (status === "current") return "#cf6d36";
+        return "#d1d5db";
+      }
+
+      getStatusIcon(status) {
+        if (status === "done") return "✓";
+        if (status === "current") return "●";
+        return "🔒";
+      }
+
+      statusText(status) {
+        if (status === "done") return "已完成";
+        if (status === "current") return "进行中";
+        return "未解锁";
+      }
+
+      getCategoryColor(category) {
+        const map = {
+          "基础": "#4a9eff",
+          "G代码": "#cf6d36",
+          "进阶": "#b794f6",
+          "安全": "#00d4aa",
+          "工艺": "#00d4aa",
+          "实操": "#cf6d36"
+        };
+
+        return map[category] || "#4a9eff";
+      }
+
+      wrapCanvasText(ctx, text, x, y, maxWidth, lineHeight) {
+        const chars = String(text).split("");
+        const lines = [];
+        let line = "";
+
+        chars.forEach(ch => {
+          const test = line + ch;
+          if (ctx.measureText(test).width > maxWidth && line) {
+            lines.push(line);
+            line = ch;
+          } else {
+            line = test;
+          }
+        });
+
+        if (line) lines.push(line);
+
+        const startY = y - ((lines.length - 1) * lineHeight) / 2;
+        lines.forEach((item, index) => {
+          ctx.fillText(item, x, startY + index * lineHeight);
+        });
+      }
+
+      toast(message) {
+        const toast = document.querySelector("#toast");
+        toast.textContent = message;
+        toast.classList.add("show");
+
+        clearTimeout(this.toastTimer);
+        this.toastTimer = setTimeout(() => toast.classList.remove("show"), 1700);
+      }
+    }
+
+    function generateDemoCheckins() {
+      const data = {};
+      const today = new Date();
+
+      for (let i = 0; i < 140; i++) {
+        const date = new Date(today);
+        date.setDate(today.getDate() - i);
+
+        if (Math.random() > 0.38 || i < 6) {
+          data[formatDate(date)] = [15, 25, 35, 45, 70, 95][Math.floor(Math.random() * 6)];
+        }
+      }
+
+      return data;
+    }
+
+    function formatDate(date) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, "0");
+      const d = String(date.getDate()).padStart(2, "0");
+      return `${y}-${m}-${d}`;
+    }
+
+    function escapeHTML(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function structuredCloneSafe(value) {
+      if (typeof structuredClone === "function") return structuredClone(value);
+      return JSON.parse(JSON.stringify(value));
+    }
+
+    const app = new LearningPathSystem({
+      root: "#learningPathApp",
+      data: demoData
+    });
+
+    window.learningPathSystem = app;
+    window.LearningPathSystem = LearningPathSystem;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      app.init();
+    });
+  </script>
+</body>
+</html>

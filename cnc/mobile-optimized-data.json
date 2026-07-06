@@ -1,0 +1,99 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-07-03T03:16:35.640Z",
+  "mobileFeatures": {
+    "quickAccess": [
+      {
+        "id": "quick-gcode",
+        "icon": "⚙️",
+        "title": "G代码速查",
+        "shortcut": true,
+        "entries": [
+          "kb-00001",
+          "kb-00003",
+          "kb-00004"
+        ]
+      },
+      {
+        "id": "quick-alarm",
+        "icon": "⚠️",
+        "title": "报警查询",
+        "shortcut": true,
+        "entries": [
+          "kb-00012",
+          "kb-00013"
+        ]
+      },
+      {
+        "id": "quick-calc",
+        "icon": "🧮",
+        "title": "工艺计算器",
+        "shortcut": true,
+        "entries": [
+          "kb-00390"
+        ]
+      },
+      {
+        "id": "quick-history",
+        "icon": "⏳",
+        "title": "最近查看",
+        "shortcut": false,
+        "entries": [
+          "kb-00001",
+          "kb-00008"
+        ]
+      }
+    ],
+    "bottomNavigation": [
+      {
+        "id": "home",
+        "icon": "🏠",
+        "label": "首页",
+        "route": "dashboard"
+      },
+      {
+        "id": "search",
+        "icon": "🔍",
+        "label": "查询",
+        "route": "workspace"
+      },
+      {
+        "id": "favorites",
+        "icon": "⭐",
+        "label": "收藏",
+        "route": "favorites"
+      },
+      {
+        "id": "me",
+        "icon": "👤",
+        "label": "我的",
+        "route": "profile"
+      }
+    ],
+    "swipeGestures": {
+      "enabled": true,
+      "leftSwipe": "nextEntry",
+      "rightSwipe": "previousEntry",
+      "upSwipe": "scrollDown",
+      "downSwipe": "scrollUp"
+    },
+    "offlineMode": {
+      "enabled": true,
+      "cachedEntries": 100,
+      "cachedImages": 50,
+      "storageStrategy": "lru",
+      "syncOnWifi": true
+    }
+  },
+  "responsiveBreakpoints": {
+    "mobile": "< 640px",
+    "tablet": "640px - 1024px",
+    "desktop": "> 1024px"
+  },
+  "touchOptimizations": {
+    "buttonMinSize": "44px",
+    "tapTargetSpacing": "8px",
+    "swipeThreshold": "50px",
+    "longPressDelay": "500ms"
+  }
+}

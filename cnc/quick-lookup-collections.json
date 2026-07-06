@@ -1,0 +1,568 @@
+[
+  {
+    "id": "lookup-gcode-common",
+    "title": "数控常用 G 代码速查表",
+    "lookupType": "G-Code",
+    "items": [
+      {
+        "code": "G00",
+        "description": "快速定位",
+        "example": "G00 X100.0 Z5.0"
+      },
+      {
+        "code": "G01",
+        "description": "直线插补",
+        "example": "G01 Z-20.0 F150"
+      },
+      {
+        "code": "G02",
+        "description": "顺时针圆弧插补",
+        "example": "G02 X30.0 R15.0"
+      },
+      {
+        "code": "G03",
+        "description": "逆时针圆弧插补",
+        "example": "G03 X30.0 R15.0"
+      },
+      {
+        "code": "G54",
+        "description": "第一工件坐标系",
+        "example": "G54 G00 X0 Y0"
+      },
+      {
+        "code": "G41",
+        "description": "刀具半径左补偿",
+        "example": "G41 G01 X10.0 D01"
+      },
+      {
+        "code": "G42",
+        "description": "刀具半径右补偿",
+        "example": "G42 G01 X10.0 D01"
+      },
+      {
+        "code": "G43",
+        "description": "刀具长度补偿",
+        "example": "G43 G01 Z10.0 H01"
+      }
+    ],
+    "entryIds": [
+      "kb-00005",
+      "kb-00006",
+      "kb-00007",
+      "kb-00013",
+      "kb-00014"
+    ],
+    "searchTerms": [
+      "G代码",
+      "指令",
+      "G00",
+      "G01",
+      "G41"
+    ]
+  },
+  {
+    "id": "lookup-mcode-common",
+    "title": "数控常用 M 代码速查表",
+    "lookupType": "M-Code",
+    "items": [
+      {
+        "code": "M03",
+        "description": "主轴正转启动",
+        "example": "M03 S1200"
+      },
+      {
+        "code": "M04",
+        "description": "主轴反转启动",
+        "example": "M04 S800"
+      },
+      {
+        "code": "M05",
+        "description": "主轴旋转停止",
+        "example": "M05"
+      },
+      {
+        "code": "M06",
+        "description": "刀具自动交换",
+        "example": "T2 M06"
+      },
+      {
+        "code": "M08",
+        "description": "切削液开",
+        "example": "M08"
+      },
+      {
+        "code": "M09",
+        "description": "切削液关",
+        "example": "M09"
+      },
+      {
+        "code": "M30",
+        "description": "主程序结束返回首行",
+        "example": "M30"
+      }
+    ],
+    "entryIds": [
+      "kb-00006",
+      "kb-00007",
+      "kb-00013",
+      "kb-00016",
+      "kb-00018"
+    ],
+    "searchTerms": [
+      "M代码",
+      "换刀",
+      "主轴正转"
+    ]
+  },
+  {
+    "id": "lookup-gen-3",
+    "title": "FANUC 常见伺服轴报警字典",
+    "lookupType": "Alarm",
+    "items": [
+      {
+        "code": "Param 01",
+        "description": "常规选定值/设定方法第一项",
+        "example": "根据说明书或工艺卡设定"
+      },
+      {
+        "code": "Param 02",
+        "description": "常规设定值/参考基准第二项",
+        "example": "微调时以百分表数值为准"
+      }
+    ],
+    "entryIds": [
+      "kb-00308",
+      "kb-00443",
+      "kb-00480",
+      "kb-00964"
+    ],
+    "searchTerms": [
+      "FANUC报警",
+      "伺服轴"
+    ]
+  },
+  {
+    "id": "lookup-gen-4",
+    "title": "西门子 828D 常见驱动器报警",
+    "lookupType": "Alarm",
+    "items": [
+      {
+        "code": "Param 01",
+        "description": "常规选定值/设定方法第一项",
+        "example": "根据说明书或工艺卡设定"
+      },
+      {
+        "code": "Param 02",
+        "description": "常规设定值/参考基准第二项",
+        "example": "微调时以百分表数值为准"
+      }
+    ],
+    "entryIds": [
+      "kb-00340",
+      "kb-00396",
+      "kb-00443",
+      "kb-00461"
+    ],
+    "searchTerms": [
+      "西门子报警",
+      "驱动"
+    ]
+  },
+  {
+    "id": "lookup-gen-5",
+    "title": "螺纹切削牙大径与小径速查表",
+    "lookupType": "Speeds-Feeds",
+    "items": [
+      {
+        "code": "Param 01",
+        "description": "常规选定值/设定方法第一项",
+        "example": "根据说明书或工艺卡设定"
+      },
+      {
+        "code": "Param 02",
+        "description": "常规设定值/参考基准第二项",
+        "example": "微调时以百分表数值为准"
+      }
+    ],
+    "entryIds": [
+      "kb-00188",
+      "kb-00258",
+      "kb-01392",
+      "kb-01450"
+    ],
+    "searchTerms": [
+      "螺纹参数",
+      "螺孔大径"
+    ]
+  },
+  {
+    "id": "lookup-gen-6",
+    "title": "加工中心刚性攻丝 S 与 F 计算公式",
+    "lookupType": "Speeds-Feeds",
+    "items": [
+      {
+        "code": "Param 01",
+        "description": "常规选定值/设定方法第一项",
+        "example": "根据说明书或工艺卡设定"
+      },
+      {
+        "code": "Param 02",
+        "description": "常规设定值/参考基准第二项",
+        "example": "微调时以百分表数值为准"
+      }
+    ],
+    "entryIds": [],
+    "searchTerms": [
+      "攻丝进给",
+      "螺距F"
+    ]
+  },
+  {
+    "id": "lookup-gen-7",
+    "title": "啄钻(G83)及深孔加工退刀量表",
+    "lookupType": "G-Code",
+    "items": [
+      {
+        "code": "Param 01",
+        "description": "常规选定值/设定方法第一项",
+        "example": "根据说明书或工艺卡设定"
+      },
+      {
+        "code": "Param 02",
+        "description": "常规设定值/参考基准第二项",
+        "example": "微调时以百分表数值为准"
+      }
+    ],
+    "entryIds": [],
+    "searchTerms": [
+      "G83啄钻",
+      "退刀点"
+    ]
+  },
+  {
+    "id": "lookup-gen-8",
+    "title": "对刀仪测头精度标定补偿步骤",
+    "lookupType": "Setup",
+    "items": [
+      {
+        "code": "Param 01",
+        "description": "常规选定值/设定方法第一项",
+        "example": "根据说明书或工艺卡设定"
+      },
+      {
+        "code": "Param 02",
+        "description": "常规设定值/参考基准第二项",
+        "example": "微调时以百分表数值为准"
+      }
+    ],
+    "entryIds": [],
+    "searchTerms": [
+      "测头标定",
+      "偏置误差"
+    ]
+  },
+  {
+    "id": "lookup-gen-9",
+    "title": "铝合金(6061)高速切削进给转速表",
+    "lookupType": "Speeds-Feeds",
+    "items": [
+      {
+        "code": "Param 01",
+        "description": "常规选定值/设定方法第一项",
+        "example": "根据说明书或工艺卡设定"
+      },
+      {
+        "code": "Param 02",
+        "description": "常规设定值/参考基准第二项",
+        "example": "微调时以百分表数值为准"
+      }
+    ],
+    "entryIds": [
+      "kb-00714",
+      "kb-00757",
+      "kb-00765",
+      "kb-00861"
+    ],
+    "searchTerms": [
+      "铝合金切削",
+      "高速铣削"
+    ]
+  },
+  {
+    "id": "lookup-gen-10",
+    "title": "45号钢铣削加工切削力与功率表",
+    "lookupType": "Speeds-Feeds",
+    "items": [
+      {
+        "code": "Param 01",
+        "description": "常规选定值/设定方法第一项",
+        "example": "根据说明书或工艺卡设定"
+      },
+      {
+        "code": "Param 02",
+        "description": "常规设定值/参考基准第二项",
+        "example": "微调时以百分表数值为准"
+      }
+    ],
+    "entryIds": [
+      "kb-00026",
+      "kb-00148",
+      "kb-00196",
+      "kb-00296"
+    ],
+    "searchTerms": [
+      "45号钢参数",
+      "切削速度"
+    ]
+  },
+  {
+    "id": "lookup-gen-11",
+    "title": "刀补磨损值微调量经验对照表",
+    "lookupType": "Setup",
+    "items": [
+      {
+        "code": "Param 01",
+        "description": "常规选定值/设定方法第一项",
+        "example": "根据说明书或工艺卡设定"
+      },
+      {
+        "code": "Param 02",
+        "description": "常规设定值/参考基准第二项",
+        "example": "微调时以百分表数值为准"
+      }
+    ],
+    "entryIds": [
+      "kb-01265"
+    ],
+    "searchTerms": [
+      "磨损调整",
+      "微调补偿"
+    ]
+  },
+  {
+    "id": "lookup-gen-12",
+    "title": "常用形位公差符号与测量读数",
+    "lookupType": "GD&T",
+    "items": [
+      {
+        "code": "Param 01",
+        "description": "常规选定值/设定方法第一项",
+        "example": "根据说明书或工艺卡设定"
+      },
+      {
+        "code": "Param 02",
+        "description": "常规设定值/参考基准第二项",
+        "example": "微调时以百分表数值为准"
+      }
+    ],
+    "entryIds": [
+      "kb-00033",
+      "kb-00263",
+      "kb-00280",
+      "kb-00296"
+    ],
+    "searchTerms": [
+      "形位公差",
+      "粗糙度"
+    ]
+  },
+  {
+    "id": "lookup-gen-13",
+    "title": "自动换刀臂PLC顺序动作逻辑速查",
+    "lookupType": "Alarm",
+    "items": [
+      {
+        "code": "Param 01",
+        "description": "常规选定值/设定方法第一项",
+        "example": "根据说明书或工艺卡设定"
+      },
+      {
+        "code": "Param 02",
+        "description": "常规设定值/参考基准第二项",
+        "example": "微调时以百分表数值为准"
+      }
+    ],
+    "entryIds": [],
+    "searchTerms": [
+      "ATC换刀",
+      "刀臂角度"
+    ]
+  },
+  {
+    "id": "lookup-gen-14",
+    "title": "钛合金难加工材料钻孔参数建议",
+    "lookupType": "Speeds-Feeds",
+    "items": [
+      {
+        "code": "Param 01",
+        "description": "常规选定值/设定方法第一项",
+        "example": "根据说明书或工艺卡设定"
+      },
+      {
+        "code": "Param 02",
+        "description": "常规设定值/参考基准第二项",
+        "example": "微调时以百分表数值为准"
+      }
+    ],
+    "entryIds": [],
+    "searchTerms": [
+      "钛合金钻孔",
+      "冷却压力"
+    ]
+  },
+  {
+    "id": "lookup-gen-15",
+    "title": "游标卡尺副尺0.02分度对齐法",
+    "lookupType": "GD&T",
+    "items": [
+      {
+        "code": "Param 01",
+        "description": "常规选定值/设定方法第一项",
+        "example": "根据说明书或工艺卡设定"
+      },
+      {
+        "code": "Param 02",
+        "description": "常规设定值/参考基准第二项",
+        "example": "微调时以百分表数值为准"
+      }
+    ],
+    "entryIds": [
+      "kb-01053",
+      "kb-01456"
+    ],
+    "searchTerms": [
+      "卡尺刻度",
+      "读数方法"
+    ]
+  },
+  {
+    "id": "lookup-gen-16",
+    "title": "常用金属材料硬度换算对照表",
+    "lookupType": "GD&T",
+    "items": [
+      {
+        "code": "Param 01",
+        "description": "常规选定值/设定方法第一项",
+        "example": "根据说明书或工艺卡设定"
+      },
+      {
+        "code": "Param 02",
+        "description": "常规设定值/参考基准第二项",
+        "example": "微调时以百分表数值为准"
+      }
+    ],
+    "entryIds": [
+      "kb-00346",
+      "kb-00369",
+      "kb-00607",
+      "kb-00897"
+    ],
+    "searchTerms": [
+      "材料硬度",
+      "洛氏硬度"
+    ]
+  },
+  {
+    "id": "lookup-gen-17",
+    "title": "车削细长轴装夹受力防振工艺表",
+    "lookupType": "Setup",
+    "items": [
+      {
+        "code": "Param 01",
+        "description": "常规选定值/设定方法第一项",
+        "example": "根据说明书或工艺卡设定"
+      },
+      {
+        "code": "Param 02",
+        "description": "常规设定值/参考基准第二项",
+        "example": "微调时以百分表数值为准"
+      }
+    ],
+    "entryIds": [
+      "kb-00271",
+      "kb-00492",
+      "kb-00541",
+      "kb-00562"
+    ],
+    "searchTerms": [
+      "细长轴振刀",
+      "中心架"
+    ]
+  },
+  {
+    "id": "lookup-gen-18",
+    "title": "多坐标系零点平移G52指令参数表",
+    "lookupType": "G-Code",
+    "items": [
+      {
+        "code": "Param 01",
+        "description": "常规选定值/设定方法第一项",
+        "example": "根据说明书或工艺卡设定"
+      },
+      {
+        "code": "Param 02",
+        "description": "常规设定值/参考基准第二项",
+        "example": "微调时以百分表数值为准"
+      }
+    ],
+    "entryIds": [],
+    "searchTerms": [
+      "G52偏置",
+      "零点平移"
+    ]
+  },
+  {
+    "id": "lookup-gen-19",
+    "title": "螺纹粗车及精车分刀深度对照表",
+    "lookupType": "Speeds-Feeds",
+    "items": [
+      {
+        "code": "Param 01",
+        "description": "常规选定值/设定方法第一项",
+        "example": "根据说明书或工艺卡设定"
+      },
+      {
+        "code": "Param 02",
+        "description": "常规设定值/参考基准第二项",
+        "example": "微调时以百分表数值为准"
+      }
+    ],
+    "entryIds": [
+      "kb-00169",
+      "kb-00409",
+      "kb-00430",
+      "kb-00434"
+    ],
+    "searchTerms": [
+      "分刀次数",
+      "螺纹车削"
+    ]
+  },
+  {
+    "id": "lookup-gen-20",
+    "title": "硬质合金刀具纳米涂层特性速查",
+    "lookupType": "Setup",
+    "items": [
+      {
+        "code": "Param 01",
+        "description": "常规选定值/设定方法第一项",
+        "example": "根据说明书或工艺卡设定"
+      },
+      {
+        "code": "Param 02",
+        "description": "常规设定值/参考基准第二项",
+        "example": "微调时以百分表数值为准"
+      }
+    ],
+    "entryIds": [
+      "kb-00849",
+      "kb-00936",
+      "kb-00937",
+      "kb-01040"
+    ],
+    "searchTerms": [
+      "涂层特性",
+      "TiAlN"
+    ]
+  }
+]

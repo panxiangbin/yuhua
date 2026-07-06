@@ -1,0 +1,113 @@
+[
+  {
+    "pageId": "dashboard",
+    "mobilePriority": "High",
+    "primaryGoal": "现场快速分流与全局搜索",
+    "mustShowModules": [
+      "顶部导航",
+      "页面标题区",
+      "搜索区",
+      "卡片列表区"
+    ],
+    "optionalModules": [
+      "推荐区"
+    ],
+    "maxCardsAboveFold": 4,
+    "maxPrimaryActions": 2,
+    "maxLinesPerCard": 2,
+    "recommendedImageUsage": "仅使用48x48 px轻量微标，首屏严禁加载高分辨率横幅。",
+    "overflowRisk": "启动台项数过多导致折行，屏幕高度小于667px时次要推荐模块必须折叠到首屏线下。"
+  },
+  {
+    "pageId": "study-map",
+    "mobilePriority": "High",
+    "primaryGoal": "自学路径引导与学习进度可视化",
+    "mustShowModules": [
+      "顶部导航",
+      "页面标题区",
+      "学习路径区",
+      "卡片列表区"
+    ],
+    "optionalModules": [
+      "推荐区"
+    ],
+    "maxCardsAboveFold": 2,
+    "maxPrimaryActions": 1,
+    "maxLinesPerCard": 3,
+    "recommendedImageUsage": "学习包主卡片推荐配图以增强直白感，无图时以类别矢量图标兜底。",
+    "overflowRisk": "宽度低于360px时，连线图容易变形，必须自动降级转为纵向单列卡片时间轴布局。"
+  },
+  {
+    "pageId": "workspace",
+    "mobilePriority": "High",
+    "primaryGoal": "切削用量参数速查与条件检索",
+    "mustShowModules": [
+      "顶部导航",
+      "分类筛选区",
+      "卡片列表区"
+    ],
+    "optionalModules": [
+      "推荐区"
+    ],
+    "maxCardsAboveFold": 3,
+    "maxPrimaryActions": 2,
+    "maxLinesPerCard": 2,
+    "recommendedImageUsage": "除物理结构或对刀对位图外，其余表格参数区严禁配图以节约像素空间。",
+    "overflowRisk": "筛选项超过4个时导致折行，必须限制在单行内以横向滑块形式左右轻滑切换。"
+  },
+  {
+    "pageId": "library",
+    "mobilePriority": "Medium",
+    "primaryGoal": "图文专题与分级资料树检索",
+    "mustShowModules": [
+      "顶部导航",
+      "页面标题区",
+      "搜索区",
+      "分类筛选区",
+      "卡片列表区"
+    ],
+    "optionalModules": [
+      "推荐区"
+    ],
+    "maxCardsAboveFold": 3,
+    "maxPrimaryActions": 1,
+    "maxLinesPerCard": 2,
+    "recommendedImageUsage": "专题卡片可使用带有半透明黑罩的背景WebP缩略图，白色文字置于其上。",
+    "overflowRisk": "树状折叠层级缩进过深会导致手机右侧文字空间受限，缩进深度限制在12px递增，4级以下平铺。"
+  },
+  {
+    "pageId": "calculator",
+    "mobilePriority": "Medium",
+    "primaryGoal": "切削速度、进给及孔公差交互式换算",
+    "mustShowModules": [
+      "顶部导航",
+      "计算器输入区",
+      "结果解释区"
+    ],
+    "optionalModules": [
+      "推荐区"
+    ],
+    "maxCardsAboveFold": 1,
+    "maxPrimaryActions": 2,
+    "maxLinesPerCard": 3,
+    "recommendedImageUsage": "禁止一切图片。纯数字化表单及结果展示以高字号粗体文本为主。",
+    "overflowRisk": "手机虚拟键盘唤起时会挡住底部计算按钮，必须使用Flex自适应弹性滚动布局防挡。"
+  },
+  {
+    "pageId": "detail-panel",
+    "mobilePriority": "High",
+    "primaryGoal": "知识详情、操作警示及现场复核步骤阅读",
+    "mustShowModules": [
+      "顶部导航",
+      "详情区"
+    ],
+    "optionalModules": [
+      "推荐区"
+    ],
+    "maxCardsAboveFold": 1,
+    "maxPrimaryActions": 3,
+    "maxLinesPerCard": 4,
+    "recommendedImageUsage": "对刀、补偿、超程报警等高危指令强制要求顶端渲染 1 张 3:2 原理图并支持双击缩放。",
+    "overflowRisk": "文本过长导致拖拽无尽，当新手口语化解释字数超过300字时提供‘展开全文’按钮收纳。"
+  }
+]

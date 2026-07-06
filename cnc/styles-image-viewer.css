@@ -1,0 +1,77 @@
+/* ============================================
+   styles-image-viewer.css
+   图片查看器样式 — 全屏覆盖/控制栏/滤镜面板/标注
+   ============================================ */
+
+:root {
+  --viewer-overlay-bg: rgba(0, 0, 0, 0.88);
+  --viewer-control-bg: rgba(0, 0, 0, 0.65);
+  --viewer-btn-bg: rgba(255, 255, 255, 0.08);
+  --viewer-btn-hover: rgba(255, 255, 255, 0.18);
+  --viewer-text: #ffffff;
+  --viewer-text-dim: rgba(255, 255, 255, 0.5);
+  --viewer-accent: #cf6d36;
+}
+
+/* 覆盖层 */
+.image-viewer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--viewer-overlay-bg); z-index: 10000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+.image-viewer { position: relative; max-width: 92vw; max-height: 90vh; display: flex; align-items: center; justify-content: center; }
+.image-viewer-img { max-width: 100%; max-height: 85vh; object-fit: contain; cursor: grab; user-select: none; -webkit-user-drag: none; border-radius: 4px; box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5); transition: transform 0.15s ease; }
+.image-viewer-img:active { cursor: grabbing; }
+
+/* 控制栏 */
+.image-viewer-controls { position: absolute; bottom: -52px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; background: var(--viewer-control-bg); padding: 8px 14px; border-radius: 10px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.1); }
+.image-viewer-controls button { background: var(--viewer-btn-bg); border: 1px solid rgba(255, 255, 255, 0.12); color: var(--viewer-text); width: 38px; height: 38px; border-radius: 6px; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+.image-viewer-controls button:hover { background: var(--viewer-btn-hover); border-color: rgba(255, 255, 255, 0.3); }
+.image-viewer-controls button:active { transform: scale(0.92); }
+
+/* 查看器信息 */
+.image-viewer-info { position: absolute; top: -32px; right: 0; color: var(--viewer-text-dim); font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5); }
+
+/* 滤镜面板 */
+.image-filter-panel { background: #fff; border: 1px solid #e5e0db; border-radius: 12px; padding: 16px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); width: 260px; }
+.filter-panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.filter-panel-header h4 { margin: 0; font-size: 15px; color: #2d2d2d; }
+.filter-reset-btn { background: transparent; border: 1px solid #e5e0db; padding: 4px 10px; border-radius: 4px; font-size: 12px; cursor: pointer; color: #6b7280; }
+.filter-reset-btn:hover { background: #f3f4f6; }
+.filter-slider-group { margin-bottom: 12px; }
+.filter-slider-group label { display: flex; justify-content: space-between; font-size: 13px; color: #6b7280; margin-bottom: 4px; }
+.filter-slider-group input[type="range"] { width: 100%; height: 4px; -webkit-appearance: none; appearance: none; background: #e5e0db; border-radius: 2px; outline: none; }
+.filter-slider-group input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--viewer-accent); cursor: pointer; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); }
+.filter-toggle-group { display: flex; gap: 8px; margin-top: 8px; }
+.filter-toggle-btn { flex: 1; padding: 8px; border: 1px solid #e5e0db; border-radius: 6px; background: #fff; cursor: pointer; font-size: 13px; color: #6b7280; transition: all 0.2s; }
+.filter-toggle-btn:hover { border-color: var(--viewer-accent); color: var(--viewer-accent); }
+.filter-toggle-btn.active { background: var(--viewer-accent); color: #fff; border-color: var(--viewer-accent); }
+
+/* Canvas 标注容器 */
+.annotation-canvas-wrapper { position: relative; display: inline-block; }
+.annotation-canvas { position: absolute; top: 0; left: 0; cursor: crosshair; }
+.annotation-toolbar { display: flex; gap: 6px; padding: 8px 12px; background: #fff; border: 1px solid #e5e0db; border-radius: 8px; margin-bottom: 8px; flex-wrap: wrap; align-items: center; }
+.annotation-tool-btn { padding: 6px 12px; border: 1px solid #e5e0db; border-radius: 4px; background: #fff; cursor: pointer; font-size: 13px; color: #2d2d2d; transition: all 0.15s; }
+.annotation-tool-btn:hover { border-color: var(--viewer-accent); }
+.annotation-tool-btn.active { background: var(--viewer-accent); color: #fff; border-color: var(--viewer-accent); }
+.annotation-color-picker { width: 28px; height: 28px; padding: 0; border: 2px solid #e5e0db; border-radius: 4px; cursor: pointer; }
+.annotation-action-btn { padding: 6px 10px; border: 1px solid #e5e0db; border-radius: 4px; background: #f9f7f5; cursor: pointer; font-size: 12px; color: #6b7280; }
+.annotation-action-btn:hover { background: #f3f4f6; }
+
+/* 加载动画 */
+@keyframes viewer-loading {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.image-viewer-loading { position: absolute; top: 50%; left: 50%; width: 40px; height: 40px; margin: -20px 0 0 -20px; border: 3px solid rgba(255,255,255,0.15); border-top-color: var(--viewer-accent); border-radius: 50%; animation: viewer-loading 0.8s linear infinite; }
+
+/* 移动端触摸 */
+@media (hover: none) and (pointer: coarse) {
+  .image-viewer-controls { bottom: -60px; padding: 10px 16px; gap: 10px; }
+  .image-viewer-controls button { width: 44px; height: 44px; font-size: 20px; }
+  .image-viewer-img { cursor: default; }
+}
+
+/* 响应式 */
+@media (max-width: 640px) {
+  .image-viewer { max-width: 96vw; }
+  .image-viewer-controls { flex-wrap: wrap; justify-content: center; width: 90vw; bottom: -80px; }
+  .image-filter-panel { width: calc(100vw - 40px); }
+  .annotation-toolbar { flex-wrap: wrap; }
+}

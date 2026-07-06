@@ -1,0 +1,137 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-07-03T03:43:56.792Z",
+  "validationRules": {
+    "knowledgeEntry": {
+      "required": [
+        "id",
+        "title",
+        "category",
+        "content"
+      ],
+      "optional": [
+        "tags",
+        "difficulty",
+        "relatedIds",
+        "images"
+      ],
+      "constraints": {
+        "id": {
+          "type": "string",
+          "pattern": "^kb-\\d{5}$",
+          "unique": true
+        },
+        "title": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 200
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "编程基础",
+            "机床操作",
+            "CAM软件",
+            "刀具工艺",
+            "故障维修",
+            "检测质量",
+            "行业资讯",
+            "加工案例"
+          ]
+        },
+        "content": {
+          "type": "string",
+          "minLength": 10
+        },
+        "difficulty": {
+          "type": "string",
+          "enum": [
+            "入门",
+            "初级",
+            "中级",
+            "高级",
+            "专家"
+          ]
+        },
+        "tags": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 10,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "searchIndex": {
+      "required": [
+        "term",
+        "documentIds",
+        "weight"
+      ],
+      "constraints": {
+        "term": {
+          "type": "string",
+          "minLength": 1
+        },
+        "documentIds": {
+          "type": "array",
+          "minItems": 1
+        },
+        "weight": {
+          "type": "number",
+          "min": 0,
+          "max": 1
+        }
+      }
+    },
+    "knowledgeGraph": {
+      "required": [
+        "sourceId",
+        "targetId",
+        "relationType"
+      ],
+      "constraints": {
+        "sourceId": {
+          "type": "string",
+          "pattern": "^kb-\\d{5}$"
+        },
+        "targetId": {
+          "type": "string",
+          "pattern": "^kb-\\d{5}$"
+        },
+        "relationType": {
+          "type": "string",
+          "enum": [
+            "前置知识",
+            "后续学习",
+            "相关主题",
+            "对比参考"
+          ]
+        }
+      }
+    }
+  },
+  "validationScripts": [
+    {
+      "name": "checkDuplicateIds",
+      "description": "检查知识点ID是否重复",
+      "severity": "critical"
+    },
+    {
+      "name": "checkBrokenReferences",
+      "description": "检查知识图谱中的断链",
+      "severity": "warning"
+    },
+    {
+      "name": "checkEmptyContent",
+      "description": "检查空内容知识点",
+      "severity": "warning"
+    },
+    {
+      "name": "checkImagePaths",
+      "description": "检查图片路径是否有效",
+      "severity": "warning"
+    }
+  ]
+}

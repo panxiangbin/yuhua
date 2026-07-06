@@ -1,0 +1,205 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-07-02T17:54:17Z",
+  "summary": {
+    "totalImages": 125,
+    "totalEntries": 1796,
+    "totalMappings": 664,
+    "coverageRate": 28.7,
+    "imageUtilizationRate": 74.4
+  },
+  "sourceBreakdown": {
+    "featured": 32,
+    "extended": 383,
+    "supplement": 249
+  },
+  "categoryStats": [
+    {
+      "category": "G代码相关",
+      "count": 155,
+      "percentage": 23.3
+    },
+    {
+      "category": "刀具相关",
+      "count": 276,
+      "percentage": 41.6
+    },
+    {
+      "category": "报警相关",
+      "count": 49,
+      "percentage": 7.4
+    },
+    {
+      "category": "M代码相关",
+      "count": 8,
+      "percentage": 1.2
+    },
+    {
+      "category": "坐标系相关",
+      "count": 41,
+      "percentage": 6.2
+    },
+    {
+      "category": "其他",
+      "count": 135,
+      "percentage": 20.3
+    }
+  ],
+  "topImages": [
+    {
+      "imageId": "safe-tool-approach-001",
+      "title": "刀具安全切入工件路径规划",
+      "mappingCount": 110,
+      "category": "安全操作"
+    },
+    {
+      "imageId": "tool-nose-radius-basic-001",
+      "title": "车刀刀尖半径对尺寸的影响",
+      "mappingCount": 109,
+      "category": "车削工艺"
+    },
+    {
+      "imageId": "tool-offset-table-001",
+      "title": "系统刀偏表几何与磨损设定",
+      "mappingCount": 103,
+      "category": "编程基础"
+    },
+    {
+      "imageId": "alarm-spindle-001",
+      "title": "主轴驱动与过载报警",
+      "mappingCount": 63,
+      "category": "报警相关"
+    },
+    {
+      "imageId": "panel-control-overview-001",
+      "title": "数控系统操作面板按键定义",
+      "mappingCount": 37,
+      "category": "安全操作"
+    },
+    {
+      "imageId": "panel-jog-handle-001",
+      "title": "手轮手摇与JOG轴点动控制",
+      "mappingCount": 37,
+      "category": "安全操作"
+    },
+    {
+      "imageId": "drawing-tolerance-roughness-001",
+      "title": "尺寸公差与表面粗糙度识读",
+      "mappingCount": 35,
+      "category": "图纸工艺"
+    },
+    {
+      "imageId": "alarm-limit-overtravel-001",
+      "title": "轴行程超程报警故障",
+      "mappingCount": 28,
+      "category": "报警相关"
+    },
+    {
+      "imageId": "alarm-servo-001",
+      "title": "伺服驱动系统故障报警",
+      "mappingCount": 28,
+      "category": "报警相关"
+    },
+    {
+      "imageId": "ballnose-vs-flat-endmill-001",
+      "title": "球头铣刀与平底铣刀走刀对比",
+      "mappingCount": 26,
+      "category": "铣削刀具"
+    },
+    {
+      "imageId": "burr-in-milling-001",
+      "title": "铣削出口撕裂毛刺控制优化",
+      "mappingCount": 26,
+      "category": "铣削刀具"
+    },
+    {
+      "imageId": "endmill-2f-vs-4f-001",
+      "title": "两刃与四刃立铣刀容屑及排屑",
+      "mappingCount": 25,
+      "category": "铣削刀具"
+    },
+    {
+      "imageId": "zero-return-sequence-001",
+      "title": "手动回零坐标轴操作顺序",
+      "mappingCount": 21,
+      "category": "安全操作"
+    },
+    {
+      "imageId": "beginner-coordinate-001",
+      "title": "机床与工件坐标系基础",
+      "mappingCount": 18,
+      "category": "编程基础"
+    },
+    {
+      "imageId": "gcode-g54-g59-001",
+      "title": "G54至G59工件坐标系设定",
+      "mappingCount": 18,
+      "category": "编程基础"
+    },
+    {
+      "imageId": "screen-coordinate-reading-001",
+      "title": "显示屏三项坐标读数与余量",
+      "mappingCount": 18,
+      "category": "编程基础"
+    },
+    {
+      "imageId": "chip-control-turning-001",
+      "title": "车削加工断屑与排屑控制",
+      "mappingCount": 16,
+      "category": "车削工艺"
+    },
+    {
+      "imageId": "turning-allowance-flow-001",
+      "title": "车削切削余量合理分配工序",
+      "mappingCount": 16,
+      "category": "车削工艺"
+    },
+    {
+      "imageId": "gcode-g00-g01-001",
+      "title": "G00快速定位与G01直线切削",
+      "mappingCount": 15,
+      "category": "编程基础"
+    },
+    {
+      "imageId": "milling-drill-ream-tap-001",
+      "title": "孔加工工序链工艺顺序配合",
+      "mappingCount": 14,
+      "category": "固定循环"
+    }
+  ],
+  "unmappedImages": [
+    "README",
+    "unit-g20-g21-001",
+    "alarm-category-overview-001",
+    "program-structure-basic-001",
+    "startup-checklist-001",
+    "retaining-ring-groove-001",
+    "step-shaft-case-001",
+    "thread-part-case-001",
+    "turning-facing-001",
+    "turning-thin-wall-001",
+    "turning-tool-wear-001",
+    "fixture-plate-datum-001",
+    "insert-shape-overview-001",
+    "milling-corner-cleanup-001",
+    "milling-face-milling-001",
+    "tool-breakage-warning-001",
+    "atc-alarm-flow-001",
+    "battery-loss-parameter-risk-001",
+    "coolant-system-overview-001",
+    "drawing-fit-h7-h6-001",
+    "drawing-gdt-basic-001",
+    "machine-warmup-flow-001",
+    "material-aluminum-cutting-001",
+    "material-stainless-cutting-001",
+    "micrometer-detail-001",
+    "power-sequence-warning-001",
+    "vernier-caliper-detail-001",
+    "weekly-maintenance-001"
+  ],
+  "qualityDistribution": {
+    "high": 120,
+    "medium": 400,
+    "low": 144
+  }
+}

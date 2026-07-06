@@ -1,0 +1,242 @@
+[
+    {
+        "keyword":  "G41",
+        "riskType":  "刀补方向",
+        "riskMessage":  "G41/G42搞反导致过切，严重时直接报废工件",
+        "recommendedGuard":  "首件空跑验证刀补轨迹，测首件尺寸再批量"
+    },
+    {
+        "keyword":  "G42",
+        "riskType":  "刀补方向",
+        "riskMessage":  "G42右补偿方向反了会过切，且难以在加工中察觉",
+        "recommendedGuard":  "首件空跑验证刀补轨迹，测首件尺寸再批量"
+    },
+    {
+        "keyword":  "G43",
+        "riskType":  "刀长补偿",
+        "riskMessage":  "H值与当前刀具不匹配直接撞刀，换刀后忘记G43也撞",
+        "recommendedGuard":  "换刀后立即写G43 H__，养成条件反射"
+    },
+    {
+        "keyword":  "G52",
+        "riskType":  "局部坐标系",
+        "riskMessage":  "G52忘记取消导致后续加工坐标整体偏移",
+        "recommendedGuard":  "G52加工完成后立即写G52 X0 Y0取消"
+    },
+    {
+        "keyword":  "G53",
+        "riskType":  "坐标系",
+        "riskMessage":  "G53不是模态每段都要写，混淆G53/G54导致错误位置",
+        "recommendedGuard":  "写G53前确认Z轴在安全高度"
+    },
+    {
+        "keyword":  "G54",
+        "riskType":  "工件坐标系",
+        "riskMessage":  "G54值输错(单位微米)导致全部尺寸偏移几十毫米",
+        "recommendedGuard":  "对刀后先检查G54值是否合理，用试切验证"
+    },
+    {
+        "keyword":  "G92",
+        "riskType":  "坐标系",
+        "riskMessage":  "G92临时设定坐标断电消失；车铣系统中功能完全不同",
+        "recommendedGuard":  "尽量用G54代替G92，G92只用于临时场合"
+    },
+    {
+        "keyword":  "回零",
+        "riskType":  "回零操作",
+        "riskMessage":  "不回零直接加工，增量编码器机床位置全错直接撞刀",
+        "recommendedGuard":  "开机第一条：回零，做进开机SOP"
+    },
+    {
+        "keyword":  "对刀",
+        "riskType":  "对刀操作",
+        "riskMessage":  "对刀数据写错刀号=用错误刀长加工，深度全错",
+        "recommendedGuard":  "对刀后核对刀号H值和刀具是否一致"
+    },
+    {
+        "keyword":  "刀补",
+        "riskType":  "半径补偿",
+        "riskMessage":  "D值输成直径(输10而非5)导致过切5mm直接撞",
+        "recommendedGuard":  "D10刀输5.0，再用千分表确认"
+    },
+    {
+        "keyword":  "参数修改",
+        "riskType":  "参数修改",
+        "riskMessage":  "改参数前没记录原值，改错后恢复不了",
+        "recommendedGuard":  "改任何参数前截图或记下原值"
+    },
+    {
+        "keyword":  "参数1815",
+        "riskType":  "回零参数",
+        "riskMessage":  "APC/APZ改错导致回零位置偏移直接撞",
+        "recommendedGuard":  "改1815前确认机械零点已对准"
+    },
+    {
+        "keyword":  "参数1420",
+        "riskType":  "进给参数",
+        "riskMessage":  "G00最高速度设太大超过机械极限导致撞机",
+        "recommendedGuard":  "按机床说明书设定，不超过机械额定值"
+    },
+    {
+        "keyword":  "参数1320",
+        "riskType":  "行程极限",
+        "riskMessage":  "软限位改到硬限位之外=没有限位保护",
+        "recommendedGuard":  "改前用慢速手动走到硬限位确认实际坐标"
+    },
+    {
+        "keyword":  "SV0401",
+        "riskType":  "伺服报警",
+        "riskMessage":  "伺服准备信号断开，90%是急停回路问题",
+        "recommendedGuard":  "先检查急停按钮，再查放大器LED"
+    },
+    {
+        "keyword":  "SV0435",
+        "riskType":  "伺服过电流",
+        "riskMessage":  "断电后电容未放电(5分钟)就拆电机有触电风险",
+        "recommendedGuard":  "断电等待5分钟以上确认电容放电"
+    },
+    {
+        "keyword":  "M03",
+        "riskType":  "主轴方向",
+        "riskMessage":  "M03/M04搞反导致刀片崩刃或工件飞出",
+        "recommendedGuard":  "启动主轴前确认方向，首次低速验证"
+    },
+    {
+        "keyword":  "M04",
+        "riskType":  "主轴方向",
+        "riskMessage":  "M03/M04搞反导致刀片崩刃或工件飞出",
+        "recommendedGuard":  "启动主轴前确认方向，首次低速验证"
+    },
+    {
+        "keyword":  "M06",
+        "riskType":  "换刀操作",
+        "riskMessage":  "换刀后忘记G43 Z轴往下直接撞工件或夹具",
+        "recommendedGuard":  "T01 M06后立即写G43 H01"
+    },
+    {
+        "keyword":  "M19",
+        "riskType":  "主轴定向",
+        "riskMessage":  "主轴定向角度不对或没定好向就换刀打坏刀臂",
+        "recommendedGuard":  "换刀前确认M19执行完毕再M06"
+    },
+    {
+        "keyword":  "G00",
+        "riskType":  "快移碰撞",
+        "riskMessage":  "G00路径不是直线是折线中间有障碍直接撞",
+        "recommendedGuard":  "G00前一定把Z抬到安全高度"
+    },
+    {
+        "keyword":  "G96",
+        "riskType":  "恒线速",
+        "riskMessage":  "G96没配G50限制最高转速卡盘可能解体",
+        "recommendedGuard":  "用G96必须写G50 Sxxxx限制最高转速"
+    },
+    {
+        "keyword":  "G83",
+        "riskType":  "钻孔",
+        "riskMessage":  "Q值(啄钻深度)太大导致排屑不畅断钻头",
+        "recommendedGuard":  "Q值=钻头直径*0.3~0.5"
+    },
+    {
+        "keyword":  "G84",
+        "riskType":  "攻丝",
+        "riskMessage":  "没M29刚性攻丝时不同步丝锥断",
+        "recommendedGuard":  "攻丝前确认M29已执行核对S和F匹配"
+    },
+    {
+        "keyword":  "G40",
+        "riskType":  "刀补取消",
+        "riskMessage":  "取消距离不够或圆弧段取消导致过切",
+        "recommendedGuard":  "G40前直线段移动距离大于刀具半径"
+    },
+    {
+        "keyword":  "G49",
+        "riskType":  "刀长取消",
+        "riskMessage":  "换刀前忘记G49取消刀长补偿导致Z轴干涉碰撞",
+        "recommendedGuard":  "换刀前写G49条件反射"
+    },
+    {
+        "keyword":  "超程",
+        "riskType":  "行程超限",
+        "riskMessage":  "超程后硬拉导致丝杠损坏或伺服过载",
+        "recommendedGuard":  "按住超程解除按钮反向移动"
+    },
+    {
+        "keyword":  "急停",
+        "riskType":  "安全操作",
+        "riskMessage":  "急停后增量编码器机床必须回零，不回零直接动=撞",
+        "recommendedGuard":  "急停恢复第一条：回零"
+    },
+    {
+        "keyword":  "M29",
+        "riskType":  "刚性攻丝",
+        "riskMessage":  "刚性攻丝转速和进给不匹配丝锥直接断裂",
+        "recommendedGuard":  "S*P=F，核对螺距后再启动"
+    },
+    {
+        "keyword":  "攻丝",
+        "riskType":  "攻丝操作",
+        "riskMessage":  "底孔直径不对转速进给不匹配丝锥断在孔里",
+        "recommendedGuard":  "查表确认底孔直径用刚性攻丝M29"
+    },
+    {
+        "keyword":  "SV0410",
+        "riskType":  "伺服超差",
+        "riskMessage":  "停止误差超差导致定位不准影响加工精度",
+        "recommendedGuard":  "检查伺服增益参数1825和反向间隙1851"
+    },
+    {
+        "keyword":  "SV0411",
+        "riskType":  "移动超差",
+        "riskMessage":  "移动误差超差意味电机跟丢位置有碰撞风险",
+        "recommendedGuard":  "减小进给速度和加速度检查负载"
+    },
+    {
+        "keyword":  "SV0415",
+        "riskType":  "编码器断线",
+        "riskMessage":  "编码器通信断线导致位置反馈丢失系统报警",
+        "recommendedGuard":  "检查编码器线是否破损重新插拔接头"
+    },
+    {
+        "keyword":  "SP0101",
+        "riskType":  "主轴过热",
+        "riskMessage":  "主轴电机温度超标可能烧毁电机",
+        "recommendedGuard":  "检查冷却风扇和水泵降低切削负载"
+    },
+    {
+        "keyword":  "SP0106",
+        "riskType":  "主轴电流",
+        "riskMessage":  "主轴驱动电流异常可能是电机短路或卡死",
+        "recommendedGuard":  "断电用万用表量电机三相电阻"
+    },
+    {
+        "keyword":  "工件零点",
+        "riskType":  "工件坐标系",
+        "riskMessage":  "G54值和实际工件位置不一致整批活做偏",
+        "recommendedGuard":  "首件试切后先测量尺寸再批量"
+    },
+    {
+        "keyword":  "刚件零点",
+        "riskType":  "工件坐标系",
+        "riskMessage":  "G54值和实际工件位置不一致整批活做偏",
+        "recommendedGuard":  "首件试切后先测量尺寸再批量"
+    },
+    {
+        "keyword":  "SV0437",
+        "riskType":  "编码器电池",
+        "riskMessage":  "编码器电池电压低位置数据即将丢失",
+        "recommendedGuard":  "通电状态下换电池换完重新回零"
+    },
+    {
+        "keyword":  "SV0440",
+        "riskType":  "编码器通信",
+        "riskMessage":  "编码器通信数据错误校验不过受干扰",
+        "recommendedGuard":  "编码器线远离动力线走检查屏蔽接地"
+    },
+    {
+        "keyword":  "D值",
+        "riskType":  "半径补偿",
+        "riskMessage":  "D值输成直径或正负号搞反导致尺寸错误",
+        "recommendedGuard":  "D10刀半径5mm输5.0注意正负号"
+    }
+]

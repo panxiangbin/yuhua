@@ -1,0 +1,833 @@
+[
+  {
+    "id": "calc-recipe-001",
+    "title": "主轴转速 S 换算公式 (RPM)",
+    "calculatorType": "转速",
+    "inputMeaning": "切削速度 Vc (m/min), 刀具/工件直径 D (mm)",
+    "resultMeaning": "主轴每分钟旋转圈数 S (r/min)",
+    "typicalUseCase": "根据刀具商推荐的线速度，计算出在系统控制面板中输入的 S 参数。",
+    "commonWrongInput": "在计算转速RPM时，公式分子中的 1000 漏写，或把工件半径当作直径D代入公式。",
+    "afterCalculationCheck": "切记计算所得S与F值是否超出了机床主轴的最大额定转速及驱动器最大的进给速度限值。",
+    "recommendedEntryIds": [
+      "kb-00002",
+      "kb-00003",
+      "kb-00008",
+      "kb-00011"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gcode-common"
+    ]
+  },
+  {
+    "id": "calc-recipe-002",
+    "title": "切削线速度 Vc 测定公式",
+    "calculatorType": "切削速度",
+    "inputMeaning": "主轴实际转速 S (RPM), 直径 D (mm)",
+    "resultMeaning": "切削速度 Vc (m/min)",
+    "typicalUseCase": "现场评估当前机床运转速度是否处于硬质合金刀具的正常耐热寿命区间。",
+    "commonWrongInput": "在计算转速RPM时，公式分子中的 1000 漏写，或把工件半径当作直径D代入公式。",
+    "afterCalculationCheck": "切记计算所得S与F值是否超出了机床主轴的最大额定转速及驱动器最大的进给速度限值。",
+    "recommendedEntryIds": [
+      "kb-00003",
+      "kb-00008",
+      "kb-00011",
+      "kb-00013"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gcode-common"
+    ]
+  },
+  {
+    "id": "calc-recipe-003",
+    "title": "铣床每分钟进给率 F 换算",
+    "calculatorType": "进给",
+    "inputMeaning": "每齿进给量 Fz (mm/t), 刀具齿数 Z, 转速 S (RPM)",
+    "resultMeaning": "工作台移动速度 F (mm/min)",
+    "typicalUseCase": "铣削编程中，结合切削速度计算每分钟走刀率，这是G01段必填的F代码。",
+    "commonWrongInput": "在计算转速RPM时，公式分子中的 1000 漏写，或把工件半径当作直径D代入公式。",
+    "afterCalculationCheck": "切记计算所得S与F值是否超出了机床主轴的最大额定转速及驱动器最大的进给速度限值。",
+    "recommendedEntryIds": [
+      "kb-00002",
+      "kb-00003",
+      "kb-00008",
+      "kb-00011"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gcode-common"
+    ]
+  },
+  {
+    "id": "calc-recipe-004",
+    "title": "螺纹切削分刀深度及切削深度计算",
+    "calculatorType": "螺距",
+    "inputMeaning": "螺距 P (mm), 牙高因数",
+    "resultMeaning": "粗车、精车分刀切深量 (ap)",
+    "typicalUseCase": "车削公制螺纹时，计算分刀次数，直接用于G76 P_Q_R_循环。",
+    "commonWrongInput": "在计算转速RPM时，公式分子中的 1000 漏写，或把工件半径当作直径D代入公式。",
+    "afterCalculationCheck": "切记计算所得S与F值是否超出了机床主轴的最大额定转速及驱动器最大的进给速度限值。",
+    "recommendedEntryIds": [
+      "kb-00003",
+      "kb-00008",
+      "kb-00011",
+      "kb-00013"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gcode-common"
+    ]
+  },
+  {
+    "id": "calc-recipe-005",
+    "title": "螺纹底孔钻头小径选用尺寸",
+    "calculatorType": "小径 / 大径",
+    "inputMeaning": "公称直径 M (mm), 螺距 P (mm)",
+    "resultMeaning": "螺纹小径 D1 即可选用的底孔钻头直径 (mm)",
+    "typicalUseCase": "攻丝前选择钻孔钻头直径，防止底孔过小导致攻丝卡刀丝锥折断。",
+    "commonWrongInput": "在计算转速RPM时，公式分子中的 1000 漏写，或把工件半径当作直径D代入公式。",
+    "afterCalculationCheck": "切记计算所得S与F值是否超出了机床主轴的最大额定转速及驱动器最大的进给速度限值。",
+    "recommendedEntryIds": [
+      "kb-00003",
+      "kb-00008",
+      "kb-00011",
+      "kb-00013"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gcode-common"
+    ]
+  },
+  {
+    "id": "calc-recipe-006",
+    "title": "攻丝参数高精算法方案_1",
+    "calculatorType": "攻丝参数",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 攻丝参数 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [
+      "kb-00096",
+      "kb-00188"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-007",
+    "title": "钻孔参数高精算法方案_1",
+    "calculatorType": "钻孔参数",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 钻孔参数 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-008",
+    "title": "车削 / 铣削基础参数高精算法方案_1",
+    "calculatorType": "车削 / 铣削基础参数",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 车削 / 铣削基础参数 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-009",
+    "title": "转速高精算法方案_2",
+    "calculatorType": "转速",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 转速 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [
+      "kb-00002",
+      "kb-00036",
+      "kb-00069"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-010",
+    "title": "切削速度高精算法方案_2",
+    "calculatorType": "切削速度",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 切削速度 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [
+      "kb-00026",
+      "kb-00148",
+      "kb-00196"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-011",
+    "title": "进给高精算法方案_2",
+    "calculatorType": "进给",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 进给 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [
+      "kb-00002",
+      "kb-00003",
+      "kb-00011"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-012",
+    "title": "螺距高精算法方案_2",
+    "calculatorType": "螺距",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 螺距 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [
+      "kb-00044",
+      "kb-00063",
+      "kb-00091"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-013",
+    "title": "小径 / 大径高精算法方案_2",
+    "calculatorType": "小径 / 大径",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 小径 / 大径 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-014",
+    "title": "攻丝参数高精算法方案_2",
+    "calculatorType": "攻丝参数",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 攻丝参数 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [
+      "kb-00096",
+      "kb-00188"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-015",
+    "title": "钻孔参数高精算法方案_2",
+    "calculatorType": "钻孔参数",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 钻孔参数 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-016",
+    "title": "车削 / 铣削基础参数高精算法方案_2",
+    "calculatorType": "车削 / 铣削基础参数",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 车削 / 铣削基础参数 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-017",
+    "title": "转速高精算法方案_3",
+    "calculatorType": "转速",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 转速 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [
+      "kb-00002",
+      "kb-00036",
+      "kb-00069"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-018",
+    "title": "切削速度高精算法方案_3",
+    "calculatorType": "切削速度",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 切削速度 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [
+      "kb-00026",
+      "kb-00148",
+      "kb-00196"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-019",
+    "title": "进给高精算法方案_3",
+    "calculatorType": "进给",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 进给 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [
+      "kb-00002",
+      "kb-00003",
+      "kb-00011"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-020",
+    "title": "螺距高精算法方案_3",
+    "calculatorType": "螺距",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 螺距 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [
+      "kb-00044",
+      "kb-00063",
+      "kb-00091"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-021",
+    "title": "小径 / 大径高精算法方案_3",
+    "calculatorType": "小径 / 大径",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 小径 / 大径 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-022",
+    "title": "攻丝参数高精算法方案_3",
+    "calculatorType": "攻丝参数",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 攻丝参数 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [
+      "kb-00096",
+      "kb-00188"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-023",
+    "title": "钻孔参数高精算法方案_3",
+    "calculatorType": "钻孔参数",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 钻孔参数 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-024",
+    "title": "车削 / 铣削基础参数高精算法方案_3",
+    "calculatorType": "车削 / 铣削基础参数",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 车削 / 铣削基础参数 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-025",
+    "title": "转速高精算法方案_4",
+    "calculatorType": "转速",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 转速 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [
+      "kb-00002",
+      "kb-00036",
+      "kb-00069"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-026",
+    "title": "切削速度高精算法方案_4",
+    "calculatorType": "切削速度",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 切削速度 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [
+      "kb-00026",
+      "kb-00148",
+      "kb-00196"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-027",
+    "title": "进给高精算法方案_4",
+    "calculatorType": "进给",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 进给 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [
+      "kb-00002",
+      "kb-00003",
+      "kb-00011"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-028",
+    "title": "螺距高精算法方案_4",
+    "calculatorType": "螺距",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 螺距 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [
+      "kb-00044",
+      "kb-00063",
+      "kb-00091"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-029",
+    "title": "小径 / 大径高精算法方案_4",
+    "calculatorType": "小径 / 大径",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 小径 / 大径 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-030",
+    "title": "攻丝参数高精算法方案_4",
+    "calculatorType": "攻丝参数",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 攻丝参数 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [
+      "kb-00096",
+      "kb-00188"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-031",
+    "title": "钻孔参数高精算法方案_4",
+    "calculatorType": "钻孔参数",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 钻孔参数 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-032",
+    "title": "车削 / 铣削基础参数高精算法方案_4",
+    "calculatorType": "车削 / 铣削基础参数",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 车削 / 铣削基础参数 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-033",
+    "title": "转速高精算法方案_5",
+    "calculatorType": "转速",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 转速 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [
+      "kb-00002",
+      "kb-00036",
+      "kb-00069"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-034",
+    "title": "切削速度高精算法方案_5",
+    "calculatorType": "切削速度",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 切削速度 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [
+      "kb-00026",
+      "kb-00148",
+      "kb-00196"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-035",
+    "title": "进给高精算法方案_5",
+    "calculatorType": "进给",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 进给 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [
+      "kb-00002",
+      "kb-00003",
+      "kb-00011"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-036",
+    "title": "螺距高精算法方案_5",
+    "calculatorType": "螺距",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 螺距 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [
+      "kb-00044",
+      "kb-00063",
+      "kb-00091"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-037",
+    "title": "小径 / 大径高精算法方案_5",
+    "calculatorType": "小径 / 大径",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 小径 / 大径 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-038",
+    "title": "攻丝参数高精算法方案_5",
+    "calculatorType": "攻丝参数",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 攻丝参数 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [
+      "kb-00096",
+      "kb-00188"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-039",
+    "title": "钻孔参数高精算法方案_5",
+    "calculatorType": "钻孔参数",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 钻孔参数 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-040",
+    "title": "车削 / 铣削基础参数高精算法方案_5",
+    "calculatorType": "车削 / 铣削基础参数",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 车削 / 铣削基础参数 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-041",
+    "title": "转速高精算法方案_6",
+    "calculatorType": "转速",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 转速 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [
+      "kb-00002",
+      "kb-00036",
+      "kb-00069"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-042",
+    "title": "切削速度高精算法方案_6",
+    "calculatorType": "切削速度",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 切削速度 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [
+      "kb-00026",
+      "kb-00148",
+      "kb-00196"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-043",
+    "title": "进给高精算法方案_6",
+    "calculatorType": "进给",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 进给 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [
+      "kb-00002",
+      "kb-00003",
+      "kb-00011"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-044",
+    "title": "螺距高精算法方案_6",
+    "calculatorType": "螺距",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 螺距 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [
+      "kb-00044",
+      "kb-00063",
+      "kb-00091"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-045",
+    "title": "小径 / 大径高精算法方案_6",
+    "calculatorType": "小径 / 大径",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 小径 / 大径 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-046",
+    "title": "攻丝参数高精算法方案_6",
+    "calculatorType": "攻丝参数",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 攻丝参数 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [
+      "kb-00096",
+      "kb-00188"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-047",
+    "title": "钻孔参数高精算法方案_6",
+    "calculatorType": "钻孔参数",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 钻孔参数 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-048",
+    "title": "车削 / 铣削基础参数高精算法方案_6",
+    "calculatorType": "车削 / 铣削基础参数",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 车削 / 铣削基础参数 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-049",
+    "title": "转速高精算法方案_7",
+    "calculatorType": "转速",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 转速 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [
+      "kb-00002",
+      "kb-00036",
+      "kb-00069"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  },
+  {
+    "id": "calc-recipe-050",
+    "title": "切削速度高精算法方案_7",
+    "calculatorType": "切削速度",
+    "inputMeaning": "输入加工相关物理参数（如刀具齿数、涂层类型、材料硬度HB等）",
+    "resultMeaning": "计算出目标最佳的 切削速度 配合表与补偿值",
+    "typicalUseCase": "在车间实际试切新合金或难加工复合材料时，提供首刀工艺计算起点。",
+    "commonWrongInput": "混淆公制（mm）和英制（inch）单位，未执行 G21/G20 模式换算。",
+    "afterCalculationCheck": "在第一刀切削时观察铁屑颜色。铁屑呈淡黄色或蓝紫色（钢件）属于切削热正常，若发黑或冒烟则需立刻降速。",
+    "recommendedEntryIds": [
+      "kb-00026",
+      "kb-00148",
+      "kb-00196"
+    ],
+    "recommendedLookupIds": [
+      "lookup-gen-9"
+    ]
+  }
+]

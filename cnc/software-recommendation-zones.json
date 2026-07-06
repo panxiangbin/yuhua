@@ -1,0 +1,138 @@
+[
+  {
+    "id": "zone-home",
+    "title": "软件首页精选入口推荐",
+    "zoneType": "Home-Featured",
+    "logicDescription": "优先展示新手必学核心、常用G/M代码以及当前高频搜索主题。",
+    "seedEntryIds": [
+      "kb-00001",
+      "kb-00003",
+      "kb-00004",
+      "kb-00005"
+    ],
+    "fallbackEntryIds": [
+      "kb-00001",
+      "kb-00010",
+      "kb-00015"
+    ]
+  },
+  {
+    "id": "zone-beginner",
+    "title": "新手专区系统课建议",
+    "zoneType": "Beginner-Study",
+    "logicDescription": "按照坐标系、回零、对刀、线性插补、长度偏置、半径补偿的顺序串联。",
+    "seedEntryIds": [
+      "kb-00024",
+      "kb-00060",
+      "kb-00066",
+      "kb-00067"
+    ],
+    "fallbackEntryIds": [
+      "kb-00001",
+      "kb-00012",
+      "kb-00021"
+    ]
+  },
+  {
+    "id": "zone-workspace",
+    "title": "加工操作工作区实时关联",
+    "zoneType": "Workspace-Context",
+    "logicDescription": "在用户编程或录入面板偏置时，实时推送对刀、工序卡、切削参数表等配套文章。",
+    "seedEntryIds": [
+      "kb-00008",
+      "kb-00009",
+      "kb-00011",
+      "kb-00025"
+    ],
+    "fallbackEntryIds": [
+      "kb-00045",
+      "kb-00052",
+      "kb-00085"
+    ]
+  },
+  {
+    "id": "zone-visual",
+    "title": "只看图/图文专题精选推荐",
+    "zoneType": "Visual-Only",
+    "logicDescription": "汇集拥有高质量WebP插图的工艺和运动轨迹解说文档。",
+    "seedEntryIds": [
+      "kb-00034",
+      "kb-00040",
+      "kb-00086",
+      "kb-00087"
+    ],
+    "fallbackEntryIds": [
+      "kb-00002",
+      "kb-00010",
+      "kb-01836"
+    ]
+  },
+  {
+    "id": "zone-alarm",
+    "title": "故障停机与报警实时诊断推荐",
+    "zoneType": "Alarm-Diag",
+    "logicDescription": "一旦系统捕获轴超程、使能断开或总线通信报警，置顶推荐排查流程与接线插脚指南。",
+    "seedEntryIds": [
+      "kb-00188",
+      "kb-00268",
+      "kb-00368",
+      "kb-00443"
+    ],
+    "fallbackEntryIds": [
+      "kb-00085",
+      "kb-00086",
+      "kb-00087"
+    ]
+  },
+  {
+    "id": "zone-cam",
+    "title": "CAM 软件编程工作区相关推荐",
+    "zoneType": "CAM-Software",
+    "logicDescription": "配合Mastercam或UG/NX编程页面，展示后处理修改、加工仿真碰撞检查及高速铣刀路生成技巧。",
+    "seedEntryIds": [
+      "kb-00023",
+      "kb-00035",
+      "kb-00124",
+      "kb-00135"
+    ],
+    "fallbackEntryIds": [
+      "kb-00691",
+      "kb-00692",
+      "kb-00693"
+    ]
+  },
+  {
+    "id": "zone-tool",
+    "title": "刀具寿命与切削效率推荐",
+    "zoneType": "Tool-Process",
+    "logicDescription": "关注刀片槽型、硬度热处理、涂层抗氧化性能以及顺铣逆铣对刀具磨损的影响。",
+    "seedEntryIds": [
+      "kb-00004",
+      "kb-00008",
+      "kb-00009",
+      "kb-00011"
+    ],
+    "fallbackEntryIds": [
+      "kb-00812",
+      "kb-00813",
+      "kb-00814"
+    ]
+  },
+  {
+    "id": "zone-recent-search",
+    "title": "最近搜索关键词联动推荐",
+    "zoneType": "Search-Linked",
+    "logicDescription": "动态捕捉最近搜索的G代码或材料型号，触发推荐相关的螺纹参数或报警解决方法。",
+    "seedEntryIds": [
+      "kb-00008",
+      "kb-00013",
+      "kb-00030",
+      "kb-00034"
+    ],
+    "fallbackEntryIds": [
+      "kb-00055",
+      "kb-00056",
+      "kb-00005"
+    ]
+  }
+]

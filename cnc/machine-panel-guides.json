@@ -1,0 +1,1316 @@
+[
+  {
+    "id": "panel-guide-001",
+    "title": "开机回零安全操作步骤",
+    "machineActionType": "回零",
+    "targetControlArea": "模式选择区",
+    "whatItDoes": "上电后手动让各运动轴退回机械参考零点，以便机床建立全局测坐标系统。",
+    "whenToUse": "加工开始第一步，或测量完刀偏参数需要确认和微调偏置时。",
+    "wrongOperationRisk": "在滑台本来就靠近极限碰块时，若误操作回零方向，会直接硬撞行程开关。",
+    "stepGuide": [
+      "第一步：按下机床面板的模式选择旋钮，对准所需要的物理图标。",
+      "第二步：操作屏幕键盘输入G代码字段，按下屏幕右下角的 INSERT 插入。",
+      "第三步：手握机床红色急停按钮，点击绿色循环启动键，注意观察刀头走向。"
+    ],
+    "relatedEntryIds": [
+      "kb-00028",
+      "kb-00060",
+      "kb-00529"
+    ],
+    "preferredImageKeywords": [
+      "panel control board",
+      "MDI key pressed",
+      "handle handwheel jog"
+    ]
+  },
+  {
+    "id": "panel-guide-002",
+    "title": "MDI 简短指令录入设定",
+    "machineActionType": "MDI",
+    "targetControlArea": "键盘编辑区",
+    "whatItDoes": "在手动数据输入模式下，单行输入诸如 M03 S800 或换刀指令并立刻执行。",
+    "whenToUse": "加工开始第一步，或测量完刀偏参数需要确认和微调偏置时。",
+    "wrongOperationRisk": "录入错误代码且直接按下循环启动（CYCLE START），可能导致机床瞬间进行意外刀路运动。",
+    "stepGuide": [
+      "第一步：按下机床面板的模式选择旋钮，对准所需要的物理图标。",
+      "第二步：操作屏幕键盘输入G代码字段，按下屏幕右下角的 INSERT 插入。",
+      "第三步：手握机床红色急停按钮，点击绿色循环启动键，注意观察刀头走向。"
+    ],
+    "relatedEntryIds": [
+      "kb-00031",
+      "kb-00403",
+      "kb-00477"
+    ],
+    "preferredImageKeywords": [
+      "panel control board",
+      "MDI key pressed",
+      "handle handwheel jog"
+    ]
+  },
+  {
+    "id": "panel-guide-003",
+    "title": "手摇脉冲轮（手轮）对刀微调",
+    "machineActionType": "手轮",
+    "targetControlArea": "手持手柄区",
+    "whatItDoes": "通过手摇轮微步调整轴位置（X1, X10, X100），实现微米级安全对刀。",
+    "whenToUse": "加工开始第一步，或测量完刀偏参数需要确认和微调偏置时。",
+    "wrongOperationRisk": "倍率选错在 X100，手轮摇动过快，刀尖会瞬间冲进毛坯撞碎。",
+    "stepGuide": [
+      "第一步：按下机床面板的模式选择旋钮，对准所需要的物理图标。",
+      "第二步：操作屏幕键盘输入G代码字段，按下屏幕右下角的 INSERT 插入。",
+      "第三步：手握机床红色急停按钮，点击绿色循环启动键，注意观察刀头走向。"
+    ],
+    "relatedEntryIds": [
+      "kb-00477",
+      "kb-00504",
+      "kb-00550"
+    ],
+    "preferredImageKeywords": [
+      "panel control board",
+      "MDI key pressed",
+      "handle handwheel jog"
+    ]
+  },
+  {
+    "id": "panel-guide-004",
+    "title": "单段（SINGLE BLOCK）试运行",
+    "machineActionType": "单段",
+    "targetControlArea": "机床操作面板",
+    "whatItDoes": "启用后，系统每遇到一个分号程序段就停止，需要再次按下循环启动才走下一段。",
+    "whenToUse": "加工开始第一步，或测量完刀偏参数需要确认和微调偏置时。",
+    "wrongOperationRisk": "初次开粗时关闭了单段，程序一旦包含未知坐标，加工无法在分段处及时暂停排查。",
+    "stepGuide": [
+      "第一步：按下机床面板的模式选择旋钮，对准所需要的物理图标。",
+      "第二步：操作屏幕键盘输入G代码字段，按下屏幕右下角的 INSERT 插入。",
+      "第三步：手握机床红色急停按钮，点击绿色循环启动键，注意观察刀头走向。"
+    ],
+    "relatedEntryIds": [
+      "kb-00198",
+      "kb-00232",
+      "kb-00233"
+    ],
+    "preferredImageKeywords": [
+      "panel control board",
+      "MDI key pressed",
+      "handle handwheel jog"
+    ]
+  },
+  {
+    "id": "panel-guide-005",
+    "title": "操机指令面板设定操作指南_空运行_第1节",
+    "machineActionType": "空运行",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 空运行 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"空运行\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00198",
+      "kb-00232",
+      "kb-00233"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-006",
+    "title": "操机指令面板设定操作指南_进给倍率_第1节",
+    "machineActionType": "进给倍率",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 进给倍率 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"进给倍率\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00275",
+      "kb-00477",
+      "kb-00515"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-007",
+    "title": "操机指令面板设定操作指南_主轴倍率_第1节",
+    "machineActionType": "主轴倍率",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 主轴倍率 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"主轴倍率\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00515"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-008",
+    "title": "操机指令面板设定操作指南_程序编辑_第1节",
+    "machineActionType": "程序编辑",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 程序编辑 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"程序编辑\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00481",
+      "kb-00504",
+      "kb-00592"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-009",
+    "title": "操机指令面板设定操作指南_刀补输入_第1节",
+    "machineActionType": "刀补输入",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 刀补输入 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"刀补输入\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-010",
+    "title": "操机指令面板设定操作指南_坐标查看_第1节",
+    "machineActionType": "坐标查看",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 坐标查看 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"坐标查看\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-011",
+    "title": "操机指令面板设定操作指南_报警复位_第1节",
+    "machineActionType": "报警复位",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 报警复位 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"报警复位\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-012",
+    "title": "操机指令面板设定操作指南_回零_第2节",
+    "machineActionType": "回零",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 回零 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"回零\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00028",
+      "kb-00060",
+      "kb-00529"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-013",
+    "title": "操机指令面板设定操作指南_MDI_第2节",
+    "machineActionType": "MDI",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 MDI 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"MDI\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00031",
+      "kb-00403",
+      "kb-00477"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-014",
+    "title": "操机指令面板设定操作指南_手轮_第2节",
+    "machineActionType": "手轮",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 手轮 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"手轮\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00477",
+      "kb-00504",
+      "kb-00550"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-015",
+    "title": "操机指令面板设定操作指南_单段_第2节",
+    "machineActionType": "单段",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 单段 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"单段\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00198",
+      "kb-00232",
+      "kb-00233"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-016",
+    "title": "操机指令面板设定操作指南_空运行_第2节",
+    "machineActionType": "空运行",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 空运行 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"空运行\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00198",
+      "kb-00232",
+      "kb-00233"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-017",
+    "title": "操机指令面板设定操作指南_进给倍率_第2节",
+    "machineActionType": "进给倍率",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 进给倍率 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"进给倍率\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00275",
+      "kb-00477",
+      "kb-00515"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-018",
+    "title": "操机指令面板设定操作指南_主轴倍率_第2节",
+    "machineActionType": "主轴倍率",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 主轴倍率 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"主轴倍率\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00515"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-019",
+    "title": "操机指令面板设定操作指南_程序编辑_第2节",
+    "machineActionType": "程序编辑",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 程序编辑 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"程序编辑\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00481",
+      "kb-00504",
+      "kb-00592"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-020",
+    "title": "操机指令面板设定操作指南_刀补输入_第2节",
+    "machineActionType": "刀补输入",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 刀补输入 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"刀补输入\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-021",
+    "title": "操机指令面板设定操作指南_坐标查看_第2节",
+    "machineActionType": "坐标查看",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 坐标查看 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"坐标查看\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-022",
+    "title": "操机指令面板设定操作指南_报警复位_第2节",
+    "machineActionType": "报警复位",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 报警复位 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"报警复位\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-023",
+    "title": "操机指令面板设定操作指南_回零_第3节",
+    "machineActionType": "回零",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 回零 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"回零\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00028",
+      "kb-00060",
+      "kb-00529"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-024",
+    "title": "操机指令面板设定操作指南_MDI_第3节",
+    "machineActionType": "MDI",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 MDI 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"MDI\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00031",
+      "kb-00403",
+      "kb-00477"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-025",
+    "title": "操机指令面板设定操作指南_手轮_第3节",
+    "machineActionType": "手轮",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 手轮 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"手轮\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00477",
+      "kb-00504",
+      "kb-00550"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-026",
+    "title": "操机指令面板设定操作指南_单段_第3节",
+    "machineActionType": "单段",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 单段 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"单段\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00198",
+      "kb-00232",
+      "kb-00233"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-027",
+    "title": "操机指令面板设定操作指南_空运行_第3节",
+    "machineActionType": "空运行",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 空运行 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"空运行\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00198",
+      "kb-00232",
+      "kb-00233"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-028",
+    "title": "操机指令面板设定操作指南_进给倍率_第3节",
+    "machineActionType": "进给倍率",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 进给倍率 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"进给倍率\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00275",
+      "kb-00477",
+      "kb-00515"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-029",
+    "title": "操机指令面板设定操作指南_主轴倍率_第3节",
+    "machineActionType": "主轴倍率",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 主轴倍率 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"主轴倍率\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00515"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-030",
+    "title": "操机指令面板设定操作指南_程序编辑_第3节",
+    "machineActionType": "程序编辑",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 程序编辑 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"程序编辑\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00481",
+      "kb-00504",
+      "kb-00592"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-031",
+    "title": "操机指令面板设定操作指南_刀补输入_第3节",
+    "machineActionType": "刀补输入",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 刀补输入 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"刀补输入\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-032",
+    "title": "操机指令面板设定操作指南_坐标查看_第3节",
+    "machineActionType": "坐标查看",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 坐标查看 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"坐标查看\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-033",
+    "title": "操机指令面板设定操作指南_报警复位_第3节",
+    "machineActionType": "报警复位",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 报警复位 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"报警复位\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-034",
+    "title": "操机指令面板设定操作指南_回零_第4节",
+    "machineActionType": "回零",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 回零 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"回零\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00028",
+      "kb-00060",
+      "kb-00529"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-035",
+    "title": "操机指令面板设定操作指南_MDI_第4节",
+    "machineActionType": "MDI",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 MDI 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"MDI\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00031",
+      "kb-00403",
+      "kb-00477"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-036",
+    "title": "操机指令面板设定操作指南_手轮_第4节",
+    "machineActionType": "手轮",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 手轮 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"手轮\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00477",
+      "kb-00504",
+      "kb-00550"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-037",
+    "title": "操机指令面板设定操作指南_单段_第4节",
+    "machineActionType": "单段",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 单段 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"单段\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00198",
+      "kb-00232",
+      "kb-00233"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-038",
+    "title": "操机指令面板设定操作指南_空运行_第4节",
+    "machineActionType": "空运行",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 空运行 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"空运行\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00198",
+      "kb-00232",
+      "kb-00233"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-039",
+    "title": "操机指令面板设定操作指南_进给倍率_第4节",
+    "machineActionType": "进给倍率",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 进给倍率 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"进给倍率\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00275",
+      "kb-00477",
+      "kb-00515"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-040",
+    "title": "操机指令面板设定操作指南_主轴倍率_第4节",
+    "machineActionType": "主轴倍率",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 主轴倍率 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"主轴倍率\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00515"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-041",
+    "title": "操机指令面板设定操作指南_程序编辑_第4节",
+    "machineActionType": "程序编辑",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 程序编辑 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"程序编辑\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00481",
+      "kb-00504",
+      "kb-00592"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-042",
+    "title": "操机指令面板设定操作指南_刀补输入_第4节",
+    "machineActionType": "刀补输入",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 刀补输入 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"刀补输入\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-043",
+    "title": "操机指令面板设定操作指南_坐标查看_第4节",
+    "machineActionType": "坐标查看",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 坐标查看 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"坐标查看\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-044",
+    "title": "操机指令面板设定操作指南_报警复位_第4节",
+    "machineActionType": "报警复位",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 报警复位 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"报警复位\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-045",
+    "title": "操机指令面板设定操作指南_回零_第5节",
+    "machineActionType": "回零",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 回零 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"回零\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00028",
+      "kb-00060",
+      "kb-00529"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-046",
+    "title": "操机指令面板设定操作指南_MDI_第5节",
+    "machineActionType": "MDI",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 MDI 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"MDI\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00031",
+      "kb-00403",
+      "kb-00477"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-047",
+    "title": "操机指令面板设定操作指南_手轮_第5节",
+    "machineActionType": "手轮",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 手轮 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"手轮\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00477",
+      "kb-00504",
+      "kb-00550"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-048",
+    "title": "操机指令面板设定操作指南_单段_第5节",
+    "machineActionType": "单段",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 单段 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"单段\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00198",
+      "kb-00232",
+      "kb-00233"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-049",
+    "title": "操机指令面板设定操作指南_空运行_第5节",
+    "machineActionType": "空运行",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 空运行 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"空运行\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00198",
+      "kb-00232",
+      "kb-00233"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-050",
+    "title": "操机指令面板设定操作指南_进给倍率_第5节",
+    "machineActionType": "进给倍率",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 进给倍率 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"进给倍率\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00275",
+      "kb-00477",
+      "kb-00515"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-051",
+    "title": "操机指令面板设定操作指南_主轴倍率_第5节",
+    "machineActionType": "主轴倍率",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 主轴倍率 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"主轴倍率\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00515"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-052",
+    "title": "操机指令面板设定操作指南_程序编辑_第5节",
+    "machineActionType": "程序编辑",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 程序编辑 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"程序编辑\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00481",
+      "kb-00504",
+      "kb-00592"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-053",
+    "title": "操机指令面板设定操作指南_刀补输入_第5节",
+    "machineActionType": "刀补输入",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 刀补输入 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"刀补输入\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-054",
+    "title": "操机指令面板设定操作指南_坐标查看_第5节",
+    "machineActionType": "坐标查看",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 坐标查看 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"坐标查看\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-055",
+    "title": "操机指令面板设定操作指南_报警复位_第5节",
+    "machineActionType": "报警复位",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 报警复位 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"报警复位\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-056",
+    "title": "操机指令面板设定操作指南_回零_第6节",
+    "machineActionType": "回零",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 回零 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"回零\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00028",
+      "kb-00060",
+      "kb-00529"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-057",
+    "title": "操机指令面板设定操作指南_MDI_第6节",
+    "machineActionType": "MDI",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 MDI 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"MDI\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00031",
+      "kb-00403",
+      "kb-00477"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-058",
+    "title": "操机指令面板设定操作指南_手轮_第6节",
+    "machineActionType": "手轮",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 手轮 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"手轮\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00477",
+      "kb-00504",
+      "kb-00550"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-059",
+    "title": "操机指令面板设定操作指南_单段_第6节",
+    "machineActionType": "单段",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 单段 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"单段\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00198",
+      "kb-00232",
+      "kb-00233"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  },
+  {
+    "id": "panel-guide-060",
+    "title": "操机指令面板设定操作指南_空运行_第6节",
+    "machineActionType": "空运行",
+    "targetControlArea": "机床系统控制柜面板",
+    "whatItDoes": "提供针对 空运行 操作的标准化现场按钮点按与屏幕画面切入操作引导。",
+    "whenToUse": "在数控车铣复合加工和考证刷题实操演练中使用。",
+    "wrongOperationRisk": "按错模式键（如在MEM运行中误按编辑Edit）会触发机床逻辑警告或强制停机。",
+    "stepGuide": [
+      "步骤1：在系统面板选择 \"空运行\" 对应按键或软键盘按钮。",
+      "步骤2：确认进给修调与主轴转速调节旋钮处于极低安全位置（建议置于0%或10%状态）。",
+      "步骤3：仔细确认屏幕当前坐标值，再进行物理动作确认。"
+    ],
+    "relatedEntryIds": [
+      "kb-00198",
+      "kb-00232",
+      "kb-00233"
+    ],
+    "preferredImageKeywords": [
+      "CNC panel screen close-up",
+      "mode change switch button"
+    ]
+  }
+]

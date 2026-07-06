@@ -1,0 +1,32 @@
+/* ============================================
+   themes/theme-dark.css — 深色主题
+   ============================================ */
+:root[data-theme="dark"] {
+  --bg-primary: #1a1a2e; --bg-secondary: #16213e; --bg-tertiary: #0f3460;
+  --text-primary: #e4e6eb; --text-secondary: #b0b3b8; --text-muted: #6c7086;
+  --border-primary: #2d2d4a; --border-secondary: #3d3d5c;
+  --accent-primary: #e8945a; --accent-secondary: #cf6d36; --accent-dark: #f0b080;
+  --accent-success: #2ecc71; --accent-error: #e74c3c; --accent-warning: #f1c40f;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.2); --shadow-md: 0 2px 8px rgba(0,0,0,0.3); --shadow-lg: 0 4px 16px rgba(0,0,0,0.4);
+  --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px; --radius-xl: 16px;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "Cascadia Code", "Fira Code", monospace;
+  --transition-fast: 0.15s ease; --transition-normal: 0.25s ease;
+  color-scheme: dark;
+}
+:root[data-theme="dark"] body { background: var(--bg-primary); color: var(--text-primary); }
+:root[data-theme="dark"] a { color: var(--accent-primary); }
+:root[data-theme="dark"] .card, :root[data-theme="dark"] .masonry-card, :root[data-theme="dark"] .detail-card { background: var(--bg-secondary); border-color: var(--border-primary); }
+:root[data-theme="dark"] input, :root[data-theme="dark"] select, :root[data-theme="dark"] textarea { background: var(--bg-tertiary); color: var(--text-primary); border-color: var(--border-primary); }
+:root[data-theme="dark"] .quiz-option { background: var(--bg-tertiary); border-color: var(--border-primary); }
+:root[data-theme="dark"] .quiz-feedback-correct { background: rgba(46,204,113,0.15); }
+:root[data-theme="dark"] .quiz-feedback-incorrect { background: rgba(231,76,60,0.15); }
+:root[data-theme="dark"] .lesson-summary { background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary)); }
+:root[data-theme="dark"] .code-block { background: #0d1117; }
+:root[data-theme="dark"] .code-block-header { background: #161b22; }
+:root[data-theme="dark"] .search-history-list, :root[data-theme="dark"] .search-filter-panel { background: var(--bg-secondary); border-color: var(--border-primary); }
+:root[data-theme="dark"] .analytics-stat-card { background: var(--bg-tertiary); }
+:root[data-theme="dark"] .journey-item { border-color: var(--border-secondary); }
+:root[data-theme="dark"] .image-filter-panel { background: var(--bg-secondary); border-color: var(--border-primary); }
+:root[data-theme="dark"] .annotation-toolbar { background: var(--bg-secondary); border-color: var(--border-primary); }
+:root[data-theme="dark"] .inline-code { background: var(--bg-tertiary); color: var(--accent-error); }

@@ -1,0 +1,1682 @@
+{
+  "entry-study": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_001.webp",
+      "title": "新手小白入门闯关与技能路线",
+      "caption": "流程图 · 已经对齐到当前学习卡片/功能模块。"
+    }
+  ],
+  "entry-gcode": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_002.webp",
+      "title": "数控 G/M 核心编程指令速查",
+      "caption": "刀路轨迹图 · 已经对齐到当前学习卡片/功能模块。"
+    }
+  ],
+  "entry-alarm": [
+    {
+      "src": "./image-system-round1/img_batch001_diagnosis_003.webp",
+      "title": "伺服电气与 PLC 故障排障",
+      "caption": "报警情景图 · 已经对齐到当前学习卡片/功能模块。"
+    }
+  ],
+  "entry-param": [
+    {
+      "src": "./image-system-round1/img_batch001_compare_004.webp",
+      "title": "十类经典材料加工切削参数",
+      "caption": "对比图 · 已经对齐到当前学习卡片/功能模块。"
+    }
+  ],
+  "entry-tooling": [
+    {
+      "src": "./image-system-round1/img_batch001_compare_005.webp",
+      "title": "刀具选用与切削工艺技巧",
+      "caption": "对比图 · 已经对齐到当前学习卡片/功能模块。"
+    }
+  ],
+  "entry-calc": [
+    {
+      "src": "./image-system-round1/img_batch001_calculator_006.webp",
+      "title": "转速进给及孔公差计算器",
+      "caption": "参数仪表图 · 已经对齐到当前学习卡片/功能模块。"
+    }
+  ],
+  "card-001": [
+    {
+      "src": "./image-system-round1/img_batch001_drawing_007.webp",
+      "title": "识读机械图纸符号与公差",
+      "caption": "图纸实物对比图 · 已经对齐到当前学习卡片/功能模块。"
+    }
+  ],
+  "card-002": [
+    {
+      "src": "./image-system-round1/img_batch001_coordinate_008.webp",
+      "title": "笛卡尔右手坐标轴方向判定",
+      "caption": "坐标示意图 · 已经对齐到当前学习卡片/功能模块。"
+    }
+  ],
+  "card-003": [
+    {
+      "src": "./image-system-round1/img_batch001_coordinate_009.webp",
+      "title": "机床安全归回机械零点顺序",
+      "caption": "坐标示意图 · 已经对齐到当前学习卡片/功能模块。"
+    }
+  ],
+  "card-004": [
+    {
+      "src": "./image-system-round1/img_batch001_coordinate_010.webp",
+      "title": "G54 工件坐标系原点偏置设定",
+      "caption": "坐标示意图 · 已经对齐到当前学习卡片/功能模块。"
+    }
+  ],
+  "card-005": [
+    {
+      "src": "./image-system-round1/img_batch001_touchoff_011.webp",
+      "title": "寻边器分中与手动对刀步骤",
+      "caption": "对刀步骤图 · 已经对齐到当前学习卡片/功能模块。"
+    }
+  ],
+  "card-006": [
+    {
+      "src": "./image-system-round1/img_batch001_touchoff_012.webp",
+      "title": "G43 刀长偏置安全防扎刀首件校验",
+      "caption": "对刀步骤图 · 已经对齐到当前学习卡片/功能模块。"
+    }
+  ],
+  "card-007": [
+    {
+      "src": "./image-system-round1/img_batch001_compare_013.webp",
+      "title": "铝件与钢件加工铣刀对比选型",
+      "caption": "对比图 · 已经对齐到当前学习卡片/功能模块。"
+    }
+  ],
+  "card-008": [
+    {
+      "src": "./image-system-round1/img_batch001_calculator_014.webp",
+      "title": "线速度与主轴 RPM 进给换算",
+      "caption": "参数仪表图 · 已经对齐到当前学习卡片/功能模块。"
+    }
+  ],
+  "card-009": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_015.webp",
+      "title": "顺铣与逆铣受力方向表面光洁度对比",
+      "caption": "刀路轨迹图 · 已经对齐到当前学习卡片/功能模块。"
+    }
+  ],
+  "card-010": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_016.webp",
+      "title": "G00快速平移与G01直线切削插补轨迹",
+      "caption": "刀路轨迹图 · 已经对齐到当前学习卡片/功能模块。"
+    }
+  ],
+  "card-011": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_017.webp",
+      "title": "G83啄钻循环分段排屑步骤",
+      "caption": "流程图 · 已经对齐到当前学习卡片/功能模块。"
+    }
+  ],
+  "card-012": [
+    {
+      "src": "./image-system-round1/img_batch001_diagnosis_018.webp",
+      "title": "伺服轴超程手动释放手轮退离步骤",
+      "caption": "报警情景图 · 已经对齐到当前学习卡片/功能模块。"
+    }
+  ],
+  "learn-g41-g42": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_019.webp",
+      "title": "G41/G42 刀具半径左/右补偿建立段",
+      "caption": "刀路轨迹图 · 已经对齐到当前学习卡片/功能模块。"
+    }
+  ],
+  "learn-g17-g18-g19": [
+    {
+      "src": "./image-system-round1/img_batch001_coordinate_020.webp",
+      "title": "G17 XY平面 / G18 XZ平面选择",
+      "caption": "坐标示意图 · 已经对齐到当前学习卡片/功能模块。"
+    }
+  ],
+  "m06-tool-change": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_021.webp",
+      "title": "M06 刀库换刀机械手复位步骤",
+      "caption": "流程图 · 已经对齐到当前学习卡片/功能模块。"
+    }
+  ],
+  "fanuc-alarm-common": [
+    {
+      "src": "./image-system-round1/img_batch001_diagnosis_022.webp",
+      "title": "5136 FSSB 伺服卡光纤连线排障",
+      "caption": "报警情景图 · 已经对齐到当前学习卡片/功能模块。"
+    }
+  ],
+  "calc-thread-pitch": [
+    {
+      "src": "./image-system-round1/img_batch001_calculator_023.webp",
+      "title": "螺距与 TPI 牙数换算对照表",
+      "caption": "参数仪表图 · 已经对齐到当前学习卡片/功能模块。"
+    }
+  ],
+  "premium-preview-tc4": [
+    {
+      "src": "./image-system-round1/img_batch001_compare_024.webp",
+      "title": "高级授权 TC4 钛合金切削工艺卡",
+      "caption": "对比图 · 已经对齐到当前学习卡片/功能模块。"
+    }
+  ],
+  "learn-coordinate-system": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_025.webp",
+      "title": "坐标系与对刀详解",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "learn-absolute-incremental": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_026.webp",
+      "title": "G90 / G91 绝对值与增量编程",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "learn-g54-g59": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_027.webp",
+      "title": "G54-G59 工件坐标系",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "learn-g43-g44-g49": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_028.webp",
+      "title": "G43 / G44 / G49 刀长补偿",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "learn-g71-g72-g73": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_029.webp",
+      "title": "G71 / G72 / G73 车床循环",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "learn-g81-g83": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_030.webp",
+      "title": "G81 / G83 钻孔与啄钻循环",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "learn-g84": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_031.webp",
+      "title": "G84 攻丝循环",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "fanuc-param-backup": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_032.webp",
+      "title": "FANUC 参数备份与恢复",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "fanuc-rigid-tap": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_033.webp",
+      "title": "FANUC 刚性攻丝编程与参数",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "alarm-servo": [
+    {
+      "src": "./image-system-round1/img_batch001_diagnosis_034.webp",
+      "title": "伺服系统常见故障与排除",
+      "caption": "报警情景图 · 现场指导配图"
+    }
+  ],
+  "alarm-spindle": [
+    {
+      "src": "./image-system-round1/img_batch001_diagnosis_035.webp",
+      "title": "主轴常见故障与排除",
+      "caption": "报警情景图 · 现场指导配图"
+    }
+  ],
+  "alarm-atc": [
+    {
+      "src": "./image-system-round1/img_batch001_diagnosis_036.webp",
+      "title": "ATC 自动换刀故障诊断",
+      "caption": "报警情景图 · 现场指导配图"
+    }
+  ],
+  "tool-life": [
+    {
+      "src": "./image-system-round1/img_batch001_compare_037.webp",
+      "title": "刀具寿命管理",
+      "caption": "对比图 · 现场指导配图"
+    }
+  ],
+  "tool-coating": [
+    {
+      "src": "./image-system-round1/img_batch001_compare_038.webp",
+      "title": "刀具涂层技术",
+      "caption": "对比图 · 现场指导配图"
+    }
+  ],
+  "material-stainless": [
+    {
+      "src": "./image-system-round1/img_batch001_compare_039.webp",
+      "title": "不锈钢加工完整方案",
+      "caption": "对比图 · 现场指导配图"
+    }
+  ],
+  "material-aluminum": [
+    {
+      "src": "./image-system-round1/img_batch001_compare_040.webp",
+      "title": "铝合金加工基础",
+      "caption": "对比图 · 现场指导配图"
+    }
+  ],
+  "material-high-temp": [
+    {
+      "src": "./image-system-round1/img_batch001_compare_041.webp",
+      "title": "高温合金加工专项",
+      "caption": "对比图 · 现场指导配图"
+    }
+  ],
+  "case-thin-wall": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_042.webp",
+      "title": "薄壁零件加工案例",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "case-axis": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_043.webp",
+      "title": "车削阶梯轴案例",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "case-thread-part": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_044.webp",
+      "title": "螺纹零件加工案例",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "quick-fanuc-param": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_045.webp",
+      "title": "FANUC 参数修改速查",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "quick-fanuc-alarm": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_046.webp",
+      "title": "FANUC 报警代码速查表",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "quick-gcode": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_047.webp",
+      "title": "G代码与编程速查",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "quick-g96": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_048.webp",
+      "title": "G96 恒线速速查表",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "quick-thread": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_049.webp",
+      "title": "螺纹与规格速查",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "quick-measure": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_050.webp",
+      "title": "量具使用速查表",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "learn-program-structure": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_051.webp",
+      "title": "程序结构与常见地址符",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "machine-home-return": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_052.webp",
+      "title": "回零操作与参考点概念",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "machine-tool-setting": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_053.webp",
+      "title": "FANUC 对刀完整操作流程",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "machine-panel-english": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_054.webp",
+      "title": "机床面板常见英文单词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "g04-dwell": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_055.webp",
+      "title": "G04 暂停指令",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "g20-g21-unit": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_056.webp",
+      "title": "G20 / G21 英制与公制切换",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "g28-g29-reference": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_057.webp",
+      "title": "G28 / G29 参考点返回",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "g00-g01-motion": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_058.webp",
+      "title": "G00 / G01 快移与直线切削",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "g02-g03-arc": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_059.webp",
+      "title": "G02 / G03 圆弧插补",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "g40-cancel-comp": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_060.webp",
+      "title": "G40 取消刀补",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "g53-machine-coordinate": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_061.webp",
+      "title": "G53 机床坐标调用",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "g94-g95-feed": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_062.webp",
+      "title": "G94 / G95 进给方式",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "g76-thread-cycle": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_063.webp",
+      "title": "G76 螺纹循环",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "g80-cancel-cycle": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_064.webp",
+      "title": "G80 取消固定循环",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "g98-g99-return": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_065.webp",
+      "title": "G98 / G99 返回平面",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "g96-g97-spindle": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_066.webp",
+      "title": "G96 / G97 恒线速与固定转速",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "m30-program-end": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_067.webp",
+      "title": "M30 程序结束与复位",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "m03-m04-m05": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_068.webp",
+      "title": "M03 / M04 / M05 主轴控制",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "m08-m09-coolant": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_069.webp",
+      "title": "M08 / M09 冷却液控制",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "m00-m01-stop": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_070.webp",
+      "title": "M00 / M01 程序停止",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "fault-limit-switch": [
+    {
+      "src": "./image-system-round1/img_batch001_diagnosis_071.webp",
+      "title": "限位与超程类问题排查",
+      "caption": "报警情景图 · 现场指导配图"
+    }
+  ],
+  "fault-home-fail": [
+    {
+      "src": "./image-system-round1/img_batch001_diagnosis_072.webp",
+      "title": "回不了零点时先查什么",
+      "caption": "报警情景图 · 现场指导配图"
+    }
+  ],
+  "fault-home-reference": [
+    {
+      "src": "./image-system-round1/img_batch001_diagnosis_073.webp",
+      "title": "回零失败与参考点异常",
+      "caption": "报警情景图 · 现场指导配图"
+    }
+  ],
+  "process-allowance-basics": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_074.webp",
+      "title": "粗加工 / 半精加工 / 精加工余量逻辑",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "process-surface-roughness": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_075.webp",
+      "title": "表面粗糙度标准与选用",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "drawing-symbol": [
+    {
+      "src": "./image-system-round1/img_batch001_drawing_076.webp",
+      "title": "图纸符号与尺寸标注入门",
+      "caption": "图纸实物对比图 · 现场指导配图"
+    }
+  ],
+  "tool-insert-brand": [
+    {
+      "src": "./image-system-round1/img_batch001_compare_077.webp",
+      "title": "刀具品牌与牌号认知入门",
+      "caption": "对比图 · 现场指导配图"
+    }
+  ],
+  "tool-drill-selection": [
+    {
+      "src": "./image-system-round1/img_batch001_compare_078.webp",
+      "title": "钻头选型与切削基础",
+      "caption": "对比图 · 现场指导配图"
+    }
+  ],
+  "tool-thread-tap": [
+    {
+      "src": "./image-system-round1/img_batch001_compare_079.webp",
+      "title": "丝锥攻丝入门",
+      "caption": "对比图 · 现场指导配图"
+    }
+  ],
+  "material-carbon-steel": [
+    {
+      "src": "./image-system-round1/img_batch001_compare_080.webp",
+      "title": "常见钢材加工基础",
+      "caption": "对比图 · 现场指导配图"
+    }
+  ],
+  "material-plastic": [
+    {
+      "src": "./image-system-round1/img_batch001_compare_081.webp",
+      "title": "工程塑料加工特点",
+      "caption": "对比图 · 现场指导配图"
+    }
+  ],
+  "case-flange": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_082.webp",
+      "title": "法兰盘加工案例",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "case-gear": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_083.webp",
+      "title": "精密齿轮加工案例",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "quick-allowance-card": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_084.webp",
+      "title": "加工余量标准速查表",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "quick-insert-card": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_085.webp",
+      "title": "刀片型号解读速查表",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "quick-cutting-card": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_086.webp",
+      "title": "切削参数速查",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "learn-g20-g21": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_087.webp",
+      "title": "G20 / G21 英制与公制切换",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "learn-g28-g29": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_088.webp",
+      "title": "G28 / G29 参考点返回",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "learn-m03-m05": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_089.webp",
+      "title": "M03 / M04 / M05 主轴控制",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "learn-m06": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_090.webp",
+      "title": "M06 自动换刀",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "learn-m08-m09": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_091.webp",
+      "title": "M08 / M09 冷却液控制",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "learn-fanuc-alarm-common": [
+    {
+      "src": "./image-system-round1/img_batch001_diagnosis_092.webp",
+      "title": "FANUC 常见报警代码解析",
+      "caption": "报警情景图 · 现场指导配图"
+    }
+  ],
+  "calc-vc-rpm": [
+    {
+      "src": "./image-system-round1/img_batch001_calculator_093.webp",
+      "title": "线速度、转速换算",
+      "caption": "参数仪表图 · 现场指导配图"
+    }
+  ],
+  "calc-feed": [
+    {
+      "src": "./image-system-round1/img_batch001_calculator_094.webp",
+      "title": "进给速度换算",
+      "caption": "参数仪表图 · 现场指导配图"
+    }
+  ],
+  "calc-radius-diameter": [
+    {
+      "src": "./image-system-round1/img_batch001_calculator_095.webp",
+      "title": "半径与直径换算",
+      "caption": "参数仪表图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-coordinate": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_096.webp",
+      "title": "坐标系教学配图提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-g02": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_097.webp",
+      "title": "G02 / G03 圆弧配图提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-compensation": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_098.webp",
+      "title": "刀补教学配图提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-cycle": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_099.webp",
+      "title": "钻孔与攻丝循环提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-plane": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_100.webp",
+      "title": "G17 / G18 / G19 平面提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-offset": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_101.webp",
+      "title": "G54 / G59 工件坐标提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-home": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_102.webp",
+      "title": "G28 回零与安全退刀提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-thread": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_103.webp",
+      "title": "G76 螺纹循环提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-alarm": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_104.webp",
+      "title": "报警排查流程提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-gauge": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_105.webp",
+      "title": "量具识别与读数提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-tool-life": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_106.webp",
+      "title": "刀具寿命与涂层提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-tolerance": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_107.webp",
+      "title": "公差与配合提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-roughness": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_108.webp",
+      "title": "表面粗糙度提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-cutting": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_109.webp",
+      "title": "切削参数提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-parameter-sheet": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_110.webp",
+      "title": "现场参数速查提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-material": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_111.webp",
+      "title": "材料切削与刀具选择提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-startup": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_112.webp",
+      "title": "开机检查与安全准备提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-atc": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_113.webp",
+      "title": "ATC 换刀与刀库提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-compensation-flow": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_114.webp",
+      "title": "刀补流程与对刀提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-feed-mode": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_115.webp",
+      "title": "G94 / G95 进给模式提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-return-plane": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_116.webp",
+      "title": "G98 / G99 返回平面提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-unit-switch": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_117.webp",
+      "title": "G20 / G21 单位切换提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-tool-length": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_118.webp",
+      "title": "G43 / G49 刀长补偿提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-fixed-cycle": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_119.webp",
+      "title": "G81 / G83 / G84 固定循环提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-alarm-servo": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_120.webp",
+      "title": "伺服报警排查提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-alarm-spindle": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_121.webp",
+      "title": "主轴报警排查提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-alarm-limit": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_122.webp",
+      "title": "限位与超程报警提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-home-fail": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_123.webp",
+      "title": "回零失败与参考点异常提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-touchoff-fail": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_124.webp",
+      "title": "对刀失败与基准异常提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-parameter-backup": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_125.webp",
+      "title": "参数备份与初始化提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-home-parameter": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_126.webp",
+      "title": "回零参数与参考点设定提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-init": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_127.webp",
+      "title": "机床初始化与上电流程提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-high-risk-params": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_128.webp",
+      "title": "高风险参数类别提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-init-checklist": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_129.webp",
+      "title": "机床初始化检查清单提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "diagram-prompt-alarm-overview": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_130.webp",
+      "title": "报警总览与分类图卡提示词",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "kb-g20-g21": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_131.webp",
+      "title": "G20 / G21 英制公制切换",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-g28-g29": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_132.webp",
+      "title": "G28 / G29 回参考点",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-g40-g41-g42": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_133.webp",
+      "title": "G40 / G41 / G42 刀具半径补偿",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-g43-g44-g49": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_134.webp",
+      "title": "G43 / G44 / G49 刀长补偿",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-g50": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_135.webp",
+      "title": "G50 主轴限制与坐标系设定",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-g51": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_136.webp",
+      "title": "G51 比例缩放",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-g52-g53": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_137.webp",
+      "title": "G52 / G53 局部与机床坐标",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-g54-g59": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_138.webp",
+      "title": "G54-G59 工件坐标系",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-g61-g64": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_139.webp",
+      "title": "G61 / G64 精确停止与连续路径",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-g65-g66-g67": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_140.webp",
+      "title": "G65 / G66 / G67 宏程序调用",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-g68-g69": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_141.webp",
+      "title": "G68 / G69 坐标旋转",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-g70": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_142.webp",
+      "title": "G70 精车循环",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-g71-g72-g73": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_143.webp",
+      "title": "G71 / G72 / G73 外圆粗车与啄钻",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-g74-g75": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_144.webp",
+      "title": "G74 / G75 端面与切槽循环",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-g76": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_145.webp",
+      "title": "G76 螺纹与精镗循环",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-g81-g82-g83": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_146.webp",
+      "title": "G81 / G82 / G83 钻孔固定循环",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-g84": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_147.webp",
+      "title": "G84 攻丝循环",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-g85-g86-g87-g88-g89": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_148.webp",
+      "title": "G85-G89 镗孔循环",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-g90-g91": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_149.webp",
+      "title": "G90 / G91 绝对与增量编程",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-g94-g95": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_150.webp",
+      "title": "G94 / G95 进给模式",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-g96-g97": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_151.webp",
+      "title": "G96 / G97 恒线速与定转速",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-g98-g99": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_152.webp",
+      "title": "G98 / G99 返回平面",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-m03-m05": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_153.webp",
+      "title": "M03 / M04 / M05 主轴控制",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "kb-m06": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_154.webp",
+      "title": "M06 自动换刀",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "kb-m08-m09": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_155.webp",
+      "title": "M08 / M09 冷却控制",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "kb-m19": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_156.webp",
+      "title": "M19 主轴定向",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "kb-m30-m02": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_157.webp",
+      "title": "M30 / M02 程序结束",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "kb-m98-m99": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_158.webp",
+      "title": "M98 / M99 子程序调用",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-fanuc-params": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_159.webp",
+      "title": "FANUC 系统参数详解",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "kb-fanuc-backup": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_160.webp",
+      "title": "FANUC 0i 参数备份与维护",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "kb-siemens-840d": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_161.webp",
+      "title": "西门子 SINUMERIK 编程基础",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "kb-gsk": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_162.webp",
+      "title": "广数 GSK980 系统编程操作",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "kb-okuma": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_163.webp",
+      "title": "OKUMA 系统速查",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "kb-mazak": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_164.webp",
+      "title": "Mazak Mazatrol 对话式编程",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "kb-fanuc-alarm": [
+    {
+      "src": "./image-system-round1/img_batch001_diagnosis_165.webp",
+      "title": "FANUC 报警代码速查",
+      "caption": "报警情景图 · 现场指导配图"
+    }
+  ],
+  "kb-servo-fault": [
+    {
+      "src": "./image-system-round1/img_batch001_diagnosis_166.webp",
+      "title": "伺服系统常见故障与排除",
+      "caption": "报警情景图 · 现场指导配图"
+    }
+  ],
+  "kb-spindle-fault": [
+    {
+      "src": "./image-system-round1/img_batch001_diagnosis_167.webp",
+      "title": "主轴常见故障与排除",
+      "caption": "报警情景图 · 现场指导配图"
+    }
+  ],
+  "kb-atc-fault": [
+    {
+      "src": "./image-system-round1/img_batch001_diagnosis_168.webp",
+      "title": "ATC 自动换刀故障诊断",
+      "caption": "报警情景图 · 现场指导配图"
+    }
+  ],
+  "kb-home-fail": [
+    {
+      "src": "./image-system-round1/img_batch001_diagnosis_169.webp",
+      "title": "回零失败排查",
+      "caption": "报警情景图 · 现场指导配图"
+    }
+  ],
+  "kb-tool-setting": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_170.webp",
+      "title": "对刀与刀具补偿",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "kb-tool-life": [
+    {
+      "src": "./image-system-round1/img_batch001_compare_171.webp",
+      "title": "刀具寿命管理",
+      "caption": "对比图 · 现场指导配图"
+    }
+  ],
+  "kb-cutting-params": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_172.webp",
+      "title": "切削参数与工艺速查",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "kb-material-params": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_173.webp",
+      "title": "材料切削参数速查",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "kb-measurement": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_174.webp",
+      "title": "公差与精密测量",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "kb-surface-roughness": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_175.webp",
+      "title": "表面粗糙度速查",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "kb-spc-msa": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_176.webp",
+      "title": "SPC 与 MSA 质量基础",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "kb-machine-accuracy": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_177.webp",
+      "title": "机床精度检测验收",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "kb-g-code-m-code": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_178.webp",
+      "title": "G 代码与 M 代码总览",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-sample-case-flange": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_179.webp",
+      "title": "法兰盘加工案例",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "kb-sample-thin-wall": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_180.webp",
+      "title": "薄壁零件加工案例",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "kb-sample-aviation": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_181.webp",
+      "title": "航空结构件加工案例",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "kb-g10": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_182.webp",
+      "title": "G10 可编程参数输入",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-g16": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_183.webp",
+      "title": "G16 极坐标编程",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-g17-g18-g19": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_184.webp",
+      "title": "G17 / G18 / G19 平面选择",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-g04": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_185.webp",
+      "title": "G04 暂停指令",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-g32-g33": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_186.webp",
+      "title": "G32 / G33 螺纹切削",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-g35-g37": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_187.webp",
+      "title": "G35 / G37 自动对刀",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-g92": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_188.webp",
+      "title": "G92 螺纹循环与坐标预设",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-program-structure": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_189.webp",
+      "title": "G 代码程序结构",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-program-opt": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_190.webp",
+      "title": "程序优化技巧",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-tool-holder": [
+    {
+      "src": "./image-system-round1/img_batch001_compare_191.webp",
+      "title": "刀柄与工具系统",
+      "caption": "对比图 · 现场指导配图"
+    }
+  ],
+  "kb-tool-material": [
+    {
+      "src": "./image-system-round1/img_batch001_compare_192.webp",
+      "title": "刀具材料与品牌选型",
+      "caption": "对比图 · 现场指导配图"
+    }
+  ],
+  "kb-tool-coating": [
+    {
+      "src": "./image-system-round1/img_batch001_compare_193.webp",
+      "title": "刀具涂层技术",
+      "caption": "对比图 · 现场指导配图"
+    }
+  ],
+  "kb-material-base": [
+    {
+      "src": "./image-system-round1/img_batch001_compare_194.webp",
+      "title": "工件材料手册",
+      "caption": "对比图 · 现场指导配图"
+    }
+  ],
+  "kb-process-rules": [
+    {
+      "src": "./image-system-round1/img_batch001_compare_195.webp",
+      "title": "加工工艺规程",
+      "caption": "对比图 · 现场指导配图"
+    }
+  ],
+  "kb-drawing-reading": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_196.webp",
+      "title": "机械制图核心知识点",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "kb-common-errors": [
+    {
+      "src": "./image-system-round1/img_batch001_diagnosis_197.webp",
+      "title": "编程常见错误与防范",
+      "caption": "报警情景图 · 现场指导配图"
+    }
+  ],
+  "kb-root-01_编程基础": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_198.webp",
+      "title": "01_编程基础 总览",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "kb-root-02_机床操作": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_199.webp",
+      "title": "02_机床操作 总览",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "kb-root-03_CAM软件": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_200.webp",
+      "title": "03_CAM软件 总览",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "kb-root-04_刀具工艺": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_201.webp",
+      "title": "04_刀具工艺 总览",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "kb-root-05_故障维修": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_202.webp",
+      "title": "05_故障维修 总览",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "kb-root-06_检测质量": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_203.webp",
+      "title": "06_检测质量 总览",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "kb-root-06_考证职业": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_204.webp",
+      "title": "06_考证职业 总览",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "kb-root-07_行业资讯": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_205.webp",
+      "title": "07_行业资讯 总览",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "kb-root-08_加工案例": [
+    {
+      "src": "./image-system-round1/img_batch001_flowchart_206.webp",
+      "title": "08_加工案例 总览",
+      "caption": "流程图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-知识类_G代码M代码编程实例大全": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_207.webp",
+      "title": "FANUC G代码M代码编程实例大全(完整版)",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-知识类_FANUC_G代码全集参考手册": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_208.webp",
+      "title": "FANUC G代码全集参考手册",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-NotebookLM_FANUC加工中心G代码M代码完整手册": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_209.webp",
+      "title": "FANUC立式加工中心：G代码与M代码终极详细参考手册",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-教学_固定循环编程完全指南": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_210.webp",
+      "title": "FANUC固定循环编程完全指南",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-QClaw测试_G代码速查手册": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_211.webp",
+      "title": "QClaw测试 G代码速查手册",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-数控编程基础": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_212.webp",
+      "title": "数控编程基础",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-螺纹加工专项": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_213.webp",
+      "title": "螺纹加工专项",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-程序优化技巧": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_214.webp",
+      "title": "数控程序优化技巧",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-知识类_数控加工工艺与参数大全": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_215.webp",
+      "title": "数控加工工艺与参数大全",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-Web_数控技术基础原理": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_216.webp",
+      "title": "数控技术基础原理",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-Web_G代码编程参考手册": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_217.webp",
+      "title": "G代码编程完整参考手册",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-电火花线切割编程": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_218.webp",
+      "title": "电火花线切割编程",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-教学_数控英语术语扩展手册": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_219.webp",
+      "title": "教学 数控英语术语扩展手册",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-金属切削原理": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_220.webp",
+      "title": "金属切削原理",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-铣床加工中心编程专项": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_221.webp",
+      "title": "铣床加工中心编程专项",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-教学_螺纹铣削": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_222.webp",
+      "title": "数控加工螺纹铣削专项教学",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-曲面加工编程": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_223.webp",
+      "title": "曲面加工编程",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-教学_FANUC宏程序B类完全指南": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_224.webp",
+      "title": "教学 FANUC宏程序B类完全指南",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-加工余量与工序设计": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_225.webp",
+      "title": "加工余量与工序设计",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-磨床编程": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_226.webp",
+      "title": "磨床编程",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-编程技巧与经验": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_227.webp",
+      "title": "编程技巧与经验",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-攻丝与螺孔加工": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_228.webp",
+      "title": "数控攻丝与螺孔加工",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-车床编程专项": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_229.webp",
+      "title": "车床编程专项",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-QClaw测试_编程报警解决方案": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_230.webp",
+      "title": "QClaw测试 编程报警解决方案",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-QClaw测试_坐标系详解": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_231.webp",
+      "title": "QClaw测试 坐标系详解",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-数控编程教学合集": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_232.webp",
+      "title": "数控编程教学合集",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-五轴加工编程": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_233.webp",
+      "title": "五轴加工编程",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-教学_刀具补偿": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_234.webp",
+      "title": "数控编程教学：刀具补偿（长度+半径）",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-宏程序编程": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_235.webp",
+      "title": "数控宏程序编程",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-Web_G代码M代码完整手册": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_236.webp",
+      "title": "Web G代码M代码完整手册",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-教学_螺纹加工": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_237.webp",
+      "title": "教学 螺纹加工",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-知识类_数控技术基础知识大全": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_238.webp",
+      "title": "数控技术基础知识大全",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-五轴加工碰撞检测与仿真": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_239.webp",
+      "title": "五轴加工碰撞检测与仿真",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ],
+  "kb-file-01_编程基础-QClaw测试_尾座使用": [
+    {
+      "src": "./image-system-round1/img_batch001_toolpath_240.webp",
+      "title": "QClaw测试 尾座使用",
+      "caption": "刀路轨迹图 · 现场指导配图"
+    }
+  ]
+}

@@ -1,0 +1,874 @@
+[
+  {
+    "id": "cluster-gbasic-motion",
+    "title": "G00/G01 快速定位与直线进给轨迹图解",
+    "coverImage": "assets/images/batch01_core/gcode-g00-g01-001.webp",
+    "clusterType": "G代码动作图解",
+    "entryIds": [
+      "kb-00001",
+      "kb-00003",
+      "kb-00004",
+      "kb-00005",
+      "kb-00006",
+      "kb-00007"
+    ],
+    "imageDriven": true,
+    "description": "对比快速移刀与按给定速度直线切削时的轨迹运动特点，重点规避安全距离防撞刀。",
+    "keywords": [
+      "G00",
+      "G01",
+      "快速定位",
+      "轨迹图解"
+    ]
+  },
+  {
+    "id": "cluster-gcircle-arcs",
+    "title": "G02/G03 圆弧插补与 G17/G18/G19 平面关系",
+    "coverImage": "assets/images/batch01_core/gcode-g17-g18-g19-001.webp",
+    "clusterType": "G代码动作图解",
+    "entryIds": [
+      "kb-00001",
+      "kb-00003",
+      "kb-00004",
+      "kb-00005",
+      "kb-00006",
+      "kb-00007"
+    ],
+    "imageDriven": true,
+    "description": "通过三维平面投影分解XY、XZ、YZ平面上的圆弧切削以及I、J、K圆心矢量设定。",
+    "keywords": [
+      "G02",
+      "G03",
+      "G17",
+      "圆弧轨迹"
+    ]
+  },
+  {
+    "id": "cluster-g54-zero",
+    "title": "机械零点 vs 工件零点与 G54 工件偏置转换",
+    "coverImage": "assets/images/batch01_core/beginner-machine-zero-vs-work-zero-001.webp",
+    "clusterType": "对刀与坐标设定",
+    "entryIds": [
+      "kb-00001",
+      "kb-00009",
+      "kb-00010",
+      "kb-00013",
+      "kb-00028",
+      "kb-00031"
+    ],
+    "imageDriven": true,
+    "description": "直观展示机床基准参考点与工件对刀零点在三维轴向的空间转换关系，并显示偏置参数写入流程。",
+    "keywords": [
+      "G54",
+      "机械零点",
+      "工件原点",
+      "空间关系"
+    ]
+  },
+  {
+    "id": "cluster-work-offset",
+    "title": "对刀仪偏置测量与对刀操作步骤详解",
+    "coverImage": "assets/images/batch02_operation_basics/work-offset-setting-001.webp",
+    "clusterType": "对刀与坐标设定",
+    "entryIds": [
+      "kb-00009",
+      "kb-00028",
+      "kb-00029",
+      "kb-00062",
+      "kb-00065",
+      "kb-00067"
+    ],
+    "imageDriven": true,
+    "description": "手把手展示机外对刀仪及工件试切对刀的量测步骤，包含坐标偏置值(X/Y/Z)在系统的写入位置图。",
+    "keywords": [
+      "对刀",
+      "偏置测量",
+      "系统写入",
+      "寻边分中"
+    ]
+  },
+  {
+    "id": "cluster-radius-compensation",
+    "title": "G41/G42 刀鼻半径补偿与切削刀补图解",
+    "coverImage": "assets/images/batch01_core/gcode-g41-g42-001.webp",
+    "clusterType": "刀补与长度补偿",
+    "entryIds": [
+      "kb-00002",
+      "kb-00004",
+      "kb-00012",
+      "kb-00024",
+      "kb-00059",
+      "kb-00066"
+    ],
+    "imageDriven": true,
+    "description": "演示刀尖圆弧中心轨迹与工件实际侧边轮廓的偏移偏置，并图解左侧G41和右侧G42的运动路线。",
+    "keywords": [
+      "G41",
+      "G42",
+      "刀尖半径",
+      "刀补图解"
+    ]
+  },
+  {
+    "id": "cluster-tool-nose-radius",
+    "title": "车刀尖圆角半径(R0.4/R0.8)与表面光洁度对比",
+    "coverImage": "assets/images/batch02_operation_basics/tool-nose-radius-basic-001.webp",
+    "clusterType": "刀具识别与用途",
+    "entryIds": [
+      "kb-00033",
+      "kb-00066",
+      "kb-00084",
+      "kb-00263",
+      "kb-00270",
+      "kb-00280"
+    ],
+    "imageDriven": true,
+    "description": "展示不同刀尖圆角半径在每转进给量下形成的波峰波谷高度差异，阐述精车残留面积公式。",
+    "keywords": [
+      "刀尖半径",
+      "光洁度",
+      "残留面积",
+      "工艺对比"
+    ]
+  },
+  {
+    "id": "cluster-limit-overtravel",
+    "title": "软硬限位行程超程报警故障排查流程图",
+    "coverImage": "assets/images/batch01_core/alarm-limit-overtravel-001.webp",
+    "clusterType": "常见报警图解",
+    "entryIds": [
+      "kb-00012",
+      "kb-00013",
+      "kb-00030",
+      "kb-00037",
+      "kb-00039",
+      "kb-00133"
+    ],
+    "imageDriven": true,
+    "description": "提供X/Y/Z三轴超出物理限位后的安全退回图，解释超程释放键配合手摇脉冲发生器的排故顺序。",
+    "keywords": [
+      "超程",
+      "限位报警",
+      "手摇退回",
+      "排查流程"
+    ]
+  },
+  {
+    "id": "cluster-control-panel",
+    "title": "主流数控系统控制操作面板各区域功能总览",
+    "coverImage": "assets/images/batch02_operation_basics/panel-control-overview-001.webp",
+    "clusterType": "对刀与坐标设定",
+    "entryIds": [
+      "kb-00017",
+      "kb-00031",
+      "kb-00157",
+      "kb-00212",
+      "kb-00403",
+      "kb-00477"
+    ],
+    "imageDriven": true,
+    "description": "标注屏幕区、编辑键盘、机床手操面板（模式旋钮、进给倍率、快速倍率）按键及对应运行状态。",
+    "keywords": [
+      "操作面板",
+      "模式旋钮",
+      "进给倍率",
+      "FANUC面板"
+    ]
+  },
+  {
+    "id": "cluster-vernier-caliper",
+    "title": "精密游标卡尺读数方法与工件公差读数示教",
+    "coverImage": "assets/images/batch05_alarm_drawing_material/vernier-caliper-detail-001.webp",
+    "clusterType": "测量与量具使用",
+    "entryIds": [
+      "kb-00002",
+      "kb-00065",
+      "kb-00067",
+      "kb-00163",
+      "kb-00182",
+      "kb-00187"
+    ],
+    "imageDriven": true,
+    "description": "微距图解0.02mm分度值游标卡尺的副尺刻度对齐与读数逻辑，配合尺寸公差，演示检验规范。",
+    "keywords": [
+      "游标卡尺",
+      "刻度读数",
+      "公差量测",
+      "分度值"
+    ]
+  },
+  {
+    "id": "cluster-probe-overview",
+    "title": "在机雷尼绍测头物理结构与信号接收总览",
+    "coverImage": "assets/images/batch01_core/probe-overview-001.webp",
+    "clusterType": "对刀与坐标设定",
+    "entryIds": [
+      "kb-00039",
+      "kb-00062",
+      "kb-00193",
+      "kb-00361",
+      "kb-00367",
+      "kb-00370"
+    ],
+    "imageDriven": true,
+    "description": "直观展示红外线无线接收传感器与在机测头触发式的偏心及轴向运动信号传递图解。",
+    "keywords": [
+      "雷尼绍测头",
+      "触发传感",
+      "物理结构",
+      "信号接收"
+    ]
+  },
+  {
+    "id": "cluster-turning-facing",
+    "title": "车床切削端面（Facing）进给方向与工艺规程",
+    "coverImage": "assets/images/batch03_turning_process/turning-facing-001.webp",
+    "clusterType": "常见加工工艺",
+    "entryIds": [
+      "kb-00027",
+      "kb-00032",
+      "kb-00081",
+      "kb-00085",
+      "kb-00088",
+      "kb-00099"
+    ],
+    "imageDriven": true,
+    "description": "展示外圆到中心面车刀轨迹变化、中心点处线速度变零的处理方法，防切削积屑瘤。",
+    "keywords": [
+      "车削端面",
+      "恒线速度",
+      "积屑瘤",
+      "走刀方向"
+    ]
+  },
+  {
+    "id": "cluster-face-milling",
+    "title": "铣床面铣刀加工平面轨迹与切削参数搭配",
+    "coverImage": "assets/images/batch04_milling_tooling/milling-face-milling-001.webp",
+    "clusterType": "常见加工工艺",
+    "entryIds": [
+      "kb-00001",
+      "kb-00008",
+      "kb-00009",
+      "kb-00010",
+      "kb-00036",
+      "kb-00050"
+    ],
+    "imageDriven": true,
+    "description": "平面面铣加工切削比设计、粗加工余量分配及顺铣在提高面粗糙度上的轨迹分布图解。",
+    "keywords": [
+      "面铣加工",
+      "切削余量",
+      "顺铣逆铣",
+      "表面粗糙度"
+    ]
+  },
+  {
+    "id": "cluster-cycle-g83",
+    "title": "G83 Peck Drilling 啄钻加工深孔排屑图解",
+    "coverImage": "assets/images/batch01_core/cycle-g83-001.webp",
+    "clusterType": "钻孔 / 攻丝 / 镗孔循环",
+    "entryIds": [
+      "kb-00034",
+      "kb-00086",
+      "kb-00087",
+      "kb-00088",
+      "kb-00093",
+      "kb-00095"
+    ],
+    "imageDriven": true,
+    "description": "动态图解钻头每次钻入深度Q值、退刀到R参考点以便排屑与冷却液涌入孔底的运动轨迹。",
+    "keywords": [
+      "G83",
+      "啄钻循环",
+      "退刀点",
+      "深孔排屑"
+    ]
+  },
+  {
+    "id": "cluster-cycle-g84",
+    "title": "G84 刚性攻丝主轴与进给严格同步图解",
+    "coverImage": "assets/images/batch01_core/cycle-g84-001.webp",
+    "clusterType": "钻孔 / 攻丝 / 镗孔循环",
+    "entryIds": [
+      "kb-00011",
+      "kb-00025",
+      "kb-00032",
+      "kb-00034",
+      "kb-00040",
+      "kb-00074"
+    ],
+    "imageDriven": true,
+    "description": "展示螺距与主轴正转/反转与Z轴进给严格相关的比例线图，预防拔丝与折断故障。",
+    "keywords": [
+      "G84",
+      "刚性攻丝",
+      "主轴同步",
+      "拔丝断裂"
+    ]
+  },
+  {
+    "id": "cluster-canned-cycle",
+    "title": "G98 与 G99 固定循环返回参考平面差异",
+    "coverImage": "assets/images/batch01_core/cycle-g98-g99-001.webp",
+    "clusterType": "钻孔 / 攻丝 / 镗孔循环",
+    "entryIds": [
+      "kb-00018",
+      "kb-00026",
+      "kb-00043",
+      "kb-00048",
+      "kb-00064",
+      "kb-00081"
+    ],
+    "imageDriven": true,
+    "description": "图解多孔加工中返回初始平面G98与返回安全R点平面G99的跳刀高度差异，防压板碰撞。",
+    "keywords": [
+      "G98",
+      "G99",
+      "初始平面",
+      "安全高度"
+    ]
+  },
+  {
+    "id": "cluster-feed-unit",
+    "title": "G94 (每分钟进给) 与 G95 (每转进给) 走刀轨迹对比",
+    "coverImage": "assets/images/batch01_core/feed-g94-g95-001.webp",
+    "clusterType": "常见加工工艺",
+    "entryIds": [
+      "kb-00003",
+      "kb-00015",
+      "kb-00026",
+      "kb-00035",
+      "kb-00049",
+      "kb-00096"
+    ],
+    "imageDriven": true,
+    "description": "图解进给制式，在车削螺纹和铣床面铣中走刀速度的计算模式及表面粗糙度成形差异。",
+    "keywords": [
+      "G94",
+      "G95",
+      "进给制式",
+      "轨迹对比"
+    ]
+  },
+  {
+    "id": "cluster-g90-g91",
+    "title": "G90 绝对值编程与 G91 增量值编程位移对比",
+    "coverImage": "assets/images/batch01_core/beginner-g90-g91-001.webp",
+    "clusterType": "G代码动作图解",
+    "entryIds": [
+      "kb-00002",
+      "kb-00003",
+      "kb-00004",
+      "kb-00005",
+      "kb-00007",
+      "kb-00015"
+    ],
+    "imageDriven": true,
+    "description": "对比从相同坐标起点出发，分别以工件原点为准(G90)和以当前点为准(G91)计算移动轨迹的区别。",
+    "keywords": [
+      "G90",
+      "G91",
+      "坐标计算",
+      "增量绝对值"
+    ]
+  },
+  {
+    "id": "cluster-probe-safety",
+    "title": "在机探头路径防撞障碍与保护安全移动指令",
+    "coverImage": "assets/images/batch01_core/probe-safety-mistakes-001.webp",
+    "clusterType": "对刀与坐标设定",
+    "entryIds": [
+      "kb-00022",
+      "kb-00039",
+      "kb-00147",
+      "kb-00152",
+      "kb-00269",
+      "kb-00274"
+    ],
+    "imageDriven": true,
+    "description": "图解不规范的快速对中路径导致测球破裂的事故，给出测头安全过渡G31指令规划建议。",
+    "keywords": [
+      "测球碰撞",
+      "在机探头",
+      "G31保护",
+      "防撞动作"
+    ]
+  },
+  {
+    "id": "cluster-auto-centering",
+    "title": "工件长方形/正方形外廓探头自动对中找正图解",
+    "coverImage": "assets/images/batch01_core/auto-centering-rectangle-001.webp",
+    "clusterType": "对刀与坐标设定",
+    "entryIds": [
+      "kb-00009",
+      "kb-00039",
+      "kb-00282",
+      "kb-00367",
+      "kb-00530",
+      "kb-00539"
+    ],
+    "imageDriven": true,
+    "description": "图形化分解探头在长方形工件四周依次测量四点坐标并自动计算中心坐标，自动更新至坐标系。",
+    "keywords": [
+      "四点分中",
+      "自动对中",
+      "坐标写入",
+      "找正图解"
+    ]
+  },
+  {
+    "id": "cluster-bore-center",
+    "title": "内孔中心三点/四点自动量测定心几何分析图解",
+    "coverImage": "assets/images/batch01_core/bore-center-measure-001.webp",
+    "clusterType": "对刀与坐标设定",
+    "entryIds": [
+      "kb-00009",
+      "kb-00039",
+      "kb-00090",
+      "kb-00099",
+      "kb-00140",
+      "kb-00149"
+    ],
+    "imageDriven": true,
+    "description": "图示说明探针在圆孔内圆弧触测计算孔中心X、Y坐标几何原理及同轴度误差测定图。",
+    "keywords": [
+      "孔中心测量",
+      "内孔分中",
+      "探针触测",
+      "同轴度误差"
+    ]
+  },
+  {
+    "id": "cluster-alarm-servo",
+    "title": "数控伺服轴偏载与放大器过流故障诊断",
+    "coverImage": "assets/images/batch01_core/alarm-servo-001.webp",
+    "clusterType": "常见报警图解",
+    "entryIds": [
+      "kb-00012",
+      "kb-00013",
+      "kb-00019",
+      "kb-00030",
+      "kb-00037",
+      "kb-00039"
+    ],
+    "imageDriven": true,
+    "description": "结合伺服驱动硬件指示灯变化，剖析轴偏载导致的过载报错（SV0438）电气排查步骤。",
+    "keywords": [
+      "伺服报警",
+      "电流过流",
+      "驱动硬件",
+      "故障诊断"
+    ]
+  },
+  {
+    "id": "cluster-alarm-spindle",
+    "title": "主轴转速异常及主轴驱动放大器散热排故",
+    "coverImage": "assets/images/batch01_core/alarm-spindle-001.webp",
+    "clusterType": "常见报警图解",
+    "entryIds": [
+      "kb-00002",
+      "kb-00008",
+      "kb-00009",
+      "kb-00011",
+      "kb-00012",
+      "kb-00013"
+    ],
+    "imageDriven": true,
+    "description": "分析主轴电机热保护报警，引导如何检测变频模块冷却风扇和热敏电阻阻值。",
+    "keywords": [
+      "主轴报警",
+      "电机过热",
+      "变频放大器",
+      "风扇排故"
+    ]
+  },
+  {
+    "id": "cluster-home-fail",
+    "title": "手动回参考点开机回零减速档块位置释放",
+    "coverImage": "assets/images/batch01_core/fault-home-fail-001.webp",
+    "clusterType": "常见报警图解",
+    "entryIds": [
+      "kb-00028",
+      "kb-00031",
+      "kb-00060",
+      "kb-00061",
+      "kb-00072",
+      "kb-00108"
+    ],
+    "imageDriven": true,
+    "description": "图解减速行程开关被污垢粘结或档块错位导致无法回零的物理调整与清洗步骤。",
+    "keywords": [
+      "开机回零",
+      "减速开关",
+      "挡块调整",
+      "参考点故障"
+    ]
+  },
+  {
+    "id": "cluster-canned-overview",
+    "title": "钻孔、攻丝、镗孔固定循环通用参数动作拆解",
+    "coverImage": "assets/images/batch02_operation_basics/canned-cycle-overview-001.webp",
+    "clusterType": "钻孔 / 攻丝 / 镗孔循环",
+    "entryIds": [
+      "kb-00002",
+      "kb-00018",
+      "kb-00021",
+      "kb-00032",
+      "kb-00043",
+      "kb-00058"
+    ],
+    "imageDriven": true,
+    "description": "解剖固定循环G80-G89指令中X/Y/Z/R/Q/P/F字段定义，以动画形式对比初学避坑点。",
+    "keywords": [
+      "固定循环",
+      "R点平面",
+      "孔加工",
+      "参数拆解"
+    ]
+  },
+  {
+    "id": "cluster-arc-r-ik",
+    "title": "G02/G03 圆弧插补 R 半径与 IJK 圆心矢量计算",
+    "coverImage": "assets/images/batch02_operation_basics/arc-r-vs-ik-001.webp",
+    "clusterType": "对刀与坐标设定",
+    "entryIds": [
+      "kb-00004",
+      "kb-00050",
+      "kb-00051",
+      "kb-00052",
+      "kb-00053",
+      "kb-00059"
+    ],
+    "imageDriven": true,
+    "description": "用几何图剖析增量圆心矢量I、J与半径R在整圆和大于180度弧线加工中的计算法则区别。",
+    "keywords": [
+      "圆弧插补",
+      "圆心矢量",
+      "IJK计算",
+      "半径编程"
+    ]
+  },
+  {
+    "id": "cluster-tool-offset",
+    "title": "车铣床数控偏置与磨损补偿参数录入规程",
+    "coverImage": "assets/images/batch02_operation_basics/tool-offset-table-001.webp",
+    "clusterType": "对刀与坐标设定",
+    "entryIds": [
+      "kb-00008",
+      "kb-00009",
+      "kb-00011",
+      "kb-00028",
+      "kb-00037",
+      "kb-00055"
+    ],
+    "imageDriven": true,
+    "description": "屏幕截图式标注刀偏偏置表（几何长度L、半径R）与磨损表（微调量Delta）的数据对冲方法。",
+    "keywords": [
+      "刀具偏置",
+      "磨损补偿",
+      "系统参数",
+      "录入规范"
+    ]
+  },
+  {
+    "id": "cluster-safe-approach",
+    "title": "多刀换刀安全点切换与退刀安全进给路线图",
+    "coverImage": "assets/images/batch02_operation_basics/safe-tool-approach-001.webp",
+    "clusterType": "对刀与坐标设定",
+    "entryIds": [
+      "kb-00039",
+      "kb-00061",
+      "kb-00108",
+      "kb-00115",
+      "kb-00118",
+      "kb-00127"
+    ],
+    "imageDriven": true,
+    "description": "对比Z轴先升至安全平高度换刀与直接平移换刀的碰撞风险，制定进退刀规范。",
+    "keywords": [
+      "安全高度",
+      "退刀路线",
+      "换刀防撞",
+      "G28参考点"
+    ]
+  },
+  {
+    "id": "cluster-tolerance-roughness",
+    "title": "公差配合精密公差带与表面粗糙度(Ra)图解",
+    "coverImage": "assets/images/batch01_core/drawing-tolerance-roughness-001.webp",
+    "clusterType": "测量与量具使用",
+    "entryIds": [
+      "kb-00033",
+      "kb-00074",
+      "kb-00214",
+      "kb-00217",
+      "kb-00263",
+      "kb-00280"
+    ],
+    "imageDriven": true,
+    "description": "分解图纸上配合公差带极限偏差（上偏差、下偏差）计算，并图解微观粗糙度Ra的几何释义。",
+    "keywords": [
+      "精密公差",
+      "表面粗糙度",
+      "Ra值解说",
+      "配合公差"
+    ]
+  },
+  {
+    "id": "cluster-gcode-g43",
+    "title": "G43 H指令长度偏置补偿测量及正向补正",
+    "coverImage": "assets/images/batch01_core/gcode-g43-g49-001.webp",
+    "clusterType": "刀补与长度补偿",
+    "entryIds": [
+      "kb-00003",
+      "kb-00020",
+      "kb-00021",
+      "kb-00023",
+      "kb-00036",
+      "kb-00053"
+    ],
+    "imageDriven": true,
+    "description": "图形化演绎长度补偿建立时，主轴相对于Z轴零点偏移，避免长度不准扎刀的测刀规程。",
+    "keywords": [
+      "G43",
+      "长度补偿",
+      "H寄存器",
+      "扎刀防护"
+    ]
+  },
+  {
+    "id": "cluster-home-safe-path",
+    "title": "高刚性切削防止扎刀的进退刀首尾安全轨迹",
+    "coverImage": "assets/images/batch01_core/home-safe-path-001.webp",
+    "clusterType": "对刀与坐标设定",
+    "entryIds": [],
+    "imageDriven": true,
+    "description": "规范化机床回原点前的退刀轨迹，设定斜向拉伸与分轴进刀的防撞机几何分解。",
+    "keywords": [
+      "退刀轨迹",
+      "安全平面",
+      "防碰撞路径",
+      "分轴进刀"
+    ]
+  },
+  {
+    "id": "cluster-gdt-basic",
+    "title": "几何公差 GD&T 形状位置公差基准特征解读",
+    "coverImage": "assets/images/batch05_alarm_drawing_material/drawing-gdt-basic-001.webp",
+    "clusterType": "测量与量具使用",
+    "entryIds": [
+      "kb-00031",
+      "kb-00146",
+      "kb-00195",
+      "kb-00214",
+      "kb-00217",
+      "kb-00235"
+    ],
+    "imageDriven": true,
+    "description": "图解同轴度、垂直度、平面度等常见形位公差符号，介绍基准面特征符号在工件测量中的校准。",
+    "keywords": [
+      "形位公差",
+      "GD&T",
+      "基准符号",
+      "测量图解"
+    ]
+  },
+  {
+    "id": "cluster-turning-drill",
+    "title": "数控车床中心钻打定位孔走刀与切削深度",
+    "coverImage": "assets/images/batch03_turning_process/turning-center-drill-001.webp",
+    "clusterType": "常见加工工艺",
+    "entryIds": [
+      "kb-00178",
+      "kb-00222",
+      "kb-01059",
+      "kb-01060",
+      "kb-01174"
+    ],
+    "imageDriven": true,
+    "description": "车床上进行中心定位孔加工的走刀参数（S, F）设定，展示中心钻切削刃部夹角对后续钻孔的定位防偏作用。",
+    "keywords": [
+      "中心钻定位",
+      "车床打孔",
+      "同轴度防偏",
+      "走刀深度"
+    ]
+  },
+  {
+    "id": "cluster-chip-control",
+    "title": "精粗加工车刀槽型角度对不锈钢断屑的制约",
+    "coverImage": "assets/images/batch02_operation_basics/chip-control-turning-001.webp",
+    "clusterType": "刀具识别与用途",
+    "entryIds": [
+      "kb-00088",
+      "kb-00148",
+      "kb-00454",
+      "kb-00462",
+      "kb-00583",
+      "kb-00637"
+    ],
+    "imageDriven": true,
+    "description": "图示钢件车削中积屑、缠绕导致表面划伤问题，说明车刀前角和断屑槽台阶对切屑卷曲折断的作用。",
+    "keywords": [
+      "车屑断屑",
+      "刀片槽型",
+      "前角后角",
+      "缠绕表面"
+    ]
+  },
+  {
+    "id": "cluster-chuck-safety",
+    "title": "液压卡盘三爪软爪精密车夹及安全压力分配",
+    "coverImage": "assets/images/batch02_operation_basics/chuck-clamping-safety-001.webp",
+    "clusterType": "夹具与装夹",
+    "entryIds": [
+      "kb-00011",
+      "kb-00127",
+      "kb-00526",
+      "kb-00527",
+      "kb-00545",
+      "kb-00546"
+    ],
+    "imageDriven": true,
+    "description": "直观展示软爪镗削弧度与工件外圆贴合夹紧力计算，列出高速旋转离心力下夹紧力衰减安全限。",
+    "keywords": [
+      "液压卡盘",
+      "软爪精密车",
+      "夹紧力衰减",
+      "防飞出安全"
+    ]
+  },
+  {
+    "id": "cluster-coolant-nozzle",
+    "title": "面铣及深孔切削高压内冷/外冷喷嘴冲屑对比",
+    "coverImage": "assets/images/batch02_operation_basics/coolant-nozzle-setup-001.webp",
+    "clusterType": "常见加工工艺",
+    "entryIds": [
+      "kb-00112",
+      "kb-00113",
+      "kb-00117",
+      "kb-00128",
+      "kb-00130",
+      "kb-00215"
+    ],
+    "imageDriven": true,
+    "description": "通过切削区漏冷粘刃对比，阐述喷嘴偏角及加压内冷对难加工材料（不锈钢、钛合金）排屑的重大改善。",
+    "keywords": [
+      "高压冷却",
+      "排屑冲屑",
+      "内冷主轴",
+      "防粘刀积屑"
+    ]
+  },
+  {
+    "id": "cluster-g10-write",
+    "title": "G10 L2/L20 参数化宏程序偏置坐标自动写入",
+    "coverImage": "assets/images/batch01_core/g10-g54-offset-write-001.webp",
+    "clusterType": "对刀与坐标设定",
+    "entryIds": [
+      "kb-00008",
+      "kb-00013",
+      "kb-00014",
+      "kb-00016",
+      "kb-00017",
+      "kb-00030"
+    ],
+    "imageDriven": true,
+    "description": "介绍自动量测后，通过G10 L2 P1 X_ Y_ Z_自动覆盖G54坐标偏置，实现自动化闭环对刀动作。",
+    "keywords": [
+      "G10偏置写入",
+      "自动对刀",
+      "坐标覆盖",
+      "批量加工"
+    ]
+  },
+  {
+    "id": "cluster-g31-vars",
+    "title": "G31 测头碰壁触发中断与5000系系统变量读取",
+    "coverImage": "assets/images/batch01_core/g31-trigger-vars-001.webp",
+    "clusterType": "对刀与坐标设定",
+    "entryIds": [
+      "kb-00041",
+      "kb-00043",
+      "kb-00062",
+      "kb-00144",
+      "kb-00163",
+      "kb-00185"
+    ],
+    "imageDriven": true,
+    "description": "图解G31指令执行时，测针触碰到金属产生脉冲信号，系统瞬时锁死当前机械坐标读取至#5061-#5063的原理。",
+    "keywords": [
+      "G31触控",
+      "机械坐标锁存",
+      "宏系统变量",
+      "在机测头"
+    ]
+  },
+  {
+    "id": "cluster-inspection-plus",
+    "title": "雷尼绍 Inspection Plus 单向测定与孔心测头循环",
+    "coverImage": "assets/images/batch01_core/inspection-plus-cycles-001.webp",
+    "clusterType": "对刀与坐标设定",
+    "entryIds": [
+      "kb-00282",
+      "kb-00567",
+      "kb-00568",
+      "kb-00599",
+      "kb-01339",
+      "kb-01402"
+    ],
+    "imageDriven": true,
+    "description": "图解O9811单向触测、O9812圆孔中心/圆柱中心探头宏循环的内部数据计算逻辑图。",
+    "keywords": [
+      "Inspection Plus",
+      "测头循环",
+      "触测对位",
+      "自动找正"
+    ]
+  },
+  {
+    "id": "cluster-flatness-probe",
+    "title": "大型精密铸件平面度多点矩阵测定宏程序设计",
+    "coverImage": "assets/images/batch01_core/flatness-multipoint-probe-001.webp",
+    "clusterType": "测量与量具使用",
+    "entryIds": [
+      "kb-00054",
+      "kb-00737",
+      "kb-00785",
+      "kb-00886",
+      "kb-00975",
+      "kb-01035"
+    ],
+    "imageDriven": true,
+    "description": "以平面度公差要求为依据，解说如何编写双重WHILE循环宏程序，自动扫描工件表面并测定最大最小差值。",
+    "keywords": [
+      "平面度测定",
+      "WHILE循环宏",
+      "数据扫面",
+      "在线偏差分析"
+    ]
+  },
+  {
+    "id": "cluster-probe-compensation",
+    "title": "在机探测结果自动更新至磨损补偿闭环刀偏",
+    "coverImage": "assets/images/batch01_core/probe-to-compensation-workflow-001.webp",
+    "clusterType": "对刀与坐标设定",
+    "entryIds": [
+      "kb-00144",
+      "kb-00163",
+      "kb-00422",
+      "kb-00513",
+      "kb-00521",
+      "kb-01403"
+    ],
+    "imageDriven": true,
+    "description": "流程图解析：测头自动触测内孔 -> 计算名义尺寸与实测偏差 -> 若偏离0.01则自动在#2000系增加磨损量补偿的闭环机制。",
+    "keywords": [
+      "尺寸误差闭环",
+      "磨损自动更新",
+      "在机反馈",
+      "智能制造"
+    ]
+  }
+]

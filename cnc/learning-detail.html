@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>学习详情页测试 — CNC Param QuickFinder</title>
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./styles-learning-detail.css">
+  <style>
+    body { background: #f5f2ef; margin: 0; padding: 20px; }
+    .test-toolbar { max-width: 860px; margin: 0 auto 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .test-toolbar h1 { font-size: 20px; margin: 0; color: #5d655f; flex: 1; }
+    .test-toolbar select, .test-toolbar button { padding: 8px 14px; border: 1px solid #e5e0db; border-radius: 8px; font-size: 14px; background: #fff; cursor: pointer; }
+    .test-toolbar button:hover { background: #cf6d36; color: #fff; border-color: #cf6d36; }
+    .test-console { max-width: 860px; margin: 20px auto; background: #1e1e1e; color: #d4d4d4; padding: 16px; border-radius: 8px; font-family: 'Cascadia Code', 'Fira Code', monospace; font-size: 13px; white-space: pre-wrap; line-height: 1.5; max-height: 300px; overflow-y: auto; }
+    .test-console .pass { color: #4ec9b0; }
+    .test-console .fail { color: #f44747; }
+    .test-console .info { color: #569cd6; }
+    .lesson-content { max-width: 860px; margin: 0 auto; }
+  </style>
+</head>
+<body>
+  <div class="test-toolbar">
+    <h1>学习详情页 — 测试环境</h1>
+    <label>选择关卡:
+      <select id="level-select">
+        <option value="1">第1关: 认识零件的身份证</option>
+        <option value="2">第2关: 机床的东南西北</option>
+        <option value="3">第3关: 找机床的老家</option>
+        <option value="4">第4关: 告诉机床活儿在哪</option>
+      </select>
+    </label>
+    <button id="load-lesson-btn">加载</button>
+    <button id="run-tests-btn">运行测试</button>
+  </div>
+
+  <div class="lesson-content" id="lesson-content"></div>
+
+  <div class="test-console" id="test-console">[CNC] 准备就绪，点击"运行测试"开始验证。<br></div>
+
+  <script src="./ui-learning-detail.js"></script>
+  <script src="./ui-learning-quiz.js"></script>
+  <script src="./ui-learning-progress.js"></script>
+  <script src="./ui-learning-navigation.js"></script>
+  <script src="./ui-learning-image-placeholder.js"></script>
+
+  <script>
+    (function () {
+      var contentEl = document.getElementById('lesson-content');
+      var selectEl = document.getElementById('level-select');
+      var loadBtn = document.getElementById('load-lesson-btn');
+      var testBtn = document.getElementById('run-tests-btn');
+      var consoleEl = document.getElementById('test-console');
+
+      function log(msg, type) {
+        var cls = type === 'pass' ? 'pass' : type === 'fail' ? 'fail' : 'info';
+        consoleEl.innerHTML += '<span class="' + cls + '">' + msg + '</span><br>';
+        consoleEl.scrollTop = consoleEl.scrollHeight;
+      }
+
+      function loadLesson(level) {
+        var html = CNC_LEARNING_UI.renderLessonDetail(level);
+        contentEl.innerHTML = html;
+        CNC_LEARNING_UI.initNavigation();
+        log('已加载第 ' + level + ' 关内容', 'info');
+        CNC_LEARNING_PROGRESS.startSession(level);
+      }
+
+      loadBtn.addEventListener('click', function () {
+        var level = parseInt(selectEl.value, 10);
+        loadLesson(level);
+      });
+
+      testBtn.addEventListener('click', function () {
+        consoleEl.innerHTML = '[CNC] 开始运行测试用例...<br>';
+        var passed = 0, failed = 0;
+
+        // TC01: CNC_LEARNING_UI 存在
+        if (window.CNC_LEARNING_UI) { passed++; log('TC01 PASS: CNC_LEARNING_UI 已加载', 'pass'); }
+        else { failed++; log('TC01 FAIL: CNC_LEARNING_UI 未加载', 'fail'); }
+
+        // TC02: renderLessonDetail 返回字符串
+        var html = CNC_LEARNING_UI.renderLessonDetail(1);
+        if (html && html.length > 100) { passed++; log('TC02 PASS: renderLessonDetail(1) 返回 HTML (' + html.length + ' 字符)', 'pass'); }
+        else { failed++; log('TC02 FAIL: renderLessonDetail(1) 返回内容不足', 'fail'); }
+
+        // TC03: renderObjectives 返回 HTML
+        var data = CNC_LEARNING_UI.getLessonData(1);
+        var objHtml = CNC_LEARNING_UI.renderObjectives(data.objectives);
+        if (objHtml && objHtml.indexOf('objective-item') !== -1) { passed++; log('TC03 PASS: renderObjectives 包含目标列表', 'pass'); }
+        else { failed++; log('TC03 FAIL: renderObjectives 缺少目标项', 'fail'); }
+
+        // TC04: renderSteps 包含步骤编号
+        var stepHtml = CNC_LEARNING_UI.renderSteps(data.steps);
+        if (stepHtml && stepHtml.indexOf('step-number') !== -1) { passed++; log('TC04 PASS: renderSteps 包含步骤编号', 'pass'); }
+        else { failed++; log('TC04 FAIL: renderSteps 缺少步骤编号', 'fail'); }
+
+        // TC05: renderErrors 返回警告卡片
+        var errHtml = CNC_LEARNING_UI.renderErrors(data.errors);
+        if (errHtml && errHtml.indexOf('error-card') !== -1) { passed++; log('TC05 PASS: renderErrors 包含错误卡片', 'pass'); }
+        else { failed++; log('TC05 FAIL: renderErrors 缺少错误卡片', 'fail'); }
+
+        // TC06: CNC_QUIZ_SYSTEM 存在
+        if (window.CNC_QUIZ_SYSTEM) { passed++; log('TC06 PASS: CNC_QUIZ_SYSTEM 已加载', 'pass'); }
+        else { failed++; log('TC06 FAIL: CNC_QUIZ_SYSTEM 未加载', 'fail'); }
+
+        // TC07: renderMultipleChoice 返回选项
+        var quiz = data.quizzes[0];
+        var mcHtml = CNC_QUIZ_SYSTEM.renderMultipleChoice(quiz);
+        if (mcHtml && mcHtml.indexOf('quiz-option') !== -1) { passed++; log('TC07 PASS: renderMultipleChoice 包含选项', 'pass'); }
+        else { failed++; log('TC07 FAIL: renderMultipleChoice 缺少选项', 'fail'); }
+
+        // TC08: renderTrueFalse 返回两个选项
+        var tfHtml = CNC_QUIZ_SYSTEM.renderTrueFalse(data.quizzes[1]);
+        if (tfHtml && tfHtml.indexOf('option-true') !== -1) { passed++; log('TC08 PASS: renderTrueFalse 包含正确/错误选项', 'pass'); }
+        else { failed++; log('TC08 FAIL: renderTrueFalse 缺少选项', 'fail'); }
+
+        // TC09: checkAnswer 正确检测
+        var result = CNC_QUIZ_SYSTEM.checkAnswer('test-id', 0);
+        if (result && result.error) { passed++; log('TC09 PASS: checkAnswer 对不存在题目返回错误', 'pass'); }
+        else { failed++; log('TC09 FAIL: checkAnswer 未正确处理不存在题目', 'fail'); }
+
+        // TC10: CNC_LEARNING_PROGRESS 存在
+        if (window.CNC_LEARNING_PROGRESS) { passed++; log('TC10 PASS: CNC_LEARNING_PROGRESS 已加载', 'pass'); }
+        else { failed++; log('TC10 FAIL: CNC_LEARNING_PROGRESS 未加载', 'fail'); }
+
+        // TC11: getOverallProgress 返回统计
+        var progress = CNC_LEARNING_PROGRESS.getOverallProgress();
+        if (progress && progress.total === 12 && progress.percentage !== undefined) { passed++; log('TC11 PASS: getOverallProgress 返回正确统计数据', 'pass'); }
+        else { failed++; log('TC11 FAIL: getOverallProgress 返回数据异常', 'fail'); }
+
+        // TC12: markLessonComplete 正常工作
+        CNC_LEARNING_PROGRESS.markLessonComplete(1);
+        var l1 = CNC_LEARNING_PROGRESS.getLessonProgress(1);
+        if (l1 && l1.completed === true) { passed++; log('TC12 PASS: markLessonComplete 标记成功', 'pass'); }
+        else { failed++; log('TC12 FAIL: markLessonComplete 标记失败', 'fail'); }
+
+        // TC13: renderProgressBar 返回 HTML
+        var barHtml = CNC_LEARNING_PROGRESS.renderProgressBar(1);
+        if (barHtml && barHtml.indexOf('progress-bar') !== -1) { passed++; log('TC13 PASS: renderProgressBar 包含进度条元素', 'pass'); }
+        else { failed++; log('TC13 FAIL: renderProgressBar 返回内容异常', 'fail'); }
+
+        // TC14: exportProgressReport 返回完整报告
+        var report = CNC_LEARNING_PROGRESS.exportProgressReport();
+        if (report && report.overall && report.stages && report.lessons) { passed++; log('TC14 PASS: exportProgressReport 包含所有字段', 'pass'); }
+        else { failed++; log('TC14 FAIL: exportProgressReport 缺少字段', 'fail'); }
+
+        // TC15: CNC_LEARNING_NAV 存在
+        if (window.CNC_LEARNING_NAV) { passed++; log('TC15 PASS: CNC_LEARNING_NAV 已加载', 'pass'); }
+        else { failed++; log('TC15 FAIL: CNC_LEARNING_NAV 未加载', 'fail'); }
+
+        // TC16: renderBreadcrumb 包含导航链接
+        var bcHtml = CNC_LEARNING_NAV.renderBreadcrumb(2);
+        if (bcHtml && bcHtml.indexOf('breadcrumb') !== -1) { passed++; log('TC16 PASS: renderBreadcrumb 包含面包屑元素', 'pass'); }
+        else { failed++; log('TC16 FAIL: renderBreadcrumb 缺少面包屑元素', 'fail'); }
+
+        // TC17: renderTableOfContents 返回目录列表
+        var tocHtml = CNC_LEARNING_NAV.renderTableOfContents(1);
+        if (tocHtml && tocHtml.indexOf('toc-item') !== -1) { passed++; log('TC17 PASS: renderTableOfContents 包含目录项', 'pass'); }
+        else { failed++; log('TC17 FAIL: renderTableOfContents 缺少目录项', 'fail'); }
+
+        // TC18: goPrevLesson / goNextLesson 返回布尔值
+        CNC_LEARNING_NAV.setCurrentLevel(2);
+        var prev = CNC_LEARNING_NAV.goPrevLesson();
+        var next = CNC_LEARNING_NAV.goNextLesson();
+        if (typeof prev === 'boolean' && typeof next === 'boolean') { passed++; log('TC18 PASS: goPrevLesson/goNextLesson 返回布尔值', 'pass'); }
+        else { failed++; log('TC18 FAIL: 导航函数返回类型异常', 'fail'); }
+
+        // TC19: CNC_LEARNING_IMAGES 存在
+        if (window.CNC_LEARNING_IMAGES) { passed++; log('TC19 PASS: CNC_LEARNING_IMAGES 已加载', 'pass'); }
+        else { failed++; log('TC19 FAIL: CNC_LEARNING_IMAGES 未加载', 'fail'); }
+
+        // TC20: renderImagePlaceholder 返回 SVG
+        var imgHtml = CNC_LEARNING_IMAGES.renderImagePlaceholder('测试图片说明');
+        if (imgHtml && imgHtml.indexOf('<svg') !== -1) { passed++; log('TC20 PASS: renderImagePlaceholder 包含 SVG', 'pass'); }
+        else { failed++; log('TC20 FAIL: renderImagePlaceholder 缺少 SVG', 'fail'); }
+
+        log('---', 'info');
+        log('测试完成: ' + passed + ' 通过, ' + failed + ' 失败, 共 ' + (passed + failed) + ' 项', failed > 0 ? 'fail' : 'pass');
+      });
+
+      // 默认加载第一关
+      loadLesson(1);
+    })();
+  </script>
+</body>
+</html>

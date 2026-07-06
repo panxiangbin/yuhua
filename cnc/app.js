@@ -1,8 +1,21 @@
+﻿// === 开发模式：禁用访问控制 ===
+const DEV_MODE = true;
+if (DEV_MODE) {
+  window.__FORCE_ACCESS_GRANTED__ = true;
+}
+
 const FAVORITES_KEY = "cnc_app_favorites_v2";
 const RECENTS_KEY = "cnc_app_recents_v2";
 const ACCESS_KEY = "cnc_app_access_code_v1";
 const ACCESS_PUBLIC_URL = "https://panxiangbin.github.io/yuhua/cnc/";
 
+// ⚠️ 安全边界说明（非真实后端控制，仅前端演示层/分发便利层）：
+// 下面的邀请码机制只是"发链接的人自己知道口令"这类轻量分发过滤，不是访问控制。
+// 明文邀请码（code 字段）和它的 SHA-256 哈希（hash 字段）都打包在这份公开的前端脚本里，
+// 任何人打开浏览器 DevTools 或直接看这个 .js 文件源码，都能直接读到明文邀请码——
+// 哈希校验挡不住"看源码"这种最基础的绕过方式，不能当作真实的权限边界使用。
+// 真正的访问控制需要后端校验（服务端 session / Cloudflare Access 等），当前版本明确不做这一层，
+// 这里保留只是为了给站长一个"生成/复制分享链接"的自用小工具，不代表内容已被保护。
 const ACCESS_PROFILES = [
   {
     id: "follower",
@@ -33,12 +46,13 @@ const ACCESS_HASHES = new Set([
 ]);
 
 const VIEW_META = {
-  dashboard: { kicker: "总览面板", title: "把网页改成像软件一样用" },
+  dashboard: { kicker: "总览面板", title: "数控工程师工作平台" },
   study: { kicker: "新手路线", title: "先按顺序学，再单点深入" },
   workspace: { kicker: "快速查询", title: "左边找条目，右边看详情" },
-  gallery: { kicker: "Gemini 图卡", title: "先把图片真正接进网页" },
+  "learning-map": { kicker: "知识地图", title: "可视化知识结构与学习路径" },
+  gallery: { kicker: "图片图库", title: "125张专业教学图片资料" },
   calculator: { kicker: "参数换算", title: "把常用计算做成独立工作区" },
-  library: { kicker: "本地知识库", title: "逐步把本地数据库接进网页" },
+  library: { kicker: "知识库管理", title: "逐步把本地数据库接进网页" },
   favorites: { kicker: "学习记录", title: "最近查看和收藏会保留下来" },
   access: { kicker: "访问控制", title: "只让你想让进的人进入资料区" }
 };
@@ -78,7 +92,7 @@ const state = {
   entries: [],
   baseEntries: [],
   archiveEntries: [],
-  activeView: "workspace",
+  activeView: "dashboard",
   activeFilter: "all",
   selectedCategory: "全部栏目",
   keyword: "",
@@ -87,7 +101,7 @@ const state = {
   selectedId: null,
   favorites: [],
   recents: [],
-  accessGranted: false,
+  accessGranted: window.__FORCE_ACCESS_GRANTED__ || false,
   accessProfileLabel: "",
   loadedScripts: new Set(),
   loadedContentChunks: new Set(),
@@ -119,16 +133,17 @@ const dom = {
   sidebarClose: document.querySelector("#sidebar-close"),
   topbarKicker: document.querySelector("#topbar-kicker"),
   topbarTitle: document.querySelector("#topbar-title"),
-  heroMetrics: document.querySelector("#hero-metrics"),
+  heroMetrics: document.querySelector("#launchpad-stats"),
   dashboardGalleryGrid: document.querySelector("#dashboard-gallery-grid"),
   categorySelect: document.querySelector("#category-select"),
   presetChipRow: document.querySelector("#preset-chip-row"),
   knowledgeChipRow: document.querySelector("#knowledge-chip-row"),
   workspaceModeRow: document.querySelector("#workspace-mode-row"),
   searchInput: document.querySelector("#search-input"),
+  searchClearBtn: document.querySelector("#search-clear-btn"),
   searchMeta: document.querySelector("#search-meta"),
   resultList: document.querySelector("#result-list"),
-  workspaceStatus: document.querySelector("#workspace-status"),
+  workspaceStatus: document.querySelector("#workspace-status-text"),
   detailTitle: document.querySelector("#detail-title"),
   detailCategory: document.querySelector("#detail-category"),
   detailCode: document.querySelector("#detail-code"),
@@ -143,14 +158,17 @@ const dom = {
   detailPreviewStatus: document.querySelector("#detail-preview-status"),
   detailPreview: document.querySelector("#detail-preview"),
   loadPreviewButton: document.querySelector("#load-preview-button"),
-  detailRisk: document.querySelector("#detail-risk"),
-  detailSource: document.querySelector("#detail-source"),
+  detailRisk: document.querySelector("#detail-risk-badge"),
+  detailSource: document.querySelector("#detail-category"),
   detailImageCard: document.querySelector("#detail-image-card"),
-  detailImageTitle: document.querySelector("#detail-image-title"),
-  detailImageCaption: document.querySelector("#detail-image-caption"),
+  detailImageTitle: document.querySelector("#detail-title"),
+  detailImageCaption: document.querySelector("#detail-summary"),
   detailImageStage: document.querySelector("#detail-image-stage"),
   relatedLinks: document.querySelector("#related-links"),
-  galleryGrid: document.querySelector("#gallery-grid"),
+  detailQuickCheck: document.querySelector("#detail-quick-check"),
+  detailTools: document.querySelector("#detail-tools"),
+  detailParams: document.querySelector("#detail-params"),
+  detailSmartRecommend: document.querySelector("#detail-smart-recommend"),
   favoriteToggle: document.querySelector("#favorite-toggle"),
   recentLinks: document.querySelector("#recent-links"),
   favoriteLinks: document.querySelector("#favorite-links"),
@@ -192,6 +210,16 @@ function normalizeText(value = "") {
     .replace(/g0?3/g, "g03")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+/**
+ * 文本标准化（用于学习卡片匹配）：去空格、去标点、转小写
+ */
+function normalizeCompactText(text) {
+  return String(text || '')
+    .toLowerCase()
+    .replace(/\s+/g, '')
+    .replace(/[：:，,。.!！?？"""'''（）()【】\[\]-]/g, '');
 }
 
 function safeArray(value) {
@@ -364,12 +392,6 @@ function inferNextLearn(entry) {
   return "下一步建议继续看同一栏目下最常用、最容易出问题的高频内容。";
 }
 
-function getFeaturedImages(entryId) {
-  const source = window.CNC_FEATURED_IMAGES || {};
-  const images = source[entryId];
-  return Array.isArray(images) ? images : [];
-}
-
 function getGalleryLibrary() {
   return Array.isArray(window.CNC_GALLERY_LIBRARY) ? window.CNC_GALLERY_LIBRARY : [];
 }
@@ -423,6 +445,73 @@ function getEntryImages(entry) {
     }));
 
   return ranked;
+}
+
+function getFeaturedSource() {
+  return {
+    ...(window.CNC_FEATURED_IMAGES || {}),
+    ...(window.CNC_FEATURED_IMAGES_EXTENDED || {}),
+    ...(window.CNC_FEATURED_IMAGES_SUPPLEMENT || {})
+  };
+}
+
+function findEntryByFeaturedKey(entryKey) {
+  return state.entries.find((entry) => entry.id === entryKey || entry.title === entryKey) || null;
+}
+
+function getGalleryImageLookup() {
+  const lookup = new Map();
+  getGalleryLibrary().forEach((image) => {
+    if (!image?.src) return;
+    lookup.set(image.src, image);
+    if (image.id) lookup.set(image.id, image);
+
+    const filename = String(image.src).split("/").pop();
+    if (filename) lookup.set(filename, image);
+    if (image.id && !String(image.id).endsWith(".webp")) {
+      lookup.set(`${image.id}.webp`, image);
+    }
+  });
+  return lookup;
+}
+
+function normalizeFeaturedImages(entryKey, value) {
+  if (Array.isArray(value)) return safeArray(value).filter((image) => image?.src);
+  if (!value || !Array.isArray(value.images)) return [];
+
+  const lookup = getGalleryImageLookup();
+  const entry = findEntryByFeaturedKey(entryKey);
+
+  return value.images
+    .map((ref) => {
+      const image = lookup.get(ref) || lookup.get(String(ref).split("/").pop()) || null;
+      if (!image?.src) return null;
+      return {
+        src: image.src,
+        title: image.title || entry?.title || entryKey,
+        caption: `${value.category || "精选配图"} · 优先级 ${value.priority || 2}`
+      };
+    })
+    .filter(Boolean);
+}
+
+function getFeaturedImages(entryOrKey) {
+  const source = getFeaturedSource();
+  const entryId = typeof entryOrKey === "string" ? entryOrKey : entryOrKey?.id;
+  const entry = typeof entryOrKey === "object"
+    ? entryOrKey
+    : state.entries.find((item) => item.id === entryOrKey) || null;
+  const entryTitle = entry?.title || null;
+
+  if (entryId && source[entryId] !== undefined) {
+    return normalizeFeaturedImages(entryId, source[entryId]);
+  }
+
+  if (entryTitle && source[entryTitle] !== undefined) {
+    return normalizeFeaturedImages(entryTitle, source[entryTitle]);
+  }
+
+  return [];
 }
 
 async function ensureContentChunk(chunkNo) {
@@ -498,20 +587,93 @@ function filterKeyMatches(entry, key) {
   return true;
 }
 
+
+/**
+ * 扩展搜索词（支持别名映射）
+ * @param {string} keyword - 用户输入的关键词
+ * @returns {Array<string>} 扩展后的关键词数组
+ */
+function expandSearchTerm(keyword) {
+  if (!keyword || !window.CNC_SEARCH_ALIASES) return [keyword];
+
+  const normalized = normalizeText(keyword);
+  const match = window.CNC_SEARCH_ALIASES.find(
+    alias => normalizeText(alias.term) === normalized
+  );
+
+  const expandedTerms = match ? [keyword, ...match.expands] : [keyword];
+
+  // 记录扩展日志（如果调试模块已加载）
+  if (window.CNC_SEARCH_DEBUG) {
+    window.CNC_SEARCH_DEBUG.logExpansion(keyword, expandedTerms);
+  }
+
+  return expandedTerms;
+}
+
+/**
+ * 检查条目是否匹配关键词
+ * @param {Object} entry - 知识条目
+ * @param {string} keyword - 搜索关键词
+ * @returns {boolean} 是否匹配
+ */
 function matchesKeyword(entry, keyword) {
   if (!keyword) return true;
-  const parts = normalizeText(keyword).split(/\s+/).filter(Boolean);
+
+  // 1. 扩展用户输入的搜索词（支持别名）
+  const expandedTerms = expandSearchTerm(keyword);
+  const parts = expandedTerms.flatMap(term =>
+    normalizeText(term).split(/\s+/)
+  ).filter(Boolean);
+
   const hay = normalizeText(getEntryText(entry));
-  return parts.every((part) => hay.includes(part));
+
+  // 2. 用扩展后的词进行匹配（只要任意一个词匹配即可）
+  const aliasMatched = parts.some((part) => hay.includes(part));
+  if (aliasMatched) {
+    // 记录匹配日志（如果调试模块已加载）
+    if (window.CNC_SEARCH_DEBUG) {
+      window.CNC_SEARCH_DEBUG.logMatch(entry, keyword, {
+        type: 'alias',
+        expandedTerms
+      });
+    }
+    return true;
+  }
+
+  // 3. 保留前端索引补充匹配能力（兼容frontend-data-layer）
+  if (window.CNC_FRONTEND && window.CNC_FRONTEND.getIndexMatches) {
+    const indexItems = window.CNC_FRONTEND.getIndexMatches(keyword);
+    if (indexItems.length) {
+      const eid = normalizeText(entry.id);
+      const etitle = normalizeText(entry.title);
+      const indexMatched = indexItems.some(function (item) {
+        return normalizeText(item.id) === eid || normalizeText(item.title) === etitle;
+      });
+
+      if (indexMatched) {
+        // 记录索引匹配日志
+        if (window.CNC_SEARCH_DEBUG) {
+          window.CNC_SEARCH_DEBUG.logMatch(entry, keyword, {
+            type: 'frontend_index'
+          });
+        }
+        return true;
+      }
+    }
+  }
+
+  return false;
 }
 
 function scoreEntry(entry, keyword) {
+  if (!keyword) return 0;
   const q = normalizeText(keyword);
-  if (!q) return 0;
-  const title = normalizeText(entry.title);
   const code = normalizeText(entry.code);
-  const tags = entry.tags.map(normalizeText);
+  const title = normalizeText(entry.title);
   const aliases = entry.aliases.map(normalizeText);
+  const tags = entry.tags.map(normalizeText);
+
   let score = 0;
   if (code === q) score += 140;
   if (title === q) score += 120;
@@ -627,8 +789,8 @@ function navigate(view, options = {}) {
   });
 
   const meta = VIEW_META[view] || VIEW_META.dashboard;
-  dom.topbarKicker.textContent = meta.kicker;
-  dom.topbarTitle.textContent = meta.title;
+  if (dom.topbarKicker) dom.topbarKicker.textContent = meta.kicker;
+  if (dom.topbarTitle) dom.topbarTitle.textContent = meta.title;
 
   document.querySelectorAll(".tree-parent, .tree-item").forEach((button) => {
     const isSameView = button.dataset.route === view;
@@ -637,27 +799,56 @@ function navigate(view, options = {}) {
   });
 
   if (view === "workspace") {
-    dom.searchInput.value = state.keyword;
+    if (dom.searchInput) dom.searchInput.value = state.keyword;
     renderWorkspace();
   }
 
-  if (view === "gallery") renderGalleryRich();
+  if (view === "dashboard") renderDashboardRecent();
+  // 图库视图由 gallery-featured.js 独立管理 #cncGalleryGrid，此处不再重复渲染（旧的 #gallery-grid 容器已废弃）
   if (view === "library") renderLibraryStats();
   if (view === "favorites") renderProgressLinks();
   closeSidebar();
+
+  if (!options.skipHash) {
+    // 视图名称到URL hash的映射
+    const viewToHashMap = {
+      "learning-map": "study-map",
+      "dashboard": "",
+      "workspace": "workspace",
+      "study": "study",
+      "gallery": "gallery",
+      "calculator": "calculator",
+      "library": "library",
+      "favorites": "favorites",
+      "access": "access"
+    };
+    const hash = viewToHashMap[view] !== undefined ? viewToHashMap[view] : view;
+    if (location.hash.slice(1) !== hash) {
+      location.hash = hash;
+    }
+  }
 }
 
 function closeSidebar() {
-  dom.sidebar.classList.remove("open");
-  dom.sidebarMask.hidden = true;
+  if (dom.sidebar) {
+    dom.sidebar.classList.remove("open");
+  }
+  if (dom.sidebarMask) {
+    dom.sidebarMask.hidden = true;
+  }
 }
 
 function openSidebar() {
-  dom.sidebar.classList.add("open");
-  dom.sidebarMask.hidden = false;
+  if (dom.sidebar) {
+    dom.sidebar.classList.add("open");
+  }
+  if (dom.sidebarMask) {
+    dom.sidebarMask.hidden = false;
+  }
 }
 
 function buildCategorySelect() {
+  if (!dom.categorySelect) return;
   const categories = ["全部栏目", ...new Set(state.entries.map((entry) => entry.category))];
   dom.categorySelect.innerHTML = categories
     .map((category) => `<option value="${escapeHtml(category)}">${escapeHtml(category)}</option>`)
@@ -666,6 +857,7 @@ function buildCategorySelect() {
 }
 
 function renderPresetChips() {
+  if (!dom.presetChipRow) return;
   dom.presetChipRow.innerHTML = [
     { value: "all", label: "全部" },
     ...Object.entries(FILTER_META).filter(([key]) => key !== "all").map(([value, item]) => ({ value, label: item.label }))
@@ -675,6 +867,7 @@ function renderPresetChips() {
 }
 
 function renderKnowledgeChips() {
+  if (!dom.knowledgeChipRow) return;
   dom.knowledgeChipRow.innerHTML = QUICK_TERMS
     .map((term) => `<button class="chip soft" data-quick-term="${escapeHtml(term)}" type="button">${escapeHtml(term)}</button>`)
     .join("");
@@ -693,32 +886,17 @@ function renderWorkspaceModes() {
 
 function renderHeroMetrics() {
   const total = state.entries.length;
-  const withImages = Object.keys(window.CNC_FEATURED_IMAGES || {}).length;
-  const base = state.baseEntries.length;
-  const archive = state.archiveEntries.length;
+  const featured = Object.keys(window.CNC_FEATURED_IMAGES || {}).length;
+  const extended = Object.keys(window.CNC_FEATURED_IMAGES_EXTENDED || {}).length;
+  const withImages = featured + extended;
 
-  dom.heroMetrics.innerHTML = `
-    <article class="hero-metric">
-      <span class="card-kicker">当前可查</span>
-      <strong>${total}</strong>
-      <p>已经进入网页可查的条目总数。</p>
-    </article>
-    <article class="hero-metric">
-      <span class="card-kicker">基础结构化条目</span>
-      <strong>${base}</strong>
-      <p>来自速查表与补充条目的初始数据。</p>
-    </article>
-    <article class="hero-metric">
-      <span class="card-kicker">带图条目</span>
-      <strong>${withImages}</strong>
-      <p>首批 Gemini 图片已经直接绑定到对应知识点。</p>
-    </article>
-    <article class="hero-metric">
-      <span class="card-kicker">扩展知识包</span>
-      <strong>${archive || "待并入"}</strong>
-      <p>本地大知识库会按包和按块继续接入。</p>
-    </article>
-  `;
+  const statEntries = document.getElementById('stat-entries');
+  const statImages = document.getElementById('stat-images');
+  const statRecents = document.getElementById('stat-recents');
+
+  if (statEntries) statEntries.textContent = total;
+  if (statImages) statImages.textContent = withImages;
+  if (statRecents) statRecents.textContent = state.recents.length;
 }
 
 function renderWorkspace() {
@@ -731,15 +909,25 @@ function renderWorkspace() {
       ? `已接入核心知识包 ${state.archiveEntries.length} 条。`
       : "当前先使用基础条目，超大知识包可按需继续加载。";
 
-  dom.workspaceStatus.textContent = archiveNote;
-  dom.searchMeta.textContent = `当前命中 ${filtered.length} 条，模块为：${activeFilterLabel}；栏目为：${categoryLabel}。基础条目 ${state.baseEntries.length} 条，扩展知识条目 ${state.archiveEntries.length} 条。`;
-  dom.resultList.classList.toggle("visual-mode", state.workspaceMode === "visual");
+  const workspaceStatusText = document.getElementById('workspace-status-text');
+  if (workspaceStatusText) {
+    workspaceStatusText.textContent = archiveNote;
+  }
+
+  if (dom.searchMeta) {
+    dom.searchMeta.textContent = `当前命中 ${filtered.length} 条，模块为：${activeFilterLabel}；栏目为：${categoryLabel}。基础条目 ${state.baseEntries.length} 条，扩展知识条目 ${state.archiveEntries.length} 条。`;
+  }
+
+  if (dom.resultList) {
+    dom.resultList.classList.toggle("visual-mode", state.workspaceMode === "visual");
+  }
 
   if (filtered.length && !filtered.some((entry) => entry.id === state.selectedId)) {
     state.selectedId = filtered[0].id;
   }
 
-  dom.resultList.innerHTML = filtered.length
+  if (dom.resultList) {
+    dom.resultList.innerHTML = filtered.length
     ? filtered.slice(0, 120).map((entry) => {
       const thumb = getEntryImages(entry)[0];
       return `
@@ -763,13 +951,14 @@ function renderWorkspace() {
     }).join("")
     : `<article class="result-card"><h4>没有找到匹配项</h4><p>可以试试搜：G02、1815、回零、对刀、报警、G84、螺距。</p></article>`;
 
-  dom.resultList.querySelectorAll("[data-open-entry]").forEach((button) => {
-    button.addEventListener("click", () => {
-      state.selectedId = button.dataset.openEntry;
-      renderWorkspace();
-      renderDetail();
+    dom.resultList.querySelectorAll("[data-open-entry]").forEach((button) => {
+      button.addEventListener("click", () => {
+        state.selectedId = button.dataset.openEntry;
+        renderWorkspace();
+        renderDetail();
+      });
     });
-  });
+  }
 
   renderFavoriteButton();
   renderDetail();
@@ -782,6 +971,255 @@ function renderWorkspace() {
 function renderFavoriteButton() {
   const active = state.favorites.includes(state.selectedId);
   dom.favoriteToggle.textContent = active ? "取消收藏这条内容" : "收藏这条内容";
+}
+
+
+function toArray(value) {
+  if (!value) return [];
+  return Array.isArray(value) ? value : [value];
+}
+
+function getItemText(entry) {
+  return normalizeText([
+    entry.id,
+    entry.title,
+    entry.code,
+    entry.category,
+    entry.summary,
+    entry.beginner,
+    entry.usage,
+    entry.warning,
+    entry.example,
+    entry.tags
+  ].join(" "));
+}
+
+const DETAIL_TOOL_DEFINITIONS = [
+  {
+    id: "speed",
+    title: "转速计算器",
+    desc: "根据刀具直径和线速度计算主轴转速",
+    keywords: ["转速", "主轴", "线速度", "vc", "s值", "切削速度"]
+  },
+  {
+    id: "feed",
+    title: "进给计算器",
+    desc: "根据每齿进给、刃数、转速计算进给速度",
+    keywords: ["进给", "每齿进给", "fz", "刃数", "f值", "mm/min"]
+  },
+  {
+    id: "surface-speed",
+    title: "线速度计算器",
+    desc: "根据刀具直径和转速反推线速度",
+    keywords: ["线速度", "vc", "切削速度"]
+  },
+  {
+    id: "unit",
+    title: "英制 / 公制换算",
+    desc: "inch、mm、分数英寸快速换算",
+    keywords: ["英制", "公制", "inch", "mm", "分数英寸"]
+  },
+  {
+    id: "roughness",
+    title: "Ra / Rz 粗糙度换算",
+    desc: "粗糙度 Ra、Rz 近似参考换算",
+    keywords: ["ra", "rz", "粗糙度", "表面粗糙"]
+  }
+];
+
+function getQuickCheckList(entry) {
+  const explicit = entry.quickCheck || entry.checklist || entry.checkPoints || entry.beforeUseCheck;
+  if (explicit) return toArray(explicit).slice(0, 5);
+
+  const text = getItemText(entry);
+  if (text.includes("坐标") || text.includes("g54")) {
+    return [
+      "当前坐标系是否正确？",
+      "工件零点是否和图纸基准一致？",
+      "Z 零点是否单独确认过？",
+      "程序起点是否在安全位置？",
+      "首件前是否做过单段或空运行？"
+    ];
+  }
+  if (text.includes("刀补") || text.includes("g41") || text.includes("g42") || text.includes("g43")) {
+    return [
+      "刀号和补偿号是否对应？",
+      "H 值或 D 值是否调用正确？",
+      "补偿方向是否判断正确？",
+      "换刀后是否重新确认刀长？",
+      "首件尺寸是否留有调整余地？"
+    ];
+  }
+  if (text.includes("转速") || text.includes("进给") || text.includes("线速度")) {
+    return [
+      "刀具直径是否输入正确？",
+      "材料类型是否考虑？",
+      "单位是否确认无误？",
+      "机床刚性和装夹是否允许该参数？",
+      "首件是否保守试切？"
+    ];
+  }
+  return [
+    "这个知识点适用场景是否和当前加工一致？",
+    "关键参数是否逐项检查？",
+    "坐标、刀具、工件基准是否确认？",
+    "是否存在撞刀、过切、尺寸异常风险？",
+    "正式加工前是否做过模拟或单段检查？"
+  ];
+}
+
+function getRelatedTools(entry) {
+  const explicitToolIds = toArray(entry.toolIds || entry.relatedTools);
+  const text = getItemText(entry);
+  return DETAIL_TOOL_DEFINITIONS.filter((tool) => {
+    if (explicitToolIds.includes(tool.id)) return true;
+    return tool.keywords.some((keyword) => text.includes(normalizeText(keyword)));
+  }).slice(0, 3);
+}
+
+function openCalculatorTool(toolId, params = {}, fromEntry = null) {
+  localStorage.setItem("cnc_calculator_prefill", JSON.stringify({
+    toolId,
+    params,
+    fromId: fromEntry?.id || "",
+    fromTitle: fromEntry?.title || "",
+    time: Date.now()
+  }));
+  navigate("calculator");
+  renderAll();
+}
+
+function renderQuickCheckSection(entry) {
+  if (!dom.detailQuickCheck) return;
+  const checks = getQuickCheckList(entry);
+  dom.detailQuickCheck.innerHTML = checks.map((text) => `
+    <label class="detail-check-item">
+      <input type="checkbox">
+      <span>${escapeHtml(text)}</span>
+    </label>
+  `).join("");
+}
+
+function renderRelatedToolsSection(entry) {
+  if (!dom.detailTools) return;
+  const tools = getRelatedTools(entry);
+  dom.detailTools.innerHTML = tools.length
+    ? tools.map((tool) => `
+      <button type="button" class="detail-tool-button" data-detail-tool="${escapeHtml(tool.id)}">
+        <strong>${escapeHtml(tool.title)}</strong>
+        <span>${escapeHtml(tool.desc)}</span>
+      </button>
+    `).join("")
+    : `<p class="detail-soft-empty">暂无强关联工具，后续可在数据中补充 toolIds。</p>`;
+
+  dom.detailTools.querySelectorAll("[data-detail-tool]").forEach((button) => {
+    button.addEventListener("click", () => openCalculatorTool(button.dataset.detailTool, {}, entry));
+  });
+}
+
+function renderDetailParamsSection(entry) {
+  if (!dom.detailParams) return;
+  const params = entry.params || entry.parameters || entry.formulaParams || [];
+  if (!Array.isArray(params) || !params.length) {
+    dom.detailParams.innerHTML = `<p class="detail-soft-empty">暂无可联动参数。后续补充 params 字段后可自动带入计算器。</p>`;
+    return;
+  }
+
+  dom.detailParams.innerHTML = params.map((param) => `
+    <button type="button" class="detail-param-chip" data-tool-id="${escapeHtml(param.toolId || "speed")}" data-param-name="${escapeHtml(param.name || param.key || "")}" data-param-value="${escapeHtml(param.value || "")}">
+      ${escapeHtml(param.label || param.name || param.key || "参数")}：${escapeHtml(param.value || "")}${escapeHtml(param.unit || "")}
+    </button>
+  `).join("");
+
+  dom.detailParams.querySelectorAll(".detail-param-chip").forEach((button) => {
+    button.addEventListener("click", () => {
+      openCalculatorTool(button.dataset.toolId || "speed", {
+        [button.dataset.paramName || "value"]: button.dataset.paramValue || ""
+      }, entry);
+    });
+  });
+}
+
+function getSmartRecommendations(entry) {
+  const relatedById = toArray(entry.relatedIds || entry.related || entry.links)
+    .map((id) => state.entries.find((item) => String(item.id) === String(id)))
+    .filter(Boolean);
+  const existingIds = new Set([entry.id, ...relatedById.map((item) => item.id)]);
+  const tagText = getItemText(entry);
+  const bySimilar = state.entries.filter((item) => {
+    if (!item || existingIds.has(item.id)) return false;
+    const text = getItemText(item);
+    return text.includes(normalizeText(entry.category)) || tagText.includes(normalizeText(item.category));
+  }).slice(0, 4);
+  const history = state.recents
+    .filter((id) => id !== entry.id)
+    .map((id) => state.entries.find((item) => item.id === id))
+    .filter(Boolean)
+    .slice(0, 3);
+  const nextById = entry.nextId ? state.entries.find((item) => item.id === entry.nextId) : null;
+  return {
+    next: nextById,
+    items: [...relatedById, ...bySimilar, ...history].filter((item, index, arr) => arr.findIndex((x) => x.id === item.id) === index).slice(0, 6)
+  };
+}
+
+function renderSmartRecommendSection(entry) {
+  if (!dom.detailSmartRecommend) return;
+  const recommendations = getSmartRecommendations(entry);
+  const nextHtml = recommendations.next ? `
+    <button type="button" class="detail-next-card" data-smart-entry="${escapeHtml(recommendations.next.id)}">
+      <span>建议下一步</span>
+      <strong>${escapeHtml(recommendations.next.title)}</strong>
+    </button>
+  ` : "";
+  const itemsHtml = recommendations.items.length
+    ? recommendations.items.map((item) => `
+      <button type="button" class="detail-recommend-button" data-smart-entry="${escapeHtml(item.id)}">
+        <strong>${escapeHtml(item.title)}</strong>
+        <span>${escapeHtml(item.summary || item.category || "相关知识点")}</span>
+      </button>
+    `).join("")
+    : `<p class="detail-soft-empty">暂无更多智能推荐，后续可通过 relatedIds 增强。</p>`;
+
+  dom.detailSmartRecommend.innerHTML = nextHtml + itemsHtml;
+  dom.detailSmartRecommend.querySelectorAll("[data-smart-entry]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.selectedId = button.dataset.smartEntry;
+      renderWorkspace();
+    });
+  });
+}
+
+function renderDetailEnhancements(entry) {
+  renderQuickCheckSection(entry);
+  renderRelatedToolsSection(entry);
+  renderDetailParamsSection(entry);
+  renderSmartRecommendSection(entry);
+}
+
+function clearDetailEnhancements() {
+  if (dom.detailQuickCheck) dom.detailQuickCheck.innerHTML = "";
+  if (dom.detailTools) dom.detailTools.innerHTML = "";
+  if (dom.detailParams) dom.detailParams.innerHTML = "";
+  if (dom.detailSmartRecommend) dom.detailSmartRecommend.innerHTML = "";
+}
+
+function renderFrontendRiskWarning(entry) {
+  var card = document.getElementById('detail-frontend-risk-card');
+  var body = document.getElementById('detail-frontend-risk-body');
+  if (!card || !body) return;
+  if (!entry || !window.CNC_FRONTEND || !window.CNC_FRONTEND.getRiskFor) {
+    card.hidden = true;
+    return;
+  }
+  var text = (entry.title || '') + ' ' + (entry.code || '') + ' ' + (entry.summary || '') + ' ' + (entry.warning || '');
+  var risk = window.CNC_FRONTEND.getRiskFor(text);
+  if (risk) {
+    card.hidden = false;
+    body.innerHTML = '<p class="risk-message">' + escapeHtml(risk.riskMessage) + '</p><p class="risk-guard"><strong>建议防护：</strong>' + escapeHtml(risk.recommendedGuard || '无') + '</p>';
+  } else {
+    card.hidden = true;
+  }
 }
 
 function renderDetail() {
@@ -800,10 +1238,11 @@ function renderDetail() {
     dom.detailPreview.textContent = "还没有加载原文摘录。";
     if (dom.detailPrev) dom.detailPrev.disabled = true;
     if (dom.detailNextButton) dom.detailNextButton.disabled = true;
-    dom.detailRisk.textContent = "未选择";
-    dom.detailSource.textContent = "等待选择";
+    if (dom.detailRisk) dom.detailRisk.textContent = "未选择";
     dom.detailImageCard.hidden = true;
     dom.relatedLinks.innerHTML = "";
+    clearDetailEnhancements();
+    renderFrontendRiskWarning(null);
     return;
   }
 
@@ -819,8 +1258,8 @@ function renderDetail() {
   dom.detailNext.textContent = entry.nextLearn || inferNextLearn(entry);
   dom.detailPreviewStatus.textContent = "当前先显示结构化速查内容，正文摘录会继续补进来。";
   dom.detailPreview.textContent = "正在检查这条知识点有没有可直接并入的原文摘录……";
-  dom.detailRisk.textContent = entry.risk;
-  dom.detailSource.textContent = entry.source;
+  if (dom.detailRisk) dom.detailRisk.textContent = entry.risk;
+  renderFrontendRiskWarning(entry);
 
   const visible = getVisibleEntries();
   const currentIndex = visible.findIndex((item) => item.id === entry.id);
@@ -830,10 +1269,6 @@ function renderDetail() {
   const images = getEntryImages(entry);
   if (images.length) {
     dom.detailImageCard.hidden = false;
-    dom.detailImageTitle.textContent = `${entry.title} 对应图卡`;
-    dom.detailImageCaption.textContent = getFeaturedImages(entry.id).length
-      ? "Gemini 图已经直接挂到当前知识点详情里。"
-      : "当前图片由图库自动匹配到这个知识点，用来先把学习画面补直观。";
     dom.detailImageStage.innerHTML = images.map((image) => `
       <article class="image-card">
         <img src="${image.src}" alt="${escapeHtml(image.title || entry.title)}" loading="lazy">
@@ -860,84 +1295,13 @@ function renderDetail() {
     });
   });
 
+  renderDetailEnhancements(entry);
   loadDetailPreview(entry);
 }
 
-function renderGallery() {
-  const galleryData = Object.entries(window.CNC_FEATURED_IMAGES || {});
-  dom.galleryGrid.innerHTML = galleryData.length
-    ? galleryData.map(([entryId, images]) => {
-      const entry = state.entries.find((item) => item.id === entryId);
-      const hero = images[0];
-      return `
-        <article class="gallery-card">
-          <img src="${hero.src}" alt="${escapeHtml(hero.title || entry?.title || entryId)}" loading="lazy">
-          <h4>${escapeHtml(entry?.title || entryId)}</h4>
-          <p>${escapeHtml(hero.caption || entry?.summary || "首批 Gemini 图卡。")}</p>
-          <div class="gallery-actions">
-            <button class="ghost-button" data-gallery-entry="${escapeHtml(entryId)}" type="button">查看对应知识点</button>
-          </div>
-        </article>
-      `;
-    }).join("")
-    : `<article class="gallery-card"><h4>暂时还没有图片图卡</h4><p>等首批图片接入后，这里会直接显示。</p></article>`;
-
-  dom.galleryGrid.querySelectorAll("[data-gallery-entry]").forEach((button) => {
-    button.addEventListener("click", () => {
-      state.selectedId = button.dataset.galleryEntry;
-      navigate("workspace");
-    });
-  });
-}
-
-function renderGalleryRich() {
-  const featuredLookup = new Map();
-  Object.entries(window.CNC_FEATURED_IMAGES || {}).forEach(([entryId, images]) => {
-    safeArray(images).forEach((image) => {
-      if (image?.src) featuredLookup.set(image.src, entryId);
-    });
-  });
-
-  const galleryLibrary = getGalleryLibrary();
-  const galleryData = galleryLibrary.length
-    ? galleryLibrary.map((image) => ({
-      entryId: featuredLookup.get(image.src) || "",
-      image
-    }))
-    : Object.entries(window.CNC_FEATURED_IMAGES || {}).flatMap(([entryId, images]) =>
-      safeArray(images).map((image) => ({ entryId, image }))
-    );
-
-  dom.galleryGrid.innerHTML = galleryData.length
-    ? galleryData.map(({ entryId, image }) => {
-      const entry = state.entries.find((item) => item.id === entryId);
-      const batchLabel = image.batch || "Gemini 图库";
-      return `
-        <article class="gallery-card">
-          <img src="${image.src}" alt="${escapeHtml(image.title || entry?.title || entryId || "CNC Gallery Image")}" loading="lazy">
-          <div class="result-badges">
-            <span class="badge">${escapeHtml(batchLabel)}</span>
-            ${entry ? `<span class="badge level">已关联知识点</span>` : `<span class="badge level">图库素材</span>`}
-          </div>
-          <h4>${escapeHtml(entry?.title || image.title || entryId || "图库图片")}</h4>
-          <p>${escapeHtml(image.caption || entry?.summary || "这张图片已经并入站内图库，可作为学习时的直观参考。")}</p>
-          <div class="gallery-actions">
-            ${entry
-              ? `<button class="ghost-button" data-gallery-entry="${escapeHtml(entryId)}" type="button">查看对应知识点</button>`
-              : `<button class="ghost-button" type="button" disabled>正在补充关联知识点</button>`}
-          </div>
-        </article>
-      `;
-    }).join("")
-    : `<article class="gallery-card"><h4>暂时还没有图库图片</h4><p>图片资源正在接入，稍后这里会直接展示。</p></article>`;
-
-  dom.galleryGrid.querySelectorAll("[data-gallery-entry]").forEach((button) => {
-    button.addEventListener("click", () => {
-      state.selectedId = button.dataset.galleryEntry;
-      navigate("workspace");
-    });
-  });
-}
+// renderGallery() / renderGalleryRich()：旧版图库渲染逻辑已删除。
+// 图库视图当前完全由 gallery-featured.js 独立管理 #cncGalleryGrid / #cncGalleryCount，
+// 这两个函数原先操作的 #gallery-grid 容器在 index.html 里已不存在，属于历史遗留死代码。
 
 function renderDashboardGallery() {
   if (!dom.dashboardGalleryGrid) return;
@@ -958,6 +1322,89 @@ function renderDashboardGallery() {
   dom.dashboardGalleryGrid.querySelectorAll("[data-route='gallery']").forEach((card) => {
     card.addEventListener("click", () => navigate("gallery"));
   });
+}
+
+function renderDashboardRecent() {
+  const section = document.getElementById('dashboard-recent-section');
+  const container = document.getElementById('dashboard-recent-list');
+  if (!section || !container) return;
+
+  const recentEntries = state.recents
+    .map((id) => state.entries.find((entry) => entry.id === id))
+    .filter(Boolean)
+    .slice(0, 6);
+
+  if (recentEntries.length === 0) {
+    section.style.display = 'block';
+    container.innerHTML = '<div class="recent-empty">这里干干净净的，像刚打扫过一样呢~ 快去逛逛，把喜欢的页面装进来吧！</div>';
+    return;
+  }
+
+  section.style.display = 'block';
+  container.innerHTML = recentEntries.map((entry) => `
+    <article class="recent-card" data-entry-id="${escapeHtml(entry.id)}">
+      <div class="recent-card-icon">${entry.category.includes('G代码') || entry.code.match(/^[GM]\d/) ? '📘' : '📄'}</div>
+      <div>
+        <div class="recent-card-meta">
+          <span class="badge">${escapeHtml(entry.category)}</span>
+          <strong>${escapeHtml(entry.code)}</strong>
+        </div>
+        <h4>${escapeHtml(entry.title)}</h4>
+        <p>${escapeHtml(entry.summary.slice(0, 50))}${entry.summary.length > 50 ? '...' : ''}</p>
+      </div>
+    </article>
+  `).join('');
+
+  container.querySelectorAll('[data-entry-id]').forEach((card) => {
+    card.addEventListener('click', () => {
+      const entryId = card.dataset.entryId;
+      state.selectedId = entryId;
+      navigate('workspace');
+    });
+  });
+}
+
+function renderFAQPreview() {
+  var container = document.getElementById('faq-list');
+  var tabsContainer = document.getElementById('faq-tabs');
+  if (!container) return;
+  if (!window.CNC_FRONTEND || !window.CNC_FRONTEND.faq) {
+    container.innerHTML = '<p class="faq-placeholder">FAQ 数据尚未加载，请稍后刷新页面。</p>';
+    return;
+  }
+  var activeType = 'alarm';
+  if (tabsContainer) {
+    var activeTab = tabsContainer.querySelector('.faq-tab.active');
+    if (activeTab) activeType = activeTab.dataset.faqType;
+  }
+  var faqs = window.CNC_FRONTEND.getFAQs(activeType, 5);
+  if (!faqs.length) {
+    container.innerHTML = '<p class="faq-placeholder">该分类暂无 FAQ。</p>';
+    return;
+  }
+  container.innerHTML = faqs.map(function (faq) {
+    var riskClass = faq.riskNote ? 'faq-item-has-risk' : '';
+    var riskBadge = faq.riskNote ? '<span class="faq-risk-badge">高危</span>' : '';
+    return '<details class="faq-item ' + riskClass + '"><summary>' + riskBadge + '<span class="faq-item-title">' + escapeHtml(faq.title) + '</span></summary><div class="faq-item-body"><p>' + escapeHtml(faq.shortAnswer || faq.fullAnswer || '') + '</p></div></details>';
+  }).join('');
+
+  if (tabsContainer) {
+    tabsContainer.querySelectorAll('.faq-tab').forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        tabsContainer.querySelectorAll('.faq-tab').forEach(function (t) { t.classList.remove('active'); });
+        tab.classList.add('active');
+        renderFAQPreview();
+      });
+    });
+    var toggleBtn = document.getElementById('faq-toggle-btn');
+    if (toggleBtn) {
+      toggleBtn.onclick = function () {
+        container.querySelectorAll('.faq-item').forEach(function (item) {
+          item.open = !item.open;
+        });
+      };
+    }
+  }
 }
 
 function renderProgressLinks() {
@@ -1048,13 +1495,60 @@ function renderAll() {
   }
   buildCategorySelect();
   renderHeroMetrics();
-  renderWorkspace();
-  renderGalleryRich();
   renderDashboardGallery();
-  renderProgressLinks();
+  renderDashboardRecent();
+  renderFAQPreview();
   renderLibraryStats();
   renderLibraryBrowser();
   renderAccessCenter();
+  initRuntimeLayers();
+  initSearchEngine();
+}
+
+function initRuntimeLayers() {
+  if (!window.CNC_RUNTIME) return;
+  if (window.CNC_RUNTIME._runtimeInitialized) return;
+
+  var Runtime = window.CNC_RUNTIME;
+
+  if (Runtime.ImageLayer && !Runtime.imageLayer) {
+    try {
+      Runtime.imageLayer = new Runtime.ImageLayer({
+        featuredImages: window.CNC_FEATURED_IMAGES || {},
+        featuredImagesExtended: window.CNC_FEATURED_IMAGES_EXTENDED || {},
+        featuredImagesSupplement: window.CNC_FEATURED_IMAGES_SUPPLEMENT || {},
+        galleryLibrary: window.CNC_GALLERY_LIBRARY || [],
+        galleryLibraryEnhanced: window.CNC_GALLERY_LIBRARY_ENHANCED || [],
+        entryToImagesMap: window.ENTRY_TO_IMAGES_MAP || {}
+      });
+      Runtime.DataLoader.log('info', 'initRuntimeLayers', 'ImageLayer initialized: ' + Runtime.imageLayer.getStatus().totalImages + ' images');
+    } catch (e) {
+      Runtime.DataLoader.log('error', 'initRuntimeLayers', 'ImageLayer init failed: ' + e.message);
+    }
+  }
+
+  Runtime._runtimeInitialized = true;
+}
+
+function initSearchEngine() {
+  if (!window.CNC_RUNTIME) return;
+  var Runtime = window.CNC_RUNTIME;
+  if (!Runtime.SearchEngine) return;
+  if (Runtime.searchEngine) return;
+
+  try {
+    Runtime.searchEngine = new Runtime.SearchEngine({
+      entries: state.entries || [],
+      indexLight: (window.CNC_FRONTEND && window.CNC_FRONTEND.index) || [],
+      suggestions: (window.CNC_FRONTEND && window.CNC_FRONTEND.suggestions) || [],
+      faqs: (window.CNC_FRONTEND && window.CNC_FRONTEND.faq) || [],
+      riskKeywords: (window.CNC_FRONTEND && window.CNC_FRONTEND.riskKeywords) || [],
+      aliases: window.CNC_SEARCH_ALIASES || []
+    });
+    Runtime.DataLoader.log('info', 'initSearchEngine', 'SearchEngine initialized: ' + Runtime.searchEngine.getSourceStats().length + ' sources');
+  } catch (e) {
+    Runtime.DataLoader.log('error', 'initSearchEngine', 'SearchEngine init failed: ' + e.message);
+  }
 }
 
 function formatNumber(value, digits = 2) {
@@ -1118,6 +1612,14 @@ async function sha256Hex(input) {
   return [...new Uint8Array(hashBuffer)].map((item) => item.toString(16).padStart(2, "0")).join("");
 }
 
+function setGateVisibility(visible) {
+  if (!dom.gate) return;
+  dom.gate.hidden = !visible;
+  dom.gate.setAttribute("aria-hidden", visible ? "false" : "true");
+  dom.gate.style.display = visible ? "grid" : "none";
+}
+
+// 注意：这是纯前端字符串比对，不是安全校验——源码里就能直接读到明文邀请码（见文件顶部 ACCESS_PROFILES 说明）。
 async function grantAccess(code) {
   const trimmed = code.trim();
   const hash = await sha256Hex(trimmed);
@@ -1126,29 +1628,13 @@ async function grantAccess(code) {
     state.accessGranted = true;
     state.accessProfileLabel = profile?.label || "已授权";
     localStorage.setItem(ACCESS_KEY, trimmed);
-    dom.gate.hidden = true;
-    dom.lockPill.textContent = state.accessProfileLabel;
-    dom.accessMessage.textContent = "授权成功，正在进入资料区。";
+    setGateVisibility(false);
+    if (dom.lockPill) dom.lockPill.textContent = state.accessProfileLabel;
+    if (dom.accessMessage) dom.accessMessage.textContent = "授权成功，正在进入资料区。";
     renderAccessCenter();
     return true;
   }
   return false;
-}
-
-async function initAccess() {
-  const stored = localStorage.getItem(ACCESS_KEY);
-  const urlCode = new URLSearchParams(window.location.search).get("invite");
-  const candidate = urlCode || stored || "";
-
-  if (candidate) {
-    const ok = await grantAccess(candidate);
-    if (ok) return;
-  }
-
-  state.accessGranted = false;
-  dom.gate.hidden = false;
-  dom.lockPill.textContent = "访问受控";
-  renderAccessCenter();
 }
 
 function ensureScript(id, src) {
@@ -1165,10 +1651,10 @@ function ensureScript(id, src) {
   });
 }
 
-async function loadKnowledgeCore() {
+async function loadKnowledgeCore(silent) {
   if (state.coreLoaded) {
     logLibrary("核心知识库包已经加载过，不再重复加载。");
-    navigate("library");
+    if (!silent) navigate("library");
     return;
   }
 
@@ -1187,61 +1673,120 @@ async function loadKnowledgeCore() {
   }
 
   renderAll();
-  navigate("library");
+  if (!silent) navigate("library");
 }
 
 function bindRouteButtons() {
+  // 路由按钮（带过滤器）
   document.querySelectorAll("[data-route]").forEach((button) => {
     button.addEventListener("click", () => {
       const view = button.dataset.route;
       const filter = button.dataset.filter;
+      console.log('[路由跳转]', view, filter ? `(过滤: ${filter})` : '');
       navigate(view, { filter });
     });
   });
 
+  // 直接跳转到指定条目
   document.querySelectorAll("[data-entry-id]").forEach((button) => {
     button.addEventListener("click", () => {
-      state.selectedId = button.dataset.entryId;
+      const entryId = button.dataset.entryId;
+      console.log('[条目跳转]', entryId);
+      state.selectedId = entryId;
       navigate("workspace");
     });
   });
 
+  // 快捷搜索跳转（热门词按钮、quick-pill）
   document.querySelectorAll("[data-jump-keyword]").forEach((button) => {
     button.addEventListener("click", () => {
-      state.keyword = button.dataset.jumpKeyword || "";
+      const keyword = button.dataset.jumpKeyword || "";
+      console.log('[快捷搜索]', keyword);
+      state.keyword = keyword;
       state.activeFilter = "all";
-      navigate("workspace");
+      state.selectedCategory = "全部栏目";
+      navigate("workspace", { keyword });
+      // 确保工作区搜索框同步
+      if (dom.searchInput) {
+        dom.searchInput.value = keyword;
+      }
+      renderAll();
     });
   });
 }
 
+function handleHashChange() {
+  const hash = location.hash.slice(1);
+  // 路由映射：hash -> 实际视图名称
+  const routeMap = {
+    "study-map": "learning-map",
+    "workspace": "workspace",
+    "study": "study",
+    "gallery": "gallery",
+    "calculator": "calculator",
+    "library": "library",
+    "favorites": "favorites",
+    "access": "access"
+  };
+
+  const view = routeMap[hash] || "dashboard";
+  navigate(view, { skipHash: true });
+}
+
+function initHashRouting() {
+  window.addEventListener("hashchange", handleHashChange);
+  handleHashChange();
+}
+
 function bindWorkspaceEvents() {
-  dom.searchInput.addEventListener("input", () => {
-    state.keyword = dom.searchInput.value;
-    renderWorkspace();
-  });
+  if (dom.searchInput) {
+    dom.searchInput.addEventListener("input", () => {
+      state.keyword = dom.searchInput.value;
+      renderWorkspace();
+    });
+  }
 
-  dom.categorySelect.addEventListener("change", () => {
-    state.selectedCategory = dom.categorySelect.value;
-    renderWorkspace();
-  });
+  if (dom.searchClearBtn) {
+    dom.searchClearBtn.addEventListener("click", () => {
+      state.keyword = "";
+      if (dom.searchInput) dom.searchInput.value = "";
+      renderWorkspace();
+      if (dom.searchInput) dom.searchInput.focus();
+    });
+  }
 
-  dom.presetChipRow.addEventListener("click", (event) => {
-    const button = event.target.closest("[data-filter-chip]");
-    if (!button) return;
-    state.activeFilter = button.dataset.filterChip;
-    state.selectedCategory = "全部栏目";
-    renderWorkspace();
-  });
+  if (window.CNC_FRONTEND && window.CNC_FRONTEND.renderSuggestionBox) {
+    var suggestionBox = document.getElementById('search-suggestions');
+    window.CNC_FRONTEND.renderSuggestionBox(dom.searchInput, suggestionBox);
+  }
 
-  dom.knowledgeChipRow.addEventListener("click", (event) => {
-    const button = event.target.closest("[data-quick-term]");
-    if (!button) return;
-    state.keyword = button.dataset.quickTerm;
-    dom.searchInput.value = state.keyword;
-    state.selectedCategory = "全部栏目";
-    renderWorkspace();
-  });
+  if (dom.categorySelect) {
+    dom.categorySelect.addEventListener("change", () => {
+      state.selectedCategory = dom.categorySelect.value;
+      renderWorkspace();
+    });
+  }
+
+  if (dom.presetChipRow) {
+    dom.presetChipRow.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-filter-chip]");
+      if (!button) return;
+      state.activeFilter = button.dataset.filterChip;
+      state.selectedCategory = "全部栏目";
+      renderWorkspace();
+    });
+  }
+
+  if (dom.knowledgeChipRow) {
+    dom.knowledgeChipRow.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-quick-term]");
+      if (!button) return;
+      state.keyword = button.dataset.quickTerm;
+      if (dom.searchInput) dom.searchInput.value = state.keyword;
+      state.selectedCategory = "全部栏目";
+      renderWorkspace();
+    });
+  }
 
   dom.workspaceModeRow?.addEventListener("click", (event) => {
     const button = event.target.closest("[data-workspace-mode]");
@@ -1259,13 +1804,21 @@ function bindWorkspaceEvents() {
     }
   });
 
-  dom.favoriteToggle.addEventListener("click", toggleFavorite);
+  if (dom.favoriteToggle) {
+    dom.favoriteToggle.addEventListener("click", toggleFavorite);
+  }
 }
 
 function bindSidebarEvents() {
-  dom.sidebarOpen.addEventListener("click", openSidebar);
-  dom.sidebarClose.addEventListener("click", closeSidebar);
-  dom.sidebarMask.addEventListener("click", closeSidebar);
+  if (dom.sidebarOpen) {
+    dom.sidebarOpen.addEventListener("click", openSidebar);
+  }
+  if (dom.sidebarClose) {
+    dom.sidebarClose.addEventListener("click", closeSidebar);
+  }
+  if (dom.sidebarMask) {
+    dom.sidebarMask.addEventListener("click", closeSidebar);
+  }
 }
 
 function bindTreeEvents() {
@@ -1279,8 +1832,12 @@ function bindTreeEvents() {
 }
 
 function bindLibraryEvents() {
-  dom.loadCoreButton.addEventListener("click", loadKnowledgeCore);
-  dom.loadFullButton.addEventListener("click", loadFullLocalArchive);
+  if (dom.loadCoreButton) {
+    dom.loadCoreButton.addEventListener("click", () => loadKnowledgeCore());
+  }
+  if (dom.loadFullButton) {
+    dom.loadFullButton.addEventListener("click", () => loadFullLocalArchive());
+  }
 }
 
 function bindDetailEvents() {
@@ -1301,17 +1858,21 @@ function bindDetailEvents() {
 }
 
 function bindAccessEvents() {
-  dom.accessForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const code = dom.accessInput.value;
-    const ok = await grantAccess(code);
-    if (ok && !state.coreLoaded) {
-      await loadKnowledgeCore();
-    }
-    dom.accessMessage.textContent = ok
-      ? "授权成功，已经进入资料区。"
-      : "邀请码不对。你可以换一个邀请码或通过私密链接进入。";
-  });
+  if (dom.accessForm) {
+    dom.accessForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const code = dom.accessInput ? dom.accessInput.value : "";
+      const ok = await grantAccess(code);
+      if (ok && !state.coreLoaded) {
+        await loadKnowledgeCore();
+      }
+      if (dom.accessMessage) {
+        dom.accessMessage.textContent = ok
+          ? "授权成功，已经进入资料区。"
+          : "邀请码不对。你可以换一个邀请码或通过私密链接进入。";
+      }
+    });
+  }
 }
 
 async function loadFullLocalArchive() {
@@ -1349,6 +1910,56 @@ async function loadFullLocalArchive() {
   navigate("library");
 }
 
+function isLocalTrustedEnvironment() {
+  const { protocol, hostname } = window.location;
+  return (
+    protocol === "file:" ||
+    hostname === "localhost" ||
+    hostname === "127.0.0.1" ||
+    hostname === "::1" ||
+    hostname === "[::1]"
+  );
+}
+
+async function initAccess() {
+  if (window.__FORCE_ACCESS_GRANTED__) {
+    state.accessGranted = true;
+    state.accessProfileLabel = "开发免密模式";
+    setGateVisibility(false);
+    if (dom.lockPill) dom.lockPill.style.display = "none";
+    const accessBtn = document.querySelector('button[data-route="access"]');
+    if (accessBtn) accessBtn.style.display = "none";
+    localStorage.setItem(ACCESS_KEY, "dev-mode");
+    renderAccessCenter();
+    return;
+  }
+
+  if (isLocalTrustedEnvironment()) {
+    state.accessGranted = true;
+    state.accessProfileLabel = "本地调试访问";
+    setGateVisibility(false);
+    if (dom.lockPill) dom.lockPill.textContent = state.accessProfileLabel;
+    if (dom.accessMessage) dom.accessMessage.textContent = "当前是本地打开，已自动放行。";
+    localStorage.setItem(ACCESS_KEY, "dev-mode");
+    renderAccessCenter();
+    return;
+  }
+
+  const stored = localStorage.getItem(ACCESS_KEY);
+  const urlCode = new URLSearchParams(window.location.search).get("invite");
+  const candidate = urlCode || stored || "";
+
+  if (candidate) {
+    const ok = await grantAccess(candidate);
+    if (ok) return;
+  }
+
+  state.accessGranted = false;
+  setGateVisibility(true);
+  if (dom.lockPill) dom.lockPill.textContent = "访问受控";
+  renderAccessCenter();
+}
+
 async function bootstrap() {
   state.favorites = readStorage(FAVORITES_KEY);
   state.recents = readStorage(RECENTS_KEY);
@@ -1361,21 +1972,369 @@ async function bootstrap() {
   bindDetailEvents();
   bindAccessEvents();
   bindCalculators();
+  bindEnhancedUI();
 
   syncTreeState();
   renderLibraryLog();
   renderAll();
-  navigate(state.activeView);
   renderProgressLinks();
+  initHashRouting();
   calculateRpm();
   calculateVc();
   calculateFeed();
   calculatePitch();
   calculateDiameter();
   await initAccess();
+  if (window.CNC_FRONTEND && window.CNC_FRONTEND.init) {
+    window.CNC_FRONTEND.init().then(function () {
+      renderFAQPreview();
+      initSearchEngine();
+      initRuntimeLayers();
+    });
+  }
   if (state.accessGranted && !state.coreLoaded) {
-    await loadKnowledgeCore();
+    await loadKnowledgeCore(true);
+  }
+  await initEnhancedFeatures();
+}
+
+// ============================================
+// 增强功能初始化
+// ============================================
+
+let knowledgeTreeUI = null;
+let recommendationsUI = null;
+
+function bindEnhancedUI() {
+  // 快速搜索 - 首页搜索框
+  const quickSearchInput = document.getElementById('quick-search-input');
+  const quickSearchBtn = document.getElementById('quick-search-btn');
+
+  if (quickSearchBtn) {
+    quickSearchBtn.addEventListener('click', () => {
+      if (quickSearchInput && quickSearchInput.value.trim()) {
+        const keyword = quickSearchInput.value.trim();
+        console.log('[快速搜索] 触发搜索:', keyword);
+        state.keyword = keyword;
+        state.activeFilter = 'all';
+        state.selectedCategory = '全部栏目';
+        navigate('workspace', { keyword });
+        // 确保工作区搜索框同步
+        if (dom.searchInput) {
+          dom.searchInput.value = keyword;
+        }
+        renderAll();
+      }
+    });
+  }
+
+  if (quickSearchInput) {
+    quickSearchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && quickSearchInput.value.trim()) {
+        const keyword = quickSearchInput.value.trim();
+        console.log('[快速搜索] Enter触发搜索:', keyword);
+        state.keyword = keyword;
+        state.activeFilter = 'all';
+        state.selectedCategory = '全部栏目';
+        navigate('workspace', { keyword });
+        // 确保工作区搜索框同步
+        if (dom.searchInput) {
+          dom.searchInput.value = keyword;
+        }
+        renderAll();
+      }
+    });
+  }
+
+  // 知识地图视图切换
+  const mapViewButtons = document.querySelectorAll('[data-map-view]');
+  mapViewButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const view = btn.dataset.mapView;
+      mapViewButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      if (knowledgeTreeUI) {
+        knowledgeTreeUI.switchView(view);
+      }
+    });
+  });
+
+  // 启动台统计更新
+  updateLaunchpadStats();
+
+  // 学习卡片交互绑定
+  bindStudyCards();
+}
+
+// ============================================
+// 学习卡片点击跳转详情
+// ============================================
+
+/**
+ * 兼容不同 data.js 命名
+ */
+function getKnowledgeList() {
+  return state.entries || [];
+}
+
+/**
+ * 从学习卡片中提取标题
+ */
+function getStudyCardTitle(card) {
+  const titleEl =
+    card.querySelector('.card-title') ||
+    card.querySelector('.study-card-title') ||
+    card.querySelector('h3') ||
+    card.querySelector('h4') ||
+    card.querySelector('.title');
+
+  return titleEl ? titleEl.textContent.trim() : card.textContent.trim();
+}
+
+/**
+ * 根据卡片标题找到匹配规则（使用统一的规则模块）
+ */
+function findStudyRuleByCardTitle(cardTitle) {
+  // 优先使用外部规则模块
+  if (window.CNC_STUDY_ENTRY_RULES) {
+    return window.CNC_STUDY_ENTRY_RULES.findRuleByCardTitle(cardTitle);
+  }
+
+  // 降级：使用内部规则（保持兼容性）
+  if (!STUDY_CARD_MATCH_RULES || !Array.isArray(STUDY_CARD_MATCH_RULES)) {
+    console.warn('[findStudyRuleByCardTitle] 规则未加载');
+    return null;
+  }
+
+  const normalizedCardTitle = normalizeCompactText(cardTitle);
+  return STUDY_CARD_MATCH_RULES.find(rule => {
+    const normalizedRuleTitle = normalizeCompactText(rule.cardTitle);
+    return (
+      normalizedCardTitle.includes(normalizedRuleTitle) ||
+      normalizedRuleTitle.includes(normalizedCardTitle)
+    );
+  });
+}
+
+/**
+ * 根据规则从 data.js 中找到知识点
+ */
+function findKnowledgeItemByRule(rule) {
+  const list = getKnowledgeList();
+  if (!Array.isArray(list) || !rule) return null;
+
+  // 优先使用外部规则模块的查找逻辑
+  if (window.CNC_STUDY_ENTRY_RULES) {
+    return window.CNC_STUDY_ENTRY_RULES.findKnowledgeItem(rule, list);
+  }
+
+  // 降级：使用内部逻辑
+  // 1. 优先按 id 精确匹配
+  if (rule.id) {
+    const itemById = list.find(item => item.id === rule.id);
+    if (itemById) return itemById;
+  }
+
+  // 2. 再按关键词匹配
+  const keywords = rule.keywords || [];
+  return list.find(item => {
+    const searchableText = normalizeCompactText([
+      item.id,
+      item.title,
+      item.name,
+      item.subtitle,
+      item.desc,
+      item.description,
+      item.content,
+      Array.isArray(item.tags) ? item.tags.join(' ') : item.tags,
+      item.category
+    ].join(' '));
+
+    return keywords.some(keyword => searchableText.includes(normalizeCompactText(keyword)));
+  });
+}
+
+/**
+ * 跳转到详情页
+ */
+function goToKnowledgeDetail(item) {
+  if (!item || !item.id) return;
+
+  // 使用项目现有的路由机制
+  state.selectedId = item.id;
+  navigate('workspace');
+  renderAll();
+}
+
+/**
+ * 绑定 12 张学习卡片点击事件
+ */
+function bindStudyCards() {
+  const cardSelector = [
+    '.study-card',
+    '.level-card',
+    '.lesson-card',
+    '.checkpoint-card',
+    '[data-study-card]'
+  ].join(',');
+
+  const cards = document.querySelectorAll(cardSelector);
+
+  if (!cards.length) {
+    console.warn('[bindStudyCards] 没找到学习卡片，请检查卡片 class。');
+    return;
+  }
+
+  console.log(`[bindStudyCards] 找到 ${cards.length} 个学习卡片`);
+
+  cards.forEach(card => {
+    // 防止重复绑定
+    if (card.dataset.studyBound === 'true') return;
+    card.dataset.studyBound = 'true';
+
+    card.style.cursor = 'pointer';
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+
+    const handleOpen = () => {
+      const cardTitle = getStudyCardTitle(card);
+      const rule = findStudyRuleByCardTitle(cardTitle);
+
+      if (!rule) {
+        console.warn('[学习卡片未配置匹配规则]', cardTitle);
+        return;
+      }
+
+      const item = findKnowledgeItemByRule(rule);
+      if (!item) {
+        console.warn('[未在 data.js 中找到对应知识点]', {
+          cardTitle,
+          rule
+        });
+        return;
+      }
+
+      console.log('[学习卡片跳转]', cardTitle, '→', item.title);
+      goToKnowledgeDetail(item);
+    };
+
+    card.addEventListener('click', handleOpen);
+
+    // 支持键盘 Enter / Space 打开
+    card.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        handleOpen();
+      }
+    });
+  });
+}
+
+async function initEnhancedFeatures() {
+  // 初始化知识树UI
+  if (typeof KnowledgeTreeUI !== 'undefined') {
+    try {
+      knowledgeTreeUI = new KnowledgeTreeUI('knowledgeTreeContainer');
+      const loaded = await knowledgeTreeUI.loadTree();
+      knowledgeTreeUI.render();
+      knowledgeTreeUI.setNodeClickHandler((node) => {
+        // 根据节点ID跳转到对应内容
+        if (node.id && node.id.startsWith('cat-')) {
+          const filter = node.id.replace('cat-', '');
+          state.activeFilter = filter;
+          navigate('workspace');
+          renderAll();
+        }
+      });
+    } catch (err) {
+      console.error('知识树初始化失败:', err);
+    }
+  }
+
+  // 初始化推荐系统UI
+  if (typeof RecommendationsUI !== 'undefined') {
+    recommendationsUI = new RecommendationsUI();
+    await recommendationsUI.loadRecommendations();
+  }
+
+  // 渲染首页精选图片
+  renderFeaturedImagesPreview();
+}
+
+function updateLaunchpadStats() {
+  const statEntries = document.getElementById('stat-entries');
+  const statImages = document.getElementById('stat-images');
+  const statRecents = document.getElementById('stat-recents');
+
+  if (statEntries) {
+    statEntries.textContent = state.entries.length;
+  }
+
+  if (statImages) {
+    const imageCount = (window.CNC_GALLERY_LIBRARY_ENHANCED || []).length;
+    statImages.textContent = imageCount;
+  }
+
+  if (statRecents) {
+    statRecents.textContent = state.recents.length;
   }
 }
+
+function renderFeaturedImagesPreview() {
+  const container = document.getElementById('featuredImagesPreview');
+  if (!container) return;
+
+  const images = (window.CNC_GALLERY_LIBRARY_ENHANCED || []).slice(0, 8);
+
+  if (images.length === 0) {
+    container.innerHTML = '<div class="empty-state">暂无图片数据</div>';
+    return;
+  }
+
+  container.innerHTML = images.map(img => `
+    <div class="featured-image-card" data-image-id="${img.id || ''}">
+      <img src="${img.path || './assets/images/batch01_core/' + (img.id || 'placeholder') + '.svg'}"
+           alt="${img.title || '图片'}"
+           loading="lazy"
+           onerror="this.style.display='none'">
+      <div class="featured-image-info">
+        <h5>${img.title || '未命名'}</h5>
+      </div>
+    </div>
+  `).join('');
+
+  // 绑定点击事件
+  container.querySelectorAll('.featured-image-card').forEach(card => {
+    card.addEventListener('click', () => {
+      navigate('gallery');
+    });
+  });
+}
+
+// 增强详情页推荐
+function renderEnhancedRecommendations(entryId) {
+  if (!recommendationsUI) return;
+
+  const recommendations = recommendationsUI.getRecommendationsFor(entryId, {
+    category: state.selectedCategory
+  });
+
+  recommendationsUI.renderRecommendations('related-links', recommendations);
+}
+
+// 导出全局方法供其他模块使用
+window.app = {
+  selectEntry: (id) => {
+    const entry = state.entries.find(e => e.id === id);
+    if (entry) {
+      state.selectedId = id;
+      navigate('workspace');
+      renderDetail();
+    }
+  },
+  navigate: navigate,
+  updateLaunchpadStats: updateLaunchpadStats
+};
 
 bootstrap();

@@ -1,0 +1,72 @@
+[
+    {
+        "name":  "search_alias_dictionary_clean",
+        "path":  "./search_alias_dictionary_clean.json",
+        "entries":  219,
+        "schemaVersion":  "1.0",
+        "readyForProduction":  false,
+        "containsDraft":  true,
+        "recommendedUse":  "Search alias and fuzzy matching",
+        "recommendedLoad":  "fetch + build Map on startup"
+    },
+    {
+        "name":  "gcode_reference",
+        "path":  "./gcode_reference.json",
+        "entries":  89,
+        "schemaVersion":  "1.0",
+        "readyForProduction":  true,
+        "containsDraft":  false,
+        "recommendedUse":  "G-code detail pages",
+        "recommendedLoad":  "lazy load on demand"
+    },
+    {
+        "name":  "mcode_reference",
+        "path":  "./mcode_reference.json",
+        "entries":  90,
+        "schemaVersion":  "1.0",
+        "readyForProduction":  true,
+        "containsDraft":  false,
+        "recommendedUse":  "M-code detail pages",
+        "recommendedLoad":  "lazy load on demand"
+    },
+    {
+        "name":  "alarm_faq_data",
+        "path":  "./alarm_faq_data.json",
+        "entries":  130,
+        "schemaVersion":  "1.0",
+        "readyForProduction":  false,
+        "containsDraft":  true,
+        "recommendedUse":  "Alarm troubleshooting content",
+        "recommendedLoad":  "fetch + index on idle"
+    },
+    {
+        "name":  "parameter_faq_data",
+        "path":  "./parameter_faq_data.json",
+        "entries":  130,
+        "schemaVersion":  "1.0",
+        "readyForProduction":  false,
+        "containsDraft":  true,
+        "recommendedUse":  "Parameter FAQ pages",
+        "recommendedLoad":  "fetch + cache by topic"
+    },
+    {
+        "name":  "beginner_learning_faq",
+        "path":  "./beginner_learning_faq.json",
+        "entries":  157,
+        "schemaVersion":  "1.0",
+        "readyForProduction":  false,
+        "containsDraft":  true,
+        "recommendedUse":  "Beginner learning cards",
+        "recommendedLoad":  "fetch + cache by topic"
+    },
+    {
+        "name":  "related_links_map",
+        "path":  "./related_links_map.json",
+        "entries":  281,
+        "schemaVersion":  "1.0",
+        "readyForProduction":  true,
+        "containsDraft":  false,
+        "recommendedUse":  "Knowledge graph / recommendations",
+        "recommendedLoad":  "fetch + build graph on idle"
+    }
+]

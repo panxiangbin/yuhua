@@ -1,0 +1,5271 @@
+[
+  {
+    "entryId": "learn-coordinate-system",
+    "title": "坐标系与对刀详解",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "坐标系与对刀详解",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "learn-absolute-incremental",
+    "title": "G90 / G91 绝对值与增量编程",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g90 / g91 绝对值与增量编程",
+      "g90 g91"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "learn-g54-g59",
+    "title": "G54-G59 工件坐标系",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g54-g59 工件坐标系",
+      "g54 g55 g56 g57 g58 g59"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "learn-g17-g18-g19",
+    "title": "G17 / G18 / G19 平面选择",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g17 / g18 / g19 平面选择",
+      "g17 g18 g19"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "learn-g41-g42",
+    "title": "G41 / G42 刀具补偿",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g41 / g42 刀具补偿",
+      "g41 g42"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "learn-g43-g44-g49",
+    "title": "G43 / G44 / G49 刀长补偿",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g43 / g44 / g49 刀长补偿",
+      "g43 g44 g49"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "learn-g71-g72-g73",
+    "title": "G71 / G72 / G73 车床循环",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g71 / g72 / g73 车床循环",
+      "g71 g72 g73"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "learn-g81-g83",
+    "title": "G81 / G83 钻孔与啄钻循环",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g81 / g83 钻孔与啄钻循环",
+      "g81 g83"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "learn-g84",
+    "title": "G84 攻丝循环",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g84 攻丝循环",
+      "g84"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "alarm-servo",
+    "title": "伺服系统常见故障与排除",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "伺服系统常见故障与排除",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "alarm-spindle",
+    "title": "主轴常见故障与排除",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "主轴常见故障与排除",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "alarm-atc",
+    "title": "ATC 自动换刀故障诊断",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "atc 自动换刀故障诊断",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "quick-fanuc-alarm",
+    "title": "FANUC 报警代码速查表",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "fanuc 报警代码速查表",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "quick-g96",
+    "title": "G96 恒线速速查表",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g96 恒线速速查表",
+      "g96 图卡"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "machine-home-return",
+    "title": "回零操作与参考点概念",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "回零操作与参考点概念",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "machine-tool-setting",
+    "title": "FANUC 对刀完整操作流程",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "fanuc 对刀完整操作流程",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "g04-dwell",
+    "title": "G04 暂停指令",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g04 暂停指令",
+      "g04",
+      "g4"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "g20-g21-unit",
+    "title": "G20 / G21 英制与公制切换",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g20 / g21 英制与公制切换",
+      "g20 g21"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "g28-g29-reference",
+    "title": "G28 / G29 参考点返回",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g28 / g29 参考点返回",
+      "g28 g29"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "g00-g01-motion",
+    "title": "G00 / G01 快移与直线切削",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g00 / g01 快移与直线切削",
+      "g00 g01",
+      "g0 g01"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "g02-g03-arc",
+    "title": "G02 / G03 圆弧插补",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g02 / g03 圆弧插补",
+      "g02 g03",
+      "g2 g03"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "g40-cancel-comp",
+    "title": "G40 取消刀补",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g40 取消刀补",
+      "g40"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "g53-machine-coordinate",
+    "title": "G53 机床坐标调用",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g53 机床坐标调用",
+      "g53"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "g94-g95-feed",
+    "title": "G94 / G95 进给方式",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g94 / g95 进给方式",
+      "g94 g95"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "g76-thread-cycle",
+    "title": "G76 螺纹循环",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g76 螺纹循环",
+      "g76"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "g80-cancel-cycle",
+    "title": "G80 取消固定循环",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g80 取消固定循环",
+      "g80"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "g98-g99-return",
+    "title": "G98 / G99 返回平面",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g98 / g99 返回平面",
+      "g98 g99"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "g96-g97-spindle",
+    "title": "G96 / G97 恒线速与固定转速",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g96 / g97 恒线速与固定转速",
+      "g96 g97"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "m30-program-end",
+    "title": "M30 程序结束与复位",
+    "searchCategory": "M_CODE",
+    "likelyQueries": [
+      "m30 程序结束与复位",
+      "m30"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "M代码辅助指令。"
+  },
+  {
+    "entryId": "m03-m04-m05",
+    "title": "M03 / M04 / M05 主轴控制",
+    "searchCategory": "M_CODE",
+    "likelyQueries": [
+      "m03 / m04 / m05 主轴控制",
+      "m03 m04 m05",
+      "m3 m04 m05"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "M代码辅助指令。"
+  },
+  {
+    "entryId": "m06-tool-change",
+    "title": "M06 自动换刀",
+    "searchCategory": "M_CODE",
+    "likelyQueries": [
+      "m06 自动换刀",
+      "m06",
+      "m6"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "M代码辅助指令。"
+  },
+  {
+    "entryId": "m08-m09-coolant",
+    "title": "M08 / M09 冷却液控制",
+    "searchCategory": "M_CODE",
+    "likelyQueries": [
+      "m08 / m09 冷却液控制",
+      "m08 m09",
+      "m8 m09"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "M代码辅助指令。"
+  },
+  {
+    "entryId": "m00-m01-stop",
+    "title": "M00 / M01 程序停止",
+    "searchCategory": "M_CODE",
+    "likelyQueries": [
+      "m00 / m01 程序停止",
+      "m00 m01",
+      "m0 m01"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "M代码辅助指令。"
+  },
+  {
+    "entryId": "fanuc-alarm-common",
+    "title": "FANUC 常见报警代码解析",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "fanuc 常见报警代码解析",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "fault-limit-switch",
+    "title": "限位与超程类问题排查",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "限位与超程类问题排查",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "fault-home-fail",
+    "title": "回不了零点时先查什么",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "回不了零点时先查什么",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "fault-home-reference",
+    "title": "回零失败与参考点异常",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "回零失败与参考点异常",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "learn-g20-g21",
+    "title": "G20 / G21 英制与公制切换",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g20 / g21 英制与公制切换",
+      "g20 g21"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "learn-g28-g29",
+    "title": "G28 / G29 参考点返回",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g28 / g29 参考点返回",
+      "g28 g29"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "learn-m03-m05",
+    "title": "M03 / M04 / M05 主轴控制",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "m03 / m04 / m05 主轴控制",
+      "m03 m04 m05"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "learn-m06",
+    "title": "M06 自动换刀",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "m06 自动换刀",
+      "m06"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "learn-m08-m09",
+    "title": "M08 / M09 冷却液控制",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "m08 / m09 冷却液控制",
+      "m08 m09"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "learn-fanuc-alarm-common",
+    "title": "FANUC 常见报警代码解析",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "fanuc 常见报警代码解析",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "diagram-prompt-coordinate",
+    "title": "坐标系教学配图提示词",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "坐标系教学配图提示词",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "diagram-prompt-g02",
+    "title": "G02 / G03 圆弧配图提示词",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g02 / g03 圆弧配图提示词",
+      "g02 g03 配图",
+      "g2 g03 配图"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "diagram-prompt-compensation",
+    "title": "刀补教学配图提示词",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "刀补教学配图提示词",
+      "g41 g42 g43"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "diagram-prompt-cycle",
+    "title": "钻孔与攻丝循环提示词",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "钻孔与攻丝循环提示词",
+      "g81 g83 g84"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "diagram-prompt-plane",
+    "title": "G17 / G18 / G19 平面提示词",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g17 / g18 / g19 平面提示词",
+      "g17 g18 g19 配图"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "diagram-prompt-offset",
+    "title": "G54 / G59 工件坐标提示词",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g54 / g59 工件坐标提示词",
+      "g54 g59 配图"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "diagram-prompt-home",
+    "title": "G28 回零与安全退刀提示词",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g28 回零与安全退刀提示词",
+      "g28 配图"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "diagram-prompt-thread",
+    "title": "G76 螺纹循环提示词",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g76 螺纹循环提示词",
+      "g76 配图"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "diagram-prompt-alarm",
+    "title": "报警排查流程提示词",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "报警排查流程提示词",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "diagram-prompt-compensation-flow",
+    "title": "刀补流程与对刀提示词",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "刀补流程与对刀提示词",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "diagram-prompt-feed-mode",
+    "title": "G94 / G95 进给模式提示词",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g94 / g95 进给模式提示词",
+      "g94 g95 配图"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "diagram-prompt-return-plane",
+    "title": "G98 / G99 返回平面提示词",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g98 / g99 返回平面提示词",
+      "g98 g99 配图"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "diagram-prompt-unit-switch",
+    "title": "G20 / G21 单位切换提示词",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g20 / g21 单位切换提示词",
+      "g20 g21 配图"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "diagram-prompt-tool-length",
+    "title": "G43 / G49 刀长补偿提示词",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g43 / g49 刀长补偿提示词",
+      "g43 g49 配图"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "diagram-prompt-fixed-cycle",
+    "title": "G81 / G83 / G84 固定循环提示词",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g81 / g83 / g84 固定循环提示词",
+      "g81 g83 g84 配图"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "diagram-prompt-alarm-servo",
+    "title": "伺服报警排查提示词",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "伺服报警排查提示词",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "diagram-prompt-alarm-spindle",
+    "title": "主轴报警排查提示词",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "主轴报警排查提示词",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "diagram-prompt-alarm-limit",
+    "title": "限位与超程报警提示词",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "限位与超程报警提示词",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "diagram-prompt-home-fail",
+    "title": "回零失败与参考点异常提示词",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "回零失败与参考点异常提示词",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "diagram-prompt-touchoff-fail",
+    "title": "对刀失败与基准异常提示词",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "对刀失败与基准异常提示词",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "diagram-prompt-home-parameter",
+    "title": "回零参数与参考点设定提示词",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "回零参数与参考点设定提示词",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "diagram-prompt-alarm-overview",
+    "title": "报警总览与分类图卡提示词",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "报警总览与分类图卡提示词",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-g20-g21",
+    "title": "G20 / G21 英制公制切换",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g20 / g21 英制公制切换",
+      "g20 g21"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-g28-g29",
+    "title": "G28 / G29 回参考点",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g28 / g29 回参考点",
+      "g28 g29"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-g40-g41-g42",
+    "title": "G40 / G41 / G42 刀具半径补偿",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g40 / g41 / g42 刀具半径补偿",
+      "g40 g41 g42"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-g43-g44-g49",
+    "title": "G43 / G44 / G49 刀长补偿",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g43 / g44 / g49 刀长补偿",
+      "g43 g44 g49"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-g50",
+    "title": "G50 主轴限制与坐标系设定",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g50 主轴限制与坐标系设定",
+      "g50"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-g51",
+    "title": "G51 比例缩放",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g51 比例缩放",
+      "g51"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-g52-g53",
+    "title": "G52 / G53 局部与机床坐标",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g52 / g53 局部与机床坐标",
+      "g52 g53"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-g54-g59",
+    "title": "G54-G59 工件坐标系",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g54-g59 工件坐标系",
+      "g54 g55 g56 g57 g58 g59"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-g61-g64",
+    "title": "G61 / G64 精确停止与连续路径",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g61 / g64 精确停止与连续路径",
+      "g61 g64"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-g65-g66-g67",
+    "title": "G65 / G66 / G67 宏程序调用",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g65 / g66 / g67 宏程序调用",
+      "g65 g66 g67"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-g68-g69",
+    "title": "G68 / G69 坐标旋转",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g68 / g69 坐标旋转",
+      "g68 g69"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-g70",
+    "title": "G70 精车循环",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g70 精车循环",
+      "g70"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-g71-g72-g73",
+    "title": "G71 / G72 / G73 外圆粗车与啄钻",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g71 / g72 / g73 外圆粗车与啄钻",
+      "g71 g72 g73"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-g74-g75",
+    "title": "G74 / G75 端面与切槽循环",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g74 / g75 端面与切槽循环",
+      "g74 g75"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-g76",
+    "title": "G76 螺纹与精镗循环",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g76 螺纹与精镗循环",
+      "g76"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-g81-g82-g83",
+    "title": "G81 / G82 / G83 钻孔固定循环",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g81 / g82 / g83 钻孔固定循环",
+      "g81 g82 g83"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-g84",
+    "title": "G84 攻丝循环",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g84 攻丝循环",
+      "g84"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-g85-g86-g87-g88-g89",
+    "title": "G85-G89 镗孔循环",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g85-g89 镗孔循环",
+      "g85 g86 g87 g88 g89"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-g90-g91",
+    "title": "G90 / G91 绝对与增量编程",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g90 / g91 绝对与增量编程",
+      "g90 g91"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-g94-g95",
+    "title": "G94 / G95 进给模式",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g94 / g95 进给模式",
+      "g94 g95"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-g96-g97",
+    "title": "G96 / G97 恒线速与定转速",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g96 / g97 恒线速与定转速",
+      "g96 g97"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-g98-g99",
+    "title": "G98 / G99 返回平面",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g98 / g99 返回平面",
+      "g98 g99"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-m03-m05",
+    "title": "M03 / M04 / M05 主轴控制",
+    "searchCategory": "M_CODE",
+    "likelyQueries": [
+      "m03 / m04 / m05 主轴控制",
+      "m03 m04 m05",
+      "m3 m04 m05"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "M代码辅助指令。"
+  },
+  {
+    "entryId": "kb-m06",
+    "title": "M06 自动换刀",
+    "searchCategory": "M_CODE",
+    "likelyQueries": [
+      "m06 自动换刀",
+      "m06",
+      "m6"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "M代码辅助指令。"
+  },
+  {
+    "entryId": "kb-m08-m09",
+    "title": "M08 / M09 冷却控制",
+    "searchCategory": "M_CODE",
+    "likelyQueries": [
+      "m08 / m09 冷却控制",
+      "m08 m09",
+      "m8 m09"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "M代码辅助指令。"
+  },
+  {
+    "entryId": "kb-m19",
+    "title": "M19 主轴定向",
+    "searchCategory": "M_CODE",
+    "likelyQueries": [
+      "m19 主轴定向",
+      "m19"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "M代码辅助指令。"
+  },
+  {
+    "entryId": "kb-m30-m02",
+    "title": "M30 / M02 程序结束",
+    "searchCategory": "M_CODE",
+    "likelyQueries": [
+      "m30 / m02 程序结束",
+      "m30 m02"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "M代码辅助指令。"
+  },
+  {
+    "entryId": "kb-m98-m99",
+    "title": "M98 / M99 子程序调用",
+    "searchCategory": "M_CODE",
+    "likelyQueries": [
+      "m98 / m99 子程序调用",
+      "m98 m99"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "M代码辅助指令。"
+  },
+  {
+    "entryId": "kb-fanuc-alarm",
+    "title": "FANUC 报警代码速查",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "fanuc 报警代码速查",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-servo-fault",
+    "title": "伺服系统常见故障与排除",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "伺服系统常见故障与排除",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-spindle-fault",
+    "title": "主轴常见故障与排除",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "主轴常见故障与排除",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-atc-fault",
+    "title": "ATC 自动换刀故障诊断",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "atc 自动换刀故障诊断",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-home-fail",
+    "title": "回零失败排查",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "回零失败排查",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-tool-setting",
+    "title": "对刀与刀具补偿",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "对刀与刀具补偿",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-g10",
+    "title": "G10 可编程参数输入",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g10 可编程参数输入",
+      "g10"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-g16",
+    "title": "G16 极坐标编程",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g16 极坐标编程",
+      "g16"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-g17-g18-g19",
+    "title": "G17 / G18 / G19 平面选择",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g17 / g18 / g19 平面选择",
+      "g17 g18 g19"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-g04",
+    "title": "G04 暂停指令",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g04 暂停指令",
+      "g04",
+      "g4"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-g32-g33",
+    "title": "G32 / G33 螺纹切削",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g32 / g33 螺纹切削",
+      "g32 g33"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-g35-g37",
+    "title": "G35 / G37 自动对刀",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g35 / g37 自动对刀",
+      "g35 g37"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-g92",
+    "title": "G92 螺纹循环与坐标预设",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g92 螺纹循环与坐标预设",
+      "g92"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-common-errors",
+    "title": "编程常见错误与防范",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "编程常见错误与防范",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-QClaw测试_坐标系详解",
+    "title": "QClaw测试 坐标系详解",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "qclaw测试 坐标系详解",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_G02G03圆弧插补完全指南",
+    "title": "G02/G03 圆弧插补编程完全指南",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g02/g03 圆弧插补编程完全指南",
+      "g2/g03 圆弧插补编程完全指南"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-QClaw测试_分中对刀",
+    "title": "QClaw测试 分中对刀",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "qclaw测试 分中对刀",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_宏程序坐标系动态变换应用",
+    "title": "教学 宏程序坐标系动态变换应用",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "教学 宏程序坐标系动态变换应用",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G54-G59工件坐标系完全指南",
+    "title": "G54-G59 工件坐标系完全指南",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g54-g59 工件坐标系完全指南"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G04暂停指令完全指南",
+    "title": "G04 暂停指令完全指南",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g04 暂停指令完全指南",
+      "g4 暂停指令完全指南"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G40G41G42刀补完全指南",
+    "title": "G40/G41/G42 刀具半径补偿完全指南",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g40/g41/g42 刀具半径补偿完全指南"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G01直线插补完全指南",
+    "title": "G01 直线插补完全指南",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g01 直线插补完全指南",
+      "g1 直线插补完全指南"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G00快速定位完全指南",
+    "title": "G00 快速定位完全指南",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g00 快速定位完全指南",
+      "g0 快速定位完全指南"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G43G44G49刀长补偿完全指南",
+    "title": "G43/G44/G49 刀长补偿完全指南",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g43/g44/g49 刀长补偿完全指南"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G81钻孔循环完全指南",
+    "title": "G81 钻孔循环完全指南",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g81 钻孔循环完全指南"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G17G18G19平面选择完全指南",
+    "title": "G17/G18/G19 平面选择完全指南",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g17/g18/g19 平面选择完全指南"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G83深孔啄钻循环完全指南",
+    "title": "G83 深孔啄钻循环完全指南",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g83 深孔啄钻循环完全指南"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G02G03圆弧插补完全指南",
+    "title": "G02/G03 圆弧插补完全指南",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g02/g03 圆弧插补完全指南",
+      "g2/g03 圆弧插补完全指南"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G20G21英制公制切换完全指南",
+    "title": "G20/G21 英制公制切换完全指南",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g20/g21 英制公制切换完全指南"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G28G29参考点指令完全指南",
+    "title": "G28/G29 参考点指令完全指南",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g28/g29 参考点指令完全指南"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-坐标系与对刀详解",
+    "title": "CNC坐标系详解",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "cnc坐标系详解",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_钻孔攻丝固定循环",
+    "title": "G81/G73/G83/G84/G76 钻孔攻丝镗孔固定循环详解",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g81/g73/g83/g84/g76 钻孔攻丝镗孔固定循环详解"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G76精镗循环完全指南",
+    "title": "G76 精镗循环完全指南",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g76 精镗循环完全指南"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_G10坐标系设置与刀具补偿高级应用",
+    "title": "教学 G10坐标系设置与刀具补偿高级应用",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "教学 g10坐标系设置与刀具补偿高级应用",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G85-G89镗孔循环完全指南",
+    "title": "G85/G86/G87/G88/G89 镗孔循环完全指南",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g85/g86/g87/g88/g89 镗孔循环完全指南"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G73高速啄钻循环完全指南",
+    "title": "G73 高速啄钻循环完全指南",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g73 高速啄钻循环完全指南"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_G92螺纹循环与坐标系预设详解",
+    "title": "教学 G92螺纹循环与坐标系预设详解",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "教学 g92螺纹循环与坐标系预设详解",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_坐标系入门",
+    "title": "教学 坐标系入门",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "教学 坐标系入门",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G84攻螺纹循环完全指南",
+    "title": "G84 攻螺纹循环完全指南",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g84 攻螺纹循环完全指南"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-G00G01快速定位与直线插补",
+    "title": "G00/G01快速定位与直线插补详解",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g00/g01快速定位与直线插补详解",
+      "g0/g01快速定位与直线插补详解"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-知识类_G98_G99返回平面",
+    "title": "G98 / G99 返回平面详解",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g98 / g99 返回平面详解"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-知识类_G85_G86_G82镗孔循环",
+    "title": "G85 / G86 / G82 镗孔循环详解",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g85 / g86 / g82 镗孔循环详解"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_刀具半径补偿",
+    "title": "G40/G41/G42 刀具半径补偿",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g40/g41/g42 刀具半径补偿"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-G02G03圆弧插补详解",
+    "title": "G02/G03圆弧插补指令详解",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g02/g03圆弧插补指令详解",
+      "g2/g03圆弧插补指令详解"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-知识类_G71_G72_G73外圆粗车循环",
+    "title": "G71/G72/G73 外圆粗车/端面粗车/轮廓粗车循环",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g71/g72/g73 外圆粗车/端面粗车/轮廓粗车循环"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-知识类_G54_G59工件坐标系",
+    "title": "G54~G59 工件坐标系选择",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g54~g59 工件坐标系选择"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-知识类_M30_M02程序结束",
+    "title": "M30/M02 程序结束与程序段号",
+    "searchCategory": "M_CODE",
+    "likelyQueries": [
+      "m30/m02 程序结束与程序段号"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "M代码辅助指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_恒线速主轴控制",
+    "title": "G96/G97 恒线速与主轴控制",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g96/g97 恒线速与主轴控制"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_G50工件坐标系设定",
+    "title": "教学 G50工件坐标系设定",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "教学 g50工件坐标系设定",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-知识类_M06自动换刀",
+    "title": "M06 自动换刀指令",
+    "searchCategory": "M_CODE",
+    "likelyQueries": [
+      "m06 自动换刀指令",
+      "m6 自动换刀指令"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "M代码辅助指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-知识类_G50主轴钳制与坐标系设定",
+    "title": "G50 主轴转速钳制（车床）与坐标系设定",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g50 主轴转速钳制（车床）与坐标系设定"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-采集_G74左旋螺纹攻丝完全指南",
+    "title": "G74 左旋螺纹攻丝完全指南",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g74 左旋螺纹攻丝完全指南"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_工件坐标系偏置",
+    "title": "G54-G59 工件坐标系偏置详解",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g54-g59 工件坐标系偏置详解"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_G52局部坐标系详解",
+    "title": "教学 G52局部坐标系详解",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "教学 g52局部坐标系详解",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-知识类_M08_M09冷却液控制",
+    "title": "M08/M09 冷却液控制",
+    "searchCategory": "M_CODE",
+    "likelyQueries": [
+      "m08/m09 冷却液控制",
+      "m8/m09 冷却液控制"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "M代码辅助指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_极坐标编程",
+    "title": "数控编程教学：极坐标编程",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "数控编程教学：极坐标编程",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_数控坐标系进阶",
+    "title": "教学 数控坐标系进阶",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "教学 数控坐标系进阶",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_M00程序停止详解",
+    "title": "M01 - 选择性停止（Optional Stop）",
+    "searchCategory": "M_CODE",
+    "likelyQueries": [
+      "m01 - 选择性停止（optional stop）",
+      "m1 - 选择性停止（optional stop）"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "M代码辅助指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_G53机床坐标系详解",
+    "title": "教学 G53机床坐标系详解",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "教学 g53机床坐标系详解",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_极坐标编程G16",
+    "title": "教学 极坐标编程G16",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "教学 极坐标编程g16",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_G68G69坐标旋转详解",
+    "title": "教学 G68G69坐标旋转详解",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "教学 g68g69坐标旋转详解",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-工件坐标系建立方法",
+    "title": "工件坐标系建立方法",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "工件坐标系建立方法",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_绝对增量与回参考点",
+    "title": "G90/G91/G28/G30 绝对增量编程与回参考点",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g90/g91/g28/g30 绝对增量编程与回参考点"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_G16极坐标编程",
+    "title": "教学 G16极坐标编程",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "教学 g16极坐标编程",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_坐标计算",
+    "title": "教学 数控编程坐标计算",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "教学 数控编程坐标计算",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_G54G59工件坐标系详解",
+    "title": "教学 G54G59工件坐标系详解",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "教学 g54g59工件坐标系详解",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_G35G37自动对刀详解",
+    "title": "教学 G35G37自动对刀详解",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "教学 g35g37自动对刀详解",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_G90G91坐标模式详解",
+    "title": "教学 G90G91坐标模式详解",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "教学 g90g91坐标模式详解",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_坐标旋转G68",
+    "title": "教学 坐标旋转G68",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "教学 坐标旋转g68",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_刀具长度补偿",
+    "title": "G43/G44/G49 刀具长度补偿",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g43/g44/g49 刀具长度补偿"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-file-01_编程基础-教学_可编程数据输入",
+    "title": "G10/G11 可编程数据输入",
+    "searchCategory": "G_CODE",
+    "likelyQueries": [
+      "g10/g11 可编程数据输入"
+    ],
+    "aliasNeeded": true,
+    "priority": "P1",
+    "notes": "G代码编程核心指令。"
+  },
+  {
+    "entryId": "kb-file-02_机床操作-机床对刀教学合集",
+    "title": "数控机床对刀教学合集",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "数控机床对刀教学合集",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-02_机床操作-网采_FANUC对刀完整操作流程",
+    "title": "FANUC对刀完整操作流程",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "fanuc对刀完整操作流程",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-02_机床操作-网采_FANUC工件坐标系设定详解",
+    "title": "FANUC工件坐标系设定详解",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "fanuc工件坐标系设定详解",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-02_机床操作-教学_对刀方法大全9种方式",
+    "title": "教学 对刀方法大全9种方式",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "教学 对刀方法大全9种方式",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-02_机床操作-知识类_数控车床对刀方法大全",
+    "title": "数控车床对刀方法大全",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "数控车床对刀方法大全",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-02_机床操作-教学_数控车床自动对刀与设置",
+    "title": "教学 数控车床自动对刀与设置",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "教学 数控车床自动对刀与设置",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-02_机床操作-教学_铣床对刀与找正方法大全",
+    "title": "教学 铣床对刀与找正方法大全",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "教学 铣床对刀与找正方法大全",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-02_机床操作-教学_数控机床对刀方法详解",
+    "title": "数控机床对刀方法完全指南",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "数控机床对刀方法完全指南",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-02_机床操作-教学_对刀分中操作",
+    "title": "教学 数控铣床对刀分中操作",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "教学 数控铣床对刀分中操作",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-02_机床操作-教学_机内测头与对刀仪",
+    "title": "机床测头与对刀仪教学",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "机床测头与对刀仪教学",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-02_机床操作-教学_对刀仪与测头应用",
+    "title": "教学 对刀仪与测头应用",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "教学 对刀仪与测头应用",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-03_CAM软件-教学_5轴加工中的工作平面与坐标系管理",
+    "title": "教学 5轴加工中的工作平面与坐标系管理",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "教学 5轴加工中的工作平面与坐标系管理",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-04_刀具工艺-教学_对刀仪选择使用",
+    "title": "对刀仪选择与使用教学",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "对刀仪选择与使用教学",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-伺服系统详解",
+    "title": "数控机床伺服系统详解",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床伺服系统详解",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-主轴系统详解",
+    "title": "数控机床主轴系统详解",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床主轴系统详解",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-机床维护保养",
+    "title": "机床维护保养",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "机床维护保养",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床导轨丝杠",
+    "title": "数控机床导轨丝杠系统",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床导轨丝杠系统",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-故障维修手册",
+    "title": "故障维修手册",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "故障维修手册",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-Web_液压系统维护",
+    "title": "液压系统在数控机床中的应用",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "液压系统在数控机床中的应用",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-机床精度检测",
+    "title": "数控机床精度检测",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床精度检测",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_数控机床故障诊断与排除大全",
+    "title": "数控机床故障诊断与排除大全",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床故障诊断与排除大全",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-液压站维修保养",
+    "title": "数控机床液压站维修保养",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床液压站维修保养",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-热误差补偿技术",
+    "title": "数控机床热误差补偿技术",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床热误差补偿技术",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_主轴动平衡与高精度保持",
+    "title": "教学 主轴动平衡与高精度保持",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 主轴动平衡与高精度保持",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_伺服系统故障诊断",
+    "title": "教学 伺服系统故障诊断",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 伺服系统故障诊断",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-维修_FANUC伺服驱动参数调试与优化权威指南",
+    "title": "维修 FANUC伺服驱动参数调试与优化权威指南",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "维修 fanuc伺服驱动参数调试与优化权威指南",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_电气系统常见故障",
+    "title": "教学 电气系统常见故障",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 电气系统常见故障",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_FANUC报警代码大全",
+    "title": "FANUC数控系统报警代码大全与解决方案",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "fanuc数控系统报警代码大全与解决方案",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-气动系统维护",
+    "title": "数控机床气动系统维护",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床气动系统维护",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_主轴热补偿与精度保持",
+    "title": "教学 主轴热补偿与精度保持",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 主轴热补偿与精度保持",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-滚珠丝杠副维修与预紧调整",
+    "title": "滚珠丝杠副维修与预紧调整",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "滚珠丝杠副维修与预紧调整",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_预测性维护与刀具寿命AI预警系统",
+    "title": "教学 预测性维护与刀具寿命AI预警系统",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 预测性维护与刀具寿命ai预警系统",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-液压原理图识读",
+    "title": "液压原理图识读",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "液压原理图识读",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_进给系统丝杠故障诊断",
+    "title": "教学 进给系统丝杠故障诊断",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 进给系统丝杠故障诊断",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_液压系统常见故障",
+    "title": "教学 液压系统常见故障",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 液压系统常见故障",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_智能刀具管理系统",
+    "title": "教学 智能刀具管理系统",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 智能刀具管理系统",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_电气驱动系统深度解析",
+    "title": "教学 电气驱动系统深度解析",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 电气驱动系统深度解析",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_数控加工中心ATC刀库故障诊断",
+    "title": "教学 数控加工中心ATC刀库故障诊断",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 数控加工中心atc刀库故障诊断",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_故障维修主轴定向与编码器调试",
+    "title": "教学 故障维修主轴定向与编码器调试",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 故障维修主轴定向与编码器调试",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-PLC梯形图识读",
+    "title": "PLC梯形图识读",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "plc梯形图识读",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-FANUC常见报警代码速查手册",
+    "title": "FANUC常见报警代码速查手册",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "fanuc常见报警代码速查手册",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_系统报警代码详解",
+    "title": "教学 系统报警代码详解",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 系统报警代码详解",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床故障诊断与排除指南",
+    "title": "数控机床故障诊断与排除指南",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床故障诊断与排除指南",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_20种常见故障排查手册",
+    "title": "20种常见数控机床故障排查手册",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "20种常见数控机床故障排查手册",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床几何精度检测与校准",
+    "title": "数控机床几何精度检测与校准",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床几何精度检测与校准",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_FANUC报警代码分详解",
+    "title": "教学 FANUC报警代码分详解",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 fanuc报警代码分详解",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_主轴维修技术",
+    "title": "主轴维修技术",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "主轴维修技术",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_CNC控制器维修诊断",
+    "title": "CNC控制器维修诊断",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "cnc控制器维修诊断",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-网采_液压气动系统故障排查",
+    "title": "液压气动系统故障排查",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "液压气动系统故障排查",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-网采_FANUC常见报警代码解决方案",
+    "title": "FANUC常见报警代码解决方案",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "fanuc常见报警代码解决方案",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-网采_数控机床精度检测与补偿",
+    "title": "数控机床精度检测与补偿",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床精度检测与补偿",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-网采_数控机床主轴故障诊断维修",
+    "title": "数控机床主轴故障诊断维修",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床主轴故障诊断维修",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-网采_伺服系统故障诊断完全手册",
+    "title": "伺服系统故障诊断完全手册",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "伺服系统故障诊断完全手册",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_五轴机床维护保养",
+    "title": "五轴机床维护保养",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "五轴机床维护保养",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_增量编码器",
+    "title": "教学 增量编码器",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 增量编码器",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_主轴轴承故障诊断",
+    "title": "教学 主轴轴承故障诊断",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 主轴轴承故障诊断",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-网采_新机床验收标准流程",
+    "title": "新机床验收标准与流程",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "新机床验收标准与流程",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_数控维修安全与基本功",
+    "title": "数控维修安全与基本功",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控维修安全与基本功",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-精度保持技术",
+    "title": "精度保持技术",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "精度保持技术",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_ATC自动换刀故障诊断",
+    "title": "自动换刀（ATC）故障诊断",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "自动换刀（atc）故障诊断",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_机械故障诊断与维修",
+    "title": "教学 机械故障诊断与维修",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 机械故障诊断与维修",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_CNC设备全生命周期管理",
+    "title": "CNC设备全生命周期管理",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "cnc设备全生命周期管理",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_刀库换刀系统故障排除",
+    "title": "刀库与自动换刀系统故障排除",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "刀库与自动换刀系统故障排除",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_PLC基础与CNC联机",
+    "title": "PLC基础与CNC联机",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "plc基础与cnc联机",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_机床电气基础与维修",
+    "title": "机床电气基础与维修",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "机床电气基础与维修",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_主轴故障诊断与维修",
+    "title": "主轴故障诊断与维修",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "主轴故障诊断与维修",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_电气故障诊断与维修",
+    "title": "教学 电气故障诊断与维修",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 电气故障诊断与维修",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_液压气动系统维护",
+    "title": "液压与气动系统维护",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "液压与气动系统维护",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_FANUC PMC宏程序故障诊断",
+    "title": "教学：FANUC PMC 梯形图诊断与故障排查",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学：fanuc pmc 梯形图诊断与故障排查",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_故障诊断与维修方法论",
+    "title": "数控机床故障诊断与维修方法论",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床故障诊断与维修方法论",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_预测性维护PdM",
+    "title": "教学 预测性维护PdM",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 预测性维护pdm",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_伺服系统调试与维修",
+    "title": "伺服系统调试与维修",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "伺服系统调试与维修",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_机床导轨与进给系统",
+    "title": "机床导轨与进给系统",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "机床导轨与进给系统",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_液压与气动系统维护",
+    "title": "液压与气动系统维护",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "液压与气动系统维护",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_丝杠与导轨维护",
+    "title": "丝杠与导轨维护",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "丝杠与导轨维护",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-FANUC伺服驱动器SV报警代码全解",
+    "title": "FANUC伺服驱动器SV报警代码全解",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "fanuc伺服驱动器sv报警代码全解",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-知识类_主轴系统维修手册",
+    "title": "数控机床主轴系统维修与保养完全手册",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床主轴系统维修与保养完全手册",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-FANUC伺服报警代码速查",
+    "title": "FANUC伺服报警代码速查",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "fanuc伺服报警代码速查",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床换刀故障诊断大全",
+    "title": "数控机床换刀故障诊断大全",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床换刀故障诊断大全",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_电池更换",
+    "title": "教学 电池更换",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 电池更换",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_伺服报警处理",
+    "title": "教学 伺服报警处理",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 伺服报警处理",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床伺服过载报警排查流程",
+    "title": "数控机床伺服过载报警排查流程",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床伺服过载报警排查流程",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-西门子数控系统常见报警代码手册",
+    "title": "西门子数控系统常见报警代码手册",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "西门子数控系统常见报警代码手册",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_机床精度检测与验收",
+    "title": "教学 机床精度检测与验收",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 机床精度检测与验收",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_冷却润滑系统维修",
+    "title": "教学 冷却润滑系统维修",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 冷却润滑系统维修",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_机内清洗系统",
+    "title": "教学 机内清洗系统",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 机内清洗系统",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-FANUC系统报警PS0000-PS0100详解",
+    "title": "FANUC系统报警 PS0000-PS0100 详解",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "fanuc系统报警 ps0000-ps0100 详解",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-主轴常见故障排查手册",
+    "title": "主轴常见故障排查手册",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "主轴常见故障排查手册",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_回零故障排查",
+    "title": "教学 回零故障排查",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 回零故障排查",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_主轴系统维修",
+    "title": "教学 主轴系统维修",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 主轴系统维修",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_换刀故障排查",
+    "title": "教学 换刀故障排查",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 换刀故障排查",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_自动排屑器",
+    "title": "教学 自动排屑器",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 自动排屑器",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床不回参考点故障处理",
+    "title": "数控机床不回参考点故障处理",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床不回参考点故障处理",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床电气系统常见故障排查",
+    "title": "数控机床电气系统常见故障排查",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床电气系统常见故障排查",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_导轨丝杠维修",
+    "title": "教学 导轨丝杠维修",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 导轨丝杠维修",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_刀库系统维修",
+    "title": "教学 刀库系统维修",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 刀库系统维修",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_系统报警处理",
+    "title": "教学 系统报警处理",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 系统报警处理",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床主轴电气故障诊断",
+    "title": "数控机床主轴电气故障诊断",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床主轴电气故障诊断",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床精度检测与激光干涉仪使用",
+    "title": "数控机床精度检测与激光干涉仪使用",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床精度检测与激光干涉仪使用",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_年检与精度校准",
+    "title": "教学 年检与精度校准",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 年检与精度校准",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床常见故障排除速查表",
+    "title": "数控机床常见故障排除速查表",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床常见故障排除速查表",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_冷却系统故障排查",
+    "title": "教学 冷却系统故障排查",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 冷却系统故障排查",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_机械故障速查表",
+    "title": "教学 机械故障速查表",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 机械故障速查表",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_伺服驱动维修",
+    "title": "教学 伺服驱动维修",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 伺服驱动维修",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_碰撞预防",
+    "title": "教学 碰撞预防",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 碰撞预防",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_报警识别与处理",
+    "title": "教学 报警识别与处理",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 报警识别与处理",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_设备管理与点检",
+    "title": "教学 设备管理与点检",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 设备管理与点检",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_电气柜维护",
+    "title": "教学 电气柜维护",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 电气柜维护",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-FANUC系统参数初始化与数据备份",
+    "title": "FANUC系统参数初始化与数据备份",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "fanuc系统参数初始化与数据备份",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_电气故障排查",
+    "title": "教学 电气故障排查",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 电气故障排查",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床冷却润滑故障处理",
+    "title": "数控机床冷却润滑故障处理",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床冷却润滑故障处理",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_机械故障排查",
+    "title": "教学 机械故障排查",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 机械故障排查",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_系统软件故障恢复",
+    "title": "教学 系统软件故障恢复",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 系统软件故障恢复",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_热补偿技术",
+    "title": "教学 热补偿技术",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 热补偿技术",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_液压气动系统维修",
+    "title": "教学 液压气动系统维修",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 液压气动系统维修",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_伺服电机维修",
+    "title": "教学 伺服电机维修",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 伺服电机维修",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_变频器报警处理",
+    "title": "教学 变频器报警处理",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 变频器报警处理",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控系统参数设置与备份",
+    "title": "数控系统参数设置与备份",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控系统参数设置与备份",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床超程OT报警处理指南",
+    "title": "数控机床超程OT报警处理指南",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床超程ot报警处理指南",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_液压系统故障排查",
+    "title": "教学 液压系统故障排查",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 液压系统故障排查",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_激光干涉仪精度校准",
+    "title": "教学 激光干涉仪精度校准",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 激光干涉仪精度校准",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-PMC故障排查手册",
+    "title": "PMC故障排查手册",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "pmc故障排查手册",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_润滑系统故障排查",
+    "title": "教学 润滑系统故障排查",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 润滑系统故障排查",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_电气安全",
+    "title": "教学 电气安全",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 电气安全",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_主轴编码器维修",
+    "title": "教学 主轴编码器维修",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 主轴编码器维修",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_加工异常处理",
+    "title": "教学 数控加工异常处理",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 数控加工异常处理",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_进给系统",
+    "title": "教学 数控机床进给系统",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 数控机床进给系统",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_液压系统维修",
+    "title": "教学 数控机床液压系统",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 数控机床液压系统",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-液压气动系统维护与故障排除",
+    "title": "数控机床液压气动系统维护与故障排除",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床液压气动系统维护与故障排除",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_润滑系统原理",
+    "title": "教学 润滑系统原理",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 润滑系统原理",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_滚珠丝杠副维护",
+    "title": "教学 滚珠丝杠副维护",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 滚珠丝杠副维护",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_TPM全员维护",
+    "title": "教学 TPM全员维护",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 tpm全员维护",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_液压站维修",
+    "title": "教学 液压站维修",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 液压站维修",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_测头与在线测量",
+    "title": "教学 测头与在线测量",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 测头与在线测量",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_电气系统入门",
+    "title": "教学 数控机床电气系统入门",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 数控机床电气系统入门",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_气动系统故障排查",
+    "title": "教学 气动系统故障排查",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 气动系统故障排查",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_绝对编码器设置",
+    "title": "教学 绝对编码器设置",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 绝对编码器设置",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_排屑器故障排查",
+    "title": "教学 排屑器故障排查",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 排屑器故障排查",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_冷却机维修",
+    "title": "教学 冷却机维修",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 冷却机维修",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_润滑系统",
+    "title": "教学 润滑系统",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 润滑系统",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_伺服电机更换调试",
+    "title": "教学 伺服电机更换调试",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 伺服电机更换调试",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_气动三联件维护",
+    "title": "教学 气动三联件维护",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 气动三联件维护",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-预防性维护检查表",
+    "title": "预防性维护检查表",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "预防性维护检查表",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_联轴器维修",
+    "title": "教学 联轴器维修",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 联轴器维修",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_FANUC PMC编程基础",
+    "title": "教学 FANUC PMC编程基础",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 fanuc pmc编程基础",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_主轴拉刀机构维修",
+    "title": "教学 主轴拉刀机构维修",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 主轴拉刀机构维修",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_润滑泵维修",
+    "title": "教学 润滑泵维修",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 润滑泵维修",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_液压系统原理与维护",
+    "title": "教学 液压系统原理与维护",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 液压系统原理与维护",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_西门子840D高级诊断",
+    "title": "教学：西门子840D sl高级诊断与故障排查",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学：西门子840d sl高级诊断与故障排查",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控系统死机故障处理",
+    "title": "数控系统死机故障处理",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控系统死机故障处理",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-主轴驱动故障排查",
+    "title": "主轴驱动故障排查",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "主轴驱动故障排查",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-伺服电机故障排查",
+    "title": "伺服电机故障排查",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "伺服电机故障排查",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-FANUC报警代码大全",
+    "title": "FANUC报警代码大全",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "fanuc报警代码大全",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_编码器信号故障",
+    "title": "数控机床编码器信号故障教学",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床编码器信号故障教学",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_油冷机维修",
+    "title": "教学 油冷机维修",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 油冷机维修",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_主轴驱动器故障",
+    "title": "数控机床主轴驱动器故障教学",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床主轴驱动器故障教学",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_排故思路方法",
+    "title": "数控机床排故思路与方法教学",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床排故思路与方法教学",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-机床精度丧失修复技术",
+    "title": "机床精度丧失修复技术",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "机床精度丧失修复技术",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_故障判断逻辑",
+    "title": "数控机床故障判断逻辑教学",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床故障判断逻辑教学",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_漏油处理",
+    "title": "数控机床漏油处理教学",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床漏油处理教学",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_伺服电机故障诊断",
+    "title": "伺服电机故障诊断教学",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "伺服电机故障诊断教学",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_散热与温控系统",
+    "title": "数控机床散热与温控系统教学",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床散热与温控系统教学",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-气动系统故障排查",
+    "title": "气动系统故障排查",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "气动系统故障排查",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-机床电气故障排查流程",
+    "title": "机床电气故障排查流程",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "机床电气故障排查流程",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_冷却液过滤系统",
+    "title": "教学 数控加工冷却液过滤系统",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "教学 数控加工冷却液过滤系统",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_PLC输入输出诊断",
+    "title": "数控机床PLC输入输出诊断教学",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床plc输入输出诊断教学",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-报警代码速查手册",
+    "title": "报警代码速查手册",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "报警代码速查手册",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床常见机械故障",
+    "title": "数控机床常见机械故障",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床常见机械故障",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_系统软件故障排查",
+    "title": "数控系统软件故障排查教学",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控系统软件故障排查教学",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_常见机械故障排查",
+    "title": "数控机床常见机械故障排查教学",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床常见机械故障排查教学",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_温度监控系统",
+    "title": "数控机床温度监控系统教学",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床温度监控系统教学",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_编码器与光栅尺",
+    "title": "数控机床编码器与光栅尺教学",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床编码器与光栅尺教学",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-FANUC PMC常见故障排查",
+    "title": "FANUC PMC常见故障排查",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "fanuc pmc常见故障排查",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床通信故障排查",
+    "title": "数控机床通信故障排查",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床通信故障排查",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-FANUC伺服报警400-499详解",
+    "title": "FANUC伺服报警400-499详解",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "fanuc伺服报警400-499详解",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_润滑报警处理",
+    "title": "数控机床润滑报警处理教学",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床润滑报警处理教学",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_伺服驱动器调试",
+    "title": "数控机床伺服驱动器调试教学",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床伺服驱动器调试教学",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_电气符号识别",
+    "title": "数控机床电气符号识别教学",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床电气符号识别教学",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-液压气动传感器",
+    "title": "液压气动传感器",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "液压气动传感器",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_典型电气元件",
+    "title": "数控机床典型电气元件教学",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床典型电气元件教学",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_丝杠更换调试",
+    "title": "数控机床丝杠更换调试教学",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床丝杠更换调试教学",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-FANUC主轴放大器报警代码大全",
+    "title": "FANUC主轴放大器报警代码大全",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "fanuc主轴放大器报警代码大全",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_电磁阀故障排查",
+    "title": "数控机床电磁阀故障排查教学",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床电磁阀故障排查教学",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_高压内冷系统",
+    "title": "数控机床高压内冷系统教学",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床高压内冷系统教学",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_液压系统维护",
+    "title": "数控机床液压系统维护教学",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床液压系统维护教学",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_背隙与反向误差",
+    "title": "数控机床背隙与反向误差教学",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床背隙与反向误差教学",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_主轴拉刀机构",
+    "title": "数控机床主轴拉刀机构教学",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床主轴拉刀机构教学",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-西门子系统报警速查",
+    "title": "西门子系统报警速查",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "西门子系统报警速查",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_冷却液更换标准",
+    "title": "数控机床冷却液更换标准教学",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床冷却液更换标准教学",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床限位开关故障排查",
+    "title": "数控机床限位开关故障排查",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床限位开关故障排查",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-机床机械故障诊断技术",
+    "title": "机床机械故障诊断技术",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "机床机械故障诊断技术",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_精度检测工具",
+    "title": "数控机床精度检测工具教学",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床精度检测工具教学",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_油压系统故障排查",
+    "title": "数控机床油压系统故障排查教学",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床油压系统故障排查教学",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_振动检测诊断",
+    "title": "数控机床振动检测与诊断教学",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床振动检测与诊断教学",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床漏油漏气排查",
+    "title": "数控机床漏油漏气排查",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床漏油漏气排查",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-数控机床润滑报警排查",
+    "title": "数控机床润滑报警排查",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床润滑报警排查",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_主轴轴承与维护",
+    "title": "数控机床主轴轴承与维护教学",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床主轴轴承与维护教学",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-FANUC伺服放大器故障排查",
+    "title": "FANUC伺服放大器故障排查",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "fanuc伺服放大器故障排查",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_年度保养计划",
+    "title": "数控机床年度保养计划教学",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床年度保养计划教学",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-教学_滚珠丝杠维护",
+    "title": "数控机床滚珠丝杠维护教学",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床滚珠丝杠维护教学",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-05_故障维修-FANUC系统报警快速排查",
+    "title": "FANUC系统报警快速排查",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "fanuc系统报警快速排查",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-file-06_检测质量-Web_三坐标测量技术",
+    "title": "三坐标测量机(CMM)技术",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "三坐标测量机(cmm)技术",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-06_检测质量-几何公差GD&T检测方法与三坐标测量完全指南",
+    "title": "几何公差GD&T检测方法与三坐标测量完全指南",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "几何公差gd&t检测方法与三坐标测量完全指南",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-06_检测质量-三坐标测量机详解",
+    "title": "三坐标测量机(CMM)操作与编程详解",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "三坐标测量机(cmm)操作与编程详解",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-06_检测质量-知识类_三坐标测量CMM编程",
+    "title": "三坐标测量（CMM）编程",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "三坐标测量（cmm）编程",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-06_检测质量-三坐标测量编程高级技巧",
+    "title": "三坐标测量编程高级技巧",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "三坐标测量编程高级技巧",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-06_检测质量-教学_三坐标测量CMM详解",
+    "title": "教学 三坐标测量CMM详解",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "教学 三坐标测量cmm详解",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-file-06_检测质量-三坐标测量机日常维护",
+    "title": "三坐标测量机日常维护",
+    "searchCategory": "OPERATION",
+    "likelyQueries": [
+      "三坐标测量机日常维护",
+      "对刀",
+      "回零",
+      "坐标原点",
+      "找正"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "机床准备阶段高频词。"
+  },
+  {
+    "entryId": "kb-readme-伺服系统详解",
+    "title": "数控机床伺服系统详解",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床伺服系统详解",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-readme-主轴系统详解",
+    "title": "数控机床主轴系统详解",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "数控机床主轴系统详解",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  },
+  {
+    "entryId": "kb-readme-机床维护保养",
+    "title": "机床维护保养",
+    "searchCategory": "ALARM",
+    "likelyQueries": [
+      "机床维护保养",
+      "alarm",
+      "报警",
+      "错误",
+      "报错"
+    ],
+    "aliasNeeded": true,
+    "priority": "P0",
+    "notes": "报警故障一键急救排障。"
+  }
+]

@@ -1,0 +1,42 @@
+# Gemini CLI 执行指令
+
+请在 Gemini CLI 终端中执行：
+
+```bash
+cd "F:\AI工作台\04_数控知识库"
+```
+
+然后输入以下提示词：
+
+---
+
+你好，我需要你完成一个超大型数据分析任务。
+
+**任务文档位置**：
+`F:\AI工作台\cnc_param_quickfinder\TASK_GEMINI_CLI_MEGA.md`
+
+**请先读取这个任务文档**，然后严格按照文档中的所有要求完成任务。
+
+**任务概要**：
+- 分析当前目录（F:\AI工作台\04_数控知识库）中的 42,294 个文件
+- 生成 8 个交付文件：
+  1. knowledge-index-master.json
+  2. knowledge-relationships.json
+  3. learning-paths.json
+  4. parameter-quick-reference.json
+  5. category-statistics.json
+  6. search-index.json
+  7. recommended-content.json
+  8. KNOWLEDGE_SYSTEM_REPORT.md
+
+**输出位置**：`F:\AI工作台\cnc_param_quickfinder\`
+
+**预计工作时间**：5-6 小时
+
+**重要**：
+- 请分 5 个阶段执行，每个阶段完成后报告进度
+- 所有文件必须是有效的 JSON 格式
+- 至少扫描所有 42,294 个文件的元数据
+- 至少深度分析 1,000 个文件内容
+
+请开始执行任务。

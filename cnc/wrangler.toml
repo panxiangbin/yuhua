@@ -1,0 +1,7 @@
+name = "cnc-param-quickfinder"
+compatibility_date = "2026-06-30"
+pages_build_output_dir = "."
+
+[vars]
+SITE_NAME = "数控新手学习助手"
+SITE_MODE = "public-web"

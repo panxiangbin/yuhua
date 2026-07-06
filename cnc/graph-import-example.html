@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CNC 知识图谱导入演示</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; background: #f5f6fa; color: #2c3e50; }
+    h1 { color: #2980b9; border-bottom: 2px solid #2980b9; padding-bottom: 10px; }
+    h2 { color: #34495e; margin-top: 30px; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin: 20px 0; }
+    .stat-card { background: white; border-radius: 8px; padding: 16px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .stat-card .number { font-size: 28px; font-weight: bold; color: #2980b9; }
+    .stat-card .label { font-size: 12px; color: #7f8c8d; margin-top: 4px; }
+    .stat-card .number.green { color: #27ae60; }
+    .stat-card .number.red { color: #e74c3c; }
+    .stat-card .number.orange { color: #f39c12; }
+    .btn { display: inline-block; padding: 10px 24px; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; margin: 4px; transition: all 0.2s; }
+    .btn-primary { background: #2980b9; color: white; }
+    .btn-primary:hover { background: #2471a3; }
+    .btn-success { background: #27ae60; color: white; }
+    .btn-success:hover { background: #219a52; }
+    .btn-danger { background: #e74c3c; color: white; }
+    .btn-danger:hover { background: #c0392b; }
+    .btn-warning { background: #f39c12; color: white; }
+    .btn-warning:hover { background: #d68910; }
+    .btn:disabled { background: #bdc3c7; cursor: not-allowed; }
+    #log { background: #1a1a2e; color: #00ff00; font-family: "Consolas", "Courier New", monospace; font-size: 12px; padding: 16px; border-radius: 8px; height: 300px; overflow-y: auto; margin: 20px 0; white-space: pre-wrap; }
+    #log .info { color: #00ff00; }
+    #log .warn { color: #f39c12; }
+    #log .error { color: #e74c3c; }
+    #progress-bar { width: 100%; height: 20px; background: #ecf0f1; border-radius: 10px; overflow: hidden; margin: 10px 0; }
+    #progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #27ae60, #2980b9); border-radius: 10px; transition: width 0.3s; }
+    #progress-text { text-align: center; font-size: 12px; color: #7f8c8d; margin: 4px 0; }
+    .entity-list { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+    .entity-tag { padding: 3px 10px; border-radius: 12px; font-size: 12px; color: white; }
+    .entity-tag.gcode { background: #e74c3c; }
+    .entity-tag.mcode { background: #e67e22; }
+    .entity-tag.tool { background: #3498db; }
+    .entity-tag.machine { background: #9b59b6; }
+    .entity-tag.material { background: #27ae60; }
+    .entity-tag.concept { background: #f39c12; color: #333; }
+    .entity-tag.exam { background: #00bcd4; }
+    .hidden { display: none; }
+    table { width: 100%; border-collapse: collapse; margin: 15px 0; background: white; border-radius: 8px; overflow: hidden; }
+    th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid #ecf0f1; }
+    th { background: #2980b9; color: white; }
+    tr:hover { background: #f5f6fa; }
+  </style>
+</head>
+<body>
+  <h1>CNC 知识图谱导入演示</h1>
+  <p>本页面演示知识图谱数据导入系统的完整工作流：配置加载 → 实体提取 → 数据清洗 → 关系构建 → 导入图谱 → 持久化。</p>
+
+  <div class="btn-group">
+    <button class="btn btn-primary" id="btn-init" onclick="initAll()">1. 初始化引擎</button>
+    <button class="btn btn-success" id="btn-import" onclick="runImport()" disabled>2. 导入样本 (5个文件)</button>
+    <button class="btn btn-success" id="btn-big" onclick="runBigImport()" disabled>3. 导入大样本 (50个文件)</button>
+    <button class="btn btn-primary" id="btn-query" onclick="runQuery()" disabled>4. 查询图谱</button>
+    <button class="btn btn-warning" id="btn-test" onclick="runTest()">5. 运行测试</button>
+    <button class="btn btn-danger" id="btn-clear" onclick="clearLog()">清空日志</button>
+  </div>
+
+  <div id="progress-bar"><div id="progress-fill"></div></div>
+  <div id="progress-text">等待操作...</div>
+
+  <div id="log">[CNC] 页面已加载。点击"初始化引擎"开始。<br></div>
+
+  <div id="results" class="hidden">
+    <h2>导入结果</h2>
+    <div class="stats" id="stats-container"></div>
+    <h2>实体列表</h2>
+    <div id="entity-container" class="entity-list"></div>
+    <h2>查询测试</h2>
+    <div id="query-results"></div>
+    <h2>G代码节点 (前10)</h2>
+    <table id="gcode-table"><tr><th>ID</th><th>标签</th><th>类型</th><th>属性</th></tr></table>
+  </div>
+
+  <script src="import-config.js"></script>
+  <script src="entity-extractor.js"></script>
+  <script src="data-cleaner.js"></script>
+  <script src="relationship-builder.js"></script>
+  <script src="graph-importer.js"></script>
+  <script src="import-test.js"></script>
+  <script>
+    var graph = null;
+    var importer = null;
+    var logEl = document.getElementById('log');
+    var progressFill = document.getElementById('progress-fill');
+    var progressText = document.getElementById('progress-text');
+
+    function log(msg, level) {
+      var cls = level || 'info';
+      logEl.innerHTML += '<span class="' + cls + '">' + msg + '</span><br>';
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    function setProgress(pct, msg) {
+      progressFill.style.width = Math.min(pct, 100) + '%';
+      progressText.textContent = (msg || '') + ' (' + Math.round(pct) + '%)';
+    }
+
+    function generateSampleFiles(count) {
+      var samples = [];
+      var topics = [
+        { path: '01_编程基础', content: ['G00 G01 快速定位与直线插补详解 用于数控编程基础', 'G02 G03 圆弧插补指令 顺逆圆弧加工', 'G54-G59 工件坐标系设定方法 对刀操作', 'M03 M04 M05 主轴控制指令 正转反转停止', 'G90 G91 绝对增量编程模式 坐标值定义'] },
+        { path: '04_刀具工艺', content: ['端铣刀 平底刀 用于平面加工和轮廓铣削 钢件铝合金', '球头铣刀 R刀 曲面加工 精加工 钢铝钛合金适用', '钻头 麻花钻 中心钻 孔加工 钢件铝合金', '面铣刀 盘铣刀 大平面加工 粗加工效率高', '刀片 硬质合金涂层刀片 车削铣削用'] },
+        { path: '02_机床操作', content: ['FANUC 0i-MF 加工中心系统操作面板说明', 'SIEMENS 828D 数控系统编程操作指南', 'MITSUBISHI M70 三菱数控系统参数设定', 'HEIDENHAIN TNC640 海德汉系统编程', 'HAAS VF系列 哈斯加工中心操作'] },
+        { path: '06_考证职业', content: ['考点 G00 G01 G02 G03 题型 选择题 数控编程基础', '考点 坐标系 对刀 刀补 题型 判断题 实操要点', '考点 M代码 主轴控制 题型 填空题 辅助功能', '考点 切削三要素 进给速度 切削深度 题型 计算题', '考点 固定循环 G81 G83 G84 题型 选择题'] },
+        { path: '05_故障维修', content: ['FANUC报警 伺服报警 过载 故障诊断方法', '主轴过热 轴承损坏 维修案例 预防措施', '加工尺寸超差 刀具补偿错误 对刀不准', '系统黑屏 电源模块故障 排查步骤', '切削振动 让刀现象 工艺参数优化'] },
+        { path: '03_CAM软件', content: ['UG NX 编程流程 创建坐标系 创建刀具 创建工序', 'Mastercam 刀路规划 粗加工 精加工策略', 'PowerMill 高速加工 刀路优化 碰撞检查', 'Fusion360 CAD/CAM 集成 云制造', '后处理 修改 G代码生成 定制后处理'] },
+        { path: '07_行业资讯', content: ['2025年数控机床市场发展趋势分析', '五轴加工中心技术进展与应用', '工业4.0 智能工厂 数字化制造', '刀具涂层技术新发展 TiAlN AlCrN DLC', '数控系统 AI 智能自适应加工'] },
+        { path: '08_加工案例', content: ['案例 模具型腔加工 整体硬质合金刀具 高速铣削', '案例 航空航天薄壁零件 铝合金 变形控制', '案例 医疗植入物 钛合金 精密加工', '案例 汽车零部件 批量生产 效率优化', '案例 精密齿轮 滚齿加工 质量检测'] }
+      ];
+
+      for (var i = 0; i < count; i++) {
+        var topic = topics[i % topics.length];
+        var sub = topic.content[i % topic.content.length];
+        var fileName = sub.split(' ').slice(0, 3).join('') + '.md';
+        samples.push({
+          path: topic.path + '/' + fileName,
+          name: fileName,
+          content: '# ' + sub.split(' ').slice(0, 4).join(' ') + '\n> 标签: ' + sub.split(' ').slice(0, 3).join(',') + '\n\n## 内容\n' + sub + '\n\n详细说明：\n' + sub.replace(/ /g, '\n- ') + '\n\n相关参考：\n- 数控编程基础\n- 加工工艺参数\n- 应用场景示例'
+        });
+      }
+      return samples;
+    }
+
+    var sampleFiles = generateSampleFiles(5);
+    var bigSampleFiles = generateSampleFiles(50);
+
+    window.initAll = function() {
+      try {
+        var KG = window.CNC_KnowledgeGraph;
+        if (!KG) { log('KnowledgeGraph 引擎未找到！', 'error'); return; }
+        graph = new KG();
+        importer = new CNC_GRAPH_IMPORTER.GraphImporter(graph);
+        log('✓ 引擎已初始化: 空图谱 (0 节点, 0 关系)');
+        log('✓ 配置已加载: ' + CNC_IMPORT_CONFIG.CONFIG.ENTITY_TYPES.length + ' 实体类型');
+        log('✓ 实体提取器已就绪');
+        log('✓ 数据清洗器已就绪');
+        log('✓ 关系构建器已就绪');
+        document.getElementById('btn-import').disabled = false;
+        document.getElementById('btn-big').disabled = false;
+        document.getElementById('btn-query').disabled = false;
+      } catch (e) {
+        log('初始化失败: ' + e.message, 'error');
+      }
+    };
+
+    window.runImport = function() {
+      if (!importer) { log('请先初始化引擎', 'error'); return; }
+      importer.resetStats();
+      importer.importFromFileEntries(sampleFiles, {
+        batchSize: 100,
+        filterLowQuality: true,
+        mergeDuplicates: true,
+        enableLogging: false,
+        enableProgress: true,
+        onProgress: function(p) { setProgress(p.percent, p.message); },
+        onComplete: function(report) {
+          log('✓ 样本导入完成! 节点: ' + report.importedNodes + ', 关系: ' + report.importedEdges + ', 耗时: ' + report.elapsedStr);
+          showResults(report);
+        }
+      });
+    };
+
+    window.runBigImport = function() {
+      if (!importer) { log('请先初始化引擎', 'error'); return; }
+      importer.resetStats();
+      setProgress(0, '开始导入 50 个文件...');
+      log('开始导入 50 个文件...');
+      importer.importFromFileEntries(bigSampleFiles, {
+        batchSize: 50,
+        filterLowQuality: true,
+        mergeDuplicates: true,
+        enableLogging: false,
+        enableProgress: true,
+        onProgress: function(p) { setProgress(p.percent, '导入中...'); },
+        onComplete: function(report) {
+          log('✓ 50 文件导入完成! 节点: ' + report.importedNodes + ', 关系: ' + report.importedEdges + ', 耗时: ' + report.elapsedStr);
+          showResults(report);
+        }
+      });
+    };
+
+    window.runQuery = function() {
+      if (!graph) { log('请先初始化引擎', 'error'); return; }
+      var totalNodes = graph.nodes.size;
+      var totalEdges = graph.edges.size;
+      log('图谱状态: ' + totalNodes + ' 节点, ' + totalEdges + ' 关系');
+
+      var gcodes = graph.queryNodes({ type: 'gcode' }, 10, 0);
+      log('G代码查询: ' + gcodes.length + ' 个');
+      var table = document.getElementById('gcode-table');
+      table.innerHTML = '<tr><th>ID</th><th>标签</th><th>类型</th><th>属性</th></tr>';
+      for (var i = 0; i < gcodes.length; i++) {
+        var row = table.insertRow();
+        row.insertCell().textContent = gcodes[i].id;
+        row.insertCell().textContent = gcodes[i].label;
+        row.insertCell().textContent = gcodes[i].type;
+        row.insertCell().textContent = JSON.stringify(gcodes[i].properties);
+      }
+
+      if (gcodes.length > 1) {
+        var recs = graph.recommend(gcodes[0].id, 5);
+        log('推荐 (基于 ' + gcodes[0].label + '): ' + (recs.length > 0 ? recs.map(function(r) { return r.node.label; }).join(', ') : '无推荐'));
+      }
+
+      var entityHtml = '';
+      var types = ['gcode', 'mcode', 'tool', 'machine', 'material', 'concept', 'exam'];
+      for (var t = 0; t < types.length; t++) {
+        var nodes = graph.queryNodes({ type: types[t] }, 5, 0);
+        for (var n = 0; n < nodes.length; n++) {
+          entityHtml += '<span class="entity-tag ' + types[t] + '">' + nodes[n].label + '</span>';
+        }
+      }
+      document.getElementById('entity-container').innerHTML = entityHtml;
+    };
+
+    window.runTest = function() {
+      var result = CNC_IMPORT_TEST.runQuick();
+      log('测试完成: ' + result.passed + '/' + result.total + ' 通过, ' + result.failed + ' 失败');
+      if (result.failed > 0) log('部分测试未通过，请检查控制台详情。', 'warn');
+    };
+
+    window.clearLog = function() {
+      logEl.innerHTML = '[CNC] 日志已清空<br>';
+      setProgress(0, '等待操作...');
+    };
+
+    function showResults(report) {
+      document.getElementById('results').classList.remove('hidden');
+      var statsHtml = '';
+      var items = [
+        { num: report.importedNodes, label: '导入节点', cls: '' },
+        { num: report.importedEdges, label: '导入关系', cls: '' },
+        { num: report.parsedFiles, label: '解析文件', cls: 'green' },
+        { num: report.extractedEntities, label: '提取实体', cls: '' },
+        { num: report.duplicatesRemoved, label: '去重数', cls: 'orange' },
+        { num: report.errors, label: '错误数', cls: 'red' },
+        { num: report.elapsedStr, label: '总耗时', cls: '' }
+      ];
+      for (var i = 0; i < items.length; i++) {
+        statsHtml += '<div class="stat-card"><div class="number ' + items[i].cls + '">' + items[i].num + '</div><div class="label">' + items[i].label + '</div></div>';
+      }
+      document.getElementById('stats-container').innerHTML = statsHtml;
+      document.getElementById('btn-query').disabled = false;
+    }
+  </script>
+</body>
+</html>

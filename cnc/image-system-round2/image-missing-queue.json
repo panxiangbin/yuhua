@@ -1,0 +1,1102 @@
+[
+  {
+    "missingId": "miss-001",
+    "entryId": "kb-file-01_编程基础-教学_数控铣削编程完整案例",
+    "title": "教学 数控铣削编程完整案例",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 数控铣削编程完整案例 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-002",
+    "entryId": "kb-file-01_编程基础-教学_数控编程常见错误与避坑指南",
+    "title": "数控编程常见错误与避坑指南",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 数控编程常见错误与避坑指南 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-003",
+    "entryId": "kb-file-01_编程基础-教学_G代码程序结构",
+    "title": "教学 G代码程序结构",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 G代码程序结构 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-004",
+    "entryId": "kb-file-01_编程基础-教学_数控加工常用术语中英文对照",
+    "title": "数控加工常用术语中英文对照",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 数控加工常用术语中英文对照 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-005",
+    "entryId": "kb-file-01_编程基础-教学_G71循环详解",
+    "title": "教学 G71循环详解",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 G71循环详解 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-006",
+    "entryId": "kb-file-01_编程基础-工件坐标系建立方法",
+    "title": "工件坐标系建立方法",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 工件坐标系建立方法 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-007",
+    "entryId": "kb-file-01_编程基础-教学_M41M44主轴换挡详解",
+    "title": "教学 M41M44主轴换挡详解",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 M41M44主轴换挡详解 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-008",
+    "entryId": "kb-file-01_编程基础-教学_M21M24镜像轴控详解",
+    "title": "教学 M21M24镜像轴控详解",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 M21M24镜像轴控详解 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-009",
+    "entryId": "kb-file-01_编程基础-教学_G10可编程参数输入",
+    "title": "教学 G10可编程参数输入",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 G10可编程参数输入 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-010",
+    "entryId": "kb-file-01_编程基础-教学_FANUC系统参数详解",
+    "title": "FANUC系统参数详解",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 FANUC系统参数详解 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-011",
+    "entryId": "kb-file-01_编程基础-教学_接刀痕消除技巧",
+    "title": "教学 接刀痕消除技巧",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 接刀痕消除技巧 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-012",
+    "entryId": "kb-file-01_编程基础-教学_绝对增量与回参考点",
+    "title": "G90/G91/G28/G30 绝对增量编程与回参考点",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 G90/G91/G28/G30 绝对增量编程与回参考点 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-013",
+    "entryId": "kb-file-01_编程基础-教学_G02G03圆弧IJR详解",
+    "title": "教学 G02G03圆弧IJR详解",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 G02G03圆弧IJR详解 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-014",
+    "entryId": "kb-file-01_编程基础-教学_G16极坐标编程",
+    "title": "教学 G16极坐标编程",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 G16极坐标编程 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-015",
+    "entryId": "kb-file-01_编程基础-教学_G81钻孔循环",
+    "title": "教学 G81钻孔循环",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 G81钻孔循环 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-016",
+    "entryId": "kb-file-01_编程基础-教学_坐标计算",
+    "title": "教学 数控编程坐标计算",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 数控编程坐标计算 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-017",
+    "entryId": "kb-file-01_编程基础-教学_进给与转速调整",
+    "title": "教学 进给与转速调整",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 进给与转速调整 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-018",
+    "entryId": "kb-file-01_编程基础-教学_外圆磨削编程",
+    "title": "数控外圆磨削编程教学",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 数控外圆磨削编程教学 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-019",
+    "entryId": "kb-file-01_编程基础-教学_G54G59工件坐标系详解",
+    "title": "教学 G54G59工件坐标系详解",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 G54G59工件坐标系详解 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-020",
+    "entryId": "kb-file-01_编程基础-教学_西门子840D高级编程",
+    "title": "教学 西门子840D高级编程",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 西门子840D高级编程 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-021",
+    "entryId": "kb-file-01_编程基础-教学_编程练习221-250综合篇",
+    "title": "教学 编程练习221-250综合篇",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 编程练习221-250综合篇 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-022",
+    "entryId": "kb-file-01_编程基础-教学_G35G37自动对刀详解",
+    "title": "教学 G35G37自动对刀详解",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 G35G37自动对刀详解 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-023",
+    "entryId": "kb-file-01_编程基础-教学_M98M99子程序详解",
+    "title": "教学 M98M99子程序详解",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 M98M99子程序详解 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-024",
+    "entryId": "kb-file-01_编程基础-教学_G10应用案例",
+    "title": "教学 G10应用案例",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 G10应用案例 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-025",
+    "entryId": "kb-file-01_编程基础-教学_数控冲压编程",
+    "title": "教学：数控冲压编程",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学：数控冲压编程 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-026",
+    "entryId": "kb-file-01_编程基础-教学_齿条加工",
+    "title": "教学 齿条加工",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 齿条加工 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-027",
+    "entryId": "kb-file-01_编程基础-教学_侧铣头加工",
+    "title": "数控铣床侧铣头（角度头）加工教学",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 数控铣床侧铣头（角度头）加工教学 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-028",
+    "entryId": "kb-file-01_编程基础-教学_M代码扩展应用",
+    "title": "教学 M代码扩展应用",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 M代码扩展应用 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-029",
+    "entryId": "kb-file-01_编程基础-教学_多轴机床运动学",
+    "title": "教学 数控多轴机床运动学",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 数控多轴机床运动学 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-030",
+    "entryId": "kb-file-01_编程基础-教学_子程序嵌套调用",
+    "title": "数控子程序嵌套调用教学",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 数控子程序嵌套调用教学 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-031",
+    "entryId": "kb-file-01_编程基础-教学_加工路径优化",
+    "title": "数控加工路径优化教学",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 数控加工路径优化教学 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-032",
+    "entryId": "kb-file-01_编程基础-教学_M50M51辅助控制详解",
+    "title": "教学 M50M51辅助控制详解",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 M50M51辅助控制详解 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-033",
+    "entryId": "kb-file-01_编程基础-test_macro",
+    "title": "测试文件",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 测试文件 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-034",
+    "entryId": "kb-file-01_编程基础-教学_编程计算工具",
+    "title": "教学 数控编程计算工具",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 数控编程计算工具 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-035",
+    "entryId": "kb-file-01_编程基础-教学_镗孔加工",
+    "title": "教学 数控镗孔加工",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 数控镗孔加工 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-036",
+    "entryId": "kb-file-01_编程基础-教学_G61G64精确停止连续路径",
+    "title": "教学 G61G64精确停止连续路径",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 G61G64精确停止连续路径 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-037",
+    "entryId": "kb-file-01_编程基础-教学_程序校验防错",
+    "title": "教学 程序校验防错",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 程序校验防错 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-038",
+    "entryId": "kb-file-01_编程基础-教学_蜗杆加工",
+    "title": "教学 蜗杆加工",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 蜗杆加工 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-039",
+    "entryId": "kb-file-01_编程基础-教学_安全距离与进退刀",
+    "title": "教学 数控加工安全距离与进退刀",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 数控加工安全距离与进退刀 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-040",
+    "entryId": "kb-file-01_编程基础-教学_倒角去毛刺编程",
+    "title": "数控倒角去毛刺编程教学",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 数控倒角去毛刺编程教学 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-041",
+    "entryId": "kb-file-01_编程基础-教学_G00快速定位指令详解",
+    "title": "教学 G00快速定位指令详解",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 G00快速定位指令详解 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-042",
+    "entryId": "kb-file-01_编程基础-教学_M02M30程序结束详解",
+    "title": "教学 M02M30程序结束详解",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 M02M30程序结束详解 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-043",
+    "entryId": "kb-file-01_编程基础-教学_刀具补偿宏程序应用",
+    "title": "刀具补偿宏程序应用教学",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 刀具补偿宏程序应用教学 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-044",
+    "entryId": "kb-file-01_编程基础-教学_宏程序变量运算",
+    "title": "教学 宏程序变量运算",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 宏程序变量运算 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-045",
+    "entryId": "kb-file-01_编程基础-慢走丝线切割编程",
+    "title": "慢走丝线切割编程",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 慢走丝线切割编程 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-046",
+    "entryId": "kb-file-01_编程基础-教学_弯管加工编程",
+    "title": "教学：数控弯管加工编程",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学：数控弯管加工编程 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-047",
+    "entryId": "kb-file-01_编程基础-教学_G73高速啄钻循环详解",
+    "title": "教学 G73高速啄钻循环详解",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 G73高速啄钻循环详解 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-048",
+    "entryId": "kb-file-01_编程基础-教学_数控车床编程完整教程",
+    "title": "教学 数控车床编程完整教程",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 数控车床编程完整教程 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-049",
+    "entryId": "kb-file-01_编程基础-教学_刀路验证优化",
+    "title": "教学 刀路验证优化",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 刀路验证优化 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-050",
+    "entryId": "kb-file-01_编程基础-教学_编程进阶综合练习",
+    "title": "教学 编程进阶综合练习",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 编程进阶综合练习 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-051",
+    "entryId": "kb-file-01_编程基础-教学_G90G91坐标模式详解",
+    "title": "教学 G90G91坐标模式详解",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 G90G91坐标模式详解 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-052",
+    "entryId": "kb-file-01_编程基础-教学_编程注释规范",
+    "title": "数控编程注释规范教学",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 数控编程注释规范教学 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-053",
+    "entryId": "kb-file-01_编程基础-教学_摇篮转台5轴加工",
+    "title": "教学 摇篮转台5轴加工",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 摇篮转台5轴加工 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-054",
+    "entryId": "kb-file-01_编程基础-教学_M代码补充详解",
+    "title": "教学 M代码补充详解",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 M代码补充详解 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-055",
+    "entryId": "kb-file-01_编程基础-教学_常用计算公式",
+    "title": "教学 常用计算公式",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 常用计算公式 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-056",
+    "entryId": "kb-file-01_编程基础-教学_复合循环综合",
+    "title": "数控车床复合循环综合应用教学",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 数控车床复合循环综合应用教学 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-057",
+    "entryId": "kb-file-01_编程基础-教学_G04暂停指令详解",
+    "title": "教学 G04暂停指令详解",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 G04暂停指令详解 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-058",
+    "entryId": "kb-file-01_编程基础-教学_G00G01G02G03详解",
+    "title": "教学 G00G01G02G03详解",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 G00G01G02G03详解 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-059",
+    "entryId": "kb-file-01_编程基础-G代码模态机制详解",
+    "title": "G代码模态机制详解",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 G代码模态机制详解 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-060",
+    "entryId": "kb-file-01_编程基础-教学_滚花加工",
+    "title": "数控车床滚花加工教学",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 数控车床滚花加工教学 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-061",
+    "entryId": "kb-file-01_编程基础-教学_镜像旋转缩放编程",
+    "title": "数控铣床镜像/旋转/缩放编程教学",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 数控铣床镜像/旋转/缩放编程教学 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-062",
+    "entryId": "kb-file-01_编程基础-教学_坐标旋转G68",
+    "title": "教学 坐标旋转G68",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 坐标旋转G68 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-063",
+    "entryId": "kb-file-01_编程基础-教学_M29刚性攻丝详解",
+    "title": "教学 M29刚性攻丝详解",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 M29刚性攻丝详解 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-064",
+    "entryId": "kb-file-01_编程基础-教学_参数化编程G10",
+    "title": "教学 参数化编程G10",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 参数化编程G10 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-065",
+    "entryId": "kb-file-01_编程基础-教学_数控编程常见错误及对策",
+    "title": "数控编程常见错误及对策",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 数控编程常见错误及对策 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-066",
+    "entryId": "kb-file-01_编程基础-教学_G01直线插补详解",
+    "title": "教学 G01直线插补详解",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 G01直线插补详解 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-067",
+    "entryId": "kb-file-01_编程基础-教学_刀具长度补偿",
+    "title": "G43/G44/G49 刀具长度补偿",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 G43/G44/G49 刀具长度补偿 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-068",
+    "entryId": "kb-file-01_编程基础-教学_铰孔加工",
+    "title": "数控铰孔加工教学",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 数控铰孔加工教学 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-069",
+    "entryId": "kb-file-01_编程基础-教学_可编程数据输入",
+    "title": "G10/G11 可编程数据输入",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 G10/G11 可编程数据输入 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-070",
+    "entryId": "kb-file-01_编程基础-教学_宏程序编程入门",
+    "title": "教学 宏程序编程入门",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 宏程序编程入门 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-071",
+    "entryId": "kb-file-01_编程基础-教学_插补原理",
+    "title": "数控插补原理教学",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 数控插补原理教学 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-072",
+    "entryId": "kb-file-01_编程基础-教学_弹簧加工编程",
+    "title": "教学：数控弹簧加工编程",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学：数控弹簧加工编程 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-073",
+    "entryId": "kb-file-01_编程基础-教学_圆角编程",
+    "title": "数控铣床圆角编程教学",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 数控铣床圆角编程教学 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-074",
+    "entryId": "kb-file-01_编程基础-教学_数控加工工艺设计",
+    "title": "数控加工工艺设计",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 数控加工工艺设计 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-075",
+    "entryId": "kb-file-01_编程基础-教学_复合固定循环",
+    "title": "数控车床复合固定循环教学",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 数控车床复合固定循环教学 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-076",
+    "entryId": "kb-file-01_编程基础-教学_M19主轴定向详解",
+    "title": "教学 M19主轴定向详解",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 M19主轴定向详解 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-077",
+    "entryId": "kb-file-01_编程基础-教学_零点偏置详解",
+    "title": "数控机床零点偏置详解教学",
+    "category": "01 编程基础",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 数控机床零点偏置详解教学 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-078",
+    "entryId": "kb-file-02_机床操作-机床操作大全",
+    "title": "数控机床操作大全",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 数控机床操作大全 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-079",
+    "entryId": "kb-file-02_机床操作-数控机床电气系统",
+    "title": "数控机床电气控制系统",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 数控机床电气控制系统 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-080",
+    "entryId": "kb-file-02_机床操作-FANUC系统手册",
+    "title": "FANUC系统手册",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 FANUC系统手册 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-081",
+    "entryId": "kb-file-02_机床操作-哈斯系统手册",
+    "title": "哈斯系统手册",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 哈斯系统手册 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-082",
+    "entryId": "kb-file-02_机床操作-国产数控系统",
+    "title": "国产数控系统",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 国产数控系统 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-083",
+    "entryId": "kb-file-02_机床操作-维护_数控机床预测性维护",
+    "title": "维护 数控机床预测性维护",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 维护 数控机床预测性维护 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-084",
+    "entryId": "kb-file-02_机床操作-三菱系统手册",
+    "title": "三菱系统手册",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 三菱系统手册 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-085",
+    "entryId": "kb-file-02_机床操作-数控机床与机器人集成自动化",
+    "title": "数控机床与机器人集成自动化",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 数控机床与机器人集成自动化 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-086",
+    "entryId": "kb-file-02_机床操作-教学_FANUC操作入门",
+    "title": "教学 FANUC操作入门",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 FANUC操作入门 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-087",
+    "entryId": "kb-file-02_机床操作-数控系统PLC参数",
+    "title": "数控系统PLC与参数",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 数控系统PLC与参数 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-088",
+    "entryId": "kb-file-02_机床操作-西门子系统手册",
+    "title": "西门子数控系统手册",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 西门子数控系统手册 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-089",
+    "entryId": "kb-file-02_机床操作-DNC联网通讯技术",
+    "title": "DNC联网通讯技术",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 DNC联网通讯技术 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-090",
+    "entryId": "kb-file-02_机床操作-维护_数控机床电气设计与抗干扰完全指南",
+    "title": "维护 数控机床电气设计与抗干扰完全指南",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 维护 数控机床电气设计与抗干扰完全指南 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-091",
+    "entryId": "kb-file-02_机床操作-维护_轴承安装与维护技术",
+    "title": "维护 轴承安装与维护技术",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 维护 轴承安装与维护技术 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-092",
+    "entryId": "kb-file-02_机床操作-教学_机床精度验收标准",
+    "title": "教学 机床精度验收标准",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 机床精度验收标准 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-093",
+    "entryId": "kb-file-02_机床操作-维护_设备OEE与TPM实战",
+    "title": "维护 设备OEE与TPM实战",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 维护 设备OEE与TPM实战 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-094",
+    "entryId": "kb-file-02_机床操作-中心架与跟刀架",
+    "title": "中心架与跟刀架",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 中心架与跟刀架 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-095",
+    "entryId": "kb-file-02_机床操作-维护_滚珠丝杠与直线导轨选型完全指南",
+    "title": "维护 滚珠丝杠与直线导轨选型完全指南",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 维护 滚珠丝杠与直线导轨选型完全指南 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-096",
+    "entryId": "kb-file-02_机床操作-教学_西门子840D操作手册",
+    "title": "西门子840D sl 数控系统操作手册",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 西门子840D sl 数控系统操作手册 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-097",
+    "entryId": "kb-file-02_机床操作-维护_数控机床主轴与电主轴选型完全指南",
+    "title": "维护 数控机床主轴与电主轴选型完全指南",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 维护 数控机床主轴与电主轴选型完全指南 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-098",
+    "entryId": "kb-file-02_机床操作-维护_数控机床冷却与微量润滑系统完全指南",
+    "title": "维护 数控机床冷却与微量润滑系统完全指南",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 维护 数控机床冷却与微量润滑系统完全指南 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-099",
+    "entryId": "kb-file-02_机床操作-薄壁零件加工变形控制与装夹工艺完全指南",
+    "title": "薄壁零件加工变形控制与装夹工艺完全指南",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 薄壁零件加工变形控制与装夹工艺完全指南 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-100",
+    "entryId": "kb-file-02_机床操作-维护_数控机床气动系统设计与元件选型完全指南",
+    "title": "维护 数控机床气动系统设计与元件选型完全指南",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 维护 数控机床气动系统设计与元件选型完全指南 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-101",
+    "entryId": "kb-file-02_机床操作-教学_FANUC_0i_MF操作面板指南",
+    "title": "FANUC 0i-MF Plus 操作面板完全指南",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 FANUC 0i-MF Plus 操作面板完全指南 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-102",
+    "entryId": "kb-file-02_机床操作-教学_数控操作5轴机床日常操作",
+    "title": "教学 数控操作5轴机床日常操作",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 数控操作5轴机床日常操作 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-103",
+    "entryId": "kb-file-02_机床操作-维护_数控机床安装调试与精度校准完全指南",
+    "title": "维护 数控机床安装调试与精度校准完全指南",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 维护 数控机床安装调试与精度校准完全指南 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-104",
+    "entryId": "kb-file-02_机床操作-维护_数控机床液压系统设计与选型完全指南",
+    "title": "维护 数控机床液压系统设计与选型完全指南",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 维护 数控机床液压系统设计与选型完全指南 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-105",
+    "entryId": "kb-file-02_机床操作-维护_数控机床集中润滑系统完全指南",
+    "title": "维护 数控机床集中润滑系统完全指南",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 维护 数控机床集中润滑系统完全指南 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-106",
+    "entryId": "kb-file-02_机床操作-教学_碰撞预防",
+    "title": "教学 碰撞预防",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 碰撞预防 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-107",
+    "entryId": "kb-file-02_机床操作-教学_数控机床主轴动平衡与振动控制",
+    "title": "教学 数控机床主轴动平衡与振动控制",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 数控机床主轴动平衡与振动控制 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-108",
+    "entryId": "kb-file-02_机床操作-教学_数控机床几何误差补偿与校准",
+    "title": "教学 数控机床几何误差补偿与校准",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 数控机床几何误差补偿与校准 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-109",
+    "entryId": "kb-file-02_机床操作-教学_真空吸盘使用",
+    "title": "教学 真空吸盘使用",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 教学 真空吸盘使用 指令补充专用等角 2.5D 配图工单。"
+  },
+  {
+    "missingId": "miss-110",
+    "entryId": "kb-file-02_机床操作-维护_数控机床排屑装置设计与选型完全指南",
+    "title": "维护 数控机床排屑装置设计与选型完全指南",
+    "category": "02 机床操作",
+    "priority": "P1",
+    "missingType": "NO_EXCLUSIVE_PROMPT",
+    "suggestedImageType": "对比图",
+    "reworkPlan": "在 Batch 005 中为 维护 数控机床排屑装置设计与选型完全指南 指令补充专用等角 2.5D 配图工单。"
+  }
+]

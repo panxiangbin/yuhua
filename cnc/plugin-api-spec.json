@@ -1,0 +1,108 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-07-03T03:16:39.309Z",
+  "apiVersion": "1.0",
+  "pluginInterface": {
+    "manifest": {
+      "required": [
+        "id",
+        "name",
+        "version",
+        "author"
+      ],
+      "optional": [
+        "description",
+        "icon",
+        "permissions"
+      ]
+    },
+    "hooks": [
+      {
+        "name": "onSearchComplete",
+        "description": "在搜索完成后触发，可用于拦截、修改或补充搜索结果。",
+        "parameters": {
+          "query": "string (搜索关键词)",
+          "results": "array (搜索匹配到的知识条目)"
+        },
+        "returns": "array (修改后的过滤或强化搜索结果)"
+      },
+      {
+        "name": "onEntryView",
+        "description": "用户进入查看某知识详情页时触发，常用于统计阅读次数或注入外部插件面板。",
+        "parameters": {
+          "entryId": "string (知识点ID)",
+          "entry": "object (知识点正文与字段对象)"
+        },
+        "returns": "void"
+      },
+      {
+        "name": "onCalculate",
+        "description": "在工艺计算器执行计算并输出结果时触发，可引入工艺折减系数或干涉算法校验。",
+        "parameters": {
+          "type": "string (计算类型，如 speed_calc, feed_calc)",
+          "inputs": "object (输入参数包，如直径、刀齿数)"
+        },
+        "returns": "object (修改后的推荐转速进给结果对象)"
+      }
+    ],
+    "apis": [
+      {
+        "name": "getKnowledgeTree",
+        "description": "获取完整的 3 级知识树数据节点。",
+        "returns": "object (包含 root 的知识树大 JSON)"
+      },
+      {
+        "name": "searchEntries",
+        "description": "调用系统底层倒排索引查询知识点。",
+        "parameters": {
+          "query": "string",
+          "filters": "object (可选的分类或难度过滤器)"
+        },
+        "returns": "array (匹配的简短数据列表)"
+      },
+      {
+        "name": "addCustomCalculator",
+        "description": "向工作区侧边栏添加一个全新的自定义计算器面板。",
+        "parameters": {
+          "calculator": "object (包含标题、表单输入项和计算JS函数的对象)"
+        },
+        "returns": "boolean (挂载是否成功)"
+      }
+    ]
+  },
+  "examplePlugins": [
+    {
+      "id": "custom-thread-calculator",
+      "name": "螺纹工艺参数计算器插件",
+      "version": "1.0.0",
+      "description": "集成车铣床多头梯形螺纹底孔及分刀量推荐计算器。",
+      "manifest": {
+        "id": "custom-thread-calculator",
+        "name": "螺纹参数计算器",
+        "version": "1.0.0",
+        "author": "数控工程师工坊",
+        "permissions": [
+          "calculator",
+          "storage"
+        ]
+      },
+      "code": "workbench.on('onCalculate', (data) => {\n  if(data.type === 'thread') {\n    // 自动计算螺纹小径底孔 = 大径 - 螺距 * 1.0825\n    data.results.minorDiameter = data.inputs.major - data.inputs.pitch * 1.0825;\n  }\n  return data;\n});"
+    },
+    {
+      "id": "export-word-enhancer",
+      "name": "Word 文档导出增强插件",
+      "version": "1.0.2",
+      "description": "在数据导出页面额外提供导出为 Word .docx 格式支持。",
+      "manifest": {
+        "id": "export-word-enhancer",
+        "name": "Word导出",
+        "version": "1.0.2",
+        "author": "文档专家组",
+        "permissions": [
+          "export"
+        ]
+      },
+      "code": "workbench.registerExport('docx', (data) => {\n  console.log('Exporting learned notes to word docx file...');\n  return true;\n});"
+    }
+  ]
+}

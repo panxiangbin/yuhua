@@ -1,0 +1,130 @@
+{
+  "totalImages": 125,
+  "totalMappedEntries": 415,
+  "categoryBreakdown": {
+    "报警相关": 44,
+    "刀具相关": 156,
+    "G代码相关": 62,
+    "M代码相关": 5,
+    "坐标系相关": 32,
+    "其他": 116
+  },
+  "topMappedImages": [
+    {
+      "imageId": "safe-tool-approach-001",
+      "mappedCount": 110,
+      "title": "刀具安全切入工件路径规划"
+    },
+    {
+      "imageId": "tool-nose-radius-basic-001",
+      "mappedCount": 109,
+      "title": "车刀刀尖半径对尺寸的影响"
+    },
+    {
+      "imageId": "tool-offset-table-001",
+      "mappedCount": 103,
+      "title": "系统刀偏表几何与磨损设定"
+    },
+    {
+      "imageId": "alarm-spindle-001",
+      "mappedCount": 63,
+      "title": "主轴驱动与过载报警"
+    },
+    {
+      "imageId": "panel-control-overview-001",
+      "mappedCount": 35,
+      "title": "数控系统操作面板按键定义"
+    },
+    {
+      "imageId": "drawing-tolerance-roughness-001",
+      "mappedCount": 34,
+      "title": "尺寸公差与表面粗糙度识读"
+    },
+    {
+      "imageId": "panel-jog-handle-001",
+      "mappedCount": 33,
+      "title": "手轮手摇与JOG轴点动控制"
+    },
+    {
+      "imageId": "alarm-servo-001",
+      "mappedCount": 29,
+      "title": "伺服驱动系统故障报警"
+    },
+    {
+      "imageId": "alarm-limit-overtravel-001",
+      "mappedCount": 28,
+      "title": "轴行程超程报警故障"
+    },
+    {
+      "imageId": "ballnose-vs-flat-endmill-001",
+      "mappedCount": 26,
+      "title": "球头铣刀与平底铣刀走刀对比"
+    }
+  ],
+  "unmappedImages": [
+    "beginner-machine-zero-vs-work-zero-001",
+    "measure-reading-set-001",
+    "parameter-backup-001",
+    "canned-cycle-overview-001",
+    "chuck-clamping-safety-001",
+    "coolant-nozzle-setup-001",
+    "fixture-basics-001",
+    "lubrication-check-001",
+    "machine-init-flow-001",
+    "mdi-vs-auto-mode-001",
+    "override-control-001",
+    "single-block-dry-run-001",
+    "startup-checklist-001",
+    "tailstock-support-001",
+    "turret-tool-number-001",
+    "flange-part-process-001",
+    "lathe-process-overview-001",
+    "retaining-ring-groove-001",
+    "turning-boring-001",
+    "turning-burr-control-001",
+    "turning-chamfer-001",
+    "turning-deep-hole-001",
+    "turning-fillet-001",
+    "turning-grooving-001",
+    "turning-long-shaft-001",
+    "turning-od-finishing-001",
+    "turning-parting-off-001",
+    "turning-step-shaft-001",
+    "turning-thread-id-001",
+    "turning-thread-od-001",
+    "turning-tool-wear-001",
+    "bt-er-holder-overview-001",
+    "fixture-plate-datum-001",
+    "insert-shape-overview-001",
+    "milling-contour-001",
+    "milling-corner-cleanup-001",
+    "milling-helical-entry-001",
+    "milling-pocket-001",
+    "milling-process-overview-001",
+    "milling-side-milling-001",
+    "milling-slot-001",
+    "milling-stepdown-stepover-001",
+    "soft-jaw-clamping-001",
+    "tool-breakage-warning-001",
+    "tool-holder-reach-rigidity-001",
+    "tool-selection-beginner-001",
+    "vise-clamping-basic-001",
+    "ballscrew-guideway-maintenance-001",
+    "battery-loss-parameter-risk-001",
+    "beginner-mistakes-overview-001",
+    "bore-gauge-detail-001",
+    "cabinet-fan-filter-001",
+    "coolant-system-overview-001",
+    "daily-maintenance-001",
+    "dial-indicator-detail-001",
+    "drawing-fit-h7-h6-001",
+    "emergency-stop-chain-001",
+    "first-piece-inspection-001",
+    "grounding-shielding-001",
+    "machine-warmup-flow-001",
+    "material-steel-castiron-001",
+    "power-sequence-warning-001",
+    "safety-door-interlock-001",
+    "weekly-maintenance-001"
+  ]
+}
