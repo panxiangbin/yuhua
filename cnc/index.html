@@ -729,48 +729,124 @@
           <div class="section-head">
             <div>
               <p class="eyebrow">参数换算</p>
-              <h3>现场最常用的 5 个计算</h3>
+              <h3>现场最常用的 6 个计算</h3>
             </div>
             <p>不再在一长页底部翻找，单独做成工作区。</p>
           </div>
 
-          <div class="calculator-grid">
-            <article class="calc-card">
+          <div class="calc-mobile-grid" id="calc-mobile-grid">
+            <button class="calc-icon-card" data-calc-target="rpm" type="button">
+              <span class="calc-icon-emoji">&#9881;&#65039;</span>
+              <span class="calc-icon-name">线速度转转速</span>
+              <span class="calc-icon-formula">Vc &rarr; n</span>
+            </button>
+            <button class="calc-icon-card" data-calc-target="vc" type="button">
+              <span class="calc-icon-emoji">&#128260;</span>
+              <span class="calc-icon-name">转速转线速度</span>
+              <span class="calc-icon-formula">n &rarr; Vc</span>
+            </button>
+            <button class="calc-icon-card" data-calc-target="feed" type="button">
+              <span class="calc-icon-emoji">&#9200;</span>
+              <span class="calc-icon-name">每转进给转每分钟</span>
+              <span class="calc-icon-formula">f &rarr; F</span>
+            </button>
+            <button class="calc-icon-card" data-calc-target="pitch" type="button">
+              <span class="calc-icon-emoji">&#128297;</span>
+              <span class="calc-icon-name">英制牙数转螺距</span>
+              <span class="calc-icon-formula">TPI &rarr; P</span>
+            </button>
+            <button class="calc-icon-card" data-calc-target="diameter" type="button">
+              <span class="calc-icon-emoji">&#128207;</span>
+              <span class="calc-icon-name">半径转直径</span>
+              <span class="calc-icon-formula">R &harr; D</span>
+            </button>
+            <button class="calc-icon-card" data-calc-target="fz" type="button">
+              <span class="calc-icon-emoji">&#128190;</span>
+              <span class="calc-icon-name">每齿进给计算</span>
+              <span class="calc-icon-formula">fz &rarr; F</span>
+            </button>
+            <div class="calc-mobile-tip">
+              <strong>&#128161; 常用参考</strong>
+              <span>铝件 150-300 m/min · 钢件 60-120 · 不锈钢 40-80</span>
+            </div>
+          </div>
+
+          <div class="calculator-grid" id="calculator-grid">
+            <article class="calc-card" data-calc-id="rpm">
+              <button class="calc-back-btn" type="button">&larr; 返回计算器列表</button>
               <h4>线速度转转速</h4>
-              <label><span>线速度 Vc (m/min)</span><input id="vc-input" type="number" min="0" step="0.1" value="120"></label>
-              <label><span>直径 D (mm)</span><input id="diameter-input" type="number" min="0" step="0.1" value="50"></label>
-              <button class="primary-button" data-calc="rpm" type="button">计算转速</button>
-              <p class="calc-result" id="rpm-result">结果显示在这里</p>
+              <div class="calc-formula-box">n = 1000 &times; Vc / (&pi; &times; D)</div>
+              <label><span>线速度 Vc (m/min)</span><input id="vc-input" type="number" inputmode="decimal" min="0" step="0.1" value="120"></label>
+              <label><span>直径 D (mm)</span><input id="diameter-input" type="number" inputmode="decimal" min="0" step="0.1" value="50"></label>
+              <div class="calc-btn-row">
+                <button class="primary-button" data-calc="rpm" type="button">计算</button>
+                <button class="ghost-button calc-clear-btn" type="button">清空</button>
+              </div>
+              <p class="calc-result" id="rpm-result">输入参数后点击"计算"</p>
             </article>
 
-            <article class="calc-card">
+            <article class="calc-card" data-calc-id="vc">
+              <button class="calc-back-btn" type="button">&larr; 返回计算器列表</button>
               <h4>转速转线速度</h4>
-              <label><span>转速 n (rpm)</span><input id="rpm-back-input" type="number" min="0" step="1" value="800"></label>
-              <label><span>直径 D (mm)</span><input id="diameter-back-input" type="number" min="0" step="0.1" value="50"></label>
-              <button class="primary-button" data-calc="vc" type="button">计算线速度</button>
-              <p class="calc-result" id="vc-result">结果显示在这里</p>
+              <div class="calc-formula-box">Vc = &pi; &times; D &times; n / 1000</div>
+              <label><span>转速 n (rpm)</span><input id="rpm-back-input" type="number" inputmode="decimal" min="0" step="1" value="800"></label>
+              <label><span>直径 D (mm)</span><input id="diameter-back-input" type="number" inputmode="decimal" min="0" step="0.1" value="50"></label>
+              <div class="calc-btn-row">
+                <button class="primary-button" data-calc="vc" type="button">计算</button>
+                <button class="ghost-button calc-clear-btn" type="button">清空</button>
+              </div>
+              <p class="calc-result" id="vc-result">输入参数后点击"计算"</p>
             </article>
 
-            <article class="calc-card">
+            <article class="calc-card" data-calc-id="feed">
+              <button class="calc-back-btn" type="button">&larr; 返回计算器列表</button>
               <h4>每转进给转每分钟进给</h4>
-              <label><span>每转进给 f (mm/rev)</span><input id="feed-per-rev-input" type="number" min="0" step="0.001" value="0.2"></label>
-              <label><span>转速 n (rpm)</span><input id="feed-rpm-input" type="number" min="0" step="1" value="600"></label>
-              <button class="primary-button" data-calc="feed" type="button">计算进给</button>
-              <p class="calc-result" id="feed-result">结果显示在这里</p>
+              <div class="calc-formula-box">F = f &times; n</div>
+              <label><span>每转进给 f (mm/rev)</span><input id="feed-per-rev-input" type="number" inputmode="decimal" min="0" step="0.001" value="0.2"></label>
+              <label><span>转速 n (rpm)</span><input id="feed-rpm-input" type="number" inputmode="decimal" min="0" step="1" value="600"></label>
+              <div class="calc-btn-row">
+                <button class="primary-button" data-calc="feed" type="button">计算</button>
+                <button class="ghost-button calc-clear-btn" type="button">清空</button>
+              </div>
+              <p class="calc-result" id="feed-result">输入参数后点击"计算"</p>
             </article>
 
-            <article class="calc-card">
+            <article class="calc-card" data-calc-id="pitch">
+              <button class="calc-back-btn" type="button">&larr; 返回计算器列表</button>
               <h4>英制牙数转螺距</h4>
-              <label><span>TPI</span><input id="tpi-input" type="number" min="0" step="0.1" value="20"></label>
-              <button class="primary-button" data-calc="pitch" type="button">计算螺距</button>
-              <p class="calc-result" id="pitch-result">结果显示在这里</p>
+              <div class="calc-formula-box">P = 25.4 / TPI</div>
+              <label><span>TPI</span><input id="tpi-input" type="number" inputmode="decimal" min="0" step="0.1" value="20"></label>
+              <div class="calc-btn-row">
+                <button class="primary-button" data-calc="pitch" type="button">计算</button>
+                <button class="ghost-button calc-clear-btn" type="button">清空</button>
+              </div>
+              <p class="calc-result" id="pitch-result">输入参数后点击"计算"</p>
             </article>
 
-            <article class="calc-card">
+            <article class="calc-card" data-calc-id="diameter">
+              <button class="calc-back-btn" type="button">&larr; 返回计算器列表</button>
               <h4>半径转直径</h4>
-              <label><span>半径 R (mm)</span><input id="radius-input" type="number" min="0" step="0.01" value="12.5"></label>
-              <button class="primary-button" data-calc="diameter" type="button">计算直径</button>
-              <p class="calc-result" id="diameter-result">结果显示在这里</p>
+              <div class="calc-formula-box">D = 2 &times; R</div>
+              <label><span>半径 R (mm)</span><input id="radius-input" type="number" inputmode="decimal" min="0" step="0.01" value="12.5"></label>
+              <div class="calc-btn-row">
+                <button class="primary-button" data-calc="diameter" type="button">计算</button>
+                <button class="ghost-button calc-clear-btn" type="button">清空</button>
+              </div>
+              <p class="calc-result" id="diameter-result">输入参数后点击"计算"</p>
+            </article>
+
+            <article class="calc-card" data-calc-id="fz">
+              <button class="calc-back-btn" type="button">&larr; 返回计算器列表</button>
+              <h4>每齿进给计算</h4>
+              <div class="calc-formula-box">F = fz &times; Z &times; n</div>
+              <label><span>每齿进给 fz (mm/tooth)</span><input id="fz-input" type="number" inputmode="decimal" min="0" step="0.001" value="0.05"></label>
+              <label><span>刃数 Z</span><input id="fz-flutes-input" type="number" inputmode="decimal" min="1" step="1" value="4"></label>
+              <label><span>转速 n (rpm)</span><input id="fz-rpm-input" type="number" inputmode="decimal" min="0" step="1" value="3000"></label>
+              <div class="calc-btn-row">
+                <button class="primary-button" data-calc="fz" type="button">计算</button>
+                <button class="ghost-button calc-clear-btn" type="button">清空</button>
+              </div>
+              <p class="calc-result" id="fz-result">输入参数后点击"计算"</p>
             </article>
           </div>
         </div>

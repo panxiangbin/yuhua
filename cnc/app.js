@@ -1593,6 +1593,35 @@ function calculateDiameter() {
     : "请输入有效半径。";
 }
 
+function calculateFz() {
+  const fz = Number(document.querySelector("#fz-input").value);
+  const z = Number(document.querySelector("#fz-flutes-input").value);
+  const n = Number(document.querySelector("#fz-rpm-input").value);
+  document.querySelector("#fz-result").textContent = fz > 0 && z > 0 && n > 0
+    ? `每分钟进给约 ${formatNumber(fz * z * n, 1)} mm/min`
+    : "请输入有效的每齿进给、刃数和转速。";
+}
+
+function openMobileCalc(calcId) {
+  const grid = document.getElementById("calculator-grid");
+  const mobileGrid = document.getElementById("calc-mobile-grid");
+  if (!grid || !mobileGrid) return;
+  grid.querySelectorAll(".calc-card").forEach(c => c.classList.remove("calc-active"));
+  const target = grid.querySelector('[data-calc-id="' + calcId + '"]');
+  if (target) target.classList.add("calc-active");
+  grid.classList.add("calc-detail-open");
+  mobileGrid.classList.add("calc-grid-hidden");
+}
+
+function closeMobileCalc() {
+  const grid = document.getElementById("calculator-grid");
+  const mobileGrid = document.getElementById("calc-mobile-grid");
+  if (!grid || !mobileGrid) return;
+  grid.classList.remove("calc-detail-open");
+  grid.querySelectorAll(".calc-card").forEach(c => c.classList.remove("calc-active"));
+  mobileGrid.classList.remove("calc-grid-hidden");
+}
+
 function bindCalculators() {
   document.querySelectorAll("[data-calc]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -1602,6 +1631,25 @@ function bindCalculators() {
       if (type === "feed") calculateFeed();
       if (type === "pitch") calculatePitch();
       if (type === "diameter") calculateDiameter();
+      if (type === "fz") calculateFz();
+    });
+  });
+
+  document.querySelectorAll("[data-calc-target]").forEach((card) => {
+    card.addEventListener("click", () => openMobileCalc(card.dataset.calcTarget));
+  });
+
+  document.querySelectorAll(".calc-back-btn").forEach((btn) => {
+    btn.addEventListener("click", () => closeMobileCalc());
+  });
+
+  document.querySelectorAll(".calc-clear-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const card = btn.closest(".calc-card");
+      if (!card) return;
+      card.querySelectorAll("input").forEach(inp => { inp.value = ""; });
+      const result = card.querySelector(".calc-result");
+      if (result) result.textContent = "输入参数后点击\"计算\"";
     });
   });
 }
