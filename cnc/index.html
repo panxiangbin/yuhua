@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="面向数控新手的速查与学习助手，支持目录树导航、知识库检索、图卡学习和参数换算。">
-  <meta name="theme-color" content="#cf6d36">
+  <meta name="theme-color" content="#ffffff">
   <title>数控速查与学习助手</title>
   <meta property="og:title" content="数控速查与学习助手">
   <meta property="og:description" content="像软件一样使用的数控学习网页，支持参数、G代码、报警、工艺、图纸、量具与知识库检索。">
@@ -17,6 +17,7 @@
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="stylesheet" href="./styles.css">
   <link rel="stylesheet" href="./styles-enhanced.css">
+  <link rel="stylesheet" href="./theme-tech.css">
 </head>
 <body>
   <div class="gate-backdrop" id="access-gate" hidden>
@@ -520,8 +521,6 @@
             </div>
           </div>
         </div>
-          </div>
-        </div>
       </section>
 
       <section class="view" id="view-workspace">
@@ -905,6 +904,28 @@
     </main>
   </div>
 
+  <!-- 图片放大弹窗（必须位于脚本之前，gallery-featured.js 在解析时就要取到这些节点） -->
+  <div class="cnc-gallery-modal" id="cncGalleryModal" aria-hidden="true">
+    <div class="cnc-gallery-modal-mask" data-close="true"></div>
+
+    <div class="cnc-gallery-modal-panel">
+      <button class="cnc-gallery-modal-close" id="cncGalleryClose" aria-label="关闭">×</button>
+
+      <button class="cnc-gallery-nav cnc-gallery-prev" id="cncGalleryPrev" aria-label="上一张">‹</button>
+
+      <figure class="cnc-gallery-preview">
+        <img id="cncGalleryPreviewImg" src="" alt="">
+        <figcaption>
+          <h3 id="cncGalleryPreviewTitle"></h3>
+          <p id="cncGalleryPreviewDesc"></p>
+          <span id="cncGalleryPreviewIndex"></span>
+        </figcaption>
+      </figure>
+
+      <button class="cnc-gallery-nav cnc-gallery-next" id="cncGalleryNext" aria-label="下一张">›</button>
+    </div>
+  </div>
+
   <script src="./data.js"></script>
   <!-- 运行时四件套：环境检测 → 配置管理 → 资源加载 → 诊断工具 -->
   <script src="./runtime-env-detector.js"></script>
@@ -930,15 +951,6 @@
   <script src="./study-entry-rules.js"></script>
   <script src="./learning-content-data.js"></script>
 
-  <!-- 0号：运行时环境模块 (2026-07-06) -->
-  <script src="./runtime-env-detector.js"></script>
-  <script src="./runtime-config.js"></script>
-  <script src="./runtime-data-loader.js"></script>
-  <script src="./runtime-image-layer.js"></script>
-  <script src="./runtime-search-layer.js"></script>
-  <script src="./runtime-loader.js"></script>
-  <script src="./runtime-diagnostic.js"></script>
-
   <!-- 3号：JSON加载器（处理BOM） -->
   <script src="./json-loader.js"></script>
 
@@ -955,27 +967,5 @@
 
   <script src="./app.js"></script>
   <script src="./gallery-featured.js"></script>
-
-  <!-- 图片放大弹窗 -->
-  <div class="cnc-gallery-modal" id="cncGalleryModal" aria-hidden="true">
-    <div class="cnc-gallery-modal-mask" data-close="true"></div>
-
-    <div class="cnc-gallery-modal-panel">
-      <button class="cnc-gallery-modal-close" id="cncGalleryClose" aria-label="关闭">×</button>
-
-      <button class="cnc-gallery-nav cnc-gallery-prev" id="cncGalleryPrev" aria-label="上一张">‹</button>
-
-      <figure class="cnc-gallery-preview">
-        <img id="cncGalleryPreviewImg" src="" alt="">
-        <figcaption>
-          <h3 id="cncGalleryPreviewTitle"></h3>
-          <p id="cncGalleryPreviewDesc"></p>
-          <span id="cncGalleryPreviewIndex"></span>
-        </figcaption>
-      </figure>
-
-      <button class="cnc-gallery-nav cnc-gallery-next" id="cncGalleryNext" aria-label="下一张">›</button>
-    </div>
-  </div>
 </body>
 </html>

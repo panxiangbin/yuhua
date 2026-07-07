@@ -24,25 +24,28 @@ window.CNC_STUDY_ENTRY_RULES = {
       stage: 1,
       level: 1,
       cardTitle: '认识零件的身份证',
+      id: 'drawing-symbol',
       keywords: ['图纸', '零件图', '工程图', '尺寸标注', '符号识别']
     },
     {
       stage: 1,
       level: 2,
       cardTitle: '机床的东南西北',
+      id: 'learn-coordinate-system',
       keywords: ['坐标系', 'X轴', 'Y轴', 'Z轴', '机床坐标', '方向']
     },
     {
       stage: 1,
       level: 3,
       cardTitle: '找机床的老家',
+      id: 'fault-home-fail',
       keywords: ['回零', '参考点', '回参考点', '机床回零']
     },
     {
       stage: 1,
       level: 4,
       cardTitle: '告诉机床活儿在哪',
-      id: 'learn-coordinate-system',
+      id: 'learn-g54-g59',
       keywords: ['工件坐标系', 'G54', '对刀', '工件零点']
     },
 
@@ -51,18 +54,21 @@ window.CNC_STUDY_ENTRY_RULES = {
       stage: 2,
       level: 5,
       cardTitle: 'Z 轴对刀，保命绝招',
+      id: 'machine-tool-setting',
       keywords: ['Z轴对刀', '对刀', '试切法', '对刀仪', '安全']
     },
     {
       stage: 2,
       level: 6,
       cardTitle: '认识你的武器',
+      id: 'tool-drill-selection',
       keywords: ['刀具', '铣刀', '车刀', '钻头', '刀具材料', '刀尖圆弧']
     },
     {
       stage: 2,
       level: 7,
       cardTitle: '顺着切还是逆着切',
+      id: 'process-surface-roughness',
       keywords: ['顺铣', '逆铣', 'G41', 'G42', '刀补', '左补偿', '右补偿']
     },
 
@@ -71,25 +77,28 @@ window.CNC_STUDY_ENTRY_RULES = {
       stage: 3,
       level: 8,
       cardTitle: 'S 和 F，谁跑得快',
+      id: 'calc-vc-rpm',
       keywords: ['S转速', 'F进给', '主轴转速', '进给速度', '线速度', 'Vc']
     },
     {
       stage: 3,
       level: 9,
       cardTitle: 'G00 和 G01，快慢有别',
-      id: 'g02-g03-arc',
+      id: 'g00-g01-motion',
       keywords: ['G00', 'G01', '快速定位', '直线切削', '撞刀风险']
     },
     {
       stage: 3,
       level: 10,
       cardTitle: '致命的小数点',
+      id: 'kb-decimal-point',
       keywords: ['编程规范', '小数点', '编程错误', '数值格式']
     },
     {
       stage: 3,
       level: 11,
       cardTitle: 'G90 和 G91：算总账还是算小账',
+      id: 'learn-absolute-incremental',
       keywords: ['G90', 'G91', '绝对值', '增量值', '绝对编程', '增量编程']
     },
 
@@ -98,6 +107,7 @@ window.CNC_STUDY_ENTRY_RULES = {
       stage: 4,
       level: 12,
       cardTitle: 'G81：钻孔自动化',
+      id: 'learn-g81-g83',
       keywords: ['G81', 'G83', '固定循环', '钻孔循环', '深孔钻']
     }
   ],

@@ -24,10 +24,19 @@
     .map(normalizeGalleryItem)
     .filter(function (item) {
       return Boolean(item.src);
-    })
-    .slice(0, 20);
+    });
 
+  const PAGE_SIZE = 20;
+  let visibleCount = Math.min(PAGE_SIZE, galleryImages.length);
   let currentIndex = 0;
+
+  const loadMoreBtn = document.getElementById("cncGalleryLoadMore");
+  if (loadMoreBtn) {
+    loadMoreBtn.addEventListener("click", function () {
+      visibleCount = Math.min(visibleCount + PAGE_SIZE, galleryImages.length);
+      renderGallery();
+    });
+  }
 
   renderGallery();
 
@@ -57,7 +66,7 @@
   }
 
   function renderGallery() {
-    if (countEl) countEl.textContent = galleryImages.length;
+    if (countEl) countEl.textContent = visibleCount + " / " + galleryImages.length;
 
     if (!galleryImages.length) {
       grid.innerHTML = `
@@ -68,7 +77,12 @@
       return;
     }
 
+    if (loadMoreBtn) {
+      loadMoreBtn.style.display = visibleCount >= galleryImages.length ? "none" : "";
+    }
+
     grid.innerHTML = galleryImages
+      .slice(0, visibleCount)
       .map(function (item, index) {
         return `
           <button class="cnc-gallery-card" type="button" data-index="${index}" aria-label="查看图片：${escapeHtml(item.title)}">
