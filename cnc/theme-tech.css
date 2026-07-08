@@ -1,4 +1,4 @@
-/* ============================================================
+﻿/* ============================================================
    theme-tech.css — Google Material Design 风格主题
    设计语言：纯白底 × Google蓝 × 四色点缀 × 大圆角 × 柔和阴影
    加载顺序：必须在 styles.css / styles-enhanced.css 之后
@@ -822,19 +822,37 @@ code {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: var(--card);
-    border: 2px solid #e8eaed;
-    border-radius: 14px;
-    padding: 16px 8px;
+    justify-content: center;
+    aspect-ratio: 1;
+    border: none;
+    border-radius: 16px;
+    padding: 12px 8px;
     cursor: pointer;
-    transition: border-color 0.15s, background 0.15s;
+    transition: transform 0.15s, box-shadow 0.15s;
     text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   }
   .calc-icon-card:hover,
   .calc-icon-card:focus {
-    border-color: var(--accent);
-    background: #e8f0fe;
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.18);
   }
+  .calc-icon-card:active {
+    transform: scale(0.95);
+  }
+  /* 6 calculators, 6 different colors */
+  .calc-icon-card:nth-child(1) { background: linear-gradient(135deg, #1a73e8, #4285f4); }
+  .calc-icon-card:nth-child(2) { background: linear-gradient(135deg, #1e8e3e, #34a853); }
+  .calc-icon-card:nth-child(3) { background: linear-gradient(135deg, #f9ab00, #fbbc04); }
+  .calc-icon-card:nth-child(4) { background: linear-gradient(135deg, #d93025, #ea4335); }
+  .calc-icon-card:nth-child(5) { background: linear-gradient(135deg, #8e24aa, #ab47bc); }
+  .calc-icon-card:nth-child(6) { background: linear-gradient(135deg, #00acc1, #26c6da); }
+  .calc-icon-card:nth-child(3) .calc-icon-name,
+  .calc-icon-card:nth-child(3) .calc-icon-formula,
+  .calc-icon-card:nth-child(3) .calc-icon-emoji { color: #5f3b00; }
+  .calc-icon-card .calc-icon-name,
+  .calc-icon-card .calc-icon-formula,
+  .calc-icon-card .calc-icon-emoji { color: #ffffff; }
 
   .calc-icon-emoji {
     font-size: 32px;
@@ -1041,3 +1059,4 @@ code {
   background: #d2e3fc;
   border-color: var(--accent);
 }
+
