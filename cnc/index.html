@@ -17,7 +17,7 @@
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="stylesheet" href="./styles.css">
   <link rel="stylesheet" href="./styles-enhanced.css">
-  <link rel="stylesheet" href="./theme-tech.css">
+  <link rel="stylesheet" href="./theme-tech.css?v=20260708">
 </head>
 <body>
   <div class="gate-backdrop" id="access-gate" hidden>
@@ -111,6 +111,7 @@
       <header class="topbar">
         <div class="topbar-left">
           <button class="menu-button" id="sidebar-open" type="button" aria-label="打开目录">☰</button>
+          <button class="home-btn" id="home-btn" type="button" aria-label="返回首页" title="返回首页">&#x1F3E0;</button>
           <div>
             <p class="topbar-kicker" id="topbar-kicker">总览面板</p>
             <h2 id="topbar-title">把网页改成像软件一样用</h2>
@@ -227,6 +228,8 @@
             <button class="keyword-chip" data-jump-keyword="报警">报警</button>
             <button class="keyword-chip" data-jump-keyword="1815">1815</button>
             <button class="keyword-chip" data-jump-keyword="刀具">刀具</button>
+            <button class="keyword-chip" data-jump-keyword="SV0401">SV0401</button>
+            <button class="keyword-chip" data-jump-keyword="回零">回零</button>
           </div>
         </div>
 
@@ -578,8 +581,9 @@
           </section>
 
           <!-- 右侧：详情区 -->
-          <section class="workspace-panel detail-panel">
+          <section class="workspace-panel detail-panel" id="detail-panel">
             <div class="detail-header">
+              <button class="detail-back-btn" id="detail-back-btn" type="button">← 返回列表</button>
               <div>
                 <p class="eyebrow">DETAIL VIEW</p>
                 <h3 id="detail-title">选择左侧条目查看详情</h3>
@@ -1026,6 +1030,7 @@
   <script src="./search-runtime-debug.js"></script>
   <script src="./study-entry-rules.js"></script>
   <script src="./learning-content-data.js"></script>
+  <script src="./alarm-data.js?v=20260708"></script>
 
   <!-- 3号：JSON加载器（处理BOM） -->
   <script src="./json-loader.js"></script>
@@ -1041,7 +1046,7 @@
   <script src="./graph-importer.js"></script>
   <script src="./import-test.js"></script>
 
-  <script src="./app.js"></script>
-  <script src="./gallery-featured.js"></script>
+  <script src="./app.js?v=20260708"></script>
+  <script src="./gallery-featured.js?v=20260708"></script>
 </body>
 </html>

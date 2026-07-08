@@ -67,7 +67,7 @@ const FILTER_META = {
   cases: { label: "案例 / 实战" }
 };
 
-const QUICK_TERMS = ["G02", "G54", "1815", "回零", "对刀", "报警", "G83", "G84", "螺距"];
+const QUICK_TERMS = ["G02", "G54", "1815", "回零", "对刀", "报警", "G83", "G84", "螺距", "SV0401", "PS0001", "OT0500"];
 
 const KNOWLEDGE_SOURCES = [
   { id: "knowledge-core-01", src: "./knowledge-core-01.js", label: "核心包 01" },
@@ -337,7 +337,8 @@ function collectSources() {
     ...safeArray(window.CNC_KB_FULL_CHUNK_06),
     ...safeArray(window.CNC_KB_FULL_CHUNK_07),
     ...safeArray(window.CNC_KB_FULL_CHUNK_08),
-    ...safeArray(window.CNC_KB_README_INDEX)
+    ...safeArray(window.CNC_KB_README_INDEX),
+    ...safeArray(window.CNC_ALARM_FAQ)
   ];
 
   const map = new Map();
@@ -792,6 +793,9 @@ function navigate(view, options = {}) {
   if (dom.topbarKicker) dom.topbarKicker.textContent = meta.kicker;
   if (dom.topbarTitle) dom.topbarTitle.textContent = meta.title;
 
+  const homeBtn = document.getElementById("home-btn");
+  if (homeBtn) homeBtn.classList.toggle("visible", view !== "dashboard");
+
   document.querySelectorAll(".tree-parent, .tree-item").forEach((button) => {
     const isSameView = button.dataset.route === view;
     const sameFilter = !button.dataset.filter || button.dataset.filter === state.activeFilter;
@@ -949,13 +953,49 @@ function renderWorkspace() {
       </article>
     `;
     }).join("")
-    : `<article class="result-card"><h4>没有找到匹配项</h4><p>可以试试搜：G02、1815、回零、对刀、报警、G84、螺距。</p></article>`;
+    : `<article class="result-card result-empty-state">
+        <h4>没有找到匹配项</h4>
+        <p>换个关键词试试，或者点击下方热门搜索：</p>
+        <div class="empty-state-grid">
+          <div class="empty-state-group">
+            <span class="empty-state-label">编程基础</span>
+            <button class="empty-state-chip" data-open-search="G02">G02</button>
+            <button class="empty-state-chip" data-open-search="G54">G54</button>
+            <button class="empty-state-chip" data-open-search="G84">G84</button>
+          </div>
+          <div class="empty-state-group">
+            <span class="empty-state-label">操作技能</span>
+            <button class="empty-state-chip" data-open-search="对刀">对刀</button>
+            <button class="empty-state-chip" data-open-search="回零">回零</button>
+            <button class="empty-state-chip" data-open-search="刀具">刀具</button>
+          </div>
+          <div class="empty-state-group">
+            <span class="empty-state-label">报警排查</span>
+            <button class="empty-state-chip" data-open-search="SV0401">SV0401</button>
+            <button class="empty-state-chip" data-open-search="PS0001">PS0001</button>
+            <button class="empty-state-chip" data-open-search="报警">全部报警</button>
+          </div>
+        </div>
+      </article>`;
 
     dom.resultList.querySelectorAll("[data-open-entry]").forEach((button) => {
       button.addEventListener("click", () => {
         state.selectedId = button.dataset.openEntry;
         renderWorkspace();
         renderDetail();
+        const dp = document.getElementById("detail-panel");
+        if (dp && window.innerWidth <= 768) {
+          dp.classList.add("mobile-open");
+          dp.scrollTop = 0;
+        }
+      });
+    });
+
+    dom.resultList.querySelectorAll("[data-open-search]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        state.keyword = btn.dataset.openSearch;
+        if (dom.searchInput) dom.searchInput.value = state.keyword;
+        renderWorkspace();
       });
     });
   }
@@ -1855,9 +1895,21 @@ function bindWorkspaceEvents() {
   if (dom.favoriteToggle) {
     dom.favoriteToggle.addEventListener("click", toggleFavorite);
   }
+
+  const detailBackBtn = document.getElementById("detail-back-btn");
+  if (detailBackBtn) {
+    detailBackBtn.addEventListener("click", () => {
+      const dp = document.getElementById("detail-panel");
+      if (dp) dp.classList.remove("mobile-open");
+    });
+  }
 }
 
 function bindSidebarEvents() {
+  const homeBtn = document.getElementById("home-btn");
+  if (homeBtn) {
+    homeBtn.addEventListener("click", () => navigate("dashboard"));
+  }
   if (dom.sidebarOpen) {
     dom.sidebarOpen.addEventListener("click", openSidebar);
   }

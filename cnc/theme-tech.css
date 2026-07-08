@@ -145,6 +145,27 @@ select:focus {
   background: rgba(95, 99, 104, 0.08);
 }
 
+.home-btn {
+  display: none;
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  padding: 6px;
+  margin-left: -4px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.home-btn:hover {
+  background: rgba(26, 115, 232, 0.1);
+}
+.home-btn.visible {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .status-pill {
   background: #e8f0fe;
   color: var(--accent);
@@ -252,8 +273,8 @@ pre {
 
 /* ---------- 7. 启动台英雄区（Google风格卡片） ---------- */
 .launchpad-hero {
-  background: #ffffff;
-  border: 1px solid #e8eaed;
+  background: linear-gradient(135deg, #f0f4ff 0%, #ffffff 60%, #e8f0fe 100%);
+  border: 1px solid #d2e3fc;
   border-radius: 16px;
   box-shadow: var(--shadow);
 }
@@ -274,7 +295,7 @@ pre {
 
 .launchpad-card {
   background: var(--card-strong);
-  border: 1px solid #e8eaed;
+  border: 2.5px solid #e8eaed;
   border-radius: 12px;
   padding: 20px 14px;
   cursor: pointer;
@@ -291,13 +312,25 @@ pre {
 .launchpad-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-hover);
-  border-color: #d2e3fc;
 }
+.launchpad-card:nth-child(1):hover { background: #fce8e6; }
+.launchpad-card:nth-child(2):hover { background: #e8f0fe; }
+.launchpad-card:nth-child(3):hover { background: #fef7e0; }
+.launchpad-card:nth-child(4):hover { background: #e6f4ea; }
+.launchpad-card:nth-child(5):hover { background: #f3e8fd; }
+.launchpad-card:nth-child(6):hover { background: #fef0e6; }
 
 .launchpad-card.primary {
   background: #e8f0fe;
-  border-color: #d2e3fc;
+  border-color: #1a73e8;
 }
+
+.launchpad-card:nth-child(1) { border-color: #ea4335; }
+.launchpad-card:nth-child(2) { border-color: #1a73e8; }
+.launchpad-card:nth-child(3) { border-color: #f9ab00; }
+.launchpad-card:nth-child(4) { border-color: #1e8e3e; }
+.launchpad-card:nth-child(5) { border-color: #a142f4; }
+.launchpad-card:nth-child(6) { border-color: #e8710a; }
 
 .launchpad-card-icon {
   font-size: 28px;
@@ -645,10 +678,30 @@ code {
   font-size: 11px;
 }
 
+.stat-item {
+  background: var(--bg-soft);
+  border-radius: 12px;
+  padding: 12px 16px;
+  text-align: center;
+  border: 1px solid #e8eaed;
+}
+
 .stat-item strong {
   color: var(--accent);
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 28px;
+  display: block;
 }
+
+.stat-item span {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.stat-item:nth-child(1) strong { color: #1a73e8; }
+.stat-item:nth-child(2) strong { color: #1e8e3e; }
+.stat-item:nth-child(3) strong { color: #e8710a; }
 
 .calc-result {
   background: #e8f0fe;
@@ -871,4 +924,120 @@ code {
     width: 72px !important;
     padding: 0 !important;
   }
+}
+
+/* ---------- 18. 移动端详情面板：全屏覆盖 ---------- */
+
+.detail-back-btn {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .detail-panel {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 30;
+    background: var(--bg);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px;
+    padding-top: 0;
+  }
+
+  .detail-panel.mobile-open {
+    display: block;
+  }
+
+  .detail-back-btn {
+    display: inline-flex;
+    align-items: center;
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 14px 0;
+    margin-bottom: 4px;
+  }
+
+  .detail-header {
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 2;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  .search-toolbar {
+    grid-template-columns: 1fr !important;
+  }
+
+  .topbar-left h2 {
+    font-size: 18px !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 220px;
+  }
+}
+
+/* ---------- 19. 搜索无结果引导 ---------- */
+
+.result-empty-state {
+  text-align: center;
+  padding: 24px 16px;
+}
+
+.result-empty-state h4 {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.result-empty-state p {
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+.empty-state-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+.empty-state-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.empty-state-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-right: 2px;
+}
+
+.empty-state-chip {
+  background: #e8f0fe;
+  color: var(--accent);
+  border: 1px solid #d2e3fc;
+  border-radius: 16px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.empty-state-chip:hover {
+  background: #d2e3fc;
+  border-color: var(--accent);
 }
