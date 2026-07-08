@@ -338,7 +338,9 @@ function collectSources() {
     ...safeArray(window.CNC_KB_FULL_CHUNK_07),
     ...safeArray(window.CNC_KB_FULL_CHUNK_08),
     ...safeArray(window.CNC_KB_README_INDEX),
-    ...safeArray(window.CNC_ALARM_FAQ)
+    ...safeArray(window.CNC_ALARM_FAQ),
+    ...safeArray(window.CNC_WEAK_CATEGORY),
+    ...safeArray(window.CNC_GM_CODES)
   ];
 
   const map = new Map();
@@ -1543,6 +1545,8 @@ function renderAll() {
   renderAccessCenter();
   initRuntimeLayers();
   initSearchEngine();
+  var ls = document.getElementById('loading-screen');
+  if (ls) ls.style.display = 'none';
 }
 
 function initRuntimeLayers() {
@@ -1591,105 +1595,355 @@ function initSearchEngine() {
   }
 }
 
-function formatNumber(value, digits = 2) {
-  return Number(value).toFixed(digits).replace(/\.?0+$/, "");
-}
-
-function calculateRpm() {
-  const vc = Number(document.querySelector("#vc-input").value);
-  const diameter = Number(document.querySelector("#diameter-input").value);
-  document.querySelector("#rpm-result").textContent = vc > 0 && diameter > 0
-    ? `建议转速约 ${formatNumber((1000 * vc) / (Math.PI * diameter), 0)} rpm`
-    : "请输入有效线速度和直径。";
-}
-
-function calculateVc() {
-  const rpm = Number(document.querySelector("#rpm-back-input").value);
-  const diameter = Number(document.querySelector("#diameter-back-input").value);
-  document.querySelector("#vc-result").textContent = rpm > 0 && diameter > 0
-    ? `线速度约 ${formatNumber((Math.PI * diameter * rpm) / 1000)} m/min`
-    : "请输入有效转速和直径。";
-}
-
-function calculateFeed() {
-  const feedPerRev = Number(document.querySelector("#feed-per-rev-input").value);
-  const rpm = Number(document.querySelector("#feed-rpm-input").value);
-  document.querySelector("#feed-result").textContent = feedPerRev > 0 && rpm > 0
-    ? `每分钟进给约 ${formatNumber(feedPerRev * rpm, 3)} mm/min`
-    : "请输入有效每转进给和转速。";
-}
-
-function calculatePitch() {
-  const tpi = Number(document.querySelector("#tpi-input").value);
-  document.querySelector("#pitch-result").textContent = tpi > 0
-    ? `对应螺距约 ${formatNumber(25.4 / tpi, 3)} mm`
-    : "请输入有效 TPI。";
-}
-
-function calculateDiameter() {
-  const radius = Number(document.querySelector("#radius-input").value);
-  document.querySelector("#diameter-result").textContent = radius > 0
-    ? `对应直径约 ${formatNumber(radius * 2)} mm`
-    : "请输入有效半径。";
-}
-
-function calculateFz() {
-  const fz = Number(document.querySelector("#fz-input").value);
-  const z = Number(document.querySelector("#fz-flutes-input").value);
-  const n = Number(document.querySelector("#fz-rpm-input").value);
-  document.querySelector("#fz-result").textContent = fz > 0 && z > 0 && n > 0
-    ? `每分钟进给约 ${formatNumber(fz * z * n, 1)} mm/min`
-    : "请输入有效的每齿进给、刃数和转速。";
-}
-
-function openMobileCalc(calcId) {
-  const grid = document.getElementById("calculator-grid");
-  const mobileGrid = document.getElementById("calc-mobile-grid");
-  if (!grid || !mobileGrid) return;
-  grid.querySelectorAll(".calc-card").forEach(c => c.classList.remove("calc-active"));
-  const target = grid.querySelector('[data-calc-id="' + calcId + '"]');
-  if (target) target.classList.add("calc-active");
-  grid.classList.add("calc-detail-open");
-  mobileGrid.classList.add("calc-grid-hidden");
-}
-
-function closeMobileCalc() {
-  const grid = document.getElementById("calculator-grid");
-  const mobileGrid = document.getElementById("calc-mobile-grid");
-  if (!grid || !mobileGrid) return;
-  grid.classList.remove("calc-detail-open");
-  grid.querySelectorAll(".calc-card").forEach(c => c.classList.remove("calc-active"));
-  mobileGrid.classList.remove("calc-grid-hidden");
+function toNum(v) {
+  var n = parseFloat(v);
+  return isNaN(n) ? null : n;
 }
 
 function bindCalculators() {
-  document.querySelectorAll("[data-calc]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const type = button.dataset.calc;
-      if (type === "rpm") calculateRpm();
-      if (type === "vc") calculateVc();
-      if (type === "feed") calculateFeed();
-      if (type === "pitch") calculatePitch();
-      if (type === "diameter") calculateDiameter();
-      if (type === "fz") calculateFz();
+  var cards = document.querySelectorAll("#view-calculator .calc-card");
+
+  cards.forEach(function (card) {
+    var body = card.querySelector(".calc-card-body");
+    var header = card.querySelector(".calc-card-header");
+    body.classList.add("hidden");
+    header.classList.add("collapsed");
+    card.classList.add("calc-collapsed");
+  });
+
+  cards.forEach(function (card) {
+    var header = card.querySelector(".calc-card-header");
+    header.addEventListener("click", function (e) {
+      if (e.target.closest(".calc-btn")) return;
+      var body = card.querySelector(".calc-card-body");
+      var isAlreadyOpen = !body.classList.contains("hidden");
+      cards.forEach(function (other) {
+        var ob = other.querySelector(".calc-card-body");
+        var oh = other.querySelector(".calc-card-header");
+        if (other !== card) {
+          ob.classList.add("hidden");
+          ob.classList.remove("open");
+          oh.classList.add("collapsed");
+          other.classList.add("calc-collapsed");
+        }
+      });
+      if (isAlreadyOpen) {
+        body.classList.add("hidden");
+        body.classList.remove("open");
+        header.classList.add("collapsed");
+        card.classList.add("calc-collapsed");
+      } else {
+        body.classList.remove("hidden");
+        body.classList.add("open");
+        header.classList.remove("collapsed");
+        card.classList.remove("calc-collapsed");
+      }
     });
   });
 
-  document.querySelectorAll("[data-calc-target]").forEach((card) => {
-    card.addEventListener("click", () => openMobileCalc(card.dataset.calcTarget));
+  document.querySelectorAll("#view-calculator .calc-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var card = this.closest(".calc-card");
+      var calcId = card.dataset.calc;
+      var inputs = card.querySelectorAll(".calc-input");
+      var resultEl = card.querySelector(".calc-result");
+      var a = toNum(inputs[0] ? inputs[0].value : null);
+      var b = toNum(inputs[1] ? inputs[1].value : null);
+      var c = toNum(inputs[2] ? inputs[2].value : null);
+      var val, unit;
+
+      switch (calcId) {
+        case "calc1":
+          if (a === null || b === null || b <= 0) { resultEl.textContent = "请输入正确的正数参数"; return; }
+          val = Math.round((1000 * a) / (Math.PI * b));
+          unit = "rpm";
+          break;
+        case "calc2":
+          if (a === null || b === null || b <= 0) { resultEl.textContent = "请输入正确的正数参数"; return; }
+          val = (Math.PI * b * a) / 1000;
+          unit = "m/min";
+          break;
+        case "calc3":
+          if (a === null || b === null || c === null || b <= 0) { resultEl.textContent = "请输入正确的正数参数"; return; }
+          val = Math.round(a * b * c);
+          unit = "mm/min";
+          break;
+        case "calc4":
+          if (a === null || b === null) { resultEl.textContent = "请输入正确的正数参数"; return; }
+          val = Math.round(a * b);
+          unit = "mm/min";
+          break;
+        case "calc5":
+          if (a === null || a <= 0) { resultEl.textContent = "请输入正确的正数参数"; return; }
+          val = (25.4 / a).toFixed(3);
+          unit = "mm";
+          break;
+        case "calc6":
+          if (a === null || a < 0) { resultEl.textContent = "请输入正确的正数参数"; return; }
+          val = (2 * a).toFixed(1);
+          unit = "mm";
+          break;
+        default:
+          resultEl.textContent = "未知计算器";
+          return;
+      }
+
+      resultEl.textContent = val + " " + unit;
+    });
+  });
+}
+
+// ===== 3-in-1 Tool: Data Constants =====
+var MATERIAL_RULES = {
+  aluminum: { name: "铝合金", hardnessRange: "HB 50–120", carbide: { vc: [200, 400], fzBase: 0.05 }, coated: { vc: [250, 500], fzBase: 0.06 }, hss: { vc: [80, 150], fzBase: 0.04 }, insert: { vc: [300, 600], fzBase: 0.08 }, al_tool: { vc: [350, 700], fzBase: 0.08 }, ball: { vc: [150, 300], fzBase: 0.04 }, drill_bit: { vc: [60, 120], fzBase: 0.03 }, tap_tool: { vc: [8, 20], fzBase: 0.02 } },
+  steel_45: { name: "45钢", hardnessRange: "HB 160–220", carbide: { vc: [120, 200], fzBase: 0.04 }, coated: { vc: [150, 250], fzBase: 0.05 }, hss: { vc: [22, 35], fzBase: 0.025 }, insert: { vc: [140, 220], fzBase: 0.06 }, al_tool: { vc: [80, 140], fzBase: 0.03 }, ball: { vc: [80, 140], fzBase: 0.03 }, drill_bit: { vc: [18, 35], fzBase: 0.02 }, tap_tool: { vc: [5, 10], fzBase: 0.01 } },
+  steel_40cr: { name: "40Cr", hardnessRange: "HB 200–280", carbide: { vc: [100, 180], fzBase: 0.035 }, coated: { vc: [120, 220], fzBase: 0.045 }, hss: { vc: [18, 30], fzBase: 0.02 }, insert: { vc: [120, 200], fzBase: 0.05 }, al_tool: { vc: [70, 120], fzBase: 0.025 }, ball: { vc: [70, 120], fzBase: 0.025 }, drill_bit: { vc: [15, 28], fzBase: 0.015 }, tap_tool: { vc: [4, 8], fzBase: 0.008 } },
+  steel_42crmo: { name: "42CrMo", hardnessRange: "HB 280–350", carbide: { vc: [80, 150], fzBase: 0.03 }, coated: { vc: [100, 180], fzBase: 0.04 }, hss: { vc: [14, 25], fzBase: 0.018 }, insert: { vc: [100, 170], fzBase: 0.045 }, al_tool: { vc: [55, 100], fzBase: 0.02 }, ball: { vc: [55, 100], fzBase: 0.02 }, drill_bit: { vc: [12, 22], fzBase: 0.012 }, tap_tool: { vc: [3, 6], fzBase: 0.006 } },
+  die_steel: { name: "模具钢", hardnessRange: "HRC 30–52", carbide: { vc: [50, 120], fzBase: 0.025 }, coated: { vc: [70, 160], fzBase: 0.035 }, hss: { vc: [10, 18], fzBase: 0.015 }, insert: { vc: [60, 140], fzBase: 0.04 }, al_tool: { vc: [35, 70], fzBase: 0.015 }, ball: { vc: [40, 80], fzBase: 0.02 }, drill_bit: { vc: [8, 15], fzBase: 0.01 }, tap_tool: { vc: [2, 5], fzBase: 0.005 } },
+  stainless: { name: "不锈钢", hardnessRange: "HB 180–280", carbide: { vc: [60, 120], fzBase: 0.03 }, coated: { vc: [80, 160], fzBase: 0.04 }, hss: { vc: [12, 22], fzBase: 0.018 }, insert: { vc: [80, 150], fzBase: 0.045 }, al_tool: { vc: [40, 80], fzBase: 0.02 }, ball: { vc: [40, 80], fzBase: 0.02 }, drill_bit: { vc: [8, 18], fzBase: 0.012 }, tap_tool: { vc: [3, 6], fzBase: 0.005 } },
+  cast_iron: { name: "铸铁", hardnessRange: "HB 150–250", carbide: { vc: [100, 200], fzBase: 0.04 }, coated: { vc: [120, 250], fzBase: 0.055 }, hss: { vc: [18, 30], fzBase: 0.025 }, insert: { vc: [120, 220], fzBase: 0.06 }, al_tool: { vc: [60, 120], fzBase: 0.03 }, ball: { vc: [60, 120], fzBase: 0.03 }, drill_bit: { vc: [15, 28], fzBase: 0.02 }, tap_tool: { vc: [4, 8], fzBase: 0.008 } },
+  copper: { name: "铜", hardnessRange: "HB 40–80", carbide: { vc: [200, 400], fzBase: 0.06 }, coated: { vc: [250, 500], fzBase: 0.07 }, hss: { vc: [60, 120], fzBase: 0.04 }, insert: { vc: [250, 450], fzBase: 0.08 }, al_tool: { vc: [300, 550], fzBase: 0.07 }, ball: { vc: [150, 300], fzBase: 0.05 }, drill_bit: { vc: [40, 80], fzBase: 0.03 }, tap_tool: { vc: [6, 12], fzBase: 0.015 } },
+  titanium: { name: "钛合金", hardnessRange: "HRC 30–40", carbide: { vc: [30, 60], fzBase: 0.02 }, coated: { vc: [40, 80], fzBase: 0.025 }, hss: { vc: [8, 15], fzBase: 0.012 }, insert: { vc: [35, 65], fzBase: 0.03 }, al_tool: { vc: [20, 40], fzBase: 0.015 }, ball: { vc: [20, 45], fzBase: 0.015 }, drill_bit: { vc: [6, 12], fzBase: 0.008 }, tap_tool: { vc: [2, 4], fzBase: 0.003 } },
+  custom: { name: "自定义", hardnessRange: "—", carbide: { vc: [80, 150], fzBase: 0.035 }, coated: { vc: [100, 200], fzBase: 0.045 }, hss: { vc: [15, 25], fzBase: 0.02 }, insert: { vc: [100, 180], fzBase: 0.05 }, al_tool: { vc: [60, 120], fzBase: 0.025 }, ball: { vc: [50, 100], fzBase: 0.02 }, drill_bit: { vc: [10, 20], fzBase: 0.015 }, tap_tool: { vc: [3, 6], fzBase: 0.006 } }
+};
+
+var TOOL_NAMES = { carbide: "钨钢铣刀", coated: "涂层刀", hss: "高速钢刀具", insert: "机夹刀片", al_tool: "铝用刀", ball: "球刀", drill_bit: "钻头", tap_tool: "丝锥" };
+
+var PROCESS_ADJUST = { face: 1.0, side: 0.85, slot: 0.70, drill: 0.50, tap: 0.30, finish: 1.10, rough: 0.70 };
+
+var RIGIDITY_ADJUST = { good: 1.0, normal: 0.85, poor: 0.65 };
+
+var CLAMP_ADJUST = { stable: 1.0, overhang: 0.80, slender: 0.65, chatter: 0.50 };
+
+function fmtNum(n, decimals) {
+  if (decimals === undefined) decimals = n >= 100 ? 0 : n >= 10 ? 1 : 2;
+  return n.toFixed(decimals);
+}
+
+function fmtRange(min, max, unit) {
+  return fmtNum(min) + " – " + fmtNum(max) + " " + unit;
+}
+
+function clamp(val, min, max) {
+  return Math.min(Math.max(val, min), max);
+}
+
+function getMaterialRule(mat, tool) {
+  var matData = MATERIAL_RULES[mat];
+  if (!matData) return null;
+  var toolData = matData[tool];
+  if (!toolData) return null;
+  return { matData: matData, toolData: toolData };
+}
+
+function applyHardnessAdjust(mat, hType, hValue, baseVc) {
+  if (hType === "unknown" || hValue === null) return { vcMin: baseVc[0], vcMax: baseVc[1] };
+  var rangeMap = { aluminum: 85, steel_45: 190, steel_40cr: 240, steel_42crmo: 315, die_steel: 40, stainless: 230, cast_iron: 200, copper: 60, titanium: 35, custom: 200 };
+  var typical = rangeMap[mat] || 200;
+  var ratio;
+  if (hType === "hrc") {
+    ratio = Math.pow(0.85, (hValue - typical) / 5);
+  } else {
+    ratio = Math.pow(0.88, (hValue - typical) / 50);
+  }
+  ratio = clamp(ratio, 0.3, 1.5);
+  return { vcMin: baseVc[0] * ratio, vcMax: baseVc[1] * ratio };
+}
+
+function getFzBase(toolData, dia, mat) {
+  var base = toolData.fzBase;
+  if (dia && dia > 0) {
+    base = base * Math.pow(dia / 10, 0.3);
+  }
+  var matFactor = { titanium: 0.75, stainless: 0.85, die_steel: 0.85 };
+  var mf = matFactor[mat];
+  if (mf) base *= mf;
+  return base;
+}
+
+function getToolDirection(mat, process) {
+  if (process === "finish") return "climb";
+  if (process === "rough") return "conventional";
+  if (mat === "cast_iron" && process !== "finish") return "conventional";
+  if (mat === "aluminum" || mat === "copper") return "climb";
+  if (process === "drill" || process === "tap") return "—";
+  return "climb";
+}
+
+function getRiskLevel(mat, process, rigidity, clampVal, tool, hardness) {
+  var score = 0;
+  var matRisk = { titanium: 3, stainless: 2, die_steel: 2, steel_42crmo: 1 };
+  if (matRisk[mat]) score += matRisk[mat];
+  var processRisk = { tap: 3, slot: 2, drill: 1, rough: 1, side: 1 };
+  if (processRisk[process]) score += processRisk[process];
+  if (rigidity === "poor") score += 2;
+  else if (rigidity === "normal") score += 1;
+  var clampRisk = { chatter: 3, slender: 2, overhang: 1 };
+  if (clampRisk[clampVal]) score += clampRisk[clampVal];
+  if (hardness !== null) {
+    if (hardness > 350) score += 2;
+    else if (hardness > 280) score += 1;
+  }
+  if (score >= 7) return "high";
+  if (score >= 4) return "mid";
+  return "low";
+}
+
+var RISK_LABELS = { low: { text: "低风险", cls: "risk-low" }, mid: { text: "中风险", cls: "risk-mid" }, high: { text: "高风险", cls: "risk-high" } };
+
+var RISK_WARNINGS = {
+  low: "当前条件风险不高，可以按推荐范围的中低值试切。仍需观察声音、铁屑、刀具磨损和工件表面。",
+  mid: "当前条件有一定风险，建议先从推荐范围的低值开始试切，重点观察震刀、崩刃、发热和尺寸稳定性。",
+  high: "当前条件风险较高，不建议直接按高参数加工。请优先确认刀具牌号、装夹刚性、切深切宽、冷却方式，并从保守参数小余量试切。"
+};
+
+function generateToolRecommendation() {
+  var mat = document.getElementById("tool-material").value;
+  var hType = document.getElementById("tool-hardness_type").value;
+  var hVal = toNum(document.getElementById("tool-hardness_value").value);
+  var process = document.getElementById("tool-process").value;
+  var tool = document.getElementById("tool-tool").value;
+  var dia = toNum(document.getElementById("tool-tool_dia").value);
+  var teeth = toNum(document.getElementById("tool-tool_teeth").value);
+  var rigidity = document.getElementById("tool-rigidity").value;
+  var clampVal = document.getElementById("tool-clamp").value;
+  if (!dia || dia <= 0) { showToolResult("error", "请输入有效的刀具直径（正数）"); return; }
+  if (!teeth || teeth <= 0) { showToolResult("error", "请输入有效的刀具刃数（正整数）"); return; }
+  var rule = getMaterialRule(mat, tool);
+  if (!rule) { showToolResult("error", "该材料与刀具组合暂不支持，请选择其他组合"); return; }
+  var baseVc = rule.toolData.vc;
+  var adjVc = applyHardnessAdjust(mat, hType, hVal, baseVc);
+  var procFactor = PROCESS_ADJUST[process] || 1.0;
+  var vcMin = adjVc.vcMin * procFactor;
+  var vcMax = adjVc.vcMax * procFactor;
+  var rigFactor = RIGIDITY_ADJUST[rigidity] || 1.0;
+  vcMin *= rigFactor;
+  vcMax *= rigFactor;
+  var clampFactor = CLAMP_ADJUST[clampVal] || 1.0;
+  vcMin *= clampFactor;
+  vcMax *= clampFactor;
+  var sMin = Math.round((1000 * vcMin) / (Math.PI * dia));
+  var sMax = Math.round((1000 * vcMax) / (Math.PI * dia));
+  var fzBase = getFzBase(rule.toolData, dia, mat);
+  var fzFactor = clamp(procFactor * rigFactor * clampFactor, 0.3, 1.2);
+  var fzMin = fzBase * fzFactor * 0.6;
+  var fzMax = fzBase * fzFactor * 1.2;
+  var fMin = Math.round(sMin * teeth * fzMin);
+  var fMax = Math.round(sMax * teeth * fzMax);
+  var risk = getRiskLevel(mat, process, rigidity, clampVal, tool, hVal);
+  var riskInfo = RISK_LABELS[risk];
+  var riskWarning = RISK_WARNINGS[risk];
+  var dir = getToolDirection(mat, process);
+  var dirLabels = { climb: { text: "推荐顺铣", cls: "dir-climb" }, conventional: { text: "推荐逆铣", cls: "dir-conventional" }, "—": { text: "—", cls: "" } };
+  var dirInfo = dirLabels[dir] || { text: "—", cls: "" };
+  var adjTips = [];
+  if (rigFactor < 0.9) adjTips.push("机床刚性偏低，建议降低切深和切宽");
+  if (clampFactor < 0.8) adjTips.push("装夹条件受限，建议增加支撑或减少悬伸");
+  if (mat === "titanium" || mat === "stainless") adjTips.push("难加工材料，务必确保充分冷却");
+  if (process === "slot") adjTips.push("槽铣排屑困难，建议使用啄铣或螺旋下刀");
+  if (hVal !== null && hVal > 280) adjTips.push("材料硬度偏高，建议使用耐磨涂层刀具");
+  if (risk === "high") adjTips.push("⚠ 高风险加工，强烈建议先试切确认再批量加工");
+  if (adjTips.length === 0) adjTips.push("当前条件较理想，按推荐参数试切即可");
+  var matName = MATERIAL_RULES[mat].name;
+  var toolName = TOOL_NAMES[tool] || tool;
+  var html = '<div class="result-header fade-in" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;"><h3 style="font-size:1.05rem;font-weight:700;color:#202124;">📊 推荐结果</h3><span class="risk-badge ' + riskInfo.cls + '" style="padding:3px 14px;border-radius:999px;font-weight:700;font-size:0.82rem;">' + riskInfo.text + '</span></div><div class="tool-dir-card fade-in" style="background:#ECFDF5;border-radius:12px;padding:14px 16px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;border:1px solid #A7F3D0;"><span style="font-size:0.85rem;color:#64748B;">推荐刀具方向</span><span style="font-size:0.9rem;font-weight:700;color:#0F766E;padding:4px 14px;border-radius:999px;background:#CCFBF1;">' + dirInfo.text + '</span></div><div style="font-size:0.82rem;color:#64748B;margin-bottom:12px;text-align:center;">' + matName + ' · ' + toolName + '</div><div class="result-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">' +
+    '<div class="result-data-card" style="background:#F1F7FF;border-radius:12px;padding:14px;border:1px solid #DBEAFE;"><div style="font-size:0.78rem;color:#64748B;font-weight:500;margin-bottom:4px;">⚡ 推荐线速度 Vc</div><div style="font-size:1.1rem;font-weight:800;color:#0F172A;">' + fmtRange(vcMin, vcMax, "") + '</div><span style="font-size:0.75rem;font-weight:400;color:#94A3B8;margin-left:2px;">m/min</span></div>' +
+    '<div class="result-data-card" style="background:#F1F7FF;border-radius:12px;padding:14px;border:1px solid #DBEAFE;"><div style="font-size:0.78rem;color:#64748B;font-weight:500;margin-bottom:4px;">🔄 推荐主轴转速 S</div><div style="font-size:1.1rem;font-weight:800;color:#0F172A;">' + fmtRange(sMin, sMax, "") + '</div><span style="font-size:0.75rem;font-weight:400;color:#94A3B8;margin-left:2px;">rpm</span></div>' +
+    '<div class="result-data-card" style="background:#F1F7FF;border-radius:12px;padding:14px;border:1px solid #DBEAFE;"><div style="font-size:0.78rem;color:#64748B;font-weight:500;margin-bottom:4px;">⚙️ 推荐每齿进给 Fz</div><div style="font-size:1.1rem;font-weight:800;color:#0F172A;">' + fmtRange(fzMin, fzMax, "") + '</div><span style="font-size:0.75rem;font-weight:400;color:#94A3B8;margin-left:2px;">mm/tooth</span></div>' +
+    '<div class="result-data-card" style="background:#F1F7FF;border-radius:12px;padding:14px;border:1px solid #DBEAFE;"><div style="font-size:0.78rem;color:#64748B;font-weight:500;margin-bottom:4px;">📈 推荐每分钟进给 F</div><div style="font-size:1.1rem;font-weight:800;color:#0F172A;">' + fmtRange(fMin, fMax, "") + '</div><span style="font-size:0.75rem;font-weight:400;color:#94A3B8;margin-left:2px;">mm/min</span></div>' +
+  '</div>';
+  var riskBg = risk === "low" ? "#ECFDF5" : risk === "mid" ? "#FFF7ED" : "#FEF2F2";
+  var riskBorder = risk === "low" ? "#16A34A" : risk === "mid" ? "#F97316" : "#DC2626";
+  html += '<div class="risk-card" style="border-radius:12px;padding:16px;margin-bottom:16px;border-left:4px solid ' + riskBorder + ';background:' + riskBg + ';"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><span style="font-size:0.85rem;font-weight:600;">⚠ 风险提醒</span><span class="risk-badge ' + riskInfo.cls + '" style="padding:3px 14px;border-radius:999px;font-weight:700;font-size:0.82rem;">' + riskInfo.text + '</span></div><div style="font-size:0.82rem;color:#64748B;line-height:1.6;">' + riskWarning + '</div></div>';
+  var tipHtml = adjTips.map(function(t) { return '<li style="font-size:0.83rem;color:#78350F;line-height:1.7;padding:3px 0 3px 18px;position:relative;">' + t + '</li>'; }).join("");
+  html += '<div class="tips-card" style="background:#FFFBEB;border-radius:12px;padding:16px;margin-bottom:16px;border:1px solid #FDE68A;"><div style="font-size:0.9rem;font-weight:700;margin-bottom:8px;color:#92400E;">💡 老师傅调整建议</div><ul style="list-style:none;padding:0;margin:0;">' + tipHtml + '</ul></div>';
+  document.getElementById("tool-resultArea").innerHTML = html;
+}
+
+function showToolResult(type, msg) {
+  var cls = type === "error" ? "color:#DC2626;font-size:0.9rem;" : "color:#0F766E;font-size:0.9rem;";
+  document.getElementById("tool-resultArea").innerHTML = '<div class="risk-card high fade-in" style="text-align:center;border-radius:12px;padding:16px;border-left:4px solid #DC2626;background:#FEF2F2;"><div style="' + cls + 'font-weight:500;margin-top:8px;">' + msg + '</div></div>';
+}
+
+function setupToolTabs() {
+  document.querySelectorAll(".tool-tab-btn").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      var tabId = this.dataset.toolTab;
+      document.querySelectorAll(".tool-tab-btn").forEach(function(b) {
+        b.classList.remove("active");
+        b.setAttribute("aria-selected", "false");
+      });
+      this.classList.add("active");
+      this.setAttribute("aria-selected", "true");
+      document.querySelectorAll(".tool-tab-panel").forEach(function(p) {
+        p.classList.remove("active");
+      });
+      document.getElementById(tabId).classList.add("active");
+    });
   });
 
-  document.querySelectorAll(".calc-back-btn").forEach((btn) => {
-    btn.addEventListener("click", () => closeMobileCalc());
+  document.getElementById("tool-btnGenerate").addEventListener("click", generateToolRecommendation);
+
+  document.getElementById("tool-btnClear").addEventListener("click", function() {
+    document.querySelectorAll("#tool-tab1 select").forEach(function(s) { s.selectedIndex = 0; });
+    document.querySelectorAll("#tool-tab1 input").forEach(function(i) { i.value = ""; });
+    document.getElementById("tool-resultArea").innerHTML = "";
+    document.getElementById("tool-hardness_type").value = "hb";
   });
 
-  document.querySelectorAll(".calc-clear-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const card = btn.closest(".calc-card");
-      if (!card) return;
-      card.querySelectorAll("input").forEach(inp => { inp.value = ""; });
-      const result = card.querySelector(".calc-result");
-      if (result) result.textContent = "输入参数后点击\"计算\"";
+  document.getElementById("tool-btnExample").addEventListener("click", function() {
+    document.getElementById("tool-material").value = "steel_45";
+    document.getElementById("tool-hardness_type").value = "hb";
+    document.getElementById("tool-hardness_value").value = "220";
+    document.getElementById("tool-process").value = "side";
+    document.getElementById("tool-tool").value = "coated";
+    document.getElementById("tool-tool_dia").value = "10";
+    document.getElementById("tool-tool_teeth").value = "4";
+    document.getElementById("tool-rigidity").value = "normal";
+    document.getElementById("tool-clamp").value = "stable";
+  });
+
+  document.getElementById("tool-hardness_type").addEventListener("change", function() {
+    var valInput = document.getElementById("tool-hardness_value");
+    if (this.value === "unknown") {
+      valInput.value = "";
+      valInput.placeholder = "未知，可不填";
+    } else {
+      valInput.placeholder = "如 220";
+    }
+  });
+}
+
+var TOOL_DIAGNOSIS_DATA = [
+  { title: "老是崩刃", causes: ["进给过大或切深过大", "刀具牌号选择偏脆（硬质合金牌号过硬）", "工件材料硬度不均或含硬质点", "刀具悬伸过长导致受力偏摆", "切削刃有微裂纹或已钝化", "冷却不足导致热冲击崩刃"], checkOrder: ["检查刀具刃口状态（放大镜观察）", "确认进给率和切深是否在推荐范围内", "检查工件材料是否有硬皮、夹砂或硬度突变", "确认刀具悬伸长度（建议 ≤ 3~4倍直径）", "检查主轴跳动和刀柄精度"], advice: "崩刃通常不是单一原因。先确认刀具质量和悬伸，再看参数是否过激进。不要一崩刃就只降转速，先降进给和切深更合理。", prevention: "根据材料硬度选择合适的刀具牌号，粗加工使用韧性更好的牌号，精加工再换耐磨牌号。" },
+  { title: "加工声音发闷", causes: ["切削参数偏低（速度不够、进给不够）", "刀具已磨损（后刀面磨损带过宽）", "切深过小导致刮擦而非切削", "排屑不畅，切屑堵塞"], checkOrder: ["先听声音位置——刀具处还是工件处", "检查刀具磨损状态", "适当提高转速或进给", "检查排屑是否通畅"], advice: "发闷声通常意味着刀具在挤压而不是切削。如果参数已经在推荐范围内，优先检查刀具是否该换刃了。", prevention: "定期检查刀具磨损，记录刀具寿命。" },
+  { title: "刀具发红 / 烧刀", causes: ["转速过高导致摩擦发热过大", "进给过小导致摩擦时间过长", "冷却不足或冷却不到位", "刀具涂层已失效", "切深过大导致切削区温度过高"], checkOrder: ["检查冷却液是否对准切削区", "确认转速是否过高（核算线速度）", "检查进给是否偏低", "检查刀具涂层状态", "验证切深切宽是否合理"], advice: "烧刀先看冷却！冷却不到位的话调参数也没用。确认冷却液压力和喷嘴对准切削区。再查转速是否超了推荐范围。", prevention: "加工时注意观察铁屑颜色——发蓝发紫说明温度过高，需降转速或加冷却。" },
+  { title: "表面有震纹", causes: ["刀具悬伸过长", "工件刚性不足或装夹不稳", "主轴转速与机床产生共振", "每齿进给偏大", "刀具刃数选择不当", "刀柄动平衡不良"], checkOrder: ["减少刀具悬伸", "检查装夹稳定性（工件是否跳动）", "尝试调整转速（避开共振区间）", "降低每齿进给或使用变距刀具"], advice: "震纹优先查刚性——缩悬伸、加固装夹。如果调刚性有困难，尝试改变转速（±10%~20%）避开共振区间。", prevention: "设计工艺时优先考虑刀具悬伸、工件支撑和机床刚性匹配。" },
+  { title: "尺寸一头大一头小", causes: ["工件刚性差，加工时发生让刀", "刀具磨损不均（切入端与切出端磨损不同）", "工件装夹导致变形", "机床导轨间隙或反向间隙未补偿", "余量不均匀"], checkOrder: ["在机床上打表确认工件位置", "检查两端余量差异", "检查刀具磨损情况", "检查机床反向间隙补偿", "考虑调整走刀方向或加工顺序"], advice: "这通常是让刀或工件变形。先检查装夹方式和加工顺序，考虑从两端分别加工或增加支撑。不要只调刀补。", prevention: "细长件加工前先做应力释放，加工时增加辅助支撑。" },
+  { title: "尺寸合格但环规下不去", causes: ["单项尺寸合格，但综合形位误差超差", "工件太长，刚性差，加工时发生让刀", "两处花键或键槽同轴度不好", "齿形、齿向、倒角或毛刺影响通过", "装夹、顶尖、中心孔或支撑状态不稳定", "加工后应力释放或热处理变形", "检测方法只看单项尺寸，没有做综合通止规验"], checkOrder: ["先检查毛刺和倒角", "检查环规具体卡在哪一段", "检查两处花键或键槽的同轴度", "检查工件跳动和支撑方式", "检查齿形、齿向、跨棒距或相关综合尺寸", "复查加工顺序和装夹方式"], advice: "尺寸合格但环规不过，不要只盯单个尺寸。环规看的是综合通过性，要重点查形位误差、毛刺、同轴度和工件变形。", prevention: "加工前确认基准一致性，控制热处理变形，检测时做综合通止规校验。" },
+  { title: "孔合格但轴装不进去", causes: ["孔口毛刺或倒角不够", "孔的圆度和圆柱度超差", "孔壁粗糙度太差，实际配合过紧", "热装后冷却收缩量没算准", "轴的直线度或圆度也需复检"], checkOrder: ["检查孔口倒角和毛刺", "用内径百分表检查圆度/圆柱度", "检测粗糙度对比样块确认", "检查是否加工发热导致冷却后变形"], advice: "先看孔口倒角，很多配合问题就是差了倒角或多了毛刺。如果倒角没问题再查圆度和圆柱度。", prevention: "精加工后增加去毛刺工序，关键配合面标注圆度要求。" },
+  { title: "键槽尺寸合格但装配不顺", causes: ["键槽对称度超差", "键槽位置度偏差大", "槽底粗糙度过大", "键的尺寸未按配合公差选配", "两处键槽的同轴度不好"], checkOrder: ["检查键槽对称度", "检查键槽位置度（到基准的距离）", "检查槽底粗糙度", "实测键的宽度与槽的宽度匹配", "检查两端键槽同轴度"], advice: "键槽装配问题通常不是宽度的问题，而是对称度和位置度。建议用键槽对称度量具或打表确认。", prevention: "铣键槽时使用对刀仪或寻边器确认中心，标注对称度要求。" },
+  { title: "毛刺太大", causes: ["刀具磨损（刃口钝化）", "精加工余量偏大", "进给率偏大", "加工顺序不合理（切出方向造成毛刺）", "材料塑性大（如铝合金、铜）"], checkOrder: ["检查刀具刃口锋利度", "确认精加工余量是否合理（建议 0.2~0.5mm）", "适当降低精加工进给", "调整走刀方向——从工件内部切出而非边缘"], advice: "毛刺大先换刀或磨刃——钝刀是毛刺的头号原因。精加工用顺铣可显著减少毛刺。铝合金等软材料可以考虑使用倒角刀做去毛刺工序。", prevention: "安排专门的去毛刺工序，或使用毛刷、倒角刀一次走刀完成。" },
+  { title: "加工后尺寸不稳定", causes: ["刀具磨损快，尺寸漂移", "工件装夹不稳定（每次装夹位置有变化）", "冷却不均匀导致热变形", "加工余量不均匀", "机床热漂移（开机预热不足）", "材料内应力释放导致变形"], checkOrder: ["检查刀具磨损趋势——首件与末件对比", "确认装夹重复定位精度", "检查机床是否充分预热", "检查冷却是否稳定", "考虑增加半精加工再精加工"], advice: "尺寸不稳定先分两类：趋势性变化（刀具磨损/热漂移）还是随机性变化（装夹/材料）。趋势性变化补偿或换刀，随机性先解决装夹。", prevention: "建立首件检验和定期抽检制度，记录每件尺寸便于分析趋势。" }
+];
+
+function renderToolDiagnosis() {
+  var container = document.getElementById("tool-diagList");
+  if (!container) return;
+  container.innerHTML = TOOL_DIAGNOSIS_DATA.map(function(item, idx) {
+    return '<div class="diag-item" data-diag="' + idx + '"><span>' + (idx + 1) + '. ' + item.title + '</span><span class="arrow-icon" style="color:#64748B;font-size:1.1rem;">›</span></div><div class="diag-detail" id="tool-diagDetail' + idx + '" style="display:none;margin-top:8px;padding:16px;background:#F1F7FF;border-radius:8px;"><h4 style="font-size:0.88rem;font-weight:700;color:#202124;margin:14px 0 6px;">📌 可能原因</h4><ul style="padding-left:20px;font-size:0.85rem;color:#202124;line-height:1.8;">' + item.causes.map(function(c) { return '<li>' + c + '</li>'; }).join("") + '</ul><h4 style="font-size:0.88rem;font-weight:700;color:#202124;margin:14px 0 6px;">🔍 优先检查顺序</h4><ol style="padding-left:20px;font-size:0.85rem;color:#202124;line-height:1.8;">' + item.checkOrder.map(function(c) { return '<li>' + c + '</li>'; }).join("") + '</ol><h4 style="font-size:0.88rem;font-weight:700;color:#202124;margin:14px 0 6px;">💡 现场处理建议</h4><div class="highlight-box" style="background:#fff;border-left:3px solid #1a73e8;padding:10px 14px;border-radius:0 8px 8px 0;font-size:0.85rem;margin-top:8px;line-height:1.7;">' + item.advice + '</div><h4 style="font-size:0.88rem;font-weight:700;color:#202124;margin:14px 0 6px;">🛡 下次预防方法</h4><div class="highlight-box" style="background:rgba(15,118,110,0.06);border-left:3px solid #0F766E;padding:10px 14px;border-radius:0 8px 8px 0;font-size:0.85rem;margin-top:8px;line-height:1.7;">' + item.prevention + '</div></div>';
+  }).join("");
+
+  container.querySelectorAll(".diag-item").forEach(function(el) {
+    el.addEventListener("click", function() {
+      var idx = this.dataset.diag;
+      var detail = document.getElementById("tool-diagDetail" + idx);
+      var isOpen = detail.classList.contains("open");
+      container.querySelectorAll(".diag-detail.open").forEach(function(d) { d.classList.remove("open"); d.style.display = "none"; });
+      if (!isOpen) {
+        detail.classList.add("open");
+        detail.style.display = "block";
+      }
     });
   });
 }
@@ -2072,6 +2326,8 @@ async function bootstrap() {
   bindDetailEvents();
   bindAccessEvents();
   bindCalculators();
+  setupToolTabs();
+  renderToolDiagnosis();
   bindEnhancedUI();
 
   syncTreeState();
@@ -2079,11 +2335,6 @@ async function bootstrap() {
   renderAll();
   renderProgressLinks();
   initHashRouting();
-  calculateRpm();
-  calculateVc();
-  calculateFeed();
-  calculatePitch();
-  calculateDiameter();
   await initAccess();
   if (window.CNC_FRONTEND && window.CNC_FRONTEND.init) {
     window.CNC_FRONTEND.init().then(function () {
@@ -2165,6 +2416,41 @@ function bindEnhancedUI() {
 
   // 学习卡片交互绑定
   bindStudyCards();
+
+  // 全局键盘快捷键
+  document.addEventListener("keydown", (e) => {
+    const tag = document.activeElement?.tagName;
+    const isInput = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
+
+    // Ctrl+K / Cmd+K → 跳转工作区并聚焦搜索
+    if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+      e.preventDefault();
+      navigate("workspace");
+      if (dom.searchInput) {
+        dom.searchInput.focus();
+        dom.searchInput.select();
+      }
+      return;
+    }
+
+    if (isInput) return;
+
+    // Escape → 关闭移动端详情 / 侧边栏
+    if (e.key === "Escape") {
+      const dp = document.getElementById("detail-panel");
+      if (dp && dp.classList.contains("mobile-open")) {
+        dp.classList.remove("mobile-open");
+        return;
+      }
+      closeSidebar();
+      return;
+    }
+
+    // 工作区内：左右箭头切换条目
+    if (state.activeView === "workspace" && (e.key === "ArrowLeft" || e.key === "ArrowRight")) {
+      stepVisibleEntry(e.key === "ArrowLeft" ? -1 : 1);
+    }
+  });
 }
 
 // ============================================
@@ -2422,6 +2708,20 @@ function renderEnhancedRecommendations(entryId) {
 
   recommendationsUI.renderRecommendations('related-links', recommendations);
 }
+
+// 回到顶部按钮
+(function() {
+  var btn = document.getElementById('scroll-top-btn');
+  if (!btn) return;
+  function toggle() {
+    btn.style.display = window.scrollY > 300 ? 'flex' : 'none';
+  }
+  toggle();
+  document.addEventListener('scroll', toggle, { passive: true });
+  btn.addEventListener('click', function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+})();
 
 // 导出全局方法供其他模块使用
 window.app = {

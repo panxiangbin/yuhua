@@ -1,2 +1,3 @@
 User-agent: *
 Allow: /
+Sitemap: https://panxiangbin.github.io/yuhua/cnc/sitemap.xml

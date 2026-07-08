@@ -241,7 +241,6 @@ select:focus {
 .category-card,
 .library-browser-group,
 .library-log-item,
-.calc-card,
 .access-card,
 .share-card,
 .share-link-card,
@@ -703,14 +702,6 @@ code {
 .stat-item:nth-child(2) strong { color: #1e8e3e; }
 .stat-item:nth-child(3) strong { color: #e8710a; }
 
-.calc-result {
-  background: #e8f0fe;
-  border: 1px solid #d2e3fc;
-  color: var(--accent);
-  border-radius: 8px;
-  font-weight: 600;
-}
-
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -758,189 +749,248 @@ code {
   }
 }
 
-/* ---------- 17. 手机端计算器：图标网格 → 计算详情两步式 ---------- */
+/* ---------- 17. 6色方块手风琴计算器 ---------- */
 
-.calc-mobile-grid {
-  display: none;
+.calc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
 }
 
-.calc-back-btn {
-  display: none;
+.calc-card {
+  background: var(--card-strong);
+  border: 1px solid #e8eaed;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(60,64,67,0.08);
 }
 
-.calc-formula-box {
+.calc-card-header {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  user-select: none;
+}
+
+.calc-card-header .arrow {
+  transition: transform 0.25s;
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-left: auto;
+}
+
+.calc-card-header.collapsed .arrow { transform: rotate(-90deg); }
+
+.calc-card-body { padding: 14px; }
+.calc-card-body.hidden { display: none; }
+.calc-card-body.open {
+  display: block;
+  animation: fadeSlideDown 0.2s ease;
+}
+
+@keyframes fadeSlideDown {
+  from { opacity: 0; max-height: 0; }
+  to   { opacity: 1; max-height: 600px; }
+}
+
+.tile-icon {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.tile-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.tile-blue   { background: linear-gradient(135deg, #2563EB, #3B82F6); color: #fff; padding: 16px 14px; border-radius: 12px; }
+.tile-green  { background: linear-gradient(135deg, #16A34A, #22C55E); color: #fff; padding: 16px 14px; border-radius: 12px; }
+.tile-orange { background: linear-gradient(135deg, #EA580C, #F97316); color: #fff; padding: 16px 14px; border-radius: 12px; }
+.tile-purple { background: linear-gradient(135deg, #7C3AED, #A855F7); color: #fff; padding: 16px 14px; border-radius: 12px; }
+.tile-teal   { background: linear-gradient(135deg, #0F766E, #14B8A6); color: #fff; padding: 16px 14px; border-radius: 12px; }
+.tile-rose   { background: linear-gradient(135deg, #BE123C, #E11D48); color: #fff; padding: 16px 14px; border-radius: 12px; }
+
+.tile-blue .arrow, .tile-green .arrow, .tile-orange .arrow,
+.tile-purple .arrow, .tile-teal .arrow, .tile-rose .arrow { color: rgba(255,255,255,0.7); }
+
+.calc-card-header:hover { filter: brightness(1.1); }
+.calc-card-header:active { transform: scale(0.97); }
+
+.calc-result {
+  margin-top: 12px;
+  padding: 12px;
   background: #e8f0fe;
+  border: 1px solid #d2e3fc;
   border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 13px;
+  font-size: 1.15rem;
+  font-weight: 700;
   color: var(--accent);
-  font-weight: 500;
-  font-family: 'SF Mono', 'Consolas', monospace;
   text-align: center;
 }
 
-.calc-btn-row {
-  display: flex;
-  gap: 10px;
-}
-.calc-btn-row .primary-button {
-  flex: 1;
-}
-.calc-btn-row .calc-clear-btn {
-  flex-shrink: 0;
-  min-width: 72px;
+.calc-formula-hint {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 10px;
+  font-family: 'SF Mono', 'Consolas', monospace;
 }
 
-.calc-mobile-tip {
-  grid-column: 1 / -1;
-  background: var(--card);
-  border-radius: 12px;
-  padding: 12px 14px;
-  border: 1px solid #e8eaed;
+.calc-card-body .form-group {
+  margin-bottom: 12px;
 }
-.calc-mobile-tip strong {
+
+.calc-card-body .form-group label {
   display: block;
-  font-size: 12px;
-  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ink);
   margin-bottom: 4px;
 }
-.calc-mobile-tip span {
-  font-size: 11px;
-  color: var(--muted);
-  line-height: 1.6;
+
+.calc-card-body .form-group input {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  font-size: 0.9rem;
+  border: 1.5px solid #dadce0;
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  outline: none;
+  transition: all 0.2s;
 }
 
+.calc-card-body .form-group input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(26,115,232,0.12);
+}
+
+.calc-card-body .primary-button {
+  width: 100%;
+  height: 40px;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(26,115,232,0.25);
+  transition: all 0.2s;
+}
+
+.calc-card-body .primary-button:active {
+  transform: scale(0.97);
+}
+
+/* 移动端：2列彩色方块，点击展开独占一行 */
 @media (max-width: 768px) {
-  .calc-mobile-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-top: 16px;
+  .calc-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
   }
 
-  .calc-icon-card {
+  .calc-card.calc-collapsed {
+    aspect-ratio: 1 / 1;
+    overflow: visible;
+  }
+
+  .calc-card.calc-collapsed .calc-card-header {
+    height: 100%;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
-    aspect-ratio: 1;
-    border: none;
-    border-radius: 16px;
-    padding: 12px 8px;
-    cursor: pointer;
-    transition: transform 0.15s, box-shadow 0.15s;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 4px;
     text-align: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    cursor: pointer;
+    border-radius: 12px;
+    transition: transform 0.15s, box-shadow 0.15s;
   }
-  .calc-icon-card:hover,
-  .calc-icon-card:focus {
+
+  .calc-card.calc-collapsed .calc-card-header:hover {
     transform: scale(1.05);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.18);
-  }
-  .calc-icon-card:active {
-    transform: scale(0.95);
-  }
-  /* 6 calculators, 6 different colors */
-  .calc-icon-card:nth-child(1) { background: linear-gradient(135deg, #1a73e8, #4285f4); }
-  .calc-icon-card:nth-child(2) { background: linear-gradient(135deg, #1e8e3e, #34a853); }
-  .calc-icon-card:nth-child(3) { background: linear-gradient(135deg, #f9ab00, #fbbc04); }
-  .calc-icon-card:nth-child(4) { background: linear-gradient(135deg, #d93025, #ea4335); }
-  .calc-icon-card:nth-child(5) { background: linear-gradient(135deg, #8e24aa, #ab47bc); }
-  .calc-icon-card:nth-child(6) { background: linear-gradient(135deg, #00acc1, #26c6da); }
-  .calc-icon-card:nth-child(3) .calc-icon-name,
-  .calc-icon-card:nth-child(3) .calc-icon-formula,
-  .calc-icon-card:nth-child(3) .calc-icon-emoji { color: #5f3b00; }
-  .calc-icon-card .calc-icon-name,
-  .calc-icon-card .calc-icon-formula,
-  .calc-icon-card .calc-icon-emoji { color: #ffffff; }
-
-  .calc-icon-emoji {
-    font-size: 32px;
-    margin-bottom: 6px;
-  }
-  .calc-icon-name {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--ink);
-    line-height: 1.3;
-  }
-  .calc-icon-formula {
-    font-size: 10px;
-    color: var(--muted);
-    margin-top: 3px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
   }
 
-  .calculator-grid {
-    display: none !important;
+  .calc-card.calc-collapsed .calc-card-header:active {
+    transform: scale(0.96);
   }
 
-  .calculator-grid.calc-detail-open {
-    display: block !important;
-    margin-top: 16px;
-  }
-
-  .calculator-grid.calc-detail-open .calc-card {
+  .calc-card.calc-collapsed .calc-card-header .arrow {
     display: none;
   }
-  .calculator-grid.calc-detail-open .calc-card.calc-active {
-    display: grid;
-    gap: 12px;
-    border: 2px solid var(--accent);
-    border-radius: 14px;
+
+  .calc-card.calc-collapsed .calc-card-header .tile-icon {
+    font-size: 1.8rem;
   }
 
-  .calc-detail-open ~ .calc-mobile-grid,
-  .calc-mobile-grid.calc-grid-hidden {
-    display: none !important;
-  }
-
-  .calc-back-btn {
-    display: inline-flex;
-    align-items: center;
-    background: none;
-    border: none;
-    color: var(--accent);
-    font-size: 13px;
+  .calc-card.calc-collapsed .calc-card-header .tile-label {
+    font-size: 0.75rem;
     font-weight: 600;
-    cursor: pointer;
-    padding: 0;
-    margin-bottom: 4px;
+    line-height: 1.2;
   }
 
-  .calc-result {
-    background: #e6f4ea;
-    border: 1.5px solid #1e8e3e;
-    color: #1e8e3e;
-    border-radius: 10px;
-    padding: 12px;
-    text-align: center;
-    font-size: 16px;
-    font-weight: 700;
+  .calc-card:not(.calc-collapsed) {
+    grid-column: 1 / -1;
   }
 
-  .calc-formula-box {
-    margin-bottom: 4px;
+  .calc-card:not(.calc-collapsed) .calc-card-header {
+    padding: 12px 14px;
+    flex-direction: row;
+    border-radius: 12px 12px 0 0;
   }
 
-  .calc-btn-row .primary-button {
-    background: linear-gradient(135deg, #1a73e8, #4285f4) !important;
-    border: none !important;
-    color: #fff !important;
-    border-radius: 22px !important;
-    height: 44px;
-    font-size: 15px;
-    font-weight: 600;
-    flex: 1 1 auto !important;
-    width: auto !important;
-    min-width: 0 !important;
-    padding: 0 20px !important;
+  .calc-card:not(.calc-collapsed) .calc-card-header .arrow {
+    display: inline-block;
   }
-  .calc-btn-row .calc-clear-btn {
-    border-radius: 22px !important;
-    height: 44px;
-    flex: 0 0 72px !important;
-    width: 72px !important;
-    padding: 0 !important;
+
+  .calc-card:not(.calc-collapsed) .calc-card-header .tile-icon {
+    font-size: 1.2rem;
+  }
+
+  .calc-card:not(.calc-collapsed) .calc-card-header .tile-label {
+    font-size: 0.85rem;
+  }
+
+  .calc-card-body.open {
+    padding: 10px 14px 14px;
+  }
+
+  .calc-card-body.open .form-group {
+    margin-bottom: 10px;
+  }
+
+  .calc-card-body.open input {
+    height: 40px;
+    font-size: 0.85rem;
+  }
+
+  .calc-card-body.open .primary-button {
+    height: 38px;
+    font-size: 0.82rem;
+  }
+
+  .calc-card-body.open .calc-result {
+    margin-top: 8px;
+    padding: 10px;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .calc-grid {
+    gap: 8px;
+  }
+  .calc-card.calc-collapsed .calc-card-header .tile-icon {
+    font-size: 1.4rem;
+  }
+  .calc-card.calc-collapsed .calc-card-header .tile-label {
+    font-size: 0.65rem;
   }
 }
 
@@ -951,6 +1001,8 @@ code {
 }
 
 @media (max-width: 768px) {
+  .launchpad-hero { display: none; }
+
   .detail-panel {
     display: none;
     position: fixed;
@@ -1058,5 +1110,430 @@ code {
 .empty-state-chip:hover {
   background: #d2e3fc;
   border-color: var(--accent);
+}
+
+/* ============================================================
+   加载骨架屏
+   ============================================================ */
+#loading-screen {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 9999;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s ease;
+}
+
+#loading-screen[style*="display: none"] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loading-spinner {
+  text-align: center;
+}
+
+.loading-ring {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 16px;
+  border: 4px solid #e8eaed;
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: 0.5px;
+}
+
+/* ============================================================
+   回到顶部按钮
+   ============================================================ */
+#scroll-top-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(26,115,232,0.3);
+  transition: opacity 0.25s, transform 0.25s, box-shadow 0.25s;
+  display: none;
+}
+
+#scroll-top-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(26,115,232,0.4);
+}
+
+#scroll-top-btn:active {
+  transform: translateY(0);
+}
+
+
+
+/* ---------- 19. 3合1工具: Tabs & Forms ---------- */
+#view-calculator .tool-tab-bar {
+  display: flex;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(15,23,42,0.06);
+  margin: 16px 0 16px;
+  overflow: hidden;
+  border: 1px solid #E2E8F0;
+  padding: 4px;
+}
+
+#view-calculator .tool-tab-btn {
+  flex: 1;
+  height: 44px;
+  border: none;
+  background: transparent;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #64748B;
+  cursor: pointer;
+  transition: all 0.25s;
+  border-radius: 8px;
+  padding: 0 4px;
+  white-space: nowrap;
+}
+
+#view-calculator .tool-tab-btn.active {
+  background: linear-gradient(135deg, #1a73e8, #0F766E);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(26,115,232,0.25);
+}
+
+.tool-tab-panel { display: none; }
+.tool-tab-panel.active { display: block; }
+
+#view-calculator .form-group { margin-bottom: 14px; }
+
+#view-calculator .form-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #202124;
+  margin-bottom: 5px;
+}
+
+#view-calculator .form-group select,
+#view-calculator .form-group input[type="text"] {
+  width: 100%;
+  height: 44px;
+  padding: 0 16px;
+  font-size: 0.9rem;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 10px;
+  background: #fff;
+  color: #202124;
+  outline: none;
+  transition: all 0.2s;
+}
+
+#view-calculator .form-group select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 40px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+#view-calculator .form-group select:focus,
+#view-calculator .form-group input:focus {
+  border-color: #1a73e8;
+  box-shadow: 0 0 0 3px rgba(26,115,232,0.12);
+}
+
+#view-calculator .form-row {
+  display: flex;
+  gap: 10px;
+}
+
+#view-calculator .form-row .form-group {
+  flex: 1;
+}
+
+#view-calculator .btn-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+#view-calculator .btn:active { transform: scale(0.97); }
+
+#view-calculator .btn-primary:hover { box-shadow: 0 10px 24px rgba(26,115,232,0.35); }
+
+#view-calculator .btn-outline:hover { background: #F1F7FF; border-color: #1a73e8; color: #1a73e8; }
+
+#view-calculator .result-header h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #202124;
+}
+
+.risk-badge.risk-low { background: #DCFCE7; color: #16A34A; }
+.risk-badge.risk-mid { background: #FFEDD5; color: #F97316; }
+.risk-badge.risk-high { background: #FEE2E2; color: #DC2626; }
+
+#view-calculator .diag-item {
+  padding: 14px 16px;
+  background: #fff;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.15s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+#view-calculator .diag-item:hover { border-color: #1a73e8; background: #F1F7FF; }
+#view-calculator .diag-item:active { transform: scale(0.98); }
+
+#view-calculator .diag-detail h4:first-child { margin-top: 0; }
+
+/* 移动端适应 */
+@media (max-width: 768px) {
+  #view-calculator .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  #view-calculator .tool-tab-btn {
+    font-size: 0.75rem;
+    padding: 0 2px;
+  }
+}
+
+/* ---------- 20. 手机首屏单屏：隐藏首页下方非核心区块 ---------- */
+@media (max-width: 768px) {
+  #view-dashboard .recent-section,
+  #view-dashboard .featured-images-preview,
+  #view-dashboard .faq-preview-section {
+    display: none !important;
+  }
+}
+
+/* ==================== DARK MODE ==================== */
+/**
+ * CNC速查助手 - 暗色模式完整CSS（无CSS变量版本）
+ * 
+ * 重要说明：
+ * theme-tech.css **不使用 CSS 变量**，因此采用直接元素 + 类选择器覆盖方案。
+ * 
+ * 使用方法：将此代码块**直接复制追加**到 theme-tech.css 文件最底部。
+ * 
+ * 颜色映射：
+ *   背景       #ffffff   → #1a1a2e
+ *   文字       #202124   → #e0e0e0
+ *   主题蓝     #1a73e8   → #8ab4f8
+ *   卡片背景             → #16213e
+ *   边框                 → #2a2a4a
+ * 
+ * 已尽量覆盖常见 UI 组件和 8 个视图
+ */
+
+@media (prefers-color-scheme: dark) {
+
+  /* ==================== 全局基础 ==================== */
+  html, body {
+    background-color: #1a1a2e !important;
+    color: #e0e0e0 !important;
+  }
+
+  /* ==================== 导航与侧边栏 ==================== */
+  nav, .nav, .sidebar, .tree-nav, .main-nav, header, .header {
+    background-color: #16213e !important;
+    border-color: #2a2a4a !important;
+  }
+
+  .nav-tab, .nav-item, .tree-item, .menu-item {
+    color: #a0aec0 !important;
+    background-color: transparent !important;
+  }
+
+  .nav-tab.active,
+  .nav-item.active,
+  .tree-item.active,
+  .nav-tab:hover,
+  .nav-item:hover,
+  .tree-item:hover {
+    background-color: #1e2a4a !important;
+    color: #8ab4f8 !important;
+    border-color: #8ab4f8 !important;
+  }
+
+  /* ==================== 卡片、面板、容器（核心） ==================== */
+  .card, .panel, .view-container, .result-box, .param-card,
+  .calculator-card, .lookup-card, .section, .box, .container {
+    background-color: #16213e !important;
+    border-color: #2a2a4a !important;
+    color: #e0e0e0 !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.4) !important;
+  }
+
+  .card-header, .panel-header, .section-header {
+    background-color: #0f172a !important;
+    border-bottom-color: #2a2a4a !important;
+    color: #e0e0e0 !important;
+  }
+
+  /* ==================== 8个视图通用覆盖 ==================== */
+  .view, [class*="view-"], [id*="view-"],
+  .gcode-view, .thread-view, .params-view, .coord-view,
+  .tool-view, .material-view, .macro-view, .other-view,
+  [data-view] {
+    background-color: #1a1a2e !important;
+    color: #e0e0e0 !important;
+  }
+
+  /* ==================== 表格（参数速查最重要） ==================== */
+  table, .data-table, .param-table, .result-table {
+    background-color: #16213e !important;
+    border-color: #2a2a4a !important;
+    color: #e0e0e0 !important;
+  }
+
+  th, thead th, .table-header, .th {
+    background-color: #16213e !important;
+    color: #e0e0e0 !important;
+    border-color: #2a2a4a !important;
+  }
+
+  td, tr, tbody td {
+    border-color: #2a2a4a !important;
+    color: #e0e0e0 !important;
+    background-color: transparent !important;
+  }
+
+  tr:hover, tbody tr:hover {
+    background-color: #1e2a4a !important;
+  }
+
+  /* ==================== 表单与输入控件 ==================== */
+  input, select, textarea, .search-input, .form-control, .input {
+    background-color: #16213e !important;
+    color: #e0e0e0 !important;
+    border-color: #2a2a4a !important;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: #8ab4f8 !important;
+    box-shadow: 0 0 0 3px rgba(138, 180, 248, 0.25) !important;
+    background-color: #0f172a !important;
+  }
+
+  /* 按钮 */
+  button, .btn, input[type="button"], input[type="submit"] {
+    color: #e0e0e0 !important;
+  }
+
+  .btn-primary, button.primary, .btn-blue, .primary-btn {
+    background-color: #8ab4f8 !important;
+    color: #1a1a2e !important;
+    border-color: #8ab4f8 !important;
+  }
+
+  .btn-primary:hover, button.primary:hover {
+    background-color: #6fa8f0 !important;
+    color: #1a1a2e !important;
+  }
+
+  .btn-secondary, .btn-outline, button.secondary {
+    background-color: transparent !important;
+    color: #8ab4f8 !important;
+    border-color: #8ab4f8 !important;
+  }
+
+  /* ==================== 链接 ==================== */
+  a, .link, a:link, a:visited {
+    color: #8ab4f8 !important;
+  }
+
+  a:hover {
+    color: #6fa8f0 !important;
+    text-decoration: underline;
+  }
+
+  /* ==================== 代码块与 G-code 示例 ==================== */
+  pre, code, .code-block, .gcode-example, .highlight {
+    background-color: #0f172a !important;
+    color: #e0e0e0 !important;
+    border-color: #2a2a4a !important;
+  }
+
+  /* ==================== 模态框、弹窗、Toast ==================== */
+  .modal, .dialog, .popup, .modal-content {
+    background-color: #16213e !important;
+    border-color: #2a2a4a !important;
+    color: #e0e0e0 !important;
+  }
+
+  .modal-header, .dialog-header {
+    background-color: #0f172a !important;
+    border-bottom-color: #2a2a4a !important;
+  }
+
+  .toast, .notification, .alert, .message {
+    background-color: #16213e !important;
+    border-color: #2a2a4a !important;
+    color: #e0e0e0 !important;
+  }
+
+  /* ==================== 其他常见元素 ==================== */
+  hr {
+    border-color: #2a2a4a !important;
+  }
+
+  .divider, .separator {
+    background-color: #2a2a4a !important;
+  }
+
+  /* 滚动条美化 */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0f172a;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #2a2a4a;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #8ab4f8;
+  }
+
+  /* 打印时恢复浅色 */
+  @media print {
+    body, .card, table, pre {
+      background: white !important;
+      color: black !important;
+    }
+  }
 }
 
