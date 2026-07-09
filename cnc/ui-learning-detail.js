@@ -1,145 +1,338 @@
-/**
+/*
  * ui-learning-detail.js
- * 学习关卡详情页渲染引擎
- * 全局对象: window.CNC_LEARNING_UI
+ * CNC新手学习详情页渲染引擎
+ * 重点升级：第1关《先看懂零件图》正式课程页
  */
 (function () {
   'use strict';
 
-  if (window.CNC_LEARNING_UI) return;
-
-  var _currentLevel = null;
-  var _lessonCache = {};
-  var _LEVELS = {
-    1: { id: 1, title: '认识零件的身份证', stage: 1, time: '5分钟', objectives: ['理解图纸基本符号', '认识尺寸标注', '了解公差符号', '掌握表面粗糙度符号'], steps: ['打开图纸，找到标题栏', '识别图框中的零件名称和材料', '查看所有尺寸标注，区分线性/直径/半径', '识别公差符号和表面粗糙度标记', '核对所有技术要求'], errors: ['忽略标题栏信息：标题栏包含材料、比例、图号等关键信息', '混淆尺寸线：注意区分线性尺寸和直径尺寸的标注方式', '忽视基准符号：基准符号影响后续加工定位'], quizzes: [{ id: 'q1', type: 'multiple', question: '图纸中标注 Φ50H7 表示什么？', options: ['直径50mm，公差等级H7的孔', '半径50mm，公差等级H7的轴', '直径50mm，配合间隙H7', '螺纹M50，精度等级H7'], answer: 0, explanation: 'Φ表示直径，50是基本尺寸，H7是公差带代号（H表示孔的基本偏差，7表示IT7公差等级）' }, { id: 'q2', type: 'truefalse', question: '表面粗糙度值越小，表面越光滑。', options: ['正确', '错误'], answer: 0, explanation: '表面粗糙度值（Ra）越小，表示加工表面越光滑，但加工成本也相应提高。' }, { id: 'q3', type: 'multiple', question: 'C2 在图纸中表示什么？', options: ['倒角2mm', '倒角2×45°', '圆角R2', '锥度2:1'], answer: 1, explanation: 'C2表示45°倒角，倒角宽度为2mm。C是Chamfer（倒角）的缩写。'}], summary: '本章学习了图纸基本符号的识别方法，包括标题栏信息读取、尺寸标注分类、公差符号理解、表面粗糙度判定。掌握这些基础知识后，可以正确解读大多数机械图纸的基本信息。' },
-    2: { id: 2, title: '机床的东南西北', stage: 1, time: '8分钟', objectives: ['理解机床坐标轴概念', '掌握X/Y/Z轴方向判断', '了解正负方向含义', '认识机床坐标系与工件坐标系的关系'], steps: ['站在操作位置面对机床', '右手直角坐标系：大拇指=X轴，食指=Y轴，中指=Z轴', 'Z轴为主轴方向，远离工件为正', 'X轴为水平方向，右方为正', 'Y轴根据右手定则确定'], errors: ['坐标系混淆：加工中心Z轴垂直于工作台，车床Z轴平行于主轴', '正负方向记反：远离工件为正，靠近工件为负的规则适用于大多数情况', '忽略机床类型：立式加工中心和卧式加工中心的坐标系方向不同'], quizzes: [{ id: 'q4', type: 'multiple', question: '在立式加工中心上，Z轴正方向指向哪里？', options: ['指向工作台', '指向主轴上方（远离工件）', '指向操作者', '指向右侧'], answer: 1, explanation: 'Z轴正方向为刀具远离工件的方向，在立式加工中心上即主轴向上方向。' }, { id: 'q5', type: 'truefalse', question: '数控机床的坐标轴方向在所有机床上都是一样的。', options: ['正确', '错误'], answer: 1, explanation: '不同机床类型（立式/卧式/车床）的坐标轴方向不同，需要根据具体机床类型确定。'}], summary: '本章学习了机床坐标系的建立方法，掌握了X、Y、Z三轴的方向判断规则，理解了正负方向与加工运动的关系。坐标系是数控编程的基础。' },
-    3: { id: 3, title: '找机床的老家', stage: 1, time: '6分钟', objectives: ['理解回零(回参考点)的意义', '掌握回零操作方法', '了解参考点位置', '认识机床坐标系建立过程'], steps: ['确认机床处于手动模式', '按回零键（通常标记为HOME或REF）', '先回Z轴（避免干涉），再回X和Y', '观察坐标显示变为零或机床设定值', '确认回零指示灯亮起'], errors: ['不回零直接编程：机床断电后丢失坐标系，必须回零重新建立', '回零顺序错误：应先回Z轴避免碰撞', '回零过程中急停：可能导致参考点位置偏移'], quizzes: [{ id: 'q6', type: 'multiple', question: '机床回参考点的目的是什么？', options: ['让刀具回到换刀位置', '建立机床绝对坐标系', '清除加工程序', '检查主轴转速'], answer: 1, explanation: '回参考点是为了让机床建立绝对坐标系，使机床知道自己的准确位置。'}, { id: 'q7', type: 'multiple', question: '为什么应该先回Z轴？', options: ['Z轴运动最快', '避免刀具与工件或夹具碰撞', '先回Z轴可以节省时间', '机床控制系统有要求'], answer: 1, explanation: '先回Z轴可以将刀具抬高到安全位置，避免在回其他轴时发生碰撞。'}], summary: '本章学习了机床回参考点的方法和意义。回零是开机后的第一步操作，用于建立机床坐标系，确保位置精度。' },
-    4: { id: 4, title: '告诉机床活儿在哪', stage: 1, time: '10分钟', objectives: ['理解工件坐标系G54-G59', '掌握对刀操作方法', '了解工件零点设置', '掌握坐标系偏移概念'], steps: ['装夹工件并找正', '选择对刀方式（试切法/对刀仪）', '分别对X、Y、Z轴确定工件零点', '将零点数值输入对应的G54-G59寄存器', '验证对刀结果'], errors: ['对刀方向错误：正负方向搞反会导致加工位置偏移', '忘记切换坐标系：在G54中对刀却在G55中运行程序', '忽略刀长补偿：Z轴对刀必须考虑刀具长度'], quizzes: [{ id: 'q8', type: 'multiple', question: 'G54-G59用于什么？', options: ['主轴转速设置', '工件坐标系选择', '进给速度设置', '刀具补偿选择'], answer: 1, explanation: 'G54到G59用于选择工件坐标系，每个编号对应一组可设定的零点偏移值。'}, { id: 'q9', type: 'truefalse', question: '对刀完成后可以不验证直接开始加工。', options: ['正确', '错误'], answer: 1, explanation: '对刀完成后必须验证，通常通过手动移动到已知位置或使用对刀仪检查，确认坐标值正确。'}], summary: '本章学习了对刀和工件坐标系的设置方法。掌握G54-G59的使用是数控加工中的核心技能，直接影响加工精度。' }
+  var LESSON_MEDIA_BASE = './assets';
+  var LESSONS = {
+    1: {
+      id: 1,
+      title: '先看懂零件图',
+      stage: '阶段一：图纸、坐标与机床基准',
+      time: '10分钟',
+      levelLabel: '第1关',
+      subtitle: '不是先背G代码，而是先判断基准、尺寸、公差和加工重点。',
+      video: LESSON_MEDIA_BASE + '/videos/learning/lesson-01-datum.mp4',
+      poster: LESSON_MEDIA_BASE + '/images/learning/lesson-01-datum.png',
+      image: LESSON_MEDIA_BASE + '/images/learning/lesson-01-datum.png'
+    },
+    2: { id: 2, title: '机床的东南西北', stage: '阶段一', time: '8分钟', subtitle: '分清X、Y、Z方向，建立编程坐标感。' },
+    3: { id: 3, title: '找机床的老家', stage: '阶段一', time: '6分钟', subtitle: '理解回零和参考点，知道机床怎么找准自己的位置。' },
+    4: { id: 4, title: '告诉机床活儿在哪', stage: '阶段一', time: '10分钟', subtitle: '理解G54和工件坐标系，把程序零点设清楚。' },
+    5: { id: 5, title: 'Z轴对刀，保命绝招', stage: '阶段二', time: '8分钟', subtitle: '学会Z轴对刀，先避开最常见的撞刀风险。' },
+    6: { id: 6, title: '认识你的武器', stage: '阶段二', time: '7分钟', subtitle: '认识刀具类型、材料和基本使用场景。' },
+    7: { id: 7, title: '顺着切还是逆着切', stage: '阶段二', time: '6分钟', subtitle: '理解顺铣、逆铣和刀具补偿方向。' },
+    8: { id: 8, title: 'S 和 F，谁跑得快', stage: '阶段三', time: '7分钟', subtitle: '理解转速、进给、线速度之间的关系。' },
+    9: { id: 9, title: 'G00 和 G01，快慢有别', stage: '阶段三', time: '8分钟', subtitle: '分清快速定位和切削进给，避免把G00用成切削。' },
+    10: { id: 10, title: '致命的小数点', stage: '阶段三', time: '5分钟', subtitle: '掌握数值格式，避免尺寸差十倍的低级事故。' },
+    11: { id: 11, title: 'G90 和 G91：算总账还是算小账', stage: '阶段三', time: '9分钟', subtitle: '分清绝对值和增量值，别让轨迹越走越偏。' },
+    12: { id: 12, title: 'G81：钻孔自动化', stage: '阶段四', time: '10分钟', subtitle: '理解固定循环，把重复钻孔程序写得又短又稳。' }
   };
 
-  function getLessonData(level) {
-    if (_lessonCache[level]) return _lessonCache[level];
-    var data = _LEVELS[level];
-    if (!data) return null;
-    _lessonCache[level] = data;
-    return data;
+  function escapeHtml(value) {
+    return String(value == null ? '' : value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function lessonOneFallbackSvg() {
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1400" viewBox="0 0 900 1400">' +
+      '<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f8fbff"/><stop offset="1" stop-color="#eef5ff"/></linearGradient></defs>' +
+      '<rect width="900" height="1400" fill="url(#g)"/>' +
+      '<rect x="44" y="44" width="812" height="1312" rx="36" fill="#fff" stroke="#bfdbfe" stroke-width="4"/>' +
+      '<rect x="44" y="44" width="812" height="132" rx="36" fill="#0b3a78"/>' +
+      '<text x="90" y="126" font-size="48" font-weight="800" fill="#fff" font-family="Microsoft YaHei,Arial">第1关｜先看懂零件图</text>' +
+      '<text x="90" y="226" font-size="34" font-weight="800" fill="#0f172a" font-family="Microsoft YaHei,Arial">核心图：先找基准，再看关键尺寸</text>' +
+      '<rect x="90" y="270" width="720" height="410" rx="22" fill="#f8fafc" stroke="#cbd5e1" stroke-width="3"/>' +
+      '<polygon points="220,390 590,330 690,430 310,510" fill="#d9e3ef" stroke="#334155" stroke-width="5"/>' +
+      '<ellipse cx="450" cy="415" rx="65" ry="42" fill="#fff" stroke="#334155" stroke-width="5"/>' +
+      '<circle cx="315" cy="390" r="22" fill="#fff" stroke="#334155" stroke-width="5"/><circle cx="585" cy="382" r="22" fill="#fff" stroke="#334155" stroke-width="5"/><circle cx="350" cy="495" r="22" fill="#fff" stroke="#334155" stroke-width="5"/><circle cx="615" cy="485" r="22" fill="#fff" stroke="#334155" stroke-width="5"/>' +
+      '<rect x="380" y="285" width="128" height="54" rx="12" fill="#2563eb"/><text x="402" y="322" font-size="28" font-weight="800" fill="#fff" font-family="Microsoft YaHei,Arial">基准A</text>' +
+      '<rect x="105" y="430" width="128" height="54" rx="12" fill="#16a34a"/><text x="127" y="467" font-size="28" font-weight="800" fill="#fff" font-family="Microsoft YaHei,Arial">基准B</text>' +
+      '<rect x="390" y="565" width="128" height="54" rx="12" fill="#64748b"/><text x="412" y="602" font-size="28" font-weight="800" fill="#fff" font-family="Microsoft YaHei,Arial">基准C</text>' +
+      '<line x1="444" y1="340" x2="444" y2="380" stroke="#2563eb" stroke-width="6"/><line x1="234" y1="457" x2="305" y2="424" stroke="#16a34a" stroke-width="6"/><line x1="454" y1="565" x2="454" y2="510" stroke="#64748b" stroke-width="6"/>' +
+      '<rect x="90" y="730" width="720" height="360" rx="22" fill="#fff" stroke="#cbd5e1" stroke-width="3"/>' +
+      '<rect x="180" y="830" width="330" height="170" fill="none" stroke="#111827" stroke-width="5"/>' +
+      '<circle cx="245" cy="875" r="22" fill="none" stroke="#111827" stroke-width="4"/><circle cx="445" cy="875" r="22" fill="none" stroke="#111827" stroke-width="4"/><circle cx="245" cy="955" r="22" fill="none" stroke="#111827" stroke-width="4"/><circle cx="445" cy="955" r="22" fill="none" stroke="#111827" stroke-width="4"/><circle cx="345" cy="915" r="42" fill="none" stroke="#111827" stroke-width="4"/>' +
+      '<text x="194" y="798" font-size="28" fill="#111827" font-family="Arial">120 ±0.05</text><text x="538" y="890" font-size="28" fill="#111827" font-family="Arial">Ø30 H7</text><text x="538" y="960" font-size="28" fill="#dc2626" font-family="Arial">15 ±0.05</text>' +
+      '<rect x="96" y="1135" width="708" height="140" rx="22" fill="#eff6ff" stroke="#2563eb" stroke-width="3"/>' +
+      '<text x="128" y="1195" font-size="34" font-weight="800" fill="#0f172a" font-family="Microsoft YaHei,Arial">记住：先找基准，再看尺寸，最后看公差。</text>' +
+      '<text x="128" y="1248" font-size="26" fill="#475569" font-family="Microsoft YaHei,Arial">这张临时SVG会在你上传PNG后自动替换。</text>' +
+      '</svg>';
+    return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+  }
+
+  function injectLessonStyles() {
+    if (document.getElementById('lesson-one-pro-styles')) return;
+    var css = `
+      .lesson-detail-pro{max-width:1180px;margin:0 auto;color:#0f172a;}
+      .lesson-pro-hero{position:relative;overflow:hidden;border-radius:24px;padding:22px;background:linear-gradient(135deg,#0b3a78,#1558b0);color:#fff;box-shadow:0 18px 45px rgba(15,23,42,.18);}
+      .lesson-pro-hero:after{content:"";position:absolute;right:-90px;top:-90px;width:260px;height:260px;border-radius:50%;background:rgba(255,255,255,.12);}
+      .lesson-pro-kicker{display:inline-flex;gap:8px;align-items:center;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:6px 12px;font-size:.82rem;font-weight:700;margin-bottom:12px;}
+      .lesson-pro-hero h2{margin:0;font-size:clamp(1.55rem,4vw,2.45rem);line-height:1.18;font-weight:900;letter-spacing:-.03em;}
+      .lesson-pro-hero p{max-width:760px;margin:12px 0 0;color:#dbeafe;line-height:1.75;font-size:.98rem;}
+      .lesson-pro-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;}
+      .lesson-pro-chip{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:8px 12px;font-size:.82rem;font-weight:700;}
+      .lesson-media-grid{display:grid;grid-template-columns:minmax(260px,.92fr) minmax(320px,1.08fr);gap:18px;margin:20px 0;align-items:start;}
+      .lesson-card-pro{background:#fff;border:1px solid #dbeafe;border-radius:22px;padding:16px;box-shadow:0 12px 34px rgba(15,23,42,.08);}
+      .lesson-card-pro h3{display:flex;align-items:center;gap:8px;margin:0 0 10px;font-size:1.08rem;color:#0f172a;}
+      .lesson-video-shell{position:relative;overflow:hidden;border-radius:18px;background:#020617;border:1px solid #0f172a;}
+      .lesson-video-shell video{display:block;width:100%;aspect-ratio:9/16;max-height:680px;background:#020617;object-fit:contain;}
+      .lesson-media-note{margin:12px 0 0;color:#475569;font-size:.88rem;line-height:1.7;}
+      .lesson-media-note strong{color:#0b3a78;}
+      .lesson-upload-hint{display:none;margin-top:10px;border:1px dashed #f59e0b;background:#fffbeb;color:#92400e;border-radius:14px;padding:10px 12px;font-size:.82rem;line-height:1.65;}
+      .lesson-diagram-img{display:block;width:100%;border-radius:18px;border:1px solid #e2e8f0;background:#f8fafc;box-shadow:inset 0 0 0 1px rgba(255,255,255,.8);}
+      .lesson-section-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:18px 0;}
+      .lesson-step-card{position:relative;background:#fff;border:1px solid #e2e8f0;border-radius:18px;padding:16px;min-height:178px;box-shadow:0 8px 24px rgba(15,23,42,.06);}
+      .lesson-step-no{display:inline-flex;width:34px;height:34px;align-items:center;justify-content:center;border-radius:12px;background:#0b3a78;color:#fff;font-weight:900;margin-bottom:12px;}
+      .lesson-step-card h4{margin:0 0 8px;font-size:.98rem;color:#0f172a;}
+      .lesson-step-card p{margin:0;color:#475569;line-height:1.7;font-size:.86rem;}
+      .lesson-two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:18px 0;}
+      .lesson-case-card{background:linear-gradient(180deg,#fff,#f8fafc);border:1px solid #dbeafe;border-radius:22px;padding:18px;box-shadow:0 10px 30px rgba(15,23,42,.07);}
+      .lesson-case-card h3{margin:0 0 12px;font-size:1.05rem;}
+      .lesson-case-list{display:grid;gap:10px;margin:0;padding:0;list-style:none;}
+      .lesson-case-list li{display:flex;gap:10px;align-items:flex-start;background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;padding:11px 12px;color:#334155;line-height:1.65;font-size:.9rem;}
+      .lesson-case-list b{color:#0b3a78;white-space:nowrap;}
+      .lesson-formula{background:#0f172a;color:#fff;border-radius:18px;padding:18px;}
+      .lesson-formula h3{margin:0 0 12px;color:#fff;}
+      .lesson-formula p{margin:0 0 10px;color:#dbeafe;line-height:1.8;font-size:.95rem;}
+      .lesson-formula .big{font-size:1.25rem;font-weight:900;color:#fbbf24;}
+      .lesson-check-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+      .lesson-check-item{display:flex;gap:10px;align-items:flex-start;border:1px solid #e2e8f0;background:#fff;border-radius:14px;padding:12px;color:#334155;line-height:1.6;font-size:.9rem;}
+      .lesson-check-icon{flex:0 0 auto;width:24px;height:24px;border-radius:8px;background:#dcfce7;color:#15803d;display:inline-flex;align-items:center;justify-content:center;font-weight:900;}
+      .lesson-quiz-card{border:1px solid #bfdbfe;background:#eff6ff;border-radius:20px;padding:16px;margin-top:18px;}
+      .lesson-quiz-card h3{margin:0 0 10px;}
+      .lesson-quiz-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+      .lesson-answer-btn{border:1px solid #cbd5e1;background:#fff;border-radius:14px;padding:12px;text-align:left;font-weight:700;color:#0f172a;cursor:pointer;}
+      .lesson-answer-btn:hover{border-color:#2563eb;box-shadow:0 8px 18px rgba(37,99,235,.13);}
+      .lesson-answer-btn.correct{background:#dcfce7;border-color:#22c55e;color:#166534;}
+      .lesson-answer-btn.wrong{background:#fee2e2;border-color:#ef4444;color:#991b1b;}
+      .lesson-answer-feedback{display:none;margin-top:12px;border-radius:14px;padding:12px;background:#fff;color:#334155;line-height:1.7;}
+      .lesson-summary-pro{margin-top:18px;background:#fff7ed;border:1px solid #fed7aa;border-left:6px solid #f97316;border-radius:20px;padding:16px;color:#7c2d12;line-height:1.8;font-weight:700;}
+      .lesson-nav-placeholder{margin-top:18px;color:#64748b;font-size:.86rem;}
+      @media(max-width:900px){.lesson-media-grid,.lesson-two-col{grid-template-columns:1fr}.lesson-section-grid{grid-template-columns:1fr 1fr}.lesson-video-shell video{max-height:none}.lesson-quiz-options{grid-template-columns:1fr}}
+      @media(max-width:560px){.lesson-pro-hero{border-radius:18px;padding:18px}.lesson-section-grid,.lesson-check-grid{grid-template-columns:1fr}.lesson-card-pro,.lesson-case-card{border-radius:18px;padding:14px}}
+    `;
+    var style = document.createElement('style');
+    style.id = 'lesson-one-pro-styles';
+    style.textContent = css;
+    document.head.appendChild(style);
+  }
+
+  function renderLessonOne() {
+    var data = LESSONS[1];
+    var fallback = lessonOneFallbackSvg();
+    var videoSrc = escapeHtml(data.video);
+    var posterSrc = escapeHtml(data.poster);
+    var imgSrc = escapeHtml(data.image);
+    var fallbackAttr = escapeHtml(fallback);
+
+    return `
+      <div class="lesson-detail lesson-detail-pro" data-level="1">
+        <header class="lesson-pro-hero">
+          <span class="lesson-pro-kicker">🎯 ${escapeHtml(data.stage)} · ${escapeHtml(data.time)}</span>
+          <h2>${escapeHtml(data.levelLabel)}：${escapeHtml(data.title)}</h2>
+          <p>${escapeHtml(data.subtitle)}</p>
+          <div class="lesson-pro-chips">
+            <span class="lesson-pro-chip">学会先看图纸</span>
+            <span class="lesson-pro-chip">能找基准A/B/C</span>
+            <span class="lesson-pro-chip">知道哪些尺寸最关键</span>
+            <span class="lesson-pro-chip">上机前能做自查</span>
+          </div>
+        </header>
+
+        <section class="lesson-media-grid">
+          <article class="lesson-card-pro">
+            <h3>▶ 视频讲解：先找基准，再看关键尺寸</h3>
+            <div class="lesson-video-shell">
+              <video controls preload="metadata" playsinline poster="${posterSrc}" data-lesson-video>
+                <source src="${videoSrc}" type="video/mp4">
+                你的浏览器不支持视频播放。
+              </video>
+            </div>
+            <p class="lesson-media-note"><strong>建议先看视频一遍：</strong>重点看基准A、B、C出现的位置，以及哪些尺寸被高亮。</p>
+            <div class="lesson-upload-hint" data-video-upload-hint>
+              视频路径已接好：<code>${videoSrc}</code><br>如果这里暂时不显示视频，请把 MP4 上传到这个路径。
+            </div>
+          </article>
+
+          <article class="lesson-card-pro">
+            <h3>🖼 核心配图：基准、尺寸、公差一起看</h3>
+            <img class="lesson-diagram-img" src="${imgSrc}" alt="第1关核心配图：先找基准，再看关键尺寸" data-fallback="${fallbackAttr}" onerror="this.onerror=null;this.src=this.dataset.fallback;">
+            <p class="lesson-media-note"><strong>看图顺序：</strong>先找基准A/B/C，再看孔位、台阶、公差，最后才决定刀具、坐标和工序。</p>
+          </article>
+        </section>
+
+        <section class="lesson-section-grid" aria-label="学习步骤">
+          <article class="lesson-step-card"><span class="lesson-step-no">1</span><h4>先看标题栏</h4><p>确认零件名称、图号、材料、比例。材料会影响刀具、转速和加工方式。</p></article>
+          <article class="lesson-step-card"><span class="lesson-step-no">2</span><h4>先找基准</h4><p>基准决定装夹方式、检测依据，也会影响你把G54零点设在哪里。</p></article>
+          <article class="lesson-step-card"><span class="lesson-step-no">3</span><h4>再看关键尺寸</h4><p>优先看孔位、孔径、台阶高度、配合尺寸，不要平均用力看所有线。</p></article>
+          <article class="lesson-step-card"><span class="lesson-step-no">4</span><h4>最后看技术要求</h4><p>粗糙度、倒角、热处理、公差等级，决定最后能不能交合格件。</p></article>
+        </section>
+
+        <section class="lesson-two-col">
+          <article class="lesson-case-card">
+            <h3>🔧 现场案例：这张板类零件应该怎么看？</h3>
+            <ul class="lesson-case-list">
+              <li><b>第一眼</b><span>不要急着想程序，先判断它是板类/法兰类零件，有孔、有台阶、有装配要求。</span></li>
+              <li><b>找基准</b><span>基准A是上平面，基准B是侧面，基准C是底面。基准确定后，装夹和坐标方向才稳定。</span></li>
+              <li><b>抓重点</b><span>中心孔、四个小孔、台阶高度、H7和±0.05这类尺寸优先标记。</span></li>
+              <li><b>再编程</b><span>先定装夹和G54零点，再排工序，最后才写G00、G01、G81这些代码。</span></li>
+            </ul>
+          </article>
+
+          <article class="lesson-formula">
+            <h3>🧠 老师傅口诀</h3>
+            <p class="big">先看图，再定基准；先抓重点，再写程序。</p>
+            <p>图纸没看明白，程序写得再漂亮也没用。新手最容易错的不是G代码，而是基准找错、尺寸看漏、公差没管。</p>
+            <p>这一关只要求你养成一个习惯：拿到图纸，先按顺序检查，不要凭感觉上机。</p>
+          </article>
+        </section>
+
+        <section class="lesson-card-pro">
+          <h3>✅ 上机前6项自查</h3>
+          <div class="lesson-check-grid">
+            <div class="lesson-check-item"><span class="lesson-check-icon">✓</span><span>零件名称、材料、比例是否确认？</span></div>
+            <div class="lesson-check-item"><span class="lesson-check-icon">✓</span><span>基准A/B/C是否找出来？</span></div>
+            <div class="lesson-check-item"><span class="lesson-check-icon">✓</span><span>孔位、孔径、台阶高度是否标记？</span></div>
+            <div class="lesson-check-item"><span class="lesson-check-icon">✓</span><span>H7、±0.05等公差是否重点关注？</span></div>
+            <div class="lesson-check-item"><span class="lesson-check-icon">✓</span><span>粗糙度、倒角、去毛刺等技术要求是否看过？</span></div>
+            <div class="lesson-check-item"><span class="lesson-check-icon">✓</span><span>是否能说清楚装夹和G54零点大概应该怎么定？</span></div>
+          </div>
+        </section>
+
+        <section class="lesson-quiz-card" data-lesson-quiz="1">
+          <h3>📝 过关小测</h3>
+          <p>拿到一张零件图，新手第一步最应该先做什么？</p>
+          <div class="lesson-quiz-options">
+            <button class="lesson-answer-btn" data-lesson-answer="wrong" type="button">直接开始想G代码</button>
+            <button class="lesson-answer-btn" data-lesson-answer="correct" type="button">先看标题栏、材料、基准和关键尺寸</button>
+            <button class="lesson-answer-btn" data-lesson-answer="wrong" type="button">先估一个转速进给</button>
+            <button class="lesson-answer-btn" data-lesson-answer="wrong" type="button">先找一把看起来合适的刀</button>
+          </div>
+          <div class="lesson-answer-feedback" data-lesson-feedback></div>
+        </section>
+
+        <div class="lesson-summary-pro">
+          本关过关标准：你能对着一张简单零件图说出“材料是什么、基准在哪里、关键尺寸有哪些、哪些公差必须重点控制”，就算真正入门了。
+        </div>
+      </div>
+    `;
+  }
+
+  function renderStandardLesson(level) {
+    var data = LESSONS[level];
+    if (!data) return '';
+    return `
+      <div class="lesson-detail lesson-detail-pro" data-level="${level}">
+        <header class="lesson-pro-hero">
+          <span class="lesson-pro-kicker">${escapeHtml(data.stage)} · ${escapeHtml(data.time)}</span>
+          <h2>第${level}关：${escapeHtml(data.title)}</h2>
+          <p>${escapeHtml(data.subtitle || '详细内容正在整理中。')}</p>
+          <div class="lesson-pro-chips">
+            <span class="lesson-pro-chip">课程结构已接入</span>
+            <span class="lesson-pro-chip">后续补图文和视频</span>
+          </div>
+        </header>
+        <section class="lesson-card-pro" style="margin-top:18px;">
+          <h3>本关内容正在按第1关模板升级</h3>
+          <p class="lesson-media-note">第1关先作为样板：视频讲解、核心配图、学习步骤、现场案例、过关检查。确认效果后，后面11关按同一套结构逐关补齐。</p>
+        </section>
+      </div>
+    `;
   }
 
   function renderLessonDetail(level) {
-    var data = getLessonData(level);
-    if (!data) { console.error('[CNC_LEARNING_UI] 关卡 ' + level + ' 数据不存在'); return ''; }
-    _currentLevel = level;
-    var html = '<div class="lesson-detail" data-level="' + level + '">';
-    html += '<div class="lesson-header"><h2>' + data.title + '</h2>';
-    html += '<div class="lesson-meta"><span class="lesson-stage">阶段 ' + data.stage + '</span><span class="lesson-time">⏱ ' + data.time + '</span></div></div>';
-    html += renderObjectives(data.objectives);
-    html += renderSteps(data.steps);
-    html += renderErrors(data.errors);
-    html += renderQuizzes(data.quizzes);
-    html += renderSummary(data.summary);
-    html += '<div class="lesson-navigation" id="lesson-nav"></div>';
-    html += '</div>';
-    return html;
+    injectLessonStyles();
+    var n = parseInt(level, 10);
+    if (n === 1) return renderLessonOne();
+    return renderStandardLesson(n);
   }
 
-  function renderObjectives(objectives) {
-    if (!objectives || !objectives.length) return '';
-    var html = '<section class="lesson-section lesson-objectives"><h3>学习目标</h3><ul class="objective-list">';
-    for (var i = 0; i < objectives.length; i++) {
-      html += '<li class="objective-item"><span class="objective-check">☐</span> ' + escapeHtml(objectives[i]) + '</li>';
+  function polishStudyList() {
+    var stageOne = document.querySelector('#view-study .stage-header h4');
+    if (stageOne && stageOne.textContent.indexOf('图纸') === -1) {
+      stageOne.textContent = '图纸、坐标与机床基准';
     }
-    html += '</ul></section>';
-    return html;
-  }
 
-  function renderSteps(steps) {
-    if (!steps || !steps.length) return '';
-    var html = '<section class="lesson-section lesson-steps"><h3>操作步骤</h3><ol class="steps-list">';
-    for (var i = 0; i < steps.length; i++) {
-      html += '<li class="step-item"><span class="step-number">' + (i + 1) + '</span><div class="step-content">' + escapeHtml(steps[i]) + '</div></li>';
+    var card1 = document.querySelector('#view-study .study-card[data-level="1"]');
+    if (card1) {
+      var title = card1.querySelector('h4');
+      var desc = card1.querySelector('p');
+      var time = card1.querySelector('.study-card-time');
+      if (title) title.textContent = '先看懂零件图';
+      if (desc) desc.textContent = '先看标题栏、材料、基准、关键尺寸和技术要求。图纸看错，程序就容易跟着错。';
+      if (time) time.textContent = '⏱ 10分钟';
+      var tags = card1.querySelector('.study-card-tags');
+      if (tags) {
+        tags.innerHTML = '<span class="tag">图纸识读</span><span class="tag">基准</span><span class="tag">关键尺寸</span>';
+      }
     }
-    html += '</ol></section>';
-    return html;
-  }
 
-  function renderErrors(errors) {
-    if (!errors || !errors.length) return '';
-    var html = '<section class="lesson-section lesson-errors"><h3>常见错误与避免</h3><div class="errors-list">';
-    for (var i = 0; i < errors.length; i++) {
-      var parts = errors[i].split('：');
-      html += '<div class="error-card"><span class="error-icon">⚠️</span><div class="error-text">';
-      if (parts.length > 1) { html += '<strong>' + escapeHtml(parts[0]) + '</strong>：' + escapeHtml(parts[1]); }
-      else { html += escapeHtml(errors[i]); }
-      html += '</div></div>';
+    var intro = document.querySelector('#view-study .section-head > p');
+    if (intro) {
+      intro.textContent = '按顺序闯关，从看懂图纸、找基准、建坐标，到能独立判断程序和加工风险。每关都有图文、视频和过关检查。';
     }
-    html += '</div></section>';
-    return html;
   }
 
-  function renderQuizzes(quizzes) {
-    if (!quizzes || !quizzes.length) return '';
-    var html = '<section class="lesson-section lesson-quizzes"><h3>互动练习</h3><div class="quizzes-list">';
-    for (var i = 0; i < quizzes.length; i++) {
-      html += renderSingleQuiz(quizzes[i], i);
-    }
-    html += '</div></section>';
-    return html;
+  function bindLessonInteractions() {
+    if (window.__LESSON_ONE_INTERACTIONS_BOUND__) return;
+    window.__LESSON_ONE_INTERACTIONS_BOUND__ = true;
+
+    document.addEventListener('click', function (event) {
+      var btn = event.target.closest && event.target.closest('[data-lesson-answer]');
+      if (!btn) return;
+      var card = btn.closest('[data-lesson-quiz]');
+      if (!card) return;
+      card.querySelectorAll('.lesson-answer-btn').forEach(function (item) {
+        item.classList.remove('correct', 'wrong');
+      });
+      var feedback = card.querySelector('[data-lesson-feedback]');
+      if (btn.dataset.lessonAnswer === 'correct') {
+        btn.classList.add('correct');
+        if (feedback) {
+          feedback.style.display = 'block';
+          feedback.innerHTML = '答对了。先看图纸信息和基准，再谈刀具、坐标、工序和程序。';
+        }
+      } else {
+        btn.classList.add('wrong');
+        if (feedback) {
+          feedback.style.display = 'block';
+          feedback.innerHTML = '还不稳。新手不要一上来就想G代码或刀具，第一步必须先把图纸和基准看明白。';
+        }
+      }
+    });
+
+    document.addEventListener('error', function (event) {
+      var video = event.target && event.target.closest && event.target.closest('[data-lesson-video]');
+      if (!video) return;
+      var card = video.closest('.lesson-card-pro');
+      var hint = card && card.querySelector('[data-video-upload-hint]');
+      if (hint) hint.style.display = 'block';
+    }, true);
   }
 
-  function renderSingleQuiz(quiz, index) {
-    var html = '<div class="quiz-card" data-quiz-id="' + quiz.id + '">';
-    html += '<div class="quiz-header"><span class="quiz-number">第 ' + (index + 1) + ' 题</span>';
-    var typeLabel = quiz.type === 'multiple' ? '选择题' : quiz.type === 'truefalse' ? '判断题' : '填空题';
-    html += '<span class="quiz-type">' + typeLabel + '</span></div>';
-    html += '<p class="quiz-question">' + escapeHtml(quiz.question) + '</p><div class="quiz-options">';
-    for (var j = 0; j < quiz.options.length; j++) {
-      html += '<label class="quiz-option"><input type="radio" name="' + quiz.id + '" value="' + j + '"><span class="quiz-option-text">' + escapeHtml(quiz.options[j]) + '</span></label>';
-    }
-    html += '</div><div class="quiz-feedback" style="display:none"></div>';
-    html += '<button class="quiz-submit primary-button" data-quiz-id="' + quiz.id + '">提交答案</button>';
-    html += '<div class="quiz-explanation" style="display:none"><p>' + escapeHtml(quiz.explanation) + '</p></div></div>';
-    return html;
+  function boot() {
+    injectLessonStyles();
+    polishStudyList();
+    bindLessonInteractions();
   }
 
-  function renderSummary(summary) {
-    if (!summary) return '';
-    return '<section class="lesson-section lesson-summary"><h3>本章小结</h3><div class="summary-content">' + escapeHtml(summary) + '</div></section>';
-  }
-
-  function initNavigation() {
-    var nav = document.getElementById('lesson-nav');
-    if (!nav) return;
-    var level = _currentLevel;
-    var prevLevel = level > 1 ? level - 1 : null;
-    var nextLevel = _LEVELS[level + 1] ? level + 1 : null;
-    var html = '<div class="lesson-nav-buttons">';
-    if (prevLevel) { html += '<button class="lesson-nav-btn prev" data-level="' + prevLevel + '">← ' + _LEVELS[prevLevel].title + '</button>'; }
-    else { html += '<button class="lesson-nav-btn disabled" disabled>← 已是第一关</button>'; }
-    html += '<button class="lesson-nav-btn mark-complete" data-level="' + level + '">标记完成 ✓</button>';
-    if (nextLevel) { html += '<button class="lesson-nav-btn next" data-level="' + nextLevel + '">' + _LEVELS[nextLevel].title + ' →</button>'; }
-    else { html += '<button class="lesson-nav-btn disabled" disabled>已是最后一关 →</button>'; }
-    html += '</div>';
-    nav.innerHTML = html;
-  }
-
-  function escapeHtml(text) {
-    if (!text) return '';
-    var div = document.createElement('div');
-    div.appendChild(document.createTextNode(text));
-    return div.innerHTML;
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
   }
 
   window.CNC_LEARNING_UI = {
     renderLessonDetail: renderLessonDetail,
-    renderObjectives: renderObjectives,
-    renderSteps: renderSteps,
-    renderErrors: renderErrors,
-    renderQuizzes: renderQuizzes,
-    renderSummary: renderSummary,
-    initNavigation: initNavigation,
-    getLessonData: getLessonData,
-    getCurrentLevel: function () { return _currentLevel; }
+    getLessonData: function (level) { return LESSONS[parseInt(level, 10)] || null; },
+    polishStudyList: polishStudyList
   };
-
-  console.log('[CNC_LEARNING_UI] 学习详情页渲染引擎已加载。内置 ' + Object.keys(_LEVELS).length + ' 关示例数据。');
 })();
