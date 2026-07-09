@@ -46,15 +46,16 @@ const ACCESS_HASHES = new Set([
 ]);
 
 const VIEW_META = {
-  dashboard: { kicker: "总览面板", title: "数控工程师工作平台" },
-  study: { kicker: "新手路线", title: "先按顺序学，再单点深入" },
+  dashboard: { kicker: "", title: "数控小潘CNC助手" },
+  study: { kicker: "新手学习路线", title: "先按顺序学，再单点深入" },
   workspace: { kicker: "快速查询", title: "左边找条目，右边看详情" },
   "learning-map": { kicker: "知识地图", title: "可视化知识结构与学习路径" },
   gallery: { kicker: "图片图库", title: "125张专业教学图片资料" },
-  calculator: { kicker: "参数换算", title: "把常用计算做成独立工作区" },
+  calculator: { kicker: "换算工具", title: "转速、线速度、进给、螺距快速计算" },
   library: { kicker: "知识库管理", title: "逐步把本地数据库接进网页" },
   favorites: { kicker: "学习记录", title: "最近查看和收藏会保留下来" },
-  access: { kicker: "访问控制", title: "只让你想让进的人进入资料区" }
+  balloon: { kicker: "质检工具", title: "图纸气泡标注与检测记录" },
+  access: { kicker: "访问控制", title: "只让你授权的人看到完整资料" }
 };
 
 const FILTER_META = {
@@ -768,7 +769,7 @@ function syncTreeState() {
 function openTreeGroupForView(view) {
   if (view === "study") state.treeOpen.study = true;
   if (view === "workspace") state.treeOpen.workspace = true;
-  if (["gallery", "calculator", "library", "favorites", "access"].includes(view)) {
+  if (["gallery", "calculator", "library", "favorites", "access", "balloon"].includes(view)) {
     state.treeOpen.tools = true;
   }
 }
@@ -792,8 +793,29 @@ function navigate(view, options = {}) {
   });
 
   const meta = VIEW_META[view] || VIEW_META.dashboard;
-  if (dom.topbarKicker) dom.topbarKicker.textContent = meta.kicker;
+  if (dom.topbarKicker) {
+    dom.topbarKicker.textContent = meta.kicker;
+    dom.topbarKicker.style.display = meta.kicker ? "" : "none";
+  }
   if (dom.topbarTitle) dom.topbarTitle.textContent = meta.title;
+
+  // 根据 workspace 的 filter 参数设置不同标题
+  if (view === "workspace" && state.activeFilter) {
+    var filterTitles = {
+      "gcode": { kicker: "G/M代码查询", title: "查代码含义、用法和易错点" },
+      "params": { kicker: "参数速查", title: "查常见参数含义和注意事项" },
+      "tooling": { kicker: "工艺刀具", title: "查看刀具、材料和工艺经验" },
+      "all": { kicker: "快速查询", title: "左边找条目，右边看详情" }
+    };
+    var ft = filterTitles[state.activeFilter];
+    if (ft) {
+      if (dom.topbarKicker) {
+        dom.topbarKicker.textContent = ft.kicker;
+        dom.topbarKicker.style.display = ft.kicker ? "" : "none";
+      }
+      if (dom.topbarTitle) dom.topbarTitle.textContent = ft.title;
+    }
+  }
 
   const homeBtn = document.getElementById("home-btn");
   if (homeBtn) homeBtn.classList.toggle("visible", view !== "dashboard");
@@ -806,6 +828,37 @@ function navigate(view, options = {}) {
 
   if (view === "workspace") {
     if (dom.searchInput) dom.searchInput.value = state.keyword;
+
+    // 动态设置 workspace 内部标题
+    var wsEyebrow = document.getElementById("workspace-eyebrow");
+    var wsTitle = document.getElementById("workspace-title");
+    var wsTitles = {
+      "gcode": { eyebrow: "G/M CODE", title: "G/M代码查询" },
+      "params": { eyebrow: "PARAMS & ALARM", title: "参数速查" },
+      "tooling": { eyebrow: "TOOL & PROCESS", title: "工艺刀具" },
+      "all": { eyebrow: "KNOWLEDGE BASE", title: "知识库工作区" }
+    };
+    var wsT = wsTitles[state.activeFilter] || wsTitles["all"];
+    if (wsEyebrow) wsEyebrow.textContent = wsT.eyebrow;
+    if (wsTitle) wsTitle.textContent = wsT.title;
+
+    // 动态修改搜索框 placeholder
+    if (dom.searchInput) {
+      var wsPlaceholders = {
+        "gcode": "搜索 G代码 / M代码，例如 G02、G43、M08、M30",
+        "params": "搜索报警号、参数名，例如 1815、EX1020、主轴参数",
+        "tooling": "搜索刀具、材料、工艺，例如 铝合金、球刀、粗加工",
+        "all": "G代码 · 报警 · 对刀 · 刀具..."
+      };
+      dom.searchInput.placeholder = wsPlaceholders[state.activeFilter] || wsPlaceholders["all"];
+    }
+
+    // 特定 filter 时隐藏分类下拉
+    var filterGroup = document.getElementById("workspace-filter-group");
+    if (filterGroup) {
+      filterGroup.style.display = (state.activeFilter === "all" || !state.activeFilter) ? "" : "none";
+    }
+
     renderWorkspace();
   }
 
@@ -1914,37 +1967,94 @@ function setupToolTabs() {
   });
 }
 
-var TOOL_DIAGNOSIS_DATA = [
-  { title: "老是崩刃", causes: ["进给过大或切深过大", "刀具牌号选择偏脆（硬质合金牌号过硬）", "工件材料硬度不均或含硬质点", "刀具悬伸过长导致受力偏摆", "切削刃有微裂纹或已钝化", "冷却不足导致热冲击崩刃"], checkOrder: ["检查刀具刃口状态（放大镜观察）", "确认进给率和切深是否在推荐范围内", "检查工件材料是否有硬皮、夹砂或硬度突变", "确认刀具悬伸长度（建议 ≤ 3~4倍直径）", "检查主轴跳动和刀柄精度"], advice: "崩刃通常不是单一原因。先确认刀具质量和悬伸，再看参数是否过激进。不要一崩刃就只降转速，先降进给和切深更合理。", prevention: "根据材料硬度选择合适的刀具牌号，粗加工使用韧性更好的牌号，精加工再换耐磨牌号。" },
-  { title: "加工声音发闷", causes: ["切削参数偏低（速度不够、进给不够）", "刀具已磨损（后刀面磨损带过宽）", "切深过小导致刮擦而非切削", "排屑不畅，切屑堵塞"], checkOrder: ["先听声音位置——刀具处还是工件处", "检查刀具磨损状态", "适当提高转速或进给", "检查排屑是否通畅"], advice: "发闷声通常意味着刀具在挤压而不是切削。如果参数已经在推荐范围内，优先检查刀具是否该换刃了。", prevention: "定期检查刀具磨损，记录刀具寿命。" },
-  { title: "刀具发红 / 烧刀", causes: ["转速过高导致摩擦发热过大", "进给过小导致摩擦时间过长", "冷却不足或冷却不到位", "刀具涂层已失效", "切深过大导致切削区温度过高"], checkOrder: ["检查冷却液是否对准切削区", "确认转速是否过高（核算线速度）", "检查进给是否偏低", "检查刀具涂层状态", "验证切深切宽是否合理"], advice: "烧刀先看冷却！冷却不到位的话调参数也没用。确认冷却液压力和喷嘴对准切削区。再查转速是否超了推荐范围。", prevention: "加工时注意观察铁屑颜色——发蓝发紫说明温度过高，需降转速或加冷却。" },
-  { title: "表面有震纹", causes: ["刀具悬伸过长", "工件刚性不足或装夹不稳", "主轴转速与机床产生共振", "每齿进给偏大", "刀具刃数选择不当", "刀柄动平衡不良"], checkOrder: ["减少刀具悬伸", "检查装夹稳定性（工件是否跳动）", "尝试调整转速（避开共振区间）", "降低每齿进给或使用变距刀具"], advice: "震纹优先查刚性——缩悬伸、加固装夹。如果调刚性有困难，尝试改变转速（±10%~20%）避开共振区间。", prevention: "设计工艺时优先考虑刀具悬伸、工件支撑和机床刚性匹配。" },
-  { title: "尺寸一头大一头小", causes: ["工件刚性差，加工时发生让刀", "刀具磨损不均（切入端与切出端磨损不同）", "工件装夹导致变形", "机床导轨间隙或反向间隙未补偿", "余量不均匀"], checkOrder: ["在机床上打表确认工件位置", "检查两端余量差异", "检查刀具磨损情况", "检查机床反向间隙补偿", "考虑调整走刀方向或加工顺序"], advice: "这通常是让刀或工件变形。先检查装夹方式和加工顺序，考虑从两端分别加工或增加支撑。不要只调刀补。", prevention: "细长件加工前先做应力释放，加工时增加辅助支撑。" },
-  { title: "尺寸合格但环规下不去", causes: ["单项尺寸合格，但综合形位误差超差", "工件太长，刚性差，加工时发生让刀", "两处花键或键槽同轴度不好", "齿形、齿向、倒角或毛刺影响通过", "装夹、顶尖、中心孔或支撑状态不稳定", "加工后应力释放或热处理变形", "检测方法只看单项尺寸，没有做综合通止规验"], checkOrder: ["先检查毛刺和倒角", "检查环规具体卡在哪一段", "检查两处花键或键槽的同轴度", "检查工件跳动和支撑方式", "检查齿形、齿向、跨棒距或相关综合尺寸", "复查加工顺序和装夹方式"], advice: "尺寸合格但环规不过，不要只盯单个尺寸。环规看的是综合通过性，要重点查形位误差、毛刺、同轴度和工件变形。", prevention: "加工前确认基准一致性，控制热处理变形，检测时做综合通止规校验。" },
-  { title: "孔合格但轴装不进去", causes: ["孔口毛刺或倒角不够", "孔的圆度和圆柱度超差", "孔壁粗糙度太差，实际配合过紧", "热装后冷却收缩量没算准", "轴的直线度或圆度也需复检"], checkOrder: ["检查孔口倒角和毛刺", "用内径百分表检查圆度/圆柱度", "检测粗糙度对比样块确认", "检查是否加工发热导致冷却后变形"], advice: "先看孔口倒角，很多配合问题就是差了倒角或多了毛刺。如果倒角没问题再查圆度和圆柱度。", prevention: "精加工后增加去毛刺工序，关键配合面标注圆度要求。" },
-  { title: "键槽尺寸合格但装配不顺", causes: ["键槽对称度超差", "键槽位置度偏差大", "槽底粗糙度过大", "键的尺寸未按配合公差选配", "两处键槽的同轴度不好"], checkOrder: ["检查键槽对称度", "检查键槽位置度（到基准的距离）", "检查槽底粗糙度", "实测键的宽度与槽的宽度匹配", "检查两端键槽同轴度"], advice: "键槽装配问题通常不是宽度的问题，而是对称度和位置度。建议用键槽对称度量具或打表确认。", prevention: "铣键槽时使用对刀仪或寻边器确认中心，标注对称度要求。" },
-  { title: "毛刺太大", causes: ["刀具磨损（刃口钝化）", "精加工余量偏大", "进给率偏大", "加工顺序不合理（切出方向造成毛刺）", "材料塑性大（如铝合金、铜）"], checkOrder: ["检查刀具刃口锋利度", "确认精加工余量是否合理（建议 0.2~0.5mm）", "适当降低精加工进给", "调整走刀方向——从工件内部切出而非边缘"], advice: "毛刺大先换刀或磨刃——钝刀是毛刺的头号原因。精加工用顺铣可显著减少毛刺。铝合金等软材料可以考虑使用倒角刀做去毛刺工序。", prevention: "安排专门的去毛刺工序，或使用毛刷、倒角刀一次走刀完成。" },
-  { title: "加工后尺寸不稳定", causes: ["刀具磨损快，尺寸漂移", "工件装夹不稳定（每次装夹位置有变化）", "冷却不均匀导致热变形", "加工余量不均匀", "机床热漂移（开机预热不足）", "材料内应力释放导致变形"], checkOrder: ["检查刀具磨损趋势——首件与末件对比", "确认装夹重复定位精度", "检查机床是否充分预热", "检查冷却是否稳定", "考虑增加半精加工再精加工"], advice: "尺寸不稳定先分两类：趋势性变化（刀具磨损/热漂移）还是随机性变化（装夹/材料）。趋势性变化补偿或换刀，随机性先解决装夹。", prevention: "建立首件检验和定期抽检制度，记录每件尺寸便于分析趋势。" }
-];
-
-function renderToolDiagnosis() {
+function bindDiagnosisUI() {
+  var data = window.CNC_DIAGNOSIS_DATA || [];
   var container = document.getElementById("tool-diagList");
-  if (!container) return;
-  container.innerHTML = TOOL_DIAGNOSIS_DATA.map(function(item, idx) {
-    return '<div class="diag-item" data-diag="' + idx + '"><span>' + (idx + 1) + '. ' + item.title + '</span><span class="arrow-icon" style="color:#64748B;font-size:1.1rem;">›</span></div><div class="diag-detail" id="tool-diagDetail' + idx + '" style="display:none;margin-top:8px;padding:16px;background:#F1F7FF;border-radius:8px;"><h4 style="font-size:0.88rem;font-weight:700;color:#202124;margin:14px 0 6px;">📌 可能原因</h4><ul style="padding-left:20px;font-size:0.85rem;color:#202124;line-height:1.8;">' + item.causes.map(function(c) { return '<li>' + c + '</li>'; }).join("") + '</ul><h4 style="font-size:0.88rem;font-weight:700;color:#202124;margin:14px 0 6px;">🔍 优先检查顺序</h4><ol style="padding-left:20px;font-size:0.85rem;color:#202124;line-height:1.8;">' + item.checkOrder.map(function(c) { return '<li>' + c + '</li>'; }).join("") + '</ol><h4 style="font-size:0.88rem;font-weight:700;color:#202124;margin:14px 0 6px;">💡 现场处理建议</h4><div class="highlight-box" style="background:#fff;border-left:3px solid #1a73e8;padding:10px 14px;border-radius:0 8px 8px 0;font-size:0.85rem;margin-top:8px;line-height:1.7;">' + item.advice + '</div><h4 style="font-size:0.88rem;font-weight:700;color:#202124;margin:14px 0 6px;">🛡 下次预防方法</h4><div class="highlight-box" style="background:rgba(15,118,110,0.06);border-left:3px solid #0F766E;padding:10px 14px;border-radius:0 8px 8px 0;font-size:0.85rem;margin-top:8px;line-height:1.7;">' + item.prevention + '</div></div>';
-  }).join("");
+  var searchInput = document.getElementById("tool-diagSearch");
+  var countEl = document.getElementById("tool-diagCount");
+  if (!container || !data.length) return;
 
-  container.querySelectorAll(".diag-item").forEach(function(el) {
-    el.addEventListener("click", function() {
-      var idx = this.dataset.diag;
-      var detail = document.getElementById("tool-diagDetail" + idx);
-      var isOpen = detail.classList.contains("open");
-      container.querySelectorAll(".diag-detail.open").forEach(function(d) { d.classList.remove("open"); d.style.display = "none"; });
-      if (!isOpen) {
-        detail.classList.add("open");
-        detail.style.display = "block";
+  var currentCat = "all";
+  var searchTimer = null;
+  var searchTerm = "";
+
+  function render() {
+    var filtered = data.filter(function(item) {
+      if (currentCat !== "all" && item.category !== currentCat) return false;
+      if (searchTerm) {
+        var q = searchTerm.toLowerCase();
+        var matchTitle = item.title.toLowerCase().indexOf(q) !== -1;
+        var matchKw = (item.keywords || []).some(function(kw) { return kw.toLowerCase().indexOf(q) !== -1; });
+        if (!matchTitle && !matchKw) return false;
       }
+      return true;
     });
+
+    countEl.textContent = filtered.length + " / " + data.length + " 条";
+
+    if (!filtered.length) {
+      container.innerHTML = '<div style="text-align:center;padding:32px 16px;color:#64748B;">未找到匹配的问题</div>';
+      return;
+    }
+
+    container.innerHTML = filtered.map(function(item, idx) {
+      var riskClass = item.risk || "low";
+      var riskColor = riskClass === "high" ? "#DC2626" : riskClass === "medium" ? "#F97316" : "#16A34A";
+      var riskBg = riskClass === "high" ? "#FEE2E2" : riskClass === "medium" ? "#FFEDD5" : "#DCFCE7";
+      var isMaster = item.risk === "high";
+      return '<div class="diag-item' + (isMaster ? ' diag-master' : '') + '" data-diag-idx="' + idx + '">'
+        + '<div class="diag-item-header">'
+        + '<span class="diag-item-title">' + item.title + '</span>'
+        + '<span class="diag-risk" style="background:' + riskBg + ';color:' + riskColor + ';">' + (riskClass === "high" ? "高" : riskClass === "medium" ? "中" : "低") + '</span>'
+        + '<span class="diag-cat-tag">' + item.category + '</span>'
+        + '<span class="arrow-icon" style="color:#64748B;font-size:1.1rem;">›</span>'
+        + '</div>'
+        + '<div class="diag-detail" id="tool-diagDetail-' + idx + '" style="display:none;">'
+        + '<h4 style="font-size:0.88rem;font-weight:700;color:#202124;margin:14px 0 6px;">📌 可能原因</h4>'
+        + '<ul style="padding-left:20px;font-size:0.85rem;color:#202124;line-height:1.8;">'
+        + item.causes.map(function(c) { return '<li>' + c + '</li>'; }).join("") + '</ul>'
+        + '<h4 style="font-size:0.88rem;font-weight:700;color:#202124;margin:14px 0 6px;">🔍 优先检查顺序</h4>'
+        + '<ol style="padding-left:20px;font-size:0.85rem;color:#202124;line-height:1.8;">'
+        + item.checkOrder.map(function(c) { return '<li>' + c + '</li>'; }).join("") + '</ol>'
+        + '<h4 style="font-size:0.88rem;font-weight:700;color:#202124;margin:14px 0 6px;">💡 现场处理建议</h4>'
+        + '<div class="highlight-box" style="background:#fff;border-left:3px solid #1a73e8;padding:10px 14px;border-radius:0 8px 8px 0;font-size:0.85rem;margin-top:8px;line-height:1.7;">' + item.advice + '</div>'
+        + '<h4 style="font-size:0.88rem;font-weight:700;color:#202124;margin:14px 0 6px;">🛡 下次预防方法</h4>'
+        + '<div class="highlight-box" style="background:rgba(15,118,110,0.06);border-left:3px solid #0F766E;padding:10px 14px;border-radius:0 8px 8px 0;font-size:0.85rem;margin-top:8px;line-height:1.7;">' + item.prevention + '</div>'
+        + '</div></div>';
+    }).join("");
+
+    container.querySelectorAll(".diag-item").forEach(function(el) {
+      el.addEventListener("click", function() {
+        var idx = this.dataset.diagIdx;
+        var detail = document.getElementById("tool-diagDetail-" + idx);
+        if (!detail) return;
+        var isOpen = detail.style.display !== "none";
+        container.querySelectorAll(".diag-detail").forEach(function(d) { d.style.display = "none"; });
+        if (!isOpen) {
+          detail.style.display = "block";
+        }
+      });
+    });
+  }
+
+  render();
+
+  searchInput.addEventListener("input", function() {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(function() {
+      searchTerm = searchInput.value.trim();
+      render();
+    }, 300);
+  });
+
+  document.addEventListener("click", function(e) {
+    var target = e.target.closest(".cat-btn");
+    if (!target || !target.dataset.cat) return;
+    document.querySelectorAll(".cat-btn").forEach(function(b) { b.classList.remove("active"); });
+    target.classList.add("active");
+    currentCat = target.dataset.cat;
+    searchTerm = searchInput.value.trim();
+    render();
   });
 }
 
@@ -2068,7 +2178,8 @@ function handleHashChange() {
     "calculator": "calculator",
     "library": "library",
     "favorites": "favorites",
-    "access": "access"
+    "access": "access",
+    "balloon": "balloon"
   };
 
   const view = routeMap[hash] || "dashboard";
@@ -2327,7 +2438,10 @@ async function bootstrap() {
   bindAccessEvents();
   bindCalculators();
   setupToolTabs();
-  renderToolDiagnosis();
+  bindDiagnosisUI();
+  if (typeof CNC_BALLOON_TOOL !== 'undefined' && CNC_BALLOON_TOOL.init) {
+    CNC_BALLOON_TOOL.init();
+  }
   bindEnhancedUI();
 
   syncTreeState();
@@ -2541,16 +2655,64 @@ function findKnowledgeItemByRule(rule) {
   });
 }
 
-/**
- * 跳转到详情页
- */
-function goToKnowledgeDetail(item) {
-  if (!item || !item.id) return;
+function openStudyDetail(level) {
+  var panel = document.getElementById("study-detail-panel");
+  var content = document.getElementById("study-detail-content");
+  var stagesList = document.querySelector("#view-study .learning-stages");
+  var studyHead = document.querySelector("#view-study .section-head");
 
-  // 使用项目现有的路由机制
-  state.selectedId = item.id;
-  navigate('workspace');
-  renderAll();
+  if (!panel || !content) {
+    console.error('[openStudyDetail] 找不到详情面板容器');
+    return;
+  }
+
+  // 尝试用 CNC_LEARNING_UI 渲染详情
+  var html = "";
+  if (window.CNC_LEARNING_UI && typeof window.CNC_LEARNING_UI.renderLessonDetail === "function") {
+    html = window.CNC_LEARNING_UI.renderLessonDetail(level);
+  }
+
+  if (!html) {
+    // 如果没有详情数据，显示占位内容
+    html = '<div style="padding:20px;text-align:center;color:#64748B;">';
+    html += '<h3>第 ' + level + ' 关</h3>';
+    html += '<p>详细内容正在准备中，敬请期待...</p>';
+    html += '</div>';
+  }
+
+  // 添加导航按钮（上一关/下一关）
+  html += '<div style="display:flex;justify-content:space-between;padding:16px 0;margin-top:16px;border-top:1px solid #E2E8F0;">';
+  if (level > 1) {
+    html += '<button class="sub-nav-btn" onclick="openStudyDetail(' + (level - 1) + ')">← 上一关</button>';
+  } else {
+    html += '<span></span>';
+  }
+  if (level < 12) {
+    html += '<button class="sub-nav-btn" onclick="openStudyDetail(' + (level + 1) + ')" style="background:#1a73e8;color:#fff;border-color:#1a73e8;">下一关 →</button>';
+  } else {
+    html += '<span></span>';
+  }
+  html += '</div>';
+
+  content.innerHTML = html;
+
+  // 隐藏关卡列表，显示详情
+  if (stagesList) stagesList.style.display = "none";
+  if (studyHead) studyHead.style.display = "none";
+  panel.style.display = "block";
+
+  // 滚动到顶部
+  panel.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function closeStudyDetail() {
+  var panel = document.getElementById("study-detail-panel");
+  var stagesList = document.querySelector("#view-study .learning-stages");
+  var studyHead = document.querySelector("#view-study .section-head");
+
+  if (panel) panel.style.display = "none";
+  if (stagesList) stagesList.style.display = "";
+  if (studyHead) studyHead.style.display = "";
 }
 
 /**
@@ -2584,25 +2746,12 @@ function bindStudyCards() {
     card.setAttribute('tabindex', '0');
 
     const handleOpen = () => {
-      const cardTitle = getStudyCardTitle(card);
-      const rule = findStudyRuleByCardTitle(cardTitle);
-
-      if (!rule) {
-        console.warn('[学习卡片未配置匹配规则]', cardTitle);
+      const level = parseInt(card.dataset.level, 10);
+      if (!level) {
+        console.warn('[学习卡片] 没有 data-level 属性', card);
         return;
       }
-
-      const item = findKnowledgeItemByRule(rule);
-      if (!item) {
-        console.warn('[未在 data.js 中找到对应知识点]', {
-          cardTitle,
-          rule
-        });
-        return;
-      }
-
-      console.log('[学习卡片跳转]', cardTitle, '→', item.title);
-      goToKnowledgeDetail(item);
+      openStudyDetail(level);
     };
 
     card.addEventListener('click', handleOpen);

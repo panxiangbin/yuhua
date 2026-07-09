@@ -3,7 +3,7 @@
  * PWA 离线支持：首次访问缓存核心资源，后续采用 Network First + Cache Fallback 策略
  * 缓存名称：cnc-cache-v1
  */
-const CACHE_NAME = 'cnc-cache-v1';
+const CACHE_NAME = 'cnc-cache-v2';
 
 const ASSETS_TO_CACHE = [
   '/yuhua/cnc/',
@@ -41,7 +41,10 @@ const ASSETS_TO_CACHE = [
   '/yuhua/cnc/learning-content-data.js',
   '/yuhua/cnc/json-loader.js',
   '/yuhua/cnc/KnowledgeGraph.js',
-  '/yuhua/cnc/search-runtime-debug.js'
+  '/yuhua/cnc/search-runtime-debug.js',
+  '/yuhua/cnc/diagnosis-data.js',
+  '/yuhua/cnc/ui-learning-detail.js',
+  '/yuhua/cnc/balloon-tool.js'
 ];
 
 self.addEventListener('install', (event) => {

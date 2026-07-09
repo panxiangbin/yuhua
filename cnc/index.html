@@ -215,6 +215,23 @@
           </article>
         </div>
 
+        <!-- 粉丝建议临时板块 -->
+        <div class="fan-suggestion-panel">
+          <div class="fan-suggestion-header">
+            <span class="fan-suggestion-icon">💬</span>
+            <h4>粉丝建议正在加入</h4>
+          </div>
+          <p class="fan-suggestion-desc">最近准备加入这些现场功能：</p>
+          <div class="fan-suggestion-list">
+            <span class="fan-suggestion-tag">🔧 刀具参数助手</span>
+            <span class="fan-suggestion-tag">🔍 加工中心异常排查</span>
+            <span class="fan-suggestion-tag">📐 单网纹 / 刀纹排查</span>
+            <span class="fan-suggestion-tag">🔩 螺纹小径忽大忽小</span>
+            <span class="fan-suggestion-tag highlight" data-route="balloon">📋 图纸气泡标注</span>
+          </div>
+          <p class="fan-suggestion-note">大家在现场遇到的问题，也可以继续提，我会慢慢加进来。</p>
+        </div>
+
         <!-- 快速搜索入口 -->
         <div class="launchpad-search">
           <div class="launchpad-search-header">
@@ -279,6 +296,10 @@
 
       <!-- 知识地图视图 -->
       <section class="view" id="view-learning-map">
+        <div class="sub-nav-bar">
+          <button class="sub-nav-btn" onclick="navigate('dashboard')">← 返回主页</button>
+          <button class="sub-nav-btn" onclick="history.back()">↩ 返回上一层</button>
+        </div>
         <div class="section-panel">
           <div class="section-head">
             <div>
@@ -317,6 +338,10 @@
       </section>
 
       <section class="view" id="view-study">
+        <div class="sub-nav-bar">
+          <button class="sub-nav-btn" onclick="navigate('dashboard')">← 返回主页</button>
+          <button class="sub-nav-btn" onclick="history.back()">↩ 返回上一层</button>
+        </div>
         <div class="section-panel">
           <div class="section-head">
             <div>
@@ -529,16 +554,29 @@
             </div>
           </div>
         </div>
+
+        <!-- 学习关卡详情面板 -->
+        <div id="study-detail-panel" style="display:none;">
+          <div class="sub-nav-bar">
+            <button class="sub-nav-btn" onclick="navigate('dashboard')">← 返回主页</button>
+            <button class="sub-nav-btn" onclick="closeStudyDetail()">↩ 返回关卡列表</button>
+          </div>
+          <div id="study-detail-content"></div>
+        </div>
       </section>
 
       <section class="view" id="view-workspace">
+        <div class="sub-nav-bar">
+          <button class="sub-nav-btn" onclick="navigate('dashboard')">← 返回主页</button>
+          <button class="sub-nav-btn" onclick="history.back()">↩ 返回上一层</button>
+        </div>
         <div class="workspace-layout">
           <!-- 左侧：搜索与列表区 -->
           <section class="workspace-panel search-panel">
             <div class="workspace-header">
               <div>
-                <p class="eyebrow">KNOWLEDGE BASE</p>
-                <h3>知识库工作区</h3>
+                <p class="eyebrow" id="workspace-eyebrow">KNOWLEDGE BASE</p>
+                <h3 id="workspace-title">知识库工作区</h3>
               </div>
               <div class="workspace-status-bar">
                 <span class="status-indicator" id="workspace-status-indicator">●</span>
@@ -555,7 +593,7 @@
                 <button class="icon-button" id="search-clear-btn" title="清除搜索">×</button>
                 <div class="search-suggestions" id="search-suggestions" style="display:none"></div>
               </div>
-              <label class="filter-select-group">
+              <label class="filter-select-group" id="workspace-filter-group">
                 <span>分类</span>
                 <select id="category-select"></select>
               </label>
@@ -702,6 +740,10 @@
       </section>
 
       <section class="view" id="view-gallery">
+        <div class="sub-nav-bar">
+          <button class="sub-nav-btn" onclick="navigate('dashboard')">← 返回主页</button>
+          <button class="sub-nav-btn" onclick="history.back()">↩ 返回上一层</button>
+        </div>
         <div class="section-panel">
           <div class="section-head">
             <div>
@@ -734,6 +776,10 @@
       </section>
 
       <section class="view" id="view-calculator">
+        <div class="sub-nav-bar">
+          <button class="sub-nav-btn" onclick="navigate('dashboard')">← 返回主页</button>
+          <button class="sub-nav-btn" onclick="history.back()">↩ 返回上一层</button>
+        </div>
         <div class="section-panel">
           <div class="section-head">
             <div>
@@ -967,15 +1013,90 @@
 
           <div class="tool-tab-panel" id="tool-tab3" role="tabpanel">
             <div class="card" style="background:#fff;border:1px solid #e8eaed;border-radius:12px;padding:16px;margin-bottom:16px;">
-              <div class="card-title" style="font-size:1rem;font-weight:600;margin-bottom:14px;">🔍 常见问题诊断</div>
-              <p style="font-size:0.85rem;color:#64748B;margin-bottom:12px;">选择一个问题，查看可能原因和处理建议</p>
+              <div class="card-title" style="font-size:1rem;font-weight:600;margin-bottom:14px;">🔍 异常排查库</div>
+              <p style="font-size:0.85rem;color:#64748B;margin-bottom:12px;">搜索或按分类筛选常见加工问题，查看原因、检查顺序和处理建议</p>
+              <div class="tool-diag-search-bar">
+                <input type="text" id="tool-diagSearch" placeholder="搜索关键词…" class="tool-diag-input">
+                <span class="tool-diag-count" id="tool-diagCount">24 条</span>
+              </div>
+              <div class="tool-diag-cats" id="tool-diagCats">
+                <button class="cat-btn active" data-cat="all">全部</button>
+                <button class="cat-btn" data-cat="表面质量">表面质量</button>
+                <button class="cat-btn" data-cat="尺寸稳定">尺寸稳定</button>
+                <button class="cat-btn" data-cat="孔加工">孔加工</button>
+                <button class="cat-btn" data-cat="螺纹攻丝">螺纹攻丝</button>
+                <button class="cat-btn" data-cat="刀具异常">刀具异常</button>
+                <button class="cat-btn" data-cat="装夹刚性">装夹刚性</button>
+                <button class="cat-btn" data-cat="程序刀补">程序刀补</button>
+                <button class="cat-btn" data-cat="冷却排屑">冷却排屑</button>
+              </div>
               <div class="tool-diag-list" id="tool-diagList"></div>
             </div>
           </div>
         </div>
       </section>
 
+      <section class="view" id="view-balloon">
+        <div class="sub-nav-bar">
+          <button class="sub-nav-btn" onclick="navigate('dashboard')">← 返回主页</button>
+          <button class="sub-nav-btn" onclick="history.back()">↩ 返回上一层</button>
+        </div>
+        <div class="section-panel">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">质检工具</p>
+              <h3>图纸气泡标注</h3>
+            </div>
+          </div>
+          <div id="balloon-tool-container">
+            <!-- 上传区域 -->
+            <div id="balloon-upload-area" style="border:2px dashed #ccc;border-radius:12px;padding:40px;text-align:center;margin-bottom:16px;cursor:pointer;">
+              <p style="font-size:1rem;color:#666;">点击或拖拽上传图纸图片</p>
+              <p style="font-size:0.85rem;color:#999;">支持 JPG / PNG，建议分辨率 1000px 以上</p>
+              <input type="file" id="balloon-file-input" accept="image/*" style="display:none;">
+            </div>
+
+            <!-- 工具栏 -->
+            <div id="balloon-toolbar" style="display:none;margin-bottom:12px;">
+              <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+                <button class="primary-button" id="balloon-add-btn" type="button">➕ 添加气泡</button>
+                <button class="sub-nav-btn" id="balloon-delete-btn" type="button">🗑 删除选中</button>
+                <button class="sub-nav-btn" id="balloon-renumber-btn" type="button">🔢 重新编号</button>
+                <span style="flex:1;"></span>
+                <button class="sub-nav-btn" id="balloon-export-img-btn" type="button">📤 导出标注图</button>
+                <button class="sub-nav-btn" id="balloon-export-csv-btn" type="button">📋 导出CSV</button>
+              </div>
+              <div style="display:flex;gap:8px;margin-top:8px;">
+                <button class="sub-nav-btn" id="balloon-save-btn" type="button">💾 保存草稿</button>
+                <button class="sub-nav-btn" id="balloon-load-btn" type="button">📂 加载草稿</button>
+                <button class="sub-nav-btn" id="balloon-clear-btn" type="button">🧹 清空</button>
+                <button class="sub-nav-btn" id="balloon-example-btn" type="button">📎 加载示例</button>
+              </div>
+            </div>
+
+            <!-- 画布 + 气泡列表 -->
+            <div id="balloon-workspace" style="display:none;">
+              <div style="display:grid;grid-template-columns:1fr 300px;gap:16px;">
+                <!-- 左侧：标注画布 -->
+                <div style="position:relative;border:1px solid #e8eaed;border-radius:8px;overflow:hidden;">
+                  <canvas id="balloon-canvas" style="width:100%;display:block;cursor:crosshair;"></canvas>
+                </div>
+                <!-- 右侧：气泡列表 -->
+                <div style="border:1px solid #e8eaed;border-radius:8px;padding:12px;max-height:600px;overflow-y:auto;">
+                  <h4 style="margin:0 0 8px;font-size:0.95rem;">气泡列表</h4>
+                  <div id="balloon-list"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section class="view" id="view-library">
+        <div class="sub-nav-bar">
+          <button class="sub-nav-btn" onclick="navigate('dashboard')">← 返回主页</button>
+          <button class="sub-nav-btn" onclick="history.back()">↩ 返回上一层</button>
+        </div>
         <div class="section-panel">
           <div class="section-head">
             <div>
@@ -1029,6 +1150,10 @@
       </section>
 
       <section class="view" id="view-favorites">
+        <div class="sub-nav-bar">
+          <button class="sub-nav-btn" onclick="navigate('dashboard')">← 返回主页</button>
+          <button class="sub-nav-btn" onclick="history.back()">↩ 返回上一层</button>
+        </div>
         <div class="section-panel">
           <div class="section-head">
             <div>
@@ -1052,6 +1177,10 @@
       </section>
 
       <section class="view" id="view-access">
+        <div class="sub-nav-bar">
+          <button class="sub-nav-btn" onclick="navigate('dashboard')">← 返回主页</button>
+          <button class="sub-nav-btn" onclick="history.back()">↩ 返回上一层</button>
+        </div>
         <div class="section-panel">
           <div class="section-head">
             <div>
@@ -1152,6 +1281,9 @@
   <script src="./alarm-data.js?v=20260708b"></script>
   <script src="./weak-category-data.js"></script>
   <script src="./gm-code-complete.js"></script>
+  <script src="./diagnosis-data.js"></script>
+  <script src="./ui-learning-detail.js"></script>
+  <script src="./balloon-tool.js"></script>
 
   <!-- 3号：JSON加载器（处理BOM） -->
   <script src="./json-loader.js"></script>
@@ -1167,7 +1299,7 @@
   <script src="./graph-importer.js"></script>
   <script src="./import-test.js"></script>
 
-  <script src="./app.js?v=20260708b"></script>
+  <script src="./app.js?v=20260709a"></script>
   <script src="./gallery-featured.js?v=20260708b"></script>
   <button id="scroll-top-btn" title="回到顶部">↑</button>
 <script>
