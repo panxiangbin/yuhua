@@ -43,6 +43,12 @@
   <link rel="stylesheet" href="./styles.css">
   <link rel="stylesheet" href="./styles-enhanced.css">
   <link rel="stylesheet" href="./theme-tech.css?v=20260708b">
+  <style>
+    /* 临时修复：如果JS出错，3秒后自动隐藏加载界面 */
+    #loading-screen {
+      transition: opacity 0.3s ease;
+    }
+  </style>
 </head>
 <body>
   <div id="loading-screen">
@@ -850,7 +856,7 @@
               <div class="form-group">
                 <label>刀具类型</label>
                 <select id="tool-tool">
-                  <option value="carbide">钨钢铣刀</option>
+                  <option value="carbide">钨钢铟刀</option>
                   <option value="hss">高速钢刀具</option>
                   <option value="insert">机夹刀片</option>
                   <option value="coated">涂层刀</option>
@@ -1314,6 +1320,17 @@
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').catch(function(){});
 }
+
+// 安全网：如果JS出错导致加载界面卡住，3秒后自动隐藏
+setTimeout(function() {
+  var ls = document.getElementById('loading-screen');
+  if (ls) {
+    ls.style.opacity = '0';
+    setTimeout(function() {
+      ls.style.display = 'none';
+    }, 300);
+  }
+}, 3000);
 </script>
 </body>
 </html>
