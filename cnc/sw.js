@@ -1,9 +1,10 @@
 /**
  * CNC速查助手 - Service Worker
  * PWA 离线支持：首次访问缓存核心资源，后续采用 Network First + Cache Fallback 策略
- * 缓存名称：cnc-cache-v4
+ * 缓存名称：cnc-cache-v5
  */
-const CACHE_NAME = 'cnc-cache-v4';
+const CACHE_NAME = 'cnc-cache-v5';
+const LESSON_MEDIA_VERSION = '20260709e';
 
 // 路由兜底：即使 app.js 旧缓存/局部初始化失败，首页板块也必须能切换视图。
 // 这段会被 Service Worker 自动插到 app.js 最前面。
@@ -119,6 +120,48 @@ const ROUTE_FALLBACK_SCRIPT = `
 })();
 `;
 
+const LESSON_MEDIA_FIX_SCRIPT = `
+;(function () {
+  if (window.__CNC_LESSON_MEDIA_FIX__) return;
+  window.__CNC_LESSON_MEDIA_FIX__ = true;
+  var version = '${LESSON_MEDIA_VERSION}';
+  var rawVideo = './assets/videos/learning/lesson-01-datum.mp4';
+  var rawImage = './assets/images/learning/lesson-01-datum.png';
+  function withVersion(url) {
+    if (!url) return url;
+    if (url.indexOf('lesson-01-datum') === -1) return url;
+    return url.split('?')[0] + '?v=' + version;
+  }
+  function fixLessonMedia() {
+    document.querySelectorAll('[data-lesson-video]').forEach(function (video) {
+      if (video.dataset.mediaFixed === version) return;
+      var source = video.querySelector('source');
+      if (source) source.setAttribute('src', withVersion(source.getAttribute('src') || rawVideo));
+      video.setAttribute('poster', withVersion(video.getAttribute('poster') || rawImage));
+      video.dataset.mediaFixed = version;
+      try { video.load(); } catch (err) {}
+      var card = video.closest('.lesson-card-pro');
+      if (card && !card.querySelector('.lesson-direct-video-link')) {
+        var p = document.createElement('p');
+        p.className = 'lesson-media-note lesson-direct-video-link';
+        p.innerHTML = '<a href="' + rawVideo + '?v=' + version + '" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;background:#0b3a78;color:#fff;text-decoration:none;font-weight:700;">如果播放器打不开，点这里直接打开视频</a>';
+        var note = card.querySelector('.lesson-media-note');
+        if (note && note.parentNode) note.parentNode.insertBefore(p, note.nextSibling);
+        else card.appendChild(p);
+      }
+    });
+    document.querySelectorAll('.lesson-diagram-img').forEach(function (img) {
+      if (img.dataset.imgFixed === version) return;
+      img.src = withVersion(img.getAttribute('src') || rawImage);
+      img.dataset.imgFixed = version;
+    });
+  }
+  document.addEventListener('DOMContentLoaded', fixLessonMedia);
+  document.addEventListener('click', function () { setTimeout(fixLessonMedia, 120); }, true);
+  setInterval(fixLessonMedia, 1000);
+})();
+`;
+
 const ASSETS_TO_CACHE = [
   '/yuhua/cnc/',
   '/yuhua/cnc/index.html',
@@ -158,7 +201,9 @@ const ASSETS_TO_CACHE = [
   '/yuhua/cnc/search-runtime-debug.js',
   '/yuhua/cnc/diagnosis-data.js',
   '/yuhua/cnc/ui-learning-detail.js',
-  '/yuhua/cnc/balloon-tool.js'
+  '/yuhua/cnc/balloon-tool.js',
+  '/yuhua/cnc/assets/videos/learning/lesson-01-datum.mp4',
+  '/yuhua/cnc/assets/images/learning/lesson-01-datum.png'
 ];
 
 function isAppScriptRequest(request) {
@@ -170,12 +215,40 @@ function isAppScriptRequest(request) {
   }
 }
 
+function isLearningDetailRequest(request) {
+  try {
+    const url = new URL(request.url);
+    return url.pathname.endsWith('/yuhua/cnc/ui-learning-detail.js');
+  } catch (err) {
+    return false;
+  }
+}
+
 async function patchAppScriptResponse(request, networkResponse) {
   const original = await networkResponse.text();
   const headers = new Headers(networkResponse.headers);
   headers.set('Content-Type', 'application/javascript; charset=utf-8');
   headers.set('Cache-Control', 'no-cache');
   const patched = new Response(ROUTE_FALLBACK_SCRIPT + '\n' + original, {
+    status: networkResponse.status,
+    statusText: networkResponse.statusText,
+    headers
+  });
+  caches.open(CACHE_NAME).then((cache) => {
+    cache.put(request, patched.clone()).catch(() => {});
+  });
+  return patched;
+}
+
+async function patchLearningDetailResponse(request, networkResponse) {
+  let original = await networkResponse.text();
+  const headers = new Headers(networkResponse.headers);
+  headers.set('Content-Type', 'application/javascript; charset=utf-8');
+  headers.set('Cache-Control', 'no-cache');
+  original = original
+    .replace("/videos/learning/lesson-01-datum.mp4'", "/videos/learning/lesson-01-datum.mp4?v=" + LESSON_MEDIA_VERSION + "'")
+    .replace(/\/images\/learning\/lesson-01-datum\.png'/g, "/images/learning/lesson-01-datum.png?v=" + LESSON_MEDIA_VERSION + "'");
+  const patched = new Response(original + '\n' + LESSON_MEDIA_FIX_SCRIPT, {
     status: networkResponse.status,
     statusText: networkResponse.statusText,
     headers
@@ -235,6 +308,9 @@ self.addEventListener('fetch', (event) => {
           if (isAppScriptRequest(event.request)) {
             return patchAppScriptResponse(event.request, networkResponse.clone());
           }
+          if (isLearningDetailRequest(event.request)) {
+            return patchLearningDetailResponse(event.request, networkResponse.clone());
+          }
 
           const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
@@ -249,7 +325,7 @@ self.addEventListener('fetch', (event) => {
             return cachedResponse;
           }
 
-          if (event.request.mode === 'navigate' || 
+          if (event.request.mode === 'navigate' ||
               (event.request.destination === 'document' && event.request.url.endsWith('/'))) {
             return caches.match('/yuhua/cnc/index.html');
           }
