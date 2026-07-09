@@ -230,9 +230,9 @@ window.CNC_BALLOON_TOOL = (function() {
 
   function autoJudgeResult(bubble) {
     var req = bubble.requirement.trim();
-    var upper = bubble.upperTol.trim();
-    var lower = bubble.lowerTol.trim();
-    var measured = bubble.measured.trim();
+    var upper = balloon.upperTol.trim();
+    var lower = balloon.lowerTol.trim();
+    var measured = balloon.measured.trim();
 
     if (!req || !upper || !lower || !measured) return;
 
@@ -247,9 +247,9 @@ window.CNC_BALLOON_TOOL = (function() {
     var minVal = baseVal + lowerVal;
 
     if (measVal >= minVal && measVal <= maxVal) {
-      bubble.result = "合格";
+      balloon.result = "合格";
     } else {
-      bubble.result = "超差";
+      balloon.result = "超差";
     }
   }
 
@@ -414,7 +414,8 @@ window.CNC_BALLOON_TOOL = (function() {
     if (state._initialized) return;
     state._initialized = true;
 
-    var uploadInput = document.getElementById("balloon-upload");
+    // 支持多个可能的上传 input ID
+    var uploadInput = document.getElementById("balloon-upload") || document.getElementById("balloon-file-input");
     if (uploadInput) {
       uploadInput.addEventListener("change", function(e) {
         var file = e.target.files[0];
@@ -498,7 +499,7 @@ window.CNC_BALLOON_TOOL = (function() {
 
   function escapeHtml(str) {
     if (typeof str !== "string") return "";
-    return str.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    return str.replace(/&/g, "&").replace(/"/g, """).replace(/</g, "<").replace(/>/g, ">");
   }
 
   return {
@@ -525,3 +526,16 @@ window.CNC_BALLOON_TOOL = (function() {
     }
   };
 })();
+
+// 自动初始化（页面加载后自动尝试初始化气泡工具）
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function() {
+    if (window.CNC_BALLOON_TOOL && typeof window.CNC_BALLOON_TOOL.init === 'function') {
+      window.CNC_BALLOON_TOOL.init();
+    }
+  });
+} else {
+  if (window.CNC_BALLOON_TOOL && typeof window.CNC_BALLOON_TOOL.init === 'function') {
+    window.CNC_BALLOON_TOOL.init();
+  }
+}
