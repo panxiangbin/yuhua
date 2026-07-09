@@ -423,6 +423,14 @@ window.CNC_BALLOON_TOOL = (function() {
       });
     }
 
+    // 让上传区域可点击
+    var uploadArea = document.getElementById("balloon-upload-area");
+    if (uploadArea && uploadInput) {
+      uploadArea.addEventListener("click", function() {
+        uploadInput.click();
+      });
+    }
+
     var canvas = document.getElementById("balloon-canvas");
     if (canvas) {
       canvas.addEventListener("click", function(e) {
@@ -527,7 +535,7 @@ window.CNC_BALLOON_TOOL = (function() {
   };
 })();
 
-// 自动初始化（页面加载后自动尝试初始化气泡工具）
+// 自动初始化
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', function() {
     if (window.CNC_BALLOON_TOOL && typeof window.CNC_BALLOON_TOOL.init === 'function') {
