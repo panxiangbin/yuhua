@@ -215,6 +215,31 @@
           </article>
         </div>
 
+        <!-- ==================== 新增：图纸气泡标注工具（放在6个板块下方） ==================== -->
+        <div class="balloon-dashboard-card" style="margin-top: 24px; background: linear-gradient(135deg, #fffaf0, #fff); border: 2px solid #f59e0b; border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(245, 158, 11, 0.1);">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+            <div style="font-size: 28px;">📐</div>
+            <div>
+              <h3 style="margin: 0; font-size: 1.25rem; color: #92400e;">图纸气泡标注工具</h3>
+              <p style="margin: 4px 0 0; color: #92400e; font-size: 0.95rem;">快速标注尺寸、生成检验表、导出带气泡的图纸</p>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px;">
+            <button onclick="navigate('balloon')" class="primary-button" style="flex: 1; min-width: 160px; padding: 14px 24px; font-size: 1rem; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; color: white; border-radius: 12px; font-weight: 700; cursor: pointer;">
+              🚀 立即打开气泡标注工具
+            </button>
+            <button onclick="if(window.CNC_BALLOON_TOOL && window.CNC_BALLOON_TOOL.loadExample){ window.CNC_BALLOON_TOOL.loadExample(); } navigate('balloon');" class="ghost-button" style="flex: 1; min-width: 140px; padding: 14px 20px; font-size: 0.95rem;">
+              📎 加载示例图纸
+            </button>
+          </div>
+
+          <div style="margin-top: 14px; font-size: 0.85rem; color: #92400e; opacity: 0.85;">
+            支持上传 JPG/PNG 图纸 → 点击添加气泡 → 填写尺寸要求 → 一键导出标注图 + CSV 检验表
+          </div>
+        </div>
+        <!-- ==================== 气泡标注入口结束 ==================== -->
+
         <!-- 粉丝建议临时板块 -->
         <div class="fan-suggestion-panel">
           <div class="fan-suggestion-header">
@@ -786,7 +811,6 @@
               <p class="eyebrow">CNC工具箱</p>
               <h3>刀具参数·计算器·故障诊断</h3>
             </div>
-          </div>
 
           <nav class="tool-tab-bar" role="tablist">
             <button class="tool-tab-btn active" data-tool-tab="tool-tab1" role="tab" aria-selected="true">材料硬度推荐</button>
