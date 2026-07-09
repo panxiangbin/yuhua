@@ -1,9 +1,9 @@
 /**
  * CNC速查助手 - Service Worker
  * PWA 离线支持：首次访问缓存核心资源，后续采用 Network First + Cache Fallback 策略
- * 缓存名称：cnc-cache-v4
+ * 缓存名称：cnc-cache-v5-lesson1-images
  */
-const CACHE_NAME = 'cnc-cache-v4';
+const CACHE_NAME = 'cnc-cache-v5-lesson1-images';
 
 // 路由兜底：即使 app.js 旧缓存/局部初始化失败，首页板块也必须能切换视图。
 // 这段会被 Service Worker 自动插到 app.js 最前面。
@@ -158,7 +158,12 @@ const ASSETS_TO_CACHE = [
   '/yuhua/cnc/search-runtime-debug.js',
   '/yuhua/cnc/diagnosis-data.js',
   '/yuhua/cnc/ui-learning-detail.js',
-  '/yuhua/cnc/balloon-tool.js'
+  '/yuhua/cnc/balloon-tool.js',
+  '/yuhua/cnc/assets/images/learning/lesson-01/1.png',
+  '/yuhua/cnc/assets/images/learning/lesson-01/2.png',
+  '/yuhua/cnc/assets/images/learning/lesson-01/3.png',
+  '/yuhua/cnc/assets/images/learning/lesson-01/4.png',
+  '/yuhua/cnc/assets/images/learning/lesson-01/5.png'
 ];
 
 function isAppScriptRequest(request) {
