@@ -1,9 +1,123 @@
 /**
  * CNC速查助手 - Service Worker
  * PWA 离线支持：首次访问缓存核心资源，后续采用 Network First + Cache Fallback 策略
- * 缓存名称：cnc-cache-v3
+ * 缓存名称：cnc-cache-v4
  */
-const CACHE_NAME = 'cnc-cache-v3';
+const CACHE_NAME = 'cnc-cache-v4';
+
+// 路由兜底：即使 app.js 旧缓存/局部初始化失败，首页板块也必须能切换视图。
+// 这段会被 Service Worker 自动插到 app.js 最前面。
+const ROUTE_FALLBACK_SCRIPT = `
+;(function () {
+  if (window.__CNC_ROUTE_FALLBACK_INSTALLED__) return;
+  window.__CNC_ROUTE_FALLBACK_INSTALLED__ = true;
+
+  var VIEW_META = {
+    dashboard: { kicker: '总览面板', title: '把网页改成像软件一样用' },
+    study: { kicker: '新手学习路线', title: '先按顺序学，再单点深入' },
+    workspace: { kicker: '快速查询', title: '左边找条目，右边看详情' },
+    'learning-map': { kicker: '知识地图', title: '可视化知识结构与学习路径' },
+    gallery: { kicker: '图片图库', title: '图片资料' },
+    calculator: { kicker: '换算工具', title: '转速、线速度、进给、螺距快速计算' },
+    library: { kicker: '知识库管理', title: '逐步把本地数据库接进网页' },
+    favorites: { kicker: '学习记录', title: '最近查看和收藏会保留下来' },
+    balloon: { kicker: '质检工具', title: '图纸气泡标注与检测记录' },
+    access: { kicker: '访问控制', title: '只让你授权的人看到完整资料' }
+  };
+
+  function fallbackNavigate(view, options) {
+    options = options || {};
+
+    if (window.app && typeof window.app.navigate === 'function') {
+      try {
+        window.app.navigate(view, options);
+        return;
+      } catch (err) {
+        console.warn('[CNC route fallback] app.navigate failed, using DOM fallback:', err);
+      }
+    }
+
+    var targetId = 'view-' + view;
+    document.querySelectorAll('.view').forEach(function (node) {
+      node.classList.toggle('active', node.id === targetId);
+    });
+
+    var meta = VIEW_META[view] || VIEW_META.dashboard;
+    var kicker = document.getElementById('topbar-kicker');
+    var title = document.getElementById('topbar-title');
+    if (kicker) {
+      kicker.textContent = meta.kicker || '';
+      kicker.style.display = meta.kicker ? '' : 'none';
+    }
+    if (title) title.textContent = meta.title || '';
+
+    var homeBtn = document.getElementById('home-btn');
+    if (homeBtn) homeBtn.classList.toggle('visible', view !== 'dashboard');
+
+    document.querySelectorAll('[data-route]').forEach(function (button) {
+      var sameView = button.dataset.route === view;
+      var sameFilter = !button.dataset.filter || button.dataset.filter === options.filter;
+      button.classList.toggle('active', sameView && sameFilter);
+    });
+
+    if (view === 'workspace') {
+      var filter = options.filter || 'all';
+      var wsTitle = document.getElementById('workspace-title');
+      var wsEyebrow = document.getElementById('workspace-eyebrow');
+      var searchInput = document.getElementById('search-input');
+      var filterGroup = document.getElementById('workspace-filter-group');
+      var titles = {
+        gcode: ['G/M CODE', 'G/M代码查询'],
+        params: ['PARAMS & ALARM', '参数 / 报警 / 故障查询'],
+        tooling: ['TOOL & PROCESS', '工艺刀具查询'],
+        operation: ['OPERATION', '机床操作 / 回零 / 对刀'],
+        drawing: ['DRAWING & QC', '图纸 / 量具 / 质量'],
+        cases: ['CASES', '案例 / 实战'],
+        all: ['KNOWLEDGE BASE', '知识库工作区']
+      };
+      var t = titles[filter] || titles.all;
+      if (wsEyebrow) wsEyebrow.textContent = t[0];
+      if (wsTitle) wsTitle.textContent = t[1];
+      if (filterGroup) filterGroup.style.display = filter === 'all' ? '' : 'none';
+      if (searchInput && options.keyword) searchInput.value = options.keyword;
+    }
+
+    var sidebar = document.getElementById('sidebar');
+    var mask = document.getElementById('sidebar-mask');
+    if (sidebar) sidebar.classList.remove('open');
+    if (mask) mask.hidden = true;
+  }
+
+  window.cncSafeNavigate = fallbackNavigate;
+  window.navigate = window.navigate || fallbackNavigate;
+
+  document.addEventListener('click', function (event) {
+    var routeEl = event.target.closest && event.target.closest('[data-route]');
+    if (!routeEl) return;
+    var view = routeEl.dataset.route;
+    if (!view) return;
+    event.preventDefault();
+    event.stopPropagation();
+    fallbackNavigate(view, {
+      filter: routeEl.dataset.filter || undefined,
+      keyword: routeEl.dataset.jumpKeyword || undefined
+    });
+  }, true);
+
+  document.addEventListener('click', function (event) {
+    var entryEl = event.target.closest && event.target.closest('[data-entry-id]');
+    if (!entryEl) return;
+    event.preventDefault();
+    event.stopPropagation();
+    fallbackNavigate('workspace', { keyword: entryEl.textContent || '' });
+  }, true);
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var gate = document.getElementById('access-gate');
+    if (gate) gate.hidden = true;
+  });
+})();
+`;
 
 const ASSETS_TO_CACHE = [
   '/yuhua/cnc/',
@@ -46,6 +160,31 @@ const ASSETS_TO_CACHE = [
   '/yuhua/cnc/ui-learning-detail.js',
   '/yuhua/cnc/balloon-tool.js'
 ];
+
+function isAppScriptRequest(request) {
+  try {
+    const url = new URL(request.url);
+    return url.pathname.endsWith('/yuhua/cnc/app.js');
+  } catch (err) {
+    return false;
+  }
+}
+
+async function patchAppScriptResponse(request, networkResponse) {
+  const original = await networkResponse.text();
+  const headers = new Headers(networkResponse.headers);
+  headers.set('Content-Type', 'application/javascript; charset=utf-8');
+  headers.set('Cache-Control', 'no-cache');
+  const patched = new Response(ROUTE_FALLBACK_SCRIPT + '\n' + original, {
+    status: networkResponse.status,
+    statusText: networkResponse.statusText,
+    headers
+  });
+  caches.open(CACHE_NAME).then((cache) => {
+    cache.put(request, patched.clone()).catch(() => {});
+  });
+  return patched;
+}
 
 self.addEventListener('install', (event) => {
   console.log('[SW] Install event - precaching assets');
@@ -93,6 +232,10 @@ self.addEventListener('fetch', (event) => {
     fetch(event.request)
       .then((networkResponse) => {
         if (networkResponse && networkResponse.status === 200) {
+          if (isAppScriptRequest(event.request)) {
+            return patchAppScriptResponse(event.request, networkResponse.clone());
+          }
+
           const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseToCache).catch(() => {});
