@@ -24,27 +24,27 @@
       problem: '很多新手一拿到图纸就急着想G代码，其实第一步应该先确认零件、材料、基准、关键尺寸和技术要求。图纸方向错了，后面的装夹、对刀、程序零点都会跟着错。',
       imageCards: [
         {
-          src: LESSON_01_IMAGE_BASE + '1.png',
+          src: LESSON_01_IMAGE_BASE + '1.webp',
           title: '拿到图纸，先看这4步',
           desc: '先看标题栏，再找基准，然后看关键尺寸，最后看技术要求。'
         },
         {
-          src: LESSON_01_IMAGE_BASE + '2.png',
+          src: LESSON_01_IMAGE_BASE + '2.webp',
           title: '基准A/B/C是什么意思',
           desc: '基准会影响装夹方式、测量依据和G54零点思路。'
         },
         {
-          src: LESSON_01_IMAGE_BASE + '3.png',
+          src: LESSON_01_IMAGE_BASE + '3.webp',
           title: '哪些尺寸最关键',
           desc: '先抓决定成败的尺寸，比如孔径、孔位、中心距、台阶高度和公差尺寸。'
         },
         {
-          src: LESSON_01_IMAGE_BASE + '4.png',
+          src: LESSON_01_IMAGE_BASE + '4.webp',
           title: '新手最容易犯的4个错误',
           desc: '很多问题不是程序不会写，而是图纸先看错了。'
         },
         {
-          src: LESSON_01_IMAGE_BASE + '5.png',
+          src: LESSON_01_IMAGE_BASE + '5.webp',
           title: '编程前先检查这6项',
           desc: '先检查，再编程，能少犯很多低级错误。'
         }
@@ -114,7 +114,7 @@
       var card = cards[i];
       html += '<section class="lesson-image-card">';
       html += '<div class="lesson-image-head"><span>图 ' + (i + 1) + '</span><h3>' + escapeHtml(card.title) + '</h3></div>';
-      html += '<img src="' + escapeHtml(card.src) + '" alt="' + escapeHtml(card.title) + '" loading="lazy">';
+      html += '<img src="' + escapeHtml(card.src) + '" alt="' + escapeHtml(card.title) + '" loading="' + (card.loading || (i === 0 ? 'eager' : 'lazy')) + '" decoding="async"' + (card.fetchpriority ? ' fetchpriority="' + card.fetchpriority + '"' : '') + '>';
       html += '<p>' + escapeHtml(card.desc) + '</p>';
       html += '</section>';
     }
