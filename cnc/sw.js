@@ -1,9 +1,9 @@
 /**
  * CNC速查助手 - Service Worker
  * PWA 离线支持：首次访问缓存核心资源，后续采用 Network First + Cache Fallback 策略
- * 缓存名称：cnc-cache-v1
+ * 缓存名称：cnc-cache-v3
  */
-const CACHE_NAME = 'cnc-cache-v2';
+const CACHE_NAME = 'cnc-cache-v3';
 
 const ASSETS_TO_CACHE = [
   '/yuhua/cnc/',
