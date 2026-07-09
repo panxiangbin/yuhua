@@ -2,7 +2,7 @@
  * ui-learning-detail.js
  * 学习关卡详情页渲染引擎
  * 全局对象: window.CNC_LEARNING_UI
- * 2026-07-09：只优化新手学习区和第1关手机端体验，不改 app.js / sw.js / 全局主题。
+ * 只优化新手学习区和第1关手机端体验，不改 app.js / sw.js / 全局主题。
  */
 (function () {
   'use strict';
@@ -11,6 +11,8 @@
 
   var _currentLevel = null;
   var _lessonCache = {};
+  var LESSON_01_IMAGE_BASE = './assets/images/learning/lesson-01/';
+
   var _LEVELS = {
     1: {
       id: 1,
@@ -20,36 +22,32 @@
       subtitle: '先找基准，再看关键尺寸。图纸没看明白，程序写得再漂亮也容易错。',
       teacherTip: '图纸没看明白，程序写得再漂亮也没用。',
       problem: '很多新手一拿到图纸就急着想G代码，其实第一步应该先确认零件、材料、基准、关键尺寸和技术要求。图纸方向错了，后面的装夹、对刀、程序零点都会跟着错。',
-      objectives: [
-        '能从标题栏确认零件名称、材料、比例、图号和版本，避免拿错图、看错比例、按旧图加工',
-        '能先找基准A/B/C，判断工件装夹、测量和G54零点应该围绕哪里建立',
-        '能圈出孔位、孔径、台阶高度、中心距、公差尺寸这些最容易影响报废的重点',
-        '能把图纸信息转成加工判断：怎么装、怎么量、怎么编程、哪里不能错'
-      ],
-      steps: [
-        '看标题栏：确认零件名称、材料、比例、图号、版本日期。材料会影响刀具、转速和加工方法。',
-        '找基准：先找基准A、B、C，想清楚工件靠哪里定位、压哪里、从哪里测量。',
-        '圈关键尺寸：优先看孔位、孔径、槽宽、台阶高度、中心距、配合尺寸和带公差的尺寸。',
-        '看技术要求：粗糙度、倒角、去毛刺、热处理、未注公差，很多返工都出在这里。'
-      ],
-      caseStudy: [
-        '比如一块带孔板，不要先想程序，先判断它是板类零件，有孔、有台阶、有装配要求。',
-        '如果基准面找错，孔位可能整体偏；如果H7孔没注意，刀具、余量和检测方法都会跟着错。',
-        '正确顺序是：先定基准和装夹，再定G54零点，再排工序，最后才写G00、G01、G81这些代码。'
-      ],
-      errors: [
-        '只看外形不看标题栏：材料、比例、图号、版本一旦看错，程序再漂亮也可能加工错零件',
-        '没先找基准就编程：坐标零点随手定，后面孔位、槽位、台阶尺寸很容易整体偏移',
-        '把普通尺寸和关键尺寸混在一起：带公差的孔径、孔距、配合面、密封面要优先控制',
-        '忽略技术要求：去毛刺、倒角、粗糙度、热处理、未注公差，经常不在主视图里，但会直接影响验收'
-      ],
-      checkList: [
-        '零件名称、材料、比例是否确认？',
-        '基准A/B/C是否找出来？',
-        '孔位、孔径、台阶高度是否标记？',
-        'H7、±0.05等公差是否重点关注？',
-        '粗糙度、倒角、去毛刺等技术要求是否看过？',
-        '是否能说清楚装夹和G54零点大概应该怎么定？'
+      imageCards: [
+        {
+          src: LESSON_01_IMAGE_BASE + '1.png',
+          title: '拿到图纸，先看这4步',
+          desc: '先看标题栏，再找基准，然后看关键尺寸，最后看技术要求。'
+        },
+        {
+          src: LESSON_01_IMAGE_BASE + '2.png',
+          title: '基准A/B/C是什么意思',
+          desc: '基准会影响装夹方式、测量依据和G54零点思路。'
+        },
+        {
+          src: LESSON_01_IMAGE_BASE + '3.png',
+          title: '哪些尺寸最关键',
+          desc: '先抓决定成败的尺寸，比如孔径、孔位、中心距、台阶高度和公差尺寸。'
+        },
+        {
+          src: LESSON_01_IMAGE_BASE + '4.png',
+          title: '新手最容易犯的4个错误',
+          desc: '很多问题不是程序不会写，而是图纸先看错了。'
+        },
+        {
+          src: LESSON_01_IMAGE_BASE + '5.png',
+          title: '编程前先检查这6项',
+          desc: '先检查，再编程，能少犯很多低级错误。'
+        }
       ],
       quizzes: [
         { id: 'l1q1', type: 'multiple', question: '拿到一张零件图，新手第一步最应该先看什么？', options: ['直接开始写G代码', '先看标题栏、材料、基准和关键尺寸', '先估一个转速进给', '先找一把看起来合适的刀'], answer: 1, explanation: '先确认图纸和基准，再谈刀具、坐标、工序和程序。图纸信息没确认，后面越做越容易偏。' },
@@ -101,15 +99,25 @@
 
     html += '<section class="lesson-section lesson-focus-card"><h3>这一关先解决什么问题</h3><p>' + escapeHtml(data.problem) + '</p></section>';
     html += '<section class="lesson-teacher-tip"><span>老师傅一句话</span><strong>' + escapeHtml(data.teacherTip) + '</strong></section>';
-    html += renderObjectives(data.objectives);
-    html += renderSteps(data.steps);
-    html += renderLessonDiagram();
-    html += renderCaseStudy(data.caseStudy);
-    html += renderErrors(data.errors);
-    html += renderChecklist(data.checkList);
+    html += renderImageCards(data.imageCards);
     html += renderQuizzes(data.quizzes);
     html += renderSummary(data.summary);
     html += '<div class="lesson-navigation" id="lesson-nav"></div>';
+    html += '</div>';
+    return html;
+  }
+
+  function renderImageCards(cards) {
+    if (!cards || !cards.length) return '';
+    var html = '<div class="lesson-image-flow">';
+    for (var i = 0; i < cards.length; i++) {
+      var card = cards[i];
+      html += '<section class="lesson-image-card">';
+      html += '<div class="lesson-image-head"><span>图 ' + (i + 1) + '</span><h3>' + escapeHtml(card.title) + '</h3></div>';
+      html += '<img src="' + escapeHtml(card.src) + '" alt="' + escapeHtml(card.title) + '" loading="lazy">';
+      html += '<p>' + escapeHtml(card.desc) + '</p>';
+      html += '</section>';
+    }
     html += '</div>';
     return html;
   }
@@ -126,25 +134,11 @@
 
   function renderSteps(steps) {
     if (!steps || !steps.length) return '';
-    var html = '<section class="lesson-section lesson-steps"><h3>看图纸的4步顺序</h3><ol class="steps-list">';
+    var html = '<section class="lesson-section lesson-steps"><h3>操作步骤</h3><ol class="steps-list">';
     for (var i = 0; i < steps.length; i++) {
       html += '<li class="step-item"><span class="step-number">' + (i + 1) + '</span><div class="step-content">' + escapeHtml(steps[i]) + '</div></li>';
     }
     html += '</ol></section>';
-    return html;
-  }
-
-  function renderLessonDiagram() {
-    return '<section class="lesson-section lesson-diagram-card"><h3>核心图：先找基准，再看关键尺寸</h3><div class="lesson-mini-drawing" aria-label="零件图示意"><div class="mini-part"><span class="datum datum-a">基准A</span><span class="datum datum-b">基准B</span><span class="datum datum-c">基准C</span><i class="hole h1"></i><i class="hole h2"></i><i class="hole h3"></i><i class="hole h4"></i><i class="hole center"></i></div><div class="mini-dim dim-top">120 ±0.05</div><div class="mini-dim dim-right">Ø30 H7</div><div class="mini-dim dim-bottom">台阶 15±0.05</div></div><p class="diagram-note">看图时不要平均用力，先抓基准、孔位、公差、台阶高度这些决定加工结果的重点。</p></section>';
-  }
-
-  function renderCaseStudy(items) {
-    if (!items || !items.length) return '';
-    var html = '<section class="lesson-section lesson-case-study"><h3>现场案例：一块带孔板应该怎么看？</h3><ul>';
-    for (var i = 0; i < items.length; i++) {
-      html += '<li>' + escapeHtml(items[i]) + '</li>';
-    }
-    html += '</ul></section>';
     return html;
   }
 
@@ -157,16 +151,6 @@
       if (parts.length > 1) { html += '<strong>' + escapeHtml(parts[0]) + '</strong>：' + escapeHtml(parts.slice(1).join('：')); }
       else { html += escapeHtml(errors[i]); }
       html += '</div></div>';
-    }
-    html += '</div></section>';
-    return html;
-  }
-
-  function renderChecklist(items) {
-    if (!items || !items.length) return '';
-    var html = '<section class="lesson-section lesson-checklist"><h3>上机前6项自查</h3><div class="lesson-check-grid">';
-    for (var i = 0; i < items.length; i++) {
-      html += '<div class="lesson-check-item"><span>✓</span><p>' + escapeHtml(items[i]) + '</p></div>';
     }
     html += '</div></section>';
     return html;
@@ -230,36 +214,25 @@
       '#view-study .lesson-mobile-hero h2{margin:0;font-size:28px;line-height:1.15;}' +
       '#view-study .lesson-mobile-hero p{margin:10px 0 0;color:var(--muted);line-height:1.75;}' +
       '#view-study .lesson-mobile-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}' +
-      '#view-study .lesson-mobile-tags span,#view-study .lesson-check-item span{border-radius:999px;background:var(--green-soft);color:var(--green);padding:6px 10px;font-size:12px;font-weight:800;}' +
-      '#view-study .lesson-section,#view-study .lesson-teacher-tip{background:var(--card-strong);border:1px solid rgba(29,38,34,.08);border-radius:18px;padding:16px;}' +
-      '#view-study .lesson-section h3{margin:0 0 12px;font-size:18px;}' +
-      '#view-study .lesson-section p,#view-study .lesson-section li,#view-study .summary-content{line-height:1.75;color:var(--muted);}' +
+      '#view-study .lesson-mobile-tags span{border-radius:999px;background:var(--green-soft);color:var(--green);padding:6px 10px;font-size:12px;font-weight:800;}' +
+      '#view-study .lesson-section,#view-study .lesson-teacher-tip,#view-study .lesson-image-card{background:var(--card-strong);border:1px solid rgba(29,38,34,.08);border-radius:18px;padding:16px;}' +
+      '#view-study .lesson-section h3,#view-study .lesson-image-card h3{margin:0;font-size:18px;}' +
+      '#view-study .lesson-section p,#view-study .summary-content,#view-study .lesson-image-card p{line-height:1.75;color:var(--muted);}' +
       '#view-study .lesson-teacher-tip{display:grid;gap:8px;background:#fff7ed;border-color:#fed7aa;}' +
       '#view-study .lesson-teacher-tip span{color:var(--accent-deep);font-size:13px;font-weight:800;}' +
       '#view-study .lesson-teacher-tip strong{font-size:20px;line-height:1.45;color:#7c2d12;}' +
-      '#view-study .objective-list,#view-study .steps-list,#view-study .lesson-case-study ul{display:grid;gap:10px;margin:0;padding:0;list-style:none;}' +
-      '#view-study .objective-item,#view-study .step-item,#view-study .error-card,#view-study .lesson-case-study li{background:rgba(255,255,255,.62);border:1px solid rgba(29,38,34,.07);border-radius:14px;padding:12px;}' +
-      '#view-study .step-item{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start;}' +
-      '#view-study .step-number{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:12px;background:var(--accent);color:#fff;font-weight:900;}' +
-      '#view-study .lesson-mini-drawing{position:relative;height:260px;border-radius:18px;background:linear-gradient(180deg,#fffaf3,#f6ead8);border:1px solid rgba(29,38,34,.08);overflow:hidden;margin-top:4px;}' +
-      '#view-study .mini-part{position:absolute;left:14%;right:14%;top:58px;height:120px;border:4px solid #1d2622;border-radius:16px;background:rgba(255,255,255,.55);}' +
-      '#view-study .hole{position:absolute;width:22px;height:22px;border:3px solid #1d2622;border-radius:50%;background:#fff;}' +
-      '#view-study .h1{left:18%;top:25px}.h2{right:18%;top:25px}.h3{left:18%;bottom:25px}.h4{right:18%;bottom:25px}.center{left:50%;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;border-color:var(--accent);}' +
-      '#view-study .datum{position:absolute;border-radius:10px;padding:5px 8px;color:#fff;font-size:12px;font-weight:900;}' +
-      '#view-study .datum-a{left:50%;top:-34px;transform:translateX(-50%);background:#2563eb}.datum-b{left:-46px;top:44px;background:#16a34a}.datum-c{left:50%;bottom:-36px;transform:translateX(-50%);background:#64748b}' +
-      '#view-study .mini-dim{position:absolute;border-radius:999px;background:#fff;border:1px solid rgba(29,38,34,.12);padding:6px 9px;font-size:12px;font-weight:900;color:var(--ink);}' +
-      '#view-study .dim-top{left:18%;top:20px}.dim-right{right:8%;top:112px;color:#dc2626}.dim-bottom{left:22%;bottom:20px;color:#dc2626}' +
-      '#view-study .diagram-note{margin:12px 0 0!important;}' +
-      '#view-study .lesson-check-grid{display:grid;gap:10px;grid-template-columns:repeat(2,minmax(0,1fr));}' +
-      '#view-study .lesson-check-item{display:flex;gap:10px;align-items:flex-start;background:rgba(255,255,255,.62);border:1px solid rgba(29,38,34,.07);border-radius:14px;padding:12px;}' +
-      '#view-study .lesson-check-item p{margin:0!important;}' +
+      '#view-study .lesson-image-flow{display:grid;gap:14px;}' +
+      '#view-study .lesson-image-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;}' +
+      '#view-study .lesson-image-head span{display:inline-flex;align-items:center;justify-content:center;min-width:42px;height:28px;border-radius:999px;background:var(--green-soft);color:var(--green);font-size:12px;font-weight:900;}' +
+      '#view-study .lesson-image-card img{display:block;width:100%;height:auto;border-radius:16px;background:#fff;border:1px solid rgba(29,38,34,.08);box-shadow:0 10px 24px rgba(85,63,39,.10);}' +
+      '#view-study .lesson-image-card p{margin:12px 0 0!important;font-size:14px;}' +
       '#view-study .quiz-card{background:rgba(255,255,255,.70);border:1px solid rgba(29,38,34,.08);border-radius:16px;padding:14px;margin-top:12px;}' +
       '#view-study .quiz-options{display:grid;gap:8px;margin-top:10px;}' +
       '#view-study .quiz-option{display:flex;gap:8px;align-items:flex-start;border:1px solid rgba(29,38,34,.10);background:#fff;border-radius:14px;padding:10px;}' +
       '#view-study .quiz-feedback.is-correct{display:block!important;background:#dcfce7;color:#166534;border-radius:12px;padding:10px;margin-top:10px;}' +
       '#view-study .quiz-feedback.is-wrong{display:block!important;background:#fee2e2;color:#991b1b;border-radius:12px;padding:10px;margin-top:10px;}' +
       '#view-study .quiz-explanation{display:block!important;background:#f8fafc;border-radius:12px;padding:10px;margin-top:10px;color:var(--muted);}' +
-      '@media(max-width:640px){#view-study .section-head h3{font-size:24px}#view-study .study-card-grid{display:grid;gap:12px}#view-study .study-card{padding:14px;border-radius:18px}#view-study .study-card-icon{font-size:24px;margin:8px 0}#view-study .study-card h4{font-size:19px;margin:6px 0}#view-study .study-card p{font-size:14px;line-height:1.65}#view-study .lesson-mobile-hero h2{font-size:25px}#view-study .lesson-check-grid{grid-template-columns:1fr}#view-study .lesson-nav-buttons{position:sticky;bottom:10px;z-index:6;background:rgba(255,251,244,.94);border:1px solid rgba(29,38,34,.08);border-radius:18px;padding:10px;box-shadow:0 14px 34px rgba(85,63,39,.16)}#view-study .lesson-nav-buttons .lesson-nav-btn{width:100%;margin-top:8px}}';
+      '@media(max-width:640px){#view-study .section-head h3{font-size:24px}#view-study .study-card-grid{display:grid;gap:12px}#view-study .study-card{padding:14px;border-radius:18px}#view-study .study-card-icon{font-size:24px;margin:8px 0}#view-study .study-card h4{font-size:19px;margin:6px 0}#view-study .study-card p{font-size:14px;line-height:1.65}#view-study .lesson-mobile-hero h2{font-size:25px}#view-study .lesson-image-card{padding:12px;border-radius:18px}#view-study .lesson-image-card img{border-radius:14px}#view-study .lesson-nav-buttons{position:sticky;bottom:10px;z-index:6;background:rgba(255,251,244,.94);border:1px solid rgba(29,38,34,.08);border-radius:18px;padding:10px;box-shadow:0 14px 34px rgba(85,63,39,.16)}#view-study .lesson-nav-buttons .lesson-nav-btn{width:100%;margin-top:8px}}';
     var style = document.createElement('style');
     style.id = 'cnc-mobile-study-style';
     style.textContent = css;
@@ -348,5 +321,5 @@
     polishStudyList: polishStudyList
   };
 
-  console.log('[CNC_LEARNING_UI] 学习详情页渲染引擎已加载。第1关已优化为手机端闯关式图文课。');
+  console.log('[CNC_LEARNING_UI] 学习详情页渲染引擎已加载。第1关已接入5张图片，优化为手机端图文课。');
 })();
