@@ -11,7 +11,7 @@
   </defs>
   <rect width="1200" height="630" fill="url(#bg)"/>
   <rect x="54" y="54" width="1092" height="522" rx="42" fill="#fff8ed" stroke="#d8c7ae" stroke-width="3"/>
-  <rect x="88" y="90" width="216" height="42" rx="21" fill="url(#accent)"/>
+  <rect x="88" y="90" width="300" height="42" rx="21" fill="url(#accent)"/>
   <text x="116" y="119" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="24" font-weight="700" fill="#fff8f1">BEGINNER FIRST CNC</text>
   <text x="88" y="228" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="64" font-weight="700" fill="#1f2b25">数控新手学习助手</text>
   <text x="88" y="300" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="30" fill="#5d655f">参数速查 · G代码 · 报警排查 · 换算工具 · 图解提示词</text>

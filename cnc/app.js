@@ -113,7 +113,9 @@ const state = {
   },
   coreLoaded: false,
   fullLocalLoaded: false,
-  libraryLogs: []
+  libraryLogs: [],
+  listRenderLimit: 50,
+  _lastFilterKey: ""
 };
 
 const dom = {
@@ -959,6 +961,11 @@ function renderHeroMetrics() {
 }
 
 function renderWorkspace() {
+  var filterKey = (state.keyword || "") + "|" + (state.selectedCategory || "") + "|" + (state.activeFilter || "");
+  if (filterKey !== state._lastFilterKey) {
+    state.listRenderLimit = 50;
+    state._lastFilterKey = filterKey;
+  }
   const filtered = getFilteredEntries();
   const activeFilterLabel = FILTER_META[state.activeFilter]?.label || "全部条目";
   const categoryLabel = state.selectedCategory === "全部栏目" ? "全部栏目" : state.selectedCategory;
@@ -974,7 +981,7 @@ function renderWorkspace() {
   }
 
   if (dom.searchMeta) {
-    dom.searchMeta.textContent = `当前命中 ${filtered.length} 条，模块为：${activeFilterLabel}；栏目为：${categoryLabel}。基础条目 ${state.baseEntries.length} 条，扩展知识条目 ${state.archiveEntries.length} 条。`;
+    dom.searchMeta.textContent = `共 ${filtered.length} 条 · ${activeFilterLabel} · ${categoryLabel}`;
   }
 
   if (dom.resultList) {
@@ -986,8 +993,9 @@ function renderWorkspace() {
   }
 
   if (dom.resultList) {
+    var renderLimit = Math.min(state.listRenderLimit, filtered.length);
     dom.resultList.innerHTML = filtered.length
-    ? filtered.slice(0, 120).map((entry) => {
+    ? filtered.slice(0, renderLimit).map((entry) => {
       const thumb = getEntryImages(entry)[0];
       return `
       <article class="result-card${entry.id === state.selectedId ? " selected" : ""}${thumb ? " has-thumb" : ""}">
@@ -1008,6 +1016,7 @@ function renderWorkspace() {
       </article>
     `;
     }).join("")
+    + (filtered.length > renderLimit ? '<div style="text-align:center;padding:16px 0;"><button class="load-more-btn" data-load-more type="button">加载更多（还有 ' + (filtered.length - renderLimit) + ' 条）</button></div>' : "")
     : `<article class="result-card result-empty-state">
         <h4>没有找到匹配项</h4>
         <p>换个关键词试试，或者点击下方热门搜索：</p>
@@ -1065,7 +1074,10 @@ function renderWorkspace() {
 
 function renderFavoriteButton() {
   const active = state.favorites.includes(state.selectedId);
-  dom.favoriteToggle.textContent = active ? "取消收藏这条内容" : "收藏这条内容";
+  dom.favoriteToggle.textContent = active ? "★" : "☆";
+  dom.favoriteToggle.title = active ? "取消收藏" : "收藏这条内容";
+  dom.favoriteToggle.setAttribute("aria-label", active ? "取消收藏" : "收藏这条内容");
+  dom.favoriteToggle.classList.toggle("active", active);
 }
 
 
@@ -1373,9 +1385,13 @@ function renderDetail() {
         </div>
       </article>
     `).join("");
+    var imageCountBadge = document.getElementById("image-count-badge");
+    if (imageCountBadge) imageCountBadge.textContent = images.length + " 张";
   } else {
     dom.detailImageCard.hidden = true;
     dom.detailImageStage.innerHTML = "";
+    var imageCountBadge = document.getElementById("image-count-badge");
+    if (imageCountBadge) imageCountBadge.textContent = "0 张";
   }
 
   const related = findRelated(entry);
@@ -1530,7 +1546,7 @@ function renderLinkCloud(container, ids, emptyText) {
 function renderLibraryStats() {
   dom.baseCount.textContent = String(state.baseEntries.length);
   dom.coreCount.textContent = state.coreLoaded ? `${state.archiveEntries.length} 条已并入` : "待加载";
-  dom.archiveCount.textContent = state.fullLocalLoaded ? `${state.archiveEntries.length} 条索引已并入` : "待尝试";
+  dom.archiveCount.textContent = state.fullLocalLoaded ? `${state.archiveEntries.length} 条索引已并入` : "按需加载";
   dom.knowledgePill.textContent = state.fullLocalLoaded
     ? "完整索引已接入"
     : state.coreLoaded
@@ -2259,6 +2275,16 @@ function bindWorkspaceEvents() {
 
   if (dom.favoriteToggle) {
     dom.favoriteToggle.addEventListener("click", toggleFavorite);
+  }
+
+  if (dom.resultList) {
+    dom.resultList.addEventListener("click", (event) => {
+      const loadMoreBtn = event.target.closest("[data-load-more]");
+      if (loadMoreBtn) {
+        state.listRenderLimit += 50;
+        renderWorkspace();
+      }
+    });
   }
 
   const detailBackBtn = document.getElementById("detail-back-btn");
