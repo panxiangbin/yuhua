@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="1280" viewBox="0 0 720 1280">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#f9fbff"/><stop offset="1" stop-color="#edf5ff"/></linearGradient><filter id="s"><feDropShadow dx="0" dy="8" stdDeviation="10" flood-opacity=".12"/></filter><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10Z" fill="#1769d2"/></marker></defs>
+<rect width="720" height="1280" fill="url(#bg)"/>
+<text x="38" y="82" font-family="Microsoft YaHei,Arial" font-size="52" font-weight="900" fill="#1769d2">第2关</text>
+<text x="200" y="82" font-family="Microsoft YaHei,Arial" font-size="41" font-weight="900" fill="#111827">刀具与工件的相对运动</text>
+<rect x="64" y="118" width="592" height="70" rx="35" fill="#1769d2"/>
+<text x="360" y="164" text-anchor="middle" font-family="Microsoft YaHei,Arial" font-size="27" font-weight="800" fill="white">看懂谁在动，才能看懂坐标和程序</text>
+
+<g filter="url(#s)"><rect x="55" y="225" width="610" height="570" rx="30" fill="white"/></g>
+<text x="86" y="275" font-family="Microsoft YaHei,Arial" font-size="28" font-weight="900" fill="#172033">编程关注的是：刀具相对工件怎么走</text>
+<!-- simplified machining center -->
+<rect x="95" y="335" width="390" height="360" rx="24" fill="#dbe4ec" stroke="#64748b" stroke-width="5"/>
+<rect x="150" y="392" width="280" height="250" rx="16" fill="#334155"/>
+<rect x="250" y="300" width="78" height="245" rx="14" fill="#94a3b8"/>
+<rect x="267" y="505" width="44" height="90" rx="6" fill="#64748b"/>
+<path d="M289 595v42" stroke="#111827" stroke-width="10"/>
+<rect x="196" y="620" width="190" height="44" rx="6" fill="#94a3b8"/>
+<rect x="225" y="575" width="132" height="52" rx="6" fill="#cbd5e1" stroke="#475569" stroke-width="3"/>
+<line x1="289" y1="610" x2="445" y2="610" stroke="#1769d2" stroke-width="10" marker-end="url(#a)"/>
+<line x1="289" y1="610" x2="140" y2="610" stroke="#1769d2" stroke-width="10" marker-end="url(#a)"/>
+<line x1="289" y1="610" x2="289" y2="470" stroke="#1769d2" stroke-width="10" marker-end="url(#a)"/>
+<text x="118" y="360" font-family="Microsoft YaHei,Arial" font-size="22" font-weight="900" fill="#1769d2">刀具（主动）</text>
+<text x="118" y="390" font-family="Microsoft YaHei,Arial" font-size="17" fill="#475569">程序控制它相对工件运动</text>
+<text x="170" y="735" font-family="Microsoft YaHei,Arial" font-size="22" font-weight="900" fill="#169b62">工件（被加工）</text>
+<text x="170" y="765" font-family="Microsoft YaHei,Arial" font-size="17" fill="#475569">固定在工作台上作为加工基准</text>
+
+<g font-family="Microsoft YaHei,Arial">
+<rect x="505" y="330" width="130" height="125" rx="20" fill="#eef5ff" stroke="#6d9de8" stroke-width="3"/>
+<circle cx="535" cy="365" r="23" fill="#1769d2"/><text x="535" y="374" text-anchor="middle" font-size="24" font-weight="900" fill="white">1</text>
+<text x="526" y="407" font-size="18" font-weight="900" fill="#1559b7">机床在动</text><text x="526" y="435" font-size="16" fill="#374151">不代表图纸在动</text>
+<rect x="505" y="475" width="130" height="125" rx="20" fill="#effcf6" stroke="#55b98a" stroke-width="3"/>
+<circle cx="535" cy="510" r="23" fill="#169b62"/><text x="535" y="519" text-anchor="middle" font-size="24" font-weight="900" fill="white">2</text>
+<text x="526" y="552" font-size="18" font-weight="900" fill="#0b8b54">编程时</text><text x="526" y="580" font-size="16" fill="#374151">按相对位置理解</text>
+<rect x="505" y="620" width="130" height="125" rx="20" fill="#fff7e8" stroke="#f59e0b" stroke-width="3"/>
+<circle cx="535" cy="655" r="23" fill="#f59e0b"/><text x="535" y="664" text-anchor="middle" font-size="24" font-weight="900" fill="white">3</text>
+<text x="526" y="697" font-size="18" font-weight="900" fill="#d97706">看到正方向</text><text x="526" y="725" font-size="16" fill="#374151">先想刀具往哪走</text>
+</g>
+
+<rect x="55" y="835" width="285" height="170" rx="24" fill="#fff1f1" stroke="#ef6a66" stroke-width="3"/>
+<text x="82" y="882" font-family="Microsoft YaHei,Arial" font-size="27" font-weight="900" fill="#d52d28">✕ 容易想错</text>
+<text x="82" y="930" font-family="Microsoft YaHei,Arial" font-size="20" fill="#374151">只盯着工作台移动，</text>
+<text x="82" y="962" font-family="Microsoft YaHei,Arial" font-size="20" fill="#374151">结果坐标方向越看越乱。</text>
+
+<rect x="380" y="835" width="285" height="170" rx="24" fill="#effcf6" stroke="#55b98a" stroke-width="3"/>
+<text x="407" y="882" font-family="Microsoft YaHei,Arial" font-size="27" font-weight="900" fill="#0b8b54">✓ 正确理解</text>
+<text x="407" y="930" font-family="Microsoft YaHei,Arial" font-size="20" fill="#374151">站在加工角度，始终看</text>
+<text x="407" y="962" font-family="Microsoft YaHei,Arial" font-size="20" fill="#374151">刀具相对工件怎么走。</text>
+
+<rect x="55" y="1038" width="610" height="128" rx="24" fill="#eafaf5" stroke="#169b62" stroke-width="3"/>
+<text x="86" y="1083" font-family="Microsoft YaHei,Arial" font-size="27" font-weight="900" fill="#08784a">🔔 老师傅提醒</text>
+<text x="86" y="1122" font-family="Microsoft YaHei,Arial" font-size="19" fill="#1f2937">新手最容易把机床运动和编程方向混在一起。</text>
+<text x="86" y="1152" font-family="Microsoft YaHei,Arial" font-size="19" fill="#1f2937">程序里的方向，核心是看刀具相对工件怎么运动。</text>
+
+<rect x="55" y="1192" width="610" height="64" rx="20" fill="#fff7e8" stroke="#f59e0b" stroke-width="3"/>
+<text x="82" y="1233" font-family="Microsoft YaHei,Arial" font-size="22" font-weight="900" fill="#d97706">记忆：看加工，不只看谁在动；要看相对运动。</text>
+</svg>
