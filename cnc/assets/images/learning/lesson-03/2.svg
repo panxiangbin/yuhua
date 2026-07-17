@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="1280" viewBox="0 0 720 1280">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#f9fbff"/><stop offset="1" stop-color="#eef6ff"/></linearGradient><filter id="s"><feDropShadow dx="0" dy="8" stdDeviation="10" flood-opacity=".11"/></filter><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10Z" fill="#1769d2"/></marker></defs>
+<rect width="720" height="1280" fill="url(#bg)"/>
+<text x="38" y="82" font-family="Microsoft YaHei,Arial" font-size="52" font-weight="900" fill="#1769d2">第3关</text>
+<text x="200" y="82" font-family="Microsoft YaHei,Arial" font-size="43" font-weight="900" fill="#111827">新手上机前的安全流程</text>
+<rect x="90" y="118" width="540" height="70" rx="35" fill="#1769d2"/>
+<text x="360" y="164" text-anchor="middle" font-family="Microsoft YaHei,Arial" font-size="27" font-weight="800" fill="white">按顺序做，能少犯很多低级错误</text>
+
+<g font-family="Microsoft YaHei,Arial" filter="url(#s)">
+<rect x="55" y="230" width="610" height="130" rx="24" fill="white" stroke="#6d9de8" stroke-width="3"/>
+<rect x="75" y="250" width="72" height="90" rx="18" fill="#1769d2"/><text x="111" y="307" text-anchor="middle" font-size="46" font-weight="900" fill="white">1</text>
+<text x="175" y="278" font-size="29" font-weight="900" fill="#1769d2">观察现场</text><text x="175" y="317" font-size="20" fill="#374151">看夹具、工件、刀具、周围是否安全</text>
+<line x1="360" y1="360" x2="360" y2="397" stroke="#1769d2" stroke-width="6" marker-end="url(#a)"/>
+
+<rect x="55" y="400" width="610" height="130" rx="24" fill="white" stroke="#6d9de8" stroke-width="3"/>
+<rect x="75" y="420" width="72" height="90" rx="18" fill="#1769d2"/><text x="111" y="477" text-anchor="middle" font-size="46" font-weight="900" fill="white">2</text>
+<text x="175" y="448" font-size="29" font-weight="900" fill="#1769d2">开机检查</text><text x="175" y="487" font-size="20" fill="#374151">确认急停、面板状态、报警信息</text>
+<line x1="360" y1="530" x2="360" y2="567" stroke="#1769d2" stroke-width="6" marker-end="url(#a)"/>
+
+<rect x="55" y="570" width="610" height="130" rx="24" fill="white" stroke="#6d9de8" stroke-width="3"/>
+<rect x="75" y="590" width="72" height="90" rx="18" fill="#1769d2"/><text x="111" y="647" text-anchor="middle" font-size="46" font-weight="900" fill="white">3</text>
+<text x="175" y="618" font-size="29" font-weight="900" fill="#1769d2">回参考点 / 确认状态</text><text x="175" y="657" font-size="20" fill="#374151">按本机规范，让机床回到可控状态</text>
+<line x1="360" y1="700" x2="360" y2="737" stroke="#1769d2" stroke-width="6" marker-end="url(#a)"/>
+
+<rect x="55" y="740" width="610" height="130" rx="24" fill="white" stroke="#6d9de8" stroke-width="3"/>
+<rect x="75" y="760" width="72" height="90" rx="18" fill="#1769d2"/><text x="111" y="817" text-anchor="middle" font-size="46" font-weight="900" fill="white">4</text>
+<text x="175" y="788" font-size="29" font-weight="900" fill="#1769d2">低速手动检查</text><text x="175" y="827" font-size="20" fill="#374151">看方向、看位置、看是否有干涉风险</text>
+<line x1="360" y1="870" x2="360" y2="907" stroke="#1769d2" stroke-width="6" marker-end="url(#a)"/>
+
+<rect x="55" y="910" width="610" height="130" rx="24" fill="white" stroke="#6d9de8" stroke-width="3"/>
+<rect x="75" y="930" width="72" height="90" rx="18" fill="#1769d2"/><text x="111" y="987" text-anchor="middle" font-size="46" font-weight="900" fill="white">5</text>
+<text x="175" y="958" font-size="29" font-weight="900" fill="#1769d2">单段 / 低倍率试运行</text><text x="175" y="997" font-size="20" fill="#374151">先慢速验证，再正式运行</text>
+</g>
+
+<rect x="55" y="1075" width="285" height="135" rx="24" fill="#fff1f1" stroke="#ef6a66" stroke-width="3"/>
+<text x="82" y="1117" font-family="Microsoft YaHei,Arial" font-size="27" font-weight="900" fill="#d52d28">✕ 常见错误</text>
+<text x="82" y="1154" font-family="Microsoft YaHei,Arial" font-size="18" fill="#374151">• 一开机就急着跑程序</text><text x="82" y="1183" font-family="Microsoft YaHei,Arial" font-size="18" fill="#374151">• 没看夹具和刀具位置</text>
+<rect x="380" y="1075" width="285" height="135" rx="24" fill="#effcf6" stroke="#55b98a" stroke-width="3"/>
+<text x="407" y="1117" font-family="Microsoft YaHei,Arial" font-size="27" font-weight="900" fill="#0b8b54">✓ 正确习惯</text>
+<text x="407" y="1154" font-family="Microsoft YaHei,Arial" font-size="18" fill="#374151">• 先看环境，再动机床</text><text x="407" y="1183" font-family="Microsoft YaHei,Arial" font-size="18" fill="#374151">• 先慢速验证，再加工</text>
+
+<rect x="55" y="1230" width="610" height="38" rx="19" fill="#fff7e8" stroke="#f59e0b" stroke-width="2"/>
+<text x="360" y="1256" text-anchor="middle" font-family="Microsoft YaHei,Arial" font-size="21" font-weight="900" fill="#d97706">先看、再查、再回、再试、再跑</text>
+</svg>
