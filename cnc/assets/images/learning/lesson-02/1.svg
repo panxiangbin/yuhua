@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="1280" viewBox="0 0 720 1280">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#f8fbff"/><stop offset="1" stop-color="#eef6ff"/></linearGradient>
+  <filter id="shadow"><feDropShadow dx="0" dy="8" stdDeviation="10" flood-opacity=".12"/></filter>
+  <marker id="redArrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10Z" fill="#e53935"/></marker>
+  <marker id="greenArrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10Z" fill="#169b62"/></marker>
+  <marker id="blueArrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10Z" fill="#1769d2"/></marker>
+</defs>
+<rect width="720" height="1280" fill="url(#bg)"/>
+<text x="38" y="82" font-family="Microsoft YaHei,Arial" font-size="52" font-weight="900" fill="#1769d2">第2关</text>
+<text x="200" y="82" font-family="Microsoft YaHei,Arial" font-size="46" font-weight="900" fill="#111827">认识 X、Y、Z 轴</text>
+<rect x="60" y="118" width="600" height="70" rx="35" fill="#1769d2"/>
+<text x="360" y="164" text-anchor="middle" font-family="Microsoft YaHei,Arial" font-size="27" font-weight="800" fill="white">先分清三轴方向，再去看坐标和程序</text>
+
+<g filter="url(#shadow)">
+<rect x="60" y="225" width="600" height="540" rx="30" fill="white"/>
+</g>
+<text x="90" y="278" font-family="Microsoft YaHei,Arial" font-size="29" font-weight="900" fill="#172033">立式加工中心三轴方向</text>
+<!-- machine -->
+<rect x="165" y="360" width="350" height="310" rx="24" fill="#d8e1ea" stroke="#66788a" stroke-width="5"/>
+<rect x="210" y="410" width="260" height="210" rx="15" fill="#334155"/>
+<rect x="245" y="555" width="190" height="38" rx="6" fill="#94a3b8"/>
+<path d="M265 567h150M275 580h130" stroke="#64748b" stroke-width="5"/>
+<rect x="314" y="315" width="72" height="215" rx="14" fill="#94a3b8"/>
+<rect x="328" y="500" width="44" height="75" rx="7" fill="#64748b"/>
+<path d="M350 575v35" stroke="#1f2937" stroke-width="10"/>
+<circle cx="350" cy="610" r="8" fill="#111827"/>
+<!-- axes -->
+<line x1="350" y1="610" x2="570" y2="610" stroke="#e53935" stroke-width="12" marker-end="url(#redArrow)"/>
+<line x1="350" y1="610" x2="160" y2="720" stroke="#169b62" stroke-width="12" marker-end="url(#greenArrow)"/>
+<line x1="350" y1="610" x2="350" y2="335" stroke="#1769d2" stroke-width="12" marker-end="url(#blueArrow)"/>
+<text x="585" y="624" font-family="Arial" font-size="44" font-weight="900" fill="#e53935">X+</text>
+<text x="95" y="758" font-family="Arial" font-size="44" font-weight="900" fill="#169b62">Y+</text>
+<text x="372" y="338" font-family="Arial" font-size="44" font-weight="900" fill="#1769d2">Z+</text>
+<text x="350" y="706" text-anchor="middle" font-family="Microsoft YaHei,Arial" font-size="23" font-weight="700" fill="#475569">按刀具相对工件运动理解方向</text>
+
+<g font-family="Microsoft YaHei,Arial">
+<rect x="60" y="805" width="185" height="160" rx="22" fill="#fff1f1" stroke="#ef6a66" stroke-width="3"/>
+<circle cx="105" cy="850" r="28" fill="#e53935"/><text x="105" y="861" text-anchor="middle" font-size="31" font-weight="900" fill="white">X</text>
+<text x="92" y="912" font-size="25" font-weight="900" fill="#d52d28">X轴：左右方向</text>
+<text x="92" y="944" font-size="18" fill="#475569">常见为工作台左右</text>
+
+<rect x="267" y="805" width="185" height="160" rx="22" fill="#effcf6" stroke="#55b98a" stroke-width="3"/>
+<circle cx="312" cy="850" r="28" fill="#169b62"/><text x="312" y="861" text-anchor="middle" font-size="31" font-weight="900" fill="white">Y</text>
+<text x="299" y="912" font-size="25" font-weight="900" fill="#0b8b54">Y轴：前后方向</text>
+<text x="299" y="944" font-size="18" fill="#475569">注意观察相对运动</text>
+
+<rect x="474" y="805" width="186" height="160" rx="22" fill="#eef5ff" stroke="#5d91e6" stroke-width="3"/>
+<circle cx="520" cy="850" r="28" fill="#1769d2"/><text x="520" y="861" text-anchor="middle" font-size="31" font-weight="900" fill="white">Z</text>
+<text x="503" y="912" font-size="25" font-weight="900" fill="#1559b7">Z轴：上下方向</text>
+<text x="503" y="944" font-size="18" fill="#475569">刀具升降最关键</text>
+</g>
+
+<rect x="60" y="1000" width="600" height="128" rx="24" fill="#eafaf5" stroke="#169b62" stroke-width="3"/>
+<text x="92" y="1047" font-family="Microsoft YaHei,Arial" font-size="27" font-weight="900" fill="#08784a">🔔 老师傅提醒</text>
+<text x="92" y="1085" font-family="Microsoft YaHei,Arial" font-size="21" fill="#1f2937">上机前别急着编程，先站在机床前，</text>
+<text x="92" y="1115" font-family="Microsoft YaHei,Arial" font-size="21" fill="#1f2937">把 X、Y、Z 三个方向指给自己看一遍。</text>
+
+<rect x="60" y="1155" width="600" height="86" rx="22" fill="#fff7e8" stroke="#f59e0b" stroke-width="3"/>
+<text x="92" y="1191" font-family="Microsoft YaHei,Arial" font-size="25" font-weight="900" fill="#e67e00">💡 记忆口诀</text>
+<text x="92" y="1225" font-family="Microsoft YaHei,Arial" font-size="25" font-weight="900"><tspan fill="#e53935">左右看 X</tspan><tspan fill="#374151">，</tspan><tspan fill="#169b62">前后看 Y</tspan><tspan fill="#374151">，</tspan><tspan fill="#1769d2">上下看 Z</tspan><tspan fill="#374151">。</tspan></text>
+</svg>

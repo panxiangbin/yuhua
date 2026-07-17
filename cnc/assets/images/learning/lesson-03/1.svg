@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="1280" viewBox="0 0 720 1280">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#f9fbff"/><stop offset="1" stop-color="#eef6ff"/></linearGradient><filter id="s"><feDropShadow dx="0" dy="8" stdDeviation="10" flood-opacity=".12"/></filter></defs>
+<rect width="720" height="1280" fill="url(#bg)"/>
+<text x="38" y="82" font-family="Microsoft YaHei,Arial" font-size="52" font-weight="900" fill="#1769d2">第3关</text>
+<text x="200" y="82" font-family="Microsoft YaHei,Arial" font-size="38" font-weight="900" fill="#111827">开机前先认识这些安全按钮</text>
+<rect x="65" y="118" width="590" height="70" rx="35" fill="#1769d2"/>
+<text x="360" y="164" text-anchor="middle" font-family="Microsoft YaHei,Arial" font-size="27" font-weight="800" fill="white">先会停，再会动；先保安全，再谈操作</text>
+
+<g filter="url(#s)"><rect x="55" y="225" width="610" height="510" rx="30" fill="white"/></g>
+<text x="85" y="273" font-family="Microsoft YaHei,Arial" font-size="28" font-weight="900" fill="#172033">操作面板六个关键位置</text>
+<!-- panel -->
+<rect x="115" y="315" width="330" height="360" rx="26" fill="#3f4b59" stroke="#202936" stroke-width="5"/>
+<rect x="155" y="350" width="250" height="105" rx="10" fill="#bfe0ff" stroke="#7896ad" stroke-width="4"/>
+<text x="180" y="390" font-family="Consolas" font-size="23" font-weight="700" fill="#1f4d7d">X 100.000</text><text x="180" y="420" font-family="Consolas" font-size="23" font-weight="700" fill="#1f4d7d">Y  50.000</text><text x="180" y="450" font-family="Consolas" font-size="23" font-weight="700" fill="#1f4d7d">Z -25.000</text>
+<circle cx="170" cy="525" r="42" fill="#f4c542"/><circle cx="170" cy="525" r="30" fill="#e53935"/>
+<circle cx="255" cy="525" r="24" fill="#2d6cdf"/><circle cx="325" cy="525" r="24" fill="#23a363"/><circle cx="390" cy="525" r="24" fill="#4b5563"/>
+<circle cx="215" cy="620" r="50" fill="#222b36" stroke="#94a3b8" stroke-width="5"/><circle cx="215" cy="620" r="25" fill="#64748b"/>
+<circle cx="350" cy="620" r="50" fill="#222b36" stroke="#94a3b8" stroke-width="5"/><circle cx="350" cy="620" r="25" fill="#64748b"/>
+
+<g font-family="Microsoft YaHei,Arial" font-size="21" font-weight="900">
+<line x1="170" y1="525" x2="510" y2="335" stroke="#e53935" stroke-width="4"/><rect x="505" y="305" width="120" height="58" rx="18" fill="#fff1f1" stroke="#e53935" stroke-width="3"/><text x="565" y="342" text-anchor="middle" fill="#d52d28">1 急停</text>
+<line x1="255" y1="525" x2="520" y2="410" stroke="#1769d2" stroke-width="4"/><rect x="505" y="380" width="120" height="58" rx="18" fill="#eef5ff" stroke="#1769d2" stroke-width="3"/><text x="565" y="417" text-anchor="middle" fill="#1559b7">2 复位</text>
+<line x1="325" y1="525" x2="520" y2="485" stroke="#169b62" stroke-width="4"/><rect x="485" y="455" width="160" height="58" rx="18" fill="#effcf6" stroke="#169b62" stroke-width="3"/><text x="565" y="492" text-anchor="middle" fill="#0b8b54">3 进给保持</text>
+<line x1="390" y1="525" x2="520" y2="560" stroke="#f59e0b" stroke-width="4"/><rect x="505" y="530" width="120" height="58" rx="18" fill="#fff7e8" stroke="#f59e0b" stroke-width="3"/><text x="565" y="567" text-anchor="middle" fill="#d97706">4 单段</text>
+<line x1="215" y1="620" x2="505" y2="635" stroke="#7c3aed" stroke-width="4"/><rect x="485" y="605" width="160" height="58" rx="18" fill="#f6f1ff" stroke="#7c3aed" stroke-width="3"/><text x="565" y="642" text-anchor="middle" fill="#6d28d9">5 进给倍率</text>
+<line x1="350" y1="620" x2="505" y2="705" stroke="#0891b2" stroke-width="4"/><rect x="485" y="675" width="160" height="58" rx="18" fill="#ecfeff" stroke="#0891b2" stroke-width="3"/><text x="565" y="712" text-anchor="middle" fill="#0e7490">6 手轮/JOG</text>
+</g>
+
+<g font-family="Microsoft YaHei,Arial">
+<rect x="55" y="775" width="190" height="155" rx="22" fill="#fff1f1" stroke="#ef6a66" stroke-width="3"/><text x="78" y="817" font-size="24" font-weight="900" fill="#d52d28">1 急停</text><text x="78" y="858" font-size="18" fill="#374151">危险时第一时间</text><text x="78" y="888" font-size="18" fill="#374151">按下，先保命。</text>
+<rect x="265" y="775" width="190" height="155" rx="22" fill="#eef5ff" stroke="#6d9de8" stroke-width="3"/><text x="288" y="817" font-size="24" font-weight="900" fill="#1559b7">2 复位</text><text x="288" y="858" font-size="18" fill="#374151">解除报警后继续前</text><text x="288" y="888" font-size="18" fill="#374151">先确认状态。</text>
+<rect x="475" y="775" width="190" height="155" rx="22" fill="#effcf6" stroke="#55b98a" stroke-width="3"/><text x="498" y="817" font-size="24" font-weight="900" fill="#0b8b54">3 进给保持</text><text x="498" y="858" font-size="18" fill="#374151">加工中临时停下</text><text x="498" y="888" font-size="18" fill="#374151">观察情况。</text>
+<rect x="55" y="950" width="190" height="155" rx="22" fill="#fff7e8" stroke="#f59e0b" stroke-width="3"/><text x="78" y="992" font-size="24" font-weight="900" fill="#d97706">4 单段</text><text x="78" y="1033" font-size="18" fill="#374151">一行一行执行，</text><text x="78" y="1063" font-size="18" fill="#374151">适合新手检查。</text>
+<rect x="265" y="950" width="190" height="155" rx="22" fill="#f6f1ff" stroke="#7c3aed" stroke-width="3"/><text x="288" y="992" font-size="24" font-weight="900" fill="#6d28d9">5 倍率</text><text x="288" y="1033" font-size="18" fill="#374151">先低倍率，</text><text x="288" y="1063" font-size="18" fill="#374151">看清楚再加速。</text>
+<rect x="475" y="950" width="190" height="155" rx="22" fill="#ecfeff" stroke="#0891b2" stroke-width="3"/><text x="498" y="992" font-size="24" font-weight="900" fill="#0e7490">6 手轮/JOG</text><text x="498" y="1033" font-size="18" fill="#374151">移动必须慢、稳，</text><text x="498" y="1063" font-size="18" fill="#374151">看清方向。</text>
+</g>
+
+<rect x="55" y="1135" width="610" height="84" rx="22" fill="#fff1f1" stroke="#e53935" stroke-width="3"/>
+<text x="82" y="1174" font-family="Microsoft YaHei,Arial" font-size="25" font-weight="900" fill="#d52d28">⚠ 危险错误</text><text x="245" y="1174" font-family="Microsoft YaHei,Arial" font-size="20" fill="#374151">按钮位置没认清，就急着跑程序。</text>
+<rect x="55" y="1230" width="610" height="38" rx="19" fill="#eafaf5" stroke="#169b62" stroke-width="2"/>
+<text x="360" y="1256" text-anchor="middle" font-family="Microsoft YaHei,Arial" font-size="20" font-weight="900" fill="#08784a">先熟悉急停、单段、倍率、进给保持</text>
+</svg>
