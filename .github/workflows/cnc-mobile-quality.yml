@@ -8,6 +8,8 @@ on:
       - "cnc/clean-ui.css"
       - "cnc/clean-ui.js"
       - "cnc/vivid-ui.css"
+      - "cnc/query-modes.js"
+      - "cnc/query-modes.css"
       - "cnc/import-test.js"
       - "cnc/sw.js"
       - "cnc-recover.html"
@@ -28,6 +30,7 @@ jobs:
         run: |
           node --check cnc/mobile-gcode-pro.js
           node --check cnc/clean-ui.js
+          node --check cnc/query-modes.js
           node --check cnc/import-test.js
           node --check cnc/sw.js
           node --check cnc/tests/mobile-home-smoke.cjs
@@ -38,11 +41,25 @@ jobs:
           node --check cnc/tests/mobile-gcode-detail-content-smoke.cjs
           node --check cnc/tests/mobile-gcode-detail-panel-smoke.cjs
           node --check cnc/tests/mobile-other-search-smoke.cjs
+          node --check cnc/tests/mobile-query-split-smoke.cjs
           node --check cnc/tests/mobile-sw-smoke.cjs
-      - name: Stability and vivid vertical UI assertions
+      - name: Stability and split query assertions
         run: |
           grep -q "20260720k" cnc/import-test.js
           grep -q "20260720m" cnc/import-test.js
+          grep -q "20260720n" cnc/query-modes.js
+          grep -q "QUERY_BUILD = '20260720n'" cnc/clean-ui.js
+          grep -q "query-modes.css" cnc/clean-ui.js
+          grep -q "query-modes.js" cnc/clean-ui.js
+          grep -q "FILTER_META.alarm" cnc/query-modes.js
+          grep -q "FILTER_META.parameter" cnc/query-modes.js
+          grep -q "FILTER_META.fault" cnc/query-modes.js
+          grep -q "delete FILTER_META.params" cnc/query-modes.js
+          grep -q "isAlarmEntry" cnc/query-modes.js
+          grep -q "isParameterEntry" cnc/query-modes.js
+          grep -q "isFaultEntry" cnc/query-modes.js
+          grep -q "data-cnc-query-mode" cnc/query-modes.js
+          grep -q "data-filter=\"fault\"" cnc/tests/mobile-query-split-smoke.cjs
           grep -q "clean-ui.css" cnc/import-test.js
           grep -q "clean-ui.js" cnc/import-test.js
           grep -q "vivid-ui.css" cnc/import-test.js
