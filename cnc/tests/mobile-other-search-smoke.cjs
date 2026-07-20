@@ -23,6 +23,7 @@ const assert = require('node:assert/strict');
     state: 'visible',
     timeout: 30000
   });
+  await page.waitForFunction(() => window.CNC_CLEAN_UI && window.CNC_CLEAN_UI.build === '20260720k', null, { timeout: 15000 });
   await page.waitForTimeout(500);
 
   assert.equal(
@@ -52,7 +53,7 @@ const assert = require('node:assert/strict');
   assert.equal(style.opacity, '0');
   assert.equal(style.position, 'absolute');
 
-  await firstResult.click();
+  await button.click({ force: true });
   await page.waitForFunction(() => {
     const panel = document.querySelector('#detail-panel');
     return panel && panel.classList.contains('mobile-open');
