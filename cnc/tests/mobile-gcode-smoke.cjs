@@ -58,7 +58,7 @@ const assert = require('node:assert/strict');
   const firstResult = page.locator('#result-list .result-card').first();
   await firstResult.waitFor({ state: 'visible', timeout: 15000 });
 
-  for (const selector of ['.result-thumb', '.result-tags', '.result-button']) {
+  for (const selector of ['.result-thumb', '.result-tags']) {
     const node = firstResult.locator(selector);
     if (await node.count()) {
       assert.equal(
@@ -68,6 +68,16 @@ const assert = require('node:assert/strict');
       );
     }
   }
+
+  const openButton = firstResult.locator('.result-button');
+  assert.equal(await openButton.count(), 1, '结果卡仍需保留可用的详情入口');
+  const buttonStyle = await openButton.evaluate(element => {
+    const style = getComputedStyle(element);
+    return { display: style.display, opacity: style.opacity, position: style.position };
+  });
+  assert.equal(buttonStyle.display, 'block');
+  assert.equal(buttonStyle.opacity, '0');
+  assert.equal(buttonStyle.position, 'absolute');
 
   await firstResult.click();
   await page.waitForFunction(() => {
