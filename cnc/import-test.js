@@ -7,6 +7,7 @@
   var PRO_SCRIPT = './mobile-gcode-pro.js?v=' + PRO_BUILD;
   var PRO_STYLE = './mobile-gcode-pro.css?v=' + PRO_BUILD;
   var CLEAN_STYLE = './clean-ui.css?v=' + BUILD;
+  var CLEAN_SCRIPT = './clean-ui.js?v=' + BUILD;
   var STATIC_CARDS = {
     2: [
       {
@@ -141,6 +142,28 @@
     if (document.body) document.body.classList.add('cnc-clean-ui');
   }
 
+  function ensureCleanInteraction() {
+    if (window.CNC_CLEAN_UI && window.CNC_CLEAN_UI.build === BUILD) return Promise.resolve(true);
+    if (window.__CNC_CLEAN_UI_LOADING__) return window.__CNC_CLEAN_UI_LOADING__;
+
+    window.__CNC_CLEAN_UI_LOADING__ = new Promise(function (resolve) {
+      var script = document.querySelector('script[data-cnc-clean-ui-script]');
+      if (!script) {
+        script = document.createElement('script');
+        script.src = CLEAN_SCRIPT;
+        script.async = true;
+        script.dataset.cncCleanUiScript = 'true';
+        document.head.appendChild(script);
+      }
+      script.addEventListener('load', function () { resolve(true); }, { once: true });
+      script.addEventListener('error', function () {
+        console.error('[CNC减法界面] 整卡点击修复层加载失败');
+        resolve(false);
+      }, { once: true });
+    });
+    return window.__CNC_CLEAN_UI_LOADING__;
+  }
+
   function ensureProStyle() {
     if (!document.querySelector('link[data-cnc-mobile-pro]')) {
       var link = document.createElement('link');
@@ -168,6 +191,7 @@
       }
       script.addEventListener('load', function () {
         ensureCleanStyle(true);
+        ensureCleanInteraction();
         resolve(true);
       }, { once: true });
       script.addEventListener('error', function () {
@@ -211,6 +235,7 @@
 
   function boot() {
     ensureCleanStyle(true);
+    ensureCleanInteraction();
     applyBranding();
     correctCourseCards();
     injectStaticCards();
@@ -218,6 +243,7 @@
     clearLegacyCaches();
     window.setTimeout(function () {
       ensureCleanStyle(true);
+      ensureCleanInteraction();
       applyBranding();
       correctCourseCards();
       clearLegacyCaches();
@@ -243,13 +269,14 @@
         build: BUILD,
         lightweightHome: true,
         cleanUi: Boolean(cleanStyle && document.body.classList.contains('cnc-clean-ui')),
+        cleanInteraction: Boolean(window.CNC_CLEAN_UI && window.CNC_CLEAN_UI.build === BUILD),
         brand: document.title,
         gcodeLoaded: window.__CNC_GM_PRO_INSTALLED__ === PRO_BUILD,
         serviceWorkerControlled: Boolean(navigator.serviceWorker && navigator.serviceWorker.controller),
         lesson9Corrected: Boolean(lesson9 && lesson9.textContent.indexOf('不保证直线') !== -1),
         lesson10Corrected: Boolean(lesson10 && lesson10.textContent.indexOf('最小输入单位') !== -1)
       };
-      result.passed = result.cleanUi && !result.serviceWorkerControlled && result.lesson9Corrected && result.lesson10Corrected;
+      result.passed = result.cleanUi && result.cleanInteraction && !result.serviceWorkerControlled && result.lesson9Corrected && result.lesson10Corrected;
       console.log('[CNC减法界面检查]', result);
       return result;
     }
