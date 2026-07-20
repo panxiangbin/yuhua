@@ -1,0 +1,595 @@
+/* 数控小潘 CNC 助手：手机端减法界面
+   原则：一个页面只突出一个主要任务，隐藏开发状态和低频控件。 */
+
+body.cnc-clean-ui .fan-suggestion-panel,
+body.cnc-clean-ui .sidebar-status {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  body.cnc-clean-ui {
+    background: #f5f7fa !important;
+    color: #202124;
+  }
+
+  body.cnc-clean-ui .main-shell {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  /* 顶部只保留菜单、首页和当前页面名称 */
+  body.cnc-clean-ui .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 90;
+    min-height: 58px !important;
+    padding: 8px 12px !important;
+    border-bottom: 1px solid #e6e9ef !important;
+    background: rgba(255,255,255,.97) !important;
+    backdrop-filter: blur(12px);
+  }
+
+  body.cnc-clean-ui .topbar-right,
+  body.cnc-clean-ui .topbar-kicker,
+  body.cnc-clean-ui .topbar-left p,
+  body.cnc-clean-ui .sidebar .tree-group[data-tree-group="tools"] button[data-route="library"],
+  body.cnc-clean-ui .sidebar .tree-group[data-tree-group="tools"] button[data-route="access"] {
+    display: none !important;
+  }
+
+  body.cnc-clean-ui .topbar-left {
+    min-width: 0;
+    gap: 8px !important;
+  }
+
+  body.cnc-clean-ui .topbar-left > div {
+    min-width: 0;
+  }
+
+  body.cnc-clean-ui #topbar-title {
+    margin: 0 !important;
+    overflow: hidden;
+    font-size: 17px !important;
+    line-height: 1.25 !important;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  body.cnc-clean-ui .menu-button,
+  body.cnc-clean-ui #home-btn {
+    width: 42px !important;
+    min-width: 42px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    padding: 0 !important;
+    border-radius: 12px !important;
+  }
+
+  /* 首页：只留六个主入口和搜索 */
+  body.cnc-clean-ui #view-dashboard {
+    padding: 12px 0 28px !important;
+  }
+
+  body.cnc-clean-ui #view-dashboard .featured-images-preview,
+  body.cnc-clean-ui #view-dashboard #faq-preview-section,
+  body.cnc-clean-ui #view-dashboard .launchpad-hero,
+  body.cnc-clean-ui #view-dashboard .dashboard-gallery-grid {
+    display: none !important;
+  }
+
+  body.cnc-clean-ui .launchpad-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+    padding: 0 12px !important;
+  }
+
+  body.cnc-clean-ui .launchpad-card,
+  body.cnc-clean-ui .launchpad-card.primary {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 112px !important;
+    padding: 16px 10px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 1px solid #e3e7ed !important;
+    border-radius: 16px !important;
+    background: #fff !important;
+    box-shadow: 0 3px 12px rgba(31,45,61,.06) !important;
+    text-align: center !important;
+  }
+
+  body.cnc-clean-ui .launchpad-card.primary {
+    border-color: #c9dcff !important;
+    background: #f5f9ff !important;
+  }
+
+  body.cnc-clean-ui .launchpad-card > div:last-child {
+    width: 100%;
+  }
+
+  body.cnc-clean-ui .launchpad-card-icon {
+    margin: 0 0 8px !important;
+    font-size: 30px !important;
+  }
+
+  body.cnc-clean-ui .launchpad-card h3 {
+    margin: 0 !important;
+    font-size: 16px !important;
+    line-height: 1.3 !important;
+  }
+
+  body.cnc-clean-ui .launchpad-card p,
+  body.cnc-clean-ui .launchpad-card .launchpad-badge {
+    display: none !important;
+  }
+
+  body.cnc-clean-ui .launchpad-search {
+    margin: 14px 12px 0 !important;
+    padding: 14px !important;
+    border: 1px solid #e3e7ed !important;
+    border-radius: 16px !important;
+    background: #fff !important;
+    box-shadow: none !important;
+  }
+
+  body.cnc-clean-ui .launchpad-search-header {
+    margin-bottom: 10px !important;
+  }
+
+  body.cnc-clean-ui .launchpad-search-header h3 {
+    margin: 0 !important;
+    font-size: 17px !important;
+  }
+
+  body.cnc-clean-ui .launchpad-search-header p,
+  body.cnc-clean-ui .quick-keywords .keyword-label {
+    display: none !important;
+  }
+
+  body.cnc-clean-ui .launchpad-search-bar {
+    display: grid !important;
+    grid-template-columns: minmax(0,1fr) auto !important;
+    gap: 8px !important;
+  }
+
+  body.cnc-clean-ui .launchpad-search-bar input {
+    min-width: 0;
+    min-height: 46px !important;
+    padding: 0 14px !important;
+    border-radius: 12px !important;
+    font-size: 16px !important;
+  }
+
+  body.cnc-clean-ui .launchpad-search-bar button {
+    width: auto !important;
+    min-width: 70px !important;
+    min-height: 46px !important;
+    padding: 0 14px !important;
+    border-radius: 12px !important;
+  }
+
+  body.cnc-clean-ui .quick-keywords {
+    display: flex !important;
+    margin-top: 10px !important;
+    gap: 7px !important;
+    overflow-x: auto;
+    flex-wrap: nowrap !important;
+    scrollbar-width: none;
+  }
+
+  body.cnc-clean-ui .quick-keywords::-webkit-scrollbar {
+    display: none;
+  }
+
+  body.cnc-clean-ui .quick-keywords .keyword-chip {
+    flex: 0 0 auto;
+    min-width: 48px !important;
+    min-height: 36px !important;
+    padding: 7px 11px !important;
+    font-size: 12px !important;
+  }
+
+  body.cnc-clean-ui .quick-keywords .keyword-chip:nth-of-type(n+6) {
+    display: none !important;
+  }
+
+  /* 页面标题：去掉英文眉题、重复介绍和第二个返回按钮 */
+  body.cnc-clean-ui .section-panel {
+    padding: 14px 12px 28px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  body.cnc-clean-ui .section-head {
+    margin-bottom: 14px !important;
+    padding: 0 !important;
+  }
+
+  body.cnc-clean-ui .section-head .eyebrow,
+  body.cnc-clean-ui .section-head > p,
+  body.cnc-clean-ui .section-head > div + p {
+    display: none !important;
+  }
+
+  body.cnc-clean-ui .section-head h3 {
+    margin: 0 !important;
+    font-size: 21px !important;
+    line-height: 1.3 !important;
+  }
+
+  body.cnc-clean-ui .sub-nav-bar {
+    min-height: 50px !important;
+    padding: 7px 12px !important;
+    gap: 8px !important;
+    border-bottom: 1px solid #edf0f4 !important;
+    background: #fff !important;
+  }
+
+  body.cnc-clean-ui .sub-nav-bar .sub-nav-btn {
+    min-height: 38px !important;
+    padding: 7px 11px !important;
+    border-radius: 10px !important;
+    font-size: 13px !important;
+  }
+
+  body.cnc-clean-ui .sub-nav-bar .sub-nav-btn[onclick*="history.back"] {
+    display: none !important;
+  }
+
+  /* 新手课程：目录只显示关数、标题和时间 */
+  body.cnc-clean-ui .learning-stages {
+    gap: 24px !important;
+  }
+
+  body.cnc-clean-ui .stage-header {
+    margin: 0 0 10px !important;
+  }
+
+  body.cnc-clean-ui .stage-header h4 {
+    font-size: 17px !important;
+  }
+
+  body.cnc-clean-ui .stage-badge {
+    padding: 5px 9px !important;
+    font-size: 11px !important;
+  }
+
+  body.cnc-clean-ui .study-card-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+
+  body.cnc-clean-ui .study-card {
+    min-height: 126px !important;
+    padding: 12px !important;
+    border: 1px solid #e1e6ec !important;
+    border-radius: 14px !important;
+    background: #fff !important;
+    box-shadow: none !important;
+  }
+
+  body.cnc-clean-ui .study-card-header {
+    margin-bottom: 8px !important;
+  }
+
+  body.cnc-clean-ui .study-card-icon {
+    margin: 2px 0 8px !important;
+    font-size: 26px !important;
+  }
+
+  body.cnc-clean-ui .study-card h4 {
+    margin: 0 !important;
+    font-size: 14px !important;
+    line-height: 1.4 !important;
+  }
+
+  body.cnc-clean-ui .study-card p,
+  body.cnc-clean-ui .study-card-tags {
+    display: none !important;
+  }
+
+  body.cnc-clean-ui .study-card-time,
+  body.cnc-clean-ui .study-card-badge {
+    font-size: 10px !important;
+  }
+
+  /* 所有查询页统一：搜索在前，列表紧凑，详情独占一屏 */
+  body.cnc-clean-ui #view-workspace .workspace-layout {
+    display: block !important;
+    padding: 0 !important;
+  }
+
+  body.cnc-clean-ui #view-workspace .workspace-panel.search-panel {
+    padding: 12px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  body.cnc-clean-ui #view-workspace .workspace-header,
+  body.cnc-clean-ui #view-workspace #workspace-mode-row,
+  body.cnc-clean-ui #view-workspace #preset-chip-row,
+  body.cnc-clean-ui #view-workspace #knowledge-chip-row {
+    display: none !important;
+  }
+
+  body.cnc-clean-ui #view-workspace .search-toolbar {
+    display: block !important;
+    margin: 0 !important;
+  }
+
+  body.cnc-clean-ui #view-workspace .search-input-group label > span,
+  body.cnc-clean-ui #view-workspace .filter-select-group > span {
+    display: none !important;
+  }
+
+  body.cnc-clean-ui #view-workspace #search-input {
+    width: 100% !important;
+    height: 50px !important;
+    padding: 0 46px 0 15px !important;
+    border: 1.5px solid #ccd8ea !important;
+    border-radius: 14px !important;
+    background: #fff !important;
+    font-size: 16px !important;
+    box-shadow: none !important;
+  }
+
+  body.cnc-clean-ui #view-workspace #search-clear-btn {
+    position: absolute !important;
+    top: 6px !important;
+    right: 6px !important;
+    width: 38px !important;
+    min-width: 38px !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    padding: 0 !important;
+  }
+
+  body.cnc-clean-ui #view-workspace #workspace-filter-group {
+    margin-top: 8px !important;
+  }
+
+  body.cnc-clean-ui #view-workspace #category-select {
+    width: 100% !important;
+    min-height: 44px !important;
+    border-radius: 12px !important;
+    background: #fff !important;
+  }
+
+  body.cnc-clean-ui #view-workspace .search-meta {
+    margin: 9px 2px 5px !important;
+    color: #6b7280 !important;
+    font-size: 12px !important;
+  }
+
+  body.cnc-clean-ui #view-workspace .result-list,
+  body.cnc-clean-ui #view-workspace .result-list.visual-mode {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+    max-height: none !important;
+    margin-top: 8px !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  body.cnc-clean-ui #view-workspace .result-card,
+  body.cnc-clean-ui #view-workspace .result-card.has-thumb,
+  body.cnc-clean-ui #view-workspace .result-list.visual-mode .result-card.has-thumb {
+    display: block !important;
+    position: relative !important;
+    padding: 12px 13px !important;
+    border: 1px solid #e2e7ed !important;
+    border-radius: 13px !important;
+    background: #fff !important;
+    box-shadow: none !important;
+  }
+
+  body.cnc-clean-ui #view-workspace .result-card.selected {
+    border-color: #9fc1ff !important;
+    background: #f7faff !important;
+  }
+
+  body.cnc-clean-ui #view-workspace .result-thumb,
+  body.cnc-clean-ui #view-workspace .result-tags {
+    display: none !important;
+  }
+
+  body.cnc-clean-ui #view-workspace .result-button {
+    display: block !important;
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 3 !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: inherit !important;
+    opacity: 0 !important;
+    cursor: pointer !important;
+  }
+
+  body.cnc-clean-ui #view-workspace .result-top strong {
+    color: #1a73e8 !important;
+    font-size: 20px !important;
+    line-height: 1.1 !important;
+  }
+
+  body.cnc-clean-ui #view-workspace .result-badges .badge:nth-child(n+2) {
+    display: none !important;
+  }
+
+  body.cnc-clean-ui #view-workspace .result-card h4 {
+    margin: 6px 0 0 !important;
+    font-size: 15px !important;
+    line-height: 1.4 !important;
+  }
+
+  body.cnc-clean-ui #view-workspace .result-card p {
+    display: -webkit-box !important;
+    margin: 5px 0 0 !important;
+    overflow: hidden !important;
+    color: #606a78 !important;
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  /* G/M代码：去掉“常查”长条，只留两行必要筛选 */
+  body.cnc-clean-ui #view-workspace.gcode-pro-mode .gcode-mobile-controls {
+    margin: 9px 0 6px !important;
+    padding: 10px !important;
+    gap: 8px !important;
+    border: 0 !important;
+    border-radius: 13px !important;
+    background: #eef3f9 !important;
+  }
+
+  body.cnc-clean-ui #view-workspace.gcode-pro-mode .gcode-control-row {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0,1fr)) !important;
+    gap: 6px !important;
+  }
+
+  body.cnc-clean-ui #view-workspace.gcode-pro-mode .gcode-control-label,
+  body.cnc-clean-ui #view-workspace.gcode-pro-mode .gcode-quick-row {
+    display: none !important;
+  }
+
+  body.cnc-clean-ui #view-workspace.gcode-pro-mode .gcode-filter-chip {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 38px !important;
+    padding: 7px 5px !important;
+    border-radius: 10px !important;
+    font-size: 12px !important;
+  }
+
+  body.cnc-clean-ui #view-workspace.gcode-pro-mode .gcode-exact-hint {
+    margin: 2px 0 0 !important;
+  }
+
+  /* 所有查询详情统一为手机全屏；次要说明继续折叠 */
+  body.cnc-clean-ui #view-workspace .detail-panel {
+    display: none !important;
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 500 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    max-width: none !important;
+    padding: 0 12px 82px !important;
+    overflow-y: auto !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: #f5f7fa !important;
+  }
+
+  body.cnc-clean-ui #view-workspace .detail-panel.mobile-open {
+    display: block !important;
+  }
+
+  body.cnc-clean-ui #view-workspace .detail-header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    display: grid !important;
+    grid-template-columns: auto minmax(0,1fr) auto !important;
+    align-items: center !important;
+    gap: 7px !important;
+    margin: 0 -12px 10px !important;
+    padding: 9px 12px !important;
+    border-bottom: 1px solid #e2e7ed !important;
+    background: rgba(255,255,255,.97) !important;
+  }
+
+  body.cnc-clean-ui #view-workspace .detail-header .eyebrow {
+    display: none !important;
+  }
+
+  body.cnc-clean-ui #view-workspace .detail-header h3 {
+    margin: 0 !important;
+    overflow: hidden !important;
+    font-size: 16px !important;
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+  }
+
+  body.cnc-clean-ui #view-workspace .detail-back-btn {
+    display: inline-flex !important;
+    min-width: 42px !important;
+    min-height: 38px !important;
+    padding: 7px 9px !important;
+    border: 0 !important;
+    border-radius: 10px !important;
+    background: #e8f0fe !important;
+    color: #1a73e8 !important;
+  }
+
+  body.cnc-clean-ui #view-workspace .detail-toolbar #detail-prev,
+  body.cnc-clean-ui #view-workspace .detail-toolbar #detail-next-button,
+  body.cnc-clean-ui #view-workspace .detail-toolbar #detail-share {
+    display: none !important;
+  }
+
+  body.cnc-clean-ui #view-workspace .detail-content-grid {
+    gap: 9px !important;
+  }
+
+  body.cnc-clean-ui #view-workspace .detail-card {
+    margin: 0 !important;
+    padding: 14px !important;
+    border: 1px solid #e2e7ed !important;
+    border-radius: 14px !important;
+    background: #fff !important;
+    box-shadow: none !important;
+  }
+
+  body.cnc-clean-ui #view-workspace .detail-code {
+    font-size: 27px !important;
+  }
+
+  /* 工具、图库、收藏页面统一卡片节奏 */
+  body.cnc-clean-ui .calc-card,
+  body.cnc-clean-ui .tool-tab-panel > .card,
+  body.cnc-clean-ui .library-card,
+  body.cnc-clean-ui .access-card,
+  body.cnc-clean-ui .detail-card,
+  body.cnc-clean-ui .favorites-grid > article {
+    border: 1px solid #e2e7ed !important;
+    border-radius: 14px !important;
+    box-shadow: none !important;
+  }
+
+  body.cnc-clean-ui .tool-tabs,
+  body.cnc-clean-ui .knowledge-map-toolbar,
+  body.cnc-clean-ui .faq-tabs {
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    scrollbar-width: none;
+  }
+}
+
+@media (max-width: 380px) {
+  body.cnc-clean-ui .launchpad-card {
+    min-height: 104px !important;
+  }
+
+  body.cnc-clean-ui .study-card {
+    min-height: 120px !important;
+    padding: 10px !important;
+  }
+
+  body.cnc-clean-ui .study-card h4 {
+    font-size: 13px !important;
+  }
+}
