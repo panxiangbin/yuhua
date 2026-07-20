@@ -9,6 +9,7 @@ on:
       - "cnc/sw.js"
       - "cnc-recover.html"
       - ".github/workflows/cnc-mobile-quality.yml"
+      - ".github/workflows/cnc-mobile-smoke.yml"
   workflow_dispatch:
 
 permissions:
@@ -24,10 +25,14 @@ jobs:
           node --check cnc/mobile-gcode-pro.js
           node --check cnc/import-test.js
           node --check cnc/sw.js
-      - name: Recovery and mobile assertions
+      - name: Stability assertions
         run: |
-          grep -q "20260720i" cnc/import-test.js
-          grep -q "20260720i" cnc/sw.js
+          grep -q "20260720j" cnc/import-test.js
+          grep -q "数控小潘 CNC速查与学习助手" cnc/import-test.js
+          grep -q "不保证直线" cnc/import-test.js
+          grep -q "最小输入单位" cnc/import-test.js
+          grep -q "disableServiceWorkerRegistration" cnc/import-test.js
+          grep -q "Object.defineProperty(navigator.serviceWorker, 'register'" cnc/import-test.js
           grep -q "loadGcodePro" cnc/import-test.js
           grep -q "正在恢复数控网站" cnc-recover.html
           grep -q "./cnc/?recovered=20260720i" cnc-recover.html
