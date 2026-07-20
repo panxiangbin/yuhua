@@ -40,11 +40,14 @@ jobs:
           cat /tmp/cnc-http.log
           exit 1
 
-      - name: Mobile homepage opens and copy is correct
+      - name: Mobile homepage clean layout
         run: node cnc/tests/mobile-home-smoke.cjs
 
-      - name: Mobile G-code search and detail journey
+      - name: Mobile G-code clean search journey
         run: node cnc/tests/mobile-gcode-smoke.cjs
+
+      - name: Mobile alarm and parameter clean journey
+        run: node cnc/tests/mobile-other-search-smoke.cjs
 
       - name: Service Worker remains disabled
         run: node cnc/tests/mobile-sw-smoke.cjs
