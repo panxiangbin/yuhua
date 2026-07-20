@@ -42,7 +42,8 @@ jobs:
           grep -q "clean-ui.css" cnc/import-test.js
           grep -q "clean-ui.js" cnc/import-test.js
           grep -q "CNC_CLEAN_UI" cnc/clean-ui.js
-          grep -q "stopImmediatePropagation" cnc/clean-ui.js
+          grep -q "openMobilePanel" cnc/clean-ui.js
+          grep -q "setTimeout(openMobilePanel" cnc/clean-ui.js
           grep -q "cnc-clean-ui" cnc/import-test.js
           grep -q "数控小潘 CNC速查与学习助手" cnc/import-test.js
           grep -q "不保证直线" cnc/import-test.js
