@@ -6,8 +6,8 @@ on:
       - "cnc/mobile-gcode-pro.js"
       - "cnc/mobile-gcode-pro.css"
       - "cnc/import-test.js"
-      - "cnc/learning-alignment-hotfix.js"
       - "cnc/sw.js"
+      - ".github/workflows/deploy-cnc-pages.yml"
       - ".github/workflows/cnc-mobile-quality.yml"
   workflow_dispatch:
 
@@ -23,19 +23,22 @@ jobs:
         run: |
           node --check cnc/mobile-gcode-pro.js
           node --check cnc/import-test.js
-          node --check cnc/learning-alignment-hotfix.js
           node --check cnc/sw.js
-      - name: Critical feature assertions
+      - name: Emergency recovery assertions
         run: |
-          grep -q "20260720h" cnc/mobile-gcode-pro.js
-          grep -q "20260720h" cnc/import-test.js
-          grep -q "20260720h" cnc/sw.js
-          grep -q "G05.1" cnc/mobile-gcode-pro.js
-          grep -q "data-gcode-machine" cnc/mobile-gcode-pro.js
-          grep -q "detail-panel.mobile-open" cnc/mobile-gcode-pro.css
-          grep -q "learning-alignment-hotfix.js" cnc/sw.js
-          grep -q "CNC_ALIGN_LEARNING_IMAGES" cnc/learning-alignment-hotfix.js
-          grep -q "4000" cnc/learning-alignment-hotfix.js
+          grep -q "20260720i" cnc/import-test.js
+          grep -q "20260720i" cnc/sw.js
+          grep -q "loadGcodePro" cnc/import-test.js
+          grep -q "getRegistrations" .github/workflows/deploy-cnc-pages.yml
+          grep -q "recovered=20260720i" .github/workflows/deploy-cnc-pages.yml
+          if grep -q "learning-images-04-12" cnc/import-test.js; then
+            echo "Homepage bootstrap must not auto-load the large lesson image bundle"
+            exit 1
+          fi
+          if grep -q "addEventListener('fetch'" cnc/sw.js; then
+            echo "Emergency Service Worker must not intercept fetch requests"
+            exit 1
+          fi
           if grep -q "new MutationObserver" cnc/mobile-gcode-pro.js; then
             echo "mobile-gcode-pro.js must not install a global MutationObserver"
             exit 1
