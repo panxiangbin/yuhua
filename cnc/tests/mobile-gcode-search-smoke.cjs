@@ -9,24 +9,27 @@ const assert = require('node:assert/strict');
   await card.waitFor({ state: 'visible', timeout: 30000 });
   await card.click();
   await page.waitForFunction(() => window.__CNC_GM_PRO_INSTALLED__ === '20260720h', null, { timeout: 30000 });
+  await page.waitForFunction(() => window.CNC_CLEAN_UI && window.CNC_CLEAN_UI.build === '20260720k', null, { timeout: 15000 });
 
   await page.locator('#search-input').fill('G1');
   await page.waitForTimeout(700);
   assert.match((await page.locator('#result-list').textContent()) || '', /G01/);
 
-  const result = page.locator('#result-list .result-card').first();
-  await result.waitFor({ state: 'visible', timeout: 15000 });
-  const button = result.locator('.result-button');
-  assert.equal(await button.count(), 1);
+  const button = page.locator('#result-list [data-open-entry="kb-gcode-g01"]');
+  await button.waitFor({ state: 'attached', timeout: 15000 });
+  await page.waitForFunction(() => {
+    const button = document.querySelector('#result-list [data-open-entry="kb-gcode-g01"]');
+    return button && button.dataset.cncCleanBound === 'true';
+  }, null, { timeout: 15000 });
+
   const style = await button.evaluate(element => {
     const computed = getComputedStyle(element);
     return { display: computed.display, opacity: computed.opacity, position: computed.position };
   });
-  console.log('result-button-style', JSON.stringify(style));
   assert.equal(style.display, 'block');
   assert.equal(style.opacity, '0');
   assert.equal(style.position, 'absolute');
 
-  console.log('G/M搜索与整卡点击层通过');
+  console.log('G/M搜索、透明整卡按钮和自动绑定通过');
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });
