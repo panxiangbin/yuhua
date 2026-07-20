@@ -13,9 +13,9 @@ const assert = require('node:assert/strict');
 
   await page.locator('#search-input').fill('G1');
   await page.waitForTimeout(700);
-  const result = page.locator('#result-list .result-card').first();
-  await result.waitFor({ state: 'visible', timeout: 15000 });
-  const openButton = result.locator('.result-button');
+
+  const openButton = page.locator('#result-list [data-open-entry="kb-gcode-g01"]');
+  await openButton.waitFor({ state: 'attached', timeout: 15000 });
   await openButton.click({ force: true });
 
   await page.waitForFunction(() => {
@@ -27,6 +27,6 @@ const assert = require('node:assert/strict');
   assert.equal(await page.locator('#detail-panel').evaluate(node => getComputedStyle(node).position), 'fixed');
   assert.equal(await page.locator('#detail-back-btn').isVisible(), true);
 
-  console.log('G/M全屏详情通过');
+  console.log('G/M精确G01全屏详情通过');
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });
