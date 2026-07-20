@@ -5,11 +5,13 @@ on:
     paths:
       - "cnc/mobile-gcode-pro.js"
       - "cnc/mobile-gcode-pro.css"
+      - "cnc/clean-ui.css"
       - "cnc/import-test.js"
       - "cnc/sw.js"
       - "cnc-recover.html"
       - ".github/workflows/cnc-mobile-quality.yml"
       - ".github/workflows/cnc-mobile-smoke.yml"
+      - ".github/tests/cnc-mobile-*.js"
   workflow_dispatch:
 
 permissions:
@@ -25,15 +27,24 @@ jobs:
           node --check cnc/mobile-gcode-pro.js
           node --check cnc/import-test.js
           node --check cnc/sw.js
-      - name: Stability assertions
+          node --check .github/tests/cnc-mobile-home.js
+          node --check .github/tests/cnc-mobile-gcode.js
+          node --check .github/tests/cnc-mobile-sw.js
+      - name: Stability and clean UI assertions
         run: |
-          grep -q "20260720j" cnc/import-test.js
+          grep -q "20260720k" cnc/import-test.js
+          grep -q "clean-ui.css" cnc/import-test.js
+          grep -q "cnc-clean-ui" cnc/import-test.js
           grep -q "数控小潘 CNC速查与学习助手" cnc/import-test.js
           grep -q "不保证直线" cnc/import-test.js
           grep -q "最小输入单位" cnc/import-test.js
           grep -q "disableServiceWorkerRegistration" cnc/import-test.js
           grep -q "Object.defineProperty(navigator.serviceWorker, 'register'" cnc/import-test.js
           grep -q "loadGcodePro" cnc/import-test.js
+          grep -q "gcode-quick-row" cnc/clean-ui.css
+          grep -q "study-card-grid" cnc/clean-ui.css
+          grep -q "featured-images-preview" cnc/clean-ui.css
+          grep -q "result-thumb" cnc/clean-ui.css
           grep -q "正在恢复数控网站" cnc-recover.html
           grep -q "./cnc/?recovered=20260720i" cnc-recover.html
           grep -q "getRegistrations" cnc-recover.html
