@@ -1,11 +1,12 @@
-/* CNC 稳定性第一阶段：轻量启动、按需加载、品牌与安全文案修正。 */
+/* CNC 稳定性与减法界面：轻量启动、按需加载、统一手机端视觉。 */
 (function () {
   'use strict';
 
-  var BUILD = '20260720j';
+  var BUILD = '20260720k';
   var PRO_BUILD = '20260720h';
   var PRO_SCRIPT = './mobile-gcode-pro.js?v=' + PRO_BUILD;
   var PRO_STYLE = './mobile-gcode-pro.css?v=' + PRO_BUILD;
+  var CLEAN_STYLE = './clean-ui.css?v=' + BUILD;
   var STATIC_CARDS = {
     2: [
       {
@@ -126,13 +127,29 @@
     return true;
   }
 
+  function ensureCleanStyle(forceLast) {
+    var link = document.querySelector('link[data-cnc-clean-ui]');
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = CLEAN_STYLE;
+      link.dataset.cncCleanUi = 'true';
+      document.head.appendChild(link);
+    } else if (forceLast && link.parentNode) {
+      link.parentNode.appendChild(link);
+    }
+    if (document.body) document.body.classList.add('cnc-clean-ui');
+  }
+
   function ensureProStyle() {
-    if (document.querySelector('link[data-cnc-mobile-pro]')) return;
-    var link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = PRO_STYLE;
-    link.dataset.cncMobilePro = 'true';
-    document.head.appendChild(link);
+    if (!document.querySelector('link[data-cnc-mobile-pro]')) {
+      var link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = PRO_STYLE;
+      link.dataset.cncMobilePro = 'true';
+      document.head.appendChild(link);
+    }
+    ensureCleanStyle(true);
   }
 
   function loadGcodePro() {
@@ -149,7 +166,10 @@
         script.dataset.cncMobileGcodePro = 'true';
         document.head.appendChild(script);
       }
-      script.addEventListener('load', function () { resolve(true); }, { once: true });
+      script.addEventListener('load', function () {
+        ensureCleanStyle(true);
+        resolve(true);
+      }, { once: true });
       script.addEventListener('error', function () {
         console.error('[CNC稳定版] G/M增强模块加载失败');
         resolve(false);
@@ -190,12 +210,14 @@
   }
 
   function boot() {
+    ensureCleanStyle(true);
     applyBranding();
     correctCourseCards();
     injectStaticCards();
     bindLazyLoading();
     clearLegacyCaches();
     window.setTimeout(function () {
+      ensureCleanStyle(true);
       applyBranding();
       correctCourseCards();
       clearLegacyCaches();
@@ -215,18 +237,20 @@
     runAll: function () {
       var lesson9 = document.querySelector('.study-card[data-level="9"] p');
       var lesson10 = document.querySelector('.study-card[data-level="10"] p');
+      var cleanStyle = document.querySelector('link[data-cnc-clean-ui]');
       var result = {
         passed: true,
         build: BUILD,
         lightweightHome: true,
+        cleanUi: Boolean(cleanStyle && document.body.classList.contains('cnc-clean-ui')),
         brand: document.title,
         gcodeLoaded: window.__CNC_GM_PRO_INSTALLED__ === PRO_BUILD,
         serviceWorkerControlled: Boolean(navigator.serviceWorker && navigator.serviceWorker.controller),
         lesson9Corrected: Boolean(lesson9 && lesson9.textContent.indexOf('不保证直线') !== -1),
         lesson10Corrected: Boolean(lesson10 && lesson10.textContent.indexOf('最小输入单位') !== -1)
       };
-      result.passed = !result.serviceWorkerControlled && result.lesson9Corrected && result.lesson10Corrected;
-      console.log('[CNC稳定性第一阶段检查]', result);
+      result.passed = result.cleanUi && !result.serviceWorkerControlled && result.lesson9Corrected && result.lesson10Corrected;
+      console.log('[CNC减法界面检查]', result);
       return result;
     }
   };
