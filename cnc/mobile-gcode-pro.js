@@ -1,42 +1,538 @@
-/* CNC 手机端 G/M 代码现场速查升级版 */
-(function(){'use strict';
-var BUILD='20260720e',STORAGE_MACHINE='cnc_gcode_machine_v1',STORAGE_SCOPE='cnc_gcode_scope_v1',STORAGE_CUSTOM='cnc_gcode_custom_v1';
-var QUICK_CODES=['G00','G01','G02','G03','G43','G54','G83','G84','G90','M03','M08','M30'];
-var COMMON_CODES=new Set(['G00','G01','G02','G03','G04','G09','G10','G15','G16','G17','G18','G19','G20','G21','G28','G30','G31','G32','G40','G41','G42','G43','G44','G49','G50','G51','G52','G53','G54','G55','G56','G57','G58','G59','G60','G61','G64','G65','G68','G69','G73','G74','G75','G76','G80','G81','G82','G83','G84','G85','G86','G87','G88','G89','G90','G91','G92','G94','G95','G96','G97','G98','G99','G05.1','G07.1','G43.4','G43.5','G54.1','G68.2','M00','M01','M02','M03','M04','M05','M06','M07','M08','M09','M19','M30','M41','M42','M48','M49','M60','M98','M99']);
-var FORMAT_MAP={G00:'G00 X_ Y_ Z_',G01:'G01 X_ Y_ Z_ F_',G02:'G17 G02 X_ Y_ I_ J_ F_\n或：G17 G02 X_ Y_ R_ F_',G03:'G17 G03 X_ Y_ I_ J_ F_\n或：G17 G03 X_ Y_ R_ F_',G43:'G00 G43 H_ Z_',G54:'G54\nG00 X_ Y_',G73:'G98/G99 G73 X_ Y_ Z_ R_ Q_ F_',G80:'G80',G81:'G98/G99 G81 X_ Y_ Z_ R_ F_',G82:'G98/G99 G82 X_ Y_ Z_ R_ P_ F_',G83:'G98/G99 G83 X_ Y_ Z_ R_ Q_ F_',G84:'刚性攻丝常见结构：\nS_ M03（部分系统需M29）\nG98/G99 G84 X_ Y_ Z_ R_ F_\nF值必须结合G94/G95和本机说明书确认',G90:'加工中心：G90 X_ Y_ Z_\n数控车床：G90 X_ Z_ F_（外径/内径循环，依系统）',G91:'G91 X_ Y_ Z_（从当前位置增量移动）',G94:'加工中心常见：G94 F_（每分钟进给）',G95:'加工中心常见：G95 F_（每转进给）',G98:'加工中心固定循环：返回初始平面\n车床常见：每分钟进给',G99:'加工中心固定循环：返回R平面\n车床常见：每转进给',M03:'S_ M03',M04:'S_ M04',M05:'M05',M06:'T_ M06',M08:'M08',M09:'M09',M30:'M30',M98:'M98 P_ L_',M99:'M99'};
-var EXTENSIONS=[
-{id:'kb-gcode-g05-1',category:'G代码',title:'G05.1 AI轮廓控制/高速高精度控制',code:'G05.1',aliases:['AI轮廓控制','高速高精度','AICC'],summary:'用于高速、小线段和复杂曲面加工的预读与轮廓控制，属于FANUC选项功能。',usage:'模具曲面精加工、高速小线段程序使用。',beginner:'它不是移动指令，而是让控制系统更聪明地处理后续轨迹。',warning:'不同系统代数、选项和参数差异很大，未开通功能会报警，必须以本机说明书为准。',example:'常见形式：G05.1 Q1开启；G05.1 Q0取消。',risk:'中',tags:['加工中心','选项功能','高速加工']},
-{id:'kb-gcode-g07-1',category:'G代码',title:'G07.1 圆柱插补',code:'G07.1',aliases:['圆柱插补'],summary:'把旋转轴与直线轴联动，使圆柱表面的槽、孔或文字可按展开轨迹编程。',usage:'圆柱表面铣槽、刻字、孔阵列使用。',beginner:'先确定旋转轴、圆柱半径和展开方向。',warning:'半径、轴名或单位错误会使轨迹比例完全错误。',example:'常见形式：G07.1 C_开启，G07.1 C0取消。',risk:'高',tags:['加工中心','旋转轴','选项功能']},
-{id:'kb-gcode-g43-4',category:'G代码',title:'G43.4 刀具中心点控制（TCP）',code:'G43.4',aliases:['TCP','刀尖点控制'],summary:'五轴联动中补偿旋转轴运动造成的刀尖位置变化。',usage:'五轴联动、曲面加工、摆头或转台运动。',beginner:'机床转轴在动，但系统尽量让刀尖按编程轨迹走。',warning:'运动学参数、刀长和后处理必须完全匹配，禁止照搬程序。',example:'常见形式：G43.4 H_；取消方式以本机说明书为准。',risk:'高',tags:['加工中心','五轴','TCP','选项功能']},
-{id:'kb-gcode-g43-5',category:'G代码',title:'G43.5 刀具中心点/刀轴方向控制相关',code:'G43.5',aliases:['TCP type II','刀轴矢量控制'],summary:'部分FANUC五轴系统中用于另一类刀具中心点或刀轴方向控制。',usage:'五轴联动和刀轴矢量编程中可能使用。',beginner:'G43.4和G43.5不能只按编号猜含义。',warning:'属于高风险五轴选项功能，必须按机床厂家资料确认。',example:'出现G43.5时应核对后处理、刀长和旋转中心。',risk:'高',tags:['加工中心','五轴','选项功能']},
-{id:'kb-gcode-g54-1',category:'G代码',title:'G54.1 扩展工件坐标系',code:'G54.1',aliases:['扩展坐标系','P坐标系'],summary:'在G54-G59之外调用更多工件坐标偏置，常配合P号选择。',usage:'多工位夹具、多零件排版和自动化生产线。',beginner:'它相当于把G54-G59扩展成更多组工件零点。',warning:'P号对应错误会整体加工错位。',example:'常见形式：G54.1 P1。',risk:'高',tags:['加工中心','工件坐标','多工位']},
-{id:'kb-gcode-g68-2',category:'G代码',title:'G68.2 倾斜工作平面指令',code:'G68.2',aliases:['倾斜平面','3D坐标旋转'],summary:'建立空间倾斜坐标平面，让后续程序可在倾斜面上按平面思路编程。',usage:'五面体加工、3+2定位加工和倾斜孔。',beginner:'先把坐标系转到倾斜面，再按新的平面坐标加工。',warning:'旋转中心、角度顺序和取消指令错误都可能造成严重碰撞。',example:'参数格式随系统与后处理而异，必须使用经过验证的机床专用格式。',risk:'高',tags:['加工中心','五轴','3+2','选项功能']}
-];
-function appState(){try{return state}catch(e){return null}}function arr(v){return Array.isArray(v)?v:[]}function esc(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
-function canon(v){return String(v==null?'':v).normalize('NFKC').replace(/\b([gGmM])\s*0*(\d{1,2})(\.\d+)?\b/g,function(_,l,d,x){return l.toUpperCase()+String(Number(d)).padStart(2,'0')+(x||'')}).replace(/\s+/g,' ').trim()}
-function exact(v){var n=canon(v).toUpperCase();return /^[GM]\d{2}(?:\.\d+)?$/.test(n)?n:''}function code(e){return canon(e&&e.code).toUpperCase()}function text(e){return canon([e&&e.code,e&&e.title,e&&e.category,e&&e.summary,e&&e.usage,e&&e.beginner,e&&e.warning,arr(e&&e.tags).join(' '),arr(e&&e.aliases).join(' ')].join(' ')).toLowerCase()}
-function isGM(e){return !!e&&(e.category==='G代码'||e.category==='M代码'||/^[GM]\d/i.test(String(e.code||'')))}function isCustom(e){return /厂家自定义|备用|没有统一标准|无统一标准|machine m-code|厂家定义|保留代码/.test(text(e))}
-function flags(e){var t=text(e),lathe=/车床|车削|粗车|精车|外圆|端面|恒线速|车螺纹|车铣差异|每转进给/.test(t),mill=/加工中心|铣床|铣削|钻孔|镗孔|攻丝|孔加工|xy平面|g17|刀长|工件坐标|五轴|旋转轴/.test(t);if(!lathe&&!mill){lathe=true;mill=true}return{lathe:lathe,mill:mill}}function machineOK(e,m){if(m==='all')return true;var f=flags(e);return m==='lathe'?f.lathe:f.mill}
-function patchEntry(c,p){var l=window.CNC_GM_CODES;if(!Array.isArray(l))return;var e=l.find(function(x){return code(x)===c});if(e)Object.assign(e,p)}
-function patchData(){if(!Array.isArray(window.CNC_GM_CODES))return false;patchEntry('G00',{summary:'让刀具以机床快速速度定位到目标坐标。快移轨迹通常不保证是一条直线，各轴到位时间可能不同。',beginner:'G00只负责快速到位，不用于正式切削；多轴快移前先把Z抬到安全高度。',warning:'不要在低位用G00同时移动多个轴。必须确认整条路径不会穿过工件、压板、虎钳或刀库。',example:'更安全的思路：G00 Z50.；再执行 G00 X100. Y50.。'});patchEntry('G84',{summary:'右旋攻丝固定循环。F值含义取决于G94/G95、主轴转速和机床刚性攻丝方式。',beginner:'先确认底孔、螺距、转速和进给模式，再写G84；不要把F值想当然地直接写成螺距。',warning:'G94下F通常按“转速×导程”理解；G95下F通常可按每转导程理解。部分系统还需要M29等指令，必须按本机说明书确认。',example:'结构示例：G95；S500 M03；G84 X0 Y0 Z-15. R2. F1.25。实际格式以机床为准。'});patchEntry('G90',{warning:'加工中心常表示绝对坐标；FANUC车床中也可能表示外径/内径切削循环。必须先确认机型。'});patchEntry('G98',{beginner:'加工中心钻孔循环中G98返回初始平面；车床中常表示每分钟进给。先选机型再理解。'});patchEntry('G99',{beginner:'加工中心钻孔循环中G99返回R平面；车床中常表示每转进给。先选机型再理解。'});EXTENSIONS.forEach(function(e){if(!window.CNC_GM_CODES.some(function(x){return x.id===e.id||code(x)===e.code}))window.CNC_GM_CODES.push(e)});window.__CNC_GM_PRO_DATA_PATCHED__=BUILD;return true}
-function patchFunctions(){var s=appState();if(!s||typeof normalizeText!=='function'||typeof getFilteredEntries!=='function'||typeof renderWorkspace!=='function'||typeof renderDetail!=='function')return false;if(!window.__CNC_GM_PRO_ORIGINALS__)window.__CNC_GM_PRO_ORIGINALS__={};var o=window.__CNC_GM_PRO_ORIGINALS__;if(!o.normalizeText){o.normalizeText=normalizeText;normalizeText=function(v){return o.normalizeText(canon(v))}}if(!o.filterKeyMatches&&typeof filterKeyMatches==='function'){o.filterKeyMatches=filterKeyMatches;filterKeyMatches=function(e,k){if(k==='gcode')return isGM(e);return o.filterKeyMatches(e,k)}}if(!o.getFilteredEntries){o.getFilteredEntries=getFilteredEntries;getFilteredEntries=function(){var rows=o.getFilteredEntries(),st=appState();if(!st||st.activeFilter!=='gcode')return rows;var ex=exact(st.keyword);return rows.filter(function(e){if(ex&&code(e)===ex)return true;if(!st.gcodeShowCustom&&isCustom(e))return false;if((st.gcodeScope||'common')==='common'&&!COMMON_CODES.has(code(e)))return false;if(!machineOK(e,st.gcodeMachine||'mill'))return false;return true}).sort(function(a,b){if(ex){if(code(a)===ex&&code(b)!==ex)return-1;if(code(b)===ex&&code(a)!==ex)return 1}var ac=COMMON_CODES.has(code(a))?1:0,bc=COMMON_CODES.has(code(b))?1:0;if(ac!==bc)return bc-ac;return code(a).localeCompare(code(b),'zh-CN',{numeric:true})})}}
-if(!o.navigate&&typeof navigate==='function'){o.navigate=navigate;navigate=function(view){var st=appState();if(view==='workspace'&&st&&st.activeFilter==='gcode')st.workspaceMode='list';var r=o.navigate.apply(this,arguments);setTimeout(decorateWorkspace,0);return r}}
-if(!o.renderWorkspace){o.renderWorkspace=renderWorkspace;renderWorkspace=function(){var st=appState();if(st&&st.activeFilter==='gcode')st.workspaceMode='list';var r=o.renderWorkspace.apply(this,arguments);decorateWorkspace();return r}}
-if(!o.renderDetail){o.renderDetail=renderDetail;renderDetail=function(){var r=o.renderDetail.apply(this,arguments);decorateDetail();return r}}return true}
-function prefs(){var s=appState();if(!s)return;s.gcodeMachine=localStorage.getItem(STORAGE_MACHINE)||s.gcodeMachine||'mill';s.gcodeScope=localStorage.getItem(STORAGE_SCOPE)||s.gcodeScope||'common';s.gcodeShowCustom=localStorage.getItem(STORAGE_CUSTOM)==='1'}
-function controls(s){function a(v,c){return v===c?' active':''}return'<div class="gcode-mobile-controls" id="gcode-mobile-controls"><div class="gcode-control-row"><span class="gcode-control-label">机型</span><button class="gcode-filter-chip'+a('mill',s.gcodeMachine)+'" data-gcode-machine="mill">加工中心</button><button class="gcode-filter-chip'+a('lathe',s.gcodeMachine)+'" data-gcode-machine="lathe">数控车床</button><button class="gcode-filter-chip'+a('all',s.gcodeMachine)+'" data-gcode-machine="all">全部</button></div><div class="gcode-control-row"><span class="gcode-control-label">范围</span><button class="gcode-filter-chip'+a('common',s.gcodeScope)+'" data-gcode-scope="common">现场常用</button><button class="gcode-filter-chip'+a('all',s.gcodeScope)+'" data-gcode-scope="all">全部标准</button><button class="gcode-filter-chip warning'+(s.gcodeShowCustom?' active':'')+'" data-gcode-custom="1">厂家扩展</button></div><div class="gcode-control-row gcode-quick-row"><span class="gcode-control-label">常查</span>'+QUICK_CODES.map(function(c){return'<button class="gcode-quick-chip" data-gcode-quick="'+c+'">'+c+'</button>'}).join('')+'</div><div class="gcode-exact-hint" id="gcode-exact-hint"></div></div>'}
-function bindControls(h){if(!h)return;h.querySelectorAll('[data-gcode-machine]').forEach(function(b){b.onclick=function(){var s=appState();s.gcodeMachine=b.dataset.gcodeMachine;localStorage.setItem(STORAGE_MACHINE,s.gcodeMachine);renderWorkspace()}});h.querySelectorAll('[data-gcode-scope]').forEach(function(b){b.onclick=function(){var s=appState();s.gcodeScope=b.dataset.gcodeScope;localStorage.setItem(STORAGE_SCOPE,s.gcodeScope);renderWorkspace()}});var c=h.querySelector('[data-gcode-custom]');if(c)c.onclick=function(){var s=appState();s.gcodeShowCustom=!s.gcodeShowCustom;localStorage.setItem(STORAGE_CUSTOM,s.gcodeShowCustom?'1':'0');renderWorkspace()};h.querySelectorAll('[data-gcode-quick]').forEach(function(b){b.onclick=function(){var s=appState();s.keyword=b.dataset.gcodeQuick;var i=document.getElementById('search-input');if(i)i.value=s.keyword;renderWorkspace();setTimeout(openExact,0)}})}
-function decorateWorkspace(){var s=appState(),v=document.getElementById('view-workspace');if(!s||!v)return;var active=s.activeFilter==='gcode';v.classList.toggle('gcode-pro-mode',active);if(!active)return;s.workspaceMode='list';var list=document.getElementById('result-list');if(list)list.classList.remove('visual-mode');var t=document.getElementById('workspace-title');if(t)t.textContent='G/M代码现场速查';var e=document.getElementById('workspace-eyebrow');if(e)e.textContent='FANUC STYLE · MOBILE QUICK LOOKUP';var i=document.getElementById('search-input');if(i)i.placeholder='输入 G1、G01、M3、啄钻、攻牙…';var bar=v.querySelector('.search-toolbar'),old=document.getElementById('gcode-mobile-controls');if(old)old.remove();if(bar){bar.insertAdjacentHTML('afterend',controls(s));bindControls(document.getElementById('gcode-mobile-controls'))}var h=document.getElementById('gcode-exact-hint'),x=exact(s.keyword);if(h){h.classList.toggle('visible',!!x);h.textContent=x?'已识别为 '+x+'；按回车可直接打开详情。':''}if(list)list.querySelectorAll('.result-card').forEach(function(card){if(card.__cncProClickable)return;card.__cncProClickable=true;card.tabIndex=0;card.setAttribute('role','button');function open(ev){if(ev&&ev.target&&ev.target.closest('button'))return;var b=card.querySelector('[data-open-entry]');if(b)b.click()}card.addEventListener('click',open);card.addEventListener('keydown',function(ev){if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();open(ev)}})})}
-function openMobile(){var p=document.getElementById('detail-panel');if(!p||innerWidth>768)return;window.__CNC_PRO_LIST_SCROLL__=scrollY;p.classList.add('mobile-open');p.scrollTop=0;document.body.classList.add('cnc-detail-open')}function closeMobile(){var p=document.getElementById('detail-panel');if(p)p.classList.remove('mobile-open','show-secondary');document.body.classList.remove('cnc-detail-open');setTimeout(function(){if(typeof window.__CNC_PRO_LIST_SCROLL__==='number')scrollTo(0,window.__CNC_PRO_LIST_SCROLL__)},0)}
-function openExact(){var s=appState(),c=s&&exact(s.keyword);if(!c)return false;var e=s.entries.find(function(x){return isGM(x)&&code(x)===c});if(!e)return false;s.selectedId=e.id;renderWorkspace();renderDetail();openMobile();shareUrl(c);return true}
-function format(e){return FORMAT_MAP[code(e)]||e.example||'请以本机床说明书中的格式为准。'}function badges(e){var f=flags(e),h='';if(f.mill)h+='<span class="cnc-pro-machine-badge">加工中心</span>';if(f.lathe)h+='<span class="cnc-pro-machine-badge lathe">数控车床</span>';if(isCustom(e)||/选项功能/.test(text(e)))h+='<span class="cnc-pro-machine-badge option">系统/厂家确认</span>';return h}
-function decorateDetail(){var s=appState(),p=document.getElementById('detail-panel');if(!s||!p||s.activeFilter!=='gcode')return;var e=s.entries.find(function(x){return x.id===s.selectedId});if(!e||!isGM(e))return;var primary=p.querySelector('.detail-card-primary');if(primary){var b=primary.querySelector('.cnc-pro-machine-badges');if(!b){b=document.createElement('div');b.className='cnc-pro-machine-badges';primary.appendChild(b)}b.innerHTML=badges(e)}var old=p.querySelector('.cnc-pro-quick-card');if(old)old.remove();if(primary){var q=document.createElement('article');q.className='detail-card cnc-pro-quick-card';q.innerHTML='<h4>⚡ 现场先看这四件事</h4><div class="cnc-pro-format">'+esc(format(e))+'</div><p><strong>用途：</strong>'+esc(e.usage||e.summary||'')+'</p><p><strong>危险点：</strong>'+esc(e.warning||'先空运行、单段和低倍率验证。')+'</p><div class="cnc-pro-source-note">适用范围：FANUC风格速查。不同机床厂家、系统代数和选项可能不同；高风险指令必须以本机说明书为准。资料复核版本：2026-07-20。</div>';primary.insertAdjacentElement('afterend',q)}p.querySelectorAll('.detail-card').forEach(function(c){var h=c.querySelector('h4'),tx=h?h.textContent:'';c.classList.toggle('cnc-mobile-secondary',/关联工具|参数联动|智能推荐|下一步学什么|知识库原文摘录|相关推荐/.test(tx))});var more=p.querySelector('.cnc-detail-more');if(!more){more=document.createElement('button');more.type='button';more.className='cnc-detail-more';more.textContent='展开更多资料与相关推荐';p.querySelector('.detail-content-grid').appendChild(more);more.onclick=function(){p.classList.toggle('show-secondary');more.textContent=p.classList.contains('show-secondary')?'收起扩展资料':'展开更多资料与相关推荐'}}else{p.classList.remove('show-secondary');more.textContent='展开更多资料与相关推荐'}bottomNav(p);shareUrl(code(e))}
-function bottomNav(p){var n=p.querySelector('.cnc-mobile-bottom-nav');if(n)return;n=document.createElement('div');n.className='cnc-mobile-bottom-nav';n.innerHTML='<button data-cnc-bottom="prev">← 上一条</button><button class="primary" data-cnc-bottom="back">返回列表</button><button data-cnc-bottom="next">下一条 →</button>';p.appendChild(n);n.querySelector('[data-cnc-bottom="back"]').onclick=closeMobile;n.querySelector('[data-cnc-bottom="prev"]').onclick=function(){var b=document.getElementById('detail-prev');if(b)b.click();setTimeout(function(){p.scrollTop=0;decorateDetail()},0)};n.querySelector('[data-cnc-bottom="next"]').onclick=function(){var b=document.getElementById('detail-next-button');if(b)b.click();setTimeout(function(){p.scrollTop=0;decorateDetail()},0)}}
-function shareUrl(c){if(!c||!history.replaceState)return;try{var u=new URL(location.href);u.searchParams.set('q',c);u.hash='workspace';history.replaceState(null,'',u.href)}catch(e){}}
-function toast(t){var x=document.querySelector('.cnc-pro-toast');if(!x){x=document.createElement('div');x.className='cnc-pro-toast';document.body.appendChild(x)}x.textContent=t;x.classList.add('show');clearTimeout(x.__timer);x.__timer=setTimeout(function(){x.classList.remove('show')},1800)}
-function bindEvents(){var i=document.getElementById('search-input');if(i&&!i.__cncProEnterBound){i.__cncProEnterBound=true;i.addEventListener('keydown',function(e){if(e.key==='Enter')setTimeout(openExact,0)},true)}var b=document.getElementById('detail-back-btn');if(b&&!b.__cncProBound){b.__cncProBound=true;b.onclick=closeMobile}var sh=document.getElementById('detail-share');if(sh&&!sh.__cncProBound){sh.__cncProBound=true;sh.onclick=async function(){var s=appState(),e=s&&s.entries.find(function(x){return x.id===s.selectedId});if(!e)return;var u=new URL(location.href);u.searchParams.set('q',code(e));u.hash='workspace';try{if(navigator.share)await navigator.share({title:e.title,text:e.code+'｜'+e.summary,url:u.href});else if(navigator.clipboard){await navigator.clipboard.writeText(u.href);toast('查询链接已复制')}}catch(err){}}}document.addEventListener('click',function(ev){var x=ev.target.closest('[data-open-entry]');if(!x)return;var s=appState();if(s&&s.activeFilter==='gcode')setTimeout(openMobile,0)})}
-function customLessonCards(level,defs){function wrap(t,max){var a=Array.from(String(t||'')),r=[],x='';a.forEach(function(ch){if(x.length>=max||ch==='\n'){r.push(x);x=ch==='\n'?'':ch}else x+=ch});if(x)r.push(x);return r}function txt(t,x,y,size,color,max,lh,w){return'<text x="'+x+'" y="'+y+'" font-family="Microsoft YaHei,Arial,sans-serif" font-size="'+size+'" font-weight="'+(w||700)+'" fill="'+color+'">'+wrap(t,max||18).map(function(row,i){return'<tspan x="'+x+'" dy="'+(i?(lh||size*1.35):0)+'">'+esc(row)+'</tspan>'}).join('')+'</text>'}function poster(item,index){var ac=item.accent||'#1a73e8',svg='<svg xmlns="http://www.w3.org/2000/svg" width="720" height="1280" viewBox="0 0 720 1280"><rect width="720" height="1280" fill="#f4f8fc"/><rect width="720" height="220" fill="#0f3b75"/><circle cx="72" cy="70" r="40" fill="#facc15"/>'+txt(String(level),52,84,38,'#0f3b75',3,42,900)+txt('第'+level+'关｜'+item.title,130,60,36,'#fff',17,44,900)+'<rect x="44" y="150" width="632" height="48" rx="24" fill="'+ac+'"/>'+txt(item.subtitle,68,181,21,'#fff',28,26,800)+'<rect x="48" y="250" width="624" height="270" rx="28" fill="#fff" stroke="'+ac+'" stroke-width="3"/>';item.points.forEach(function(p,i){var y=292+i*72;svg+='<circle cx="82" cy="'+(y+16)+'" r="20" fill="'+ac+'"/>'+txt(String(i+1),75,y+24,20,'#fff',2,22,900)+txt(p[0],118,y+4,24,ac,10,28,900)+txt(p[1],118,y+37,18,'#334155',28,24,600)});svg+='<rect x="48" y="550" width="624" height="250" rx="24" fill="#0f172a"/>'+txt('程序 / 记忆重点',75,592,24,'#93c5fd',20,28,900);arr(item.code).slice(0,7).forEach(function(line,i){svg+=txt(line,75,636+i*31,18,i===0?'#86efac':'#e2e8f0',34,24,700)});svg+='<rect x="48" y="830" width="624" height="145" rx="22" fill="#fee2e2" stroke="#ef4444" stroke-width="3"/>'+txt('⚠ '+item.warning,72,872,20,'#991b1b',29,28,800)+'<rect x="48" y="1005" width="624" height="145" rx="22" fill="#dcfce7" stroke="#16a34a" stroke-width="3"/>'+txt('✓ '+item.tip,72,1047,20,'#166534',29,28,800)+'<text x="650" y="1235" text-anchor="end" font-family="Microsoft YaHei,Arial,sans-serif" font-size="17" font-weight="700" fill="#64748b">'+String(level).padStart(2,'0')+'-'+String(index+1).padStart(2,'0')+' · 数控小潘 CNC助手</text></svg>';return'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(svg)}return defs.map(function(item,i){return{src:poster(item,i),title:item.title,desc:item.subtitle,loading:i===0?'eager':'lazy'}})}
-function alignLessons(){var c=window.CNC_LEARNING_CONTENT;if(!c||!c.lessons||!window.CNC_LEARNING_VECTOR_POSTERS)return false;var l=c.lessons,s={};for(var i=4;i<=12;i++){var x=l[i]||l[String(i)];s[i]=x&&Array.isArray(x.imageCards)?x.imageCards.slice():[]}function set(n,cards){var x=l[n]||l[String(n)];if(x&&cards&&cards.length)x.imageCards=cards.map(function(y){return Object.assign({},y)})}set(7,s[11]);set(8,s[9]);set(9,s[8]);set(11,s[7]);set(6,customLessonCards(6,[{title:'常用铣刀、钻头和车刀怎么分？',subtitle:'先认形状和用途，再谈参数。',accent:'#1a73e8',points:[['铣刀','端铣刀、立铣刀、球刀负责平面、侧面和曲面。'],['钻头','麻花钻、中心钻负责孔加工，深孔要考虑排屑。'],['车刀','外圆刀、切槽刀、螺纹刀用于不同车削轮廓。']],code:['看加工方式 → 选刀具类别','看材料和硬度 → 选刀具材料','看刀径、刃数和伸出 → 再定参数'],warning:'装刀前必须核对直径、刃长、刀柄和旋向。',tip:'先选对刀，再谈转速和进给。'},{title:'刀具材料和伸出量怎么选？',subtitle:'钨钢、高速钢、刀片各有适用场景。',accent:'#16a34a',points:[['钨钢刀具','刚性好、耐磨，适合较高速度，但怕冲击和振动。'],['高速钢刀具','韧性较好、成本低，常见于钻头和丝锥。'],['控制伸出','刀具伸出越长越容易振动，能短就不要长。']],code:['刀具伸出尽量短','夹持长度足够','跳动、刀柄、刃口一起检查'],warning:'悬伸过长或夹持不足，会让正常参数也变危险。',tip:'刀、刀柄、主轴和装夹要一起看。'}]));set(10,customLessonCards(10,[{title:'一行程序的格式怎么检查？',subtitle:'地址字母、数字、模式和顺序都要看。',accent:'#7c3aed',points:[['地址字母','X/Y/Z是坐标，S是转速，F是进给。'],['模态状态','确认G90/G91、平面和进给模式。'],['逐行检查','先看动作，再看终点、速度和安全路径。']],code:['G90 G54 G00 X0 Y0','S2500 M03','G43 H01 Z50.','G01 Z-2. F200.'],warning:'只看当前一行、不看前面留下的模态状态，最容易误判。',tip:'按状态—动作—坐标—速度—风险五步检查。'},{title:'小数点为什么不能乱写？',subtitle:'不同系统可能按最小输入单位解释。',accent:'#dc2626',points:[['不要猜倍数','X10与X10.的解释受系统和参数影响。'],['统一写法','按本机说明书和车间规范统一小数点。'],['先验证','新程序先仿真、空运行、单段和低倍率。']],code:['推荐统一写清：X10.0 Y25.0 Z-2.0','不要固定说无小数点差10倍','跨机床程序重新核对输入单位'],warning:'输入单位理解错误，可能造成尺寸严重偏差甚至碰撞。',tip:'不知道本机规则时，先查说明书。'}]));set(12,customLessonCards(12,[{title:'G81和G83怎么选？',subtitle:'普通浅孔用G81，深孔排屑优先G83。',accent:'#1a73e8',points:[['G81普通钻孔','一次进给到孔底后返回，适合浅孔。'],['G83深孔啄钻','分段进给并退刀排屑，Q控制啄钻量。'],['结束写G80','完成后必须取消，避免后续继续钻孔。']],code:['G98 G81 X0 Y0 Z-12. R2. F120.','G99 G83 X20. Y0 Z-40. R2. Q3. F80.','G80'],warning:'Z、R、Q和F任何一项错误都可能断钻或撞刀。',tip:'先判断孔深和排屑，再选G81或G83。'},{title:'G98和G99返回高度怎么选？',subtitle:'跨夹具优先确认初始平面和R平面。',accent:'#16a34a',points:[['G98返回初始平面','退得更高，跨压板和凸台通常更安全。'],['G99返回R平面','孔间移动更快，但R平面必须安全。'],['看完整路径','不仅看孔底，还要看孔与孔之间怎么走。']],code:['G98 G81 ... → 回初始平面','G99 G81 ... → 回R平面','跨夹具前重新确认R值'],warning:'R平面低于夹具时使用G99，孔间快移可能碰撞。',tip:'效率让位于安全。'}]));window.__CNC_LEARNING_ALIGNED__=BUILD;var open=document.querySelector('#study-detail-content .lesson-detail-v2');if(open&&typeof window.openStudyDetail==='function'){var n=Number(open.getAttribute('data-level')||0);if(n)window.openStudyDetail(n)}return true}
-function deepLink(){var s=appState();if(!s||typeof navigate!=='function')return;var q=new URLSearchParams(location.search).get('q');if(!q)return;s.keyword=canon(q);s.activeFilter='gcode';s.selectedCategory='全部栏目';s.workspaceMode='list';var i=document.getElementById('search-input');if(i)i.value=s.keyword;navigate('workspace');renderWorkspace();setTimeout(openExact,30)}
-function install(){if(window.__CNC_GM_PRO_INSTALLED__)return true;if(!patchData()||!patchFunctions())return false;prefs();bindEvents();window.__CNC_GM_PRO_INSTALLED__=BUILD;if(typeof renderAll==='function')renderAll();decorateWorkspace();alignLessons();deepLink();var ob=new MutationObserver(function(){decorateWorkspace();bindEvents();var p=document.getElementById('detail-panel');if(p&&p.classList.contains('mobile-open'))decorateDetail()});ob.observe(document.body,{childList:true,subtree:true});return true}
-var tries=0,t=setInterval(function(){tries++;if(install()||tries>120)clearInterval(t);if(window.CNC_LEARNING_VECTOR_POSTERS)alignLessons()},100);addEventListener('load',function(){install();setTimeout(alignLessons,200);setTimeout(alignLessons,1200)})})();
+/* CNC 手机端 G/M 代码现场速查稳定版：无全局 DOM 监听，避免手机循环重绘 */
+(function () {
+  'use strict';
+
+  var BUILD = '20260720h';
+  var STORAGE_MACHINE = 'cnc_gcode_machine_v2';
+  var STORAGE_SCOPE = 'cnc_gcode_scope_v2';
+  var STORAGE_CUSTOM = 'cnc_gcode_custom_v2';
+  var QUICK_CODES = ['G00','G01','G02','G03','G43','G54','G83','G84','G90','M03','M08','M30'];
+  var COMMON_CODES = new Set([
+    'G00','G01','G02','G03','G04','G09','G10','G15','G16','G17','G18','G19','G20','G21',
+    'G28','G30','G31','G32','G40','G41','G42','G43','G44','G49','G50','G51','G52','G53',
+    'G54','G55','G56','G57','G58','G59','G60','G61','G64','G65','G68','G69','G73','G74',
+    'G75','G76','G80','G81','G82','G83','G84','G85','G86','G87','G88','G89','G90','G91',
+    'G92','G94','G95','G96','G97','G98','G99','G05.1','G07.1','G43.4','G43.5','G54.1',
+    'G68.2','M00','M01','M02','M03','M04','M05','M06','M07','M08','M09','M19','M30',
+    'M41','M42','M48','M49','M60','M98','M99'
+  ]);
+  var FORMAT_MAP = {
+    G00:'G00 X_ Y_ Z_',
+    G01:'G01 X_ Y_ Z_ F_',
+    G02:'G17 G02 X_ Y_ I_ J_ F_\n或：G17 G02 X_ Y_ R_ F_',
+    G03:'G17 G03 X_ Y_ I_ J_ F_\n或：G17 G03 X_ Y_ R_ F_',
+    G43:'G00 G43 H_ Z_',
+    G54:'G54\nG00 X_ Y_',
+    G73:'G98/G99 G73 X_ Y_ Z_ R_ Q_ F_',
+    G80:'G80',
+    G81:'G98/G99 G81 X_ Y_ Z_ R_ F_',
+    G82:'G98/G99 G82 X_ Y_ Z_ R_ P_ F_',
+    G83:'G98/G99 G83 X_ Y_ Z_ R_ Q_ F_',
+    G84:'刚性攻丝常见结构：\nS_ M03（部分系统需M29）\nG98/G99 G84 X_ Y_ Z_ R_ F_\nF值必须结合G94/G95和本机说明书确认',
+    G90:'加工中心：G90 X_ Y_ Z_\n数控车床：G90 X_ Z_ F_（外径/内径循环，依系统）',
+    G91:'G91 X_ Y_ Z_（从当前位置增量移动）',
+    G94:'加工中心常见：G94 F_（每分钟进给）',
+    G95:'加工中心常见：G95 F_（每转进给）',
+    G98:'加工中心固定循环：返回初始平面\n车床常见：每分钟进给',
+    G99:'加工中心固定循环：返回R平面\n车床常见：每转进给',
+    M03:'S_ M03',M04:'S_ M04',M05:'M05',M06:'T_ M06',M08:'M08',M09:'M09',
+    M30:'M30',M98:'M98 P_ L_',M99:'M99'
+  };
+
+  var EXTENSIONS = [
+    {id:'kb-gcode-g05-1',category:'G代码',title:'G05.1 AI轮廓控制/高速高精度控制',code:'G05.1',aliases:['AI轮廓控制','高速高精度','AICC'],summary:'用于高速、小线段和复杂曲面加工的预读与轮廓控制，属于FANUC选项功能。',usage:'模具曲面精加工、高速小线段程序使用。',beginner:'它不是移动指令，而是让控制系统更聪明地处理后续轨迹。',warning:'不同系统代数、选项和参数差异很大，未开通功能会报警，必须以本机说明书为准。',example:'常见形式：G05.1 Q1开启；G05.1 Q0取消。',risk:'中',tags:['加工中心','选项功能','高速加工']},
+    {id:'kb-gcode-g07-1',category:'G代码',title:'G07.1 圆柱插补',code:'G07.1',aliases:['圆柱插补'],summary:'把旋转轴与直线轴联动，使圆柱表面的槽、孔或文字可按展开轨迹编程。',usage:'圆柱表面铣槽、刻字、孔阵列使用。',beginner:'先确定旋转轴、圆柱半径和展开方向。',warning:'半径、轴名或单位错误会使轨迹比例完全错误。',example:'常见形式：G07.1 C_开启，G07.1 C0取消。',risk:'高',tags:['加工中心','旋转轴','选项功能']},
+    {id:'kb-gcode-g43-4',category:'G代码',title:'G43.4 刀具中心点控制（TCP）',code:'G43.4',aliases:['TCP','刀尖点控制'],summary:'五轴联动中补偿旋转轴运动造成的刀尖位置变化。',usage:'五轴联动、曲面加工、摆头或转台运动。',beginner:'机床转轴在动，但系统尽量让刀尖按编程轨迹走。',warning:'运动学参数、刀长和后处理必须完全匹配，禁止照搬程序。',example:'常见形式：G43.4 H_；取消方式以本机说明书为准。',risk:'高',tags:['加工中心','五轴','TCP','选项功能']},
+    {id:'kb-gcode-g43-5',category:'G代码',title:'G43.5 刀具中心点/刀轴方向控制相关',code:'G43.5',aliases:['TCP type II','刀轴矢量控制'],summary:'部分FANUC五轴系统中用于另一类刀具中心点或刀轴方向控制。',usage:'五轴联动和刀轴矢量编程中可能使用。',beginner:'G43.4和G43.5不能只按编号猜含义。',warning:'属于高风险五轴选项功能，必须按机床厂家资料确认。',example:'出现G43.5时应核对后处理、刀长和旋转中心。',risk:'高',tags:['加工中心','五轴','选项功能']},
+    {id:'kb-gcode-g54-1',category:'G代码',title:'G54.1 扩展工件坐标系',code:'G54.1',aliases:['扩展坐标系','P坐标系'],summary:'在G54-G59之外调用更多工件坐标偏置，常配合P号选择。',usage:'多工位夹具、多零件排版和自动化生产线。',beginner:'它相当于把G54-G59扩展成更多组工件零点。',warning:'P号对应错误会整体加工错位。',example:'常见形式：G54.1 P1。',risk:'高',tags:['加工中心','工件坐标','多工位']},
+    {id:'kb-gcode-g68-2',category:'G代码',title:'G68.2 倾斜工作平面指令',code:'G68.2',aliases:['倾斜平面','3D坐标旋转'],summary:'建立空间倾斜坐标平面，让后续程序可在倾斜面上按平面思路编程。',usage:'五面体加工、3+2定位加工和倾斜孔。',beginner:'先把坐标系转到倾斜面，再按新的平面坐标加工。',warning:'旋转中心、角度顺序和取消指令错误都可能造成严重碰撞。',example:'参数格式随系统与后处理而异，必须使用经过验证的机床专用格式。',risk:'高',tags:['加工中心','五轴','3+2','选项功能']}
+  ];
+
+  var originals = {};
+  var globalEventsBound = false;
+
+  function arr(value) { return Array.isArray(value) ? value : []; }
+  function esc(value) {
+    return String(value == null ? '' : value)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+  function getState() {
+    try { return state; } catch (error) { return null; }
+  }
+  function canon(value) {
+    return String(value == null ? '' : value)
+      .normalize('NFKC')
+      .replace(/\b([gGmM])\s*0*(\d{1,2})(\.\d+)?\b/g, function (_, letter, digits, decimal) {
+        return letter.toUpperCase() + String(Number(digits)).padStart(2,'0') + (decimal || '');
+      })
+      .replace(/\s+/g,' ')
+      .trim();
+  }
+  function exactCode(value) {
+    var normalized = canon(value).toUpperCase();
+    return /^[GM]\d{2}(?:\.\d+)?$/.test(normalized) ? normalized : '';
+  }
+  function entryCode(entry) { return canon(entry && entry.code).toUpperCase(); }
+  function entryText(entry) {
+    return canon([
+      entry && entry.code, entry && entry.title, entry && entry.category,
+      entry && entry.summary, entry && entry.usage, entry && entry.beginner,
+      entry && entry.warning, arr(entry && entry.tags).join(' '),
+      arr(entry && entry.aliases).join(' ')
+    ].join(' ')).toLowerCase();
+  }
+  function isGM(entry) {
+    return !!entry && (
+      entry.category === 'G代码' ||
+      entry.category === 'M代码' ||
+      /^[GM]\d/i.test(String(entry.code || ''))
+    );
+  }
+  function isCustom(entry) {
+    return /厂家自定义|备用|没有统一标准|无统一标准|machine m-code|厂家定义|保留代码/.test(entryText(entry));
+  }
+  function machineFlags(entry) {
+    var text = entryText(entry);
+    var lathe = /车床|车削|粗车|精车|外圆|端面|恒线速|车螺纹|车铣差异|每转进给/.test(text);
+    var mill = /加工中心|铣床|铣削|钻孔|镗孔|攻丝|孔加工|xy平面|g17|刀长|工件坐标|五轴|旋转轴/.test(text);
+    if (!lathe && !mill) { lathe = true; mill = true; }
+    return { lathe: lathe, mill: mill };
+  }
+  function machineMatches(entry, machine) {
+    if (machine === 'all') return true;
+    var flags = machineFlags(entry);
+    return machine === 'lathe' ? flags.lathe : flags.mill;
+  }
+
+  function patchEntry(code, patch) {
+    if (!Array.isArray(window.CNC_GM_CODES)) return;
+    var entry = window.CNC_GM_CODES.find(function (item) { return entryCode(item) === code; });
+    if (entry) Object.assign(entry, patch);
+  }
+
+  function patchData() {
+    if (!Array.isArray(window.CNC_GM_CODES)) return false;
+    patchEntry('G00', {
+      summary:'让刀具以机床快速速度定位到目标坐标。快移轨迹通常不保证是一条直线，各轴到位时间可能不同。',
+      beginner:'G00只负责快速到位，不用于正式切削；多轴快移前先把Z抬到安全高度。',
+      warning:'不要在低位用G00同时移动多个轴。必须确认整条路径不会穿过工件、压板、虎钳或刀库。',
+      example:'更安全的思路：G00 Z50.；再执行 G00 X100. Y50.。'
+    });
+    patchEntry('G84', {
+      summary:'右旋攻丝固定循环。F值含义取决于G94/G95、主轴转速和机床刚性攻丝方式。',
+      beginner:'先确认底孔、螺距、转速和进给模式，再写G84；不要把F值想当然地直接写成螺距。',
+      warning:'G94下F通常按“转速×导程”理解；G95下F通常可按每转导程理解。部分系统还需要M29等指令，必须按本机说明书确认。',
+      example:'结构示例：G95；S500 M03；G84 X0 Y0 Z-15. R2. F1.25。实际格式以机床为准。'
+    });
+    patchEntry('G90', { warning:'加工中心常表示绝对坐标；FANUC车床中也可能表示外径/内径切削循环。必须先确认机型。' });
+    patchEntry('G98', { beginner:'加工中心钻孔循环中G98返回初始平面；车床中常表示每分钟进给。先选机型再理解。' });
+    patchEntry('G99', { beginner:'加工中心钻孔循环中G99返回R平面；车床中常表示每转进给。先选机型再理解。' });
+
+    EXTENSIONS.forEach(function (entry) {
+      if (!window.CNC_GM_CODES.some(function (item) {
+        return item.id === entry.id || entryCode(item) === entry.code;
+      })) {
+        window.CNC_GM_CODES.push(entry);
+      }
+    });
+    return true;
+  }
+
+  function loadPreferences() {
+    var current = getState();
+    if (!current) return;
+    current.gcodeMachine = localStorage.getItem(STORAGE_MACHINE) || current.gcodeMachine || 'mill';
+    current.gcodeScope = localStorage.getItem(STORAGE_SCOPE) || current.gcodeScope || 'common';
+    current.gcodeShowCustom = localStorage.getItem(STORAGE_CUSTOM) === '1';
+  }
+
+  function filterRows(rows) {
+    var current = getState();
+    if (!current || current.activeFilter !== 'gcode') return rows;
+    var exact = exactCode(current.keyword);
+    return rows.filter(function (entry) {
+      if (exact && entryCode(entry) === exact) return true;
+      if (!current.gcodeShowCustom && isCustom(entry)) return false;
+      if ((current.gcodeScope || 'common') === 'common' && !COMMON_CODES.has(entryCode(entry))) return false;
+      return machineMatches(entry, current.gcodeMachine || 'mill');
+    }).sort(function (a,b) {
+      if (exact) {
+        if (entryCode(a) === exact && entryCode(b) !== exact) return -1;
+        if (entryCode(b) === exact && entryCode(a) !== exact) return 1;
+      }
+      var aCommon = COMMON_CODES.has(entryCode(a)) ? 1 : 0;
+      var bCommon = COMMON_CODES.has(entryCode(b)) ? 1 : 0;
+      if (aCommon !== bCommon) return bCommon - aCommon;
+      return entryCode(a).localeCompare(entryCode(b),'zh-CN',{numeric:true});
+    });
+  }
+
+  function controlsHtml(current) {
+    function active(value, target) { return value === target ? ' active' : ''; }
+    return '<div class="gcode-mobile-controls" id="gcode-mobile-controls">' +
+      '<div class="gcode-control-row"><span class="gcode-control-label">机型</span>' +
+      '<button class="gcode-filter-chip'+active('mill',current.gcodeMachine)+'" data-gcode-machine="mill">加工中心</button>' +
+      '<button class="gcode-filter-chip'+active('lathe',current.gcodeMachine)+'" data-gcode-machine="lathe">数控车床</button>' +
+      '<button class="gcode-filter-chip'+active('all',current.gcodeMachine)+'" data-gcode-machine="all">全部</button></div>' +
+      '<div class="gcode-control-row"><span class="gcode-control-label">范围</span>' +
+      '<button class="gcode-filter-chip'+active('common',current.gcodeScope)+'" data-gcode-scope="common">现场常用</button>' +
+      '<button class="gcode-filter-chip'+active('all',current.gcodeScope)+'" data-gcode-scope="all">全部标准</button>' +
+      '<button class="gcode-filter-chip warning'+(current.gcodeShowCustom?' active':'')+'" data-gcode-custom="1">厂家扩展</button></div>' +
+      '<div class="gcode-control-row gcode-quick-row"><span class="gcode-control-label">常查</span>' +
+      QUICK_CODES.map(function (code) {
+        return '<button class="gcode-quick-chip" data-gcode-quick="'+code+'">'+code+'</button>';
+      }).join('') + '</div>' +
+      '<div class="gcode-exact-hint" id="gcode-exact-hint"></div></div>';
+  }
+
+  function updateControls() {
+    var current = getState();
+    var host = document.getElementById('gcode-mobile-controls');
+    if (!host || !current) return;
+    host.querySelectorAll('[data-gcode-machine]').forEach(function (button) {
+      button.classList.toggle('active', button.dataset.gcodeMachine === current.gcodeMachine);
+    });
+    host.querySelectorAll('[data-gcode-scope]').forEach(function (button) {
+      button.classList.toggle('active', button.dataset.gcodeScope === current.gcodeScope);
+    });
+    var custom = host.querySelector('[data-gcode-custom]');
+    if (custom) custom.classList.toggle('active', !!current.gcodeShowCustom);
+    var hint = host.querySelector('#gcode-exact-hint');
+    var exact = exactCode(current.keyword);
+    if (hint) {
+      hint.classList.toggle('visible', !!exact);
+      hint.textContent = exact ? '已识别为 '+exact+'；按回车可直接打开详情。' : '';
+    }
+  }
+
+  function bindControlEvents(host) {
+    if (!host || host.__cncStableBound) return;
+    host.__cncStableBound = true;
+    host.addEventListener('click', function (event) {
+      var button = event.target.closest('button');
+      if (!button) return;
+      var current = getState();
+      if (!current) return;
+
+      if (button.dataset.gcodeMachine) {
+        current.gcodeMachine = button.dataset.gcodeMachine;
+        localStorage.setItem(STORAGE_MACHINE,current.gcodeMachine);
+        renderWorkspace();
+        return;
+      }
+      if (button.dataset.gcodeScope) {
+        current.gcodeScope = button.dataset.gcodeScope;
+        localStorage.setItem(STORAGE_SCOPE,current.gcodeScope);
+        renderWorkspace();
+        return;
+      }
+      if (button.dataset.gcodeCustom) {
+        current.gcodeShowCustom = !current.gcodeShowCustom;
+        localStorage.setItem(STORAGE_CUSTOM,current.gcodeShowCustom?'1':'0');
+        renderWorkspace();
+        return;
+      }
+      if (button.dataset.gcodeQuick) {
+        current.keyword = button.dataset.gcodeQuick;
+        var input = document.getElementById('search-input');
+        if (input) input.value = current.keyword;
+        renderWorkspace();
+        setTimeout(openExact,0);
+      }
+    });
+  }
+
+  function decorateWorkspace() {
+    var current = getState();
+    var view = document.getElementById('view-workspace');
+    if (!current || !view) return;
+
+    var active = current.activeFilter === 'gcode';
+    view.classList.toggle('gcode-pro-mode',active);
+    var existing = document.getElementById('gcode-mobile-controls');
+    if (!active) {
+      if (existing) existing.hidden = true;
+      return;
+    }
+
+    current.workspaceMode = 'list';
+    current.listRenderLimit = Math.min(Number(current.listRenderLimit || 50),30);
+
+    var list = document.getElementById('result-list');
+    if (list) list.classList.remove('visual-mode');
+    var title = document.getElementById('workspace-title');
+    if (title) title.textContent = 'G/M代码现场速查';
+    var eyebrow = document.getElementById('workspace-eyebrow');
+    if (eyebrow) eyebrow.textContent = 'FANUC STYLE · MOBILE QUICK LOOKUP';
+    var input = document.getElementById('search-input');
+    if (input) input.placeholder = '输入 G1、G01、M3、啄钻、攻牙…';
+
+    var toolbar = view.querySelector('.search-toolbar');
+    if (!existing && toolbar) {
+      toolbar.insertAdjacentHTML('afterend',controlsHtml(current));
+      existing = document.getElementById('gcode-mobile-controls');
+      bindControlEvents(existing);
+    }
+    if (existing) {
+      existing.hidden = false;
+      updateControls();
+    }
+
+    if (list) {
+      list.querySelectorAll('.result-card').forEach(function (card) {
+        card.tabIndex = 0;
+        card.setAttribute('role','button');
+      });
+    }
+  }
+
+  function openMobileDetail() {
+    var panel = document.getElementById('detail-panel');
+    if (!panel || window.innerWidth > 768) return;
+    window.__CNC_STABLE_LIST_SCROLL__ = window.scrollY;
+    panel.classList.add('mobile-open');
+    panel.scrollTop = 0;
+    document.body.classList.add('cnc-detail-open');
+  }
+
+  function closeMobileDetail() {
+    var panel = document.getElementById('detail-panel');
+    if (panel) panel.classList.remove('mobile-open','show-secondary');
+    document.body.classList.remove('cnc-detail-open');
+    setTimeout(function () {
+      if (typeof window.__CNC_STABLE_LIST_SCROLL__ === 'number') {
+        window.scrollTo(0,window.__CNC_STABLE_LIST_SCROLL__);
+      }
+    },0);
+  }
+
+  function quickFormat(entry) {
+    return FORMAT_MAP[entryCode(entry)] || entry.example || '请以本机床说明书中的格式为准。';
+  }
+
+  function machineBadges(entry) {
+    var flags = machineFlags(entry);
+    var html = '';
+    if (flags.mill) html += '<span class="cnc-pro-machine-badge">加工中心</span>';
+    if (flags.lathe) html += '<span class="cnc-pro-machine-badge lathe">数控车床</span>';
+    if (isCustom(entry) || /选项功能/.test(entryText(entry))) {
+      html += '<span class="cnc-pro-machine-badge option">系统/厂家确认</span>';
+    }
+    return html;
+  }
+
+  function addBottomNav(panel) {
+    var nav = panel.querySelector('.cnc-mobile-bottom-nav');
+    if (nav) return;
+    nav = document.createElement('div');
+    nav.className = 'cnc-mobile-bottom-nav';
+    nav.innerHTML = '<button data-cnc-bottom="prev">← 上一条</button>' +
+      '<button class="primary" data-cnc-bottom="back">返回列表</button>' +
+      '<button data-cnc-bottom="next">下一条 →</button>';
+    panel.appendChild(nav);
+    nav.querySelector('[data-cnc-bottom="back"]').onclick = closeMobileDetail;
+    nav.querySelector('[data-cnc-bottom="prev"]').onclick = function () {
+      var button = document.getElementById('detail-prev');
+      if (button) button.click();
+      panel.scrollTop = 0;
+    };
+    nav.querySelector('[data-cnc-bottom="next"]').onclick = function () {
+      var button = document.getElementById('detail-next-button');
+      if (button) button.click();
+      panel.scrollTop = 0;
+    };
+  }
+
+  function decorateDetail() {
+    var current = getState();
+    var panel = document.getElementById('detail-panel');
+    if (!current || !panel || current.activeFilter !== 'gcode') return;
+    var entry = current.entries.find(function (item) { return item.id === current.selectedId; });
+    if (!entry || !isGM(entry)) return;
+
+    var primary = panel.querySelector('.detail-card-primary');
+    if (primary) {
+      var badges = primary.querySelector('.cnc-pro-machine-badges');
+      if (!badges) {
+        badges = document.createElement('div');
+        badges.className = 'cnc-pro-machine-badges';
+        primary.appendChild(badges);
+      }
+      badges.innerHTML = machineBadges(entry);
+    }
+
+    var oldQuick = panel.querySelector('.cnc-pro-quick-card');
+    if (oldQuick) oldQuick.remove();
+    if (primary) {
+      var quick = document.createElement('article');
+      quick.className = 'detail-card cnc-pro-quick-card';
+      quick.innerHTML = '<h4>⚡ 现场先看这四件事</h4>' +
+        '<div class="cnc-pro-format">'+esc(quickFormat(entry))+'</div>' +
+        '<p><strong>用途：</strong>'+esc(entry.usage || entry.summary || '')+'</p>' +
+        '<p><strong>危险点：</strong>'+esc(entry.warning || '先空运行、单段和低倍率验证。')+'</p>' +
+        '<div class="cnc-pro-source-note">适用范围：FANUC风格速查。不同机床厂家、系统代数和选项可能不同；高风险指令必须以本机说明书为准。</div>';
+      primary.insertAdjacentElement('afterend',quick);
+    }
+
+    panel.querySelectorAll('.detail-card').forEach(function (card) {
+      var heading = card.querySelector('h4');
+      var text = heading ? heading.textContent : '';
+      card.classList.toggle('cnc-mobile-secondary',/关联工具|参数联动|智能推荐|下一步学什么|知识库原文摘录|相关推荐/.test(text));
+    });
+
+    var grid = panel.querySelector('.detail-content-grid');
+    var more = panel.querySelector('.cnc-detail-more');
+    if (!more && grid) {
+      more = document.createElement('button');
+      more.type = 'button';
+      more.className = 'cnc-detail-more';
+      more.textContent = '展开更多资料与相关推荐';
+      more.onclick = function () {
+        panel.classList.toggle('show-secondary');
+        more.textContent = panel.classList.contains('show-secondary') ? '收起扩展资料' : '展开更多资料与相关推荐';
+      };
+      grid.appendChild(more);
+    } else if (more) {
+      panel.classList.remove('show-secondary');
+      more.textContent = '展开更多资料与相关推荐';
+    }
+    addBottomNav(panel);
+  }
+
+  function openExact() {
+    var current = getState();
+    var code = current && exactCode(current.keyword);
+    if (!code) return false;
+    var entry = current.entries.find(function (item) { return isGM(item) && entryCode(item) === code; });
+    if (!entry) return false;
+    current.selectedId = entry.id;
+    renderWorkspace();
+    renderDetail();
+    openMobileDetail();
+    return true;
+  }
+
+  function bindGlobalEvents() {
+    if (globalEventsBound) return;
+    globalEventsBound = true;
+
+    document.addEventListener('keydown',function (event) {
+      if (event.key !== 'Enter') return;
+      if (event.target && event.target.id === 'search-input') {
+        setTimeout(openExact,0);
+      }
+    },true);
+
+    document.addEventListener('click',function (event) {
+      var current = getState();
+      if (!current || current.activeFilter !== 'gcode') return;
+
+      var back = event.target.closest('#detail-back-btn,[data-cnc-bottom="back"]');
+      if (back) {
+        event.preventDefault();
+        closeMobileDetail();
+        return;
+      }
+
+      var card = event.target.closest('.result-card');
+      if (card && !event.target.closest('button')) {
+        var openButton = card.querySelector('[data-open-entry]');
+        if (openButton) openButton.click();
+        return;
+      }
+
+      var open = event.target.closest('[data-open-entry]');
+      if (open) setTimeout(openMobileDetail,0);
+    });
+  }
+
+  function patchFunctions() {
+    if (typeof normalizeText !== 'function' ||
+        typeof getFilteredEntries !== 'function' ||
+        typeof renderWorkspace !== 'function' ||
+        typeof renderDetail !== 'function' ||
+        typeof navigate !== 'function') {
+      return false;
+    }
+
+    originals.normalizeText = normalizeText;
+    normalizeText = function (value) { return originals.normalizeText(canon(value)); };
+
+    originals.getFilteredEntries = getFilteredEntries;
+    getFilteredEntries = function () { return filterRows(originals.getFilteredEntries()); };
+
+    originals.renderWorkspace = renderWorkspace;
+    renderWorkspace = function () {
+      var current = getState();
+      if (current && current.activeFilter === 'gcode') current.workspaceMode = 'list';
+      var result = originals.renderWorkspace.apply(this,arguments);
+      decorateWorkspace();
+      return result;
+    };
+
+    originals.renderDetail = renderDetail;
+    renderDetail = function () {
+      var result = originals.renderDetail.apply(this,arguments);
+      decorateDetail();
+      return result;
+    };
+
+    originals.navigate = navigate;
+    navigate = function (view) {
+      var current = getState();
+      if (view === 'workspace' && current && current.activeFilter === 'gcode') {
+        current.workspaceMode = 'list';
+        current.listRenderLimit = 30;
+      }
+      var result = originals.navigate.apply(this,arguments);
+      setTimeout(decorateWorkspace,0);
+      return result;
+    };
+    return true;
+  }
+
+  function deepLink() {
+    var current = getState();
+    if (!current || typeof navigate !== 'function') return;
+    var query = new URLSearchParams(window.location.search).get('q');
+    if (!query) return;
+    current.keyword = canon(query);
+    current.activeFilter = 'gcode';
+    current.selectedCategory = '全部栏目';
+    current.workspaceMode = 'list';
+    var input = document.getElementById('search-input');
+    if (input) input.value = current.keyword;
+    navigate('workspace');
+    renderWorkspace();
+    setTimeout(openExact,30);
+  }
+
+  function install() {
+    if (window.__CNC_GM_STABLE_INSTALLED__) return true;
+    if (!patchData()) return false;
+    if (!getState()) return false;
+    if (!patchFunctions()) return false;
+
+    loadPreferences();
+    bindGlobalEvents();
+    window.__CNC_GM_STABLE_INSTALLED__ = BUILD;
+    window.__CNC_GM_PRO_INSTALLED__ = BUILD;
+
+    if (typeof renderAll === 'function') renderAll();
+    decorateWorkspace();
+    deepLink();
+    return true;
+  }
+
+  var tries = 0;
+  var timer = setInterval(function () {
+    tries += 1;
+    if (install() || tries > 120) clearInterval(timer);
+  },100);
+
+  window.addEventListener('load',function () {
+    install();
+    setTimeout(decorateWorkspace,100);
+  });
+})();
