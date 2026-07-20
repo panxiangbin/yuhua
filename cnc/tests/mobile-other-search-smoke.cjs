@@ -56,16 +56,14 @@ const assert = require('node:assert/strict');
   await button.click({ force: true });
   await page.waitForFunction(() => {
     const panel = document.querySelector('#detail-panel');
-    return panel && panel.classList.contains('mobile-open');
+    const body = document.body;
+    if (!panel || !body) return false;
+    const panelStyle = getComputedStyle(panel);
+    return body.getAttribute('data-cnc-detail-open') === 'true' && panelStyle.display !== 'none' && panelStyle.position === 'fixed';
   }, null, { timeout: 15000 });
 
-  assert.equal(
-    await page.locator('#detail-panel').evaluate(node => getComputedStyle(node).position),
-    'fixed',
-    '报警/参数详情应在手机上全屏打开'
-  );
-
-  console.log('报警/参数查询减法界面、整卡点击和全屏详情通过');
+  assert.equal(await page.locator('#detail-panel').isVisible(), true);
+  console.log('报警/参数查询减法界面、整卡点击和实际全屏详情通过');
   await browser.close();
 })().catch(error => {
   console.error(error);
