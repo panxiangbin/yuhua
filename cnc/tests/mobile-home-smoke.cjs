@@ -3,58 +3,37 @@ const assert = require('node:assert/strict');
 
 (async () => {
   const browser = await chromium.launch({ headless: true });
-  const page = await browser.newPage({
-    viewport: { width: 390, height: 844 },
-    deviceScaleFactor: 2,
-    isMobile: true,
-    hasTouch: true
-  });
-
-  await page.goto('http://127.0.0.1:4173/cnc/?smoke=home', {
-    waitUntil: 'domcontentloaded',
-    timeout: 60000
-  });
-  await page.waitForSelector('.launchpad-card[data-filter="gcode"]', {
-    state: 'visible',
-    timeout: 30000
-  });
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  await page.goto('http://127.0.0.1:4173/cnc/?smoke=vivid-home', { waitUntil: 'domcontentloaded', timeout: 60000 });
+  await page.waitForSelector('.launchpad-card[data-filter="gcode"]', { state: 'visible', timeout: 30000 });
   await page.waitForTimeout(1400);
 
   assert.equal(await page.title(), '数控小潘 CNC速查与学习助手');
   assert.equal(await page.locator('body').evaluate(node => node.classList.contains('cnc-clean-ui')), true);
+  assert.equal(await page.locator('body').evaluate(node => node.classList.contains('cnc-vivid-ui')), true);
   assert.match((await page.locator('.study-card[data-level="9"] p').textContent()) || '', /不保证直线/);
   assert.match((await page.locator('.study-card[data-level="10"] p').textContent()) || '', /最小输入单位/);
 
-  const hiddenSelectors = [
-    '.fan-suggestion-panel',
-    '#view-dashboard .featured-images-preview',
-    '#view-dashboard #faq-preview-section'
-  ];
-  for (const selector of hiddenSelectors) {
-    const display = await page.locator(selector).evaluate(node => getComputedStyle(node).display);
-    assert.equal(display, 'none', selector + ' 应在手机首页隐藏');
+  for (const selector of ['.fan-suggestion-panel', '#view-dashboard .featured-images-preview', '#view-dashboard #faq-preview-section']) {
+    assert.equal(await page.locator(selector).evaluate(node => getComputedStyle(node).display), 'none');
   }
 
-  const launchColumns = await page.locator('.launchpad-grid').evaluate(node =>
-    getComputedStyle(node).gridTemplateColumns.split(' ').filter(Boolean).length
-  );
-  assert.equal(launchColumns, 2, '首页六个入口应为两列');
+  const launchColumns = await page.locator('.launchpad-grid').evaluate(node => getComputedStyle(node).gridTemplateColumns.split(' ').filter(Boolean).length);
+  assert.equal(launchColumns, 1, '首页入口必须竖向单列');
+
+  const firstCard = page.locator('.launchpad-card').first();
+  assert.match(await firstCard.evaluate(node => getComputedStyle(node).backgroundImage), /linear-gradient/);
+  assert.ok(await firstCard.locator('h3').evaluate(node => Number(getComputedStyle(node).fontWeight)) >= 800);
+
+  const searchColumns = await page.locator('.launchpad-search-bar').evaluate(node => getComputedStyle(node).gridTemplateColumns.split(' ').filter(Boolean).length);
+  assert.equal(searchColumns, 1, '搜索框与按钮必须竖向排列');
 
   await page.locator('.launchpad-card[data-route="study"]').click();
   await page.waitForSelector('#view-study.active', { state: 'visible', timeout: 15000 });
-  const studyColumns = await page.locator('.study-card-grid').first().evaluate(node =>
-    getComputedStyle(node).gridTemplateColumns.split(' ').filter(Boolean).length
-  );
-  assert.equal(studyColumns, 2, '新手课程目录应为两列');
-  assert.equal(
-    await page.locator('.study-card').first().locator('p').evaluate(node => getComputedStyle(node).display),
-    'none',
-    '课程目录不应直接展示长说明'
-  );
+  const studyColumns = await page.locator('.study-card-grid').first().evaluate(node => getComputedStyle(node).gridTemplateColumns.split(' ').filter(Boolean).length);
+  assert.equal(studyColumns, 1, '课程必须竖向单列');
+  assert.ok(await page.locator('.study-card h4').first().evaluate(node => Number(getComputedStyle(node).fontWeight)) >= 800);
 
-  console.log('首页减法界面、品牌与课程目录通过');
+  console.log('手机竖向布局、粗字体和鲜艳配色通过');
   await browser.close();
-})().catch(error => {
-  console.error(error);
-  process.exit(1);
-});
+})().catch(error => { console.error(error); process.exit(1); });
