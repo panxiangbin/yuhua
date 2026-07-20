@@ -7,6 +7,7 @@ on:
       - "cnc/mobile-gcode-pro.css"
       - "cnc/clean-ui.css"
       - "cnc/clean-ui.js"
+      - "cnc/vivid-ui.css"
       - "cnc/import-test.js"
       - "cnc/sw.js"
       - "cnc-recover.html"
@@ -38,16 +39,21 @@ jobs:
           node --check cnc/tests/mobile-gcode-detail-panel-smoke.cjs
           node --check cnc/tests/mobile-other-search-smoke.cjs
           node --check cnc/tests/mobile-sw-smoke.cjs
-      - name: Stability and clean UI assertions
+      - name: Stability and vivid vertical UI assertions
         run: |
           grep -q "20260720k" cnc/import-test.js
+          grep -q "20260720m" cnc/import-test.js
           grep -q "clean-ui.css" cnc/import-test.js
           grep -q "clean-ui.js" cnc/import-test.js
+          grep -q "vivid-ui.css" cnc/import-test.js
+          grep -q "cnc-vivid-ui" cnc/import-test.js
           grep -q "CNC_CLEAN_UI" cnc/clean-ui.js
           grep -q "openMobilePanel" cnc/clean-ui.js
           grep -q "confirmMobilePanel" cnc/clean-ui.js
           grep -q "setTimeout(openMobilePanel, 200)" cnc/clean-ui.js
-          grep -q "cnc-clean-ui" cnc/import-test.js
+          grep -q "grid-template-columns: minmax(0, 1fr)" cnc/vivid-ui.css
+          grep -q "font-weight: 950" cnc/vivid-ui.css
+          grep -q "linear-gradient" cnc/vivid-ui.css
           grep -q "数控小潘 CNC速查与学习助手" cnc/import-test.js
           grep -q "不保证直线" cnc/import-test.js
           grep -q "最小输入单位" cnc/import-test.js

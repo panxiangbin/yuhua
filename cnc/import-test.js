@@ -3,11 +3,13 @@
   'use strict';
 
   var BUILD = '20260720k';
+  var VIVID_BUILD = '20260720m';
   var PRO_BUILD = '20260720h';
   var PRO_SCRIPT = './mobile-gcode-pro.js?v=' + PRO_BUILD;
   var PRO_STYLE = './mobile-gcode-pro.css?v=' + PRO_BUILD;
   var CLEAN_STYLE = './clean-ui.css?v=' + BUILD;
   var CLEAN_SCRIPT = './clean-ui.js?v=' + BUILD;
+  var VIVID_STYLE = './vivid-ui.css?v=' + VIVID_BUILD;
   var STATIC_CARDS = {
     2: [
       {
@@ -86,6 +88,7 @@
     document.title = '数控小潘 CNC速查与学习助手';
     setMeta('description', '数控小潘CNC速查与学习助手，提供G/M代码查询、报警排查、参数换算和数控编程入门课程。');
     setMeta('keywords', '数控小潘,CNC速查,G代码,M代码,数控报警,数控编程入门');
+    setMeta('theme-color', '#1264ff');
     setMeta('og:title', '数控小潘 CNC速查与学习助手', true);
     setMeta('og:description', '手机端快速查询G/M代码、报警和参数，并按12关学习数控编程。', true);
 
@@ -142,6 +145,20 @@
     if (document.body) document.body.classList.add('cnc-clean-ui');
   }
 
+  function ensureVividStyle(forceLast) {
+    var link = document.querySelector('link[data-cnc-vivid-ui]');
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = VIVID_STYLE;
+      link.dataset.cncVividUi = 'true';
+      document.head.appendChild(link);
+    } else if (forceLast && link.parentNode) {
+      link.parentNode.appendChild(link);
+    }
+    if (document.body) document.body.classList.add('cnc-vivid-ui');
+  }
+
   function ensureCleanInteraction() {
     if (window.CNC_CLEAN_UI && window.CNC_CLEAN_UI.build === BUILD) return Promise.resolve(true);
     if (window.__CNC_CLEAN_UI_LOADING__) return window.__CNC_CLEAN_UI_LOADING__;
@@ -173,6 +190,7 @@
       document.head.appendChild(link);
     }
     ensureCleanStyle(true);
+    ensureVividStyle(true);
   }
 
   function loadGcodePro() {
@@ -191,6 +209,7 @@
       }
       script.addEventListener('load', function () {
         ensureCleanStyle(true);
+        ensureVividStyle(true);
         ensureCleanInteraction();
         resolve(true);
       }, { once: true });
@@ -235,6 +254,7 @@
 
   function boot() {
     ensureCleanStyle(true);
+    ensureVividStyle(true);
     ensureCleanInteraction();
     applyBranding();
     correctCourseCards();
@@ -243,6 +263,7 @@
     clearLegacyCaches();
     window.setTimeout(function () {
       ensureCleanStyle(true);
+      ensureVividStyle(true);
       ensureCleanInteraction();
       applyBranding();
       correctCourseCards();
@@ -264,11 +285,14 @@
       var lesson9 = document.querySelector('.study-card[data-level="9"] p');
       var lesson10 = document.querySelector('.study-card[data-level="10"] p');
       var cleanStyle = document.querySelector('link[data-cnc-clean-ui]');
+      var vividStyle = document.querySelector('link[data-cnc-vivid-ui]');
       var result = {
         passed: true,
         build: BUILD,
+        vividBuild: VIVID_BUILD,
         lightweightHome: true,
         cleanUi: Boolean(cleanStyle && document.body.classList.contains('cnc-clean-ui')),
+        vividUi: Boolean(vividStyle && document.body.classList.contains('cnc-vivid-ui')),
         cleanInteraction: Boolean(window.CNC_CLEAN_UI && window.CNC_CLEAN_UI.build === BUILD),
         brand: document.title,
         gcodeLoaded: window.__CNC_GM_PRO_INSTALLED__ === PRO_BUILD,
@@ -276,8 +300,8 @@
         lesson9Corrected: Boolean(lesson9 && lesson9.textContent.indexOf('不保证直线') !== -1),
         lesson10Corrected: Boolean(lesson10 && lesson10.textContent.indexOf('最小输入单位') !== -1)
       };
-      result.passed = result.cleanUi && result.cleanInteraction && !result.serviceWorkerControlled && result.lesson9Corrected && result.lesson10Corrected;
-      console.log('[CNC减法界面检查]', result);
+      result.passed = result.cleanUi && result.vividUi && result.cleanInteraction && !result.serviceWorkerControlled && result.lesson9Corrected && result.lesson10Corrected;
+      console.log('[CNC竖向鲜艳界面检查]', result);
       return result;
     }
   };
