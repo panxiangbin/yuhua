@@ -1,4 +1,4 @@
-const CNC_BUILD = '20260720g';
+const CNC_BUILD = '20260720h';
 const PAGE_BOOTSTRAP = [
   '<link rel="stylesheet" href="./mobile-gcode-pro.css?v=' + CNC_BUILD + '" data-cnc-mobile-pro>',
   '<script src="./learning-images-04-12.js?v=' + CNC_BUILD + '"></script>',
@@ -44,7 +44,7 @@ self.addEventListener('fetch', (event) => {
       if (!contentType.includes('text/html')) return response;
 
       let html = await response.text();
-      if (!html.includes('learning-alignment-hotfix.js?v=' + CNC_BUILD)) {
+      if (!html.includes('mobile-gcode-pro.js?v=' + CNC_BUILD)) {
         html = html.replace('</body>', PAGE_BOOTSTRAP + '\n</body>');
       }
 
