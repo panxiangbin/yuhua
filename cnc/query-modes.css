@@ -1,0 +1,69 @@
+/* 报警、参数、故障三种独立入口：鲜艳但统一的手机视觉。 */
+@media (max-width: 768px) {
+  body.cnc-vivid-ui .launchpad-card[data-filter="alarm"] {
+    color: #fff !important;
+    border-color: rgba(255,255,255,.35) !important;
+    background: linear-gradient(135deg,#ff244f 0%,#ff6b2c 100%) !important;
+    box-shadow: 0 12px 28px rgba(255,50,75,.28) !important;
+  }
+
+  body.cnc-vivid-ui .launchpad-card[data-filter="parameter"] {
+    color: #222 !important;
+    border-color: rgba(255,255,255,.48) !important;
+    background: linear-gradient(135deg,#ffd21f 0%,#ff9f1a 100%) !important;
+    box-shadow: 0 12px 28px rgba(255,166,25,.27) !important;
+  }
+
+  body.cnc-vivid-ui .launchpad-card[data-filter="fault"] {
+    color: #fff !important;
+    border-color: rgba(255,255,255,.35) !important;
+    background: linear-gradient(135deg,#b326ff 0%,#ff2f92 100%) !important;
+    box-shadow: 0 12px 28px rgba(179,38,255,.26) !important;
+  }
+
+  body.cnc-vivid-ui .launchpad-card[data-filter="alarm"] h3,
+  body.cnc-vivid-ui .launchpad-card[data-filter="fault"] h3,
+  body.cnc-vivid-ui .launchpad-card[data-filter="alarm"] .launchpad-card-icon,
+  body.cnc-vivid-ui .launchpad-card[data-filter="fault"] .launchpad-card-icon {
+    color: #fff !important;
+  }
+
+  body.cnc-vivid-ui .launchpad-card[data-filter="parameter"] h3,
+  body.cnc-vivid-ui .launchpad-card[data-filter="parameter"] .launchpad-card-icon {
+    color: #222 !important;
+  }
+
+  body[data-cnc-query-mode="alarm"] #search-input {
+    border-color: #ff3659 !important;
+    box-shadow: 0 0 0 4px rgba(255,54,89,.1) !important;
+  }
+
+  body[data-cnc-query-mode="parameter"] #search-input {
+    border-color: #ffad18 !important;
+    box-shadow: 0 0 0 4px rgba(255,173,24,.12) !important;
+  }
+
+  body[data-cnc-query-mode="fault"] #search-input {
+    border-color: #bd35ff !important;
+    box-shadow: 0 0 0 4px rgba(189,53,255,.1) !important;
+  }
+
+  body[data-cnc-query-mode="alarm"] #workspace-title,
+  body[data-cnc-query-mode="alarm"] #topbar-title {
+    color: #dc163a !important;
+  }
+
+  body[data-cnc-query-mode="parameter"] #workspace-title,
+  body[data-cnc-query-mode="parameter"] #topbar-title {
+    color: #ad6300 !important;
+  }
+
+  body[data-cnc-query-mode="fault"] #workspace-title,
+  body[data-cnc-query-mode="fault"] #topbar-title {
+    color: #8f1bc5 !important;
+  }
+
+  body[data-cnc-query-mode] #search-meta {
+    font-weight: 800 !important;
+  }
+}
