@@ -4,7 +4,7 @@
  */
 (function(){
   'use strict';
-  var BUILD='20260720f';
+  var BUILD='20260720g';
   var EXTENDED_SCRIPT='./learning-images-04-12.js?v='+BUILD;
   var PRO_SCRIPT='./mobile-gcode-pro.js?v='+BUILD;
   var ALIGN_SCRIPT='./learning-alignment-hotfix.js?v='+BUILD;

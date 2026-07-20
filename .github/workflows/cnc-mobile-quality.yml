@@ -30,6 +30,8 @@ jobs:
           grep -q "G05.1" cnc/mobile-gcode-pro.js
           grep -q "data-gcode-machine" cnc/mobile-gcode-pro.js
           grep -q "detail-panel.mobile-open" cnc/mobile-gcode-pro.css
-          grep -q "20260720f" cnc/import-test.js
+          grep -q "20260720g" cnc/import-test.js
+          grep -q "20260720g" cnc/sw.js
           grep -q "learning-alignment-hotfix.js" cnc/sw.js
           grep -q "CNC_ALIGN_LEARNING_IMAGES" cnc/learning-alignment-hotfix.js
+          grep -q "4000" cnc/learning-alignment-hotfix.js
