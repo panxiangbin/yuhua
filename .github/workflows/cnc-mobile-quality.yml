@@ -6,6 +6,7 @@ on:
       - "cnc/mobile-gcode-pro.js"
       - "cnc/mobile-gcode-pro.css"
       - "cnc/import-test.js"
+      - "cnc/learning-alignment-hotfix.js"
       - "cnc/sw.js"
       - ".github/workflows/cnc-mobile-quality.yml"
   workflow_dispatch:
@@ -22,11 +23,13 @@ jobs:
         run: |
           node --check cnc/mobile-gcode-pro.js
           node --check cnc/import-test.js
+          node --check cnc/learning-alignment-hotfix.js
           node --check cnc/sw.js
       - name: Critical feature assertions
         run: |
-          grep -q "20260720e" cnc/mobile-gcode-pro.js
           grep -q "G05.1" cnc/mobile-gcode-pro.js
           grep -q "data-gcode-machine" cnc/mobile-gcode-pro.js
           grep -q "detail-panel.mobile-open" cnc/mobile-gcode-pro.css
-          grep -q "mobile-gcode-pro.js" cnc/sw.js
+          grep -q "20260720f" cnc/import-test.js
+          grep -q "learning-alignment-hotfix.js" cnc/sw.js
+          grep -q "CNC_ALIGN_LEARNING_IMAGES" cnc/learning-alignment-hotfix.js
