@@ -43,8 +43,14 @@ jobs:
       - name: Mobile homepage clean layout
         run: node cnc/tests/mobile-home-smoke.cjs
 
-      - name: Mobile G-code clean search journey
-        run: node cnc/tests/mobile-gcode-smoke.cjs
+      - name: Mobile G-code clean layout
+        run: node cnc/tests/mobile-gcode-layout-smoke.cjs
+
+      - name: Mobile G-code search cards
+        run: node cnc/tests/mobile-gcode-search-smoke.cjs
+
+      - name: Mobile G-code fullscreen detail
+        run: node cnc/tests/mobile-gcode-detail-smoke.cjs
 
       - name: Mobile alarm and parameter clean journey
         run: node cnc/tests/mobile-other-search-smoke.cjs
