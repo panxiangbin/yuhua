@@ -43,6 +43,9 @@ jobs:
       - name: Mobile homepage clean layout
         run: node cnc/tests/mobile-home-smoke.cjs
 
+      - name: Mobile alarm parameter fault split
+        run: node cnc/tests/mobile-query-split-smoke.cjs
+
       - name: Mobile G-code clean layout
         run: node cnc/tests/mobile-gcode-layout-smoke.cjs
 
@@ -55,7 +58,7 @@ jobs:
       - name: Mobile G-code fullscreen panel
         run: node cnc/tests/mobile-gcode-detail-panel-smoke.cjs
 
-      - name: Mobile alarm and parameter clean journey
+      - name: Mobile parameter clean journey
         run: node cnc/tests/mobile-other-search-smoke.cjs
 
       - name: Service Worker remains disabled
