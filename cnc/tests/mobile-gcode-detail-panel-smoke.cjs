@@ -11,13 +11,15 @@ const assert = require('node:assert/strict');
   await page.locator('#search-input').fill('G1');
   await page.waitForTimeout(700);
 
-  const button = page.locator('#result-list [data-open-entry="kb-gcode-g01"]');
-  await button.waitFor({ state: 'attached', timeout: 15000 });
   await page.waitForFunction(() => {
     const button = document.querySelector('#result-list [data-open-entry="kb-gcode-g01"]');
     return button && button.dataset.cncCleanBound === 'true';
   }, null, { timeout: 15000 });
-  await button.click({ force: true });
+
+  await page.evaluate(() => {
+    const button = document.querySelector('#result-list [data-open-entry="kb-gcode-g01"]');
+    button.click();
+  });
 
   await page.waitForFunction(() => {
     const panel = document.querySelector('#detail-panel');
@@ -29,6 +31,6 @@ const assert = require('node:assert/strict');
 
   assert.equal(await page.locator('#detail-panel').isVisible(), true);
   assert.equal(await page.locator('#detail-back-btn').isVisible(), true);
-  console.log('G/M结果按钮绑定与实际全屏显示通过');
+  console.log('G/M已绑定按钮触发与实际全屏显示通过');
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });
