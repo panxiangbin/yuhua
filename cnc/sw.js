@@ -1,7 +1,9 @@
-const CNC_BUILD = '20260720d';
-const IMAGE_BOOTSTRAP = [
+const CNC_BUILD = '20260720e';
+const PAGE_BOOTSTRAP = [
+  '<link rel="stylesheet" href="./mobile-gcode-pro.css?v=' + CNC_BUILD + '" data-cnc-mobile-pro>',
   '<script src="./learning-images-04-12.js?v=' + CNC_BUILD + '"></script>',
-  '<script src="./import-test.js?v=' + CNC_BUILD + '"></script>'
+  '<script src="./import-test.js?v=' + CNC_BUILD + '"></script>',
+  '<script src="./mobile-gcode-pro.js?v=' + CNC_BUILD + '" data-cnc-mobile-gcode-pro></script>'
 ].join('\n');
 
 self.addEventListener('install', (event) => {
@@ -23,7 +25,7 @@ self.addEventListener('activate', (event) => {
         url.searchParams.set('cnc_build', CNC_BUILD);
         await client.navigate(url.href);
       } catch (error) {
-        console.warn('[CNC缓存修复] 页面刷新失败', error);
+        console.warn('[CNC版本升级] 页面刷新失败', error);
       }
     }));
   })());
@@ -41,8 +43,8 @@ self.addEventListener('fetch', (event) => {
       if (!contentType.includes('text/html')) return response;
 
       let html = await response.text();
-      if (!html.includes('learning-images-04-12.js?v=' + CNC_BUILD)) {
-        html = html.replace('</body>', IMAGE_BOOTSTRAP + '\n</body>');
+      if (!html.includes('mobile-gcode-pro.js?v=' + CNC_BUILD)) {
+        html = html.replace('</body>', PAGE_BOOTSTRAP + '\n</body>');
       }
 
       const headers = new Headers(response.headers);
