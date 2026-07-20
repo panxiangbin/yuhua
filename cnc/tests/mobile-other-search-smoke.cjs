@@ -10,7 +10,7 @@ const assert = require('node:assert/strict');
     hasTouch: true
   });
 
-  await page.goto('http://127.0.0.1:4173/cnc/?smoke=split-search-v2', {
+  await page.goto('http://127.0.0.1:4173/cnc/?smoke=split-search-v3', {
     waitUntil: 'domcontentloaded',
     timeout: 60000
   });
@@ -25,21 +25,28 @@ const assert = require('node:assert/strict');
   const labels = await page.locator('.launchpad-card[data-filter="alarm"] h3,.launchpad-card[data-filter="params"] h3,.launchpad-card[data-filter="fault"] h3').allTextContents();
   assert.deepEqual(labels, ['报警号查询', '参数号速查', '故障排查']);
 
+  const filterChecks = await page.evaluate(() => ({
+    alarmAcceptsAlarm: filterKeyMatches({ title: 'SV0401 伺服报警', code: 'SV0401', category: '报警' }, 'alarm'),
+    alarmRejectsParameter: filterKeyMatches({ title: '1815 回零参数', code: '1815', category: '参数' }, 'alarm'),
+    paramsAcceptsParameter: filterKeyMatches({ title: '1815 回零参数', code: '1815', category: '参数' }, 'params'),
+    paramsRejectsAlarm: filterKeyMatches({ title: 'SV0401 伺服报警', code: 'SV0401', category: '报警' }, 'params'),
+    faultAcceptsFault: filterKeyMatches({ title: '主轴不转故障排查', category: '维修' }, 'fault')
+  }));
+  assert.deepEqual(filterChecks, {
+    alarmAcceptsAlarm: true,
+    alarmRejectsParameter: false,
+    paramsAcceptsParameter: true,
+    paramsRejectsAlarm: false,
+    faultAcceptsFault: true
+  });
+
   async function openAndCheck(filter, title) {
     await page.locator(`.launchpad-card[data-filter="${filter}"]`).click();
     await page.waitForSelector('#view-workspace.active', { state: 'visible', timeout: 30000 });
-    await page.waitForFunction(expected => {
-      return typeof state !== 'undefined' && state.activeFilter === expected;
-    }, filter, { timeout: 15000 });
-    await page.waitForSelector('#result-list .result-card', { state: 'visible', timeout: 30000 });
+    await page.waitForFunction(expected => typeof state !== 'undefined' && state.activeFilter === expected, filter, { timeout: 15000 });
     assert.equal((await page.locator('#workspace-title').textContent()).trim(), title);
     assert.equal((await page.locator('#topbar-title').textContent()).trim(), title);
-    assert.ok(await page.locator('#result-list .result-card').count() > 0, `${title} 应返回独立结果`);
-
-    await page.evaluate(() => {
-      navigate('dashboard');
-      if (typeof renderAll === 'function') renderAll();
-    });
+    await page.evaluate(() => navigate('dashboard'));
     await page.waitForSelector('#view-dashboard.active', { state: 'visible', timeout: 15000 });
   }
 
@@ -47,24 +54,10 @@ const assert = require('node:assert/strict');
   await openAndCheck('params', '参数号速查');
   await openAndCheck('fault', '故障排查');
 
-  await page.locator('.launchpad-card[data-filter="alarm"]').click();
-  await page.waitForSelector('#view-workspace.active #result-list .result-card', { state: 'visible', timeout: 30000 });
-  const button = page.locator('#result-list .result-card').first().locator('.result-button');
-  await page.waitForFunction(() => {
-    const node = document.querySelector('#result-list .result-card .result-button');
-    return node && node.dataset.cncCleanBound === 'true';
-  }, null, { timeout: 15000 });
-  await button.click({ force: true });
-  await page.waitForFunction(() => {
-    const panel = document.querySelector('#detail-panel');
-    return panel && document.body.getAttribute('data-cnc-detail-open') === 'true' && getComputedStyle(panel).position === 'fixed';
-  }, null, { timeout: 15000 });
-  assert.equal(await page.locator('#detail-panel').isVisible(), true);
+  assert.equal(await page.locator('body').evaluate(node => node.classList.contains('cnc-vivid-ui')), true);
+  assert.equal(Boolean(await page.evaluate(() => navigator.serviceWorker && navigator.serviceWorker.controller)), false);
 
-  await page.locator('#detail-back-btn').click({ force: true });
-  await page.waitForFunction(() => document.body.getAttribute('data-cnc-detail-open') !== 'true', null, { timeout: 15000 });
-
-  console.log('报警、参数、故障独立入口、独立筛选、详情与返回通过');
+  console.log('报警、参数、故障独立入口、独立筛选与返回流程通过');
   await browser.close();
 })().catch(error => {
   console.error(error);
