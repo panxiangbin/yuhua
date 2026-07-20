@@ -15,7 +15,8 @@ const assert = require('node:assert/strict');
     timeout: 60000
   });
 
-  const paramsCard = page.locator('.launchpad-card[data-filter="params"]').first();
+  await page.waitForFunction(() => window.CNC_QUERY_MODES && window.CNC_QUERY_MODES.build === '20260720n', null, { timeout: 30000 });
+  const paramsCard = page.locator('.launchpad-card[data-filter="parameter"]').first();
   await paramsCard.waitFor({ state: 'visible', timeout: 30000 });
   await paramsCard.click();
 
@@ -24,22 +25,25 @@ const assert = require('node:assert/strict');
     timeout: 30000
   });
   await page.waitForFunction(() => window.CNC_CLEAN_UI && window.CNC_CLEAN_UI.build === '20260720k', null, { timeout: 15000 });
+  await page.waitForFunction(() => document.body.dataset.cncQueryMode === 'parameter', null, { timeout: 15000 });
   await page.waitForTimeout(500);
 
   assert.equal(
     await page.locator('#workspace-mode-row').evaluate(node => getComputedStyle(node).display),
     'none',
-    '报警/参数查询不应显示图文模式切换'
+    '参数查询不应显示图文模式切换'
   );
   assert.equal(
     await page.locator('#preset-chip-row').evaluate(node => getComputedStyle(node).display),
     'none',
-    '报警/参数查询不应显示重复分类快捷栏'
+    '参数查询不应显示重复分类快捷栏'
   );
+  assert.match((await page.locator('#workspace-title').textContent()) || '', /参数速查/);
+  assert.match(await page.locator('#search-input').getAttribute('placeholder') || '', /1815|参数号/);
 
   const firstResult = page.locator('#result-list .result-card').first();
   const button = firstResult.locator('.result-button');
-  assert.equal(await button.count(), 1, '报警/参数结果卡必须保留详情入口');
+  assert.equal(await button.count(), 1, '参数结果卡必须保留详情入口');
 
   const style = await button.evaluate(element => {
     const computed = getComputedStyle(element);
@@ -68,7 +72,7 @@ const assert = require('node:assert/strict');
   }, null, { timeout: 15000 });
 
   assert.equal(await page.locator('#detail-panel').isVisible(), true);
-  console.log('报警/参数查询减法界面、按钮绑定和实际全屏详情通过');
+  console.log('参数查询独立入口、按钮绑定和实际全屏详情通过');
   await browser.close();
 })().catch(error => {
   console.error(error);
