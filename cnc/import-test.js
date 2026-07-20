@@ -1,10 +1,11 @@
-/* CNC 紧急恢复版：主页轻量启动，G/M增强仅在用户点击时加载。 */
+/* CNC 稳定性第一阶段：轻量启动、按需加载、品牌与安全文案修正。 */
 (function () {
   'use strict';
 
-  var BUILD = '20260720i';
-  var PRO_SCRIPT = './mobile-gcode-pro.js?v=' + BUILD;
-  var PRO_STYLE = './mobile-gcode-pro.css?v=' + BUILD;
+  var BUILD = '20260720j';
+  var PRO_BUILD = '20260720h';
+  var PRO_SCRIPT = './mobile-gcode-pro.js?v=' + PRO_BUILD;
+  var PRO_STYLE = './mobile-gcode-pro.css?v=' + PRO_BUILD;
   var STATIC_CARDS = {
     2: [
       {
@@ -36,6 +37,80 @@
     ]
   };
 
+  function disableServiceWorkerRegistration() {
+    if (!('serviceWorker' in navigator)) return;
+
+    try {
+      navigator.serviceWorker.getRegistrations().then(function (registrations) {
+        registrations.forEach(function (registration) {
+          if (registration.scope.indexOf('/yuhua/cnc/') !== -1 || registration.scope.indexOf('/cnc/') !== -1) {
+            registration.unregister();
+          }
+        });
+      }).catch(function () {});
+    } catch (error) {
+      console.warn('[CNC稳定版] 注销旧 Service Worker 失败', error);
+    }
+
+    try {
+      Object.defineProperty(navigator.serviceWorker, 'register', {
+        configurable: true,
+        value: function () {
+          return Promise.resolve({
+            scope: window.location.href,
+            unregister: function () { return Promise.resolve(true); }
+          });
+        }
+      });
+    } catch (error) {
+      try {
+        navigator.serviceWorker.register = function () {
+          return Promise.resolve({
+            scope: window.location.href,
+            unregister: function () { return Promise.resolve(true); }
+          });
+        };
+      } catch (ignored) {}
+    }
+  }
+
+  function setMeta(name, value, propertyMode) {
+    var selector = propertyMode ? 'meta[property="' + name + '"]' : 'meta[name="' + name + '"]';
+    var node = document.querySelector(selector);
+    if (node) node.setAttribute('content', value);
+  }
+
+  function applyBranding() {
+    document.title = '数控小潘 CNC速查与学习助手';
+    setMeta('description', '数控小潘CNC速查与学习助手，提供G/M代码查询、报警排查、参数换算和数控编程入门课程。');
+    setMeta('keywords', '数控小潘,CNC速查,G代码,M代码,数控报警,数控编程入门');
+    setMeta('og:title', '数控小潘 CNC速查与学习助手', true);
+    setMeta('og:description', '手机端快速查询G/M代码、报警和参数，并按12关学习数控编程。', true);
+
+    var sidebarTitle = document.querySelector('.sidebar-head h1');
+    if (sidebarTitle) sidebarTitle.textContent = '数控小潘 CNC助手';
+
+    var topbarTitle = document.getElementById('topbar-title');
+    if (topbarTitle && topbarTitle.textContent.indexOf('把网页改成') !== -1) {
+      topbarTitle.textContent = '数控小潘 CNC助手';
+    }
+
+    var brandKicker = document.querySelector('.brand-kicker');
+    if (brandKicker) brandKicker.textContent = 'CNC XIAOPAN';
+  }
+
+  function correctCourseCards() {
+    var lesson9 = document.querySelector('.study-card[data-level="9"] p');
+    if (lesson9) {
+      lesson9.textContent = 'G00用于快速定位，G01用于直线切削。G00轨迹通常不保证直线，各轴到位时间可能不同，低位多轴快移存在碰撞风险。';
+    }
+
+    var lesson10 = document.querySelector('.study-card[data-level="10"] p');
+    if (lesson10) {
+      lesson10.textContent = '省略小数点后，系统可能按最小输入单位解释，实际尺寸可能与预期相差很大，必须以本机床说明书和参数设置为准。';
+    }
+  }
+
   function injectStaticCards() {
     var content = window.CNC_LEARNING_CONTENT;
     if (!content || !content.lessons) return false;
@@ -61,7 +136,7 @@
   }
 
   function loadGcodePro() {
-    if (window.__CNC_GM_PRO_INSTALLED__ === BUILD) return Promise.resolve(true);
+    if (window.__CNC_GM_PRO_INSTALLED__ === PRO_BUILD) return Promise.resolve(true);
     if (window.__CNC_GCODE_PRO_LOADING__) return window.__CNC_GCODE_PRO_LOADING__;
 
     ensureProStyle();
@@ -76,7 +151,7 @@
       }
       script.addEventListener('load', function () { resolve(true); }, { once: true });
       script.addEventListener('error', function () {
-        console.error('[CNC恢复版] G/M增强模块加载失败');
+        console.error('[CNC稳定版] G/M增强模块加载失败');
         resolve(false);
       }, { once: true });
     });
@@ -93,12 +168,14 @@
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistrations().then(function (registrations) {
           registrations.forEach(function (registration) {
-            if (registration.scope.indexOf('/yuhua/cnc/') !== -1) registration.unregister();
+            if (registration.scope.indexOf('/yuhua/cnc/') !== -1 || registration.scope.indexOf('/cnc/') !== -1) {
+              registration.unregister();
+            }
           });
         }).catch(function () {});
       }
     } catch (error) {
-      console.warn('[CNC恢复版] 清理旧缓存失败', error);
+      console.warn('[CNC稳定版] 清理旧缓存失败', error);
     }
   }
 
@@ -113,11 +190,19 @@
   }
 
   function boot() {
+    applyBranding();
+    correctCourseCards();
     injectStaticCards();
     bindLazyLoading();
     clearLegacyCaches();
-    window.setTimeout(clearLegacyCaches, 1200);
+    window.setTimeout(function () {
+      applyBranding();
+      correctCourseCards();
+      clearLegacyCaches();
+    }, 1200);
   }
+
+  disableServiceWorkerRegistration();
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot, { once: true });
@@ -128,14 +213,20 @@
   window.CNC_LOAD_GCODE_PRO = loadGcodePro;
   window.CNC_IMPORT_TEST = {
     runAll: function () {
+      var lesson9 = document.querySelector('.study-card[data-level="9"] p');
+      var lesson10 = document.querySelector('.study-card[data-level="10"] p');
       var result = {
         passed: true,
         build: BUILD,
         lightweightHome: true,
-        gcodeLoaded: window.__CNC_GM_PRO_INSTALLED__ === BUILD,
-        serviceWorkerControlled: Boolean(navigator.serviceWorker && navigator.serviceWorker.controller)
+        brand: document.title,
+        gcodeLoaded: window.__CNC_GM_PRO_INSTALLED__ === PRO_BUILD,
+        serviceWorkerControlled: Boolean(navigator.serviceWorker && navigator.serviceWorker.controller),
+        lesson9Corrected: Boolean(lesson9 && lesson9.textContent.indexOf('不保证直线') !== -1),
+        lesson10Corrected: Boolean(lesson10 && lesson10.textContent.indexOf('最小输入单位') !== -1)
       };
-      console.log('[CNC紧急恢复检查]', result);
+      result.passed = !result.serviceWorkerControlled && result.lesson9Corrected && result.lesson10Corrected;
+      console.log('[CNC稳定性第一阶段检查]', result);
       return result;
     }
   };

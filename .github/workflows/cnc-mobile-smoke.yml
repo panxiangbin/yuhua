@@ -1,0 +1,50 @@
+name: CNC real mobile smoke test
+
+on:
+  pull_request:
+    paths:
+      - "cnc/**"
+      - ".github/workflows/cnc-mobile-smoke.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mobile-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Install browser test runtime
+        run: |
+          npm install --no-save playwright@1.52.0
+          npx playwright install --with-deps chromium
+
+      - name: Start local site
+        run: |
+          python3 -m http.server 4173 --directory . >/tmp/cnc-http.log 2>&1 &
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:4173/cnc/ >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/cnc-http.log
+          exit 1
+
+      - name: Mobile homepage opens and copy is correct
+        run: node cnc/tests/mobile-home-smoke.cjs
+
+      - name: Mobile G-code search and detail journey
+        run: node cnc/tests/mobile-gcode-smoke.cjs
+
+      - name: Service Worker remains disabled
+        run: node cnc/tests/mobile-sw-smoke.cjs
