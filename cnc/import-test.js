@@ -1,19 +1,20 @@
 /*
- * 新手学习图片接入与页面兜底渲染
- * 目标：第2、3关无论通过课程数据渲染，还是页面已先打开，都能稳定显示教学图片。
+ * 新手学习图片接入 V3
+ * 第2、3关使用仓库SVG，第4～12关使用动态高清矢量教学图。
+ * 无论课程数据先加载还是详情页先打开，都保证图片可以显示。
  */
 (function () {
   'use strict';
 
-  var IMAGE_VERSION = '20260717f';
-  var LESSON_IMAGE_CARDS = {
+  var IMAGE_VERSION = '20260720a';
+  var EXTENDED_SCRIPT = './learning-images-04-12.js?v=' + IMAGE_VERSION;
+  var STATIC_CARDS = {
     2: [
       {
         src: './assets/images/learning/lesson-02/1.svg?v=' + IMAGE_VERSION,
         title: '认识 X、Y、Z 轴与正方向',
         desc: '用立式加工中心示意图分清 X、Y、Z 三轴方向，重点理解 Z 轴与主轴方向的关系。',
-        loading: 'eager',
-        fetchpriority: 'high'
+        loading: 'eager', fetchpriority: 'high'
       },
       {
         src: './assets/images/learning/lesson-02/2.svg?v=' + IMAGE_VERSION,
@@ -26,8 +27,7 @@
         src: './assets/images/learning/lesson-03/1.svg?v=' + IMAGE_VERSION,
         title: '开机前先认识这些安全按钮',
         desc: '认识急停、复位、进给保持、单段、倍率和手轮/JOG，先学会停，再学会动。',
-        loading: 'eager',
-        fetchpriority: 'high'
+        loading: 'eager', fetchpriority: 'high'
       },
       {
         src: './assets/images/learning/lesson-03/2.svg?v=' + IMAGE_VERSION,
@@ -39,27 +39,49 @@
 
   function escapeHtml(value) {
     return String(value == null ? '' : value)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
   }
 
-  function injectLessonData() {
-    var content = window.CNC_LEARNING_CONTENT;
+  function getContent() {
+    return window.CNC_LEARNING_CONTENT;
+  }
+
+  function getLesson(level) {
+    var content = getContent();
+    return content && content.lessons && (content.lessons[level] || content.lessons[String(level)]);
+  }
+
+  function injectStaticCards() {
+    var content = getContent();
     if (!content || !content.lessons) return false;
-
-    Object.keys(LESSON_IMAGE_CARDS).forEach(function (levelKey) {
-      var lesson = content.lessons[levelKey] || content.lessons[Number(levelKey)];
-      if (!lesson) return;
-      lesson.imageCards = LESSON_IMAGE_CARDS[levelKey].map(function (card) {
-        return Object.assign({}, card);
-      });
+    Object.keys(STATIC_CARDS).forEach(function (key) {
+      var lesson = getLesson(Number(key));
+      if (lesson) lesson.imageCards = STATIC_CARDS[key].map(function (card) { return Object.assign({}, card); });
     });
-
-    window.CNC_LEARNING_IMAGE_CARDS = LESSON_IMAGE_CARDS;
+    window.CNC_LEARNING_IMAGE_CARDS = STATIC_CARDS;
     return true;
+  }
+
+  function loadExtendedCards() {
+    if (window.CNC_LEARNING_VECTOR_POSTERS) return Promise.resolve(true);
+    if (window.__CNC_LEARNING_IMAGES_PROMISE__) return window.__CNC_LEARNING_IMAGES_PROMISE__;
+    window.__CNC_LEARNING_IMAGES_PROMISE__ = new Promise(function (resolve) {
+      var old = document.querySelector('script[data-learning-images-04-12]');
+      if (old) {
+        old.addEventListener('load', function () { resolve(true); }, { once: true });
+        old.addEventListener('error', function () { resolve(false); }, { once: true });
+        return;
+      }
+      var script = document.createElement('script');
+      script.src = EXTENDED_SCRIPT;
+      script.async = false;
+      script.dataset.learningImages0412 = 'true';
+      script.onload = function () { resolve(true); };
+      script.onerror = function () { console.error('[新手课程图片] 第4～12关图片脚本加载失败'); resolve(false); };
+      document.head.appendChild(script);
+    });
+    return window.__CNC_LEARNING_IMAGES_PROMISE__;
   }
 
   function imageFlowHtml(cards) {
@@ -67,7 +89,7 @@
       return '<section class="lesson-image-card">' +
         '<div class="lesson-image-head"><span>图 ' + (index + 1) + '</span><h3>' + escapeHtml(card.title) + '</h3></div>' +
         '<img src="' + escapeHtml(card.src) + '" alt="' + escapeHtml(card.title) + '" loading="' + escapeHtml(card.loading || (index === 0 ? 'eager' : 'lazy')) + '" decoding="async"' + (card.fetchpriority ? ' fetchpriority="' + escapeHtml(card.fetchpriority) + '"' : '') + '>' +
-        '<p>' + escapeHtml(card.desc) + '</p>' +
+        '<p>' + escapeHtml(card.desc || '') + '</p>' +
         '</section>';
     }).join('') + '</div>';
   }
@@ -75,11 +97,10 @@
   function decorateOpenLesson() {
     var detail = document.querySelector('#study-detail-content .lesson-detail-v2');
     if (!detail) return false;
-
     var level = Number(detail.getAttribute('data-level') || 0);
-    var cards = LESSON_IMAGE_CARDS[level];
+    var lesson = getLesson(level);
+    var cards = lesson && lesson.imageCards;
     if (!cards || !cards.length) return false;
-
     if (detail.querySelector('.lesson-image-flow')) return true;
 
     var sections = detail.querySelectorAll('.lesson-v2-section');
@@ -93,7 +114,6 @@
     }
     if (!anchor) anchor = detail.querySelector('.lesson-teacher-v2') || detail.querySelector('.lesson-v2-hero');
     if (!anchor) return false;
-
     anchor.insertAdjacentHTML('afterend', imageFlowHtml(cards));
     return true;
   }
@@ -102,7 +122,8 @@
     var detail = document.querySelector('#study-detail-content .lesson-detail-v2');
     if (!detail) return;
     var level = Number(detail.getAttribute('data-level') || 0);
-    if ((level === 2 || level === 3) && typeof window.openStudyDetail === 'function') {
+    var lesson = getLesson(level);
+    if (lesson && lesson.imageCards && lesson.imageCards.length && typeof window.openStudyDetail === 'function') {
       window.openStudyDetail(level);
       window.setTimeout(decorateOpenLesson, 0);
     }
@@ -110,81 +131,69 @@
 
   function wrapOpenStudyDetail() {
     var original = window.openStudyDetail;
-    if (typeof original !== 'function' || original.__lessonImagesWrapped) return false;
-
+    if (typeof original !== 'function' || original.__lessonImagesV3Wrapped) return false;
     var wrapped = function () {
       var result = original.apply(this, arguments);
-      window.setTimeout(function () {
-        injectLessonData();
-        decorateOpenLesson();
-      }, 0);
+      window.setTimeout(decorateOpenLesson, 0);
       return result;
     };
-    wrapped.__lessonImagesWrapped = true;
+    wrapped.__lessonImagesV3Wrapped = true;
     window.openStudyDetail = wrapped;
     return true;
   }
 
   function observeStudyDetail() {
     var host = document.getElementById('study-detail-content');
-    if (!host || host.__lessonImagesObserved) return;
-    host.__lessonImagesObserved = true;
-
-    var observer = new MutationObserver(function () {
-      injectLessonData();
-      decorateOpenLesson();
-    });
-    observer.observe(host, { childList: true, subtree: true });
+    if (!host || host.__lessonImagesV3Observed) return;
+    host.__lessonImagesV3Observed = true;
+    new MutationObserver(function () { decorateOpenLesson(); })
+      .observe(host, { childList: true, subtree: true });
   }
 
   function boot() {
-    injectLessonData();
-    observeStudyDetail();
+    injectStaticCards();
     wrapOpenStudyDetail();
+    observeStudyDetail();
     decorateOpenLesson();
+
+    loadExtendedCards().then(function () {
+      injectStaticCards();
+      wrapOpenStudyDetail();
+      observeStudyDetail();
+      refreshOpenLesson();
+      decorateOpenLesson();
+    });
 
     var attempts = 0;
     var timer = window.setInterval(function () {
       attempts += 1;
-      injectLessonData();
-      observeStudyDetail();
+      injectStaticCards();
       wrapOpenStudyDetail();
+      observeStudyDetail();
       decorateOpenLesson();
-      if (attempts >= 40 || (window.openStudyDetail && document.getElementById('study-detail-content'))) {
+      if (attempts >= 50 || (window.openStudyDetail && window.CNC_LEARNING_VECTOR_POSTERS)) {
         window.clearInterval(timer);
       }
     }, 100);
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', boot);
-  } else {
-    boot();
-  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
   window.addEventListener('load', function () {
-    injectLessonData();
-    wrapOpenStudyDetail();
-    observeStudyDetail();
-    refreshOpenLesson();
-    decorateOpenLesson();
+    injectStaticCards();
+    loadExtendedCards().then(function () { refreshOpenLesson(); decorateOpenLesson(); });
   });
 
   window.CNC_IMPORT_TEST = {
     runAll: function () {
-      var content = window.CNC_LEARNING_CONTENT;
-      var lessons = content && content.lessons;
-      var lesson2 = lessons && (lessons[2] || lessons['2']);
-      var lesson3 = lessons && (lessons[3] || lessons['3']);
-      var result = {
-        passed: Boolean(
-          lesson2 && Array.isArray(lesson2.imageCards) && lesson2.imageCards.length === 2 &&
-          lesson3 && Array.isArray(lesson3.imageCards) && lesson3.imageCards.length === 2
-        ),
-        lesson2Images: lesson2 && lesson2.imageCards ? lesson2.imageCards.length : 0,
-        lesson3Images: lesson3 && lesson3.imageCards ? lesson3.imageCards.length : 0,
-        openLessonDecorated: Boolean(document.querySelector('#study-detail-content .lesson-image-flow'))
-      };
-      console.log('[新手课程图片检查]', result);
+      var result = { passed: true, lessons: {}, openLessonDecorated: Boolean(document.querySelector('#study-detail-content .lesson-image-flow')) };
+      for (var level = 2; level <= 12; level += 1) {
+        var lesson = getLesson(level);
+        var count = lesson && Array.isArray(lesson.imageCards) ? lesson.imageCards.length : 0;
+        result.lessons[level] = count;
+        if (count < 2) result.passed = false;
+      }
+      console.log('[新手课程图片检查 V3]', result);
       return result;
     }
   };
