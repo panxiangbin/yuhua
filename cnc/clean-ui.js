@@ -3,6 +3,7 @@
   'use strict';
 
   var BUILD = '20260720k';
+  var QUERY_BUILD = '20260720n';
   var originalRenderWorkspace = null;
 
   function ensureStateStyle() {
@@ -18,6 +19,33 @@
       '}' +
     '}';
     document.head.appendChild(style);
+  }
+
+  function ensureQueryModes() {
+    if (!document.querySelector('link[data-cnc-query-modes-style]')) {
+      var link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = './query-modes.css?v=' + QUERY_BUILD;
+      link.dataset.cncQueryModesStyle = 'true';
+      document.head.appendChild(link);
+    }
+
+    if (window.CNC_QUERY_MODES && window.CNC_QUERY_MODES.build === QUERY_BUILD) {
+      if (window.CNC_QUERY_MODES.refresh) window.CNC_QUERY_MODES.refresh();
+      return true;
+    }
+
+    if (!document.querySelector('script[data-cnc-query-modes-script]')) {
+      var script = document.createElement('script');
+      script.src = './query-modes.js?v=' + QUERY_BUILD;
+      script.async = true;
+      script.dataset.cncQueryModesScript = 'true';
+      script.addEventListener('error', function () {
+        console.error('[CNC查询拆分] 独立查询模块加载失败');
+      }, { once: true });
+      document.head.appendChild(script);
+    }
+    return false;
   }
 
   function openMobilePanel() {
@@ -85,11 +113,17 @@
   }
 
   ensureStateStyle();
+  ensureQueryModes();
 
   var tries = 0;
   var timer = window.setInterval(function () {
     tries += 1;
-    if (patchWorkspaceRenderer() || tries > 120) window.clearInterval(timer);
+    ensureQueryModes();
+    if (patchWorkspaceRenderer() && window.CNC_QUERY_MODES && window.CNC_QUERY_MODES.build === QUERY_BUILD) {
+      window.clearInterval(timer);
+    } else if (tries > 120) {
+      window.clearInterval(timer);
+    }
   }, 100);
 
   document.addEventListener('click', function (event) {
@@ -101,9 +135,11 @@
 
   window.CNC_CLEAN_UI = {
     build: BUILD,
+    queryBuild: QUERY_BUILD,
     openMobilePanel: openMobilePanel,
     closeMobilePanel: closeMobilePanel,
     confirmMobilePanel: confirmMobilePanel,
-    bindResultButtons: bindResultButtons
+    bindResultButtons: bindResultButtons,
+    ensureQueryModes: ensureQueryModes
   };
 })();
