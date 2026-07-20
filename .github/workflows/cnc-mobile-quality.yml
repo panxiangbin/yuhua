@@ -29,6 +29,9 @@ jobs:
           node --check cnc/sw.js
           node --check cnc/tests/mobile-home-smoke.cjs
           node --check cnc/tests/mobile-gcode-smoke.cjs
+          node --check cnc/tests/mobile-gcode-layout-smoke.cjs
+          node --check cnc/tests/mobile-gcode-search-smoke.cjs
+          node --check cnc/tests/mobile-gcode-detail-smoke.cjs
           node --check cnc/tests/mobile-other-search-smoke.cjs
           node --check cnc/tests/mobile-sw-smoke.cjs
       - name: Stability and clean UI assertions
