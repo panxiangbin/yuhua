@@ -1,7 +1,7 @@
 /* 新手课程图片稳定归位：按图片标题分类，重复执行结果保持一致 */
 (function(){
   'use strict';
-  var BUILD='20260720g';
+  var BUILD='20260720h';
   function lesson(n){var c=window.CNC_LEARNING_CONTENT;return c&&c.lessons&&(c.lessons[n]||c.lessons[String(n)])}
   function cards(n){var l=lesson(n);return l&&Array.isArray(l.imageCards)?l.imageCards:[]}
   function clone(list){return list.map(function(x){return Object.assign({},x)})}
@@ -35,10 +35,10 @@
     }
     return true;
   }
-  var tries=0,successful=0;
+  var tries=0;
   var timer=setInterval(function(){
     tries+=1;
-    if(align())successful+=1;
+    align();
     if(tries>=60)clearInterval(timer);
   },100);
   window.addEventListener('load',function(){
