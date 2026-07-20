@@ -14,6 +14,12 @@
     return true;
   }
 
+  function confirmMobilePanel() {
+    openMobilePanel();
+    window.setTimeout(openMobilePanel, 50);
+    window.setTimeout(openMobilePanel, 200);
+  }
+
   document.addEventListener('click', function (event) {
     if (window.innerWidth > 768 || !event.target || !event.target.closest) return;
 
@@ -21,11 +27,12 @@
     if (!trigger) return;
 
     window.__CNC_STABLE_LIST_SCROLL__ = window.scrollY;
-    window.setTimeout(openMobilePanel, 0);
+    window.setTimeout(confirmMobilePanel, 0);
   }, true);
 
   window.CNC_CLEAN_UI = {
     build: BUILD,
-    openMobilePanel: openMobilePanel
+    openMobilePanel: openMobilePanel,
+    confirmMobilePanel: confirmMobilePanel
   };
 })();
