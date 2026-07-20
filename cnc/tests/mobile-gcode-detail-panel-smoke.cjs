@@ -17,11 +17,14 @@ const assert = require('node:assert/strict');
 
   await page.waitForFunction(() => {
     const panel = document.querySelector('#detail-panel');
-    return panel && panel.classList.contains('mobile-open');
+    const body = document.body;
+    if (!panel || !body) return false;
+    const style = getComputedStyle(panel);
+    return body.getAttribute('data-cnc-detail-open') === 'true' && style.display !== 'none' && style.position === 'fixed';
   }, null, { timeout: 15000 });
 
-  assert.equal(await page.locator('#detail-panel').evaluate(node => getComputedStyle(node).position), 'fixed');
+  assert.equal(await page.locator('#detail-panel').isVisible(), true);
   assert.equal(await page.locator('#detail-back-btn').isVisible(), true);
-  console.log('G/M手机详情全屏面板通过');
+  console.log('G/M手机详情实际全屏显示通过');
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });
