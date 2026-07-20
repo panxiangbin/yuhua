@@ -49,8 +49,11 @@ jobs:
       - name: Mobile G-code search cards
         run: node cnc/tests/mobile-gcode-search-smoke.cjs
 
-      - name: Mobile G-code fullscreen detail
-        run: node cnc/tests/mobile-gcode-detail-smoke.cjs
+      - name: Mobile G01 detail content
+        run: node cnc/tests/mobile-gcode-detail-content-smoke.cjs
+
+      - name: Mobile G-code fullscreen panel
+        run: node cnc/tests/mobile-gcode-detail-panel-smoke.cjs
 
       - name: Mobile alarm and parameter clean journey
         run: node cnc/tests/mobile-other-search-smoke.cjs
