@@ -17,7 +17,7 @@ const assert = require('node:assert/strict');
 
   const paramsCard = page.locator('.launchpad-card[data-filter="params"]').first();
   await paramsCard.waitFor({ state: 'visible', timeout: 30000 });
-  await paramsCard.click();
+  await paramsCard.tap();
 
   await page.waitForSelector('#view-workspace.active #result-list .result-card', {
     state: 'visible',
@@ -53,7 +53,7 @@ const assert = require('node:assert/strict');
   assert.equal(style.opacity, '0');
   assert.equal(style.position, 'absolute');
 
-  await button.click({ force: true });
+  await button.tap({ force: true });
   await page.waitForFunction(() => {
     const panel = document.querySelector('#detail-panel');
     const body = document.body;
@@ -63,7 +63,7 @@ const assert = require('node:assert/strict');
   }, null, { timeout: 15000 });
 
   assert.equal(await page.locator('#detail-panel').isVisible(), true);
-  console.log('报警/参数查询减法界面、整卡点击和实际全屏详情通过');
+  console.log('报警/参数查询减法界面、手机触摸和实际全屏详情通过');
   await browser.close();
 })().catch(error => {
   console.error(error);
