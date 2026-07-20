@@ -21,7 +21,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
 
       - name: Install browser test runtime
         run: |
@@ -31,7 +31,6 @@ jobs:
       - name: Start local site
         run: |
           python3 -m http.server 4173 --directory . >/tmp/cnc-http.log 2>&1 &
-          echo $! >/tmp/cnc-http.pid
           for i in $(seq 1 30); do
             if curl -fsS http://127.0.0.1:4173/cnc/ >/dev/null; then
               exit 0
@@ -41,90 +40,11 @@ jobs:
           cat /tmp/cnc-http.log
           exit 1
 
-      - name: Run 390px mobile journey
-        run: |
-          node <<'NODE'
-          const { chromium } = require('playwright');
-          const assert = require('node:assert/strict');
+      - name: Mobile homepage opens and copy is correct
+        run: node cnc/tests/mobile-home-smoke.cjs
 
-          (async () => {
-            const browser = await chromium.launch({ headless: true });
-            const context = await browser.newContext({
-              viewport: { width: 390, height: 844 },
-              deviceScaleFactor: 2,
-              isMobile: true,
-              hasTouch: true,
-              userAgent: 'Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/126 Mobile Safari/537.36'
-            });
-            const page = await context.newPage();
-            const pageErrors = [];
-            page.on('pageerror', error => pageErrors.push(String(error)));
+      - name: Mobile G-code search and detail journey
+        run: node cnc/tests/mobile-gcode-smoke.cjs
 
-            const startedAt = Date.now();
-            await page.goto('http://127.0.0.1:4173/cnc/?smoke=1', {
-              waitUntil: 'domcontentloaded',
-              timeout: 60000
-            });
-
-            await page.waitForSelector('.launchpad-card[data-filter="gcode"]', {
-              state: 'visible',
-              timeout: 30000
-            });
-
-            assert.equal(await page.title(), '数控小潘 CNC速查与学习助手');
-
-            const lesson9 = await page.locator('.study-card[data-level="9"] p').textContent();
-            const lesson10 = await page.locator('.study-card[data-level="10"] p').textContent();
-            assert.match(lesson9 || '', /不保证直线/);
-            assert.match(lesson10 || '', /最小输入单位/);
-
-            await page.locator('.launchpad-card[data-filter="gcode"]').click();
-            await page.waitForFunction(() => {
-              const view = document.querySelector('#view-workspace');
-              return view && view.classList.contains('active');
-            }, null, { timeout: 30000 });
-
-            await page.waitForFunction(() => window.__CNC_GM_PRO_INSTALLED__ === '20260720h', null, {
-              timeout: 30000
-            });
-
-            await page.locator('#search-input').fill('G1');
-            await page.waitForTimeout(500);
-            const resultText = await page.locator('#result-list').textContent();
-            assert.match(resultText || '', /G01/);
-
-            const firstResult = page.locator('#result-list .result-card').first();
-            await firstResult.waitFor({ state: 'visible', timeout: 15000 });
-            await firstResult.click();
-            await page.waitForFunction(() => {
-              const title = document.querySelector('#detail-title');
-              return title && /G01/.test(title.textContent || '');
-            }, null, { timeout: 15000 });
-
-            const back = page.locator('#detail-back-btn');
-            if (await back.isVisible()) await back.click();
-
-            const registrations = await page.evaluate(async () => {
-              if (!('serviceWorker' in navigator)) return [];
-              const regs = await navigator.serviceWorker.getRegistrations();
-              return regs.map(reg => reg.scope);
-            });
-            assert.equal(registrations.length, 0, '不应重新注册 Service Worker');
-
-            assert.equal(pageErrors.length, 0, '页面脚本异常：' + pageErrors.join('\n'));
-            const elapsed = Date.now() - startedAt;
-            assert.ok(elapsed < 45000, '手机流程耗时过长：' + elapsed + 'ms');
-
-            console.log(JSON.stringify({
-              passed: true,
-              elapsedMs: elapsed,
-              title: await page.title(),
-              search: 'G1 -> G01',
-              serviceWorkers: registrations.length
-            }, null, 2));
-            await browser.close();
-          })().catch(error => {
-            console.error(error);
-            process.exit(1);
-          });
-          NODE
+      - name: Service Worker remains disabled
+        run: node cnc/tests/mobile-sw-smoke.cjs
