@@ -9,9 +9,9 @@ on:
       - "cnc/import-test.js"
       - "cnc/sw.js"
       - "cnc-recover.html"
+      - "cnc/tests/mobile-*.cjs"
       - ".github/workflows/cnc-mobile-quality.yml"
       - ".github/workflows/cnc-mobile-smoke.yml"
-      - ".github/tests/cnc-mobile-*.js"
   workflow_dispatch:
 
 permissions:
@@ -27,9 +27,9 @@ jobs:
           node --check cnc/mobile-gcode-pro.js
           node --check cnc/import-test.js
           node --check cnc/sw.js
-          node --check .github/tests/cnc-mobile-home.js
-          node --check .github/tests/cnc-mobile-gcode.js
-          node --check .github/tests/cnc-mobile-sw.js
+          node --check cnc/tests/mobile-home-smoke.cjs
+          node --check cnc/tests/mobile-gcode-smoke.cjs
+          node --check cnc/tests/mobile-sw-smoke.cjs
       - name: Stability and clean UI assertions
         run: |
           grep -q "20260720k" cnc/import-test.js
