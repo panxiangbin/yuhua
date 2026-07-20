@@ -7,7 +7,7 @@ on:
       - "cnc/mobile-gcode-pro.css"
       - "cnc/import-test.js"
       - "cnc/sw.js"
-      - ".github/workflows/deploy-cnc-pages.yml"
+      - "cnc-recover.html"
       - ".github/workflows/cnc-mobile-quality.yml"
   workflow_dispatch:
 
@@ -24,13 +24,15 @@ jobs:
           node --check cnc/mobile-gcode-pro.js
           node --check cnc/import-test.js
           node --check cnc/sw.js
-      - name: Emergency recovery assertions
+      - name: Recovery and mobile assertions
         run: |
           grep -q "20260720i" cnc/import-test.js
           grep -q "20260720i" cnc/sw.js
           grep -q "loadGcodePro" cnc/import-test.js
-          grep -q "getRegistrations" .github/workflows/deploy-cnc-pages.yml
-          grep -q "recovered=20260720i" .github/workflows/deploy-cnc-pages.yml
+          grep -q "正在恢复数控网站" cnc-recover.html
+          grep -q "./cnc/?recovered=20260720i" cnc-recover.html
+          grep -q "getRegistrations" cnc-recover.html
+          grep -q "/yuhua/cnc/" cnc-recover.html
           if grep -q "learning-images-04-12" cnc/import-test.js; then
             echo "Homepage bootstrap must not auto-load the large lesson image bundle"
             exit 1
