@@ -1,27 +1,10 @@
-/* 数控小潘手机减法界面交互层：让G/M结果整卡稳定打开详情。 */
+/* 数控小潘手机减法界面交互层：保留原详情逻辑，只补全手机全屏状态。 */
 (function () {
   'use strict';
 
   var BUILD = '20260720k';
 
-  function getCurrentState() {
-    try {
-      return state;
-    } catch (error) {
-      return null;
-    }
-  }
-
-  function openResultCard(entryId) {
-    var current = getCurrentState();
-    if (!current || !entryId) return false;
-
-    current.selectedId = entryId;
-    window.__CNC_STABLE_LIST_SCROLL__ = window.scrollY;
-
-    if (typeof renderWorkspace === 'function') renderWorkspace();
-    if (typeof renderDetail === 'function') renderDetail();
-
+  function openMobilePanel() {
     var panel = document.getElementById('detail-panel');
     if (!panel) return false;
 
@@ -34,24 +17,15 @@
   document.addEventListener('click', function (event) {
     if (window.innerWidth > 768 || !event.target || !event.target.closest) return;
 
-    var current = getCurrentState();
-    if (!current || current.activeFilter !== 'gcode') return;
+    var trigger = event.target.closest('#result-list [data-open-entry]');
+    if (!trigger) return;
 
-    var card = event.target.closest('#result-list .result-card');
-    if (!card) return;
-
-    var trigger = event.target.closest('[data-open-entry]') || card.querySelector('[data-open-entry]');
-    var entryId = trigger && trigger.dataset ? trigger.dataset.openEntry : '';
-    if (!entryId) return;
-
-    event.preventDefault();
-    event.stopPropagation();
-    if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
-    openResultCard(entryId);
+    window.__CNC_STABLE_LIST_SCROLL__ = window.scrollY;
+    window.setTimeout(openMobilePanel, 0);
   }, true);
 
   window.CNC_CLEAN_UI = {
     build: BUILD,
-    openResultCard: openResultCard
+    openMobilePanel: openMobilePanel
   };
 })();
