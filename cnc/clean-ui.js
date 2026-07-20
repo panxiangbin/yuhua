@@ -4,10 +4,26 @@
 
   var BUILD = '20260720k';
 
+  function ensureStateStyle() {
+    if (document.querySelector('style[data-cnc-detail-state]')) return;
+    var style = document.createElement('style');
+    style.dataset.cncDetailState = 'true';
+    style.textContent = '@media (max-width:768px){' +
+      'body.cnc-clean-ui[data-cnc-detail-open="true"]{overflow:hidden!important;}' +
+      'body.cnc-clean-ui[data-cnc-detail-open="true"] #view-workspace .detail-panel{' +
+        'display:block!important;position:fixed!important;inset:0!important;' +
+        'z-index:500!important;width:100vw!important;height:100dvh!important;' +
+        'overflow-y:auto!important;' +
+      '}' +
+    '}';
+    document.head.appendChild(style);
+  }
+
   function openMobilePanel() {
     var panel = document.getElementById('detail-panel');
     if (!panel || !document.body) return false;
 
+    ensureStateStyle();
     panel.classList.add('mobile-open');
     panel.scrollTop = 0;
     document.body.classList.add('cnc-detail-open');
@@ -39,6 +55,7 @@
     confirmMobilePanel();
   }
 
+  ensureStateStyle();
   document.addEventListener('pointerdown', handleOpenIntent, true);
   document.addEventListener('click', function (event) {
     if (!event.target || !event.target.closest) return;
