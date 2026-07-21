@@ -4,6 +4,7 @@
 
   var BUILD = '20260721v';
   var retryDelays = [0, 60, 160, 360, 760, 1300];
+  var resultBindingDelays = [0, 60, 180, 360, 720, 1200];
   var booted = false;
 
   function activeViewId() {
@@ -67,7 +68,7 @@
   }
 
   function scheduleResultBinding() {
-    [0, 40, 120, 280].forEach(function (delay) {
+    resultBindingDelays.forEach(function (delay) {
       window.setTimeout(decorateResults, delay);
     });
   }
@@ -79,12 +80,13 @@
     retryDelays.forEach(function (delay) {
       window.setTimeout(syncWorkspaceSurface, delay);
     });
+    scheduleResultBinding();
     window.__CNC_INDUSTRIAL_WORKSPACE_READY_AT__ = Math.round(performance.now());
   }
 
   /*
    * 纯事件驱动：不包裹 renderWorkspace，不改写搜索、详情或路由核心函数。
-   * 动态结果仅通过 clean-ui 已公开的 bindResultButtons 接口做有限次数绑定。
+   * 旧搜索存在延迟重绘，因此在输入后1.2秒内做有限次数绑定，不启动永久定时器。
    */
   document.addEventListener('click', function (event) {
     if (!event.target || !event.target.closest) return;
@@ -121,6 +123,7 @@
     eventDriven: true,
     rendererPatched: false,
     maxReadinessAttempts: retryDelays.length,
+    maxBindingAttempts: resultBindingDelays.length,
     sync: syncWorkspaceSurface,
     bindResults: bindStableResults,
     runCheck: function () {
