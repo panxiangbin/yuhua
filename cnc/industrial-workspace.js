@@ -7,6 +7,57 @@
   var resultBindingDelays = [0, 60, 180, 360, 720, 1200];
   var booted = false;
 
+  function ensureSuggestionStyle() {
+    if (document.querySelector('style[data-cnc-industrial-suggestions]')) return;
+    var style = document.createElement('style');
+    style.dataset.cncIndustrialSuggestions = 'true';
+    style.textContent = '@media(max-width:768px){' +
+      'body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #search-suggestions{' +
+        'position:static!important;inset:auto!important;z-index:auto!important;' +
+        'width:100%!important;max-height:176px!important;margin:9px 0 0!important;' +
+        'padding:5px!important;overflow-y:auto!important;border:1px solid var(--cnc-ic-line)!important;' +
+        'border-radius:9px!important;background:var(--cnc-ic-surface-soft)!important;' +
+        'box-shadow:inset 0 1px 2px rgba(46,43,38,.06)!important;' +
+      '}' +
+      'body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #search-suggestions[hidden]{display:none!important;}' +
+      'body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #search-suggestions .suggestion-item{' +
+        'display:grid!important;grid-template-columns:34px minmax(0,1fr) auto!important;gap:8px!important;' +
+        'width:100%!important;min-height:42px!important;padding:7px 8px!important;' +
+        'align-items:center!important;border:0!important;border-bottom:1px solid var(--cnc-ic-line)!important;' +
+        'border-radius:6px!important;background:transparent!important;color:var(--cnc-ic-ink)!important;' +
+        'box-shadow:none!important;text-align:left!important;' +
+      '}' +
+      'body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #search-suggestions .suggestion-item:last-child{border-bottom:0!important;}' +
+      'body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #search-suggestions .suggestion-item:active{' +
+        'background:var(--cnc-ic-surface-pressed)!important;transform:translateY(1px)!important;' +
+      '}' +
+      'body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #search-suggestions .suggestion-type-badge{' +
+        'display:inline-flex!important;width:30px!important;height:28px!important;align-items:center!important;justify-content:center!important;' +
+        'border:1px solid var(--cnc-ic-line-strong)!important;border-radius:6px!important;background:var(--cnc-ic-surface)!important;' +
+        'color:var(--cnc-iw-accent)!important;font-family:var(--cnc-ic-code-font)!important;font-size:11px!important;font-weight:900!important;' +
+      '}' +
+      'body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #search-suggestions .suggestion-text{' +
+        'font-family:var(--cnc-ic-code-font)!important;font-size:15px!important;font-weight:900!important;' +
+      '}' +
+      'body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #search-suggestions .suggestion-category{' +
+        'color:var(--cnc-ic-muted)!important;font-size:11px!important;font-weight:700!important;' +
+      '}' +
+    '}';
+    document.head.appendChild(style);
+  }
+
+  function closeSuggestions() {
+    var box = document.getElementById('search-suggestions');
+    if (!box) return;
+    if (window.CNC_FRONTEND && typeof window.CNC_FRONTEND.closeSuggestionBox === 'function') {
+      window.CNC_FRONTEND.closeSuggestionBox(box);
+      return;
+    }
+    box.style.display = 'none';
+    box.hidden = true;
+    box.setAttribute('aria-hidden', 'true');
+  }
+
   function activeViewId() {
     var active = document.querySelector('.view.active');
     return active ? active.id : '';
@@ -22,9 +73,7 @@
 
   function currentMode() {
     try {
-      if (typeof state !== 'undefined' && state && state.activeFilter) {
-        return String(state.activeFilter);
-      }
+      if (typeof state !== 'undefined' && state && state.activeFilter) return String(state.activeFilter);
     } catch (ignored) {}
     return String(document.body && document.body.getAttribute('data-cnc-query-mode') || 'all');
   }
@@ -55,14 +104,13 @@
   function syncWorkspaceSurface() {
     if (!document.body) return false;
     document.body.classList.add('cnc-industrial-workspace');
-
     var active = activeViewId() === 'view-workspace' && !detailOpen();
     if (!active) {
       document.body.removeAttribute('data-cnc-industrial-workspace');
       document.body.removeAttribute('data-cnc-industrial-mode');
+      closeSuggestions();
       return false;
     }
-
     document.body.setAttribute('data-cnc-industrial-workspace', 'true');
     document.body.setAttribute('data-cnc-industrial-mode', currentMode());
     decorateResults();
@@ -92,7 +140,6 @@
   }
 
   function scheduleOpenFallback(entryId) {
-    /* 原有按钮/整卡点击先完整执行；仅当最终没有选中目标时才兜底。 */
     window.setTimeout(function () { fallbackOpenEntry(entryId); }, 0);
     window.setTimeout(function () { fallbackOpenEntry(entryId); }, 90);
   }
@@ -100,18 +147,13 @@
   function boot() {
     if (booted) return;
     booted = true;
+    ensureSuggestionStyle();
     document.body && document.body.classList.add('cnc-industrial-workspace');
-    retryDelays.forEach(function (delay) {
-      window.setTimeout(syncWorkspaceSurface, delay);
-    });
+    retryDelays.forEach(function (delay) { window.setTimeout(syncWorkspaceSurface, delay); });
     scheduleResultBinding();
     window.__CNC_INDUSTRIAL_WORKSPACE_READY_AT__ = Math.round(performance.now());
   }
 
-  /*
-   * 纯事件驱动：不包裹 renderWorkspace，不改写搜索、详情或路由核心函数。
-   * 旧搜索存在延迟重绘，因此在输入后1.2秒内做有限次数绑定，不启动永久定时器。
-   */
   document.addEventListener('click', function (event) {
     if (!event.target || !event.target.closest) return;
     var openButton = event.target.closest('[data-open-entry]');
@@ -121,6 +163,7 @@
       var nestedButton = resultCard.querySelector('[data-open-entry]');
       entryId = nestedButton ? nestedButton.getAttribute('data-open-entry') : '';
     }
+    if (resultCard || openButton) closeSuggestions();
     if (entryId) scheduleOpenFallback(entryId);
     if (event.target.closest('[data-route],[data-filter],[data-open-entry],#result-list .result-card,#detail-back-btn,#home-btn,.xp-bottom-nav button')) {
       scheduleInteractionSync();
@@ -128,12 +171,21 @@
     }
   }, false);
 
-  document.addEventListener('input', function (event) {
-    if (event.target && event.target.id === 'search-input') {
-      scheduleResultBinding();
-    }
+  document.addEventListener('pointerdown', function (event) {
+    if (event.target && event.target.closest && event.target.closest('#result-list')) closeSuggestions();
   }, true);
 
+  document.addEventListener('input', function (event) {
+    if (event.target && event.target.id === 'search-input') scheduleResultBinding();
+  }, true);
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') closeSuggestions();
+  }, true);
+
+  window.addEventListener('scroll', function () {
+    if (activeViewId() === 'view-workspace') closeSuggestions();
+  }, { passive: true });
   window.addEventListener('hashchange', scheduleInteractionSync);
   window.addEventListener('popstate', scheduleInteractionSync);
   document.addEventListener('DOMContentLoaded', boot, { once: true });
@@ -142,11 +194,7 @@
     scheduleResultBinding();
   }, { once: true });
 
-  if (document.readyState === 'loading') {
-    /* DOMContentLoaded 会执行 boot。 */
-  } else {
-    boot();
-  }
+  if (document.readyState !== 'loading') boot();
 
   window.CNC_INDUSTRIAL_WORKSPACE = {
     build: BUILD,
@@ -158,6 +206,7 @@
     maxBindingAttempts: resultBindingDelays.length,
     sync: syncWorkspaceSurface,
     bindResults: bindStableResults,
+    closeSuggestions: closeSuggestions,
     fallbackOpenEntry: fallbackOpenEntry,
     runCheck: function () {
       var active = document.body && document.body.getAttribute('data-cnc-industrial-workspace') === 'true';
@@ -167,6 +216,7 @@
         active: active,
         mode: document.body ? document.body.getAttribute('data-cnc-industrial-mode') || '' : '',
         decoratedResults: cards.length,
+        suggestionsStatic: Boolean(document.querySelector('style[data-cnc-industrial-suggestions]')),
         polling: false,
         observer: false,
         eventDriven: true,
