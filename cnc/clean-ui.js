@@ -64,8 +64,12 @@
     if (!isG01Entry(entryId) && !/^G0?1(?:[^0-9]|$)/.test(code)) return;
     document.body.classList.add('cnc-industrial-sample');
     document.body.setAttribute('data-cnc-industrial-surface', 'g01');
-    if (window.CNC_INDUSTRIAL_SAMPLE && typeof window.CNC_INDUSTRIAL_SAMPLE.sync === 'function') {
-      window.CNC_INDUSTRIAL_SAMPLE.sync();
+    if (window.CNC_INDUSTRIAL_SAMPLE) {
+      if (typeof window.CNC_INDUSTRIAL_SAMPLE.setEntry === 'function') {
+        window.CNC_INDUSTRIAL_SAMPLE.setEntry(entryId || 'kb-gcode-g01');
+      } else if (typeof window.CNC_INDUSTRIAL_SAMPLE.sync === 'function') {
+        window.CNC_INDUSTRIAL_SAMPLE.sync();
+      }
       if (document.body.getAttribute('data-cnc-industrial-surface') !== 'g01') {
         document.body.setAttribute('data-cnc-industrial-surface', 'g01');
       }
@@ -88,6 +92,9 @@
   function closeMobilePanel() {
     var panel = document.getElementById('detail-panel');
     if (panel) panel.classList.remove('mobile-open', 'show-secondary');
+    if (window.CNC_INDUSTRIAL_SAMPLE && typeof window.CNC_INDUSTRIAL_SAMPLE.clearEntry === 'function') {
+      window.CNC_INDUSTRIAL_SAMPLE.clearEntry();
+    }
     if (document.body) {
       document.body.classList.remove('cnc-detail-open');
       document.body.removeAttribute('data-cnc-detail-open');
