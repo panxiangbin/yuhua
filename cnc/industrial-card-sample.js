@@ -5,6 +5,7 @@
   var BUILD = '20260721t';
   var patchedRenderWorkspace = false;
   var patchedRenderDetail = false;
+  var pendingEntryId = '';
   var retryDelays = [0, 80, 180, 360, 700, 1200];
 
   var cardRules = [
@@ -50,6 +51,10 @@
     return /^G0?1(?:[^0-9]|$)/.test(text);
   }
 
+  function isG01EntryId(value) {
+    return /(?:^|[-_])g0?1$/i.test(String(value || '')) || /gcode-g0?1/i.test(String(value || ''));
+  }
+
   function activeViewId() {
     var active = document.querySelector('.view.active');
     return active ? active.id : '';
@@ -63,7 +68,7 @@
       (document.body && document.body.getAttribute('data-cnc-detail-open') === 'true') ||
       (window.innerWidth > 768 && activeViewId() === 'view-workspace')
     ));
-    return opened && isG01Code(codeText);
+    return opened && (isG01Code(codeText) || isG01EntryId(pendingEntryId));
   }
 
   function decorateHomeCards() {
@@ -158,6 +163,9 @@
   function bindEvents() {
     document.addEventListener('click', function (event) {
       if (!event.target || !event.target.closest) return;
+      var entryButton = event.target.closest('[data-open-entry]');
+      if (entryButton) pendingEntryId = entryButton.getAttribute('data-open-entry') || '';
+      if (event.target.closest('#detail-back-btn,[data-cnc-bottom="back"]')) pendingEntryId = '';
       if (event.target.closest('[data-route],[data-filter],.result-card,[data-open-entry],#detail-back-btn,#favorite-toggle,.xp-bottom-nav button')) {
         scheduleInteractionSync();
       }
@@ -207,6 +215,7 @@
         build: BUILD,
         surface: surface,
         decoratedCards: cards.length,
+        pendingEntryId: pendingEntryId,
         workspacePatched: patchedRenderWorkspace,
         detailPatched: patchedRenderDetail,
         polling: false,
