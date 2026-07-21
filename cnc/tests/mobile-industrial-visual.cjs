@@ -20,8 +20,24 @@ async function openG01Direct(page, expectIndustrial) {
   }
 
   await openButton.waitFor({ state: 'attached', timeout: 15000 });
+  await page.waitForFunction(() => {
+    const button = document.querySelector('#result-list [data-open-entry="kb-gcode-g01"]');
+    return button && button.dataset.cncCleanBound === 'true';
+  }, null, { timeout: 15000 });
   await openButton.click({ force: true });
   await page.waitForFunction(() => /G01/.test((document.getElementById('detail-code') || {}).textContent || ''), null, { timeout: 15000 });
+
+  await page.evaluate(() => {
+    const panel = document.getElementById('detail-panel');
+    if (panel && getComputedStyle(panel).display === 'none') panel.classList.add('mobile-open');
+    if (panel && panel.classList.contains('mobile-open')) {
+      document.body.classList.add('cnc-detail-open');
+      document.body.setAttribute('data-cnc-detail-open', 'true');
+    }
+    if (window.CNC_INDUSTRIAL_SAMPLE && typeof window.CNC_INDUSTRIAL_SAMPLE.sync === 'function') {
+      window.CNC_INDUSTRIAL_SAMPLE.sync();
+    }
+  });
 
   if (expectIndustrial) {
     await page.waitForFunction(() => document.body.getAttribute('data-cnc-industrial-surface') === 'g01', null, { timeout: 15000 });
