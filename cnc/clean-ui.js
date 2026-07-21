@@ -3,7 +3,7 @@
   'use strict';
 
   var BUILD = '20260721q';
-  var QUERY_BUILD = '20260720n';
+  var QUERY_BUILD = '20260721r';
   var originalRenderWorkspace = null;
   var retryDelays = [0, 40, 100, 220, 480, 900, 1600];
   var retryIndex = 0;
