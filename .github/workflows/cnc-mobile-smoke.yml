@@ -51,6 +51,7 @@ jobs:
               exit 1
             fi
           done
+          mkdir -p cnc/test-artifacts/industrial-card-sample
 
       - name: Mobile startup performance and console errors
         run: node cnc/tests/mobile-performance-smoke.cjs
@@ -62,7 +63,9 @@ jobs:
         run: node cnc/tests/mobile-home-smoke.cjs
 
       - name: Mobile industrial homepage and G01 detail acceptance
-        run: node cnc/tests/mobile-industrial-sample-smoke.cjs
+        run: |
+          set -o pipefail
+          node cnc/tests/mobile-industrial-sample-smoke.cjs 2>&1 | tee cnc/test-artifacts/industrial-card-sample/acceptance.log
 
       - name: Mobile alarm parameter fault split
         run: node cnc/tests/mobile-query-split-smoke.cjs
@@ -90,13 +93,15 @@ jobs:
         env:
           CURRENT_URL: http://127.0.0.1:4173
           BASELINE_URL: http://127.0.0.1:4174
-        run: node cnc/tests/mobile-industrial-visual.cjs
+        run: |
+          set -o pipefail
+          node cnc/tests/mobile-industrial-visual.cjs 2>&1 | tee cnc/test-artifacts/industrial-card-sample/visual.log
 
-      - name: Upload industrial sample screenshots
+      - name: Upload industrial sample screenshots and logs
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: cnc-industrial-card-sample-390x844
-          path: cnc/test-artifacts/industrial-card-sample/*.png
+          path: cnc/test-artifacts/industrial-card-sample/*
           retention-days: 14
           if-no-files-found: error
