@@ -13,10 +13,12 @@ permissions:
 jobs:
   mobile-smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 18
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -28,17 +30,27 @@ jobs:
           npm install --no-save playwright@1.52.0
           npx playwright install --with-deps chromium
 
-      - name: Start local site
+      - name: Start current and baseline sites
         run: |
-          python3 -m http.server 4173 --directory . >/tmp/cnc-http.log 2>&1 &
-          for i in $(seq 1 30); do
-            if curl -fsS http://127.0.0.1:4173/cnc/ >/dev/null; then
-              exit 0
+          BASE_REF="${GITHUB_BASE_REF:-main}"
+          git worktree add --force /tmp/cnc-baseline "origin/${BASE_REF}"
+          python3 -m http.server 4173 --directory . >/tmp/cnc-current-http.log 2>&1 &
+          python3 -m http.server 4174 --directory /tmp/cnc-baseline >/tmp/cnc-baseline-http.log 2>&1 &
+          for port in 4173 4174; do
+            ready=0
+            for i in $(seq 1 30); do
+              if curl -fsS "http://127.0.0.1:${port}/cnc/" >/dev/null; then
+                ready=1
+                break
+              fi
+              sleep 1
+            done
+            if [ "$ready" -ne 1 ]; then
+              cat /tmp/cnc-current-http.log || true
+              cat /tmp/cnc-baseline-http.log || true
+              exit 1
             fi
-            sleep 1
           done
-          cat /tmp/cnc-http.log
-          exit 1
 
       - name: Mobile startup performance and console errors
         run: node cnc/tests/mobile-performance-smoke.cjs
@@ -46,8 +58,11 @@ jobs:
       - name: Mobile bottom navigation accessibility
         run: node cnc/tests/mobile-nav-accessibility-smoke.cjs
 
-      - name: Mobile homepage clean layout
+      - name: Mobile homepage industrial card sample
         run: node cnc/tests/mobile-home-smoke.cjs
+
+      - name: Mobile industrial homepage and G01 detail acceptance
+        run: node cnc/tests/mobile-industrial-sample-smoke.cjs
 
       - name: Mobile alarm parameter fault split
         run: node cnc/tests/mobile-query-split-smoke.cjs
@@ -69,3 +84,19 @@ jobs:
 
       - name: Service Worker remains disabled
         run: node cnc/tests/mobile-sw-smoke.cjs
+
+      - name: Generate 390x844 before and after screenshots
+        if: always()
+        env:
+          CURRENT_URL: http://127.0.0.1:4173
+          BASELINE_URL: http://127.0.0.1:4174
+        run: node cnc/tests/mobile-industrial-visual.cjs
+
+      - name: Upload industrial sample screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-industrial-card-sample-390x844
+          path: cnc/test-artifacts/industrial-card-sample/*.png
+          retention-days: 14
+          if-no-files-found: error
