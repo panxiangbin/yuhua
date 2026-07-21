@@ -52,12 +52,16 @@
     return false;
   }
 
-  function syncIndustrialSample() {
+  function isG01Entry(entryId) {
+    return /gcode-g0?1/i.test(String(entryId || '')) || /(?:^|[-_])g0?1$/i.test(String(entryId || ''));
+  }
+
+  function syncIndustrialSample(entryId) {
     if (!document.body) return;
     var code = String((document.getElementById('detail-code') || {}).textContent || '')
       .toUpperCase()
       .replace(/\s+/g, '');
-    if (!/^G0?1(?:[^0-9]|$)/.test(code)) return;
+    if (!isG01Entry(entryId) && !/^G0?1(?:[^0-9]|$)/.test(code)) return;
     document.body.classList.add('cnc-industrial-sample');
     document.body.setAttribute('data-cnc-industrial-surface', 'g01');
     if (window.CNC_INDUSTRIAL_SAMPLE && typeof window.CNC_INDUSTRIAL_SAMPLE.sync === 'function') {
@@ -68,7 +72,7 @@
     }
   }
 
-  function openMobilePanel() {
+  function openMobilePanel(entryId) {
     var panel = document.getElementById('detail-panel');
     if (!panel || !document.body || window.innerWidth > 768) return false;
     ensureStateStyle();
@@ -76,8 +80,8 @@
     panel.scrollTop = 0;
     document.body.classList.add('cnc-detail-open');
     document.body.setAttribute('data-cnc-detail-open', 'true');
-    syncIndustrialSample();
-    window.setTimeout(syncIndustrialSample, 80);
+    syncIndustrialSample(entryId);
+    window.setTimeout(function () { syncIndustrialSample(entryId); }, 80);
     return true;
   }
 
@@ -93,10 +97,10 @@
     }
   }
 
-  function confirmMobilePanel() {
-    openMobilePanel();
-    window.setTimeout(openMobilePanel, 50);
-    window.setTimeout(openMobilePanel, 200);
+  function confirmMobilePanel(entryId) {
+    openMobilePanel(entryId);
+    window.setTimeout(function () { openMobilePanel(entryId); }, 50);
+    window.setTimeout(function () { openMobilePanel(entryId); }, 200);
   }
 
   function bindResultButtons() {
@@ -106,7 +110,9 @@
       button.addEventListener('pointerdown', function () {
         window.__CNC_STABLE_LIST_SCROLL__ = window.scrollY;
       });
-      button.addEventListener('click', confirmMobilePanel);
+      button.addEventListener('click', function () {
+        confirmMobilePanel(button.getAttribute('data-open-entry') || '');
+      });
     });
   }
 
