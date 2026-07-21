@@ -73,6 +73,17 @@
     });
   }
 
+  function selectOpenEntry(openButton) {
+    if (!openButton) return false;
+    var entryId = openButton.getAttribute('data-open-entry') || '';
+    if (!entryId) return false;
+    if (window.app && typeof window.app.selectEntry === 'function') {
+      window.app.selectEntry(entryId);
+      return true;
+    }
+    return false;
+  }
+
   function boot() {
     if (booted) return;
     booted = true;
@@ -90,6 +101,8 @@
    */
   document.addEventListener('click', function (event) {
     if (!event.target || !event.target.closest) return;
+    var openButton = event.target.closest('[data-open-entry]');
+    if (openButton) selectOpenEntry(openButton);
     if (event.target.closest('[data-route],[data-filter],[data-open-entry],#detail-back-btn,#home-btn,.xp-bottom-nav button')) {
       scheduleInteractionSync();
       scheduleResultBinding();
@@ -126,6 +139,7 @@
     maxBindingAttempts: resultBindingDelays.length,
     sync: syncWorkspaceSurface,
     bindResults: bindStableResults,
+    selectEntry: selectOpenEntry,
     runCheck: function () {
       var active = document.body && document.body.getAttribute('data-cnc-industrial-workspace') === 'true';
       var cards = document.querySelectorAll('#result-list .result-card[data-industrial-result="true"]');
