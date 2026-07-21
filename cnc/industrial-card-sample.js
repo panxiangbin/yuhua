@@ -17,6 +17,34 @@
     { match: /换算工具/, glyph: 'ƒ', tone: 'blue' }
   ];
 
+  function ensurePriorityStyle() {
+    if (document.querySelector('style[data-cnc-industrial-priority]')) return;
+    var style = document.createElement('style');
+    style.dataset.cncIndustrialPriority = 'true';
+    style.textContent = '@media(max-width:768px){' +
+      'body.cnc-clean-ui.cnc-vivid-ui.cnc-industrial-sample[data-cnc-industrial-surface="home"] .launchpad-card,' +
+      'body.cnc-clean-ui.cnc-vivid-ui.cnc-industrial-sample[data-cnc-industrial-surface="home"] .launchpad-card.primary{' +
+        'background-image:none!important;background-color:var(--cnc-ic-surface)!important;' +
+        'color:var(--cnc-ic-ink)!important;border:1px solid var(--cnc-ic-line)!important;' +
+        'border-radius:var(--cnc-ic-radius-card)!important;' +
+        'box-shadow:inset 4px 0 0 var(--cnc-ic-accent),var(--cnc-ic-shadow-card)!important;' +
+        'transform:none!important;' +
+      '}' +
+      'body.cnc-clean-ui.cnc-vivid-ui.cnc-industrial-sample[data-cnc-industrial-surface="home"] .launchpad-card h3{' +
+        'color:var(--cnc-ic-ink)!important;font-size:20px!important;font-weight:900!important;' +
+      '}' +
+      'body.cnc-clean-ui.cnc-vivid-ui.cnc-industrial-sample[data-cnc-industrial-surface="home"] .launchpad-card p{' +
+        'display:block!important;color:var(--cnc-ic-muted)!important;font-size:13px!important;font-weight:600!important;' +
+      '}' +
+      'body.cnc-clean-ui.cnc-vivid-ui.cnc-industrial-sample[data-cnc-industrial-surface="home"] .launchpad-card:active{' +
+        'background-image:none!important;background-color:var(--cnc-ic-surface-pressed)!important;' +
+        'box-shadow:inset 4px 0 0 var(--cnc-ic-accent),var(--cnc-ic-shadow-pressed)!important;' +
+        'transform:translateY(1px)!important;' +
+      '}' +
+    '}';
+    document.head.appendChild(style);
+  }
+
   function normalizeCode(value) {
     return String(value || '').toUpperCase().replace(/\s+/g, '').replace(/^G0?(\d+)$/, 'G$1');
   }
@@ -77,6 +105,7 @@
 
   function syncSurface() {
     if (!document.body) return false;
+    ensurePriorityStyle();
     document.body.classList.add('cnc-industrial-sample');
     decorateHomeCards();
 
@@ -136,6 +165,7 @@
   }
 
   function boot() {
+    ensurePriorityStyle();
     decorateHomeCards();
     bindEvents();
     retryDelays.forEach(function (delay) {
@@ -167,7 +197,7 @@
       var surface = document.body ? document.body.getAttribute('data-cnc-industrial-surface') : '';
       var cards = document.querySelectorAll('#view-dashboard .launchpad-card[data-industrial-tone]');
       return {
-        passed: Boolean(document.body && document.body.classList.contains('cnc-industrial-sample') && cards.length >= 6),
+        passed: Boolean(document.body && document.body.classList.contains('cnc-industrial-sample') && cards.length >= 6 && document.querySelector('style[data-cnc-industrial-priority]')),
         build: BUILD,
         surface: surface,
         decoratedCards: cards.length,
