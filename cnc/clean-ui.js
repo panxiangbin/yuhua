@@ -9,6 +9,9 @@
   var retryIndex = 0;
   var retryTimer = null;
   var restoringQuery = false;
+  var restoreGeneration = 0;
+  var userQueryCaptured = false;
+  var lastUserQuery = '';
 
   function ensureStateStyle() {
     if (document.querySelector('style[data-cnc-detail-state]')) return;
@@ -77,14 +80,29 @@
     }
   }
 
+  function rememberUserQuery(value) {
+    lastUserQuery = String(value == null ? '' : value);
+    userQueryCaptured = true;
+    window.__CNC_USER_QUERY__ = lastUserQuery;
+    window.__CNC_STABLE_QUERY__ = lastUserQuery;
+    restoreGeneration += 1;
+  }
+
   function bindSearchState() {
     var input = document.getElementById('search-input');
     if (!input) return false;
     if (input.dataset.cncSearchStateBound === 'true') return true;
     input.dataset.cncSearchStateBound = 'true';
-    window.__CNC_STABLE_QUERY__ = input.value || '';
-    input.addEventListener('input', function () {
-      if (!restoringQuery) window.__CNC_STABLE_QUERY__ = input.value;
+    if (typeof window.__CNC_STABLE_QUERY__ !== 'string') {
+      window.__CNC_STABLE_QUERY__ = input.value || '';
+    }
+    input.addEventListener('input', function (event) {
+      if (restoringQuery) return;
+      /* 只保存用户真实键入。旧模块 dispatchEvent 触发的内部 input 不能覆盖用户条件。 */
+      if (event && event.isTrusted) rememberUserQuery(input.value);
+    }, true);
+    input.addEventListener('change', function (event) {
+      if (!restoringQuery && event && event.isTrusted) rememberUserQuery(input.value);
     }, true);
     return true;
   }
@@ -92,27 +110,52 @@
   function captureWorkspaceState() {
     bindSearchState();
     var input = document.getElementById('search-input');
-    if (typeof window.__CNC_STABLE_QUERY__ !== 'string') {
-      window.__CNC_STABLE_QUERY__ = input ? input.value : '';
+    if (!userQueryCaptured) {
+      lastUserQuery = input ? input.value : String(window.__CNC_STABLE_QUERY__ || '');
+      window.__CNC_STABLE_QUERY__ = lastUserQuery;
+    } else {
+      window.__CNC_STABLE_QUERY__ = lastUserQuery;
     }
     window.__CNC_STABLE_LIST_SCROLL__ = window.scrollY;
   }
 
   function restoreWorkspaceState() {
     var input = document.getElementById('search-input');
-    var saved = window.__CNC_STABLE_QUERY__;
-    if (!input || typeof saved !== 'string' || input.value === saved) return;
-    restoringQuery = true;
-    input.value = saved;
-    input.dispatchEvent(new Event('input', { bubbles: true }));
-    window.setTimeout(function () { restoringQuery = false; }, 0);
+    var saved = userQueryCaptured ? lastUserQuery : window.__CNC_STABLE_QUERY__;
+    if (!input || typeof saved !== 'string') return false;
+
+    var stateChanged = false;
+    try {
+      if (typeof state !== 'undefined' && state && state.keyword !== saved) {
+        state.keyword = saved;
+        stateChanged = true;
+      }
+    } catch (ignored) {}
+
+    if (input.value !== saved) {
+      restoringQuery = true;
+      input.value = saved;
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      window.setTimeout(function () { restoringQuery = false; }, 0);
+      return true;
+    }
+
+    if (stateChanged) {
+      try {
+        if (typeof renderWorkspace === 'function') renderWorkspace();
+      } catch (ignored) {}
+    }
+    return stateChanged;
   }
 
   function scheduleWorkspaceRestore() {
-    restoreWorkspaceState();
-    window.setTimeout(restoreWorkspaceState, 0);
-    window.setTimeout(restoreWorkspaceState, 120);
-    window.setTimeout(restoreWorkspaceState, 320);
+    var generation = ++restoreGeneration;
+    [0, 50, 160, 420, 900, 1600].forEach(function (delay) {
+      window.setTimeout(function () {
+        if (generation !== restoreGeneration) return;
+        restoreWorkspaceState();
+      }, delay);
+    });
   }
 
   function openMobilePanel(entryId) {
@@ -213,6 +256,10 @@
 
   document.addEventListener('click', function (event) {
     if (!event.target || !event.target.closest) return;
+    var quick = event.target.closest('[data-gcode-quick]');
+    if (quick) rememberUserQuery(quick.getAttribute('data-gcode-quick') || '');
+    var jump = event.target.closest('[data-jump-keyword],[data-open-search]');
+    if (jump) rememberUserQuery(jump.getAttribute('data-jump-keyword') || jump.getAttribute('data-open-search') || '');
     if (event.target.closest('#result-list [data-open-entry]')) captureWorkspaceState();
     if (event.target.closest('#detail-back-btn,[data-cnc-bottom="back"]')) closeMobilePanel();
   }, true);
@@ -230,6 +277,7 @@
     scheduleReadinessCheck: scheduleReadinessCheck,
     syncIndustrialSample: syncIndustrialSample,
     captureWorkspaceState: captureWorkspaceState,
-    restoreWorkspaceState: restoreWorkspaceState
+    restoreWorkspaceState: restoreWorkspaceState,
+    rememberUserQuery: rememberUserQuery
   };
 })();
