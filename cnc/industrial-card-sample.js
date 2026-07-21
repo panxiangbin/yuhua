@@ -109,6 +109,24 @@
     });
   }
 
+  function setEntry(entryId) {
+    pendingEntryId = String(entryId || '');
+    if (!document.body) return false;
+    if (isG01EntryId(pendingEntryId)) {
+      document.body.classList.add('cnc-industrial-sample');
+      document.body.setAttribute('data-cnc-industrial-surface', 'g01');
+      tagDetailCards();
+      window.setTimeout(tagDetailCards, 80);
+      window.setTimeout(tagDetailCards, 260);
+      return true;
+    }
+    return false;
+  }
+
+  function clearEntry() {
+    pendingEntryId = '';
+  }
+
   function syncSurface() {
     if (!document.body) return false;
     ensurePriorityStyle();
@@ -164,8 +182,8 @@
     document.addEventListener('click', function (event) {
       if (!event.target || !event.target.closest) return;
       var entryButton = event.target.closest('[data-open-entry]');
-      if (entryButton) pendingEntryId = entryButton.getAttribute('data-open-entry') || '';
-      if (event.target.closest('#detail-back-btn,[data-cnc-bottom="back"]')) pendingEntryId = '';
+      if (entryButton) setEntry(entryButton.getAttribute('data-open-entry') || '');
+      if (event.target.closest('#detail-back-btn,[data-cnc-bottom="back"]')) clearEntry();
       if (event.target.closest('[data-route],[data-filter],.result-card,[data-open-entry],#detail-back-btn,#favorite-toggle,.xp-bottom-nav button')) {
         scheduleInteractionSync();
       }
@@ -198,6 +216,8 @@
     polling: false,
     observer: false,
     sync: syncSurface,
+    setEntry: setEntry,
+    clearEntry: clearEntry,
     tokens: {
       canvas: '#f1efe9',
       surface: '#fffdf9',
