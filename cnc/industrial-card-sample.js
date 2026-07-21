@@ -45,8 +45,9 @@
     document.head.appendChild(style);
   }
 
-  function normalizeCode(value) {
-    return String(value || '').toUpperCase().replace(/\s+/g, '').replace(/^G0?(\d+)$/, 'G$1');
+  function isG01Code(value) {
+    var text = String(value || '').toUpperCase().replace(/\s+/g, '');
+    return /^G0?1(?:[^0-9]|$)/.test(text);
   }
 
   function activeViewId() {
@@ -55,14 +56,14 @@
   }
 
   function isG01DetailOpen() {
-    var code = normalizeCode((document.getElementById('detail-code') || {}).textContent);
+    var codeText = (document.getElementById('detail-code') || {}).textContent;
     var panel = document.getElementById('detail-panel');
     var opened = Boolean(panel && (
       panel.classList.contains('mobile-open') ||
       (document.body && document.body.getAttribute('data-cnc-detail-open') === 'true') ||
       (window.innerWidth > 768 && activeViewId() === 'view-workspace')
     ));
-    return opened && code === 'G1';
+    return opened && isG01Code(codeText);
   }
 
   function decorateHomeCards() {
