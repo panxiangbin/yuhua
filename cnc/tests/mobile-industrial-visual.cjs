@@ -20,15 +20,17 @@ async function openGcodeWorkspace(page, expectIndustrialWorkspace) {
 
 async function openG01FromWorkspace(page, expectIndustrial) {
   const card = page.locator('#result-list .result-card:has([data-open-entry="kb-gcode-g01"])');
+  const button = page.locator('#result-list [data-open-entry="kb-gcode-g01"]');
   await page.locator('#search-input').fill('G1');
   await card.waitFor({ state: 'visible', timeout: 15000 });
+  await button.waitFor({ state: 'attached', timeout: 15000 });
 
   if (expectIndustrial) {
     /* 新版必须走真实可见结果卡点击，并等待建议层自动收起。 */
     await page.waitForFunction(() => document.body.getAttribute('data-cnc-suggestions-suppressed') === 'true', null, { timeout: 5000 });
     await card.click();
   } else {
-    /* 旧版基线本身存在建议层遮挡，截图只需进入同一详情状态。 */
+    /* 旧版基线的建议层会遮挡结果卡；仅为生成对照截图，在DOM中触发原按钮。 */
     await page.evaluate(() => {
       const box = document.getElementById('search-suggestions');
       if (box) {
@@ -36,12 +38,8 @@ async function openG01FromWorkspace(page, expectIndustrial) {
         box.style.display = 'none';
         box.style.pointerEvents = 'none';
       }
-      if (window.app && typeof window.app.selectEntry === 'function') {
-        window.app.selectEntry('kb-gcode-g01');
-      } else {
-        const button = document.querySelector('#result-list [data-open-entry="kb-gcode-g01"]');
-        if (button) button.click();
-      }
+      const target = document.querySelector('#result-list [data-open-entry="kb-gcode-g01"]');
+      if (target) target.click();
     });
   }
 
