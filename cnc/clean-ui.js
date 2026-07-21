@@ -8,6 +8,10 @@
   var retryDelays = [0, 40, 100, 220, 480, 900, 1600];
   var retryIndex = 0;
   var retryTimer = null;
+  var restoringQuery = false;
+  var restoreGeneration = 0;
+  var userQueryCaptured = false;
+  var lastUserQuery = '';
 
   function ensureStateStyle() {
     if (document.querySelector('style[data-cnc-detail-state]')) return;
@@ -52,7 +56,109 @@
     return false;
   }
 
-  function openMobilePanel() {
+  function isG01Entry(entryId) {
+    return /gcode-g0?1/i.test(String(entryId || '')) || /(?:^|[-_])g0?1$/i.test(String(entryId || ''));
+  }
+
+  function syncIndustrialSample(entryId) {
+    if (!document.body) return;
+    var code = String((document.getElementById('detail-code') || {}).textContent || '')
+      .toUpperCase()
+      .replace(/\s+/g, '');
+    if (!isG01Entry(entryId) && !/^G0?1(?:[^0-9]|$)/.test(code)) return;
+    document.body.classList.add('cnc-industrial-sample');
+    document.body.setAttribute('data-cnc-industrial-surface', 'g01');
+    if (window.CNC_INDUSTRIAL_SAMPLE) {
+      if (typeof window.CNC_INDUSTRIAL_SAMPLE.setEntry === 'function') {
+        window.CNC_INDUSTRIAL_SAMPLE.setEntry(entryId || 'kb-gcode-g01');
+      } else if (typeof window.CNC_INDUSTRIAL_SAMPLE.sync === 'function') {
+        window.CNC_INDUSTRIAL_SAMPLE.sync();
+      }
+      if (document.body.getAttribute('data-cnc-industrial-surface') !== 'g01') {
+        document.body.setAttribute('data-cnc-industrial-surface', 'g01');
+      }
+    }
+  }
+
+  function rememberUserQuery(value) {
+    lastUserQuery = String(value == null ? '' : value);
+    userQueryCaptured = true;
+    window.__CNC_USER_QUERY__ = lastUserQuery;
+    window.__CNC_STABLE_QUERY__ = lastUserQuery;
+    restoreGeneration += 1;
+  }
+
+  function bindSearchState() {
+    var input = document.getElementById('search-input');
+    if (!input) return false;
+    if (input.dataset.cncSearchStateBound === 'true') return true;
+    input.dataset.cncSearchStateBound = 'true';
+    if (typeof window.__CNC_STABLE_QUERY__ !== 'string') {
+      window.__CNC_STABLE_QUERY__ = input.value || '';
+    }
+    input.addEventListener('input', function (event) {
+      if (restoringQuery) return;
+      /* 只保存用户真实键入。旧模块 dispatchEvent 触发的内部 input 不能覆盖用户条件。 */
+      if (event && event.isTrusted) rememberUserQuery(input.value);
+    }, true);
+    input.addEventListener('change', function (event) {
+      if (!restoringQuery && event && event.isTrusted) rememberUserQuery(input.value);
+    }, true);
+    return true;
+  }
+
+  function captureWorkspaceState() {
+    bindSearchState();
+    var input = document.getElementById('search-input');
+    if (!userQueryCaptured) {
+      lastUserQuery = input ? input.value : String(window.__CNC_STABLE_QUERY__ || '');
+      window.__CNC_STABLE_QUERY__ = lastUserQuery;
+    } else {
+      window.__CNC_STABLE_QUERY__ = lastUserQuery;
+    }
+    window.__CNC_STABLE_LIST_SCROLL__ = window.scrollY;
+  }
+
+  function restoreWorkspaceState() {
+    var input = document.getElementById('search-input');
+    var saved = userQueryCaptured ? lastUserQuery : window.__CNC_STABLE_QUERY__;
+    if (!input || typeof saved !== 'string') return false;
+
+    var stateChanged = false;
+    try {
+      if (typeof state !== 'undefined' && state && state.keyword !== saved) {
+        state.keyword = saved;
+        stateChanged = true;
+      }
+    } catch (ignored) {}
+
+    if (input.value !== saved) {
+      restoringQuery = true;
+      input.value = saved;
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      window.setTimeout(function () { restoringQuery = false; }, 0);
+      return true;
+    }
+
+    if (stateChanged) {
+      try {
+        if (typeof renderWorkspace === 'function') renderWorkspace();
+      } catch (ignored) {}
+    }
+    return stateChanged;
+  }
+
+  function scheduleWorkspaceRestore() {
+    var generation = ++restoreGeneration;
+    [0, 50, 160, 420, 900, 1600].forEach(function (delay) {
+      window.setTimeout(function () {
+        if (generation !== restoreGeneration) return;
+        restoreWorkspaceState();
+      }, delay);
+    });
+  }
+
+  function openMobilePanel(entryId) {
     var panel = document.getElementById('detail-panel');
     if (!panel || !document.body || window.innerWidth > 768) return false;
     ensureStateStyle();
@@ -60,37 +166,48 @@
     panel.scrollTop = 0;
     document.body.classList.add('cnc-detail-open');
     document.body.setAttribute('data-cnc-detail-open', 'true');
+    syncIndustrialSample(entryId);
+    window.setTimeout(function () { syncIndustrialSample(entryId); }, 80);
     return true;
   }
 
   function closeMobilePanel() {
     var panel = document.getElementById('detail-panel');
     if (panel) panel.classList.remove('mobile-open', 'show-secondary');
+    if (window.CNC_INDUSTRIAL_SAMPLE && typeof window.CNC_INDUSTRIAL_SAMPLE.clearEntry === 'function') {
+      window.CNC_INDUSTRIAL_SAMPLE.clearEntry();
+    }
     if (document.body) {
       document.body.classList.remove('cnc-detail-open');
       document.body.removeAttribute('data-cnc-detail-open');
+      if (document.body.getAttribute('data-cnc-industrial-surface') === 'g01') {
+        document.body.removeAttribute('data-cnc-industrial-surface');
+      }
     }
+    scheduleWorkspaceRestore();
   }
 
-  function confirmMobilePanel() {
-    openMobilePanel();
-    window.setTimeout(openMobilePanel, 50);
-    window.setTimeout(openMobilePanel, 200);
+  function confirmMobilePanel(entryId) {
+    openMobilePanel(entryId);
+    window.setTimeout(function () { openMobilePanel(entryId); }, 50);
+    window.setTimeout(function () { openMobilePanel(entryId); }, 200);
   }
 
   function bindResultButtons() {
     document.querySelectorAll('#result-list [data-open-entry]').forEach(function (button) {
       if (button.dataset.cncCleanBound === 'true') return;
       button.dataset.cncCleanBound = 'true';
-      button.addEventListener('pointerdown', function () {
-        window.__CNC_STABLE_LIST_SCROLL__ = window.scrollY;
+      button.addEventListener('pointerdown', captureWorkspaceState);
+      button.addEventListener('click', function () {
+        captureWorkspaceState();
+        confirmMobilePanel(button.getAttribute('data-open-entry') || '');
       });
-      button.addEventListener('click', confirmMobilePanel);
     });
   }
 
   function patchWorkspaceRenderer() {
     if (window.__CNC_CLEAN_RENDER_PATCHED__) {
+      bindSearchState();
       bindResultButtons();
       return true;
     }
@@ -99,10 +216,12 @@
       originalRenderWorkspace = renderWorkspace;
       renderWorkspace = function () {
         var result = originalRenderWorkspace.apply(this, arguments);
+        bindSearchState();
         bindResultButtons();
         return result;
       };
       window.__CNC_CLEAN_RENDER_PATCHED__ = true;
+      bindSearchState();
       bindResultButtons();
       return true;
     } catch (error) {
@@ -115,6 +234,7 @@
     retryTimer = null;
     var queryReady = ensureQueryModes();
     var workspaceReady = patchWorkspaceRenderer();
+    bindSearchState();
     if (queryReady && workspaceReady) {
       window.__CNC_CLEAN_READY_AT__ = Math.round(performance.now());
       return;
@@ -136,6 +256,11 @@
 
   document.addEventListener('click', function (event) {
     if (!event.target || !event.target.closest) return;
+    var quick = event.target.closest('[data-gcode-quick]');
+    if (quick) rememberUserQuery(quick.getAttribute('data-gcode-quick') || '');
+    var jump = event.target.closest('[data-jump-keyword],[data-open-search]');
+    if (jump) rememberUserQuery(jump.getAttribute('data-jump-keyword') || jump.getAttribute('data-open-search') || '');
+    if (event.target.closest('#result-list [data-open-entry]')) captureWorkspaceState();
     if (event.target.closest('#detail-back-btn,[data-cnc-bottom="back"]')) closeMobilePanel();
   }, true);
 
@@ -149,6 +274,10 @@
     confirmMobilePanel: confirmMobilePanel,
     bindResultButtons: bindResultButtons,
     ensureQueryModes: ensureQueryModes,
-    scheduleReadinessCheck: scheduleReadinessCheck
+    scheduleReadinessCheck: scheduleReadinessCheck,
+    syncIndustrialSample: syncIndustrialSample,
+    captureWorkspaceState: captureWorkspaceState,
+    restoreWorkspaceState: restoreWorkspaceState,
+    rememberUserQuery: rememberUserQuery
   };
 })();
