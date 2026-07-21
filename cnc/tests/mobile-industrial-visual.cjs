@@ -7,6 +7,39 @@ const baselineUrl = process.env.BASELINE_URL || 'http://127.0.0.1:4174';
 const outputDir = path.resolve('cnc/test-artifacts/industrial-card-sample');
 fs.mkdirSync(outputDir, { recursive: true });
 
+async function openG01Direct(page, expectIndustrial) {
+  await page.locator('.launchpad-card[data-filter="gcode"]').click();
+  await page.waitForFunction(() => window.__CNC_GM_PRO_INSTALLED__ === '20260720h', null, { timeout: 30000 });
+
+  await page.evaluate(() => {
+    if (window.app && typeof window.app.selectEntry === 'function') {
+      window.app.selectEntry('kb-gcode-g01');
+    }
+  });
+
+  await page.waitForFunction(() => /G01/.test((document.getElementById('detail-code') || {}).textContent || ''), null, { timeout: 15000 });
+  await page.evaluate(() => {
+    const panel = document.getElementById('detail-panel');
+    if (panel) {
+      panel.classList.add('mobile-open');
+      panel.scrollTop = 0;
+    }
+    document.body.classList.add('cnc-detail-open');
+    document.body.setAttribute('data-cnc-detail-open', 'true');
+    if (window.CNC_INDUSTRIAL_SAMPLE && typeof window.CNC_INDUSTRIAL_SAMPLE.sync === 'function') {
+      window.CNC_INDUSTRIAL_SAMPLE.sync();
+    }
+    if (window.CNC_TRUST_NAV && typeof window.CNC_TRUST_NAV.refresh === 'function') {
+      window.CNC_TRUST_NAV.refresh();
+    }
+  });
+
+  if (expectIndustrial) {
+    await page.waitForFunction(() => document.body.getAttribute('data-cnc-industrial-surface') === 'g01', null, { timeout: 15000 });
+  }
+  await page.waitForSelector('#detail-panel', { state: 'visible', timeout: 15000 });
+}
+
 async function capture(browser, baseUrl, prefix, expectIndustrial) {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   await page.goto(`${baseUrl}/cnc/?visual=${prefix}`, { waitUntil: 'domcontentloaded', timeout: 60000 });
@@ -17,17 +50,7 @@ async function capture(browser, baseUrl, prefix, expectIndustrial) {
   await page.waitForTimeout(1200);
   await page.screenshot({ path: path.join(outputDir, `${prefix}-home-390x844.png`), animations: 'disabled', fullPage: false });
 
-  await page.locator('.launchpad-card[data-filter="gcode"]').click();
-  await page.waitForFunction(() => window.__CNC_GM_PRO_INSTALLED__ === '20260720h', null, { timeout: 30000 });
-  await page.locator('#search-input').fill('G1');
-  await page.waitForTimeout(700);
-  const openButton = page.locator('#result-list [data-open-entry="kb-gcode-g01"]');
-  await openButton.waitFor({ state: 'attached', timeout: 15000 });
-  await openButton.click({ force: true });
-  await page.waitForFunction(() => /G01/.test((document.getElementById('detail-code') || {}).textContent || ''), null, { timeout: 15000 });
-  if (expectIndustrial) {
-    await page.waitForFunction(() => document.body.getAttribute('data-cnc-industrial-surface') === 'g01', null, { timeout: 15000 });
-  }
+  await openG01Direct(page, expectIndustrial);
   await page.waitForTimeout(700);
   await page.screenshot({ path: path.join(outputDir, `${prefix}-g01-detail-390x844.png`), animations: 'disabled', fullPage: false });
   await page.close();
