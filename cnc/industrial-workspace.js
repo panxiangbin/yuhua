@@ -20,7 +20,7 @@
       'body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #view-workspace .result-card{border-radius:14px!important;}' +
       'body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #view-workspace .result-card .result-top strong{font-size:25px!important;font-weight:950!important;}' +
       'body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #view-workspace #search-suggestions{position:static!important;inset:auto!important;z-index:auto!important;width:100%!important;max-height:176px!important;margin:9px 0 0!important;padding:5px!important;overflow-y:auto!important;border:1px solid var(--cnc-ic-line)!important;border-radius:9px!important;background:var(--cnc-ic-surface-soft)!important;box-shadow:inset 0 1px 2px rgba(46,43,38,.06)!important;}' +
-      'body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #search-suggestions[hidden]{display:none!important;}' +
+      'body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #search-suggestions[hidden],body[data-cnc-suggestions-suppressed="true"] #search-suggestions{display:none!important;pointer-events:none!important;}' +
       'body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #search-suggestions .suggestion-item{display:grid!important;grid-template-columns:34px minmax(0,1fr) auto!important;gap:8px!important;width:100%!important;min-height:42px!important;padding:7px 8px!important;align-items:center!important;border:0!important;border-bottom:1px solid var(--cnc-ic-line)!important;border-radius:6px!important;background:transparent!important;color:var(--cnc-ic-ink)!important;box-shadow:none!important;text-align:left!important;}' +
       'body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #search-suggestions .suggestion-item:last-child{border-bottom:0!important;}' +
       'body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #search-suggestions .suggestion-item:active{background:var(--cnc-ic-surface-pressed)!important;transform:translateY(1px)!important;}' +
@@ -82,11 +82,13 @@
   }
 
   function scheduleSuggestionClose(query) {
+    if (query !== lastSuggestionQuery && document.body) document.body.removeAttribute('data-cnc-suggestions-suppressed');
     if (query === lastSuggestionQuery && suggestionCloseTimer !== null) return;
     lastSuggestionQuery = query;
     if (suggestionCloseTimer !== null) window.clearTimeout(suggestionCloseTimer);
     suggestionCloseTimer = window.setTimeout(function () {
       suggestionCloseTimer = null;
+      if (document.body) document.body.setAttribute('data-cnc-suggestions-suppressed', 'true');
       closeSuggestions();
     }, 900);
   }
@@ -129,6 +131,7 @@
     if (!active) {
       document.body.removeAttribute('data-cnc-industrial-workspace');
       document.body.removeAttribute('data-cnc-industrial-mode');
+      document.body.removeAttribute('data-cnc-suggestions-suppressed');
       closeSuggestions();
       return false;
     }
@@ -166,6 +169,13 @@
     }, 240);
   }
 
+  function rememberClearedSearch() {
+    if (window.CNC_CLEAN_UI && typeof window.CNC_CLEAN_UI.rememberUserQuery === 'function') window.CNC_CLEAN_UI.rememberUserQuery('');
+    lastSuggestionQuery = '';
+    if (document.body) document.body.setAttribute('data-cnc-suggestions-suppressed', 'true');
+    closeSuggestions();
+  }
+
   function boot() {
     if (booted) return;
     booted = true;
@@ -181,6 +191,7 @@
     var openButton = event.target.closest('[data-open-entry]');
     var resultCard = event.target.closest('#result-list .result-card');
     var backButton = event.target.closest('#detail-back-btn,[data-cnc-bottom="back"]');
+    var clearButton = event.target.closest('#search-clear-btn');
     var entryId = openButton ? openButton.getAttribute('data-open-entry') : '';
     if (!entryId && resultCard) {
       var nestedButton = resultCard.querySelector('[data-open-entry]');
@@ -189,6 +200,7 @@
     if (resultCard || openButton) closeSuggestions();
     if (entryId) scheduleOpenFallback(entryId);
     if (backButton) settleClosedDetail();
+    if (clearButton) window.setTimeout(rememberClearedSearch, 0);
     if (event.target.closest('[data-route],[data-filter],[data-open-entry],#result-list .result-card,#detail-back-btn,#home-btn,.xp-bottom-nav button')) {
       scheduleInteractionSync();
       scheduleResultBinding();
