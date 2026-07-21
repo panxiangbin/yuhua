@@ -40,6 +40,9 @@ jobs:
           cat /tmp/cnc-http.log
           exit 1
 
+      - name: Mobile startup performance and console errors
+        run: node cnc/tests/mobile-performance-smoke.cjs
+
       - name: Mobile homepage clean layout
         run: node cnc/tests/mobile-home-smoke.cjs
 
