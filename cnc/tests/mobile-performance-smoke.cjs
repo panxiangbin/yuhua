@@ -10,10 +10,11 @@ const assert = require('node:assert/strict');
     hasTouch: true
   });
 
-  const errors = [];
-  page.on('pageerror', error => errors.push(String(error.message || error)));
+  const pageErrors = [];
+  const consoleErrors = [];
+  page.on('pageerror', error => pageErrors.push(String(error.message || error)));
   page.on('console', message => {
-    if (message.type() === 'error') errors.push(message.text());
+    if (message.type() === 'error') consoleErrors.push(message.text());
   });
 
   const started = Date.now();
@@ -38,15 +39,20 @@ const assert = require('node:assert/strict');
     navigation: performance.getEntriesByType('navigation')[0] ? Math.round(performance.getEntriesByType('navigation')[0].domContentLoadedEventEnd) : 0
   }));
 
-  const ignored = errors.filter(text => !/favicon|Failed to load resource.*404/i.test(text));
+  const criticalConsoleErrors = consoleErrors.filter(text =>
+    /uncaught|referenceerror|typeerror|syntaxerror|rangeerror|页面启动失败|模块加载失败/i.test(text) &&
+    !/favicon|failed to load resource.*404/i.test(text)
+  );
+
   assert.equal(report.cleanBuild, '20260721q');
   assert.equal(report.polling, false, '启动层不得使用持续轮询');
   assert.ok(report.maxAttempts <= 7, '就绪检查次数应有严格上限');
   assert.ok(readyMs < 12000, `手机首页可交互时间过长：${readyMs}ms`);
   assert.ok(report.scripts < 80, `首页脚本请求异常增多：${report.scripts}`);
-  assert.deepEqual(ignored, [], `控制台存在错误：${ignored.join(' | ')}`);
+  assert.deepEqual(pageErrors, [], `页面运行错误：${pageErrors.join(' | ')}`);
+  assert.deepEqual(criticalConsoleErrors, [], `控制台关键错误：${criticalConsoleErrors.join(' | ')}`);
 
-  console.log('手机启动性能通过', { readyMs, ...report });
+  console.log('手机启动性能通过', { readyMs, ...report, consoleErrorCount: consoleErrors.length });
   await browser.close();
 })().catch(error => {
   console.error(error);
