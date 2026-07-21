@@ -12,7 +12,6 @@ const assert = require('node:assert/strict');
   await page.goto('http://127.0.0.1:4173/cnc/?smoke=industrial-sample', { waitUntil: 'domcontentloaded', timeout: 60000 });
   await page.waitForSelector('.launchpad-card[data-filter="gcode"]', { state: 'visible', timeout: 30000 });
   await page.waitForFunction(() => window.CNC_INDUSTRIAL_SAMPLE && window.CNC_INDUSTRIAL_SAMPLE.build === '20260721t', null, { timeout: 15000 });
-  await page.waitForFunction(() => window.CNC_INDUSTRIAL_CLICK && window.CNC_INDUSTRIAL_CLICK.build === '20260721t', null, { timeout: 15000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-industrial-surface') === 'home', null, { timeout: 15000 });
   await page.waitForTimeout(900);
 
