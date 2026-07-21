@@ -4,9 +4,7 @@
 
   var BUILD = '20260721v';
   var retryDelays = [0, 60, 160, 360, 760, 1300];
-  var retryIndex = 0;
-  var retryTimer = null;
-  var originalRenderWorkspace = null;
+  var booted = false;
 
   function activeViewId() {
     var active = document.querySelector('.view.active');
@@ -34,8 +32,8 @@
     document.querySelectorAll('#result-list .result-card').forEach(function (card) {
       card.dataset.industrialResult = 'true';
     });
-    var searchPanel = document.querySelector('#view-workspace .workspace-panel.search-panel');
-    if (searchPanel) searchPanel.dataset.industrialPanel = 'search';
+    var toolbar = document.querySelector('#view-workspace .search-toolbar');
+    if (toolbar) toolbar.dataset.industrialPanel = 'search';
   }
 
   function syncWorkspaceSurface() {
@@ -55,46 +53,26 @@
     return true;
   }
 
-  function patchWorkspaceRenderer() {
-    if (window.__CNC_INDUSTRIAL_WORKSPACE_PATCHED__) return true;
-    try {
-      if (typeof renderWorkspace !== 'function') return false;
-      originalRenderWorkspace = renderWorkspace;
-      renderWorkspace = function () {
-        var result = originalRenderWorkspace.apply(this, arguments);
-        window.setTimeout(syncWorkspaceSurface, 0);
-        window.setTimeout(syncWorkspaceSurface, 100);
-        return result;
-      };
-      window.__CNC_INDUSTRIAL_WORKSPACE_PATCHED__ = true;
-      return true;
-    } catch (error) {
-      console.warn('[CNC工业查询界面] 工作区渲染器暂未就绪', error);
-      return false;
-    }
-  }
-
-  function readinessCheck() {
-    retryTimer = null;
-    if (patchWorkspaceRenderer()) {
-      syncWorkspaceSurface();
-      window.__CNC_INDUSTRIAL_WORKSPACE_READY_AT__ = Math.round(performance.now());
-      return;
-    }
-    scheduleReadinessCheck();
-  }
-
-  function scheduleReadinessCheck() {
-    if (retryTimer !== null || retryIndex >= retryDelays.length) return;
-    retryTimer = window.setTimeout(readinessCheck, retryDelays[retryIndex++]);
-  }
-
   function scheduleInteractionSync() {
-    [0, 80, 240, 620].forEach(function (delay) {
+    [0, 60, 160, 360, 760].forEach(function (delay) {
       window.setTimeout(syncWorkspaceSurface, delay);
     });
   }
 
+  function boot() {
+    if (booted) return;
+    booted = true;
+    document.body && document.body.classList.add('cnc-industrial-workspace');
+    retryDelays.forEach(function (delay) {
+      window.setTimeout(syncWorkspaceSurface, delay);
+    });
+    window.__CNC_INDUSTRIAL_WORKSPACE_READY_AT__ = Math.round(performance.now());
+  }
+
+  /*
+   * 纯事件驱动：不包裹 renderWorkspace，不改写搜索、详情或路由核心函数。
+   * 这样视觉层不会与现有 G/M、详情和返回绑定产生加载顺序竞争。
+   */
   document.addEventListener('click', function (event) {
     if (!event.target || !event.target.closest) return;
     if (event.target.closest('[data-route],[data-filter],[data-open-entry],#detail-back-btn,#home-btn,.xp-bottom-nav button')) {
@@ -102,17 +80,30 @@
     }
   }, true);
 
+  document.addEventListener('input', function (event) {
+    if (event.target && event.target.id === 'search-input') {
+      window.setTimeout(decorateResults, 0);
+      window.setTimeout(decorateResults, 120);
+    }
+  }, true);
+
   window.addEventListener('hashchange', scheduleInteractionSync);
   window.addEventListener('popstate', scheduleInteractionSync);
-  document.addEventListener('DOMContentLoaded', scheduleReadinessCheck, { once: true });
-  window.addEventListener('load', scheduleReadinessCheck, { once: true });
+  document.addEventListener('DOMContentLoaded', boot, { once: true });
+  window.addEventListener('load', scheduleInteractionSync, { once: true });
 
-  scheduleReadinessCheck();
+  if (document.readyState === 'loading') {
+    /* DOMContentLoaded 会执行 boot。 */
+  } else {
+    boot();
+  }
 
   window.CNC_INDUSTRIAL_WORKSPACE = {
     build: BUILD,
     polling: false,
     observer: false,
+    eventDriven: true,
+    rendererPatched: false,
     maxReadinessAttempts: retryDelays.length,
     sync: syncWorkspaceSurface,
     runCheck: function () {
@@ -125,7 +116,8 @@
         decoratedResults: cards.length,
         polling: false,
         observer: false,
-        workspacePatched: Boolean(window.__CNC_INDUSTRIAL_WORKSPACE_PATCHED__)
+        eventDriven: true,
+        rendererPatched: false
       };
     }
   };
