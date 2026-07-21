@@ -72,8 +72,13 @@ const assert = require('node:assert/strict');
   await page.waitForTimeout(700);
   const openButton = page.locator('#result-list [data-open-entry="kb-gcode-g01"]');
   await openButton.waitFor({ state: 'attached', timeout: 15000 });
+  await page.waitForFunction(() => {
+    const button = document.querySelector('#result-list [data-open-entry="kb-gcode-g01"]');
+    return button && button.dataset.cncCleanBound === 'true';
+  }, null, { timeout: 15000 });
   await openButton.click({ force: true });
 
+  await page.waitForFunction(() => /G01/.test((document.getElementById('detail-code') || {}).textContent || ''), null, { timeout: 15000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-industrial-surface') === 'g01', null, { timeout: 15000 });
   await page.waitForSelector('#detail-panel .xp-trust-panel', { state: 'visible', timeout: 15000 });
 
