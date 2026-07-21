@@ -29,6 +29,14 @@
     return String(document.body && document.body.getAttribute('data-cnc-query-mode') || 'all');
   }
 
+  function currentSelectedId() {
+    try {
+      return typeof state !== 'undefined' && state ? String(state.selectedId || '') : '';
+    } catch (ignored) {
+      return '';
+    }
+  }
+
   function bindStableResults() {
     if (window.CNC_CLEAN_UI && typeof window.CNC_CLEAN_UI.bindResultButtons === 'function') {
       window.CNC_CLEAN_UI.bindResultButtons();
@@ -73,15 +81,20 @@
     });
   }
 
-  function selectOpenEntry(openButton) {
-    if (!openButton) return false;
-    var entryId = openButton.getAttribute('data-open-entry') || '';
-    if (!entryId) return false;
-    if (window.app && typeof window.app.selectEntry === 'function') {
-      window.app.selectEntry(entryId);
-      return true;
+  function fallbackOpenEntry(entryId) {
+    if (!entryId || currentSelectedId() === entryId) return false;
+    if (!window.app || typeof window.app.selectEntry !== 'function') return false;
+    window.app.selectEntry(entryId);
+    if (window.CNC_CLEAN_UI && typeof window.CNC_CLEAN_UI.confirmMobilePanel === 'function') {
+      window.CNC_CLEAN_UI.confirmMobilePanel(entryId);
     }
-    return false;
+    return true;
+  }
+
+  function scheduleOpenFallback(entryId) {
+    /* 原有按钮/整卡点击先完整执行；仅当最终没有选中目标时才兜底。 */
+    window.setTimeout(function () { fallbackOpenEntry(entryId); }, 0);
+    window.setTimeout(function () { fallbackOpenEntry(entryId); }, 90);
   }
 
   function boot() {
@@ -102,12 +115,18 @@
   document.addEventListener('click', function (event) {
     if (!event.target || !event.target.closest) return;
     var openButton = event.target.closest('[data-open-entry]');
-    if (openButton) selectOpenEntry(openButton);
-    if (event.target.closest('[data-route],[data-filter],[data-open-entry],#detail-back-btn,#home-btn,.xp-bottom-nav button')) {
+    var resultCard = event.target.closest('#result-list .result-card');
+    var entryId = openButton ? openButton.getAttribute('data-open-entry') : '';
+    if (!entryId && resultCard) {
+      var nestedButton = resultCard.querySelector('[data-open-entry]');
+      entryId = nestedButton ? nestedButton.getAttribute('data-open-entry') : '';
+    }
+    if (entryId) scheduleOpenFallback(entryId);
+    if (event.target.closest('[data-route],[data-filter],[data-open-entry],#result-list .result-card,#detail-back-btn,#home-btn,.xp-bottom-nav button')) {
       scheduleInteractionSync();
       scheduleResultBinding();
     }
-  }, true);
+  }, false);
 
   document.addEventListener('input', function (event) {
     if (event.target && event.target.id === 'search-input') {
@@ -139,7 +158,7 @@
     maxBindingAttempts: resultBindingDelays.length,
     sync: syncWorkspaceSurface,
     bindResults: bindStableResults,
-    selectEntry: selectOpenEntry,
+    fallbackOpenEntry: fallbackOpenEntry,
     runCheck: function () {
       var active = document.body && document.body.getAttribute('data-cnc-industrial-workspace') === 'true';
       var cards = document.querySelectorAll('#result-list .result-card[data-industrial-result="true"]');
