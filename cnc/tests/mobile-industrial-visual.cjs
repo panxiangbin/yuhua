@@ -10,8 +10,15 @@ fs.mkdirSync(outputDir, { recursive: true });
 async function openG01Direct(page, expectIndustrial) {
   await page.locator('.launchpad-card[data-filter="gcode"]').click();
   await page.waitForFunction(() => window.__CNC_GM_PRO_INSTALLED__ === '20260720h', null, { timeout: 30000 });
+  await page.waitForTimeout(700);
 
   const openButton = page.locator('#result-list [data-open-entry="kb-gcode-g01"]');
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    await page.locator('#search-input').fill('G1');
+    await page.waitForTimeout(650);
+    if (await openButton.count()) break;
+  }
+
   await openButton.waitFor({ state: 'attached', timeout: 15000 });
   await openButton.click({ force: true });
   await page.waitForFunction(() => /G01/.test((document.getElementById('detail-code') || {}).textContent || ''), null, { timeout: 15000 });
