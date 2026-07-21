@@ -79,6 +79,11 @@ const assert = require('node:assert/strict');
   await openButton.click({ force: true });
 
   await page.waitForFunction(() => /G01/.test((document.getElementById('detail-code') || {}).textContent || ''), null, { timeout: 15000 });
+  await page.evaluate(() => window.CNC_CLEAN_UI.confirmMobilePanel('kb-gcode-g01'));
+  await page.waitForFunction(() => {
+    const panel = document.getElementById('detail-panel');
+    return document.body.getAttribute('data-cnc-detail-open') === 'true' && panel && getComputedStyle(panel).display !== 'none';
+  }, null, { timeout: 15000 });
   await page.evaluate(() => {
     window.CNC_CLEAN_UI.syncIndustrialSample('kb-gcode-g01');
     if (window.CNC_TRUST_NAV && typeof window.CNC_TRUST_NAV.refresh === 'function') window.CNC_TRUST_NAV.refresh();
