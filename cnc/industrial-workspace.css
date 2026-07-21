@@ -58,12 +58,19 @@
     background: var(--cnc-ic-canvas) !important;
   }
 
-  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #view-workspace .section-panel {
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #view-workspace .section-panel,
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #view-workspace .workspace-panel.search-panel {
+    margin: 0 !important;
     padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
     background: transparent !important;
+    box-shadow: none !important;
   }
 
-  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #view-workspace .workspace-panel.search-panel {
+  /* 搜索与分类是一块独立工具面板，结果卡不嵌套在大卡里。 */
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #view-workspace .search-toolbar {
+    display: block !important;
     margin: 0 12px !important;
     padding: 14px !important;
     border: 1px solid var(--cnc-ic-line) !important;
@@ -71,11 +78,6 @@
     border-radius: var(--cnc-ic-radius-card) !important;
     background: var(--cnc-ic-surface) !important;
     box-shadow: var(--cnc-ic-shadow-card) !important;
-  }
-
-  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #view-workspace .search-toolbar {
-    display: block !important;
-    margin: 0 !important;
   }
 
   body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #search-input {
@@ -129,7 +131,7 @@
   body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #search-meta {
     display: inline-flex !important;
     min-height: 30px !important;
-    margin: 10px 0 2px !important;
+    margin: 10px 12px 2px !important;
     padding: 6px 9px !important;
     align-items: center !important;
     border: 1px solid var(--cnc-ic-line) !important;
@@ -142,7 +144,7 @@
   }
 
   body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #view-workspace.gcode-pro-mode .gcode-mobile-controls {
-    margin: 10px 0 0 !important;
+    margin: 10px 12px 0 !important;
     padding: 10px !important;
     border: 1px solid var(--cnc-ic-line) !important;
     border-radius: 11px !important;
