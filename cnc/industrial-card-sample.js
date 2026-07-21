@@ -52,8 +52,16 @@
   }
 
   function tagDetailCards() {
-    var cards = document.querySelectorAll('#detail-panel .detail-card');
-    cards.forEach(function (card) {
+    var panel = document.getElementById('detail-panel');
+    var grid = panel && panel.querySelector('.detail-content-grid');
+    var primary = panel && panel.querySelector('.detail-card-primary');
+    var trust = panel && panel.querySelector('.xp-trust-panel');
+
+    if (grid && primary && trust && trust.parentElement !== grid) {
+      primary.insertAdjacentElement('afterend', trust);
+    }
+
+    document.querySelectorAll('#detail-panel .detail-card').forEach(function (card) {
       card.removeAttribute('data-industrial-role');
       var heading = ((card.querySelector('h4') || {}).textContent || '').replace(/\s+/g, '');
       var role = 'secondary';
