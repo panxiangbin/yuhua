@@ -12,25 +12,17 @@ async function openGcodeWorkspace(page, expectIndustrialWorkspace) {
   await page.waitForFunction(() => window.__CNC_GM_PRO_INSTALLED__ === '20260720h', null, { timeout: 30000 });
   await page.waitForSelector('#view-workspace.active', { state: 'visible', timeout: 30000 });
   if (expectIndustrialWorkspace) {
+    await page.waitForFunction(() => window.CNC_INDUSTRIAL_WORKSPACE && window.CNC_INDUSTRIAL_WORKSPACE.build === '20260721v', null, { timeout: 15000 });
     await page.waitForFunction(() => document.body.getAttribute('data-cnc-industrial-workspace') === 'true', null, { timeout: 15000 });
   }
   await page.waitForTimeout(800);
 }
 
 async function openG01FromWorkspace(page, expectIndustrial) {
-  const openButton = page.locator('#result-list [data-open-entry="kb-gcode-g01"]');
-  for (let attempt = 0; attempt < 3; attempt += 1) {
-    await page.locator('#search-input').fill('G1');
-    await page.waitForTimeout(650);
-    if (await openButton.count()) break;
-  }
-
-  await openButton.waitFor({ state: 'attached', timeout: 15000 });
-  await page.waitForFunction(() => {
-    const button = document.querySelector('#result-list [data-open-entry="kb-gcode-g01"]');
-    return button && button.dataset.cncCleanBound === 'true';
-  }, null, { timeout: 15000 });
-  await openButton.click({ force: true });
+  const card = page.locator('#result-list .result-card:has([data-open-entry="kb-gcode-g01"])');
+  await page.locator('#search-input').fill('G1');
+  await card.waitFor({ state: 'visible', timeout: 15000 });
+  await card.click();
   await page.waitForFunction(() => /G01/.test((document.getElementById('detail-code') || {}).textContent || ''), null, { timeout: 15000 });
 
   await page.evaluate(() => {
@@ -60,10 +52,8 @@ async function capture(browser, baseUrl, prefix, expectIndustrial) {
   }
   await page.waitForTimeout(1200);
   await page.screenshot({ path: path.join(outputDir, `${prefix}-home-390x844.png`), animations: 'disabled', fullPage: false });
-
   await openGcodeWorkspace(page, expectIndustrial);
   await page.screenshot({ path: path.join(outputDir, `${prefix}-gcode-workspace-390x844.png`), animations: 'disabled', fullPage: false });
-
   await openG01FromWorkspace(page, expectIndustrial);
   await page.waitForTimeout(700);
   await page.screenshot({ path: path.join(outputDir, `${prefix}-g01-detail-390x844.png`), animations: 'disabled', fullPage: false });
