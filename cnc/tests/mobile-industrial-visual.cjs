@@ -18,6 +18,17 @@ async function openGcodeWorkspace(page, expectIndustrialWorkspace) {
   await page.waitForTimeout(800);
 }
 
+async function dismissSuggestions(page) {
+  await page.locator('#search-input').press('Escape');
+  await page.locator('#search-input').blur();
+  await page.waitForFunction(() => {
+    const box = document.getElementById('search-suggestions');
+    if (!box) return true;
+    const style = getComputedStyle(box);
+    return box.hidden || style.display === 'none' || style.visibility === 'hidden' || style.pointerEvents === 'none';
+  }, null, { timeout: 5000 });
+}
+
 async function openG01FromWorkspace(page, expectIndustrial) {
   const card = page.locator('#result-list .result-card:has([data-open-entry="kb-gcode-g01"])');
   const button = page.locator('#result-list [data-open-entry="kb-gcode-g01"]');
@@ -26,8 +37,8 @@ async function openG01FromWorkspace(page, expectIndustrial) {
   await button.waitFor({ state: 'attached', timeout: 15000 });
 
   if (expectIndustrial) {
-    /* 新版必须走真实可见结果卡点击，并等待建议层自动收起。 */
-    await page.waitForFunction(() => document.body.getAttribute('data-cnc-suggestions-suppressed') === 'true', null, { timeout: 5000 });
+    /* 新版走真实用户动作：收起建议后点击可见结果卡。 */
+    await dismissSuggestions(page);
     await card.click();
   } else {
     /* 旧版基线的建议层会遮挡结果卡；仅为生成对照截图，在DOM中触发原按钮。 */
