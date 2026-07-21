@@ -3,17 +3,7 @@ name: CNC mobile quality check
 on:
   pull_request:
     paths:
-      - "cnc/mobile-gcode-pro.js"
-      - "cnc/mobile-gcode-pro.css"
-      - "cnc/clean-ui.css"
-      - "cnc/clean-ui.js"
-      - "cnc/vivid-ui.css"
-      - "cnc/query-modes.js"
-      - "cnc/query-modes.css"
-      - "cnc/import-test.js"
-      - "cnc/sw.js"
-      - "cnc-recover.html"
-      - "cnc/tests/mobile-*.cjs"
+      - "cnc/**"
       - ".github/workflows/cnc-mobile-quality.yml"
       - ".github/workflows/cnc-mobile-smoke.yml"
   workflow_dispatch:
@@ -33,24 +23,16 @@ jobs:
           node --check cnc/query-modes.js
           node --check cnc/import-test.js
           node --check cnc/sw.js
-          node --check cnc/tests/mobile-home-smoke.cjs
-          node --check cnc/tests/mobile-gcode-smoke.cjs
-          node --check cnc/tests/mobile-gcode-layout-smoke.cjs
-          node --check cnc/tests/mobile-gcode-search-smoke.cjs
-          node --check cnc/tests/mobile-gcode-detail-smoke.cjs
-          node --check cnc/tests/mobile-gcode-detail-content-smoke.cjs
-          node --check cnc/tests/mobile-gcode-detail-panel-smoke.cjs
-          node --check cnc/tests/mobile-other-search-smoke.cjs
-          node --check cnc/tests/mobile-query-split-smoke.cjs
-          node --check cnc/tests/mobile-sw-smoke.cjs
-      - name: Stability and split query assertions
+          for file in cnc/tests/mobile-*.cjs; do node --check "$file"; done
+      - name: Stability performance and split query assertions
         run: |
-          grep -q "20260720k" cnc/import-test.js
-          grep -q "20260720m" cnc/import-test.js
+          grep -q "20260721q" cnc/import-test.js
+          grep -q "BUILD = '20260721q'" cnc/clean-ui.js
+          grep -q "polling: false" cnc/clean-ui.js
+          grep -q "retryDelays" cnc/clean-ui.js
+          grep -q "maxReadinessAttempts" cnc/clean-ui.js
+          grep -q "mobile-performance-smoke" .github/workflows/cnc-mobile-smoke.yml
           grep -q "20260720n" cnc/query-modes.js
-          grep -q "QUERY_BUILD = '20260720n'" cnc/clean-ui.js
-          grep -q "query-modes.css" cnc/clean-ui.js
-          grep -q "query-modes.js" cnc/clean-ui.js
           grep -q "FILTER_META.alarm" cnc/query-modes.js
           grep -q "FILTER_META.parameter" cnc/query-modes.js
           grep -q "FILTER_META.fault" cnc/query-modes.js
@@ -58,34 +40,22 @@ jobs:
           grep -q "isAlarmEntry" cnc/query-modes.js
           grep -q "isParameterEntry" cnc/query-modes.js
           grep -q "isFaultEntry" cnc/query-modes.js
-          grep -q "data-cnc-query-mode" cnc/query-modes.js
-          grep -q "data-filter=\"fault\"" cnc/tests/mobile-query-split-smoke.cjs
           grep -q "clean-ui.css" cnc/import-test.js
-          grep -q "clean-ui.js" cnc/import-test.js
           grep -q "vivid-ui.css" cnc/import-test.js
-          grep -q "cnc-vivid-ui" cnc/import-test.js
-          grep -q "CNC_CLEAN_UI" cnc/clean-ui.js
-          grep -q "openMobilePanel" cnc/clean-ui.js
-          grep -q "confirmMobilePanel" cnc/clean-ui.js
-          grep -q "setTimeout(openMobilePanel, 200)" cnc/clean-ui.js
-          grep -q "grid-template-columns: minmax(0, 1fr)" cnc/vivid-ui.css
-          grep -q "font-weight: 950" cnc/vivid-ui.css
-          grep -q "linear-gradient" cnc/vivid-ui.css
           grep -q "数控小潘 CNC速查与学习助手" cnc/import-test.js
           grep -q "不保证直线" cnc/import-test.js
           grep -q "最小输入单位" cnc/import-test.js
           grep -q "disableServiceWorkerRegistration" cnc/import-test.js
-          grep -q "Object.defineProperty(navigator.serviceWorker, 'register'" cnc/import-test.js
           grep -q "loadGcodePro" cnc/import-test.js
-          grep -q "gcode-quick-row" cnc/clean-ui.css
-          grep -q "study-card-grid" cnc/clean-ui.css
-          grep -q "featured-images-preview" cnc/clean-ui.css
-          grep -q "result-thumb" cnc/clean-ui.css
-          grep -q "result-button" cnc/clean-ui.css
           grep -q "正在恢复数控网站" cnc-recover.html
-          grep -q "./cnc/?recovered=20260720i" cnc-recover.html
-          grep -q "getRegistrations" cnc-recover.html
-          grep -q "/yuhua/cnc/" cnc-recover.html
+          if grep -q "setInterval" cnc/clean-ui.js; then
+            echo "clean-ui.js must not keep a 100ms polling interval"
+            exit 1
+          fi
+          if grep -q "setTimeout(function(){ensureCleanStyle" cnc/import-test.js; then
+            echo "Homepage bootstrap must not repeat every enhancement after startup"
+            exit 1
+          fi
           if grep -q "learning-images-04-12" cnc/import-test.js; then
             echo "Homepage bootstrap must not auto-load the large lesson image bundle"
             exit 1

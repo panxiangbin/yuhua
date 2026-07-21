@@ -7,7 +7,7 @@ const assert = require('node:assert/strict');
   await page.goto('http://127.0.0.1:4173/cnc/?smoke=gcode-detail-panel', { waitUntil: 'domcontentloaded', timeout: 60000 });
   await page.locator('.launchpad-card[data-filter="gcode"]').click();
   await page.waitForFunction(() => window.__CNC_GM_PRO_INSTALLED__ === '20260720h', null, { timeout: 30000 });
-  await page.waitForFunction(() => window.CNC_CLEAN_UI && window.CNC_CLEAN_UI.build === '20260720k', null, { timeout: 15000 });
+  await page.waitForFunction(() => window.CNC_CLEAN_UI && window.CNC_CLEAN_UI.build === '20260721q', null, { timeout: 15000 });
   await page.locator('#search-input').fill('G1');
   await page.waitForTimeout(700);
 
