@@ -90,6 +90,12 @@
     input.dispatchEvent(new Event('input', { bubbles: true }));
   }
 
+  function scheduleWorkspaceRestore() {
+    restoreWorkspaceState();
+    window.setTimeout(restoreWorkspaceState, 0);
+    window.setTimeout(restoreWorkspaceState, 120);
+  }
+
   function openMobilePanel(entryId) {
     var panel = document.getElementById('detail-panel');
     if (!panel || !document.body || window.innerWidth > 768) return false;
@@ -116,7 +122,7 @@
         document.body.removeAttribute('data-cnc-industrial-surface');
       }
     }
-    restoreWorkspaceState();
+    scheduleWorkspaceRestore();
   }
 
   function confirmMobilePanel(entryId) {
@@ -131,7 +137,6 @@
       button.dataset.cncCleanBound = 'true';
       button.addEventListener('pointerdown', captureWorkspaceState);
       button.addEventListener('click', function () {
-        if (typeof window.__CNC_STABLE_QUERY__ !== 'string') captureWorkspaceState();
         confirmMobilePanel(button.getAttribute('data-open-entry') || '');
       });
     });
@@ -184,6 +189,7 @@
 
   document.addEventListener('click', function (event) {
     if (!event.target || !event.target.closest) return;
+    if (event.target.closest('#result-list [data-open-entry]')) captureWorkspaceState();
     if (event.target.closest('#detail-back-btn,[data-cnc-bottom="back"]')) closeMobilePanel();
   }, true);
 
