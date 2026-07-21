@@ -24,20 +24,12 @@ const assert = require('node:assert/strict');
     state: 'visible',
     timeout: 30000
   });
-  await page.waitForFunction(() => window.CNC_CLEAN_UI && window.CNC_CLEAN_UI.build === '20260720k', null, { timeout: 15000 });
+  await page.waitForFunction(() => window.CNC_CLEAN_UI && window.CNC_CLEAN_UI.build === '20260721q', null, { timeout: 15000 });
   await page.waitForFunction(() => document.body.dataset.cncQueryMode === 'parameter', null, { timeout: 15000 });
   await page.waitForTimeout(500);
 
-  assert.equal(
-    await page.locator('#workspace-mode-row').evaluate(node => getComputedStyle(node).display),
-    'none',
-    '参数查询不应显示图文模式切换'
-  );
-  assert.equal(
-    await page.locator('#preset-chip-row').evaluate(node => getComputedStyle(node).display),
-    'none',
-    '参数查询不应显示重复分类快捷栏'
-  );
+  assert.equal(await page.locator('#workspace-mode-row').evaluate(node => getComputedStyle(node).display), 'none');
+  assert.equal(await page.locator('#preset-chip-row').evaluate(node => getComputedStyle(node).display), 'none');
   assert.match((await page.locator('#workspace-title').textContent()) || '', /参数速查/);
   assert.match(await page.locator('#search-input').getAttribute('placeholder') || '', /1815|参数号/);
 
@@ -47,11 +39,7 @@ const assert = require('node:assert/strict');
 
   const style = await button.evaluate(element => {
     const computed = getComputedStyle(element);
-    return {
-      display: computed.display,
-      opacity: computed.opacity,
-      position: computed.position
-    };
+    return { display: computed.display, opacity: computed.opacity, position: computed.position };
   });
   assert.equal(style.display, 'block');
   assert.equal(style.opacity, '0');
