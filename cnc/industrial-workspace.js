@@ -28,7 +28,14 @@
     return String(document.body && document.body.getAttribute('data-cnc-query-mode') || 'all');
   }
 
+  function bindStableResults() {
+    if (window.CNC_CLEAN_UI && typeof window.CNC_CLEAN_UI.bindResultButtons === 'function') {
+      window.CNC_CLEAN_UI.bindResultButtons();
+    }
+  }
+
   function decorateResults() {
+    bindStableResults();
     document.querySelectorAll('#result-list .result-card').forEach(function (card) {
       card.dataset.industrialResult = 'true';
     });
@@ -59,6 +66,12 @@
     });
   }
 
+  function scheduleResultBinding() {
+    [0, 40, 120, 280].forEach(function (delay) {
+      window.setTimeout(decorateResults, delay);
+    });
+  }
+
   function boot() {
     if (booted) return;
     booted = true;
@@ -71,26 +84,29 @@
 
   /*
    * 纯事件驱动：不包裹 renderWorkspace，不改写搜索、详情或路由核心函数。
-   * 这样视觉层不会与现有 G/M、详情和返回绑定产生加载顺序竞争。
+   * 动态结果仅通过 clean-ui 已公开的 bindResultButtons 接口做有限次数绑定。
    */
   document.addEventListener('click', function (event) {
     if (!event.target || !event.target.closest) return;
     if (event.target.closest('[data-route],[data-filter],[data-open-entry],#detail-back-btn,#home-btn,.xp-bottom-nav button')) {
       scheduleInteractionSync();
+      scheduleResultBinding();
     }
   }, true);
 
   document.addEventListener('input', function (event) {
     if (event.target && event.target.id === 'search-input') {
-      window.setTimeout(decorateResults, 0);
-      window.setTimeout(decorateResults, 120);
+      scheduleResultBinding();
     }
   }, true);
 
   window.addEventListener('hashchange', scheduleInteractionSync);
   window.addEventListener('popstate', scheduleInteractionSync);
   document.addEventListener('DOMContentLoaded', boot, { once: true });
-  window.addEventListener('load', scheduleInteractionSync, { once: true });
+  window.addEventListener('load', function () {
+    scheduleInteractionSync();
+    scheduleResultBinding();
+  }, { once: true });
 
   if (document.readyState === 'loading') {
     /* DOMContentLoaded 会执行 boot。 */
@@ -106,6 +122,7 @@
     rendererPatched: false,
     maxReadinessAttempts: retryDelays.length,
     sync: syncWorkspaceSurface,
+    bindResults: bindStableResults,
     runCheck: function () {
       var active = document.body && document.body.getAttribute('data-cnc-industrial-workspace') === 'true';
       var cards = document.querySelectorAll('#result-list .result-card[data-industrial-result="true"]');
