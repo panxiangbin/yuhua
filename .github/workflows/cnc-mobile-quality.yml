@@ -28,11 +28,13 @@ jobs:
         run: |
           grep -q "20260721q" cnc/import-test.js
           grep -q "BUILD = '20260721q'" cnc/clean-ui.js
+          grep -q "QUERY_BUILD = '20260721r'" cnc/clean-ui.js
+          grep -q "BUILD='20260721r'" cnc/query-modes.js
           grep -q "polling: false" cnc/clean-ui.js
-          grep -q "retryDelays" cnc/clean-ui.js
-          grep -q "maxReadinessAttempts" cnc/clean-ui.js
+          grep -q "polling:false" cnc/query-modes.js
+          grep -q "RETRY_DELAYS" cnc/query-modes.js
+          grep -q "maxReadinessAttempts" cnc/query-modes.js
           grep -q "mobile-performance-smoke" .github/workflows/cnc-mobile-smoke.yml
-          grep -q "20260720n" cnc/query-modes.js
           grep -q "FILTER_META.alarm" cnc/query-modes.js
           grep -q "FILTER_META.parameter" cnc/query-modes.js
           grep -q "FILTER_META.fault" cnc/query-modes.js
@@ -40,6 +42,7 @@ jobs:
           grep -q "isAlarmEntry" cnc/query-modes.js
           grep -q "isParameterEntry" cnc/query-modes.js
           grep -q "isFaultEntry" cnc/query-modes.js
+          grep -q "queryPolling" cnc/tests/mobile-performance-smoke.cjs
           grep -q "clean-ui.css" cnc/import-test.js
           grep -q "vivid-ui.css" cnc/import-test.js
           grep -q "数控小潘 CNC速查与学习助手" cnc/import-test.js
@@ -48,8 +51,8 @@ jobs:
           grep -q "disableServiceWorkerRegistration" cnc/import-test.js
           grep -q "loadGcodePro" cnc/import-test.js
           grep -q "正在恢复数控网站" cnc-recover.html
-          if grep -q "setInterval" cnc/clean-ui.js; then
-            echo "clean-ui.js must not keep a 100ms polling interval"
+          if grep -q "setInterval" cnc/clean-ui.js cnc/query-modes.js; then
+            echo "CNC startup layers must not keep polling intervals"
             exit 1
           fi
           if grep -q "setTimeout(function(){ensureCleanStyle" cnc/import-test.js; then
