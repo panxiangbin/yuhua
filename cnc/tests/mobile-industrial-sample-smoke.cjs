@@ -133,6 +133,10 @@ const assert = require('node:assert/strict');
 
   await page.locator('#detail-back-btn').click();
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-detail-open') !== 'true', null, { timeout: 15000 });
+  await page.waitForFunction(() => {
+    const input = document.getElementById('search-input');
+    return input && input.value === 'G1';
+  }, null, { timeout: 15000 });
   assert.equal(await page.locator('#search-input').inputValue(), 'G1', '返回后搜索条件必须保留');
 
   const relevantErrors = [...pageErrors, ...consoleErrors].filter(text => /industrial-card|CNC工业卡片|TypeError|ReferenceError/i.test(text));
