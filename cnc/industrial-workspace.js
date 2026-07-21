@@ -12,6 +12,12 @@
     var style = document.createElement('style');
     style.dataset.cncIndustrialSuggestions = 'true';
     style.textContent = '@media(max-width:768px){' +
+      'body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #view-workspace .search-toolbar{' +
+        'position:relative!important;top:auto!important;inset:auto!important;z-index:1!important;' +
+      '}' +
+      'body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #search-input{' +
+        'border-radius:10px!important;' +
+      '}' +
       'body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #search-suggestions{' +
         'position:static!important;inset:auto!important;z-index:auto!important;' +
         'width:100%!important;max-height:176px!important;margin:9px 0 0!important;' +
