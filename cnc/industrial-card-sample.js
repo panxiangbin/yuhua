@@ -42,6 +42,14 @@
         'box-shadow:inset 4px 0 0 var(--cnc-ic-accent),var(--cnc-ic-shadow-pressed)!important;' +
         'transform:translateY(1px)!important;' +
       '}' +
+      'body.cnc-clean-ui.cnc-vivid-ui.cnc-industrial-sample[data-cnc-industrial-surface="g01"] #detail-code{' +
+        'display:block!important;margin:10px 0 8px!important;color:var(--cnc-ic-ink)!important;' +
+        'font-family:var(--cnc-ic-code-font)!important;font-size:40px!important;line-height:1!important;' +
+        'font-weight:950!important;letter-spacing:-.04em!important;' +
+      '}' +
+      'body.cnc-clean-ui.cnc-vivid-ui.cnc-industrial-sample[data-cnc-industrial-surface="g01"] #detail-panel .detail-card-primary{' +
+        'background-image:none!important;background-color:var(--cnc-ic-surface)!important;' +
+      '}' +
     '}';
     document.head.appendChild(style);
   }
