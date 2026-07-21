@@ -11,6 +11,7 @@ const assert = require('node:assert/strict');
   await page.goto('http://127.0.0.1:4173/cnc/?smoke=nav-accessibility-s', { waitUntil: 'domcontentloaded', timeout: 60000 });
   await page.waitForFunction(() => window.CNC_TRUST_NAV && window.CNC_TRUST_NAV.build === '20260721s', null, { timeout: 20000 });
   await page.waitForSelector('.xp-bottom-nav', { state: 'visible', timeout: 20000 });
+  await page.waitForFunction(() => (window.__CNC_TRUST_READY_AT__ || 0) > 0, null, { timeout: 5000 });
 
   const api = await page.evaluate(() => ({
     build: window.CNC_TRUST_NAV.build,
