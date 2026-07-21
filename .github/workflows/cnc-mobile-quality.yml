@@ -21,20 +21,31 @@ jobs:
           node --check cnc/mobile-gcode-pro.js
           node --check cnc/clean-ui.js
           node --check cnc/query-modes.js
+          node --check cnc/mobile-trust-nav.js
           node --check cnc/import-test.js
           node --check cnc/sw.js
           for file in cnc/tests/mobile-*.cjs; do node --check "$file"; done
-      - name: Stability performance and split query assertions
+      - name: Stability performance accessibility and split query assertions
         run: |
           grep -q "20260721q" cnc/import-test.js
+          grep -q "20260721s" cnc/import-test.js
           grep -q "BUILD = '20260721q'" cnc/clean-ui.js
           grep -q "QUERY_BUILD = '20260721r'" cnc/clean-ui.js
           grep -q "BUILD='20260721r'" cnc/query-modes.js
+          grep -q "BUILD = '20260721s'" cnc/mobile-trust-nav.js
           grep -q "polling: false" cnc/clean-ui.js
           grep -q "polling:false" cnc/query-modes.js
+          grep -q "polling: false" cnc/mobile-trust-nav.js
+          grep -q "observer: false" cnc/mobile-trust-nav.js
+          grep -q "syncNavState" cnc/mobile-trust-nav.js
+          grep -q "aria-current" cnc/mobile-trust-nav.js
+          grep -q "min-height:48px" cnc/mobile-trust-nav.css
+          grep -q "safe-area-inset-bottom" cnc/mobile-trust-nav.css
+          grep -q "prefers-reduced-motion" cnc/mobile-trust-nav.css
           grep -q "RETRY_DELAYS" cnc/query-modes.js
           grep -q "maxReadinessAttempts" cnc/query-modes.js
           grep -q "mobile-performance-smoke" .github/workflows/cnc-mobile-smoke.yml
+          grep -q "mobile-nav-accessibility-smoke" .github/workflows/cnc-mobile-smoke.yml
           grep -q "FILTER_META.alarm" cnc/query-modes.js
           grep -q "FILTER_META.parameter" cnc/query-modes.js
           grep -q "FILTER_META.fault" cnc/query-modes.js
@@ -51,8 +62,12 @@ jobs:
           grep -q "disableServiceWorkerRegistration" cnc/import-test.js
           grep -q "loadGcodePro" cnc/import-test.js
           grep -q "正在恢复数控网站" cnc-recover.html
-          if grep -q "setInterval" cnc/clean-ui.js cnc/query-modes.js; then
+          if grep -q "setInterval" cnc/clean-ui.js cnc/query-modes.js cnc/mobile-trust-nav.js; then
             echo "CNC startup layers must not keep polling intervals"
+            exit 1
+          fi
+          if grep -q "new MutationObserver" cnc/mobile-trust-nav.js; then
+            echo "Mobile trust navigation must not observe the entire workspace"
             exit 1
           fi
           if grep -q "setTimeout(function(){ensureCleanStyle" cnc/import-test.js; then
