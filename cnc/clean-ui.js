@@ -8,6 +8,7 @@
   var retryDelays = [0, 40, 100, 220, 480, 900, 1600];
   var retryIndex = 0;
   var retryTimer = null;
+  var restoringQuery = false;
 
   function ensureStateStyle() {
     if (document.querySelector('style[data-cnc-detail-state]')) return;
@@ -76,9 +77,24 @@
     }
   }
 
-  function captureWorkspaceState() {
+  function bindSearchState() {
     var input = document.getElementById('search-input');
-    window.__CNC_STABLE_QUERY__ = input ? input.value : '';
+    if (!input) return false;
+    if (input.dataset.cncSearchStateBound === 'true') return true;
+    input.dataset.cncSearchStateBound = 'true';
+    window.__CNC_STABLE_QUERY__ = input.value || '';
+    input.addEventListener('input', function () {
+      if (!restoringQuery) window.__CNC_STABLE_QUERY__ = input.value;
+    }, true);
+    return true;
+  }
+
+  function captureWorkspaceState() {
+    bindSearchState();
+    var input = document.getElementById('search-input');
+    if (typeof window.__CNC_STABLE_QUERY__ !== 'string') {
+      window.__CNC_STABLE_QUERY__ = input ? input.value : '';
+    }
     window.__CNC_STABLE_LIST_SCROLL__ = window.scrollY;
   }
 
@@ -86,14 +102,17 @@
     var input = document.getElementById('search-input');
     var saved = window.__CNC_STABLE_QUERY__;
     if (!input || typeof saved !== 'string' || input.value === saved) return;
+    restoringQuery = true;
     input.value = saved;
     input.dispatchEvent(new Event('input', { bubbles: true }));
+    window.setTimeout(function () { restoringQuery = false; }, 0);
   }
 
   function scheduleWorkspaceRestore() {
     restoreWorkspaceState();
     window.setTimeout(restoreWorkspaceState, 0);
     window.setTimeout(restoreWorkspaceState, 120);
+    window.setTimeout(restoreWorkspaceState, 320);
   }
 
   function openMobilePanel(entryId) {
@@ -137,6 +156,7 @@
       button.dataset.cncCleanBound = 'true';
       button.addEventListener('pointerdown', captureWorkspaceState);
       button.addEventListener('click', function () {
+        captureWorkspaceState();
         confirmMobilePanel(button.getAttribute('data-open-entry') || '');
       });
     });
@@ -144,6 +164,7 @@
 
   function patchWorkspaceRenderer() {
     if (window.__CNC_CLEAN_RENDER_PATCHED__) {
+      bindSearchState();
       bindResultButtons();
       return true;
     }
@@ -152,10 +173,12 @@
       originalRenderWorkspace = renderWorkspace;
       renderWorkspace = function () {
         var result = originalRenderWorkspace.apply(this, arguments);
+        bindSearchState();
         bindResultButtons();
         return result;
       };
       window.__CNC_CLEAN_RENDER_PATCHED__ = true;
+      bindSearchState();
       bindResultButtons();
       return true;
     } catch (error) {
@@ -168,6 +191,7 @@
     retryTimer = null;
     var queryReady = ensureQueryModes();
     var workspaceReady = patchWorkspaceRenderer();
+    bindSearchState();
     if (queryReady && workspaceReady) {
       window.__CNC_CLEAN_READY_AT__ = Math.round(performance.now());
       return;
