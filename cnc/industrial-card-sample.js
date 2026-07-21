@@ -130,6 +130,7 @@
       var result = original.apply(this, arguments);
       window.setTimeout(syncSurface, 0);
       window.setTimeout(syncSurface, 90);
+      window.setTimeout(syncSurface, 320);
       return result;
     };
     window[flagName] = true;
@@ -149,17 +150,21 @@
     }, typeof delay === 'number' ? delay : 60);
   }
 
+  function scheduleInteractionSync() {
+    [30, 140, 320, 700, 1200].forEach(scheduleSync);
+  }
+
   function bindEvents() {
     document.addEventListener('click', function (event) {
       if (!event.target || !event.target.closest) return;
       if (event.target.closest('[data-route],[data-filter],.result-card,[data-open-entry],#detail-back-btn,#favorite-toggle,.xp-bottom-nav button')) {
-        scheduleSync(30);
-        scheduleSync(140);
+        scheduleInteractionSync();
       }
     }, true);
     window.addEventListener('hashchange', function () {
       scheduleSync(40);
       scheduleSync(150);
+      scheduleSync(420);
     });
     window.addEventListener('popstate', function () { scheduleSync(50); });
   }
