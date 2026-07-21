@@ -6,14 +6,19 @@
   var retryDelays = [0, 60, 160, 360, 760, 1300];
   var resultBindingDelays = [0, 60, 180, 360, 720, 1200];
   var booted = false;
+  var suggestionCloseTimer = null;
 
   function ensureSuggestionStyle() {
     if (document.querySelector('style[data-cnc-industrial-suggestions]')) return;
     var style = document.createElement('style');
     style.dataset.cncIndustrialSuggestions = 'true';
     style.textContent = '@media(max-width:768px){' +
-      'body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #view-workspace .search-toolbar{position:relative!important;top:auto!important;inset:auto!important;z-index:1!important;}' +
+      'body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #view-workspace .workspace-panel.search-panel,' +
+      'body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #view-workspace .search-toolbar{' +
+        'position:relative!important;top:auto!important;inset:auto!important;z-index:1!important;' +
+      '}' +
       'body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #view-workspace #search-input{border-radius:10px!important;}' +
+      'body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #view-workspace .result-card{border-radius:14px!important;}' +
       'body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #view-workspace #search-suggestions{' +
         'position:static!important;inset:auto!important;z-index:auto!important;width:100%!important;max-height:176px!important;' +
         'margin:9px 0 0!important;padding:5px!important;overflow-y:auto!important;border:1px solid var(--cnc-ic-line)!important;' +
@@ -39,17 +44,25 @@
     document.head.appendChild(style);
   }
 
+  function setNormalFlow(node, zIndex) {
+    if (!node) return;
+    node.style.setProperty('position', 'relative', 'important');
+    node.style.setProperty('top', 'auto', 'important');
+    node.style.setProperty('inset', 'auto', 'important');
+    node.style.setProperty('z-index', String(zIndex == null ? 1 : zIndex), 'important');
+  }
+
   function enforceControlGeometry() {
     var input = document.getElementById('search-input');
+    var panel = document.querySelector('#view-workspace .workspace-panel.search-panel');
     var toolbar = document.querySelector('#view-workspace .search-toolbar');
     var box = document.getElementById('search-suggestions');
     if (input) input.style.setProperty('border-radius', '10px', 'important');
-    if (toolbar) {
-      toolbar.style.setProperty('position', 'relative', 'important');
-      toolbar.style.setProperty('top', 'auto', 'important');
-      toolbar.style.setProperty('inset', 'auto', 'important');
-      toolbar.style.setProperty('z-index', '1', 'important');
-    }
+    setNormalFlow(panel, 1);
+    setNormalFlow(toolbar, 1);
+    document.querySelectorAll('#result-list .result-card').forEach(function (card) {
+      card.style.setProperty('border-radius', '14px', 'important');
+    });
     if (box) {
       box.style.setProperty('position', 'static', 'important');
       box.style.setProperty('inset', 'auto', 'important');
@@ -61,6 +74,10 @@
   }
 
   function closeSuggestions() {
+    if (suggestionCloseTimer !== null) {
+      window.clearTimeout(suggestionCloseTimer);
+      suggestionCloseTimer = null;
+    }
     var box = document.getElementById('search-suggestions');
     if (!box) return;
     if (window.CNC_FRONTEND && typeof window.CNC_FRONTEND.closeSuggestionBox === 'function') {
@@ -70,6 +87,14 @@
     box.style.display = 'none';
     box.hidden = true;
     box.setAttribute('aria-hidden', 'true');
+  }
+
+  function scheduleSuggestionClose() {
+    if (suggestionCloseTimer !== null) window.clearTimeout(suggestionCloseTimer);
+    suggestionCloseTimer = window.setTimeout(function () {
+      suggestionCloseTimer = null;
+      closeSuggestions();
+    }, 1200);
   }
 
   function activeViewId() {
@@ -191,7 +216,10 @@
   }, true);
 
   document.addEventListener('input', function (event) {
-    if (event.target && event.target.id === 'search-input') scheduleResultBinding();
+    if (event.target && event.target.id === 'search-input') {
+      scheduleResultBinding();
+      scheduleSuggestionClose();
+    }
   }, true);
 
   document.addEventListener('keydown', function (event) {
