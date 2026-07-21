@@ -62,11 +62,6 @@ jobs:
       - name: Mobile homepage industrial card sample
         run: node cnc/tests/mobile-home-smoke.cjs
 
-      - name: Diagnose G01 click chain
-        run: |
-          set -o pipefail
-          node cnc/tests/mobile-industrial-click-debug.cjs 2>&1 | tee cnc/test-artifacts/industrial-card-sample/click-debug.log
-
       - name: Mobile industrial homepage and G01 detail acceptance
         run: |
           set -o pipefail
