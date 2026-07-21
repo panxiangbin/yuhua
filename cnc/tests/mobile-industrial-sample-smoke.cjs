@@ -69,14 +69,10 @@ const assert = require('node:assert/strict');
   await page.locator('.launchpad-card[data-filter="gcode"]').click();
   await page.waitForFunction(() => window.__CNC_GM_PRO_INSTALLED__ === '20260720h', null, { timeout: 30000 });
   await page.locator('#search-input').fill('G1');
-  await page.waitForTimeout(700);
-  const openButton = page.locator('#result-list [data-open-entry="kb-gcode-g01"]');
-  await openButton.waitFor({ state: 'attached', timeout: 15000 });
-  await page.waitForFunction(() => {
-    const button = document.querySelector('#result-list [data-open-entry="kb-gcode-g01"]');
-    return button && button.dataset.cncCleanBound === 'true';
-  }, null, { timeout: 15000 });
-  await openButton.click({ force: true });
+  await page.waitForTimeout(900);
+  const resultCard = page.locator('#result-list .result-card:has([data-open-entry="kb-gcode-g01"])');
+  await resultCard.waitFor({ state: 'visible', timeout: 15000 });
+  await resultCard.click();
 
   await page.waitForFunction(() => /G01/.test((document.getElementById('detail-code') || {}).textContent || ''), null, { timeout: 15000 });
   await page.evaluate(() => window.CNC_CLEAN_UI.confirmMobilePanel('kb-gcode-g01'));
