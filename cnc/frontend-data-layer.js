@@ -23,21 +23,38 @@
   function buildRiskMap(arr) {
     var map = {};
     arr.forEach(function (item) {
+      if (!item || typeof item.keyword !== 'string') return;
       map[item.keyword.toLowerCase()] = item;
     });
     return map;
   }
 
+  function normalizeKeywords(value) {
+    if (Array.isArray(value)) return value.filter(function (item) { return typeof item === 'string' && item.trim(); });
+    if (typeof value === 'string') {
+      return value.split(/[，,、|;；\s]+/).map(function (item) { return item.trim(); }).filter(Boolean);
+    }
+    return [];
+  }
+
   function buildKeywordIndex(arr) {
     var map = {};
     arr.forEach(function (item) {
-      (item.keywords || []).forEach(function (kw) {
+      if (!item) return;
+      normalizeKeywords(item.keywords).forEach(function (kw) {
         var key = kw.toLowerCase();
         if (!map[key]) map[key] = [];
         map[key].push(item);
       });
     });
     return map;
+  }
+
+  function setSuggestionVisibility(boxEl, visible) {
+    if (!boxEl) return;
+    boxEl.style.display = visible ? 'block' : 'none';
+    boxEl.hidden = !visible;
+    boxEl.setAttribute('aria-hidden', visible ? 'false' : 'true');
   }
 
   window.CNC_FRONTEND = {};
@@ -50,27 +67,27 @@
       loadJSON(FILES.faq),
       loadJSON(FILES.lookup)
     ]).then(function (results) {
-      window.CNC_FRONTEND.suggestions = results[0];
-      window.CNC_FRONTEND.index = results[1];
-      window.CNC_FRONTEND.riskKeywords = results[2];
-      window.CNC_FRONTEND.faq = results[3];
-      window.CNC_FRONTEND.lookup = results[4];
+      window.CNC_FRONTEND.suggestions = Array.isArray(results[0]) ? results[0] : [];
+      window.CNC_FRONTEND.index = Array.isArray(results[1]) ? results[1] : [];
+      window.CNC_FRONTEND.riskKeywords = Array.isArray(results[2]) ? results[2] : [];
+      window.CNC_FRONTEND.faq = Array.isArray(results[3]) ? results[3] : [];
+      window.CNC_FRONTEND.lookup = Array.isArray(results[4]) ? results[4] : [];
 
-      window.CNC_FRONTEND.riskMap = buildRiskMap(results[2]);
-      window.CNC_FRONTEND.keywordIndex = buildKeywordIndex(results[1]);
+      window.CNC_FRONTEND.riskMap = buildRiskMap(window.CNC_FRONTEND.riskKeywords);
+      window.CNC_FRONTEND.keywordIndex = buildKeywordIndex(window.CNC_FRONTEND.index);
 
       window.CNC_FRONTEND.idIndex = {};
-      results[1].forEach(function (item) {
-        if (item.id) window.CNC_FRONTEND.idIndex[item.id] = item;
+      window.CNC_FRONTEND.index.forEach(function (item) {
+        if (item && item.id) window.CNC_FRONTEND.idIndex[item.id] = item;
       });
 
       if (window.CNC_RUNTIME) {
         window.CNC_RUNTIME._frontendData = {
-          suggestions: results[0],
-          index: results[1],
-          riskKeywords: results[2],
-          faq: results[3],
-          lookup: results[4]
+          suggestions: window.CNC_FRONTEND.suggestions,
+          index: window.CNC_FRONTEND.index,
+          riskKeywords: window.CNC_FRONTEND.riskKeywords,
+          faq: window.CNC_FRONTEND.faq,
+          lookup: window.CNC_FRONTEND.lookup
         };
       }
 
@@ -80,15 +97,15 @@
 
   window.CNC_FRONTEND.getSuggestions = function (prefix, maxResults) {
     if (!prefix || !window.CNC_FRONTEND.suggestions) return [];
-    maxResults = maxResults || 10;
+    maxResults = maxResults || 6;
     var q = prefix.toLowerCase();
     var results = window.CNC_FRONTEND.suggestions.filter(function (s) {
-      return s.keyword.toLowerCase().indexOf(q) !== -1;
+      return s && typeof s.keyword === 'string' && s.keyword.toLowerCase().indexOf(q) !== -1;
     }).slice(0, maxResults).map(function (s) {
       return { keyword: s.keyword, type: s.type, category: s.category, priority: s.priority };
     });
     results.sort(function (a, b) {
-      return a.priority - b.priority || a.keyword.localeCompare(b.keyword);
+      return Number(a.priority || 99) - Number(b.priority || 99) || a.keyword.localeCompare(b.keyword);
     });
     return results;
   };
@@ -98,9 +115,7 @@
     var q = text.toLowerCase();
     var keys = Object.keys(window.CNC_FRONTEND.riskMap);
     for (var i = 0; i < keys.length; i++) {
-      if (q.indexOf(keys[i]) !== -1) {
-        return window.CNC_FRONTEND.riskMap[keys[i]];
-      }
+      if (q.indexOf(keys[i]) !== -1) return window.CNC_FRONTEND.riskMap[keys[i]];
     }
     return null;
   };
@@ -116,7 +131,7 @@
         var items = window.CNC_FRONTEND.keywordIndex[keys[i]];
         for (var j = 0; j < items.length; j++) {
           var item = items[j];
-          if (!seen[item.id]) {
+          if (item && !seen[item.id]) {
             seen[item.id] = true;
             results.push(item);
           }
@@ -135,51 +150,63 @@
     return faqs.slice(0, maxResults);
   };
 
+  window.CNC_FRONTEND.closeSuggestionBox = function (boxEl) {
+    if (!boxEl) boxEl = document.getElementById('search-suggestions');
+    if (!boxEl) return;
+    setSuggestionVisibility(boxEl, false);
+  };
+
   window.CNC_FRONTEND.renderSuggestionBox = function (inputEl, boxEl) {
-    if (!inputEl || !boxEl) return;
+    if (!inputEl || !boxEl || inputEl.dataset.cncSuggestionBound === 'true') return;
+    inputEl.dataset.cncSuggestionBound = 'true';
+    boxEl.setAttribute('role', 'listbox');
+    setSuggestionVisibility(boxEl, false);
 
     inputEl.addEventListener('input', function () {
       var val = inputEl.value.trim();
-      if (val.length < 1) {
+      if (val.length < 1 || !window.CNC_FRONTEND.suggestions) {
         boxEl.innerHTML = '';
-        boxEl.style.display = 'none';
+        setSuggestionVisibility(boxEl, false);
         return;
       }
-      if (!window.CNC_FRONTEND.suggestions) {
-        boxEl.style.display = 'none';
-        return;
-      }
-      var items = window.CNC_FRONTEND.getSuggestions(val);
+      var items = window.CNC_FRONTEND.getSuggestions(val, 4);
       if (!items.length) {
         boxEl.innerHTML = '';
-        boxEl.style.display = 'none';
+        setSuggestionVisibility(boxEl, false);
         return;
       }
-      boxEl.style.display = 'block';
       boxEl.innerHTML = items.map(function (item) {
-        var typeLabel = item.type === 'gcode' ? 'G' : item.type === 'operation' ? 'OP' : item.type === 'alarm' ? 'AL' : item.type === 'param' ? 'PM' : 'OT';
-        return '<button type="button" class="suggestion-item" data-suggestion="' + item.keyword.replace(/"/g, '&quot;') + '"><span class="suggestion-type-badge suggestion-type-' + item.type + '">' + typeLabel + '</span><span class="suggestion-text">' + item.keyword + '</span><span class="suggestion-category">' + item.category + '</span></button>';
+        var type = String(item.type || 'other');
+        var typeLabel = type === 'gcode' ? 'G' : type === 'operation' ? 'OP' : type === 'alarm' ? 'AL' : type === 'param' ? 'PM' : 'OT';
+        return '<button type="button" role="option" class="suggestion-item" data-suggestion="' + item.keyword.replace(/"/g, '&quot;') + '"><span class="suggestion-type-badge suggestion-type-' + type + '">' + typeLabel + '</span><span class="suggestion-text">' + item.keyword + '</span><span class="suggestion-category">' + (item.category || '') + '</span></button>';
       }).join('');
+      setSuggestionVisibility(boxEl, true);
 
       boxEl.querySelectorAll('.suggestion-item').forEach(function (btn) {
         btn.addEventListener('click', function () {
           var kw = btn.dataset.suggestion;
           inputEl.value = kw;
           boxEl.innerHTML = '';
-          boxEl.style.display = 'none';
-          inputEl.dispatchEvent(new Event('input'));
+          setSuggestionVisibility(boxEl, false);
+          inputEl.dispatchEvent(new Event('input', { bubbles: true }));
+          inputEl.focus();
         });
       });
     });
 
     inputEl.addEventListener('blur', function () {
-      setTimeout(function () { boxEl.style.display = 'none'; }, 200);
+      setTimeout(function () { setSuggestionVisibility(boxEl, false); }, 180);
     });
 
     inputEl.addEventListener('focus', function () {
       var val = inputEl.value.trim();
-      if (val.length >= 1 && boxEl.children.length) {
-        boxEl.style.display = 'block';
+      if (val.length >= 1 && boxEl.children.length) setSuggestionVisibility(boxEl, true);
+    });
+
+    inputEl.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') {
+        setSuggestionVisibility(boxEl, false);
+        inputEl.blur();
       }
     });
   };
