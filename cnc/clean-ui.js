@@ -52,6 +52,22 @@
     return false;
   }
 
+  function syncIndustrialSample() {
+    if (!document.body) return;
+    var code = String((document.getElementById('detail-code') || {}).textContent || '')
+      .toUpperCase()
+      .replace(/\s+/g, '');
+    if (!/^G0?1(?:[^0-9]|$)/.test(code)) return;
+    document.body.classList.add('cnc-industrial-sample');
+    document.body.setAttribute('data-cnc-industrial-surface', 'g01');
+    if (window.CNC_INDUSTRIAL_SAMPLE && typeof window.CNC_INDUSTRIAL_SAMPLE.sync === 'function') {
+      window.CNC_INDUSTRIAL_SAMPLE.sync();
+      if (document.body.getAttribute('data-cnc-industrial-surface') !== 'g01') {
+        document.body.setAttribute('data-cnc-industrial-surface', 'g01');
+      }
+    }
+  }
+
   function openMobilePanel() {
     var panel = document.getElementById('detail-panel');
     if (!panel || !document.body || window.innerWidth > 768) return false;
@@ -60,6 +76,8 @@
     panel.scrollTop = 0;
     document.body.classList.add('cnc-detail-open');
     document.body.setAttribute('data-cnc-detail-open', 'true');
+    syncIndustrialSample();
+    window.setTimeout(syncIndustrialSample, 80);
     return true;
   }
 
@@ -69,6 +87,9 @@
     if (document.body) {
       document.body.classList.remove('cnc-detail-open');
       document.body.removeAttribute('data-cnc-detail-open');
+      if (document.body.getAttribute('data-cnc-industrial-surface') === 'g01') {
+        document.body.removeAttribute('data-cnc-industrial-surface');
+      }
     }
   }
 
@@ -149,6 +170,7 @@
     confirmMobilePanel: confirmMobilePanel,
     bindResultButtons: bindResultButtons,
     ensureQueryModes: ensureQueryModes,
-    scheduleReadinessCheck: scheduleReadinessCheck
+    scheduleReadinessCheck: scheduleReadinessCheck,
+    syncIndustrialSample: syncIndustrialSample
   };
 })();
