@@ -30,9 +30,10 @@ const { chromium } = require('playwright');
   const gridColumns = await page.locator('#cncGalleryGrid').evaluate(node => getComputedStyle(node).gridTemplateColumns.split(' ').length);
   assert.equal(gridColumns, 1, '390px手机图库必须为单列');
 
+  const gridBox = await page.locator('#cncGalleryGrid').boundingBox();
   const firstCard = page.locator('#cncGalleryGrid .cnc-gallery-card').first();
   const cardBox = await firstCard.boundingBox();
-  assert.ok(cardBox && cardBox.width > 350, '图库卡片应接近手机可用宽度');
+  assert.ok(gridBox && cardBox && cardBox.width >= gridBox.width - 2, '图库卡片必须铺满单列内容区');
   const cardStyle = await firstCard.evaluate(node => {
     const style = getComputedStyle(node);
     return { radius: style.borderRadius, background: style.backgroundColor, minHeight: style.minHeight };
@@ -55,7 +56,7 @@ const { chromium } = require('playwright');
   assert.equal(await firstCard.evaluate(node => document.activeElement === node), true, '关闭大图后焦点应回到原图片卡');
 
   assert.deepEqual(errors, [], '图库流程不应产生控制台错误');
-  console.log(JSON.stringify({ passed: true, cardStyle, closeSize, errors }, null, 2));
+  console.log(JSON.stringify({ passed: true, gridBox, cardBox, cardStyle, closeSize, errors }, null, 2));
   await browser.close();
 })().catch(error => {
   console.error(error);
