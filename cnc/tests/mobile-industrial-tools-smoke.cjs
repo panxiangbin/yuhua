@@ -12,17 +12,18 @@ const { chromium } = require('playwright');
   const home = await page.locator('#view-dashboard').evaluate(el => el.classList.contains('active'));
   if (!home) throw new Error('根网址启动后没有稳定停留在首页');
 
-  const trigger = page.locator('[data-route="calculator"]').first();
-  await trigger.click();
+  await page.locator('[data-route="calculator"]').first().click();
   await page.waitForFunction(() => document.querySelector('#view-calculator.view.active') && document.body.classList.contains('cnc-industrial-tools'));
   const check = await page.evaluate(() => window.CNC_INDUSTRIAL_TOOLS.runCheck());
   if (!check.passed || check.cards !== 6 || !check.accessible) throw new Error('工具页工业卡片验收失败: ' + JSON.stringify(check));
 
+  await page.locator('[data-tool-tab="tool-tab2"]').click();
+  await page.waitForFunction(() => document.querySelector('#tool-tab2.tool-tab-panel.active'));
   const metrics = await page.evaluate(() => {
-    const cards = [...document.querySelectorAll('#view-calculator .calc-card')];
-    const input = document.querySelector('#view-calculator .calc-input');
-    const button = document.querySelector('#view-calculator .calc-btn');
-    const result = document.querySelector('#view-calculator .calc-result');
+    const cards = [...document.querySelectorAll('#tool-tab2 .calc-card')];
+    const input = document.querySelector('#tool-tab2 .calc-input');
+    const button = document.querySelector('#tool-tab2 .calc-btn');
+    const result = document.querySelector('#tool-tab2 .calc-result');
     const first = cards[0] && cards[0].getBoundingClientRect();
     const second = cards[1] && cards[1].getBoundingClientRect();
     return {
@@ -37,25 +38,21 @@ const { chromium } = require('playwright');
     throw new Error('工具页手机几何规范失败: ' + JSON.stringify(metrics));
   }
 
-  const firstCard = page.locator('#view-calculator .calc-card').first();
+  const firstCard = page.locator('#tool-tab2 .calc-card').first();
   const firstHeader = firstCard.locator('.calc-card-header');
   if ((await firstHeader.getAttribute('aria-expanded')) === 'false') await firstHeader.click();
   const inputs = firstCard.locator('.calc-input');
   await inputs.nth(0).fill('150');
   await inputs.nth(1).fill('10');
   await firstCard.locator('.calc-btn').click();
-  await page.waitForFunction(() => {
-    const text = document.querySelector('#view-calculator .calc-card .calc-result')?.textContent || '';
-    return /4775\s*rpm/i.test(text);
-  });
+  await page.waitForFunction(() => /4775\s*rpm/i.test(document.querySelector('#tool-tab2 .calc-card .calc-result')?.textContent || ''));
   const ariaLive = await firstCard.locator('.calc-result').getAttribute('aria-live');
   if (ariaLive !== 'polite') throw new Error('计算结果未提供屏幕阅读器播报');
 
   await firstHeader.focus();
   await page.keyboard.press('Enter');
   await page.waitForTimeout(80);
-  const collapsed = await firstHeader.getAttribute('aria-expanded');
-  if (collapsed !== 'false') throw new Error('键盘 Enter 未能收起计算卡片');
+  if ((await firstHeader.getAttribute('aria-expanded')) !== 'false') throw new Error('键盘 Enter 未能收起计算卡片');
 
   await page.locator('#view-calculator .sub-nav-btn').first().click();
   await page.waitForFunction(() => document.querySelector('#view-dashboard.view.active'));
