@@ -13,6 +13,7 @@ const assert = require('node:assert/strict');
   await page.waitForSelector('.launchpad-card[data-filter="gcode"]', { state: 'visible', timeout: 30000 });
 
   await page.locator('.launchpad-card[data-filter="gcode"]').click();
+  await page.waitForFunction(() => window.__CNC_GM_PRO_INSTALLED__ === '20260720h', null, { timeout: 30000 });
   await page.waitForFunction(() => window.CNC_INDUSTRIAL_WORKSPACE && window.CNC_INDUSTRIAL_WORKSPACE.build === '20260721v', null, { timeout: 15000 });
   await page.waitForSelector('#view-workspace.active', { state: 'visible', timeout: 30000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-industrial-workspace') === 'true', null, { timeout: 15000 });
@@ -70,7 +71,36 @@ const assert = require('node:assert/strict');
   assert.ok(workspace.codeWeight >= 800, `代码号字重不足：${workspace.codeWeight}`);
 
   await page.locator('#search-input').fill('G1');
-  await page.waitForSelector('#result-list [data-open-entry="kb-gcode-g01"]', { state: 'attached', timeout: 15000 });
+  await page.waitForTimeout(1300);
+  const settledSearch = await page.evaluate(() => {
+    let internal = {};
+    try {
+      internal = {
+        keyword: typeof state !== 'undefined' && state ? state.keyword : null,
+        activeFilter: typeof state !== 'undefined' && state ? state.activeFilter : null,
+        machine: typeof state !== 'undefined' && state ? state.gcodeMachine : null,
+        scope: typeof state !== 'undefined' && state ? state.gcodeScope : null,
+        selectedId: typeof state !== 'undefined' && state ? state.selectedId : null
+      };
+    } catch (error) {}
+    return {
+      input: (document.getElementById('search-input') || {}).value || '',
+      stableQuery: window.__CNC_STABLE_QUERY__,
+      userQuery: window.__CNC_USER_QUERY__,
+      bodyMode: document.body.getAttribute('data-cnc-industrial-mode'),
+      queryMode: document.body.getAttribute('data-cnc-query-mode'),
+      internal,
+      results: Array.from(document.querySelectorAll('#result-list [data-open-entry]')).slice(0, 20).map(node => ({
+        id: node.getAttribute('data-open-entry'),
+        card: (node.closest('.result-card') || {}).innerText || ''
+      }))
+    };
+  });
+  console.log('G1稳定搜索状态', JSON.stringify(settledSearch, null, 2));
+  assert.equal(settledSearch.input, 'G1', `G1输入被覆盖：${JSON.stringify(settledSearch)}`);
+  assert.equal(settledSearch.internal.keyword, 'G1', `内部搜索词未同步：${JSON.stringify(settledSearch)}`);
+  assert.ok(settledSearch.results.some(item => item.id === 'kb-gcode-g01'), `G01结果缺失：${JSON.stringify(settledSearch)}`);
+
   await page.locator('#result-list [data-open-entry="kb-gcode-g01"]').click({ force: true });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-detail-open') === 'true', null, { timeout: 15000 });
   await page.locator('#detail-back-btn').click();
