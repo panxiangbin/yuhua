@@ -13,7 +13,7 @@ permissions:
 jobs:
   mobile-smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 18
+    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -52,6 +52,10 @@ jobs:
             fi
           done
           mkdir -p cnc/test-artifacts/industrial-card-sample
+          mkdir -p cnc/test-artifacts/public-startup
+
+      - name: Diagnose current public mobile startup timeline
+        run: node cnc/tests/mobile-public-startup-diagnostic.cjs
 
       - name: Mobile startup performance and console errors
         run: node cnc/tests/mobile-performance-smoke.cjs
@@ -112,4 +116,13 @@ jobs:
           name: cnc-industrial-card-sample-390x844
           path: cnc/test-artifacts/industrial-card-sample/*
           retention-days: 14
+          if-no-files-found: error
+
+      - name: Upload public startup diagnostic
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-public-startup-timeline
+          path: cnc/test-artifacts/public-startup/*
+          retention-days: 7
           if-no-files-found: error
