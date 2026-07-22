@@ -70,25 +70,52 @@ const assert = require('node:assert/strict');
   assert.ok(workspace.codeSize >= 23, `代码号不够醒目：${workspace.codeSize}`);
   assert.ok(workspace.codeWeight >= 800, `代码号字重不足：${workspace.codeWeight}`);
 
-  await page.locator('#search-input').fill('G1');
-  await page.waitForTimeout(1300);
+  const searchInput = page.locator('#search-input');
+  await searchInput.fill('G1');
+  await page.waitForSelector('#search-suggestions .suggestion-item', { state: 'visible', timeout: 15000 });
+
+  const suggestionState = await page.evaluate(() => {
+    const input = document.getElementById('search-input');
+    const box = document.getElementById('search-suggestions');
+    return {
+      expanded: input.getAttribute('aria-expanded'),
+      controls: input.getAttribute('aria-controls'),
+      role: input.getAttribute('role'),
+      listRole: box.getAttribute('role'),
+      suggestions: Array.from(box.querySelectorAll('.suggestion-item')).map(node => node.dataset.suggestion)
+    };
+  });
+  assert.equal(suggestionState.role, 'combobox');
+  assert.equal(suggestionState.listRole, 'listbox');
+  assert.equal(suggestionState.expanded, 'true');
+  assert.ok(suggestionState.controls, '搜索框必须关联建议列表');
+  assert.equal(suggestionState.suggestions[0], 'G01', `G1应优先建议G01：${JSON.stringify(suggestionState)}`);
+
+  await searchInput.press('ArrowDown');
+  const activeSuggestion = await page.evaluate(() => ({
+    activeId: document.getElementById('search-input').getAttribute('aria-activedescendant'),
+    selected: document.querySelector('#search-suggestions [aria-selected="true"]')?.dataset.suggestion || ''
+  }));
+  assert.ok(activeSuggestion.activeId, '方向键后必须设置活动建议');
+  assert.equal(activeSuggestion.selected, 'G01');
+
+  await searchInput.press('Enter');
+  await page.waitForFunction(() => (document.getElementById('search-input') || {}).value === 'G01', null, { timeout: 15000 });
+  await page.waitForFunction(() => document.getElementById('search-input').getAttribute('aria-expanded') === 'false', null, { timeout: 15000 });
+  await page.waitForTimeout(700);
+
   const settledSearch = await page.evaluate(() => {
     let internal = {};
     try {
       internal = {
         keyword: typeof state !== 'undefined' && state ? state.keyword : null,
         activeFilter: typeof state !== 'undefined' && state ? state.activeFilter : null,
-        machine: typeof state !== 'undefined' && state ? state.gcodeMachine : null,
-        scope: typeof state !== 'undefined' && state ? state.gcodeScope : null,
         selectedId: typeof state !== 'undefined' && state ? state.selectedId : null
       };
     } catch (error) {}
     return {
       input: (document.getElementById('search-input') || {}).value || '',
-      stableQuery: window.__CNC_STABLE_QUERY__,
-      userQuery: window.__CNC_USER_QUERY__,
-      bodyMode: document.body.getAttribute('data-cnc-industrial-mode'),
-      queryMode: document.body.getAttribute('data-cnc-query-mode'),
+      expanded: document.getElementById('search-input').getAttribute('aria-expanded'),
       internal,
       results: Array.from(document.querySelectorAll('#result-list [data-open-entry]')).slice(0, 20).map(node => ({
         id: node.getAttribute('data-open-entry'),
@@ -96,17 +123,20 @@ const assert = require('node:assert/strict');
       }))
     };
   });
-  console.log('G1稳定搜索状态', JSON.stringify(settledSearch, null, 2));
-  assert.equal(settledSearch.input, 'G1', `G1输入被覆盖：${JSON.stringify(settledSearch)}`);
-  assert.equal(settledSearch.internal.keyword, 'G1', `内部搜索词未同步：${JSON.stringify(settledSearch)}`);
+
+  assert.equal(settledSearch.input, 'G01', `键盘选择后输入值错误：${JSON.stringify(settledSearch)}`);
+  assert.equal(settledSearch.expanded, 'false');
+  assert.equal(settledSearch.internal.keyword, 'G01', `内部搜索词未同步：${JSON.stringify(settledSearch)}`);
   assert.ok(settledSearch.results.some(item => item.id === 'kb-gcode-g01'), `G01结果缺失：${JSON.stringify(settledSearch)}`);
 
-  await page.locator('#result-list [data-open-entry="kb-gcode-g01"]').click({ force: true });
+  const g01Button = page.locator('#result-list [data-open-entry="kb-gcode-g01"]');
+  await g01Button.scrollIntoViewIfNeeded();
+  await g01Button.click();
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-detail-open') === 'true', null, { timeout: 15000 });
   await page.locator('#detail-back-btn').click();
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-detail-open') !== 'true', null, { timeout: 15000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-industrial-workspace') === 'true', null, { timeout: 15000 });
-  await page.waitForFunction(() => (document.getElementById('search-input') || {}).value === 'G1', null, { timeout: 15000 });
+  await page.waitForFunction(() => (document.getElementById('search-input') || {}).value === 'G01', null, { timeout: 15000 });
 
   await page.locator('#search-clear-btn').click();
   await page.waitForFunction(() => (document.getElementById('search-input') || {}).value === '', null, { timeout: 15000 });
@@ -128,7 +158,7 @@ const assert = require('node:assert/strict');
   const relevantErrors = [...pageErrors, ...consoleErrors].filter(text => /industrial-workspace|CNC工业查询|TypeError|ReferenceError/i.test(text));
   assert.deepEqual(relevantErrors, [], `工业查询工作区存在控制台错误：${relevantErrors.join(' | ')}`);
 
-  console.log('锤子工业卡片风查询工作区通过', workspace);
+  console.log('锤子工业卡片风查询工作区与键盘搜索建议通过', workspace);
   await browser.close();
 })().catch(error => {
   console.error(error);
