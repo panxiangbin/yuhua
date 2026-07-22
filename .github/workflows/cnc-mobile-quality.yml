@@ -24,6 +24,7 @@ jobs:
           node --check cnc/mobile-trust-nav.js
           node --check cnc/industrial-card-sample.js
           node --check cnc/industrial-workspace.js
+          node --check cnc/industrial-tools.js
           node --check cnc/personal-home.js
           node --check cnc/import-test.js
           node --check cnc/sw.js
@@ -41,8 +42,19 @@ jobs:
           grep -q "CNC_STARTUP_HOME_GUARD" cnc/import-test.js
           grep -q "personalHomeFollowsTools" cnc/import-test.js
           grep -q "BUILD = '20260722b'" cnc/personal-home.js
+          grep -q "industrial-tools.css?v=20260722d" cnc/personal-home.js
+          grep -q "industrial-tools.js?v=20260722d" cnc/personal-home.js
+          grep -q "BUILD='20260722d'" cnc/industrial-tools.js
+          grep -q "CNC_INDUSTRIAL_TOOLS" cnc/industrial-tools.js
+          grep -q "aria-live" cnc/industrial-tools.js
+          grep -q "polling:false" cnc/industrial-tools.js
+          grep -q "observer:false" cnc/industrial-tools.js
+          grep -q "body.cnc-industrial-tools #view-calculator" cnc/industrial-tools.css
+          grep -q "grid-template-columns:1fr!important" cnc/industrial-tools.css
+          grep -q "font-size:25px" cnc/industrial-tools.css
+          grep -q "mobile-industrial-tools-smoke" .github/workflows/cnc-mobile-smoke.yml
           grep -q "keepPanelAfterTools" cnc/personal-home.js
-          grep -q "launch.insertAdjacentElement('afterend', panel)" cnc/personal-home.js
+          grep -q "launch.insertAdjacentElement('afterend',panel)" cnc/personal-home.js
           grep -q "followsTools" cnc/personal-home.js
           grep -q "BUILD = '20260721q'" cnc/clean-ui.js
           grep -q "QUERY_BUILD = '20260721r'" cnc/clean-ui.js
@@ -101,7 +113,6 @@ jobs:
           grep -q "isParameterEntry" cnc/query-modes.js
           grep -q "isFaultEntry" cnc/query-modes.js
           grep -q "queryPolling" cnc/tests/mobile-performance-smoke.cjs
-          grep -q "keep homepage tools before learning progress" <(git log -1 --pretty=%B cnc/personal-home.js) || true
           grep -q "工具卡必须先于学习进度出现" cnc/tests/mobile-home-smoke.cjs
           grep -q "clean-ui.css" cnc/import-test.js
           grep -q "vivid-ui.css" cnc/import-test.js
@@ -111,11 +122,11 @@ jobs:
           grep -q "disableServiceWorkerRegistration" cnc/import-test.js
           grep -q "loadGcodePro" cnc/import-test.js
           grep -q "正在恢复数控网站" cnc-recover.html
-          if grep -q "setInterval" cnc/clean-ui.js cnc/query-modes.js cnc/mobile-trust-nav.js cnc/industrial-card-sample.js cnc/industrial-workspace.js cnc/import-test.js; then
+          if grep -q "setInterval" cnc/clean-ui.js cnc/query-modes.js cnc/mobile-trust-nav.js cnc/industrial-card-sample.js cnc/industrial-workspace.js cnc/industrial-tools.js cnc/import-test.js; then
             echo "CNC startup layers must not keep polling intervals"
             exit 1
           fi
-          if grep -q "new MutationObserver" cnc/mobile-trust-nav.js cnc/industrial-card-sample.js cnc/industrial-workspace.js; then
+          if grep -q "new MutationObserver" cnc/mobile-trust-nav.js cnc/industrial-card-sample.js cnc/industrial-workspace.js cnc/industrial-tools.js; then
             echo "Mobile visual and trust layers must not install global observers"
             exit 1
           fi
