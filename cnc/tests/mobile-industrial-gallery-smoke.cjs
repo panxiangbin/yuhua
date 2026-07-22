@@ -18,8 +18,11 @@ const { chromium } = require('playwright');
     timeout: 60000
   });
   await page.waitForFunction(() => window.CNC_TRUST_NAV && window.CNC_TRUST_NAV.galleryBuild === '20260722x');
-  const galleryEntry = page.locator('#view-dashboard.active .launchpad-card[data-route="gallery"]').first();
-  await galleryEntry.waitFor({ state: 'visible', timeout: 30000 });
+  const menuButton = page.locator('#sidebar-open');
+  await menuButton.waitFor({ state: 'visible', timeout: 30000 });
+  await menuButton.click();
+  const galleryEntry = page.locator('#sidebar.open [data-route="gallery"]').first();
+  await galleryEntry.waitFor({ state: 'visible', timeout: 10000 });
   await galleryEntry.click();
   await page.waitForSelector('#view-gallery.active #cncGalleryGrid .cnc-gallery-card', { state: 'visible', timeout: 30000 });
 
