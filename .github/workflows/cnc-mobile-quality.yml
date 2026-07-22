@@ -34,6 +34,9 @@ jobs:
           grep -q "20260721s" cnc/import-test.js
           grep -q "20260721t" cnc/import-test.js
           grep -q "20260721v" cnc/import-test.js
+          grep -q "STARTUP_HOME_BUILD='20260722a'" cnc/import-test.js
+          grep -q "installStartupHomeGuard" cnc/import-test.js
+          grep -q "CNC_STARTUP_HOME_GUARD" cnc/import-test.js
           grep -q "BUILD = '20260721q'" cnc/clean-ui.js
           grep -q "QUERY_BUILD = '20260721r'" cnc/clean-ui.js
           grep -q "BUILD='20260721r'" cnc/query-modes.js
@@ -65,6 +68,7 @@ jobs:
           grep -q "decorateResults" cnc/industrial-workspace.js
           grep -q "polling: false" cnc/industrial-workspace.js
           grep -q "observer: false" cnc/industrial-workspace.js
+          grep -q "mobile-startup-home-smoke" .github/workflows/cnc-mobile-smoke.yml
           grep -q "mobile-industrial-sample-smoke" .github/workflows/cnc-mobile-smoke.yml
           grep -q "mobile-industrial-workspace-smoke" .github/workflows/cnc-mobile-smoke.yml
           grep -q "mobile-industrial-visual" .github/workflows/cnc-mobile-smoke.yml
@@ -98,7 +102,7 @@ jobs:
           grep -q "disableServiceWorkerRegistration" cnc/import-test.js
           grep -q "loadGcodePro" cnc/import-test.js
           grep -q "正在恢复数控网站" cnc-recover.html
-          if grep -q "setInterval" cnc/clean-ui.js cnc/query-modes.js cnc/mobile-trust-nav.js cnc/industrial-card-sample.js cnc/industrial-workspace.js; then
+          if grep -q "setInterval" cnc/clean-ui.js cnc/query-modes.js cnc/mobile-trust-nav.js cnc/industrial-card-sample.js cnc/industrial-workspace.js cnc/import-test.js; then
             echo "CNC startup layers must not keep polling intervals"
             exit 1
           fi

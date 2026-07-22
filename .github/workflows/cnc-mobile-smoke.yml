@@ -56,6 +56,9 @@ jobs:
       - name: Mobile startup performance and console errors
         run: node cnc/tests/mobile-performance-smoke.cjs
 
+      - name: Mobile canonical startup stays on dashboard
+        run: node cnc/tests/mobile-startup-home-smoke.cjs
+
       - name: Mobile bottom navigation accessibility
         run: node cnc/tests/mobile-nav-accessibility-smoke.cjs
 
