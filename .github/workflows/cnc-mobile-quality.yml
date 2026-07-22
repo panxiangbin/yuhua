@@ -68,7 +68,11 @@ jobs:
           grep -q "QUERY_BUILD = '20260721r'" cnc/clean-ui.js
           grep -q "BUILD='20260721r'" cnc/query-modes.js
           grep -q "BUILD = '20260721s'" cnc/mobile-trust-nav.js
-          grep -q "BUILD = '20260721t'" cnc/industrial-card-sample.js
+          grep -q "BUILD = '20260722e'" cnc/industrial-card-sample.js
+          grep -q "decorateDashboardRecent" cnc/industrial-card-sample.js
+          grep -q "__CNC_INDUSTRIAL_DASHBOARD_RECENT_PATCHED__" cnc/industrial-card-sample.js
+          grep -q "dashboard-recent-section" cnc/industrial-card-sample.js
+          grep -q "mobile-industrial-dashboard-recents-smoke" .github/workflows/cnc-mobile-smoke.yml
           grep -q "BUILD = '20260721v'" cnc/industrial-workspace.js
           grep -q "industrial-card-sample.css" cnc/import-test.js
           grep -q "industrial-card-sample.js" cnc/import-test.js
