@@ -1,0 +1,31 @@
+/* CNC学习页：锤子工业卡片风。仅作用于新手学习与课程详情。 */
+@media (max-width: 768px) {
+  body.cnc-industrial-learning #view-study { background:#f1efe9; color:#292c2f; }
+  body.cnc-industrial-learning #view-study .section-panel { padding:14px 12px 96px; background:transparent; }
+  body.cnc-industrial-learning #view-study .section-head { margin:0 0 14px; padding:16px; border:1px solid #d8d3c8; border-radius:14px; background:#fffdf9; box-shadow:0 7px 18px rgba(48,44,36,.07); }
+  body.cnc-industrial-learning #view-study .section-head h3 { margin:3px 0 0; color:#292c2f; font-size:25px; line-height:1.18; font-weight:950; }
+  body.cnc-industrial-learning #view-study .section-head p { margin:8px 0 0; color:#687078; font-size:14px; line-height:1.65; }
+  body.cnc-industrial-learning #view-study .eyebrow { color:#60788a; font-size:11px; font-weight:900; letter-spacing:.12em; }
+  body.cnc-industrial-learning #view-study .learning-stages { display:grid; gap:12px; }
+  body.cnc-industrial-learning #view-study .stage-header { display:flex; align-items:center; gap:10px; margin:10px 0 0; padding:0 2px; }
+  body.cnc-industrial-learning #view-study .stage-header h4 { margin:0; color:#34383b; font-size:17px; font-weight:900; }
+  body.cnc-industrial-learning #view-study .stage-badge { padding:6px 9px; border:1px solid #bfc7cc; border-radius:8px; background:#e8edf0; color:#3f6179; font-size:12px; font-weight:900; }
+  body.cnc-industrial-learning #view-study .study-card-grid { display:grid!important; grid-template-columns:1fr!important; gap:10px!important; }
+  body.cnc-industrial-learning #view-study .study-card { min-height:0; padding:15px 15px 14px; border:1px solid #d8d3c8!important; border-radius:14px!important; background:#fffdf9!important; box-shadow:inset 4px 0 0 #687f90,0 6px 16px rgba(48,44,36,.07)!important; color:#292c2f; transform:none!important; }
+  body.cnc-industrial-learning #view-study .study-card:active { background:#f8f5ef!important; box-shadow:inset 4px 0 0 #3f6179,inset 0 2px 4px rgba(45,42,35,.08)!important; transform:translateY(1px)!important; }
+  body.cnc-industrial-learning #view-study .study-card-header { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
+  body.cnc-industrial-learning #view-study .study-card-badge, body.cnc-industrial-learning #view-study .study-card-time { color:#596168; font-size:12px; font-weight:850; }
+  body.cnc-industrial-learning #view-study .study-card-badge { padding:5px 8px; border:1px solid #c8c3b8; border-radius:8px; background:#f2efe8; color:#3d505e; }
+  body.cnc-industrial-learning #view-study .study-card-icon { display:none; }
+  body.cnc-industrial-learning #view-study .study-card h4 { margin:0; color:#292c2f; font-size:20px; line-height:1.3; font-weight:950; }
+  body.cnc-industrial-learning #view-study .study-card p { margin:8px 0 0; color:#626970; font-size:14px; line-height:1.65; font-weight:600; }
+  body.cnc-industrial-learning #view-study .study-card-tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:11px; }
+  body.cnc-industrial-learning #view-study .study-card .tag { padding:5px 8px; border:1px solid #d5d0c5; border-radius:7px; background:#f5f2ec; color:#555e64; font-size:11px; font-weight:800; }
+  body.cnc-industrial-learning #view-study .study-card.xp-completed { border-color:#b9d0c6!important; background:#f7fbf8!important; box-shadow:inset 4px 0 0 #3d8268,0 6px 16px rgba(48,44,36,.07)!important; }
+  body.cnc-industrial-learning #view-study .sub-nav-bar { gap:8px; padding:8px 12px; background:#f1efe9; }
+  body.cnc-industrial-learning #view-study .sub-nav-btn, body.cnc-industrial-learning #study-detail-panel .sub-nav-btn { min-height:44px; border:1px solid #c7c1b6; border-radius:10px; background:#fffdf9; color:#37434c; font-weight:900; box-shadow:0 3px 8px rgba(48,44,36,.06); }
+  body.cnc-industrial-learning #study-detail-panel { padding:0; background:#f1efe9; }
+  body.cnc-industrial-learning #study-detail-content .lesson-hero, body.cnc-industrial-learning #study-detail-content .lesson-card, body.cnc-industrial-learning #study-detail-content .lesson-section, body.cnc-industrial-learning #study-detail-content .lesson-pass-box { border:1px solid #d8d3c8!important; border-radius:14px!important; background:#fffdf9!important; box-shadow:0 6px 16px rgba(48,44,36,.07)!important; }
+  body.cnc-industrial-learning #study-detail-content h2, body.cnc-industrial-learning #study-detail-content h3, body.cnc-industrial-learning #study-detail-content h4 { color:#292c2f!important; font-weight:950!important; }
+  body.cnc-industrial-learning #study-detail-content code, body.cnc-industrial-learning #study-detail-content pre { font-family:"Roboto Mono","DIN Alternate",Consolas,monospace; font-weight:800; }
+}
