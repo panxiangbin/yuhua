@@ -18,7 +18,9 @@ const { chromium } = require('playwright');
     timeout: 60000
   });
   await page.waitForFunction(() => window.CNC_TRUST_NAV && window.CNC_TRUST_NAV.galleryBuild === '20260722x');
-  await page.locator('[data-route="gallery"]').first().click();
+  const galleryEntry = page.locator('#view-dashboard.active .launchpad-card[data-route="gallery"]').first();
+  await galleryEntry.waitFor({ state: 'visible', timeout: 30000 });
+  await galleryEntry.click();
   await page.waitForSelector('#view-gallery.active #cncGalleryGrid .cnc-gallery-card', { state: 'visible', timeout: 30000 });
 
   assert.equal(await page.locator('link[data-cnc-industrial-gallery]').count(), 1, '图库工业样式必须只加载一次');
