@@ -4,8 +4,8 @@
   var BUILD = '20260721s';
   var GALLERY_BUILD = '20260722x';
   var refreshTimer = 0;
-  var lastGalleryTrigger = null;
   var shareStatusTimer = 0;
+  var lastGalleryTrigger = null;
 
   function meta(name, value, property) {
     var node = document.querySelector(property ? 'meta[property="' + name + '"]' : 'meta[name="' + name + '"]');
@@ -49,14 +49,10 @@
         if (byId) return byId;
       }
     } catch (error) {}
-
-    var code = (document.querySelector('#detail-code') || {}).textContent || '';
-    var title = (document.querySelector('#detail-title') || {}).textContent || '';
-    code = code.trim();
-    title = title.trim();
+    var code = ((document.getElementById('detail-code') || {}).textContent || '').trim();
+    var title = ((document.getElementById('detail-title') || {}).textContent || '').trim();
     return list.find(function (item) {
-      if (!item) return false;
-      return (code && String(item.code || '').trim() === code) || (title && String(item.title || '').trim() === title);
+      return item && ((code && String(item.code || '').trim() === code) || (title && String(item.title || '').trim() === title));
     }) || null;
   }
 
@@ -71,7 +67,6 @@
     if (!host) return false;
     var old = host.querySelector('.xp-trust-panel');
     if (old) old.remove();
-
     var entry = currentEntry() || {};
     var rating = risk(entry);
     var serialized = JSON.stringify(entry);
@@ -89,8 +84,7 @@
       '<div class="xp-trust-item"><span>资料状态</span><strong>' + esc(status) + '</strong></div>' +
       '<div class="xp-trust-item xp-risk-' + rating[1] + '"><span>风险等级</span><strong>' + rating[0] + '</strong></div>' +
       '<div class="xp-trust-item"><span>核验日期</span><strong>2026-07-21</strong></div>' +
-      '<div class="xp-trust-item"><span>资料来源</span><strong>' + esc(source) + '</strong></div>' +
-      '</div>';
+      '<div class="xp-trust-item"><span>资料来源</span><strong>' + esc(source) + '</strong></div></div>';
     var anchor = host.querySelector('.detail-summary,#detail-summary,.detail-header');
     if (anchor && anchor.parentNode) anchor.insertAdjacentElement('afterend', box);
     else host.prepend(box);
@@ -140,9 +134,9 @@
     node.addEventListener('click', function (event) {
       var button = event.target.closest('button');
       if (!button) return;
-      var target;
-      if (button.dataset.xpRoute) target = document.querySelector('[data-route="' + button.dataset.xpRoute + '"]');
-      else target = document.querySelector('[data-route="workspace"][data-filter="' + button.dataset.xpFilter + '"],[data-filter="' + button.dataset.xpFilter + '"]');
+      var target = button.dataset.xpRoute
+        ? document.querySelector('[data-route="' + button.dataset.xpRoute + '"]')
+        : document.querySelector('[data-route="workspace"][data-filter="' + button.dataset.xpFilter + '"],[data-filter="' + button.dataset.xpFilter + '"]');
       if (target) target.click();
       syncNavState(button.dataset.xpRoute || button.dataset.xpFilter);
       scheduleTrust();
@@ -176,12 +170,16 @@
         }, 40);
       }
       if (event.target.closest && event.target.closest('#cncGalleryClose,[data-close="true"]')) {
-        window.setTimeout(function () { if (lastGalleryTrigger && document.contains(lastGalleryTrigger)) lastGalleryTrigger.focus(); }, 40);
+        window.setTimeout(function () {
+          if (lastGalleryTrigger && document.contains(lastGalleryTrigger)) lastGalleryTrigger.focus();
+        }, 40);
       }
     }, true);
     document.addEventListener('keydown', function (event) {
       if (!modal.classList.contains('is-open') || event.key !== 'Tab') return;
-      var focusable = Array.from(modal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])')).filter(function (node) { return !node.disabled && node.offsetParent !== null; });
+      var focusable = Array.from(modal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])')).filter(function (node) {
+        return !node.disabled && node.offsetParent !== null;
+      });
       if (!focusable.length) return;
       var first = focusable[0];
       var last = focusable[focusable.length - 1];
@@ -229,9 +227,7 @@
   }
 
   function copyText(value) {
-    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
-      return navigator.clipboard.writeText(value);
-    }
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') return navigator.clipboard.writeText(value);
     return new Promise(function (resolve, reject) {
       var area = document.createElement('textarea');
       area.value = value;
@@ -250,17 +246,13 @@
 
   function shareCurrentDetail() {
     var payload = sharePayload();
-    if (!payload.url) return Promise.resolve(false);
     if (navigator.share && typeof navigator.share === 'function') {
       return navigator.share(payload).then(function () {
         announceShare('已打开系统分享');
         return true;
       }).catch(function (error) {
         if (error && error.name === 'AbortError') return false;
-        return copyText(payload.url).then(function () {
-          announceShare('分享不可用，链接已复制');
-          return true;
-        });
+        return copyText(payload.url).then(function () { announceShare('分享不可用，链接已复制'); return true; });
       });
     }
     return copyText(payload.url).then(function () {
@@ -272,24 +264,53 @@
     });
   }
 
+  function forceMobileDetailActions() {
+    if (window.innerWidth > 760) return;
+    var toolbar = document.querySelector('#detail-panel .detail-toolbar');
+    var favorite = document.getElementById('favorite-toggle');
+    var share = document.getElementById('detail-share');
+    if (toolbar) {
+      toolbar.style.setProperty('display', 'grid', 'important');
+      toolbar.style.setProperty('grid-template-columns', '44px 48px', 'important');
+      toolbar.style.setProperty('gap', '8px', 'important');
+      toolbar.style.setProperty('min-width', '100px', 'important');
+    }
+    [favorite, share].forEach(function (button) {
+      if (!button) return;
+      button.style.setProperty('display', 'inline-flex', 'important');
+      button.style.setProperty('visibility', 'visible', 'important');
+      button.style.setProperty('opacity', '1', 'important');
+      button.style.setProperty('min-height', '44px', 'important');
+    });
+  }
+
   function bindDetailShare() {
     var button = document.getElementById('detail-share');
-    if (!button || button.dataset.cncShareBound === 'true') return false;
-    button.dataset.cncShareBound = 'true';
+    if (!button) return false;
+    forceMobileDetailActions();
     button.setAttribute('aria-label', '分享当前知识条目');
     button.title = '分享当前知识条目';
-    button.addEventListener('click', function () { shareCurrentDetail(); });
+    if (button.dataset.cncShareBound !== 'true') {
+      button.dataset.cncShareBound = 'true';
+      button.addEventListener('click', function () { shareCurrentDetail(); });
+    }
     ensureShareStatus();
     return true;
+  }
+
+  function scheduleDetailActions() {
+    [0, 80, 220, 500].forEach(function (delay) {
+      window.setTimeout(function () { bindDetailShare(); forceMobileDetailActions(); }, delay);
+    });
   }
 
   function bindPageEvents() {
     document.addEventListener('click', function (event) {
       if (!event.target || !event.target.closest) return;
-      if (event.target.closest('.result-card,.knowledge-card,[data-entry-id],[data-route],[data-filter]')) {
+      if (event.target.closest('.result-card,.knowledge-card,[data-entry-id],[data-route],[data-filter],[data-open-entry]')) {
         scheduleTrust();
         window.setTimeout(syncNavState, 120);
-        window.setTimeout(bindDetailShare, 120);
+        scheduleDetailActions();
       }
       if (event.target.closest('[data-route="gallery"]')) window.setTimeout(ensureGalleryLayer, 80);
     }, true);
@@ -297,8 +318,9 @@
       window.setTimeout(syncNavState, 60);
       scheduleTrust(120);
       window.setTimeout(ensureGalleryLayer, 80);
-      window.setTimeout(bindDetailShare, 80);
+      scheduleDetailActions();
     });
+    window.addEventListener('resize', scheduleDetailActions, { passive: true });
   }
 
   function boot() {
@@ -313,13 +335,13 @@
       document.head.appendChild(link);
     }
     ensureGalleryLayer();
-    bindDetailShare();
+    scheduleDetailActions();
     bindPageEvents();
     window.setTimeout(function () {
       trust();
       syncNavState();
       ensureGalleryLayer();
-      bindDetailShare();
+      scheduleDetailActions();
       window.__CNC_TRUST_READY_AT__ = Date.now();
     }, 500);
   }
