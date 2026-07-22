@@ -1,3 +1,4 @@
+@import url('./industrial-knowledge-map.css?v=20260722y');
 /* 数控小潘：图库页锤子工业卡片风，仅作用于图库和大图弹窗。 */
 @media (max-width: 768px) {
   body.cnc-clean-ui #view-gallery .section-panel {
