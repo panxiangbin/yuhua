@@ -234,9 +234,9 @@
       if (!button) return;
       var keyword = button.dataset.suggestion || '';
       inputEl.value = keyword;
+      inputEl.dispatchEvent(new Event('input', { bubbles: true }));
       boxEl.innerHTML = '';
       syncExpanded(false);
-      inputEl.dispatchEvent(new Event('input', { bubbles: true }));
       inputEl.focus();
     }
 
