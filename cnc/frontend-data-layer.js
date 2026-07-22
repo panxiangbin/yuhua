@@ -20,6 +20,23 @@
     });
   }
 
+  function escapeHtml(value) {
+    return String(value == null ? '' : value).replace(/[&<>"']/g, function (char) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char];
+    });
+  }
+
+  function normalizeSearchText(value) {
+    return String(value || '')
+      .normalize('NFKC')
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, '')
+      .replace(/^([gm])0*([0-9]+)$/i, function (_, letter, digits) {
+        return letter.toLowerCase() + String(Number(digits)).padStart(2, '0');
+      });
+  }
+
   function buildRiskMap(arr) {
     var map = {};
     arr.forEach(function (item) {
@@ -98,16 +115,28 @@
   window.CNC_FRONTEND.getSuggestions = function (prefix, maxResults) {
     if (!prefix || !window.CNC_FRONTEND.suggestions) return [];
     maxResults = maxResults || 6;
-    var q = prefix.toLowerCase();
-    var results = window.CNC_FRONTEND.suggestions.filter(function (s) {
-      return s && typeof s.keyword === 'string' && s.keyword.toLowerCase().indexOf(q) !== -1;
-    }).slice(0, maxResults).map(function (s) {
-      return { keyword: s.keyword, type: s.type, category: s.category, priority: s.priority };
-    });
-    results.sort(function (a, b) {
-      return Number(a.priority || 99) - Number(b.priority || 99) || a.keyword.localeCompare(b.keyword);
-    });
-    return results;
+    var q = normalizeSearchText(prefix);
+    return window.CNC_FRONTEND.suggestions
+      .filter(function (item) {
+        return item && typeof item.keyword === 'string' && normalizeSearchText(item.keyword).indexOf(q) !== -1;
+      })
+      .map(function (item) {
+        var normalized = normalizeSearchText(item.keyword);
+        var matchRank = normalized === q ? 0 : normalized.indexOf(q) === 0 ? 1 : 2;
+        return {
+          keyword: item.keyword,
+          type: item.type,
+          category: item.category,
+          priority: item.priority,
+          matchRank: matchRank
+        };
+      })
+      .sort(function (a, b) {
+        return a.matchRank - b.matchRank ||
+          Number(a.priority || 99) - Number(b.priority || 99) ||
+          a.keyword.localeCompare(b.keyword, 'zh-CN', { numeric: true, sensitivity: 'base' });
+      })
+      .slice(0, maxResults);
   };
 
   window.CNC_FRONTEND.getRiskFor = function (text) {
@@ -160,53 +189,124 @@
     if (!inputEl || !boxEl || inputEl.dataset.cncSuggestionBound === 'true') return;
     inputEl.dataset.cncSuggestionBound = 'true';
     boxEl.setAttribute('role', 'listbox');
-    setSuggestionVisibility(boxEl, false);
+    boxEl.setAttribute('aria-label', '搜索建议');
+    inputEl.setAttribute('role', 'combobox');
+    inputEl.setAttribute('aria-autocomplete', 'list');
+    inputEl.setAttribute('aria-controls', boxEl.id || 'search-suggestions');
+    inputEl.setAttribute('aria-expanded', 'false');
+
+    var activeIndex = -1;
+
+    function optionButtons() {
+      return Array.prototype.slice.call(boxEl.querySelectorAll('.suggestion-item'));
+    }
+
+    function resetActive() {
+      activeIndex = -1;
+      optionButtons().forEach(function (button) {
+        button.classList.remove('active');
+        button.setAttribute('aria-selected', 'false');
+      });
+      inputEl.removeAttribute('aria-activedescendant');
+    }
+
+    function syncExpanded(visible) {
+      setSuggestionVisibility(boxEl, visible);
+      inputEl.setAttribute('aria-expanded', visible ? 'true' : 'false');
+      if (!visible) resetActive();
+    }
+
+    function setActive(nextIndex) {
+      var buttons = optionButtons();
+      if (!buttons.length) return;
+      activeIndex = (nextIndex + buttons.length) % buttons.length;
+      buttons.forEach(function (button, index) {
+        var active = index === activeIndex;
+        button.classList.toggle('active', active);
+        button.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+      var current = buttons[activeIndex];
+      inputEl.setAttribute('aria-activedescendant', current.id);
+      current.scrollIntoView({ block: 'nearest' });
+    }
+
+    function choose(button) {
+      if (!button) return;
+      var keyword = button.dataset.suggestion || '';
+      inputEl.value = keyword;
+      boxEl.innerHTML = '';
+      syncExpanded(false);
+      inputEl.dispatchEvent(new Event('input', { bubbles: true }));
+      inputEl.focus();
+    }
+
+    syncExpanded(false);
 
     inputEl.addEventListener('input', function () {
       var val = inputEl.value.trim();
+      resetActive();
       if (val.length < 1 || !window.CNC_FRONTEND.suggestions) {
         boxEl.innerHTML = '';
-        setSuggestionVisibility(boxEl, false);
+        syncExpanded(false);
         return;
       }
       var items = window.CNC_FRONTEND.getSuggestions(val, 4);
       if (!items.length) {
         boxEl.innerHTML = '';
-        setSuggestionVisibility(boxEl, false);
+        syncExpanded(false);
         return;
       }
-      boxEl.innerHTML = items.map(function (item) {
+      boxEl.innerHTML = items.map(function (item, index) {
         var type = String(item.type || 'other');
         var typeLabel = type === 'gcode' ? 'G' : type === 'operation' ? 'OP' : type === 'alarm' ? 'AL' : type === 'param' ? 'PM' : 'OT';
-        return '<button type="button" role="option" class="suggestion-item" data-suggestion="' + item.keyword.replace(/"/g, '&quot;') + '"><span class="suggestion-type-badge suggestion-type-' + type + '">' + typeLabel + '</span><span class="suggestion-text">' + item.keyword + '</span><span class="suggestion-category">' + (item.category || '') + '</span></button>';
+        return '<button id="cnc-search-option-' + index + '" type="button" role="option" aria-selected="false" class="suggestion-item" data-suggestion="' +
+          escapeHtml(item.keyword) + '"><span class="suggestion-type-badge suggestion-type-' + escapeHtml(type) + '">' +
+          typeLabel + '</span><span class="suggestion-text">' + escapeHtml(item.keyword) +
+          '</span><span class="suggestion-category">' + escapeHtml(item.category || '') + '</span></button>';
       }).join('');
-      setSuggestionVisibility(boxEl, true);
+      syncExpanded(true);
 
-      boxEl.querySelectorAll('.suggestion-item').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          var kw = btn.dataset.suggestion;
-          inputEl.value = kw;
-          boxEl.innerHTML = '';
-          setSuggestionVisibility(boxEl, false);
-          inputEl.dispatchEvent(new Event('input', { bubbles: true }));
-          inputEl.focus();
+      optionButtons().forEach(function (button) {
+        button.addEventListener('pointerdown', function (event) {
+          event.preventDefault();
+        });
+        button.addEventListener('click', function () {
+          choose(button);
         });
       });
     });
 
     inputEl.addEventListener('blur', function () {
-      setTimeout(function () { setSuggestionVisibility(boxEl, false); }, 180);
+      setTimeout(function () { syncExpanded(false); }, 180);
     });
 
     inputEl.addEventListener('focus', function () {
       var val = inputEl.value.trim();
-      if (val.length >= 1 && boxEl.children.length) setSuggestionVisibility(boxEl, true);
+      if (val.length >= 1 && boxEl.children.length) syncExpanded(true);
     });
 
     inputEl.addEventListener('keydown', function (event) {
+      var buttons = optionButtons();
+      if (event.key === 'ArrowDown' && buttons.length) {
+        event.preventDefault();
+        syncExpanded(true);
+        setActive(activeIndex + 1);
+        return;
+      }
+      if (event.key === 'ArrowUp' && buttons.length) {
+        event.preventDefault();
+        syncExpanded(true);
+        setActive(activeIndex <= 0 ? buttons.length - 1 : activeIndex - 1);
+        return;
+      }
+      if (event.key === 'Enter' && activeIndex >= 0 && buttons[activeIndex]) {
+        event.preventDefault();
+        choose(buttons[activeIndex]);
+        return;
+      }
       if (event.key === 'Escape') {
-        setSuggestionVisibility(boxEl, false);
-        inputEl.blur();
+        event.preventDefault();
+        syncExpanded(false);
       }
     });
   };
