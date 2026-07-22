@@ -26,6 +26,7 @@ const assert = require('node:assert/strict');
 
   const buttons = page.locator('.xp-bottom-nav button');
   assert.equal(await buttons.count(), 5);
+  assert.deepEqual(await buttons.locator('span').allTextContents(), ['首页', '查代码', '报警', '学习', '我的']);
   for (let index = 0; index < 5; index += 1) {
     const button = buttons.nth(index);
     const metrics = await button.evaluate(node => ({
@@ -41,6 +42,16 @@ const assert = require('node:assert/strict');
   const home = page.locator('.xp-bottom-nav button[data-xp-route="dashboard"]');
   assert.equal(await home.getAttribute('aria-current'), 'page');
 
+  const study = page.locator('.xp-bottom-nav button[data-xp-route="study"]');
+  await study.click();
+  await page.waitForSelector('#view-study.active', { state: 'visible', timeout: 15000 });
+  await page.waitForFunction(() => document.querySelector('.xp-bottom-nav button[data-xp-route="study"]')?.getAttribute('aria-current') === 'page', null, { timeout: 15000 });
+
+  const profile = page.locator('.xp-bottom-nav button[data-xp-route="favorites"]');
+  await profile.click();
+  await page.waitForSelector('#view-favorites.active', { state: 'visible', timeout: 15000 });
+  await page.waitForFunction(() => document.querySelector('.xp-bottom-nav button[data-xp-route="favorites"]')?.getAttribute('aria-current') === 'page', null, { timeout: 15000 });
+
   const alarm = page.locator('.xp-bottom-nav button[data-xp-filter="alarm"]');
   await alarm.click();
   await page.waitForSelector('#view-workspace.active', { state: 'visible', timeout: 15000 });
@@ -48,8 +59,8 @@ const assert = require('node:assert/strict');
   assert.match((await page.locator('#workspace-title').textContent()) || '', /报警/);
 
   const firstResultButton = page.locator('#result-list [data-open-entry]').first();
-  await firstResultButton.waitFor({ state: 'attached', timeout: 15000 });
-  await firstResultButton.click({ force: true });
+  await firstResultButton.waitFor({ state: 'visible', timeout: 15000 });
+  await firstResultButton.click();
   await page.waitForSelector('.xp-trust-panel', { state: 'visible', timeout: 15000 });
   assert.equal(await page.locator('.xp-trust-panel').count(), 1, '详情页只能保留一张核验卡');
   assert.match((await page.locator('.xp-trust-panel').textContent()) || '', /核验日期|资料来源/);
@@ -57,7 +68,7 @@ const assert = require('node:assert/strict');
   const relevantErrors = errors.filter(text => /trust-nav|MutationObserver|bottom-nav|核验卡/i.test(text));
   assert.deepEqual(relevantErrors, []);
 
-  console.log('手机底部导航触控、当前状态、无观察器与核验卡通过', api);
+  console.log('手机底部导航学习、我的、报警、触控和核验卡通过', api);
   await browser.close();
 })().catch(error => {
   console.error(error);

@@ -17,12 +17,25 @@ const assert = require('assert');
   await page.waitForSelector('#view-dashboard.active');
   await page.waitForSelector('.xp-bottom-nav');
 
+  async function enterFilter(filter) {
+    const bottomButton = page.locator(`.xp-bottom-nav [data-xp-filter="${filter}"]`);
+    if (await bottomButton.count()) {
+      await bottomButton.click();
+      return;
+    }
+    await page.locator('#sidebar-open').click();
+    const menuButton = page.locator(`#sidebar.open [data-route="workspace"][data-filter="${filter}"],#sidebar.open [data-filter="${filter}"]`).first();
+    await menuButton.waitFor({ state: 'visible', timeout: 10000 });
+    await menuButton.click();
+  }
+
   async function openAndCheck(filter, expectedKind) {
-    const navButton = page.locator(`.xp-bottom-nav [data-xp-filter="${filter}"]`);
-    await navButton.click();
+    await enterFilter(filter);
     await page.waitForSelector('#view-workspace.active');
     await page.waitForSelector('#result-list [data-open-entry]');
-    await page.locator('#result-list [data-open-entry]').first().click();
+    const firstEntry = page.locator('#result-list [data-open-entry]').first();
+    await firstEntry.waitFor({ state: 'visible', timeout: 15000 });
+    await firstEntry.click();
     await page.waitForSelector('#detail-panel.mobile-open');
     await page.waitForFunction(() => {
       const body = document.body;

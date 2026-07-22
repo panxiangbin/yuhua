@@ -104,6 +104,7 @@
   function activeKeyFromPage() {
     var activeView = document.querySelector('.view.active');
     if (!activeView || activeView.id === 'view-dashboard') return 'dashboard';
+    if (activeView.id === 'view-study') return 'study';
     if (activeView.id === 'view-favorites') return 'favorites';
     if (activeView.id !== 'view-workspace') return '';
     var title = ((document.getElementById('workspace-title') || {}).textContent || '') + ' ' + ((document.getElementById('topbar-title') || {}).textContent || '');
@@ -130,10 +131,10 @@
     node.className = 'xp-bottom-nav';
     node.setAttribute('aria-label', '手机底部导航');
     node.innerHTML = '<button type="button" data-xp-route="dashboard" aria-label="首页"><b aria-hidden="true">⌂</b><span>首页</span></button>' +
-      '<button type="button" data-xp-filter="gcode" aria-label="G/M代码"><b aria-hidden="true">G</b><span>代码</span></button>' +
+      '<button type="button" data-xp-filter="gcode" aria-label="查G代码和M代码"><b aria-hidden="true">G</b><span>查代码</span></button>' +
       '<button type="button" data-xp-filter="alarm" aria-label="报警排查"><b aria-hidden="true">!</b><span>报警</span></button>' +
-      '<button type="button" data-xp-filter="parameter" aria-label="参数速查"><b aria-hidden="true">#</b><span>参数</span></button>' +
-      '<button type="button" data-xp-route="favorites" aria-label="收藏与记录"><b aria-hidden="true">★</b><span>收藏</span></button>';
+      '<button type="button" data-xp-route="study" aria-label="新手学习"><b aria-hidden="true">01</b><span>学习</span></button>' +
+      '<button type="button" data-xp-route="favorites" aria-label="我的收藏与记录"><b aria-hidden="true">★</b><span>我的</span></button>';
     document.body.appendChild(node);
     node.addEventListener('click', function (event) {
       var button = event.target.closest('button');
