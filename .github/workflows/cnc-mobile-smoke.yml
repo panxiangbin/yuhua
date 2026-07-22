@@ -65,6 +65,11 @@ jobs:
       - name: Mobile homepage industrial card sample
         run: node cnc/tests/mobile-home-smoke.cjs
 
+      - name: Mobile homepage recent record cards
+        run: |
+          set -o pipefail
+          node cnc/tests/mobile-industrial-dashboard-recents-smoke.cjs 2>&1 | tee cnc/test-artifacts/industrial-card-sample/dashboard-recents.log
+
       - name: Mobile industrial homepage and G01 detail acceptance
         run: |
           set -o pipefail
