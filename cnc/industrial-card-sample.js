@@ -2,10 +2,11 @@
 (function () {
   'use strict';
 
-  var BUILD = '20260721t';
+  var BUILD = '20260722e';
   var DETAIL_STYLE_BUILD = '20260722d';
   var patchedRenderWorkspace = false;
   var patchedRenderDetail = false;
+  var patchedRenderDashboardRecent = false;
   var pendingEntryId = '';
   var retryDelays = [0, 80, 180, 360, 700, 1200];
 
@@ -55,6 +56,53 @@
         'box-shadow:inset 4px 0 0 var(--cnc-ic-accent),var(--cnc-ic-shadow-pressed)!important;' +
         'transform:translateY(1px)!important;' +
       '}' +
+      'body.cnc-industrial-sample[data-cnc-industrial-surface="home"] #dashboard-recent-section{' +
+        'display:block!important;margin:14px 12px 0!important;padding:16px!important;border:1px solid var(--cnc-ic-line)!important;' +
+        'border-radius:var(--cnc-ic-radius-card)!important;background:var(--cnc-ic-surface-soft)!important;' +
+        'box-shadow:var(--cnc-ic-shadow-card)!important;' +
+      '}' +
+      'body.cnc-industrial-sample[data-cnc-industrial-surface="home"] #dashboard-recent-section .section-head{' +
+        'display:block!important;margin-bottom:12px!important;' +
+      '}' +
+      'body.cnc-industrial-sample[data-cnc-industrial-surface="home"] #dashboard-recent-section .section-head h3{' +
+        'margin:0!important;color:var(--cnc-ic-ink)!important;font-size:19px!important;font-weight:900!important;' +
+      '}' +
+      'body.cnc-industrial-sample[data-cnc-industrial-surface="home"] #dashboard-recent-list{' +
+        'display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:9px!important;' +
+      '}' +
+      'body.cnc-industrial-sample[data-cnc-industrial-surface="home"] .recent-card{' +
+        'display:grid!important;grid-template-columns:48px minmax(0,1fr) 18px!important;align-items:center!important;' +
+        'gap:11px!important;min-height:82px!important;padding:12px!important;border:1px solid var(--cnc-ic-line)!important;' +
+        'border-radius:12px!important;background:var(--cnc-ic-surface)!important;color:var(--cnc-ic-ink)!important;' +
+        'box-shadow:inset 4px 0 0 var(--cnc-ic-blue),0 2px 8px rgba(46,43,38,.06)!important;cursor:pointer!important;' +
+      '}' +
+      'body.cnc-industrial-sample[data-cnc-industrial-surface="home"] .recent-card:after{' +
+        'content:"›";grid-column:3;color:var(--cnc-ic-muted);font:700 24px/1 var(--cnc-ic-code-font);' +
+      '}' +
+      'body.cnc-industrial-sample[data-cnc-industrial-surface="home"] .recent-card:active{' +
+        'background:var(--cnc-ic-surface-pressed)!important;box-shadow:inset 4px 0 0 var(--cnc-ic-blue),var(--cnc-ic-shadow-pressed)!important;transform:translateY(1px)!important;' +
+      '}' +
+      'body.cnc-industrial-sample[data-cnc-industrial-surface="home"] .recent-card:focus-visible{' +
+        'outline:3px solid rgba(63,97,121,.28)!important;outline-offset:2px!important;' +
+      '}' +
+      'body.cnc-industrial-sample[data-cnc-industrial-surface="home"] .recent-card-icon{' +
+        'display:grid!important;place-items:center!important;width:48px!important;height:48px!important;' +
+        'border:1px solid var(--cnc-ic-line-strong)!important;border-radius:10px!important;background:var(--cnc-ic-blue-soft)!important;' +
+        'color:var(--cnc-ic-blue-deep)!important;font:950 16px/1 var(--cnc-ic-code-font)!important;' +
+      '}' +
+      'body.cnc-industrial-sample[data-cnc-industrial-surface="home"] .recent-card h4{' +
+        'margin:5px 0 3px!important;color:var(--cnc-ic-ink)!important;font-size:16px!important;font-weight:900!important;line-height:1.35!important;' +
+      '}' +
+      'body.cnc-industrial-sample[data-cnc-industrial-surface="home"] .recent-card p{' +
+        'margin:0!important;color:var(--cnc-ic-muted)!important;font-size:12px!important;line-height:1.5!important;' +
+      '}' +
+      'body.cnc-industrial-sample[data-cnc-industrial-surface="home"] .recent-card-meta strong{' +
+        'color:var(--cnc-ic-blue-deep)!important;font:950 16px/1 var(--cnc-ic-code-font)!important;' +
+      '}' +
+      'body.cnc-industrial-sample[data-cnc-industrial-surface="home"] .recent-empty{' +
+        'padding:18px!important;border:1px dashed var(--cnc-ic-line-strong)!important;border-radius:12px!important;' +
+        'background:var(--cnc-ic-surface)!important;color:var(--cnc-ic-muted)!important;font-size:13px!important;line-height:1.6!important;text-align:left!important;' +
+      '}' +
       'body.cnc-clean-ui.cnc-vivid-ui.cnc-industrial-sample[data-cnc-industrial-surface="g01"] #detail-code,' +
       'body.cnc-clean-ui.cnc-vivid-ui.cnc-industrial-sample[data-cnc-industrial-surface="detail"] #detail-code{' +
         'display:block!important;margin:10px 0 8px!important;color:var(--cnc-ic-ink)!important;' +
@@ -80,11 +128,7 @@
 
   function detailPanelOpen() {
     var panel = document.getElementById('detail-panel');
-    return Boolean(panel && (
-      panel.classList.contains('mobile-open') ||
-      (document.body && document.body.getAttribute('data-cnc-detail-open') === 'true') ||
-      (window.innerWidth > 768 && activeViewId() === 'view-workspace')
-    ));
+    return Boolean(panel && (panel.classList.contains('mobile-open') || (document.body && document.body.getAttribute('data-cnc-detail-open') === 'true') || (window.innerWidth > 768 && activeViewId() === 'view-workspace')));
   }
 
   function detailKind() {
@@ -113,13 +157,48 @@
     });
   }
 
+  function recentGlyph(card) {
+    var code = ((card.querySelector('.recent-card-meta strong') || {}).textContent || '').trim().toUpperCase();
+    if (/^[GM]\d/.test(code)) return code.slice(0, 3);
+    if (/^\d{3,}/.test(code)) return '#';
+    return 'DOC';
+  }
+
+  function decorateDashboardRecent() {
+    var container = document.getElementById('dashboard-recent-list');
+    if (!container) return false;
+    var empty = container.querySelector('.recent-empty');
+    if (empty) empty.textContent = '还没有最近查看。先从上面的代码、报警或参数入口查一条，回来后会在这里快速继续。';
+    container.querySelectorAll('.recent-card[data-entry-id]').forEach(function (card) {
+      var title = ((card.querySelector('h4') || {}).textContent || '').trim();
+      var code = ((card.querySelector('.recent-card-meta strong') || {}).textContent || '').trim();
+      var icon = card.querySelector('.recent-card-icon');
+      if (icon) {
+        icon.textContent = recentGlyph(card);
+        icon.setAttribute('aria-hidden', 'true');
+      }
+      card.setAttribute('role', 'button');
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('aria-label', '继续查看 ' + (code ? code + ' ' : '') + title);
+      if (card.dataset.industrialKeyboardBound !== 'true') {
+        card.dataset.industrialKeyboardBound = 'true';
+        card.addEventListener('keydown', function (event) {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            card.click();
+          }
+        });
+      }
+    });
+    return true;
+  }
+
   function tagDetailCards() {
     var panel = document.getElementById('detail-panel');
     var grid = panel && panel.querySelector('.detail-content-grid');
     var primary = panel && panel.querySelector('.detail-card-primary');
     var trust = panel && panel.querySelector('.xp-trust-panel');
     if (grid && primary && trust && trust.parentElement !== grid) primary.insertAdjacentElement('afterend', trust);
-
     document.querySelectorAll('#detail-panel .detail-card').forEach(function (card) {
       card.removeAttribute('data-industrial-role');
       var heading = ((card.querySelector('h4') || {}).textContent || '').replace(/\s+/g, '');
@@ -157,7 +236,7 @@
     ensureDetailStyle();
     document.body.classList.add('cnc-industrial-sample');
     decorateHomeCards();
-
+    decorateDashboardRecent();
     var surface = '';
     if (detailPanelOpen()) {
       var codeText = (document.getElementById('detail-code') || {}).textContent || '';
@@ -168,7 +247,6 @@
       surface = 'home';
       document.body.removeAttribute('data-cnc-detail-kind');
     }
-
     if (surface) document.body.setAttribute('data-cnc-industrial-surface', surface);
     else document.body.removeAttribute('data-cnc-industrial-surface');
     return Boolean(surface);
@@ -192,6 +270,7 @@
   function patchRenderers() {
     patchedRenderWorkspace = patchRenderer('renderWorkspace', '__CNC_INDUSTRIAL_WORKSPACE_PATCHED__') || patchedRenderWorkspace;
     patchedRenderDetail = patchRenderer('renderDetail', '__CNC_INDUSTRIAL_DETAIL_PATCHED__') || patchedRenderDetail;
+    patchedRenderDashboardRecent = patchRenderer('renderDashboardRecent', '__CNC_INDUSTRIAL_DASHBOARD_RECENT_PATCHED__') || patchedRenderDashboardRecent;
     return patchedRenderWorkspace && patchedRenderDetail;
   }
 
@@ -209,7 +288,7 @@
       var entryButton = event.target.closest('[data-open-entry]');
       if (entryButton) setEntry(entryButton.getAttribute('data-open-entry') || '');
       if (event.target.closest('#detail-back-btn,[data-cnc-bottom="back"]')) clearEntry();
-      if (event.target.closest('[data-route],[data-filter],.result-card,[data-open-entry],#detail-back-btn,#favorite-toggle,.xp-bottom-nav button')) scheduleInteractionSync();
+      if (event.target.closest('[data-route],[data-filter],.result-card,[data-open-entry],#detail-back-btn,#favorite-toggle,.xp-bottom-nav button,.recent-card')) scheduleInteractionSync();
     }, true);
     window.addEventListener('hashchange', function () { scheduleSync(40); scheduleSync(150); scheduleSync(420); });
     window.addEventListener('popstate', function () { scheduleSync(50); });
@@ -219,6 +298,7 @@
     ensurePriorityStyle();
     ensureDetailStyle();
     decorateHomeCards();
+    decorateDashboardRecent();
     bindEvents();
     retryDelays.forEach(function (delay) { window.setTimeout(function () { patchRenderers(); syncSurface(); }, delay); });
   }
@@ -234,23 +314,26 @@
     sync: syncSurface,
     setEntry: setEntry,
     clearEntry: clearEntry,
-    tokens: {
-      canvas: '#f1efe9', surface: '#fffdf9', ink: '#292c2f', blue: '#3f6179', warning: '#c48722', cardRadius: '14px', controlRadius: '10px'
-    },
+    decorateDashboardRecent: decorateDashboardRecent,
+    tokens: { canvas: '#f1efe9', surface: '#fffdf9', ink: '#292c2f', blue: '#3f6179', warning: '#c48722', cardRadius: '14px', controlRadius: '10px' },
     runCheck: function () {
       var surface = document.body ? document.body.getAttribute('data-cnc-industrial-surface') : '';
       var cards = document.querySelectorAll('#view-dashboard .launchpad-card[data-industrial-tone]');
       var detailStyle = document.querySelector('link[data-cnc-industrial-detail-pages]');
+      var recentCards = document.querySelectorAll('#dashboard-recent-list .recent-card[role="button"][tabindex="0"]');
+      var recentReady = Boolean(document.getElementById('dashboard-recent-list'));
       return {
-        passed: Boolean(document.body && document.body.classList.contains('cnc-industrial-sample') && cards.length >= 6 && document.querySelector('style[data-cnc-industrial-priority]') && detailStyle),
+        passed: Boolean(document.body && document.body.classList.contains('cnc-industrial-sample') && cards.length >= 6 && document.querySelector('style[data-cnc-industrial-priority]') && detailStyle && recentReady),
         build: BUILD,
         detailStyleBuild: DETAIL_STYLE_BUILD,
         surface: surface,
         detailKind: document.body ? document.body.getAttribute('data-cnc-detail-kind') || '' : '',
         decoratedCards: cards.length,
+        decoratedRecentCards: recentCards.length,
         pendingEntryId: pendingEntryId,
         workspacePatched: patchedRenderWorkspace,
         detailPatched: patchedRenderDetail,
+        dashboardRecentPatched: patchedRenderDashboardRecent,
         polling: false,
         observer: false
       };

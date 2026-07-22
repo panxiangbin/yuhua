@@ -14,7 +14,7 @@ const assert = require('node:assert/strict');
   await page.waitForSelector('.launchpad-card[data-filter="gcode"]', { state: 'visible', timeout: 30000 });
   await page.waitForFunction(() => window.CNC_CLEAN_UI && window.CNC_CLEAN_UI.build === '20260721q', null, { timeout: 15000 });
   await page.waitForFunction(() => window.CNC_QUERY_MODES && window.CNC_QUERY_MODES.build === '20260721r', null, { timeout: 15000 });
-  await page.waitForFunction(() => window.CNC_INDUSTRIAL_SAMPLE && window.CNC_INDUSTRIAL_SAMPLE.build === '20260721t', null, { timeout: 15000 });
+  await page.waitForFunction(() => window.CNC_INDUSTRIAL_SAMPLE && window.CNC_INDUSTRIAL_SAMPLE.build === '20260722e', null, { timeout: 15000 });
   const readyMs = Date.now() - started;
   await page.waitForTimeout(2200);
 
@@ -37,7 +37,7 @@ const assert = require('node:assert/strict');
   const layerErrors = [...pageErrors, ...consoleErrors].filter(text => /clean-ui|query-modes|industrial-card|cnc性能|cnc查询拆分|cnc减法界面|cnc工业卡片/i.test(text));
   assert.equal(report.cleanBuild, '20260721q');
   assert.equal(report.queryBuild, '20260721r');
-  assert.equal(report.industrialBuild, '20260721t');
+  assert.equal(report.industrialBuild, '20260722e');
   assert.equal(report.cleanPolling, false);
   assert.equal(report.queryPolling, false);
   assert.equal(report.industrialPolling, false);
