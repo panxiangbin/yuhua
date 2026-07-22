@@ -57,7 +57,7 @@
         'transform:translateY(1px)!important;' +
       '}' +
       'body.cnc-industrial-sample[data-cnc-industrial-surface="home"] #dashboard-recent-section{' +
-        'margin:14px 12px 0!important;padding:16px!important;border:1px solid var(--cnc-ic-line)!important;' +
+        'display:block!important;margin:14px 12px 0!important;padding:16px!important;border:1px solid var(--cnc-ic-line)!important;' +
         'border-radius:var(--cnc-ic-radius-card)!important;background:var(--cnc-ic-surface-soft)!important;' +
         'box-shadow:var(--cnc-ic-shadow-card)!important;' +
       '}' +
