@@ -1,0 +1,157 @@
+/* 锤子工业卡片风：统一 G/M、报警、参数、故障等知识详情页。 */
+@media (max-width: 768px) {
+  body.cnc-industrial-sample[data-cnc-industrial-surface="detail"],
+  body.cnc-industrial-sample[data-cnc-industrial-surface="g01"] {
+    background: var(--cnc-ic-canvas) !important;
+    color: var(--cnc-ic-ink) !important;
+    font-family: var(--cnc-ic-font) !important;
+  }
+
+  body.cnc-industrial-sample[data-cnc-industrial-surface="detail"] #detail-panel,
+  body.cnc-industrial-sample[data-cnc-industrial-surface="g01"] #detail-panel {
+    background: var(--cnc-ic-canvas) !important;
+    color: var(--cnc-ic-ink) !important;
+  }
+
+  body.cnc-industrial-sample[data-cnc-industrial-surface="detail"] #detail-panel .detail-panel-head,
+  body.cnc-industrial-sample[data-cnc-industrial-surface="g01"] #detail-panel .detail-panel-head {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 8 !important;
+    min-height: 58px !important;
+    padding: 8px 12px !important;
+    border-bottom: 1px solid var(--cnc-ic-line) !important;
+    background: #f7f4ee !important;
+    box-shadow: 0 2px 8px rgba(46, 43, 38, .07) !important;
+    backdrop-filter: none !important;
+  }
+
+  body.cnc-industrial-sample[data-cnc-industrial-surface="detail"] #detail-back-btn,
+  body.cnc-industrial-sample[data-cnc-industrial-surface="g01"] #detail-back-btn,
+  body.cnc-industrial-sample[data-cnc-industrial-surface="detail"] #favorite-toggle,
+  body.cnc-industrial-sample[data-cnc-industrial-surface="g01"] #favorite-toggle {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    border: 1px solid var(--cnc-ic-line-strong) !important;
+    border-radius: var(--cnc-ic-radius-control) !important;
+    background: linear-gradient(180deg, #fffdf9 0%, #eeeae2 100%) !important;
+    color: var(--cnc-ic-ink) !important;
+    box-shadow: var(--cnc-ic-shadow-control) !important;
+    font-weight: 900 !important;
+  }
+
+  body.cnc-industrial-sample[data-cnc-industrial-surface="detail"] #detail-panel .detail-content-grid,
+  body.cnc-industrial-sample[data-cnc-industrial-surface="g01"] #detail-panel .detail-content-grid {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 10px !important;
+    padding: 12px 12px 96px !important;
+  }
+
+  body.cnc-industrial-sample[data-cnc-industrial-surface="detail"] #detail-panel .detail-card,
+  body.cnc-industrial-sample[data-cnc-industrial-surface="detail"] #detail-panel .xp-trust-panel,
+  body.cnc-industrial-sample[data-cnc-industrial-surface="g01"] #detail-panel .detail-card,
+  body.cnc-industrial-sample[data-cnc-industrial-surface="g01"] #detail-panel .xp-trust-panel {
+    margin: 0 !important;
+    padding: 15px !important;
+    border: 1px solid var(--cnc-ic-line) !important;
+    border-radius: var(--cnc-ic-radius-card) !important;
+    background: var(--cnc-ic-surface) !important;
+    color: var(--cnc-ic-ink) !important;
+    box-shadow: var(--cnc-ic-shadow-card) !important;
+  }
+
+  body.cnc-industrial-sample[data-cnc-industrial-surface="detail"] #detail-panel .detail-card-primary,
+  body.cnc-industrial-sample[data-cnc-industrial-surface="g01"] #detail-panel .detail-card-primary {
+    border-left: 4px solid var(--cnc-ic-blue) !important;
+    background-image: none !important;
+  }
+
+  body.cnc-industrial-sample[data-cnc-industrial-surface="detail"][data-cnc-detail-kind="alarm"] #detail-panel .detail-card-primary {
+    border-left-color: var(--cnc-ic-danger) !important;
+  }
+
+  body.cnc-industrial-sample[data-cnc-industrial-surface="detail"][data-cnc-detail-kind="parameter"] #detail-panel .detail-card-primary {
+    border-left-color: var(--cnc-ic-warning) !important;
+  }
+
+  body.cnc-industrial-sample[data-cnc-industrial-surface="detail"][data-cnc-detail-kind="fault"] #detail-panel .detail-card-primary {
+    border-left-color: var(--cnc-ic-success) !important;
+  }
+
+  body.cnc-industrial-sample[data-cnc-industrial-surface="detail"] #detail-code,
+  body.cnc-industrial-sample[data-cnc-industrial-surface="g01"] #detail-code {
+    display: block !important;
+    margin: 8px 0 10px !important;
+    color: var(--cnc-ic-ink) !important;
+    font-family: var(--cnc-ic-code-font) !important;
+    font-size: clamp(30px, 10vw, 42px) !important;
+    line-height: 1.05 !important;
+    font-weight: 950 !important;
+    letter-spacing: -.035em !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  body.cnc-industrial-sample[data-cnc-industrial-surface="detail"] #detail-title,
+  body.cnc-industrial-sample[data-cnc-industrial-surface="g01"] #detail-title {
+    color: var(--cnc-ic-ink) !important;
+    font-size: 22px !important;
+    line-height: 1.28 !important;
+    font-weight: 900 !important;
+  }
+
+  body.cnc-industrial-sample[data-cnc-industrial-surface="detail"] #detail-panel h4,
+  body.cnc-industrial-sample[data-cnc-industrial-surface="g01"] #detail-panel h4 {
+    margin: 0 0 8px !important;
+    color: var(--cnc-ic-ink) !important;
+    font-size: 17px !important;
+    line-height: 1.35 !important;
+    font-weight: 900 !important;
+  }
+
+  body.cnc-industrial-sample[data-cnc-industrial-surface="detail"] #detail-panel p,
+  body.cnc-industrial-sample[data-cnc-industrial-surface="detail"] #detail-panel li,
+  body.cnc-industrial-sample[data-cnc-industrial-surface="g01"] #detail-panel p,
+  body.cnc-industrial-sample[data-cnc-industrial-surface="g01"] #detail-panel li {
+    color: var(--cnc-ic-ink-soft) !important;
+    font-size: 15px !important;
+    line-height: 1.72 !important;
+  }
+
+  body.cnc-industrial-sample[data-cnc-industrial-surface="detail"] #detail-panel [data-industrial-role="warning"],
+  body.cnc-industrial-sample[data-cnc-industrial-surface="g01"] #detail-panel [data-industrial-role="warning"] {
+    border-left: 4px solid var(--cnc-ic-danger) !important;
+    background: var(--cnc-ic-danger-soft) !important;
+  }
+
+  body.cnc-industrial-sample[data-cnc-industrial-surface="detail"] #detail-panel [data-industrial-role="example"],
+  body.cnc-industrial-sample[data-cnc-industrial-surface="g01"] #detail-panel [data-industrial-role="example"] {
+    border-left: 4px solid var(--cnc-ic-blue) !important;
+    background: var(--cnc-ic-blue-soft) !important;
+  }
+
+  body.cnc-industrial-sample[data-cnc-industrial-surface="detail"] #detail-panel pre,
+  body.cnc-industrial-sample[data-cnc-industrial-surface="detail"] #detail-panel code,
+  body.cnc-industrial-sample[data-cnc-industrial-surface="g01"] #detail-panel pre,
+  body.cnc-industrial-sample[data-cnc-industrial-surface="g01"] #detail-panel code {
+    font-family: var(--cnc-ic-code-font) !important;
+    font-weight: 800 !important;
+  }
+
+  body.cnc-industrial-sample[data-cnc-industrial-surface="detail"] #detail-panel pre,
+  body.cnc-industrial-sample[data-cnc-industrial-surface="g01"] #detail-panel pre {
+    overflow-x: auto !important;
+    padding: 13px !important;
+    border: 1px solid var(--cnc-ic-line-strong) !important;
+    border-radius: var(--cnc-ic-radius-control) !important;
+    background: #2f3335 !important;
+    color: #fffdf9 !important;
+    font-size: 14px !important;
+    line-height: 1.62 !important;
+  }
+
+  body.cnc-industrial-sample[data-cnc-industrial-surface="detail"] #detail-panel button,
+  body.cnc-industrial-sample[data-cnc-industrial-surface="g01"] #detail-panel button {
+    min-height: 44px;
+  }
+}
