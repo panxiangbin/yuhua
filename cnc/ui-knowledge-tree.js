@@ -147,11 +147,23 @@
       }));
     }
 
+    openPath(path) {
+      if (!path) return;
+      if (typeof window.navigate === 'function') {
+        window.navigate(path.route, path.filter ? { filter: path.filter } : {});
+        return;
+      }
+      const selector = '[data-route="' + path.route + '"]' + (path.filter ? '[data-filter="' + path.filter + '"]' : '');
+      const target = document.querySelector(selector);
+      if (target) target.click();
+    }
+
     renderPathsView() {
       const grid = document.getElementById('learningPathsGrid');
       if (!grid) return;
       grid.hidden = false;
-      grid.innerHTML = this.paths.map((path) => '<button type="button" class="learning-path-card" data-route="' + path.route + '"' + (path.filter ? ' data-filter="' + path.filter + '"' : '') + '><span class="learning-path-code">' + path.code + '</span><span><strong>' + path.title + '</strong><small>' + path.desc + '</small><em>' + path.label + ' →</em></span></button>').join('');
+      grid.innerHTML = this.paths.map((path) => '<button type="button" class="learning-path-card" data-path-id="' + path.id + '"><span class="learning-path-code">' + path.code + '</span><span><strong>' + path.title + '</strong><small>' + path.desc + '</small><em>' + path.label + ' →</em></span></button>').join('');
+      grid.querySelectorAll('.learning-path-card').forEach((card) => card.addEventListener('click', () => this.openPath(this.paths.find((path) => path.id === card.dataset.pathId))));
     }
 
     switchView(viewName) {
