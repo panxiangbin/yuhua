@@ -289,23 +289,27 @@
       var buttons = optionButtons();
       if (event.key === 'ArrowDown' && buttons.length) {
         event.preventDefault();
+        event.stopPropagation();
         syncExpanded(true);
         setActive(activeIndex + 1);
         return;
       }
       if (event.key === 'ArrowUp' && buttons.length) {
         event.preventDefault();
+        event.stopPropagation();
         syncExpanded(true);
         setActive(activeIndex <= 0 ? buttons.length - 1 : activeIndex - 1);
         return;
       }
       if (event.key === 'Enter' && activeIndex >= 0 && buttons[activeIndex]) {
         event.preventDefault();
+        event.stopPropagation();
         choose(buttons[activeIndex]);
         return;
       }
       if (event.key === 'Escape') {
         event.preventDefault();
+        event.stopPropagation();
         syncExpanded(false);
       }
     });
