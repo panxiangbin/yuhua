@@ -5,6 +5,7 @@
   var GALLERY_BUILD = '20260722x';
   var refreshTimer = 0;
   var lastGalleryTrigger = null;
+  var shareStatusTimer = 0;
 
   function meta(name, value, property) {
     var node = document.querySelector(property ? 'meta[property="' + name + '"]' : 'meta[name="' + name + '"]');
@@ -81,7 +82,7 @@
     var box = document.createElement('section');
     box.className = 'xp-trust-panel';
     box.setAttribute('aria-label', '技术资料可信度说明');
-    box.innerHTML = '<div class="xp-trust-title"><span>🛡 技术资料核验卡</span><small>不能替代机床原厂手册</small></div>' +
+    box.innerHTML = '<div class="xp-trust-title"><span>技术资料核验卡</span><small>不能替代机床原厂手册</small></div>' +
       '<div class="xp-trust-grid">' +
       '<div class="xp-trust-item"><span>适用系统</span><strong>' + esc(system) + '</strong></div>' +
       '<div class="xp-trust-item"><span>适用机型</span><strong>' + esc(machine) + '</strong></div>' +
@@ -189,12 +190,106 @@
     });
   }
 
+  function sharePayload() {
+    var entry = currentEntry() || {};
+    var code = String(entry.code || (document.getElementById('detail-code') || {}).textContent || '').trim();
+    var title = String(entry.title || (document.getElementById('detail-title') || {}).textContent || '').trim();
+    var summary = String(entry.summary || (document.getElementById('detail-summary') || {}).textContent || '').trim();
+    var url = new URL(location.href);
+    url.hash = '';
+    url.search = '';
+    if (code) url.searchParams.set('q', code);
+    return {
+      title: code ? code + ' · ' + title : title || '数控小潘 CNC随身助手',
+      text: summary ? (code ? code + '：' : '') + summary : '数控小潘 CNC随身助手知识条目',
+      url: url.toString()
+    };
+  }
+
+  function ensureShareStatus() {
+    var status = document.getElementById('xp-share-status');
+    if (status) return status;
+    status = document.createElement('div');
+    status.id = 'xp-share-status';
+    status.className = 'xp-share-status';
+    status.setAttribute('role', 'status');
+    status.setAttribute('aria-live', 'polite');
+    status.hidden = true;
+    document.body.appendChild(status);
+    return status;
+  }
+
+  function announceShare(message, isError) {
+    var status = ensureShareStatus();
+    clearTimeout(shareStatusTimer);
+    status.textContent = message;
+    status.classList.toggle('is-error', Boolean(isError));
+    status.hidden = false;
+    shareStatusTimer = window.setTimeout(function () { status.hidden = true; }, 2400);
+  }
+
+  function copyText(value) {
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+      return navigator.clipboard.writeText(value);
+    }
+    return new Promise(function (resolve, reject) {
+      var area = document.createElement('textarea');
+      area.value = value;
+      area.setAttribute('readonly', 'readonly');
+      area.style.position = 'fixed';
+      area.style.opacity = '0';
+      document.body.appendChild(area);
+      area.select();
+      try {
+        if (document.execCommand('copy')) resolve();
+        else reject(new Error('copy failed'));
+      } catch (error) { reject(error); }
+      area.remove();
+    });
+  }
+
+  function shareCurrentDetail() {
+    var payload = sharePayload();
+    if (!payload.url) return Promise.resolve(false);
+    if (navigator.share && typeof navigator.share === 'function') {
+      return navigator.share(payload).then(function () {
+        announceShare('已打开系统分享');
+        return true;
+      }).catch(function (error) {
+        if (error && error.name === 'AbortError') return false;
+        return copyText(payload.url).then(function () {
+          announceShare('分享不可用，链接已复制');
+          return true;
+        });
+      });
+    }
+    return copyText(payload.url).then(function () {
+      announceShare('链接已复制');
+      return true;
+    }).catch(function () {
+      announceShare('复制失败，请长按地址栏复制', true);
+      return false;
+    });
+  }
+
+  function bindDetailShare() {
+    var button = document.getElementById('detail-share');
+    if (!button || button.dataset.cncShareBound === 'true') return false;
+    button.dataset.cncShareBound = 'true';
+    button.setAttribute('aria-label', '分享当前知识条目');
+    button.title = '分享当前知识条目';
+    button.addEventListener('click', function () { shareCurrentDetail(); });
+    ensureShareStatus();
+    return true;
+  }
+
   function bindPageEvents() {
     document.addEventListener('click', function (event) {
       if (!event.target || !event.target.closest) return;
       if (event.target.closest('.result-card,.knowledge-card,[data-entry-id],[data-route],[data-filter]')) {
         scheduleTrust();
         window.setTimeout(syncNavState, 120);
+        window.setTimeout(bindDetailShare, 120);
       }
       if (event.target.closest('[data-route="gallery"]')) window.setTimeout(ensureGalleryLayer, 80);
     }, true);
@@ -202,6 +297,7 @@
       window.setTimeout(syncNavState, 60);
       scheduleTrust(120);
       window.setTimeout(ensureGalleryLayer, 80);
+      window.setTimeout(bindDetailShare, 80);
     });
   }
 
@@ -217,11 +313,13 @@
       document.head.appendChild(link);
     }
     ensureGalleryLayer();
+    bindDetailShare();
     bindPageEvents();
     window.setTimeout(function () {
       trust();
       syncNavState();
       ensureGalleryLayer();
+      bindDetailShare();
       window.__CNC_TRUST_READY_AT__ = Date.now();
     }, 500);
   }
@@ -236,6 +334,9 @@
     observer: false,
     refresh: trust,
     syncNavState: syncNavState,
-    ensureGalleryLayer: ensureGalleryLayer
+    ensureGalleryLayer: ensureGalleryLayer,
+    bindDetailShare: bindDetailShare,
+    sharePayload: sharePayload,
+    shareCurrentDetail: shareCurrentDetail
   };
 })();
