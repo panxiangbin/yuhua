@@ -2,7 +2,9 @@
   'use strict';
 
   var BUILD = '20260721s';
+  var GALLERY_BUILD = '20260722x';
   var refreshTimer = 0;
+  var lastGalleryTrigger = null;
 
   function meta(name, value, property) {
     var node = document.querySelector(property ? 'meta[property="' + name + '"]' : 'meta[name="' + name + '"]');
@@ -146,6 +148,46 @@
     syncNavState();
   }
 
+  function ensureGalleryLayer() {
+    var link = document.querySelector('link[data-cnc-industrial-gallery]');
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = './industrial-gallery.css?v=' + GALLERY_BUILD;
+      link.dataset.cncIndustrialGallery = '1';
+      document.head.appendChild(link);
+    }
+    var modal = document.getElementById('cncGalleryModal');
+    if (!modal || modal.dataset.cncAccessible === 'true') return;
+    modal.dataset.cncAccessible = 'true';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-labelledby', 'cncGalleryPreviewTitle');
+    modal.setAttribute('aria-describedby', 'cncGalleryPreviewDesc');
+    document.addEventListener('click', function (event) {
+      var card = event.target.closest && event.target.closest('.cnc-gallery-card');
+      if (card) {
+        lastGalleryTrigger = card;
+        window.setTimeout(function () {
+          var close = document.getElementById('cncGalleryClose');
+          if (modal.classList.contains('is-open') && close) close.focus();
+        }, 40);
+      }
+      if (event.target.closest && event.target.closest('#cncGalleryClose,[data-close="true"]')) {
+        window.setTimeout(function () { if (lastGalleryTrigger && document.contains(lastGalleryTrigger)) lastGalleryTrigger.focus(); }, 40);
+      }
+    }, true);
+    document.addEventListener('keydown', function (event) {
+      if (!modal.classList.contains('is-open') || event.key !== 'Tab') return;
+      var focusable = Array.from(modal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])')).filter(function (node) { return !node.disabled && node.offsetParent !== null; });
+      if (!focusable.length) return;
+      var first = focusable[0];
+      var last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    });
+  }
+
   function bindPageEvents() {
     document.addEventListener('click', function (event) {
       if (!event.target || !event.target.closest) return;
@@ -153,10 +195,12 @@
         scheduleTrust();
         window.setTimeout(syncNavState, 120);
       }
+      if (event.target.closest('[data-route="gallery"]')) window.setTimeout(ensureGalleryLayer, 80);
     }, true);
     window.addEventListener('hashchange', function () {
       window.setTimeout(syncNavState, 60);
       scheduleTrust(120);
+      window.setTimeout(ensureGalleryLayer, 80);
     });
   }
 
@@ -171,10 +215,12 @@
       link.dataset.xpTrustNav = '1';
       document.head.appendChild(link);
     }
+    ensureGalleryLayer();
     bindPageEvents();
     window.setTimeout(function () {
       trust();
       syncNavState();
+      ensureGalleryLayer();
       window.__CNC_TRUST_READY_AT__ = Date.now();
     }, 500);
   }
@@ -184,9 +230,11 @@
 
   window.CNC_TRUST_NAV = {
     build: BUILD,
+    galleryBuild: GALLERY_BUILD,
     polling: false,
     observer: false,
     refresh: trust,
-    syncNavState: syncNavState
+    syncNavState: syncNavState,
+    ensureGalleryLayer: ensureGalleryLayer
   };
 })();
