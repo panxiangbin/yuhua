@@ -19,6 +19,11 @@ const { chromium } = require('playwright');
 
   await page.locator('[data-tool-tab="tool-tab2"]').click();
   await page.waitForFunction(() => document.querySelector('#tool-tab2.tool-tab-panel.active'));
+  const firstCard = page.locator('#tool-tab2 .calc-card').first();
+  const firstHeader = firstCard.locator('.calc-card-header');
+  if ((await firstHeader.getAttribute('aria-expanded')) === 'false') await firstHeader.click();
+  await page.waitForFunction(() => !document.querySelector('#tool-tab2 .calc-card .calc-card-body').classList.contains('hidden'));
+
   const metrics = await page.evaluate(() => {
     const cards = [...document.querySelectorAll('#tool-tab2 .calc-card')];
     const input = document.querySelector('#tool-tab2 .calc-input');
@@ -38,9 +43,6 @@ const { chromium } = require('playwright');
     throw new Error('工具页手机几何规范失败: ' + JSON.stringify(metrics));
   }
 
-  const firstCard = page.locator('#tool-tab2 .calc-card').first();
-  const firstHeader = firstCard.locator('.calc-card-header');
-  if ((await firstHeader.getAttribute('aria-expanded')) === 'false') await firstHeader.click();
   const inputs = firstCard.locator('.calc-input');
   await inputs.nth(0).fill('150');
   await inputs.nth(1).fill('10');
