@@ -90,6 +90,11 @@ jobs:
           set -o pipefail
           node cnc/tests/mobile-industrial-gallery-smoke.cjs 2>&1 | tee cnc/test-artifacts/industrial-card-sample/gallery.log
 
+      - name: Mobile industrial knowledge map
+        run: |
+          set -o pipefail
+          node cnc/tests/mobile-industrial-knowledge-map-smoke.cjs 2>&1 | tee cnc/test-artifacts/industrial-card-sample/knowledge-map.log
+
       - name: Mobile industrial alarm and parameter details
         run: |
           set -o pipefail

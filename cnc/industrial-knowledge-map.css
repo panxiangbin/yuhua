@@ -1,0 +1,203 @@
+/* 数控小潘：知识地图锤子工业卡片风，仅作用于知识地图。 */
+@media (max-width: 768px) {
+  body.cnc-clean-ui #view-learning-map .section-panel {
+    padding: 14px 12px 96px !important;
+    background: #f1efe9 !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+  body.cnc-clean-ui #view-learning-map .section-head {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+    margin: 0 0 12px !important;
+    padding: 16px !important;
+    background: #fffdf9 !important;
+    border: 1px solid #d8d4cb !important;
+    border-radius: 14px !important;
+    box-shadow: 0 5px 16px rgba(41,44,47,.07) !important;
+  }
+  body.cnc-clean-ui #view-learning-map .section-head h3 {
+    margin: 2px 0 0 !important;
+    color: #292c2f !important;
+    font-size: 22px !important;
+    line-height: 1.25 !important;
+    font-weight: 950 !important;
+  }
+  body.cnc-clean-ui #view-learning-map .section-head p {
+    color: #686b6e !important;
+    font-size: 13px !important;
+    line-height: 1.6 !important;
+  }
+  body.cnc-clean-ui #view-learning-map .knowledge-map-toolbar {
+    display: grid !important;
+    grid-template-columns: repeat(3,minmax(0,1fr)) !important;
+    gap: 8px !important;
+    margin: 0 0 12px !important;
+    padding: 8px !important;
+    background: #e9e6df !important;
+    border: 1px solid #d4d0c8 !important;
+    border-radius: 12px !important;
+  }
+  body.cnc-clean-ui #view-learning-map [data-map-view] {
+    min-height: 46px !important;
+    padding: 8px 6px !important;
+    border: 1px solid transparent !important;
+    border-radius: 9px !important;
+    background: transparent !important;
+    color: #5c6063 !important;
+    font-size: 13px !important;
+    font-weight: 850 !important;
+    box-shadow: none !important;
+  }
+  body.cnc-clean-ui #view-learning-map [data-map-view].active {
+    background: #fffdf9 !important;
+    color: #324653 !important;
+    border-color: #c8c4bb !important;
+    box-shadow: 0 3px 8px rgba(41,44,47,.08) !important;
+  }
+  body.cnc-clean-ui #view-learning-map .knowledge-tree-container,
+  body.cnc-clean-ui #view-learning-map .knowledge-tree-canvas {
+    padding: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+  body.cnc-clean-ui #view-learning-map .knowledge-tree {
+    display: grid !important;
+    gap: 10px !important;
+  }
+  body.cnc-clean-ui #view-learning-map .tree-node {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  body.cnc-clean-ui #view-learning-map .tree-node-header {
+    width: 100% !important;
+    min-height: 58px !important;
+    display: grid !important;
+    grid-template-columns: 28px 44px minmax(0,1fr) auto !important;
+    align-items: center !important;
+    gap: 9px !important;
+    padding: 12px !important;
+    text-align: left !important;
+    background: #fffdf9 !important;
+    color: #292c2f !important;
+    border: 1px solid #d8d4cb !important;
+    border-radius: 14px !important;
+    box-shadow: 0 5px 16px rgba(41,44,47,.07) !important;
+  }
+  body.cnc-clean-ui #view-learning-map .tree-node-header:active,
+  body.cnc-clean-ui #view-learning-map .category-card:active,
+  body.cnc-clean-ui #view-learning-map .learning-path-card:active {
+    transform: translateY(1px) !important;
+    background: #f7f4ee !important;
+    box-shadow: inset 0 1px 2px rgba(41,44,47,.10),0 2px 8px rgba(41,44,47,.05) !important;
+  }
+  body.cnc-clean-ui #view-learning-map .tree-node-toggle {
+    display: grid !important;
+    place-items: center !important;
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 8px !important;
+    background: #ece9e3 !important;
+    color: #48545c !important;
+    font-size: 18px !important;
+    font-weight: 900 !important;
+  }
+  body.cnc-clean-ui #view-learning-map .tree-node-icon,
+  body.cnc-clean-ui #view-learning-map .category-card-icon,
+  body.cnc-clean-ui #view-learning-map .learning-path-code {
+    display: grid !important;
+    place-items: center !important;
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 10px !important;
+    background: #e4ebef !important;
+    color: #3f6179 !important;
+    font-family: ui-monospace,SFMono-Regular,Consolas,monospace !important;
+    font-size: 18px !important;
+    font-weight: 950 !important;
+  }
+  body.cnc-clean-ui #view-learning-map .tree-node-copy,
+  body.cnc-clean-ui #view-learning-map .category-card-copy,
+  body.cnc-clean-ui #view-learning-map .learning-path-card > span:last-child {
+    min-width: 0 !important;
+    display: grid !important;
+    gap: 4px !important;
+  }
+  body.cnc-clean-ui #view-learning-map .tree-node-title,
+  body.cnc-clean-ui #view-learning-map .category-card strong,
+  body.cnc-clean-ui #view-learning-map .learning-path-card strong {
+    color: #292c2f !important;
+    font-size: 17px !important;
+    line-height: 1.3 !important;
+    font-weight: 950 !important;
+  }
+  body.cnc-clean-ui #view-learning-map .tree-node-desc,
+  body.cnc-clean-ui #view-learning-map .category-card small,
+  body.cnc-clean-ui #view-learning-map .learning-path-card small {
+    color: #6a6e71 !important;
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+    font-weight: 600 !important;
+  }
+  body.cnc-clean-ui #view-learning-map .tree-node-count {
+    min-width: 34px !important;
+    padding: 6px 8px !important;
+    border-radius: 9px !important;
+    background: #ece9e3 !important;
+    color: #4b5053 !important;
+    font-size: 13px !important;
+    font-weight: 950 !important;
+    text-align: center !important;
+  }
+  body.cnc-clean-ui #view-learning-map .tree-node-children {
+    display: none !important;
+    gap: 8px !important;
+    margin: 8px 0 0 18px !important;
+    padding-left: 10px !important;
+    border-left: 2px solid #c9d3d9 !important;
+  }
+  body.cnc-clean-ui #view-learning-map .tree-node.open > .tree-node-children { display: grid !important; }
+  body.cnc-clean-ui #view-learning-map .knowledge-categories-grid,
+  body.cnc-clean-ui #view-learning-map .learning-paths-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+  body.cnc-clean-ui #view-learning-map .category-card,
+  body.cnc-clean-ui #view-learning-map .learning-path-card {
+    width: 100% !important;
+    min-height: 76px !important;
+    display: grid !important;
+    grid-template-columns: 44px minmax(0,1fr) auto !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 14px !important;
+    text-align: left !important;
+    background: #fffdf9 !important;
+    color: #292c2f !important;
+    border: 1px solid #d8d4cb !important;
+    border-radius: 14px !important;
+    box-shadow: 0 5px 16px rgba(41,44,47,.07) !important;
+  }
+  body.cnc-clean-ui #view-learning-map .category-card b {
+    min-width: 36px !important;
+    color: #3f6179 !important;
+    font-size: 20px !important;
+    font-weight: 950 !important;
+    text-align: right !important;
+  }
+  body.cnc-clean-ui #view-learning-map .learning-path-card { grid-template-columns: 44px minmax(0,1fr) !important; }
+  body.cnc-clean-ui #view-learning-map .learning-path-card em {
+    margin-top: 3px !important;
+    color: #3f6179 !important;
+    font-size: 12px !important;
+    font-style: normal !important;
+    font-weight: 900 !important;
+  }
+  body.cnc-clean-ui #view-learning-map button:focus-visible {
+    outline: 3px solid rgba(63,97,121,.28) !important;
+    outline-offset: 2px !important;
+  }
+}
