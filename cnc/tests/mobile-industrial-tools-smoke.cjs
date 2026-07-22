@@ -12,7 +12,9 @@ const { chromium } = require('playwright');
   const home = await page.locator('#view-dashboard').evaluate(el => el.classList.contains('active'));
   if (!home) throw new Error('根网址启动后没有稳定停留在首页');
 
-  await page.locator('[data-route="calculator"]').first().click();
+  const toolEntry = page.locator('#view-dashboard [data-route="calculator"]:visible').first();
+  await toolEntry.scrollIntoViewIfNeeded();
+  await toolEntry.click();
   await page.waitForFunction(() => document.querySelector('#view-calculator.view.active') && document.body.classList.contains('cnc-industrial-tools'));
   const check = await page.evaluate(() => window.CNC_INDUSTRIAL_TOOLS.runCheck());
   if (!check.passed || check.cards !== 6 || !check.accessible) throw new Error('工具页工业卡片验收失败: ' + JSON.stringify(check));
