@@ -76,7 +76,9 @@ jobs:
           node cnc/tests/mobile-industrial-workspace-smoke.cjs 2>&1 | tee cnc/test-artifacts/industrial-card-sample/workspace.log
 
       - name: Mobile industrial calculator tools
-        run: node cnc/tests/mobile-industrial-tools-smoke.cjs
+        run: |
+          set -o pipefail
+          node cnc/tests/mobile-industrial-tools-smoke.cjs 2>&1 | tee cnc/test-artifacts/industrial-card-sample/tools.log
 
       - name: Mobile alarm parameter fault split
         run: node cnc/tests/mobile-query-split-smoke.cjs
