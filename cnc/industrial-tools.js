@@ -2,11 +2,17 @@
 (function(){
 'use strict';
 var BUILD='20260722d';
+var DIAG_BUILD='20260722f';
 var mounted=false;
+function ensureDiagnosisAssets(){
+  if(!document.querySelector('link[data-cnc-industrial-diagnosis]')){var link=document.createElement('link');link.rel='stylesheet';link.href='./industrial-diagnosis.css?v='+DIAG_BUILD;link.dataset.cncIndustrialDiagnosis='1';document.head.appendChild(link);}
+  if(!document.querySelector('script[data-cnc-industrial-diagnosis-script]')){var script=document.createElement('script');script.src='./industrial-diagnosis.js?v='+DIAG_BUILD;script.async=true;script.dataset.cncIndustrialDiagnosisScript='1';document.head.appendChild(script);}
+}
 function decorate(){
   var view=document.getElementById('view-calculator');
   if(!view)return false;
   document.body.classList.add('cnc-industrial-tools');
+  ensureDiagnosisAssets();
   var headers=Array.from(view.querySelectorAll('.calc-card-header'));
   headers.forEach(function(header,index){
     var card=header.closest('.calc-card');
@@ -44,12 +50,12 @@ function bind(){
   });
   window.addEventListener('hashchange',function(){if(location.hash==='#calculator')window.setTimeout(decorate,40);});
 }
-function boot(){bind();decorate();}
+function boot(){ensureDiagnosisAssets();bind();decorate();}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
-window.CNC_INDUSTRIAL_TOOLS={build:BUILD,polling:false,observer:false,refresh:decorate,runCheck:function(){
+window.CNC_INDUSTRIAL_TOOLS={build:BUILD,diagnosisBuild:DIAG_BUILD,polling:false,observer:false,refresh:decorate,runCheck:function(){
   var view=document.getElementById('view-calculator');
   var cards=view?Array.from(view.querySelectorAll('.calc-card')):[];
   var accessible=cards.every(function(card){var h=card.querySelector('.calc-card-header'),r=card.querySelector('.calc-result');return h&&h.getAttribute('role')==='button'&&h.hasAttribute('aria-expanded')&&r&&r.getAttribute('aria-live')==='polite';});
-  return{passed:Boolean(document.body.classList.contains('cnc-industrial-tools')&&cards.length===6&&accessible),build:BUILD,cards:cards.length,accessible:accessible,polling:false,observer:false};
+  return{passed:Boolean(document.body.classList.contains('cnc-industrial-tools')&&cards.length===6&&accessible),build:BUILD,diagnosisBuild:DIAG_BUILD,cards:cards.length,accessible:accessible,polling:false,observer:false};
 }};
 })();
