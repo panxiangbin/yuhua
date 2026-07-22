@@ -16,19 +16,18 @@ const assert = require('assert');
  await page.waitForFunction(()=>window.CNC_INDUSTRIAL_DIAGNOSIS&&window.CNC_INDUSTRIAL_DIAGNOSIS.runCheck().passed);
  const items=page.locator('#tool-diagList .diag-item');
  assert((await items.count())>=20,'异常排查应展示至少20条');
- await page.waitForFunction(()=>{
-   const cards=document.querySelectorAll('#tool-diagList .diag-item');
-   if(cards.length<2)return false;
-   const first=cards[0].getBoundingClientRect();
-   const second=cards[1].getBoundingClientRect();
-   return first.width>0&&second.width>0&&second.top>=first.bottom-1;
- },null,{timeout:15000});
- const first=items.first();
- const box=await first.boundingBox();
  const listBox=await page.locator('#tool-diagList').boundingBox();
- assert(box&&listBox&&box.width>=listBox.width-2,'排查卡应铺满单列内容区');
- const second=items.nth(1); const secondBox=await second.boundingBox();
- assert(secondBox&&secondBox.y>=box.y+box.height-1,`排查卡必须竖向单列：first=${JSON.stringify(box)} second=${JSON.stringify(secondBox)}`);
+ const boxes=(await items.evaluateAll(nodes=>nodes.map(node=>{const r=node.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height};}))).sort((a,b)=>a.y-b.y||a.x-b.x);
+ assert(listBox&&boxes.length>=20,'排查卡与列表区域必须可测量');
+ boxes.forEach((box,index)=>{
+  assert(box.width>=listBox.width-2,`第${index+1}张排查卡应铺满单列内容区: ${JSON.stringify(box)}`);
+  assert(Math.abs(box.x-boxes[0].x)<=1,`第${index+1}张排查卡不得横向分栏: ${JSON.stringify(box)}`);
+  if(index>0){
+   const previous=boxes[index-1];
+   assert(box.y>=previous.y+previous.height-1,`排查卡不得重叠: previous=${JSON.stringify(previous)} current=${JSON.stringify(box)}`);
+  }
+ });
+ const first=items.first();
  const header=first.locator('.diag-item-header');
  const hbox=await header.boundingBox();
  assert(hbox&&hbox.height>=58,'排查卡点击区至少58px');
