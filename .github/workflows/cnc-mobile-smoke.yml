@@ -39,10 +39,7 @@ jobs:
           for port in 4173 4174; do
             ready=0
             for i in $(seq 1 30); do
-              if curl -fsS "http://127.0.0.1:${port}/cnc/" >/dev/null; then
-                ready=1
-                break
-              fi
+              if curl -fsS "http://127.0.0.1:${port}/cnc/" >/dev/null; then ready=1; break; fi
               sleep 1
             done
             if [ "$ready" -ne 1 ]; then
@@ -55,79 +52,46 @@ jobs:
 
       - name: Mobile startup performance and console errors
         run: node cnc/tests/mobile-performance-smoke.cjs
-
       - name: Mobile canonical startup stays on dashboard
         run: node cnc/tests/mobile-startup-home-smoke.cjs
-
       - name: Mobile bottom navigation accessibility
         run: node cnc/tests/mobile-nav-accessibility-smoke.cjs
-
       - name: Mobile homepage industrial card sample
         run: node cnc/tests/mobile-home-smoke.cjs
-
       - name: Mobile homepage recent record cards
-        run: |
-          set -o pipefail
-          node cnc/tests/mobile-industrial-dashboard-recents-smoke.cjs 2>&1 | tee cnc/test-artifacts/industrial-card-sample/dashboard-recents.log
-
+        run: node cnc/tests/mobile-industrial-dashboard-recents-smoke.cjs
       - name: Mobile industrial homepage and G01 detail acceptance
-        run: |
-          set -o pipefail
-          node cnc/tests/mobile-industrial-sample-smoke.cjs 2>&1 | tee cnc/test-artifacts/industrial-card-sample/acceptance.log
-
+        run: node cnc/tests/mobile-industrial-sample-smoke.cjs
       - name: Mobile industrial query workspace
-        run: |
-          set -o pipefail
-          node cnc/tests/mobile-industrial-workspace-smoke.cjs 2>&1 | tee cnc/test-artifacts/industrial-card-sample/workspace.log
-
+        run: node cnc/tests/mobile-industrial-workspace-smoke.cjs
       - name: Mobile industrial calculator tools
+        run: node cnc/tests/mobile-industrial-tools-smoke.cjs
+      - name: Mobile industrial diagnosis workflow
         run: |
           set -o pipefail
-          node cnc/tests/mobile-industrial-tools-smoke.cjs 2>&1 | tee cnc/test-artifacts/industrial-card-sample/tools.log
-
+          node cnc/tests/mobile-industrial-diagnosis-smoke.cjs 2>&1 | tee cnc/test-artifacts/industrial-card-sample/diagnosis.log
       - name: Mobile industrial recent and favorite records
-        run: |
-          set -o pipefail
-          node cnc/tests/mobile-industrial-records-smoke.cjs 2>&1 | tee cnc/test-artifacts/industrial-card-sample/records.log
-
+        run: node cnc/tests/mobile-industrial-records-smoke.cjs
       - name: Mobile industrial gallery and modal focus
-        run: |
-          set -o pipefail
-          node cnc/tests/mobile-industrial-gallery-smoke.cjs 2>&1 | tee cnc/test-artifacts/industrial-card-sample/gallery.log
-
+        run: node cnc/tests/mobile-industrial-gallery-smoke.cjs
       - name: Mobile industrial knowledge map
-        run: |
-          set -o pipefail
-          node cnc/tests/mobile-industrial-knowledge-map-smoke.cjs 2>&1 | tee cnc/test-artifacts/industrial-card-sample/knowledge-map.log
-
+        run: node cnc/tests/mobile-industrial-knowledge-map-smoke.cjs
       - name: Mobile industrial alarm and parameter details
-        run: |
-          set -o pipefail
-          node cnc/tests/mobile-industrial-detail-pages-smoke.cjs 2>&1 | tee cnc/test-artifacts/industrial-card-sample/detail-pages.log
-
+        run: node cnc/tests/mobile-industrial-detail-pages-smoke.cjs
       - name: Mobile detail sharing and industrial navigation
-        run: |
-          set -o pipefail
-          node cnc/tests/mobile-detail-share-smoke.cjs 2>&1 | tee cnc/test-artifacts/industrial-card-sample/detail-share.log
-
+        run: node cnc/tests/mobile-detail-share-smoke.cjs
       - name: Mobile alarm parameter fault split
         run: node cnc/tests/mobile-query-split-smoke.cjs
-
       - name: Mobile G-code clean layout
         run: node cnc/tests/mobile-gcode-layout-smoke.cjs
-
       - name: Mobile G-code search cards
         run: node cnc/tests/mobile-gcode-search-smoke.cjs
-
       - name: Mobile G01 detail content
         run: node cnc/tests/mobile-gcode-detail-content-smoke.cjs
-
       - name: Mobile G-code fullscreen panel
         run: node cnc/tests/mobile-gcode-detail-panel-smoke.cjs
-
       - name: Mobile parameter clean journey
         run: node cnc/tests/mobile-other-search-smoke.cjs
-
       - name: Service Worker remains disabled
         run: node cnc/tests/mobile-sw-smoke.cjs
 
@@ -136,9 +100,7 @@ jobs:
         env:
           CURRENT_URL: http://127.0.0.1:4173
           BASELINE_URL: http://127.0.0.1:4174
-        run: |
-          set -o pipefail
-          node cnc/tests/mobile-industrial-visual.cjs 2>&1 | tee cnc/test-artifacts/industrial-card-sample/visual.log
+        run: node cnc/tests/mobile-industrial-visual.cjs
 
       - name: Upload industrial sample screenshots and logs
         if: always()
