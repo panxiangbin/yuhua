@@ -13,6 +13,7 @@ const assert = require('node:assert/strict');
   await page.waitForSelector('.launchpad-card[data-filter="gcode"]', { state: 'visible', timeout: 30000 });
 
   await page.locator('.launchpad-card[data-filter="gcode"]').click();
+  await page.waitForFunction(() => window.__CNC_GM_PRO_INSTALLED__ === '20260720h', null, { timeout: 30000 });
   await page.waitForFunction(() => window.CNC_INDUSTRIAL_WORKSPACE && window.CNC_INDUSTRIAL_WORKSPACE.build === '20260721v', null, { timeout: 15000 });
   await page.waitForSelector('#view-workspace.active', { state: 'visible', timeout: 30000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-industrial-workspace') === 'true', null, { timeout: 15000 });
