@@ -42,6 +42,14 @@ jobs:
           grep -q "CNC_STARTUP_HOME_GUARD" cnc/import-test.js
           grep -q "personalHomeFollowsTools" cnc/import-test.js
           grep -q "BUILD = '20260722b'" cnc/personal-home.js
+          grep -q "RECORDS_BUILD='20260722e'" cnc/personal-home.js
+          grep -q "industrial-personal-records.css" cnc/personal-home.js
+          grep -q "decorateRecords" cnc/personal-home.js
+          grep -q "xp-record-count" cnc/personal-home.js
+          grep -q "body.cnc-industrial-records #view-favorites" cnc/industrial-personal-records.css
+          grep -q "grid-template-columns: 1fr" cnc/industrial-personal-records.css
+          grep -q "min-height: 56px" cnc/industrial-personal-records.css
+          grep -q "mobile-industrial-records-smoke" .github/workflows/cnc-mobile-smoke.yml
           grep -q "industrial-tools.css?v=20260722d" cnc/personal-home.js
           grep -q "industrial-tools.js?v=20260722d" cnc/personal-home.js
           grep -q "BUILD='20260722d'" cnc/industrial-tools.js
@@ -122,11 +130,11 @@ jobs:
           grep -q "disableServiceWorkerRegistration" cnc/import-test.js
           grep -q "loadGcodePro" cnc/import-test.js
           grep -q "正在恢复数控网站" cnc-recover.html
-          if grep -q "setInterval" cnc/clean-ui.js cnc/query-modes.js cnc/mobile-trust-nav.js cnc/industrial-card-sample.js cnc/industrial-workspace.js cnc/industrial-tools.js cnc/import-test.js; then
+          if grep -q "setInterval" cnc/clean-ui.js cnc/query-modes.js cnc/mobile-trust-nav.js cnc/industrial-card-sample.js cnc/industrial-workspace.js cnc/industrial-tools.js cnc/personal-home.js cnc/import-test.js; then
             echo "CNC startup layers must not keep polling intervals"
             exit 1
           fi
-          if grep -q "new MutationObserver" cnc/mobile-trust-nav.js cnc/industrial-card-sample.js cnc/industrial-workspace.js cnc/industrial-tools.js; then
+          if grep -q "new MutationObserver" cnc/mobile-trust-nav.js cnc/industrial-card-sample.js cnc/industrial-workspace.js cnc/industrial-tools.js cnc/personal-home.js; then
             echo "Mobile visual and trust layers must not install global observers"
             exit 1
           fi
