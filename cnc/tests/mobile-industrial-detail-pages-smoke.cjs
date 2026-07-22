@@ -15,10 +15,11 @@ const assert = require('assert');
 
   await page.goto('http://127.0.0.1:4173/cnc/?detail-style=20260722d', { waitUntil: 'networkidle' });
   await page.waitForSelector('#view-dashboard.active');
+  await page.waitForSelector('.xp-bottom-nav');
 
   async function openAndCheck(filter, expectedKind) {
-    const selector = `[data-route="workspace"][data-filter="${filter}"], [data-filter="${filter}"]`;
-    await page.locator(selector).first().click();
+    const navButton = page.locator(`.xp-bottom-nav [data-xp-filter="${filter}"]`);
+    await navButton.click();
     await page.waitForSelector('#view-workspace.active');
     await page.waitForSelector('#result-list [data-open-entry]');
     await page.locator('#result-list [data-open-entry]').first().click();
@@ -44,7 +45,6 @@ const assert = require('assert');
         codeSize: parseFloat(codeStyle.fontSize),
         codeWeight: parseInt(codeStyle.fontWeight, 10),
         cardRadius: parseFloat(cardStyle.borderRadius),
-        cardBackground: cardStyle.backgroundColor,
         backHeight: back.getBoundingClientRect().height,
         backRadius: parseFloat(backStyle.borderRadius),
         gridColumns: getComputedStyle(document.querySelector('#detail-panel .detail-content-grid')).gridTemplateColumns
@@ -66,7 +66,7 @@ const assert = require('assert');
   }
 
   await openAndCheck('alarm', 'alarm');
-  await page.locator('[data-route="dashboard"]').first().click().catch(() => page.locator('.xp-bottom-nav [data-xp-route="dashboard"]').click());
+  await page.locator('.xp-bottom-nav [data-xp-route="dashboard"]').click();
   await page.waitForSelector('#view-dashboard.active');
   await openAndCheck('parameter', 'parameter');
 
