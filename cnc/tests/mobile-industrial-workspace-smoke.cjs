@@ -115,10 +115,11 @@ const path = require('node:path');
         selectedId: typeof state !== 'undefined' && state ? state.selectedId : null
       };
     } catch (error) {}
+    const detailPanel = document.getElementById('detail-panel');
     return {
       input: (document.getElementById('search-input') || {}).value || '',
       expanded: document.getElementById('search-input').getAttribute('aria-expanded'),
-      detailOpen: document.body.getAttribute('data-cnc-detail-open') === 'true',
+      detailOpen: document.body.getAttribute('data-cnc-detail-open') === 'true' || Boolean(detailPanel && detailPanel.classList.contains('mobile-open')),
       detailCode: (document.getElementById('detail-code') || {}).textContent || '',
       internal,
       results: Array.from(document.querySelectorAll('#result-list [data-open-entry]')).slice(0, 20).map(node => ({
@@ -139,11 +140,11 @@ const path = require('node:path');
     const g01Button = page.locator('#result-list [data-open-entry="kb-gcode-g01"]');
     await g01Button.scrollIntoViewIfNeeded();
     await g01Button.click();
-    await page.waitForFunction(() => document.body.getAttribute('data-cnc-detail-open') === 'true', null, { timeout: 15000 });
+    await page.waitForFunction(() => document.body.getAttribute('data-cnc-detail-open') === 'true' || document.getElementById('detail-panel')?.classList.contains('mobile-open'), null, { timeout: 15000 });
   }
 
   await page.locator('#detail-back-btn').click();
-  await page.waitForFunction(() => document.body.getAttribute('data-cnc-detail-open') !== 'true', null, { timeout: 15000 });
+  await page.waitForFunction(() => document.body.getAttribute('data-cnc-detail-open') !== 'true' && !document.getElementById('detail-panel')?.classList.contains('mobile-open'), null, { timeout: 15000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-industrial-workspace') === 'true', null, { timeout: 15000 });
   await page.waitForFunction(() => (document.getElementById('search-input') || {}).value === 'G01', null, { timeout: 15000 });
 
