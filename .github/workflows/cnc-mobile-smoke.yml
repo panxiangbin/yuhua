@@ -80,6 +80,11 @@ jobs:
           set -o pipefail
           node cnc/tests/mobile-industrial-tools-smoke.cjs 2>&1 | tee cnc/test-artifacts/industrial-card-sample/tools.log
 
+      - name: Mobile industrial recent and favorite records
+        run: |
+          set -o pipefail
+          node cnc/tests/mobile-industrial-records-smoke.cjs 2>&1 | tee cnc/test-artifacts/industrial-card-sample/records.log
+
       - name: Mobile industrial alarm and parameter details
         run: |
           set -o pipefail
