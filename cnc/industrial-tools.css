@@ -1,0 +1,35 @@
+/* 数控小潘：锤子工业卡片风第四批——换算工具页。 */
+@media(max-width:768px){
+body.cnc-industrial-tools #view-calculator{color:#292c2f;background:#f1efe9}
+body.cnc-industrial-tools #view-calculator>.sub-nav-bar{position:sticky;top:0;z-index:12;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 12px;background:rgba(241,239,233,.97);border-bottom:1px solid #d8d3c8}
+body.cnc-industrial-tools #view-calculator .sub-nav-btn{min-height:46px;border:1px solid #c9c3b8;border-radius:10px;background:#fffdf9;color:#34383b;box-shadow:0 3px 8px rgba(48,44,36,.07),inset 0 1px rgba(255,255,255,.9);font-size:14px;font-weight:850}
+body.cnc-industrial-tools #view-calculator .section-panel{padding:16px 12px 104px;background:#f1efe9}
+body.cnc-industrial-tools #view-calculator .section-head{margin:0 0 14px;padding:16px;border:1px solid #d8d3c8;border-radius:14px;background:#fffdf9;box-shadow:0 6px 16px rgba(48,44,36,.07)}
+body.cnc-industrial-tools #view-calculator .section-head h3{margin:4px 0 0;color:#292c2f;font-size:24px;line-height:1.2;font-weight:950;letter-spacing:-.02em}
+body.cnc-industrial-tools #view-calculator .section-head p,body.cnc-industrial-tools #view-calculator .eyebrow{color:#687078}
+body.cnc-industrial-tools #view-calculator .tool-tab-bar{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:14px;padding:8px;border:1px solid #d8d3c8;border-radius:14px;background:#e9e6df}
+body.cnc-industrial-tools #view-calculator .tool-tab-btn{min-height:48px;border:1px solid #cbc5ba;border-radius:10px;background:#fffdf9;color:#454b50;box-shadow:0 2px 6px rgba(48,44,36,.06);font-size:15px;font-weight:850}
+body.cnc-industrial-tools #view-calculator .tool-tab-btn.active{border-color:#3f6179;background:#3f6179;color:#fff;box-shadow:0 4px 10px rgba(63,97,121,.18),inset 0 1px rgba(255,255,255,.18)}
+body.cnc-industrial-tools #view-calculator .calc-grid{display:grid!important;grid-template-columns:1fr!important;gap:12px!important}
+body.cnc-industrial-tools #view-calculator .calc-card{overflow:hidden;border:1px solid #d8d3c8!important;border-radius:14px!important;background:#fffdf9!important;box-shadow:0 6px 16px rgba(48,44,36,.07)!important}
+body.cnc-industrial-tools #view-calculator .calc-card-header,body.cnc-industrial-tools #view-calculator .calc-card-header[class*="tile-"]{display:grid;grid-template-columns:42px 1fr 24px;align-items:center;gap:10px;min-height:64px;padding:10px 14px;border:0;border-left:4px solid #3f6179;background:#fffdf9!important;color:#292c2f!important;cursor:pointer}
+body.cnc-industrial-tools #view-calculator .calc-card-header:active{background:#ece8df!important;box-shadow:inset 0 2px 5px rgba(48,44,36,.11)}
+body.cnc-industrial-tools #view-calculator .tile-icon{display:grid;place-items:center;width:38px;height:38px;border:1px solid #c9c3b8;border-radius:9px;background:#f2efe8;color:#3f6179;font-family:"DIN Alternate","Roboto Mono",Consolas,monospace;font-size:16px;font-weight:950}
+body.cnc-industrial-tools #view-calculator .tile-label{color:#292c2f;font-size:17px;line-height:1.3;font-weight:950}
+body.cnc-industrial-tools #view-calculator .arrow{color:#687078;font-size:14px;transition:transform .16s ease}
+body.cnc-industrial-tools #view-calculator .calc-card:not(.calc-collapsed) .arrow{transform:rotate(180deg)}
+body.cnc-industrial-tools #view-calculator .calc-card-body{padding:14px!important;border-top:1px solid #e1ddd4;background:#faf8f3}
+body.cnc-industrial-tools #view-calculator .calc-formula-hint{margin:0 0 12px;padding:12px;border:1px solid #cdd6dc;border-radius:10px;background:#eef2f4;color:#29485f;font-family:"Roboto Mono",Consolas,monospace;font-size:16px;font-weight:900;text-align:center}
+body.cnc-industrial-tools #view-calculator .form-group{margin-bottom:12px}
+body.cnc-industrial-tools #view-calculator .form-group label{display:block;margin-bottom:6px;color:#454b50;font-size:14px;font-weight:850}
+body.cnc-industrial-tools #view-calculator .calc-input,body.cnc-industrial-tools #view-calculator .tool-diag-input{width:100%;min-height:50px;border:1px solid #bdb7ac!important;border-radius:10px!important;background:#fff!important;color:#292c2f!important;font-size:18px!important;font-weight:800;box-shadow:inset 0 2px 4px rgba(48,44,36,.05)}
+body.cnc-industrial-tools #view-calculator .calc-input:focus,body.cnc-industrial-tools #view-calculator .tool-diag-input:focus{outline:3px solid rgba(63,97,121,.18);border-color:#3f6179!important}
+body.cnc-industrial-tools #view-calculator .calc-btn{width:100%;min-height:50px;border:1px solid #29485f!important;border-radius:10px!important;background:#3f6179!important;color:#fff!important;box-shadow:0 4px 9px rgba(63,97,121,.20),inset 0 1px rgba(255,255,255,.18);font-size:17px;font-weight:950}
+body.cnc-industrial-tools #view-calculator .calc-btn:active{transform:translateY(1px);box-shadow:inset 0 3px 7px rgba(24,40,51,.22)}
+body.cnc-industrial-tools #view-calculator .calc-result{min-height:58px;margin-top:12px;display:grid;place-items:center;border:1px solid #d5bd8c;border-radius:10px;background:#fff7e2;color:#7b5315;font-family:"Roboto Mono",Consolas,monospace;font-size:25px;font-weight:950}
+body.cnc-industrial-tools #view-calculator .tool-tab-panel>.card,body.cnc-industrial-tools #view-calculator .tool-diag-item{border:1px solid #d8d3c8!important;border-radius:14px!important;background:#fffdf9!important;box-shadow:0 6px 16px rgba(48,44,36,.07)}
+body.cnc-industrial-tools #view-calculator .tool-diag-cats{display:flex;gap:8px;overflow-x:auto;padding:4px 0 10px;scrollbar-width:none}
+body.cnc-industrial-tools #view-calculator .cat-btn{flex:0 0 auto;min-height:42px;border:1px solid #c9c3b8;border-radius:9px;background:#f7f4ee;color:#454b50;font-weight:800}
+body.cnc-industrial-tools #view-calculator .cat-btn.active{border-color:#3f6179;background:#3f6179;color:#fff}
+}
+@media(prefers-reduced-motion:reduce){body.cnc-industrial-tools #view-calculator *{scroll-behavior:auto!important;transition:none!important}}
