@@ -1,5 +1,7 @@
 const { chromium } = require('playwright');
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
 
 (async () => {
   const browser = await chromium.launch({ headless: true });
@@ -161,6 +163,11 @@ const assert = require('node:assert/strict');
   console.log('锤子工业卡片风查询工作区与键盘搜索建议通过', workspace);
   await browser.close();
 })().catch(error => {
+  try {
+    const dir = path.join('cnc', 'test-artifacts', 'industrial-card-sample');
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(path.join(dir, 'workspace-error.log'), String(error && error.stack ? error.stack : error));
+  } catch (writeError) {}
   console.error(error);
   process.exit(1);
 });
