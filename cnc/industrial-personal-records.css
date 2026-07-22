@@ -1,0 +1,145 @@
+/* 数控小潘：最近查看与收藏页工业卡片风。 */
+@media (max-width: 768px) {
+  body.cnc-industrial-records #view-favorites {
+    background: #f1efe9 !important;
+    color: #292c2f !important;
+    padding-bottom: calc(92px + env(safe-area-inset-bottom)) !important;
+  }
+  body.cnc-industrial-records #view-favorites .section-panel {
+    padding: 14px !important;
+    background: transparent !important;
+  }
+  body.cnc-industrial-records #view-favorites .section-head {
+    display: block !important;
+    margin: 0 0 14px !important;
+    padding: 16px !important;
+    border: 1px solid #d8d3c8 !important;
+    border-radius: 14px !important;
+    background: #fffdf9 !important;
+    box-shadow: 0 6px 16px rgba(48, 44, 36, .07) !important;
+  }
+  body.cnc-industrial-records #view-favorites .section-head h3 {
+    margin: 5px 0 7px !important;
+    color: #292c2f !important;
+    font-size: 22px !important;
+    line-height: 1.28 !important;
+    font-weight: 950 !important;
+  }
+  body.cnc-industrial-records #view-favorites .section-head > p,
+  body.cnc-industrial-records #view-favorites .eyebrow {
+    color: #687078 !important;
+  }
+  body.cnc-industrial-records #view-favorites .favorites-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+  body.cnc-industrial-records #view-favorites .favorites-grid > .detail-card {
+    margin: 0 !important;
+    padding: 14px !important;
+    border: 1px solid #d8d3c8 !important;
+    border-radius: 14px !important;
+    background: #fffdf9 !important;
+    box-shadow: 0 6px 16px rgba(48, 44, 36, .07) !important;
+  }
+  body.cnc-industrial-records #view-favorites .favorites-grid > .detail-card:first-child {
+    box-shadow: inset 4px 0 0 #3f6179, 0 6px 16px rgba(48, 44, 36, .07) !important;
+  }
+  body.cnc-industrial-records #view-favorites .favorites-grid > .detail-card:last-child {
+    box-shadow: inset 4px 0 0 #c48722, 0 6px 16px rgba(48, 44, 36, .07) !important;
+  }
+  body.cnc-industrial-records #view-favorites .detail-card h4 {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 10px !important;
+    margin: 0 0 12px !important;
+    color: #292c2f !important;
+    font-size: 18px !important;
+    font-weight: 950 !important;
+  }
+  body.cnc-industrial-records .xp-record-count {
+    min-width: 30px !important;
+    padding: 4px 8px !important;
+    border: 1px solid #d8d3c8 !important;
+    border-radius: 8px !important;
+    background: #f2efe8 !important;
+    color: #3f6179 !important;
+    font: 900 13px/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !important;
+    text-align: center !important;
+  }
+  body.cnc-industrial-records #view-favorites .link-cloud {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 9px !important;
+  }
+  body.cnc-industrial-records #view-favorites .link-cloud > button {
+    width: 100% !important;
+    min-height: 56px !important;
+    display: grid !important;
+    grid-template-columns: minmax(48px, auto) 1fr auto !important;
+    align-items: center !important;
+    gap: 11px !important;
+    margin: 0 !important;
+    padding: 11px 12px !important;
+    border: 1px solid #d8d3c8 !important;
+    border-radius: 10px !important;
+    background: #fffdf9 !important;
+    color: #292c2f !important;
+    box-shadow: 0 3px 8px rgba(48, 44, 36, .06) !important;
+    text-align: left !important;
+  }
+  body.cnc-industrial-records #view-favorites .link-cloud > button:active {
+    transform: translateY(1px) !important;
+    background: #f2efe8 !important;
+    box-shadow: inset 0 1px 2px rgba(48, 44, 36, .12) !important;
+  }
+  body.cnc-industrial-records .xp-record-code {
+    color: #3f6179 !important;
+    font: 950 18px/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !important;
+    overflow-wrap: anywhere !important;
+  }
+  body.cnc-industrial-records .xp-record-copy {
+    min-width: 0 !important;
+  }
+  body.cnc-industrial-records .xp-record-copy strong,
+  body.cnc-industrial-records .xp-record-copy small {
+    display: block !important;
+  }
+  body.cnc-industrial-records .xp-record-copy strong {
+    color: #292c2f !important;
+    font-size: 15px !important;
+    line-height: 1.35 !important;
+    font-weight: 900 !important;
+  }
+  body.cnc-industrial-records .xp-record-copy small {
+    margin-top: 3px !important;
+    color: #687078 !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+  }
+  body.cnc-industrial-records .xp-record-arrow {
+    color: #687078 !important;
+    font-size: 22px !important;
+    font-weight: 800 !important;
+  }
+  body.cnc-industrial-records #view-favorites .link-cloud > button.xp-record-empty {
+    grid-template-columns: 1fr !important;
+    min-height: 72px !important;
+    justify-items: center !important;
+    color: #687078 !important;
+    border-style: dashed !important;
+    background: #f7f4ed !important;
+    text-align: center !important;
+    cursor: default !important;
+  }
+  body.cnc-industrial-records #view-favorites .sub-nav-btn {
+    min-height: 44px !important;
+    border: 1px solid #c9c3b7 !important;
+    border-radius: 10px !important;
+    background: #fffdf9 !important;
+    color: #292c2f !important;
+    box-shadow: 0 3px 8px rgba(48, 44, 36, .06) !important;
+    font-weight: 850 !important;
+  }
+}
