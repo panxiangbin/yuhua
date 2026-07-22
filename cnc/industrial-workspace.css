@@ -1,0 +1,308 @@
+/*
+ * 数控小潘 CNC 随身助手：锤子工业卡片风第二批
+ * 范围：手机查询工作区、搜索框、筛选控件和结果卡片。
+ * 依赖：industrial-card-sample.css 中的统一设计变量。
+ */
+@media (max-width: 768px) {
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] {
+    --cnc-iw-accent: var(--cnc-ic-blue);
+    background: var(--cnc-ic-canvas) !important;
+    color: var(--cnc-ic-ink) !important;
+    font-family: var(--cnc-ic-font) !important;
+  }
+
+  body.cnc-industrial-workspace[data-cnc-industrial-mode="alarm"] { --cnc-iw-accent: var(--cnc-ic-danger); }
+  body.cnc-industrial-workspace[data-cnc-industrial-mode="parameter"] { --cnc-iw-accent: var(--cnc-ic-warning); }
+  body.cnc-industrial-workspace[data-cnc-industrial-mode="fault"] { --cnc-iw-accent: var(--cnc-ic-success); }
+
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] .topbar {
+    min-height: 60px !important;
+    padding: 8px 12px !important;
+    border-bottom: 1px solid var(--cnc-ic-line) !important;
+    background: #f7f4ee !important;
+    box-shadow: 0 2px 8px rgba(46, 43, 38, .07) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #topbar-title {
+    color: var(--cnc-ic-ink) !important;
+    font-size: 18px !important;
+    font-weight: 900 !important;
+    letter-spacing: .01em !important;
+  }
+
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] .menu-button,
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #home-btn {
+    width: 42px !important;
+    min-width: 42px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    border: 1px solid var(--cnc-ic-line-strong) !important;
+    border-radius: var(--cnc-ic-radius-control) !important;
+    background: var(--cnc-ic-surface) !important;
+    color: var(--cnc-ic-ink-soft) !important;
+    box-shadow: var(--cnc-ic-shadow-control) !important;
+    font-weight: 900 !important;
+  }
+
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] .menu-button:active,
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #home-btn:active {
+    background: var(--cnc-ic-surface-pressed) !important;
+    box-shadow: var(--cnc-ic-shadow-pressed) !important;
+    transform: translateY(1px) !important;
+  }
+
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #view-workspace {
+    padding: 12px 0 92px !important;
+    background: var(--cnc-ic-canvas) !important;
+  }
+
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #view-workspace .section-panel,
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #view-workspace .workspace-panel.search-panel {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  /* 搜索与分类是一块独立工具面板，结果卡不嵌套在大卡里。 */
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #view-workspace .search-toolbar {
+    display: block !important;
+    margin: 0 12px !important;
+    padding: 14px !important;
+    border: 1px solid var(--cnc-ic-line) !important;
+    border-left: 4px solid var(--cnc-iw-accent) !important;
+    border-radius: var(--cnc-ic-radius-card) !important;
+    background: var(--cnc-ic-surface) !important;
+    box-shadow: var(--cnc-ic-shadow-card) !important;
+  }
+
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #search-input {
+    width: 100% !important;
+    height: 54px !important;
+    padding: 0 48px 0 15px !important;
+    border: 1px solid var(--cnc-ic-line-strong) !important;
+    border-radius: var(--cnc-ic-radius-control) !important;
+    outline: 0 !important;
+    background: var(--cnc-ic-surface-soft) !important;
+    background-image: none !important;
+    color: var(--cnc-ic-ink) !important;
+    box-shadow: inset 0 1px 2px rgba(46, 43, 38, .08) !important;
+    font-family: var(--cnc-ic-font) !important;
+    font-size: 17px !important;
+    font-weight: 750 !important;
+  }
+
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #search-input:focus {
+    border-color: var(--cnc-iw-accent) !important;
+    box-shadow: inset 0 1px 2px rgba(46, 43, 38, .08), 0 0 0 3px color-mix(in srgb, var(--cnc-iw-accent) 18%, transparent) !important;
+  }
+
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #search-clear-btn {
+    top: 8px !important;
+    right: 8px !important;
+    width: 38px !important;
+    min-width: 38px !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    border: 1px solid var(--cnc-ic-line) !important;
+    border-radius: 8px !important;
+    background: var(--cnc-ic-surface) !important;
+    color: var(--cnc-ic-ink-soft) !important;
+    box-shadow: var(--cnc-ic-shadow-control) !important;
+    font-weight: 900 !important;
+  }
+
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #category-select {
+    min-height: 46px !important;
+    padding: 0 12px !important;
+    border: 1px solid var(--cnc-ic-line-strong) !important;
+    border-radius: var(--cnc-ic-radius-control) !important;
+    background: var(--cnc-ic-surface-soft) !important;
+    color: var(--cnc-ic-ink) !important;
+    box-shadow: inset 0 1px 2px rgba(46, 43, 38, .06) !important;
+    font-size: 15px !important;
+    font-weight: 750 !important;
+  }
+
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #search-meta {
+    display: inline-flex !important;
+    min-height: 30px !important;
+    margin: 10px 12px 2px !important;
+    padding: 6px 9px !important;
+    align-items: center !important;
+    border: 1px solid var(--cnc-ic-line) !important;
+    border-radius: 7px !important;
+    background: var(--cnc-ic-surface-soft) !important;
+    color: var(--cnc-ic-muted) !important;
+    font-family: var(--cnc-ic-code-font) !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+  }
+
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #view-workspace.gcode-pro-mode .gcode-mobile-controls {
+    margin: 10px 12px 0 !important;
+    padding: 10px !important;
+    border: 1px solid var(--cnc-ic-line) !important;
+    border-radius: 11px !important;
+    background: var(--cnc-ic-surface-soft) !important;
+    box-shadow: inset 0 1px 2px rgba(46, 43, 38, .06) !important;
+  }
+
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] .gcode-filter-chip {
+    min-height: 40px !important;
+    border: 1px solid var(--cnc-ic-line-strong) !important;
+    border-radius: 8px !important;
+    background: var(--cnc-ic-surface) !important;
+    color: var(--cnc-ic-ink-soft) !important;
+    box-shadow: var(--cnc-ic-shadow-control) !important;
+    font-size: 12px !important;
+    font-weight: 850 !important;
+  }
+
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] .gcode-filter-chip.active {
+    border-color: var(--cnc-ic-blue-deep) !important;
+    background: var(--cnc-ic-blue) !important;
+    color: #fff !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 2px 5px rgba(45,75,97,.18) !important;
+  }
+
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] #result-list {
+    gap: 10px !important;
+    margin: 12px 12px 0 !important;
+    padding: 0 !important;
+  }
+
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] .result-card {
+    --cnc-result-accent: var(--cnc-iw-accent);
+    position: relative !important;
+    min-height: 102px !important;
+    padding: 14px 34px 14px 15px !important;
+    border: 1px solid var(--cnc-ic-line) !important;
+    border-left: 4px solid var(--cnc-result-accent) !important;
+    border-radius: var(--cnc-ic-radius-card) !important;
+    background: var(--cnc-ic-surface) !important;
+    background-image: none !important;
+    color: var(--cnc-ic-ink) !important;
+    box-shadow: var(--cnc-ic-shadow-card) !important;
+    transform: none !important;
+  }
+
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] .result-card::after {
+    content: "›";
+    position: absolute;
+    top: 50%;
+    right: 13px;
+    color: #8a8c88;
+    font-family: var(--cnc-ic-code-font);
+    font-size: 25px;
+    line-height: 1;
+    transform: translateY(-50%);
+  }
+
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] .result-card:active {
+    background: var(--cnc-ic-surface-pressed) !important;
+    box-shadow: var(--cnc-ic-shadow-pressed) !important;
+    transform: translateY(1px) !important;
+  }
+
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] .result-card.selected {
+    border-color: var(--cnc-iw-accent) !important;
+    border-left-width: 5px !important;
+    background: var(--cnc-ic-surface-soft) !important;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cnc-iw-accent) 15%, transparent), var(--cnc-ic-shadow-card) !important;
+  }
+
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] .result-top {
+    align-items: flex-start !important;
+    gap: 10px !important;
+  }
+
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] .result-top strong {
+    color: var(--cnc-ic-ink) !important;
+    font-family: var(--cnc-ic-code-font) !important;
+    font-size: 25px !important;
+    line-height: 1 !important;
+    font-weight: 950 !important;
+    letter-spacing: -.03em !important;
+  }
+
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] .result-badges .badge {
+    min-height: 24px !important;
+    padding: 4px 7px !important;
+    border: 1px solid var(--cnc-ic-line) !important;
+    border-radius: 6px !important;
+    background: var(--cnc-ic-surface-soft) !important;
+    color: var(--cnc-ic-muted) !important;
+    font-size: 11px !important;
+    font-weight: 850 !important;
+  }
+
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] .result-card h4 {
+    margin: 8px 0 0 !important;
+    color: var(--cnc-ic-ink) !important;
+    font-size: 17px !important;
+    line-height: 1.35 !important;
+    font-weight: 900 !important;
+  }
+
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] .result-card p {
+    margin: 6px 0 0 !important;
+    color: var(--cnc-ic-muted) !important;
+    font-size: 13px !important;
+    line-height: 1.55 !important;
+    font-weight: 600 !important;
+  }
+
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] .result-empty-state {
+    min-height: 180px !important;
+    padding: 20px !important;
+    border-left-color: var(--cnc-ic-line-strong) !important;
+    text-align: left !important;
+  }
+
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] .empty-state-chip,
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] .load-more-btn {
+    min-height: 42px !important;
+    border: 1px solid var(--cnc-ic-line-strong) !important;
+    border-radius: 8px !important;
+    background: var(--cnc-ic-surface) !important;
+    color: var(--cnc-ic-ink-soft) !important;
+    box-shadow: var(--cnc-ic-shadow-control) !important;
+    font-weight: 850 !important;
+  }
+
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] .xp-bottom-nav {
+    border: 1px solid var(--cnc-ic-line-strong) !important;
+    border-radius: 14px !important;
+    background: #f7f4ee !important;
+    background-image: none !important;
+    box-shadow: 0 -1px 0 rgba(255,255,255,.8), 0 7px 22px rgba(45,42,36,.16) !important;
+  }
+
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] .xp-bottom-nav button {
+    min-height: 48px !important;
+    border-radius: 9px !important;
+    color: var(--cnc-ic-ink-soft) !important;
+    font-weight: 850 !important;
+  }
+
+  body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] .xp-bottom-nav button[aria-current="page"] {
+    background: var(--cnc-ic-surface) !important;
+    color: var(--cnc-ic-blue-deep) !important;
+    box-shadow: var(--cnc-ic-shadow-control) !important;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] *,
+    body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] *::before,
+    body.cnc-industrial-workspace[data-cnc-industrial-workspace="true"] *::after {
+      transition-duration: .01ms !important;
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
+}
