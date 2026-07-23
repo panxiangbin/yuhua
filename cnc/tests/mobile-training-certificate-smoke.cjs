@@ -16,7 +16,7 @@ const assert = require('node:assert/strict');
     localStorage.setItem('cnc_study_completed_v1', JSON.stringify([1,2,3,4,5,6,7,9,10,11,12]));
     location.reload();
   });
-  await page.waitForFunction(() => window.CNC_TRAINING_CERTIFICATE?.build === '20260724b');
+  await page.waitForFunction(() => window.CNC_TRAINING_CERTIFICATE?.build === '20260724c');
 
   const unfinished = await page.evaluate(() => window.CNC_TRAINING_CERTIFICATE.snapshot());
   assert.equal(unfinished.passed, 11);
@@ -50,7 +50,7 @@ const assert = require('node:assert/strict');
     localStorage.setItem('cnc_study_completed_v1', JSON.stringify([1,2,3,4,5,6,7,8,9,10,11,12]));
     location.reload();
   });
-  await page.waitForFunction(() => window.CNC_TRAINING_CERTIFICATE?.build === '20260724b');
+  await page.waitForFunction(() => window.CNC_TRAINING_CERTIFICATE?.build === '20260724c');
 
   const graduated = await page.evaluate(() => window.CNC_TRAINING_CERTIFICATE.snapshot());
   assert.equal(graduated.passed, 12);
