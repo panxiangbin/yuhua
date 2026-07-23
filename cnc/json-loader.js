@@ -84,3 +84,12 @@ window.JSONLoader = {
 };
 
 console.log('[JSON加载器] 已就绪，支持BOM处理');
+
+(function loadTrainingPractice(){
+  if (document.querySelector('script[data-cnc-training-practice-script]')) return;
+  var script = document.createElement('script');
+  script.src = './training-practice.js?v=20260723b';
+  script.async = true;
+  script.dataset.cncTrainingPracticeScript = '1';
+  document.head.appendChild(script);
+})();
