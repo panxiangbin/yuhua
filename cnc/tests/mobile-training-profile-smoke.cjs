@@ -8,7 +8,7 @@ const assert = require('node:assert/strict');
   page.on('pageerror', error => errors.push(error.message));
 
   await page.goto('http://127.0.0.1:4173/cnc/?smoke=training-profile', { waitUntil: 'domcontentloaded', timeout: 60000 });
-  await page.waitForFunction(() => window.CNC_TRAINING_PROFILE?.build === '20260723h', null, { timeout: 20000 });
+  await page.waitForFunction(() => window.CNC_TRAINING_PROFILE?.build === '20260723i', null, { timeout: 20000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-startup-home') === 'stable', null, { timeout: 15000 });
   assert.equal(await page.locator('.view.active').getAttribute('id'), 'view-dashboard');
 
@@ -37,6 +37,7 @@ const assert = require('node:assert/strict');
   assert.equal(data.abilities.length, 6);
   assert.equal(data.weak.some(item => item.level === 9 && item.score === 50), true);
   assert.equal(data.next.level, 3);
+  assert.equal(data.streak.current, 0);
 
   const text = (await page.locator('#xp-training-profile').textContent()) || '';
   assert.match(text, /2\/12/);
@@ -63,6 +64,6 @@ const assert = require('node:assert/strict');
   await page.locator('[data-profile-continue="3"]').click();
   await page.waitForSelector('#view-study.active #study-detail-content .lesson-detail-v2[data-level="3"]', { state: 'visible', timeout: 15000 });
   assert.deepEqual(errors, []);
-  console.log('成长档案、课程成绩、阶段能力、薄弱项、错题与下一关推荐通过', { data, layout });
+  console.log('成长档案、课程成绩、阶段能力、连续训练、薄弱项、错题与下一关推荐通过', { data, layout });
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });
