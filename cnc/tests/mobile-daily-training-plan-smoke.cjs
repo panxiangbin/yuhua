@@ -8,7 +8,7 @@ const assert = require('node:assert/strict');
   page.on('pageerror', error => errors.push(error.message));
 
   await page.goto('http://127.0.0.1:4173/cnc/?smoke=daily-plan', { waitUntil: 'domcontentloaded', timeout: 60000 });
-  await page.waitForFunction(() => window.CNC_TRAINING_PROFILE?.build === '20260723h', null, { timeout: 20000 });
+  await page.waitForFunction(() => window.CNC_TRAINING_PROFILE?.build === '20260723i', null, { timeout: 20000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-startup-home') === 'stable', null, { timeout: 15000 });
   assert.equal(await page.locator('.view.active').getAttribute('id'), 'view-dashboard');
 
@@ -34,6 +34,7 @@ const assert = require('node:assert/strict');
   assert.equal(data.dailyPlan.score, 0);
   assert.match(data.dailyPlan.target, /80 分以上/);
   assert.equal(data.dailyPlan.steps[1].type, 'wrong');
+  assert.equal(data.dailyPlan.passed, false);
 
   const plan = page.locator('.xp-daily-plan');
   await plan.waitFor({ state: 'visible' });
