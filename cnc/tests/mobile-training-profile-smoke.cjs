@@ -23,11 +23,12 @@ const assert = require('node:assert/strict');
       lessonScores: { 1: 100, 2: 100, 9: 50 },
       updatedAt: new Date().toISOString()
     }));
-    window.CNC_TRAINING_PROFILE.render();
+    if (typeof window.navigate === 'function') window.navigate('favorites');
   });
-
-  await page.locator('[data-route="favorites"],[data-xp-route="favorites"]').first().click();
+  await page.waitForSelector('#view-favorites.active', { state: 'visible', timeout: 10000 });
+  await page.evaluate(() => window.CNC_TRAINING_PROFILE.render());
   await page.waitForSelector('#view-favorites.active #xp-training-profile', { state: 'visible', timeout: 10000 });
+
   const data = await page.evaluate(() => window.CNC_TRAINING_PROFILE.snapshot());
   assert.equal(data.completed, 2);
   assert.equal(data.wrong, 1);
