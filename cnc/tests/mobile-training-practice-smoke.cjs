@@ -8,7 +8,7 @@ const assert = require('node:assert/strict');
   page.on('pageerror', error => errors.push(error.message));
 
   await page.goto('http://127.0.0.1:4173/cnc/?smoke=training-practice', { waitUntil: 'domcontentloaded', timeout: 60000 });
-  await page.waitForFunction(() => window.CNC_TRAINING_PRACTICE && window.CNC_TRAINING_PRACTICE.build === '20260723c', null, { timeout: 20000 });
+  await page.waitForFunction(() => window.CNC_TRAINING_PRACTICE && window.CNC_TRAINING_PRACTICE.build === '20260723d', null, { timeout: 20000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-startup-home') === 'stable', null, { timeout: 15000 });
   assert.equal(await page.locator('.view.active').getAttribute('id'), 'view-dashboard', '根网址必须稳定停留首页');
 
@@ -19,10 +19,11 @@ const assert = require('node:assert/strict');
   const api = await page.evaluate(() => window.CNC_TRAINING_PRACTICE.runCheck());
   assert.equal(api.passed, true);
   assert.equal(api.questions, 9);
+  assert.equal(api.lessonGates, 12);
   assert.equal(api.state.version, 1);
 
   const entry = page.locator('#xp-practice-entry');
-  assert.match((await entry.locator('h4').textContent()) || '', /五种题型形成闭环/);
+  assert.match((await entry.locator('h4').textContent()) || '', /练习通过才算闯关/);
   const entryLayout = await entry.evaluate(node => ({ buttonHeight: node.querySelector('[data-practice-open]').getBoundingClientRect().height }));
   assert.ok(entryLayout.buttonHeight >= 48, '手机端练习入口点击区不得小于48px');
 
@@ -62,6 +63,6 @@ const assert = require('node:assert/strict');
   assert.equal(optionLayout.singleColumn, true, '手机端答案必须单列显示');
   assert.ok(optionLayout.minHeight >= 54, '答案点击区不得过小');
   assert.deepEqual(errors, []);
-  console.log('CNC新手在线练习、解析、错题记录、重做与XP防重复通过', { build: api.build, questions: api.questions, xp: saved.profile.xp });
+  console.log('CNC新手在线练习、解析、错题记录、课程门槛与XP防重复通过', { build: api.build, questions: api.questions, xp: saved.profile.xp });
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });
