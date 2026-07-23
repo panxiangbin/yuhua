@@ -1,0 +1,26 @@
+name: CNC seven-day training calendar smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-training-calendar-smoke.yml'
+  workflow_dispatch:
+
+jobs:
+  training-calendar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install --no-save playwright@1.52.0
+      - run: npx playwright install --with-deps chromium
+      - name: JavaScript syntax
+        run: node --check cnc/tests/mobile-training-calendar-smoke.cjs
+      - name: Start static server
+        run: python3 -m http.server 4173 --directory . > /tmp/cnc-server.log 2>&1 &
+      - name: Chromium 390x844 seven-day calendar
+        run: node cnc/tests/mobile-training-calendar-smoke.cjs
