@@ -8,7 +8,7 @@ const assert = require('node:assert/strict');
   page.on('pageerror', error => errors.push(error.message));
 
   await page.goto('http://127.0.0.1:4173/cnc/?smoke=training-profile', { waitUntil: 'domcontentloaded', timeout: 60000 });
-  await page.waitForFunction(() => window.CNC_TRAINING_PROFILE?.build === '20260723i', null, { timeout: 20000 });
+  await page.waitForFunction(() => window.CNC_TRAINING_PROFILE?.build === '20260724a', null, { timeout: 20000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-startup-home') === 'stable', null, { timeout: 15000 });
   assert.equal(await page.locator('.view.active').getAttribute('id'), 'view-dashboard');
 
@@ -44,26 +44,34 @@ const assert = require('node:assert/strict');
   assert.match(text, /第 9 关 50 分/);
   assert.match(text, /第 3 关/);
   assert.match(text, /重做错题/);
+  assert.match(text, /查看成长成果/);
 
   const layout = await page.locator('#xp-training-profile').evaluate(panel => {
     const cards = [...panel.querySelectorAll('.xp-profile-score')];
     const rects = cards.map(card => card.getBoundingClientRect());
     const button = panel.querySelector('[data-profile-continue]');
+    const achievements = panel.querySelector('[data-training-achievements]');
     return {
       panelWidth: panel.getBoundingClientRect().width,
       cards: cards.length,
       singleColumn: rects.slice(1).every((rect, i) => Math.abs(rect.left - rects[i].left) < 2 && rect.top > rects[i].top),
-      buttonHeight: button?.getBoundingClientRect().height || 0
+      buttonHeight: button?.getBoundingClientRect().height || 0,
+      achievementsHeight: achievements?.getBoundingClientRect().height || 0,
+      achievementsHref: achievements?.getAttribute('href') || ''
     };
   });
   assert.ok(layout.panelWidth > 330, '成长档案应铺满手机内容区');
   assert.equal(layout.cards, 12);
   assert.equal(layout.singleColumn, true, '手机课程成绩必须保持单列');
   assert.ok(layout.buttonHeight >= 44, '继续训练按钮点击区不得小于44px');
+  assert.ok(layout.achievementsHeight >= 44, '成长成果入口点击区不得小于44px');
+  assert.match(layout.achievementsHref, /training-achievements\.html/);
 
-  await page.locator('[data-profile-continue="3"]').click();
-  await page.waitForSelector('#view-study.active #study-detail-content .lesson-detail-v2[data-level="3"]', { state: 'visible', timeout: 15000 });
+  await page.locator('[data-training-achievements]').click();
+  await page.waitForURL(/training-achievements\.html/, { timeout: 10000 });
+  await page.waitForSelector('h1', { state: 'visible' });
+  assert.match(await page.locator('h1').textContent(), /成长成果/);
   assert.deepEqual(errors, []);
-  console.log('成长档案、课程成绩、阶段能力、连续训练、薄弱项、错题与下一关推荐通过', { data, layout });
+  console.log('成长档案、课程成绩、阶段能力、连续训练与成长成果入口通过', { data, layout });
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });
