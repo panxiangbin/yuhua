@@ -41,17 +41,18 @@ const assert = require('node:assert/strict');
     window.CNC_TRAINING_PRACTICE.refreshGateStatus();
   });
   await page.waitForFunction(() => document.querySelector('.xp-practice-gate')?.textContent.includes('闯关条件已达成'));
-  const closeButton = page.locator('[data-practice-close]');
-  if (await closeButton.isVisible()) await closeButton.click();
-  await page.locator('[data-xp-complete="9"]').click();
-  await page.waitForFunction(() => JSON.parse(localStorage.getItem('cnc_study_completed_v1') || '[]').includes(9));
-
   const gateLayout = await page.locator('.xp-practice-gate').evaluate(node => {
     const button = node.querySelector('button');
     return { width: node.getBoundingClientRect().width, buttonHeight: button ? button.getBoundingClientRect().height : 48 };
   });
   assert.ok(gateLayout.width > 300, '手机闯关状态卡应铺满内容区');
   assert.ok(gateLayout.buttonHeight >= 44, '闯关练习按钮点击区不得小于44px');
+
+  const closeButton = page.locator('[data-practice-close]');
+  if (await closeButton.isVisible()) await closeButton.click();
+  await page.locator('[data-xp-complete="9"]').click();
+  await page.waitForFunction(() => JSON.parse(localStorage.getItem('cnc_study_completed_v1') || '[]').includes(9));
+  assert.match((await page.locator('.xp-complete-bar').textContent()) || '', /这一关已完成/);
   assert.deepEqual(errors, []);
   console.log('课程练习门槛、拦截、必答跳转与通关记录通过', blocked);
   await browser.close();
