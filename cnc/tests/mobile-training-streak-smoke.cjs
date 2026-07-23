@@ -17,9 +17,10 @@ const assert = require('node:assert/strict');
     const fmt = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
     const d1 = new Date(now); d1.setDate(now.getDate()-2);
     const d2 = new Date(now); d2.setDate(now.getDate()-1);
+    const lessonScores = Object.fromEntries(Array.from({ length: 12 }, (_, index) => [index + 1, 100]));
     localStorage.setItem('cnc_study_completed_v1', JSON.stringify([1,2,3,11]));
     localStorage.setItem('cnc_training_profile_v1', JSON.stringify({ version:1, xp:400, badges:['迈出第一步'], completed:[1,2,3,11], trainingDays:[fmt(d1),fmt(d2)], currentStreak:2, bestStreak:2, lastTrainingDate:fmt(d2) }));
-    localStorage.setItem('cnc_training_practice_v1', JSON.stringify({ version:1, attempts:{}, wrong:[], correct:['first-piece-check'], lessonScores:{1:100,2:100,3:100,11:100,12:100} }));
+    localStorage.setItem('cnc_training_practice_v1', JSON.stringify({ version:1, attempts:{}, wrong:[], correct:['first-piece-check'], lessonScores }));
   });
 
   await page.locator('.xp-bottom-nav [data-xp-route="favorites"]').click();
