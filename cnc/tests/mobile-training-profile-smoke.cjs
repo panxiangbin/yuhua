@@ -25,7 +25,7 @@ const assert = require('node:assert/strict');
     }));
   });
 
-  await page.locator('[data-xp-route="favorites"]:visible,[data-route="favorites"]:visible').first().click();
+  await page.locator('.xp-bottom-nav [data-xp-route="favorites"]').click();
   await page.waitForSelector('#view-favorites.active', { state: 'visible', timeout: 10000 });
   await page.evaluate(() => window.CNC_TRAINING_PROFILE.render());
   await page.waitForSelector('#view-favorites.active #xp-training-profile', { state: 'visible', timeout: 10000 });
