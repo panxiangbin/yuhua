@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>上机前安全模拟｜数控小潘 CNC新手训练平台</title>
+<style>
+:root{--bg:#f1efe9;--surface:#fffdf9;--ink:#292c2f;--muted:#697078;--blue:#3f6179;--line:#d8d3c8;--ok:#466b55;--warn:#9a6518;--bad:#9a453c}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}.shell{width:min(100%,760px);margin:auto;padding:16px 14px 34px}.back,.btn,.step{min-height:46px;border:1px solid var(--line);border-radius:11px;background:var(--surface);box-shadow:0 2px 0 rgba(41,44,47,.08);font-weight:900}.back{display:inline-flex;align-items:center;padding:0 14px;color:var(--ink);text-decoration:none}.hero,.panel,.notice{margin-top:14px;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:0 6px 16px rgba(48,44,36,.07);padding:16px}.hero h1{margin:4px 0 8px;font-size:29px}.hero p,.notice{color:var(--muted);line-height:1.65}.meta{display:flex;gap:8px;flex-wrap:wrap}.tag{padding:6px 9px;border-radius:999px;border:1px solid var(--line);background:#f7f4ee;font-size:12px;font-weight:850}.steps{display:grid;gap:9px;margin-top:12px}.step{width:100%;padding:12px;text-align:left;color:var(--ink);cursor:pointer}.step[aria-pressed="true"]{border-color:#9fb0bd;background:#edf2f5}.step strong{display:block;font-size:17px}.step span{display:block;margin-top:4px;color:var(--muted);font-size:13px;line-height:1.5}.chosen{margin:14px 0 0;padding:0;list-style:none;display:grid;gap:8px}.chosen li{padding:10px;border:1px solid var(--line);border-radius:10px;background:#f7f4ee;font-weight:850}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.btn{cursor:pointer;padding:0 12px;color:#fff;background:var(--blue);border-color:#34546b}.btn.secondary{color:var(--ink);background:var(--surface);border-color:var(--line)}.result{min-height:24px;margin-top:12px;font-weight:900}.result.ok{color:var(--ok)}.result.bad{color:var(--bad)}.notice strong{display:block;color:var(--ink);margin-bottom:5px}@media(max-width:520px){.actions{grid-template-columns:1fr}.hero h1{font-size:26px}}
+</style>
+</head>
+<body><main class="shell">
+<a class="back" href="./index.html">← 返回训练平台</a>
+<section class="hero"><small>新手模拟训练 · 第1项</small><h1>上机前安全检查排序</h1><p>按你认为正确的顺序选择8个步骤。目标不是背口号，而是建立“先确认安全，再运行程序”的固定习惯。</p><div class="meta"><span class="tag">预计 5 分钟</span><span class="tag">适用：加工中心入门</span><span class="tag">风险：高</span></div></section>
+<section class="panel"><h2>请选择执行顺序</h2><div class="steps" id="steps"></div><h3>你的顺序</h3><ol class="chosen" id="chosen"></ol><div class="actions"><button class="btn" id="submit" type="button">提交检查顺序</button><button class="btn secondary" id="reset" type="button">重新排序</button></div><div class="result" id="result" role="status" aria-live="polite"></div></section>
+<section class="notice"><strong>安全边界</strong>本模拟器只用于培养检查顺序意识，不能替代机床原厂手册、企业安全制度、师傅现场指导和具体机型要求。任何真实上机操作都必须在具备授权与现场监护的条件下进行。</section>
+</main>
+<script>
+(()=>{const BUILD='20260724d';const items=[
+{id:'ppe',title:'确认个人防护与现场状态',desc:'袖口、长发、手套规定、地面和机床周边无异常。'},
+{id:'machine',title:'检查机床与急停状态',desc:'确认急停、门锁、防护罩、润滑与报警状态符合现场要求。'},
+{id:'fixture',title:'确认工件、夹具与刀具',desc:'核对装夹牢固、伸出量、刀具安装和潜在干涉。'},
+{id:'zero',title:'核对工件坐标与刀补',desc:'确认工件零点、刀长补偿和刀具号与程序一致。'},
+{id:'program',title:'检查程序与关键参数',desc:'核对程序号、单位、平面、转速、进给、换刀和安全高度。'},
+{id:'dryrun',title:'空运行或图形检查',desc:'按现场制度使用空运行、机床锁定或图形模拟检查轨迹。'},
+{id:'single',title:'单段低倍率试运行',desc:'保持手在进给保持附近，先低倍率、单段观察关键位置。'},
+{id:'firstpiece',title:'首件试切并测量确认',desc:'逐步恢复加工参数，完成首件测量后再决定是否连续加工。'}];
+const answer=items.map(x=>x.id);let selected=[];const steps=document.querySelector('#steps'),chosen=document.querySelector('#chosen'),result=document.querySelector('#result');
+function render(){steps.innerHTML=items.map(x=>`<button class="step" type="button" data-id="${x.id}" aria-pressed="${selected.includes(x.id)}"><strong>${x.title}</strong><span>${x.desc}</span></button>`).join('');chosen.innerHTML=selected.map((id,i)=>`<li>${i+1}. ${items.find(x=>x.id===id).title}</li>`).join('')||'<li>尚未选择</li>';}
+steps.addEventListener('click',e=>{const b=e.target.closest('.step');if(!b)return;const id=b.dataset.id;if(selected.includes(id))selected=selected.filter(x=>x!==id);else selected.push(id);result.textContent='';result.className='result';render();});
+document.querySelector('#reset').onclick=()=>{selected=[];result.textContent='';render();};
+document.querySelector('#submit').onclick=()=>{if(selected.length!==answer.length){result.textContent='还需选择完整的8个步骤。';result.className='result bad';return;}const ok=answer.every((id,i)=>selected[i]===id);if(ok){result.textContent='顺序正确：先确认安全与设定，再空运行、低倍率试切，最后做首件确认。';result.className='result ok';localStorage.setItem('cnc_training_simulator_v1',JSON.stringify({version:1,preflightPassed:true,passedAt:new Date().toISOString()}));}else{result.textContent='顺序需要调整：重点检查“坐标与刀补 → 程序 → 空运行 → 单段低倍率 → 首件确认”的先后关系。';result.className='result bad';}};
+window.CNC_PREFLIGHT_SIMULATOR={build:BUILD,answer:answer.slice(),snapshot:()=>({selected:selected.slice(),passed:JSON.parse(localStorage.getItem('cnc_training_simulator_v1')||'{}').preflightPassed===true})};render();})();
+</script></body></html>
