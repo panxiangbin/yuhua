@@ -1,0 +1,53 @@
+name: CNC learner growth profile smoke
+
+on:
+  pull_request:
+    paths:
+      - "cnc/**"
+      - ".github/workflows/cnc-training-profile-smoke.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  training-profile-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Install Chromium runtime
+        run: |
+          npm install --no-save playwright@1.52.0
+          npx playwright install --with-deps chromium
+      - name: Start CNC site
+        run: |
+          python3 -m http.server 4173 --directory . >/tmp/cnc-training-profile-http.log 2>&1 &
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:4173/cnc/ >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/cnc-training-profile-http.log || true
+          exit 1
+      - name: JavaScript syntax
+        run: |
+          node --check cnc/training-practice.js
+          node --check cnc/training-profile.js
+          node --check cnc/tests/mobile-training-profile-smoke.cjs
+      - name: Chromium 390x844 learner profile journey
+        run: |
+          set -o pipefail
+          node cnc/tests/mobile-training-profile-smoke.cjs 2>&1 | tee cnc-training-profile.log
+      - name: Upload learner profile log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-training-profile-log
+          path: cnc-training-profile.log
+          retention-days: 7
+          if-no-files-found: warn
