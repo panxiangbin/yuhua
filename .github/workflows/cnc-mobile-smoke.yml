@@ -60,6 +60,8 @@ jobs:
         run: node cnc/tests/mobile-home-smoke.cjs
       - name: Mobile beginner training camp foundation
         run: node cnc/tests/mobile-training-camp-foundation-smoke.cjs
+      - name: Mobile beginner practice and wrong-answer loop
+        run: node cnc/tests/mobile-training-practice-smoke.cjs
       - name: Mobile homepage recent record cards
         run: node cnc/tests/mobile-industrial-dashboard-recents-smoke.cjs
       - name: Mobile industrial homepage and G01 detail acceptance
