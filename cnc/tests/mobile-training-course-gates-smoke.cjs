@@ -31,7 +31,8 @@ const assert = require('node:assert/strict');
   assert.equal(blocked.questionId, 'g00-cutting');
 
   await page.evaluate(() => {
-    const state = JSON.parse(localStorage.getItem('cnc_training_practice_v1'));
+    const state = JSON.parse(localStorage.getItem('cnc_training_practice_v1') || 'null') || { version: 1, attempts: {}, wrong: [], correct: [], updatedAt: new Date().toISOString() };
+    state.attempts = state.attempts || {};
     state.correct = Array.from(new Set([...(state.correct || []), 'g00-cutting', 'find-error-g00']));
     state.wrong = (state.wrong || []).filter(id => id !== 'g00-cutting' && id !== 'find-error-g00');
     state.attempts['g00-cutting'] = { selected: 1, correct: true, answeredAt: new Date().toISOString() };
