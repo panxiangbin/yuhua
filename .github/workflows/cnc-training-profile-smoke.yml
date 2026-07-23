@@ -40,4 +40,14 @@ jobs:
           node --check cnc/training-profile.js
           node --check cnc/tests/mobile-training-profile-smoke.cjs
       - name: Chromium 390x844 learner profile journey
-        run: node cnc/tests/mobile-training-profile-smoke.cjs
+        run: |
+          set -o pipefail
+          node cnc/tests/mobile-training-profile-smoke.cjs 2>&1 | tee cnc-training-profile.log
+      - name: Upload learner profile log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-training-profile-log
+          path: cnc-training-profile.log
+          retention-days: 7
+          if-no-files-found: warn
