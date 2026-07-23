@@ -1,0 +1,40 @@
+const { chromium } = require('playwright');
+const assert = require('node:assert/strict');
+
+(async () => {
+  const browser = await chromium.launch({ headless: true });
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.goto('http://127.0.0.1:4173/cnc/training-certificate.html', { waitUntil: 'domcontentloaded', timeout: 60000 });
+  await page.evaluate(() => {
+    const lessonScores = {};
+    for (let level = 1; level <= 12; level += 1) lessonScores[level] = level === 8 ? 70 : 90;
+    localStorage.setItem('cnc_training_practice_v1', JSON.stringify({ version: 1, lessonScores }));
+    localStorage.setItem('cnc_training_profile_v1', JSON.stringify({ version: 1, trainingDays: ['2026-07-20', '2026-07-21', '2026-07-22'], badges: ['迈出第一步', '成绩达标'] }));
+    localStorage.setItem('cnc_study_completed_v1', JSON.stringify([1,2,3,4,5,6,7,9,10,11,12]));
+    location.reload();
+  });
+  await page.waitForFunction(() => window.CNC_TRAINING_CERTIFICATE?.build === '20260724b');
+  const snapshot = await page.evaluate(() => window.CNC_TRAINING_CERTIFICATE.snapshot());
+  assert.equal(snapshot.passed, 11);
+  assert.equal(snapshot.average, 88);
+  assert.equal(snapshot.days, 3);
+  assert.equal(snapshot.badges, 2);
+  assert.equal(snapshot.graduated, false);
+  assert.equal(snapshot.abilities.length, 6);
+  assert.equal(await page.locator('#certificate-status').textContent(), '训练进行中');
+  assert.equal(await page.locator('#ability-list .ability').count(), 6);
+  assert.equal(await page.locator('#score-list .score').count(), 12);
+  assert.match(await page.locator('#score-list').textContent(), /第 8 关/);
+  assert.match(await page.locator('#score-list').textContent(), /70/);
+  const boxes = await page.locator('#score-list .score').evaluateAll(nodes => nodes.map(node => node.getBoundingClientRect()));
+  assert.ok(boxes.every(box => box.width > 330));
+  assert.ok(boxes.every((box, index) => index === 0 || box.top >= boxes[index - 1].bottom));
+  assert.ok((await page.locator('.back').evaluate(node => node.getBoundingClientRect().height)) >= 44);
+  assert.match(await page.locator('.notice').textContent(), /不是职业资格证书/);
+  assert.match(await page.locator('.notice').textContent(), /原厂手册/);
+  assert.deepEqual(errors, []);
+  console.log('阶段训练证书、12关成绩、六维能力与安全声明通过', snapshot);
+  await browser.close();
+})().catch(error => { console.error(error); process.exit(1); });
