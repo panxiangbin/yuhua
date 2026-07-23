@@ -31,9 +31,14 @@ const assert = require('node:assert/strict');
   assert.match(await page.locator('#score-list').textContent(), /第 8 关/);
   assert.match(await page.locator('#score-list').textContent(), /70/);
 
-  const boxes = await page.locator('#score-list .score').evaluateAll(nodes => nodes.map(node => node.getBoundingClientRect()));
-  assert.ok(boxes.every(box => box.width > 330));
-  assert.ok(boxes.every((box, index) => index === 0 || box.top >= boxes[index - 1].bottom));
+  const layout = await page.evaluate(() => {
+    const list = document.querySelector('#score-list');
+    const listBox = list.getBoundingClientRect();
+    const boxes = [...list.querySelectorAll('.score')].map(node => node.getBoundingClientRect());
+    return { listBox, boxes };
+  });
+  assert.ok(layout.boxes.every(box => box.width >= layout.listBox.width - 2));
+  assert.ok(layout.boxes.every((box, index) => index === 0 || box.top >= layout.boxes[index - 1].bottom));
   assert.ok((await page.locator('.back').evaluate(node => node.getBoundingClientRect().height)) >= 44);
   assert.match(await page.locator('.notice').textContent(), /不是职业资格证书/);
   assert.match(await page.locator('.notice').textContent(), /原厂手册/);
