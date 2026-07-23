@@ -64,6 +64,8 @@ jobs:
         run: node cnc/tests/mobile-training-practice-smoke.cjs
       - name: Mobile advanced beginner practice types
         run: node cnc/tests/mobile-training-advanced-practice-smoke.cjs
+      - name: Mobile course practice completion gates
+        run: node cnc/tests/mobile-training-course-gates-smoke.cjs
       - name: Mobile homepage recent record cards
         run: node cnc/tests/mobile-industrial-dashboard-recents-smoke.cjs
       - name: Mobile industrial homepage and G01 detail acceptance
