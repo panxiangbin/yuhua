@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>7天训练日历｜数控小潘 CNC新手训练平台</title>
+  <style>
+    :root{color-scheme:light;--bg:#f1efe9;--surface:#fffdf9;--ink:#292c2f;--muted:#687078;--blue:#3f6179;--line:#d8d3c8;--warn:#c48722}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}.shell{width:min(100%,760px);margin:0 auto;padding:18px 14px 32px}.back{display:inline-flex;min-height:44px;align-items:center;padding:0 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);text-decoration:none;font-weight:800;box-shadow:0 2px 0 rgba(41,44,47,.08)}.hero,.summary,.calendar,.notice{margin-top:14px;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:0 6px 16px rgba(48,44,36,.07)}.hero{padding:18px}.eyebrow{margin:0 0 6px;color:var(--blue);font-size:12px;font-weight:900;letter-spacing:.08em}.hero h1{margin:0;font-size:30px;line-height:1.15}.hero p{margin:10px 0 0;color:var(--muted);line-height:1.65}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px}.metric{padding:12px;border:1px solid var(--line);border-radius:10px;background:#f7f4ee}.metric strong{display:block;font-size:28px}.metric span{font-size:12px;color:var(--muted);font-weight:800}.calendar{padding:14px}.calendar h2{margin:0 0 12px;font-size:20px}.days{display:grid;gap:10px}.day{display:grid;grid-template-columns:62px 1fr auto;gap:10px;align-items:center;padding:13px;border:1px solid var(--line);border-radius:12px;background:#faf8f3}.day strong{font-size:18px}.day small{display:block;color:var(--muted);margin-top:3px}.status{min-width:74px;text-align:center;padding:7px 10px;border-radius:999px;border:1px solid var(--line);font-size:12px;font-weight:900}.is-done{border-color:#9fb4a5;background:#edf5ef}.is-today{border-color:#9fb0bd;background:#edf2f5}.is-missed{border-color:#d4c39a;background:#fff8e8}.notice{padding:14px}.notice strong{display:block;margin-bottom:6px}.notice p{margin:0;color:var(--muted);line-height:1.65}.empty{padding:16px;border:1px dashed var(--line);border-radius:12px;color:var(--muted);text-align:center}.foot{margin-top:14px;color:var(--muted);font-size:12px;line-height:1.6}@media(max-width:520px){.summary{grid-template-columns:1fr}.day{grid-template-columns:56px 1fr}.status{grid-column:2;justify-self:start}.hero h1{font-size:27px}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <a class="back" href="./">← 返回训练平台</a>
+    <section class="hero">
+      <p class="eyebrow">CNC 新手训练营</p>
+      <h1>最近7天训练日历</h1>
+      <p>看清自己有没有连续练、哪天中断，以及今天是否已经完成训练。数据来自本机浏览器中的成长档案。</p>
+    </section>
+    <section class="summary" aria-label="训练统计">
+      <div class="metric"><strong id="current-streak">0</strong><span>当前连续天数</span></div>
+      <div class="metric"><strong id="best-streak">0</strong><span>历史最佳</span></div>
+      <div class="metric"><strong id="total-days">0</strong><span>累计训练天数</span></div>
+    </section>
+    <section class="calendar" aria-labelledby="calendar-title">
+      <h2 id="calendar-title">7天记录</h2>
+      <div class="days" id="days" role="list"></div>
+    </section>
+    <section class="notice">
+      <strong>训练标准</strong>
+      <p>只有当今日推荐课程达到80分并记录“完成今日训练”后，才算一天有效训练。高风险操作必须以机床原厂手册、企业制度和现场条件为准。</p>
+    </section>
+    <p class="foot">本页只读取 <code>cnc_training_profile_v1</code>，不会上传个人学习记录。</p>
+  </main>
+  <script>
+    (function(){
+      'use strict';
+      var KEY='cnc_training_profile_v1';
+      function read(){try{var value=JSON.parse(localStorage.getItem(KEY));return value&&value.version===1?value:{version:1,trainingDays:[],currentStreak:0,bestStreak:0};}catch(e){return{version:1,trainingDays:[],currentStreak:0,bestStreak:0};}}
+      function fmt(date){return date.getFullYear()+'-'+String(date.getMonth()+1).padStart(2,'0')+'-'+String(date.getDate()).padStart(2,'0');}
+      function label(date,index){if(index===6)return '今天';if(index===5)return '昨天';return ['日','一','二','三','四','五','六'][date.getDay()]+'曜日';}
+      function render(){var data=read(),days=Array.isArray(data.trainingDays)?data.trainingDays:[],box=document.getElementById('days'),today=new Date(),html=[];document.getElementById('current-streak').textContent=Number(data.currentStreak)||0;document.getElementById('best-streak').textContent=Number(data.bestStreak)||0;document.getElementById('total-days').textContent=days.length;for(var i=6;i>=0;i--){var d=new Date(today);d.setDate(today.getDate()-i);var key=fmt(d),done=days.indexOf(key)!==-1,isToday=i===0,status=done?'已完成':isToday?'待完成':'未记录',cls=done?'is-done':isToday?'is-today':'is-missed';html.push('<article class="day '+cls+'" role="listitem"><strong>'+label(d,6-i)+'</strong><div><b>'+key+'</b><small>'+(done?'这一天已经计入训练连续天数':isToday?'完成今日训练后会自动点亮':'这一天没有有效训练记录')+'</small></div><span class="status">'+status+'</span></article>');}box.innerHTML=html.join('');document.body.dataset.trainingCalendar='ready';}
+      render();window.addEventListener('storage',render);window.CNC_TRAINING_CALENDAR={build:'20260723a',render:render};
+    })();
+  </script>
+</body>
+</html>
