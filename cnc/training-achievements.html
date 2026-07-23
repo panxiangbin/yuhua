@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>成长成果｜数控小潘 CNC新手训练平台</title>
+  <style>
+    :root{color-scheme:light;--bg:#f1efe9;--surface:#fffdf9;--ink:#292c2f;--muted:#687078;--blue:#3f6179;--line:#d8d3c8;--ok:#466b55}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}.shell{width:min(100%,760px);margin:auto;padding:18px 14px 34px}.back,.action{display:inline-flex;min-height:44px;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);text-decoration:none;font-weight:900;box-shadow:0 2px 0 rgba(41,44,47,.08)}.back{padding:0 14px}.hero,.summary,.tool,.notice{margin-top:14px;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:0 6px 16px rgba(48,44,36,.07)}.hero{padding:18px}.hero small{color:var(--blue);font-weight:900;letter-spacing:.08em}.hero h1{margin:6px 0 0;font-size:30px}.hero p,.tool p,.notice{color:var(--muted);line-height:1.65}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px}.metric{padding:12px;border:1px solid var(--line);border-radius:10px;background:#f7f4ee}.metric strong{display:block;font-size:28px}.metric span{font-size:12px;color:var(--muted);font-weight:800}.tools{display:grid;gap:12px}.tool{padding:16px}.tool h2{margin:0;font-size:21px}.tool p{margin:7px 0 14px}.action{width:100%;padding:11px 14px;background:#3f6179;color:white;border-color:#29485f}.notice{padding:14px}.notice strong{display:block;color:var(--ink);margin-bottom:5px}@media(max-width:520px){.summary{grid-template-columns:1fr}.hero h1{font-size:27px}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <a class="back" href="./">← 返回训练平台</a>
+    <section class="hero"><small>CNC 新手训练营</small><h1>我的成长成果</h1><p>把连续训练和阶段徽章集中到一个入口，帮助新手看清自己已经坚持多久、完成了多少里程碑。</p></section>
+    <section class="summary" aria-label="成长成果统计">
+      <div class="metric"><strong id="streak">0</strong><span>当前连续天数</span></div>
+      <div class="metric"><strong id="days">0</strong><span>累计训练天数</span></div>
+      <div class="metric"><strong id="badges">0</strong><span>已获得徽章</span></div>
+    </section>
+    <section class="tools" aria-label="成长成果工具">
+      <article class="tool"><h2>最近7天训练日历</h2><p>逐日查看已完成、今天待完成和未记录状态，确认训练节奏有没有中断。</p><a class="action" href="./training-calendar.html">查看训练日历</a></article>
+      <article class="tool"><h2>阶段徽章柜</h2><p>查看课程通关、成绩达标和连续训练里程碑；徽章只代表本站训练进度。</p><a class="action" href="./training-badges.html">查看训练徽章</a></article>
+    </section>
+    <section class="notice"><strong>安全说明</strong>成长记录不等于职业资格或独立上机能力。真实机床操作必须在合格人员指导下进行，并以原厂手册、企业制度和现场条件为准。</section>
+  </main>
+  <script>
+  (function(){'use strict';function read(k,f){try{var v=JSON.parse(localStorage.getItem(k));return v==null?f:v;}catch(e){return f;}}var p=read('cnc_training_profile_v1',{trainingDays:[],currentStreak:0,badges:[]});document.getElementById('streak').textContent=Number(p.currentStreak)||0;document.getElementById('days').textContent=Array.isArray(p.trainingDays)?p.trainingDays.length:0;document.getElementById('badges').textContent=Array.isArray(p.badges)?p.badges.length:0;document.body.dataset.trainingAchievements='ready';window.CNC_TRAINING_ACHIEVEMENTS={build:'20260723j'};})();
+  </script>
+</body>
+</html>
