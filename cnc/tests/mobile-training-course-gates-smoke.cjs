@@ -41,7 +41,8 @@ const assert = require('node:assert/strict');
     window.CNC_TRAINING_PRACTICE.refreshGateStatus();
   });
   await page.waitForFunction(() => document.querySelector('.xp-practice-gate')?.textContent.includes('闯关条件已达成'));
-  await page.locator('[data-practice-close]').click();
+  const closeButton = page.locator('[data-practice-close]');
+  if (await closeButton.isVisible()) await closeButton.click();
   await page.locator('[data-xp-complete="9"]').click();
   await page.waitForFunction(() => JSON.parse(localStorage.getItem('cnc_study_completed_v1') || '[]').includes(9));
 
