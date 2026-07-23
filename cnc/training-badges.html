@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>训练徽章｜数控小潘 CNC新手训练平台</title>
+  <style>
+    :root{color-scheme:light;--bg:#f1efe9;--surface:#fffdf9;--ink:#292c2f;--muted:#687078;--blue:#3f6179;--line:#d8d3c8;--warn:#c48722;--ok:#466b55}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}.shell{width:min(100%,760px);margin:0 auto;padding:18px 14px 34px}.back{display:inline-flex;min-height:44px;align-items:center;padding:0 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);text-decoration:none;font-weight:800;box-shadow:0 2px 0 rgba(41,44,47,.08)}.hero,.summary,.cabinet,.notice{margin-top:14px;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:0 6px 16px rgba(48,44,36,.07)}.hero{padding:18px}.eyebrow{margin:0 0 6px;color:var(--blue);font-size:12px;font-weight:900;letter-spacing:.08em}.hero h1{margin:0;font-size:30px;line-height:1.15}.hero p{margin:10px 0 0;color:var(--muted);line-height:1.65}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px}.metric{padding:12px;border:1px solid var(--line);border-radius:10px;background:#f7f4ee}.metric strong{display:block;font-size:28px}.metric span{font-size:12px;color:var(--muted);font-weight:800}.cabinet{padding:14px}.cabinet h2{margin:0 0 12px;font-size:20px}.badges{display:grid;gap:10px}.badge{display:grid;grid-template-columns:54px 1fr auto;gap:12px;align-items:center;padding:14px;border:1px solid var(--line);border-radius:12px;background:#faf8f3}.badge-mark{display:grid;place-items:center;width:54px;height:54px;border:1px solid var(--line);border-radius:12px;background:#f1eee7;font-size:24px;font-weight:900}.badge h3{margin:0;font-size:18px}.badge p{margin:5px 0 0;color:var(--muted);line-height:1.55}.state{min-width:72px;text-align:center;padding:7px 10px;border:1px solid var(--line);border-radius:999px;font-size:12px;font-weight:900}.is-earned{border-color:#9fb4a5;background:#edf5ef}.is-earned .badge-mark{border-color:#9fb4a5;background:#e6f0e9;color:var(--ok)}.is-locked{opacity:.78}.notice{padding:14px}.notice strong{display:block;margin-bottom:6px}.notice p{margin:0;color:var(--muted);line-height:1.65}.foot{margin-top:14px;color:var(--muted);font-size:12px;line-height:1.6}@media(max-width:520px){.summary{grid-template-columns:1fr}.badge{grid-template-columns:54px 1fr}.state{grid-column:2;justify-self:start}.hero h1{font-size:27px}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <a class="back" href="./">← 返回训练平台</a>
+    <section class="hero">
+      <p class="eyebrow">CNC 新手训练营</p>
+      <h1>我的训练徽章</h1>
+      <p>把连续训练、课程通关和阶段能力变成看得见的成长记录。徽章只代表本站训练进度，不等同于职业资格或独立上机能力。</p>
+    </section>
+    <section class="summary" aria-label="徽章统计">
+      <div class="metric"><strong id="earned-count">0</strong><span>已获得徽章</span></div>
+      <div class="metric"><strong id="total-count">0</strong><span>全部徽章</span></div>
+      <div class="metric"><strong id="completion-rate">0%</strong><span>徽章完成度</span></div>
+    </section>
+    <section class="cabinet" aria-labelledby="badge-title">
+      <h2 id="badge-title">阶段徽章柜</h2>
+      <div class="badges" id="badges" role="list"></div>
+    </section>
+    <section class="notice">
+      <strong>安全说明</strong>
+      <p>徽章只记录学习和练习完成情况。真实机床操作必须在合格人员指导下进行，并以机床原厂手册、企业制度和现场条件为准。</p>
+    </section>
+    <p class="foot">本页只读取 <code>cnc_training_profile_v1</code>、<code>cnc_study_completed_v1</code> 和 <code>cnc_training_practice_v1</code>，不会上传学习记录。</p>
+  </main>
+  <script>
+    (function(){
+      'use strict';
+      var PROFILE='cnc_training_profile_v1',DONE='cnc_study_completed_v1',PRACTICE='cnc_training_practice_v1';
+      function read(key,fallback){try{var value=JSON.parse(localStorage.getItem(key));return value==null?fallback:value;}catch(error){return fallback;}}
+      function esc(value){return String(value==null?'':value).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+      function data(){var profile=read(PROFILE,{version:1,badges:[],trainingDays:[]}),done=(read(DONE,[])||[]).map(Number),practice=read(PRACTICE,{version:1,lessonScores:{}}),scores=practice.lessonScores||{},stored=Array.isArray(profile.badges)?profile.badges:[];return{stored:stored,days:Array.isArray(profile.trainingDays)?profile.trainingDays.length:0,done:done,scores:scores};}
+      function definitions(state){return[
+        {id:'first-step',mark:'01',name:'迈出第一步',desc:'完成任意1关课程并达到本站通关标准。',earned:state.done.length>=1},
+        {id:'basic-pass',mark:'03',name:'基础三关',desc:'累计完成3关课程，形成最初的学习节奏。',earned:state.done.length>=3},
+        {id:'halfway',mark:'06',name:'训练营过半',desc:'累计完成6关课程，进入程序与工艺综合阶段。',earned:state.done.length>=6},
+        {id:'graduate',mark:'12',name:'基础训练营结业',desc:'完成现有12关课程；仍需在指导下继续现场训练。',earned:state.done.length>=12},
+        {id:'score',mark:'80',name:'成绩达标',desc:'至少一关练习成绩达到80分。',earned:Object.keys(state.scores).some(function(key){return Number(state.scores[key])>=80;})},
+        {id:'streak3',mark:'3D',name:'连续训练3天',desc:'连续3天完成有效训练。',earned:state.days>=3||state.stored.indexOf('连续训练3天')!==-1},
+        {id:'streak7',mark:'7D',name:'连续训练7天',desc:'连续7天保持训练记录。',earned:state.days>=7||state.stored.indexOf('连续训练7天')!==-1},
+        {id:'streak30',mark:'30',name:'连续训练30天',desc:'连续30天形成稳定训练习惯。',earned:state.days>=30||state.stored.indexOf('连续训练30天')!==-1}
+      ];}
+      function render(){var list=definitions(data()),earned=list.filter(function(item){return item.earned;}).length;document.getElementById('earned-count').textContent=earned;document.getElementById('total-count').textContent=list.length;document.getElementById('completion-rate').textContent=Math.round(earned/list.length*100)+'%';document.getElementById('badges').innerHTML=list.map(function(item){return '<article class="badge '+(item.earned?'is-earned':'is-locked')+'" role="listitem"><div class="badge-mark">'+esc(item.mark)+'</div><div><h3>'+esc(item.name)+'</h3><p>'+esc(item.desc)+'</p></div><span class="state">'+(item.earned?'已获得':'未获得')+'</span></article>';}).join('');document.body.dataset.trainingBadges='ready';return{earned:earned,total:list.length};}
+      render();window.addEventListener('storage',render);window.CNC_TRAINING_BADGES={build:'20260723a',render:render};
+    })();
+  </script>
+</body>
+</html>
