@@ -24,3 +24,11 @@ jobs:
         run: python3 -m http.server 4173 --directory . > /tmp/cnc-server.log 2>&1 &
       - name: Chromium 390x844 drawing basics course
         run: node cnc/tests/mobile-drawing-basics-course-smoke.cjs
+      - name: Upload drawing course diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: drawing-basics-course-diagnostics
+          path: artifacts/
+          if-no-files-found: warn
+          retention-days: 7
