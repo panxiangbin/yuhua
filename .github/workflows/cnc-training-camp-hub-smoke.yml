@@ -1,0 +1,34 @@
+name: CNC training camp hub smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-training-camp-hub-smoke.yml'
+  workflow_dispatch:
+
+jobs:
+  training-camp-hub:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install --no-save playwright@1.52.0
+      - run: npx playwright install --with-deps chromium
+      - name: JavaScript syntax
+        run: node --check cnc/tests/mobile-training-camp-hub-smoke.cjs
+      - name: Start static server
+        run: python3 -m http.server 4173 --directory . > /tmp/cnc-server.log 2>&1 &
+      - name: Chromium 390x844 training camp hub
+        run: node cnc/tests/mobile-training-camp-hub-smoke.cjs
+      - name: Upload training camp hub diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: training-camp-hub-diagnostics
+          path: artifacts/training-camp-hub/
+          if-no-files-found: warn
+          retention-days: 7
