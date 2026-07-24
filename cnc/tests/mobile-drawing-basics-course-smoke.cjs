@@ -28,7 +28,7 @@ const assert = require('node:assert/strict');
     await page.locator('#next').click();
     await page.locator('#feedback').waitFor();
     assert.match(await page.locator('#feedback').innerText(),/回答正确/);
-    if(i<9) await page.locator('#next').click();
+    await page.locator('#next').click();
   }
   await page.getByText('第4关通过').waitFor();
   assert.equal(await page.locator('#finalScore').innerText(),'100');
