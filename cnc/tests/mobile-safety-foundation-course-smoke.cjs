@@ -33,6 +33,18 @@ const assert = require('node:assert/strict');
   assert.ok(typeSet.has('multi'));
   assert.ok(typeSet.has('judge'));
 
+  const initialTouchTargets = await page.locator('.option,.button,.back').evaluateAll(nodes =>
+    nodes
+      .filter(node => {
+        const style = getComputedStyle(node);
+        const rect = node.getBoundingClientRect();
+        return style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 0 && rect.height > 0;
+      })
+      .map(node => node.getBoundingClientRect().height)
+  );
+  assert.ok(initialTouchTargets.length >= 7);
+  assert.ok(initialTouchTargets.every(height => height >= 44));
+
   for (let q = 0; q < api.questions.length; q += 1) {
     const question = await page.evaluate(index => window.CNC_SAFETY_COURSE.questions[index], q);
     for (const answerIndex of question.answer) {
@@ -52,12 +64,19 @@ const assert = require('node:assert/strict');
   assert.equal(snapshot.profile.safetyCourseXp, true);
   assert.equal(snapshot.practice.wrong.length, 0);
 
-  const touchTargets = await page.locator('.option,.button,.back').evaluateAll(nodes =>
-    nodes.map(node => node.getBoundingClientRect().height)
+  const resultTouchTargets = await page.locator('#result-panel .button,.back').evaluateAll(nodes =>
+    nodes
+      .filter(node => {
+        const style = getComputedStyle(node);
+        const rect = node.getBoundingClientRect();
+        return style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 0 && rect.height > 0;
+      })
+      .map(node => node.getBoundingClientRect().height)
   );
-  assert.ok(touchTargets.every(height => height >= 44));
+  assert.ok(resultTouchTargets.length >= 3);
+  assert.ok(resultTouchTargets.every(height => height >= 44));
   assert.deepEqual(errors, []);
-  console.log('安全基础完整课程：内容结构、10题三题型、80分通关、档案写入与390x844触控区通过');
+  console.log('安全基础完整课程：内容结构、10题三题型、80分通关、档案写入与390x844可见触控区通过');
   await browser.close();
 })().catch(error => {
   console.error(error);
