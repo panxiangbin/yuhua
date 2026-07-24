@@ -18,7 +18,7 @@ const fs = require('node:fs');
     assert.equal(await page.getByText('通关练习 · 10题').count(),1);
     assert.equal(await page.locator('.question').count(),1);
     const bodyText=await page.locator('body').innerText();
-    for(const text of ['学习目标','尺寸基准','工艺基准','公差','加工余量','孔距','原厂手册','现场条件','受控图纸']) assert.ok(bodyText.includes(text),`missing ${text}`);
+    for(const text of ['学习目标','尺寸基准','工艺基准','公差','加工余量','孔距','原厂手册','现场条件','受控版本图纸']) assert.ok(bodyText.includes(text),`missing ${text}`);
     assert.match(bodyText,/暂停编程|停止.*确认/,'course must tell learners to stop and verify conflicting drawing information');
     assert.match(bodyText,/不能.*猜|不得.*猜/,'course must forbid guessing when drawing information conflicts');
     const visibleButtons=await page.locator('button:visible,a.back:visible').evaluateAll(nodes=>nodes.map(n=>({h:n.getBoundingClientRect().height,w:n.getBoundingClientRect().width})));
