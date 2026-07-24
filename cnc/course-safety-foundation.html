@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>第1关 安全基础｜数控小潘 CNC新手训练平台</title>
+<style>
+:root{--bg:#f1efe9;--surface:#fffdf9;--ink:#292c2f;--muted:#697078;--blue:#3f6179;--blue2:#2f4f66;--line:#d8d3c8;--ok:#466b55;--warn:#9a6518;--bad:#9a453c}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}.shell{width:min(100%,820px);margin:auto;padding:14px 14px 40px}.back,.button,.option{min-height:46px;border:1px solid var(--line);border-radius:11px;background:var(--surface);box-shadow:0 2px 0 rgba(41,44,47,.08);font-weight:900}.back{display:inline-flex;align-items:center;padding:0 14px;color:var(--ink);text-decoration:none}.hero,.panel,.notice,.quiz-card{margin-top:14px;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:0 6px 16px rgba(48,44,36,.07);padding:16px}.hero h1{margin:5px 0 8px;font-size:30px}.hero p,.panel p,.notice,.explain{color:var(--muted);line-height:1.68}.meta{display:flex;gap:8px;flex-wrap:wrap}.tag{padding:6px 9px;border:1px solid var(--line);border-radius:999px;background:#f7f4ee;font-size:12px;font-weight:850}.risk{color:#7a4a08;background:#fff4d9;border-color:#e3c786}.panel h2{margin:0 0 10px;font-size:22px}.panel h3{margin:18px 0 8px}.term-grid,.mistake-grid,.case-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.term,.mistake,.case{border:1px solid var(--line);border-radius:11px;background:#f7f4ee;padding:12px}.term strong,.mistake strong,.case strong{display:block;margin-bottom:5px}.flow{display:grid;gap:8px;margin:12px 0 0;padding:0;list-style:none}.flow li{display:grid;grid-template-columns:38px 1fr;gap:10px;align-items:start;padding:11px;border:1px solid var(--line);border-radius:11px;background:#f7f4ee}.flow b{display:grid;place-items:center;width:38px;height:38px;border-radius:9px;background:#edf2f5;color:var(--blue2);border:1px solid #c8d1d7}.code{overflow:auto;padding:12px;border-radius:10px;background:#25292c;color:#f3f0e9;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;line-height:1.6}.visual{display:grid;place-items:center;min-height:150px;border:2px dashed #b8b1a4;border-radius:12px;background:#f7f4ee;color:#6a6258;text-align:center;padding:14px}.quiz-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.score{min-width:88px;padding:10px;border:1px solid #c7d1d8;border-radius:10px;background:#edf2f5;text-align:center}.score strong{display:block;font-size:25px;color:var(--blue2)}.question{margin:0 0 10px;font-size:18px}.options{display:grid;gap:8px}.option{width:100%;padding:11px 12px;text-align:left;cursor:pointer;color:var(--ink)}.option[aria-pressed="true"]{border-color:#8fa6b6;background:#edf2f5}.option.correct{border-color:#8eb7a5;background:#e9f3ee}.option.wrong{border-color:#d1a39e;background:#faecea}.feedback{min-height:22px;margin-top:10px;font-weight:900}.feedback.ok{color:var(--ok)}.feedback.bad{color:var(--bad)}.button{cursor:pointer;padding:0 15px;color:#fff;background:var(--blue);border-color:var(--blue2)}.button.secondary{color:var(--ink);background:var(--surface);border-color:var(--line)}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.notice strong{display:block;color:var(--ink);margin-bottom:6px}.result-panel{text-align:center}.result-panel strong{font-size:34px;color:var(--blue2)}.hidden{display:none!important}@media(max-width:620px){.term-grid,.mistake-grid,.case-grid,.actions{grid-template-columns:1fr}.hero h1{font-size:27px}.quiz-head{flex-direction:column}.score{width:100%}.button{min-height:48px}}
+</style>
+</head>
+<body><main class="shell">
+<a class="back" href="./index.html">← 返回训练平台</a>
+<section class="hero">
+<small>训练营第1关 · 完整课程</small>
+<h1>安全基础：先学会停，再学会动</h1>
+<p>这一关不教你“马上开机”，而是帮你建立第一条数控习惯：任何动作前，先确认人、机、刀、工件和程序都处在可控状态。</p>
+<div class="meta"><span class="tag">预计 20 分钟</span><span class="tag">前置知识：无</span><span class="tag">适用：FANUC加工中心入门</span><span class="tag risk">风险等级：高</span><span class="tag">核验：通用安全原则</span></div>
+</section>
+<section class="panel">
+<h2>学习目标</h2>
+<p>完成本关后，你应该能说清急停、进给保持、复位、单段和倍率的区别；能按正确顺序完成上机前检查；知道哪些操作必须停止并请现场授权人员处理。</p>
+<h3>先把5个词讲明白</h3>
+<div class="term-grid">
+<div class="term"><strong>急停</strong><span>用于紧急停止危险运动。它不是普通暂停键，解除前必须先找清原因，并按现场规定处理。</span></div>
+<div class="term"><strong>进给保持</strong><span>让当前进给运动暂停，常用于观察和中止切削过程；具体作用范围受系统、参数和机型影响。</span></div>
+<div class="term"><strong>复位</strong><span>用于清除部分运行状态或中断程序。复位并不等于故障已经排除，也不等于机床可以继续运行。</span></div>
+<div class="term"><strong>单段</strong><span>程序每执行一个程序段后停下，便于逐段观察。它不能替代坐标、刀补和干涉检查。</span></div>
+<div class="term"><strong>倍率</strong><span>把快移、进给或主轴指令按比例限制。低倍率能降低验证风险，但不能把错误程序变成正确程序。</span></div>
+</div>
+</section>
+<section class="panel">
+<h2>核心讲解：上机前8步检查</h2>
+<ol class="flow">
+<li><b>1</b><div><strong>先看人和现场</strong><p>确认袖口、长发、首饰、防护用品、地面和机床周边符合企业制度。是否允许佩戴手套必须按具体岗位规定执行。</p></div></li>
+<li><b>2</b><div><strong>确认机床状态</strong><p>查看急停、防护门、润滑、气压、液压、报警和异常声音。发现状态不明时，不继续操作。</p></div></li>
+<li><b>3</b><div><strong>确认工件、夹具和刀具</strong><p>检查夹紧、伸出量、刀具安装、刀柄拉紧、潜在干涉和松动风险。</p></div></li>
+<li><b>4</b><div><strong>核对坐标与刀补</strong><p>确认工件坐标系、刀长补偿、刀具号和程序调用关系一致。这里的错误可能造成直接碰撞。</p></div></li>
+<li><b>5</b><div><strong>检查程序关键项</strong><p>核对程序号、单位、平面、绝对/增量方式、转速、进给、换刀、安全高度和加工顺序。</p></div></li>
+<li><b>6</b><div><strong>先做图形或空运行检查</strong><p>根据机床和企业制度使用图形模拟、机床锁定、Z轴抬高或空运行。具体做法必须核对原厂手册。</p></div></li>
+<li><b>7</b><div><strong>单段、低倍率验证</strong><p>关键位置逐段观察，保持能够立即使用进给保持或急停的准备，但不要把手伸入运动区域。</p></div></li>
+<li><b>8</b><div><strong>首件试切和测量</strong><p>先完成一件并测量，确认尺寸、表面和刀补方向，再决定是否连续加工。</p></div></li>
+</ol>
+</section>
+<section class="panel">
+<h2>图片 / 动画位</h2>
+<div class="visual">建议后续加入：FANUC面板上“急停、复位、进给保持、单段、倍率旋钮”的中文标注图。<br>要求只做功能识别，不把不同机型的按键位置说成完全一致。</div>
+</section>
+<section class="panel">
+<h2>真实案例：程序没错，坐标错了</h2>
+<div class="case-grid">
+<div class="case"><strong>现场情况</strong><span>同一套程序昨天加工正常，今天重新装夹后，操作员直接按循环启动。</span></div>
+<div class="case"><strong>真正问题</strong><span>程序本身未变，但G54原点和刀长补偿没有按新装夹重新核对。</span></div>
+<div class="case"><strong>可能后果</strong><span>刀具在错误高度或错误位置快速移动，造成撞刀、工件报废或设备损坏。</span></div>
+<div class="case"><strong>正确思路</strong><span>把“程序正确”和“当前机床设定正确”分开检查，完成坐标、刀补、空运行、单段和首件确认。</span></div>
+</div>
+<h3>用于理解程序结构的示例</h3>
+<pre class="code">%
+O0100 (学习示例)
+G90 G17 G21 G40 G49 G80
+G54
+T01 M06
+S____ M03
+G00 X0 Y0
+G43 H01 Z50.
+(先验证坐标、刀补和安全高度，再进入加工段)
+M30
+%</pre>
+<p>空白处不是让你猜固定转速。实际转速、进给、切深、刀具补偿和安全高度必须根据机床、刀具、材料、装夹条件和原厂手册确定。</p>
+</section>
+<section class="panel">
+<h2>新手最容易犯的6个错误</h2>
+<div class="mistake-grid">
+<div class="mistake"><strong>把复位当成故障修复</strong><span>复位只改变控制状态，机械、坐标或程序问题可能仍然存在。</span></div>
+<div class="mistake"><strong>低倍率就放心</strong><span>低倍率只能降低速度，错误方向和错误刀补仍可能碰撞。</span></div>
+<div class="mistake"><strong>只看程序不看机床设定</strong><span>程序、G54、刀长、刀具号和装夹必须作为一个整体核对。</span></div>
+<div class="mistake"><strong>单段时分心</strong><span>单段不是自动安全，需要持续观察下一段将执行什么。</span></div>
+<div class="mistake"><strong>首件没测就连续加工</strong><span>首件是发现刀补、装夹和程序偏差的重要关口。</span></div>
+<div class="mistake"><strong>不明报警直接清除</strong><span>报警原因不清时反复复位或强行运行，可能扩大风险。</span></div>
+</div>
+</section>
+<section class="notice"><strong>统一安全提示</strong>实际机床界面、按键名称、回零方式、刀补设置、报警处理和安全要求可能因系统、机型、厂家参数和企业制度不同而变化，请以机床原厂手册、企业安全制度和现场条件为准。</section>
+<section class="quiz-card" id="quiz">
+<div class="quiz-head"><div><small>闯关练习 · 10题</small><h2>达到80分才算通过</h2></div><div class="score"><strong id="score">0</strong><span>当前得分</span></div></div>
+<div id="question-box"></div>
+<div class="actions"><button class="button" id="submit-answer" type="button">提交答案</button><button class="button secondary" id="next-question" type="button" disabled>下一题</button></div>
+<div class="feedback" id="feedback" role="status" aria-live="polite"></div>
+</section>
+<section class="panel result-panel hidden" id="result-panel"><p>本关最终成绩</p><strong id="final-score">0</strong><p id="result-text"></p><div class="actions"><button class="button" id="retry" type="button">重新练习</button><a class="button secondary" href="./preflight-simulator.html" style="display:grid;place-items:center;text-decoration:none;color:var(--ink)">进入安全模拟训练</a></div></section>
+</main>
+<script>
+(()=>{'use strict';const BUILD='20260724e';const PROFILE='cnc_training_profile_v1',PRACTICE='cnc_training_practice_v1';const questions=[
+{id:'s1',type:'single',q:'发现机床状态不明、报警原因不清时，第一原则是什么？',opts:['继续低倍率试运行','先停止并请授权人员确认','直接按复位清除','跳过检查先加工首件'],a:[1],why:'状态不明时继续运动会放大风险。应停止操作，核对报警和机床状态，并按现场制度处理。'},
+{id:'s2',type:'single',q:'下面哪项最准确描述“复位”？',opts:['能修复所有故障','等同于急停','可能清除部分控制状态，但不代表根因已消除','可以替代首件检查'],a:[2],why:'复位是控制操作，不会自动修复坐标、装夹、机械和程序根因。'},
+{id:'s3',type:'multi',q:'程序启动前，哪些项目需要一起核对？（多选）',opts:['工件坐标','刀长补偿','刀具号','只看程序名称'],a:[0,1,2],why:'程序、坐标、刀补和刀具调用必须一致；只看程序名不能证明当前设定安全。'},
+{id:'s4',type:'judge',q:'只要把快移倍率调低，错误程序也可以安全运行。',opts:['正确','错误'],a:[1],why:'倍率只改变速度，不会改变错误坐标、错误方向或错误刀补。'},
+{id:'s5',type:'single',q:'以下哪一步应放在“首件连续加工”之前？',opts:['先连续加工十件再测量','单段低倍率验证和首件测量','取消刀补','关闭报警显示'],a:[1],why:'先单段低倍率验证，再完成首件测量，确认无误后才能决定是否连续加工。'},
+{id:'s6',type:'multi',q:'上机前检查工件与刀具时，应关注哪些内容？（多选）',opts:['夹紧是否可靠','刀具安装与伸出量','潜在干涉','操作员手机电量'],a:[0,1,2],why:'夹紧、刀具安装、伸出量和干涉直接关系到加工安全。'},
+{id:'s7',type:'single',q:'“单段”功能的正确理解是？',opts:['每执行一个程序段后停下，便于观察','自动修正坐标','自动消除撞刀风险','等同于断电'],a:[0],why:'单段用于逐段观察，但仍需正确坐标、刀补、程序和现场监护。'},
+{id:'s8',type:'judge',q:'首件测量通过后，也仍需遵守企业规定的巡检与过程确认。',opts:['正确','错误'],a:[0],why:'首件合格不代表后续加工永远不会受刀具磨损、装夹变化等因素影响。'},
+{id:'s9',type:'single',q:'对于不同机型上的“空运行”或“机床锁定”，正确做法是？',opts:['所有机床操作完全一样','照网上视频直接操作','核对原厂手册和企业制度后使用','不用理解作用直接开启'],a:[2],why:'空运行、机床锁定和轴抬高方式可能受系统、参数和机型影响，必须核对原厂资料。'},
+{id:'s10',type:'multi',q:'哪些情况应立即停止并重新确认？（多选）',opts:['异常声音或振动','坐标与刀补来源不清','防护门或夹具状态异常','已经按过复位所以无需检查'],a:[0,1,2],why:'异常声音、设定不明和防护/夹具异常都属于停止条件；复位不能替代确认。'}
+];let index=0,score=0,selected=[],locked=false;const box=document.querySelector('#question-box'),feedback=document.querySelector('#feedback'),scoreNode=document.querySelector('#score'),next=document.querySelector('#next-question');
+function read(k,f){try{const v=JSON.parse(localStorage.getItem(k));return v==null?f:v}catch(e){return f}}function write(k,v){localStorage.setItem(k,JSON.stringify(v))}function same(a,b){return a.length===b.length&&a.every((v,i)=>v===b[i])}function render(){const x=questions[index];selected=[];locked=false;feedback.textContent='';feedback.className='feedback';next.disabled=true;box.innerHTML=`<p class="question">${index+1}. ${x.q}</p><div class="options">${x.opts.map((o,i)=>`<button class="option" type="button" data-i="${i}" aria-pressed="false">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}</div><p class="explain">题型：${x.type==='multi'?'多选题':x.type==='judge'?'判断题':'单选题'} · 所属能力：安全操作 · 风险：高</p>`;}
+box.addEventListener('click',e=>{if(locked)return;const b=e.target.closest('.option');if(!b)return;const x=questions[index],n=Number(b.dataset.i);if(x.type==='multi'){selected=selected.includes(n)?selected.filter(v=>v!==n):selected.concat(n).sort()}else selected=[n];box.querySelectorAll('.option').forEach((node,i)=>node.setAttribute('aria-pressed',String(selected.includes(i))));});
+document.querySelector('#submit-answer').onclick=()=>{if(locked)return;if(!selected.length){feedback.textContent='请先选择答案。';feedback.className='feedback bad';return;}locked=true;const x=questions[index],ok=same(selected.slice().sort(),x.a.slice().sort());if(ok)score+=10;scoreNode.textContent=score;box.querySelectorAll('.option').forEach((node,i)=>{if(x.a.includes(i))node.classList.add('correct');else if(selected.includes(i))node.classList.add('wrong')});feedback.textContent=(ok?'回答正确。':'回答错误。')+' '+x.why;feedback.className='feedback '+(ok?'ok':'bad');const p=read(PRACTICE,{version:1,wrong:[],attempts:{}});p.version=1;p.attempts[x.id]=(p.attempts[x.id]||0)+1;if(!ok&&!p.wrong.includes(x.id))p.wrong.push(x.id);if(ok)p.wrong=p.wrong.filter(id=>id!==x.id);write(PRACTICE,p);next.disabled=false;};
+next.onclick=()=>{if(!locked)return;if(index<questions.length-1){index+=1;render()}else finish()};function finish(){document.querySelector('#quiz').classList.add('hidden');document.querySelector('#result-panel').classList.remove('hidden');document.querySelector('#final-score').textContent=score;const passed=score>=80;document.querySelector('#result-text').textContent=passed?'已通过第1关。下一步进入安全模拟训练，把检查顺序练成习惯。':'尚未达到80分，请根据解析重做错题。';const profile=read(PROFILE,{version:1,xp:0,completed:[],lessonScores:{},badges:[]});profile.version=1;profile.lessonScores=profile.lessonScores||{};profile.lessonScores['1']=Math.max(Number(profile.lessonScores['1'])||0,score);profile.completed=Array.isArray(profile.completed)?profile.completed:[];if(passed&&!profile.completed.includes(1))profile.completed.push(1);if(passed&&!profile.safetyCourseXp){profile.xp=(Number(profile.xp)||0)+100;profile.safetyCourseXp=true}profile.updatedAt=new Date().toISOString();write(PROFILE,profile)}
+document.querySelector('#retry').onclick=()=>{index=0;score=0;scoreNode.textContent='0';document.querySelector('#quiz').classList.remove('hidden');document.querySelector('#result-panel').classList.add('hidden');render()};window.CNC_SAFETY_COURSE={build:BUILD,questions:questions.map(q=>({id:q.id,type:q.type,answer:q.a.slice()})),snapshot:()=>({index,score,selected:selected.slice(),profile:read(PROFILE,{}),practice:read(PRACTICE,{})})};render();})();
+</script>
+</body>
+</html>
