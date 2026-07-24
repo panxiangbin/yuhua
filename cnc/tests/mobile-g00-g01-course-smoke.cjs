@@ -23,11 +23,13 @@ async function answerCourse(page,wrongIndexes=[]){
   try{
     await page.goto(URL,{waitUntil:'networkidle'});
     const text=await page.locator('body').innerText();
-    for(const needle of ['G00与G01','预计 45 分钟','快速定位','直线插补','进给量 F','安全高度','G90','G91','G43 H03','先让Z轴','原厂手册','80分']) assert.ok(text.includes(needle),`missing ${needle}`);
+    for(const needle of ['G00与G01','预计 45 分钟','快速定位','直线插补','进给量 F','安全高度','G90','G91','G43 H03','先让Z轴','原厂手册']) assert.ok(text.includes(needle),`missing ${needle}`);
     assert.strictEqual(await page.locator('.step').count(),5);
     assert.strictEqual(await page.locator('.option').count()>0,true);
     const visibleHeights=await page.locator('button:visible,a.back:visible').evaluateAll(es=>es.map(e=>e.getBoundingClientRect().height));
     assert.ok(visibleHeights.every(h=>h>=44),`touch target too small: ${visibleHeights}`);
+
+    // 100分通过路径：真实验证80分门槛、课程完成与首次XP奖励。
     await answerCourse(page);
     assert.strictEqual(await page.locator('#finalScore').innerText(),'100分');
     assert.ok((await page.locator('#resultTitle').innerText()).includes('已通过第9关'));
@@ -38,6 +40,8 @@ async function answerCourse(page,wrongIndexes=[]){
     assert.strictEqual(profile.xpAwards['lesson-09'],100);
     assert.strictEqual(Object.keys(practice.answers).filter(k=>k.startsWith('g00-')).length,10);
     assert.strictEqual(practice.wrongIds.filter(k=>k.startsWith('g00-')).length,0);
+
+    // 70分未通过路径：由结果页真实验证“未达到80分”，且不发放XP、不记录完成。
     await page.evaluate(()=>localStorage.clear());
     await page.reload({waitUntil:'networkidle'});
     await answerCourse(page,[0,1,2]);
