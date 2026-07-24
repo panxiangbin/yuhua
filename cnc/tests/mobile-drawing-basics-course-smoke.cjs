@@ -19,7 +19,8 @@ const assert = require('node:assert/strict');
   for(const text of ['学习目标','尺寸基准','工艺基准','公差','加工余量','孔距','统一安全','原厂手册']) assert.ok(bodyText.includes(text),`missing ${text}`);
   const visibleButtons=await page.locator('button:visible,a.back:visible').evaluateAll(nodes=>nodes.map(n=>({h:n.getBoundingClientRect().height,w:n.getBoundingClientRect().width})));
   assert.ok(visibleButtons.every(x=>x.h>=44&&x.w>0),'visible touch targets must be at least 44px high');
-  const answers=[1,[0,1,2],1,0,3,[0,1,2],1,1,[0,1,3]];
+  const answers=[1,1,[0,1,2],1,0,3,[0,1,2],1,1,[0,1,3]];
+  assert.equal(answers.length,10,'answer fixture must cover all 10 questions');
   for(let i=0;i<10;i++){
     const answer=answers[i];
     const indexes=Array.isArray(answer)?answer:[answer];
