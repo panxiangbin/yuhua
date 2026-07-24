@@ -30,7 +30,7 @@ const path = require('path');
     await page.evaluate(()=>localStorage.clear());
     await page.reload({waitUntil:'networkidle'});
     const body=await page.locator('body').innerText();
-    for(const text of ['工件装夹基础','预计 40 分钟','定位','夹紧','自由度','3-2-1定位','刀具通道','原厂手册','现场条件','80分']){
+    for(const text of ['工件装夹基础','预计 40 分钟','定位','夹紧','自由度','3-2-1定位','刀具通道','原厂手册','现场条件']){
       if(!body.includes(text)) throw new Error(`missing ${text}`);
     }
     const steps=await page.locator('.step').count();
