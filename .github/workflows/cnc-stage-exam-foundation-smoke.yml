@@ -1,0 +1,34 @@
+name: CNC foundation stage exam smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-stage-exam-foundation-smoke.yml'
+  workflow_dispatch:
+
+jobs:
+  foundation-stage-exam:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install --no-save playwright@1.52.0
+      - run: npx playwright install --with-deps chromium
+      - name: JavaScript syntax
+        run: node --check cnc/tests/mobile-stage-exam-foundation-smoke.cjs
+      - name: Start static server
+        run: python3 -m http.server 4173 --directory . > /tmp/cnc-server.log 2>&1 &
+      - name: Chromium 390x844 foundation stage exam
+        run: node cnc/tests/mobile-stage-exam-foundation-smoke.cjs
+      - name: Upload foundation stage exam diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: foundation-stage-exam-diagnostics
+          path: artifacts/stage-exam-foundation/
+          if-no-files-found: warn
+          retention-days: 7
