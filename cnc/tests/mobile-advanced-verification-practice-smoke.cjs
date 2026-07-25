@@ -32,7 +32,13 @@ const path = require('node:path');
       for(const index of q.answer) await active.locator(`input[value="${index}"]`).check();
       await active.getByRole('button',{name:'提交答案'}).click();
       await active.locator('.feedback.show').waitFor();
-      await active.getByRole('button',{name:i===14?'查看成绩':'下一题'}).click();
+      const next=active.getByRole('button',{name:i===14?'查看成绩':'下一题'});
+      await assert.doesNotReject(()=>next.waitFor({state:'visible'}));
+      await page.waitForFunction(({last})=>{
+        const button=document.querySelector('.question.active #next');
+        return button && !button.disabled && button.textContent.includes(last?'查看成绩':'下一题');
+      },{last:i===14});
+      await next.click();
     }
     await page.locator('#result.show').waitFor();
     assert.equal(await page.locator('#score').innerText(),'100');
@@ -52,7 +58,13 @@ const path = require('node:path');
       if(i<4) await active.locator(`input[value="${wrongIndex}"]`).check();
       else for(const index of q.answer) await active.locator(`input[value="${index}"]`).check();
       await active.getByRole('button',{name:'提交答案'}).click();
-      await active.getByRole('button',{name:i===14?'查看成绩':'下一题'}).click();
+      await active.locator('.feedback.show').waitFor();
+      const next=active.getByRole('button',{name:i===14?'查看成绩':'下一题'});
+      await page.waitForFunction(({last})=>{
+        const button=document.querySelector('.question.active #next');
+        return button && !button.disabled && button.textContent.includes(last?'查看成绩':'下一题');
+      },{last:i===14});
+      await next.click();
     }
     await page.locator('#result.show').waitFor();
     assert.equal(await page.locator('#score').innerText(),'73');
