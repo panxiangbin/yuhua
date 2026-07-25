@@ -29,6 +29,10 @@ const assert = require('node:assert/strict');
   await page.locator('.xp-bottom-nav [data-xp-route="dashboard"]').click();
   await page.waitForSelector('#view-dashboard.active', { state: 'visible', timeout: 15000 });
   await page.waitForSelector('#dashboard-recent-list .recent-card', { state: 'visible', timeout: 15000 });
+  await page.waitForFunction(() => {
+    const card = document.querySelector('#dashboard-recent-list .recent-card');
+    return Boolean(card && card.getBoundingClientRect().height >= 56);
+  }, null, { timeout: 15000 });
 
   const card = page.locator('#dashboard-recent-list .recent-card').first();
   assert.equal(await card.getAttribute('role'), 'button');
