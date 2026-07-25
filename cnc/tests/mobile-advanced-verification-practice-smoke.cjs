@@ -12,6 +12,25 @@ const path = require('node:path');
   const errors=[];
   page.on('pageerror',e=>errors.push(String(e)));
   page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
+  const answerCurrent=async(q,last)=>{
+    const active=page.locator('.question.active');
+    await active.waitFor();
+    for(const index of q.answer) await active.locator(`input[value="${index}"]`).check();
+    const submit=active.getByRole('button',{name:'提交答案'});
+    await submit.evaluate(el=>el.scrollIntoView({block:'center',inline:'nearest'}));
+    await submit.click();
+    await page.waitForFunction(()=>{
+      const card=document.querySelector('.question.active');
+      const feedback=card?.querySelector('.feedback');
+      const next=card?.querySelector('#next');
+      return Boolean(feedback?.classList.contains('show')&&next&&!next.disabled);
+    });
+    const feedback=active.locator('.feedback.show');
+    await feedback.waitFor({state:'visible'});
+    const next=active.getByRole('button',{name:last?'查看成绩':'下一题'});
+    await next.evaluate(el=>el.scrollIntoView({block:'center',inline:'nearest'}));
+    await next.click();
+  };
   try{
     await page.goto(`${base}/cnc/practice-advanced-verification.html`,{waitUntil:'networkidle'});
     await page.waitForFunction(()=>window.__CNC_ADVANCED_PRACTICE__?.questions?.length===15);
@@ -25,21 +44,7 @@ const path = require('node:path');
     }
     const body=await page.locator('body').innerText();
     for(const text of ['程序段','报警排查','参数风险','首件检查','80','原厂手册']) assert.ok(body.includes(text),`missing ${text}`);
-    for(let i=0;i<15;i++){
-      const q=meta[i];
-      const active=page.locator('.question.active');
-      await active.waitFor();
-      for(const index of q.answer) await active.locator(`input[value="${index}"]`).check();
-      await active.getByRole('button',{name:'提交答案'}).click();
-      await active.locator('.feedback.show').waitFor();
-      const next=active.getByRole('button',{name:i===14?'查看成绩':'下一题'});
-      await assert.doesNotReject(()=>next.waitFor({state:'visible'}));
-      await page.waitForFunction(({last})=>{
-        const button=document.querySelector('.question.active #next');
-        return button && !button.disabled && button.textContent.includes(last?'查看成绩':'下一题');
-      },{last:i===14});
-      await next.click();
-    }
+    for(let i=0;i<15;i++) await answerCurrent(meta[i],i===14);
     await page.locator('#result.show').waitFor();
     assert.equal(await page.locator('#score').innerText(),'100');
     assert.match(await page.locator('#result-title').innerText(),/已通过/);
@@ -52,19 +57,8 @@ const path = require('node:path');
     await page.getByRole('button',{name:'全部重练'}).click();
     for(let i=0;i<15;i++){
       const q=meta[i];
-      const active=page.locator('.question.active');
-      await active.waitFor();
-      const wrongIndex=q.answer.includes(0)?1:0;
-      if(i<4) await active.locator(`input[value="${wrongIndex}"]`).check();
-      else for(const index of q.answer) await active.locator(`input[value="${index}"]`).check();
-      await active.getByRole('button',{name:'提交答案'}).click();
-      await active.locator('.feedback.show').waitFor();
-      const next=active.getByRole('button',{name:i===14?'查看成绩':'下一题'});
-      await page.waitForFunction(({last})=>{
-        const button=document.querySelector('.question.active #next');
-        return button && !button.disabled && button.textContent.includes(last?'查看成绩':'下一题');
-      },{last:i===14});
-      await next.click();
+      const chosen=i<4?[q.answer.includes(0)?1:0]:q.answer;
+      await answerCurrent({...q,answer:chosen},i===14);
     }
     await page.locator('#result.show').waitFor();
     assert.equal(await page.locator('#score').innerText(),'73');
