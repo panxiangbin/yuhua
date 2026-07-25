@@ -27,10 +27,12 @@ const path = require('node:path');
     for(const text of ['程序段','报警排查','参数风险','首件检查','80','原厂手册']) assert.ok(body.includes(text),`missing ${text}`);
     for(let i=0;i<15;i++){
       const q=meta[i];
-      for(const index of q.answer) await page.locator(`input[value="${index}"]`).check();
-      await page.getByRole('button',{name:'提交答案'}).click();
-      await page.locator('#feedback.show').waitFor();
-      await page.getByRole('button',{name:i===14?'查看成绩':'下一题'}).click();
+      const active=page.locator('.question.active');
+      await active.waitFor();
+      for(const index of q.answer) await active.locator(`input[value="${index}"]`).check();
+      await active.getByRole('button',{name:'提交答案'}).click();
+      await active.locator('.feedback.show').waitFor();
+      await active.getByRole('button',{name:i===14?'查看成绩':'下一题'}).click();
     }
     await page.locator('#result.show').waitFor();
     assert.equal(await page.locator('#score').innerText(),'100');
@@ -44,11 +46,13 @@ const path = require('node:path');
     await page.getByRole('button',{name:'全部重练'}).click();
     for(let i=0;i<15;i++){
       const q=meta[i];
+      const active=page.locator('.question.active');
+      await active.waitFor();
       const wrongIndex=q.answer.includes(0)?1:0;
-      if(i<4) await page.locator(`input[value="${wrongIndex}"]`).check();
-      else for(const index of q.answer) await page.locator(`input[value="${index}"]`).check();
-      await page.getByRole('button',{name:'提交答案'}).click();
-      await page.getByRole('button',{name:i===14?'查看成绩':'下一题'}).click();
+      if(i<4) await active.locator(`input[value="${wrongIndex}"]`).check();
+      else for(const index of q.answer) await active.locator(`input[value="${index}"]`).check();
+      await active.getByRole('button',{name:'提交答案'}).click();
+      await active.getByRole('button',{name:i===14?'查看成绩':'下一题'}).click();
     }
     await page.locator('#result.show').waitFor();
     assert.equal(await page.locator('#score').innerText(),'73');
