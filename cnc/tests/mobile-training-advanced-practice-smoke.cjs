@@ -12,8 +12,17 @@ const assert = require('node:assert/strict');
   assert.equal(await page.locator('.view.active').getAttribute('id'), 'view-dashboard');
   await page.locator('.launchpad-card[data-route="study"]').click();
   await page.waitForSelector('#view-study.active', { state: 'visible' });
+
+  // The study view becomes visible before all practice cards finish their synchronous
+  // enhancement pass on slower CI runners. Wait for the module's own semantic health
+  // check rather than relying on a fixed delay or accepting a partially initialized UI.
+  await page.waitForFunction(() => {
+    const practice = window.CNC_TRAINING_PRACTICE;
+    return Boolean(practice && practice.runCheck && practice.runCheck().passed);
+  }, null, { timeout: 15000 });
+
   const api = await page.evaluate(() => window.CNC_TRAINING_PRACTICE.runCheck());
-  assert.equal(api.passed, true);
+  assert.equal(api.passed, true, `advanced practice readiness failed: ${JSON.stringify(api)}`);
   assert.equal(api.questions, 9);
   assert.equal(api.lessonGates, 12);
   assert.equal(api.passScore, 80);
