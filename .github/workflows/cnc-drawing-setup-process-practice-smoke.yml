@@ -1,0 +1,46 @@
+name: CNC drawing setup process practice smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-drawing-setup-process-practice-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mobile-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install Playwright
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install playwright@1.54.1
+          npx playwright install --with-deps chromium
+      - name: Start static server
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/cnc-server.log 2>&1 &
+          echo $! > /tmp/cnc-server.pid
+          for i in {1..20}; do curl -fsS http://127.0.0.1:4173/cnc/practice-drawing-setup-process.html >/dev/null && exit 0; sleep 1; done
+          cat /tmp/cnc-server.log
+          exit 1
+      - name: Run Chromium 390x844 smoke
+        env:
+          CNC_BASE_URL: http://127.0.0.1:4173
+          CNC_ARTIFACT_DIR: artifacts/drawing-setup-process-practice
+        run: node cnc/tests/mobile-drawing-setup-process-practice-smoke.cjs
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-drawing-setup-process-practice-${{ github.run_id }}
+          path: artifacts/drawing-setup-process-practice
+          if-no-files-found: warn
+          retention-days: 14
