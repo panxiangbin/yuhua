@@ -26,10 +26,19 @@ function listen(){return new Promise((resolve,reject)=>server.listen(4173,'127.0
     const page=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:1});
     page.on('console',msg=>{if(msg.type()==='error')errors.push(msg.text());});
     page.on('pageerror',err=>errors.push(err.message));
-    await page.goto('http://127.0.0.1:4173/cnc/pages-status.html',{waitUntil:'networkidle'});
-    await page.waitForFunction(()=>document.querySelector('#build')?.textContent==='20260727-pages1');
+
+    // pages-status.html registers the Service Worker and performs its own no-store
+    // build marker request. Waiting for global "networkidle" is the wrong contract:
+    // Service Worker lifecycle/update traffic may remain active even after the page
+    // is fully usable. Wait for DOM readiness and the actual product state instead.
+    await page.goto('http://127.0.0.1:4173/cnc/pages-status.html',{waitUntil:'domcontentloaded',timeout:30000});
+    await page.waitForFunction(()=>document.querySelector('#build')?.textContent==='20260727-pages1',{timeout:30000});
+    await page.waitForFunction(()=>document.querySelector('#status')?.textContent.includes('已读取公网构建标记'),{timeout:30000});
+
     const data=await page.evaluate(async()=>{
-      const marker=await fetch('./build-info.json',{cache:'no-store'}).then(r=>r.json());
+      const response=await fetch('./build-info.json',{cache:'no-store'});
+      if(!response.ok)throw new Error(`build marker HTTP ${response.status}`);
+      const marker=await response.json();
       const targets=[...document.querySelectorAll('a,button')].filter(el=>{const r=el.getBoundingClientRect();return r.width>0&&r.height>0;}).map(el=>({text:el.textContent.trim(),width:el.getBoundingClientRect().width,height:el.getBoundingClientRect().height}));
       return {marker,build:document.querySelector('#build').textContent,pwa:document.querySelector('#pwa').textContent,status:document.querySelector('#status').textContent,targets};
     });
