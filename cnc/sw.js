@@ -2,8 +2,8 @@
 const BUILD='20260726-pwa2';
 const STATIC_CACHE=`cnc-static-${BUILD}`;
 const RUNTIME_CACHE=`cnc-runtime-${BUILD}`;
-const CORE=['./','./index.html','./offline.html','./pwa-status.html','./pages-status.html','./build-info.json','./manifest.webmanifest','./styles.css','./styles-enhanced.css','./app.js','./training-camp.html','./practice.html','./profile.html','./simulator-hub.html','./data-backup.html','./data-health.html'];
-const REQUIRED_CORE=['./index.html','./offline.html','./pwa-status.html','./pages-status.html','./build-info.json'];
+const CORE=['./','./index.html','./offline.html','./pwa-status.html','./pwa-self-test.html','./pages-status.html','./build-info.json','./manifest.webmanifest','./styles.css','./styles-enhanced.css','./app.js','./training-camp.html','./practice.html','./profile.html','./simulator-hub.html','./data-backup.html','./data-health.html'];
+const REQUIRED_CORE=['./index.html','./offline.html','./pwa-status.html','./pwa-self-test.html','./pages-status.html','./build-info.json'];
 self.addEventListener('install',event=>{event.waitUntil((async()=>{const staticCache=await caches.open(STATIC_CACHE);await caches.open(RUNTIME_CACHE);await Promise.allSettled(CORE.map(url=>staticCache.add(url)));for(const url of REQUIRED_CORE){if(!await staticCache.match(url))throw new Error(`CNC PWA核心离线资源缺失：${url}`);}await self.skipWaiting();})());});
 self.addEventListener('activate',event=>{event.waitUntil((async()=>{const names=await caches.keys();await Promise.all(names.filter(name=>name.startsWith('cnc-')&&!name.endsWith(BUILD)).map(name=>caches.delete(name)));await caches.open(STATIC_CACHE);await caches.open(RUNTIME_CACHE);await self.clients.claim();})());});
 self.addEventListener('message',event=>{if(event.data&&event.data.type==='SKIP_WAITING')self.skipWaiting();if(event.data&&event.data.type==='GET_BUILD'){const target=event.ports&&event.ports[0]?event.ports[0]:event.source;target&&target.postMessage({type:'CNC_SW_BUILD',build:BUILD});}});
