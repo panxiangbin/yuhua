@@ -1,24 +1,22 @@
 {
-  "name": "数控新手学习助手",
-  "short_name": "数控学习助手",
-  "description": "适合数控新手在手机上学习代码、参数、报警、工艺和换算的轻量网页应用。",
+  "id": "./",
+  "name": "数控小潘 CNC随身助手",
+  "short_name": "CNC随身助手",
+  "description": "不会编程时能学，遇到问题时能查，程序上机前能检查。",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#f6f0e5",
-  "theme_color": "#cc6430",
+  "background_color": "#f2efe8",
+  "theme_color": "#365b72",
   "lang": "zh-CN",
+  "categories": ["education", "productivity", "utilities"],
+  "shortcuts": [
+    {"name":"训练营","short_name":"训练营","url":"./training-camp.html"},
+    {"name":"专项练习","short_name":"练习","url":"./practice.html"},
+    {"name":"成长档案","short_name":"我的","url":"./profile.html"}
+  ],
   "icons": [
-    {
-      "src": "./icon-192.svg",
-      "sizes": "192x192",
-      "type": "image/svg+xml",
-      "purpose": "any"
-    },
-    {
-      "src": "./icon-512.svg",
-      "sizes": "512x512",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    }
+    {"src":"./icon-192.svg","sizes":"192x192","type":"image/svg+xml","purpose":"any"},
+    {"src":"./icon-512.svg","sizes":"512x512","type":"image/svg+xml","purpose":"any maskable"}
   ]
 }

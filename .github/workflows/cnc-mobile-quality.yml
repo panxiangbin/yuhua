@@ -163,8 +163,16 @@ jobs:
             echo "Homepage bootstrap must not auto-load the large lesson image bundle"
             exit 1
           fi
-          if grep -q "addEventListener('fetch'" cnc/sw.js; then
-            echo "Emergency Service Worker must not intercept fetch requests"
+          grep -q "const STATIC_CACHE" cnc/sw.js
+          grep -q "const RUNTIME_CACHE" cnc/sw.js
+          grep -q "addEventListener('fetch'" cnc/sw.js
+          grep -q "request.method!=='GET'" cnc/sw.js
+          grep -q "url.origin!==location.origin" cnc/sw.js
+          grep -q "offline.html" cnc/sw.js
+          grep -q "caches.keys()" cnc/sw.js
+          grep -q "skipWaiting" cnc/sw.js
+          if grep -q "registration.unregister" cnc/sw.js; then
+            echo "Active PWA Service Worker must not unregister itself"
             exit 1
           fi
           if grep -q "new MutationObserver" cnc/mobile-gcode-pro.js; then

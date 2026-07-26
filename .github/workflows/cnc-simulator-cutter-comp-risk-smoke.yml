@@ -22,6 +22,12 @@ jobs:
         run: node --check cnc/tests/mobile-simulator-cutter-comp-risk-smoke.cjs
       - name: Start static server
         run: python3 -m http.server 4173 --directory . > /tmp/cnc-server.log 2>&1 &
+      - name: Verify static server readiness
+        run: |
+          curl --fail --silent --show-error \
+            --retry 12 --retry-delay 1 --retry-connrefused \
+            http://127.0.0.1:4173/cnc/simulator-cutter-comp-risk.html \
+            > /dev/null || { cat /tmp/cnc-server.log; exit 1; }
       - name: Chromium 390x844 cutter compensation risk simulator
         run: node cnc/tests/mobile-simulator-cutter-comp-risk-smoke.cjs
       - name: Upload cutter compensation risk diagnostics
