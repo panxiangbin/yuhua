@@ -11,7 +11,7 @@
 </head>
 <body>
 <main class="shell">
-<div class="top"><a class="btn alt" href="./training-camp.html">← 返回训练营</a><a class="btn" id="recommended-entry" href="./practice-safety-coordinate.html">开始推荐练习</a></div>
+<div class="top"><a class="btn alt" href="./training-camp.html">← 返回训练营</a><a class="btn alt" href="./practice-wrong-review.html">跨专项错题</a><a class="btn" id="recommended-entry" href="./practice-safety-coordinate.html">开始推荐练习</a></div>
 <section class="hero"><small>专项题库 · 统一入口</small><h1>按薄弱项练，不再到处找题</h1><p>这里统一汇总当前专项练习，显示最高分、练习次数、待重做错题和能力薄弱项。筛选只改变展示，不修改你的成绩与错题记录。</p><div class="stats"><div class="stat"><strong id="practice-count">5</strong><span>专项数量</span></div><div class="stat"><strong id="passed-count">0</strong><span>已通过</span></div><div class="stat"><strong id="wrong-count">0</strong><span>待重做错题</span></div><div class="stat"><strong id="avg-score">0</strong><span>平均最高分</span></div></div></section>
 <section class="panel"><h2>筛选练习</h2><div class="filters"><label>能力方向<select id="ability-filter"><option value="all">全部能力</option><option value="安全与坐标">安全与坐标</option><option value="程序验证">程序验证</option><option value="图纸与工艺">图纸与工艺</option><option value="报警与首件">报警与首件</option></select></label><label>题型<select id="type-filter"><option value="all">全部题型</option><option value="基础判断">单选 / 多选 / 判断</option><option value="流程排序">流程排序</option><option value="程序实战">程序补空 / 找错</option></select></label><label>学习状态<select id="status-filter"><option value="all">全部状态</option><option value="unstarted">未开始</option><option value="retry">未通过 / 有错题</option><option value="passed">已通过</option></select></label></div></section>
 <section class="panel"><h2>薄弱项分析</h2><p id="weak-copy">尚无足够记录。先完成一组专项，系统再按错题能力维度给出建议。</p><div id="weak-list" class="weak-list"></div></section>
