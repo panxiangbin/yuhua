@@ -5,18 +5,28 @@ on:
       - 'cnc/**'
       - '.github/workflows/cnc-pwa-offline-cache-smoke.yml'
   workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: cnc-pwa-offline-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
 jobs:
   smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm install --no-save playwright@1.52.0
-      - run: npx playwright install --with-deps chromium
-      - run: node cnc/tests/mobile-pwa-offline-cache-smoke.cjs
+      - name: Install Playwright test runtime
+        run: npm install --no-save playwright@1.52.0
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run 390x844 offline cache smoke
+        env:
+          DEBUG: pw:browser
+        run: node cnc/tests/mobile-pwa-offline-cache-smoke.cjs
       - name: Upload diagnostics
         if: always()
         uses: actions/upload-artifact@v4
@@ -24,3 +34,4 @@ jobs:
           name: cnc-pwa-offline-${{ github.run_id }}
           path: cnc/test-results/pwa-offline-*
           if-no-files-found: warn
+          retention-days: 14
