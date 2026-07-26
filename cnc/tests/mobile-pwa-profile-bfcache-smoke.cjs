@@ -8,12 +8,6 @@ async function ensureControlled(page){
   await page.waitForFunction(async()=>{if(!('serviceWorker' in navigator))return false;const reg=await navigator.serviceWorker.getRegistration('./');return Boolean(reg);},{timeout:20000});
   await page.evaluate(()=>navigator.serviceWorker.ready);
   if(!await page.evaluate(()=>Boolean(navigator.serviceWorker.controller))){
-    await Promise.race([
-      page.evaluate(()=>new Promise(resolve=>navigator.serviceWorker.addEventListener('controllerchange',()=>resolve(true),{once:true}))),
-      page.waitForTimeout(15000).then(()=>false)
-    ]);
-  }
-  if(!await page.evaluate(()=>Boolean(navigator.serviceWorker.controller))){
     await page.reload({waitUntil:'networkidle'});
   }
   await page.waitForFunction(()=>Boolean(navigator.serviceWorker&&navigator.serviceWorker.controller),{timeout:30000});
