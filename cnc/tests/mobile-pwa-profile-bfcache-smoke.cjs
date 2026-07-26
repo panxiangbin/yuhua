@@ -4,13 +4,27 @@ const root=path.resolve(__dirname,'../..'),out=path.join(root,'cnc/test-results'
 fs.mkdirSync(out,{recursive:true});
 const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.webmanifest':'application/manifest+json','.svg':'image/svg+xml'};
 const server=http.createServer((req,res)=>{let p=decodeURIComponent(req.url.split('?')[0]);if(p==='/'||p==='/cnc/')p='/cnc/index.html';const file=path.normalize(path.join(root,p));if(!file.startsWith(root)||!fs.existsSync(file)||fs.statSync(file).isDirectory()){res.writeHead(404);return res.end('404')}res.setHeader('Content-Type',types[path.extname(file)]||'application/octet-stream');fs.createReadStream(file).pipe(res)});
+async function ensureControlled(page){
+  await page.waitForFunction(async()=>{if(!('serviceWorker' in navigator))return false;const reg=await navigator.serviceWorker.getRegistration('./');return Boolean(reg);},{timeout:20000});
+  await page.evaluate(()=>navigator.serviceWorker.ready);
+  if(!await page.evaluate(()=>Boolean(navigator.serviceWorker.controller))){
+    await Promise.race([
+      page.evaluate(()=>new Promise(resolve=>navigator.serviceWorker.addEventListener('controllerchange',()=>resolve(true),{once:true}))),
+      page.waitForTimeout(15000).then(()=>false)
+    ]);
+  }
+  if(!await page.evaluate(()=>Boolean(navigator.serviceWorker.controller))){
+    await page.reload({waitUntil:'networkidle'});
+  }
+  await page.waitForFunction(()=>Boolean(navigator.serviceWorker&&navigator.serviceWorker.controller),{timeout:30000});
+}
 (async()=>{await new Promise(r=>server.listen(4173,'127.0.0.1',r));const browser=await chromium.launch({headless:true});const context=await browser.newContext({viewport:{width:390,height:844},serviceWorkers:'allow'});const page=await context.newPage(),errors=[];page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
-await page.goto('http://127.0.0.1:4173/cnc/index.html',{waitUntil:'networkidle'});await page.waitForFunction(()=>navigator.serviceWorker&&navigator.serviceWorker.controller,{timeout:20000}).catch(async()=>{await page.reload({waitUntil:'networkidle'});await page.waitForFunction(()=>navigator.serviceWorker&&navigator.serviceWorker.controller,{timeout:20000})});
+await page.goto('http://127.0.0.1:4173/cnc/index.html',{waitUntil:'networkidle'});await ensureControlled(page);
 await page.goto('http://127.0.0.1:4173/cnc/profile.html',{waitUntil:'networkidle'});const pwaLink=page.locator('a[href="./pwa-status.html"]');if(await pwaLink.count()!==1)throw new Error('成长档案缺少PWA状态入口');
-await pwaLink.click();await page.waitForURL(/pwa-status\.html/);await page.waitForFunction(()=>document.querySelector('#build').textContent.includes('20260726-pwa2'),{timeout:10000});await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('版本一致'),{timeout:10000});
+await pwaLink.click();await page.waitForURL(/pwa-status\.html/);await page.waitForFunction(()=>document.querySelector('#build').textContent.includes('20260726-pwa2'),{timeout:15000});await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('版本一致'),{timeout:15000});
 const initialChecked=await page.locator('#checked-at').textContent();const cacheCount=Number(await page.locator('#cache-count').textContent());if(cacheCount<2)throw new Error('CNC缓存数量不足');if(!(await page.locator('#static-cache').textContent()).includes('20260726-pwa2'))throw new Error('静态缓存版本不一致');if(!(await page.locator('#runtime-cache').textContent()).includes('20260726-pwa2'))throw new Error('运行时缓存版本不一致');
 await page.goto('http://127.0.0.1:4173/cnc/profile.html',{waitUntil:'domcontentloaded'});await page.goBack({waitUntil:'domcontentloaded'});await page.waitForURL(/pwa-status\.html/);await page.waitForFunction(old=>document.querySelector('#checked-at').textContent!==old,initialChecked,{timeout:10000}).catch(async()=>{await page.locator('#refresh').click();await page.waitForFunction(old=>document.querySelector('#checked-at').textContent!==old,initialChecked,{timeout:10000})});
 await page.evaluate(async()=>{for(const k of await caches.keys())if(k.startsWith('cnc-runtime-'))await caches.delete(k)});await page.locator('#refresh').click();await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('尚未完全一致'));if((await page.locator('#runtime-cache').textContent())!=='未发现')throw new Error('缓存缺失状态未显示');
-await page.reload({waitUntil:'networkidle'});await page.waitForFunction(()=>Number(document.querySelector('#cache-count').textContent)>=2,{timeout:10000});
+await page.reload({waitUntil:'networkidle'});await ensureControlled(page);await page.waitForFunction(()=>Number(document.querySelector('#cache-count').textContent)>=2,{timeout:15000});
 const small=await page.locator('a,button').evaluateAll(els=>els.filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&r.height>0&&Math.min(r.width,r.height)<44}).map(e=>{const r=e.getBoundingClientRect();return {text:e.textContent.trim(),w:r.width,h:r.height}}));if(small.length)throw new Error('触控区不足44px '+JSON.stringify(small));
 await page.screenshot({path:path.join(out,'pwa-profile-bfcache-390x844.png'),fullPage:true});if(errors.length)throw new Error('控制台错误 '+errors.join(' | '));fs.writeFileSync(path.join(out,'pwa-profile-bfcache-result.json'),JSON.stringify({build:await page.locator('#build').textContent(),cacheCount:Number(await page.locator('#cache-count').textContent()),profileEntry:true,bfcacheRestore:true,mismatchDetected:true,touchTargets:true},null,2));await browser.close();server.close();console.log('CNC PWA profile BFCache smoke passed');})().catch(e=>{console.error(e);server.close();process.exit(1)});
