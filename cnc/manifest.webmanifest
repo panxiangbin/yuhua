@@ -1,6 +1,8 @@
 {
   "id": "./",
-  "name机前能检查。",
+  "name": "数控小潘 CNC随身助手",
+  "short_name": "CNC随身助手",
+  "description": "不会编程时能学，遇到问题时能查，程序上机前能检查。",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
