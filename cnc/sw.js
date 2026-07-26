@@ -3,14 +3,16 @@ const BUILD = '20260726-pwa2';
 const STATIC_CACHE = `cnc-static-${BUILD}`;
 const RUNTIME_CACHE = `cnc-runtime-${BUILD}`;
 
-const CORE_PATHS = [
-  './',
+const REQUIRED_CORE_PATHS = [
   './index.html',
   './offline.html',
   './pwa-status.html',
   './pwa-self-test.html',
   './pages-status.html',
-  './build-info.json',
+  './build-info.json'
+];
+
+const OPTIONAL_CORE_PATHS = [
   './manifest.webmanifest',
   './styles.css',
   './styles-enhanced.css',
@@ -23,27 +25,24 @@ const CORE_PATHS = [
   './data-health.html'
 ];
 
-const REQUIRED_CORE_PATHS = [
-  './index.html',
-  './offline.html',
-  './pwa-status.html',
-  './pwa-self-test.html',
-  './pages-status.html',
-  './build-info.json'
-];
-
 function scopeUrl(path) {
   return new URL(path, self.registration.scope).href;
 }
 
-async function cacheOne(cache, path) {
-  const url = scopeUrl(path);
-  const response = await fetch(url, { cache: 'reload' });
+function requestFor(path) {
+  return new Request(scopeUrl(path), {
+    cache: 'reload',
+    credentials: 'same-origin'
+  });
+}
+
+async function fetchAndCache(cache, path) {
+  const request = requestFor(path);
+  const response = await fetch(request);
   if (!response.ok) {
-    throw new Error(`CNC PWA资源请求失败：${path} HTTP ${response.status}`);
+    throw new Error(`${path} HTTP ${response.status}`);
   }
-  await cache.put(url, response);
-  return url;
+  await cache.put(request, response.clone());
 }
 
 self.addEventListener('install', (event) => {
@@ -51,21 +50,20 @@ self.addEventListener('install', (event) => {
     const staticCache = await caches.open(STATIC_CACHE);
     await caches.open(RUNTIME_CACHE);
 
-    const results = await Promise.allSettled(
-      CORE_PATHS.map((path) => cacheOne(staticCache, path))
+    // 安装只强制缓存最小可用离线壳，避免大型或非关键资源拖死激活。
+    for (const path of REQUIRED_CORE_PATHS) {
+      await fetchAndCache(staticCache, path);
+    }
+
+    // 非关键资源尽力缓存；失败不会阻止核心离线能力激活。
+    await Promise.allSettled(
+      OPTIONAL_CORE_PATHS.map((path) => fetchAndCache(staticCache, path))
     );
 
-    const failedPaths = results
-      .map((result, index) => ({ result, path: CORE_PATHS[index] }))
-      .filter(({ result }) => result.status === 'rejected')
-      .map(({ path, result }) => `${path}: ${result.reason && result.reason.message ? result.reason.message : result.reason}`);
-
     for (const path of REQUIRED_CORE_PATHS) {
-      const match = await staticCache.match(scopeUrl(path));
+      const match = await staticCache.match(requestFor(path));
       if (!match) {
-        throw new Error(
-          `CNC PWA核心离线资源缺失：${path}${failedPaths.length ? `；预缓存失败：${failedPaths.join(' | ')}` : ''}`
-        );
+        throw new Error(`CNC PWA核心离线资源缺失：${path}`);
       }
     }
 
@@ -117,7 +115,7 @@ self.addEventListener('fetch', (event) => {
         return fresh;
       } catch {
         const cached = await caches.match(request);
-        return cached || caches.match(scopeUrl('./offline.html'));
+        return cached || caches.match(requestFor('./offline.html'));
       }
     })());
     return;
