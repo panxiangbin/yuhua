@@ -1,8 +1,8 @@
 /* CNC PWA：版本化缓存、离线回退与安全更新。 */
-const BUILD='20260726-pwa1';
+const BUILD='20260726-pwa2';
 const STATIC_CACHE=`cnc-static-${BUILD}`;
 const RUNTIME_CACHE=`cnc-runtime-${BUILD}`;
-const CORE=['./','./index.html','./offline.html','./manifest.webmanifest','./styles.css','./styles-enhanced.css','./app.js','./training-camp.html','./practice.html','./profile.html','./simulator-hub.html'];
+const CORE=['./','./index.html','./offline.html','./pwa-status.html','./manifest.webmanifest','./styles.css','./styles-enhanced.css','./app.js','./training-camp.html','./practice.html','./profile.html','./simulator-hub.html','./data-backup.html','./data-health.html'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(STATIC_CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting()));});
 self.addEventListener('activate',event=>{event.waitUntil((async()=>{const names=await caches.keys();await Promise.all(names.filter(name=>name.startsWith('cnc-')&&!name.endsWith(BUILD)).map(name=>caches.delete(name)));await self.clients.claim();})());});
 self.addEventListener('message',event=>{if(event.data&&event.data.type==='SKIP_WAITING')self.skipWaiting();if(event.data&&event.data.type==='GET_BUILD'){const target=event.ports&&event.ports[0]?event.ports[0]:event.source;target&&target.postMessage({type:'CNC_SW_BUILD',build:BUILD});}});
