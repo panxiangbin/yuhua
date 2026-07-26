@@ -42,6 +42,20 @@ const assert = require('node:assert/strict');
   assert.match(await plan.textContent(), /今日目标/);
   assert.match(await plan.textContent(), /重做当前 2 道错题/);
 
+  await page.waitForFunction(() => {
+    const panel = document.querySelector('.xp-daily-plan');
+    if (!panel) return false;
+    const steps = [...panel.querySelectorAll('.xp-plan-step')];
+    const buttons = [...panel.querySelectorAll('button')];
+    if (steps.length !== 3 || buttons.length === 0) return false;
+    const rects = steps.map(node => node.getBoundingClientRect());
+    const singleColumn = rects.slice(1).every((rect, i) =>
+      Math.abs(rect.left - rects[i].left) < 2 && rect.top > rects[i].top
+    );
+    const minButtonHeight = Math.min(...buttons.map(node => node.getBoundingClientRect().height));
+    return singleColumn && minButtonHeight >= 44;
+  }, null, { timeout: 10000 });
+
   const layout = await plan.evaluate(panel => {
     const rects = [...panel.querySelectorAll('.xp-plan-step')].map(node => node.getBoundingClientRect());
     const buttons = [...panel.querySelectorAll('button')].map(node => node.getBoundingClientRect().height);
