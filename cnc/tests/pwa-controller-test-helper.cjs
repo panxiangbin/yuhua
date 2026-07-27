@@ -111,12 +111,16 @@ async function ensureControlled(page, errors, observePage, options = {}) {
     const discoveryDeadline = Date.now() + 10000;
     let worker = registration.installing || registration.waiting || registration.active;
     while (!worker && Date.now() < discoveryDeadline) {
-      await registration.update().catch(() => {});
+      // 某些Chromium测试环境暴露的Registration对象不实现update()；
+      // 仅在方法真实存在时主动刷新，否则继续轮询浏览器正在更新的状态字段。
+      if (typeof registration.update === 'function') {
+        await registration.update().catch(() => {});
+      }
       await new Promise(resolve => setTimeout(resolve, 100));
       worker = registration.installing || registration.waiting || registration.active;
     }
     if (!worker) {
-      throw new Error(`Service Worker object missing for ${expectedScope}`);
+      throw new Error(`Service Worker object missing for ${expectedScope}; updateSupported=${typeof registration.update === 'function'}`);
     }
 
     const activationDeadline = Date.now() + 60000;
