@@ -68,6 +68,8 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('activate', (event) => {
   event.waitUntil((async () => {
+    // 先接管作用域内已打开页面，再做缓存清理，缩短首次接管窗口。
+    await self.clients.claim();
     const names = await caches.keys();
     await Promise.all(
       names
@@ -76,7 +78,6 @@ self.addEventListener('activate', (event) => {
     );
     await caches.open(STATIC_CACHE);
     await caches.open(RUNTIME_CACHE);
-    await self.clients.claim();
   })());
 });
 
