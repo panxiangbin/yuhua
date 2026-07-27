@@ -2,6 +2,7 @@
 const BUILD = '20260726-pwa2';
 const STATIC_CACHE = `cnc-static-${BUILD}`;
 const RUNTIME_CACHE = `cnc-runtime-${BUILD}`;
+const INSTALL_DIAGNOSTIC_PATH = './pwa-install-diagnostics.json';
 
 const REQUIRED_CORE_PATHS = [
   './index.html',
@@ -16,13 +17,51 @@ function scopeUrl(path) {
   return new URL(path, self.registration.scope).href;
 }
 
+async function fetchWithTimeout(url, timeoutMs = 8000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, {
+      cache: 'reload',
+      credentials: 'same-origin',
+      signal: controller.signal
+    });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function cacheCoreBestEffort() {
+  const staticCache = await caches.open(STATIC_CACHE);
+  const runtimeCache = await caches.open(RUNTIME_CACHE);
+  const failures = [];
+
+  await Promise.all(REQUIRED_CORE_PATHS.map(async (path) => {
+    try {
+      const url = scopeUrl(path);
+      const response = await fetchWithTimeout(url);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      await staticCache.put(url, response.clone());
+    } catch (error) {
+      failures.push({ path, error: String(error && error.message ? error.message : error) });
+    }
+  }));
+
+  await runtimeCache.put(scopeUrl(INSTALL_DIAGNOSTIC_PATH), new Response(JSON.stringify({
+    build: BUILD,
+    checkedAt: new Date().toISOString(),
+    cached: REQUIRED_CORE_PATHS.length - failures.length,
+    total: REQUIRED_CORE_PATHS.length,
+    failures
+  }), {
+    headers: { 'Content-Type': 'application/json; charset=utf-8' }
+  }));
+}
+
 self.addEventListener('install', (event) => {
   event.waitUntil((async () => {
-    const staticCache = await caches.open(STATIC_CACHE);
-    await caches.open(RUNTIME_CACHE);
-
-    // 使用浏览器标准批量预缓存，安装阶段只等待6个最小离线核心。
-    await staticCache.addAll(REQUIRED_CORE_PATHS.map(scopeUrl));
+    // 单个核心资源失败只记录诊断，不再让整个Worker安装报废。
+    await cacheCoreBestEffort();
     await self.skipWaiting();
   })());
 });
