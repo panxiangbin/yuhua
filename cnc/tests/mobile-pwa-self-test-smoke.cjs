@@ -108,8 +108,6 @@ function waitForExit(child, timeoutMs) {
     fs.writeFileSync(errorPath, `stage=${stage}\n${error.stack || error}\nconsole=${errors.join(' | ')}`);
     throw error;
   } finally {
-    finished = true;
-    clearTimeout(watchdog);
     if (context) {
       await withTimeout(context.close(), CLEANUP_TIMEOUT_MS, 'browser context cleanup').catch(error => {
         fs.appendFileSync(errorPath, `\ncleanup=${error.stack || error}`);
@@ -119,8 +117,12 @@ function waitForExit(child, timeoutMs) {
     if (server.exitCode === null && server.signalCode === null) server.kill('SIGTERM');
     await waitForExit(server, 3000);
     if (server.exitCode === null && server.signalCode === null) server.kill('SIGKILL');
+    finished = true;
+    clearTimeout(watchdog);
   }
-})().catch(error => {
+})().then(() => {
+  process.exit(0);
+}).catch(error => {
   console.error(error);
   process.exit(1);
 });
