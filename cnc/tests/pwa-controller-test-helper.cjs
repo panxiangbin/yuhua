@@ -20,11 +20,13 @@ async function controllerSnapshot(page) {
       registrations: registrations.map(item => ({
         scope: item.scope,
         active: item.active?.state || '',
+        activeScript: item.active?.scriptURL || '',
         installing: item.installing?.state || '',
         waiting: item.waiting?.state || ''
       })),
       scope: registration?.scope || '',
       active: registration?.active?.state || '',
+      activeScript: registration?.active?.scriptURL || '',
       installing: registration?.installing?.state || '',
       waiting: registration?.waiting?.state || ''
     };
@@ -64,35 +66,83 @@ async function openControlledNavigation(page, controlledUrl) {
 
 async function ensureControlled(page, errors, observePage, options = {}) {
   const { register = true, controlledUrl = page.url() } = options;
-  const expectedScope = await withTimeout(page.evaluate(async shouldRegister => {
+  const activation = await withTimeout(page.evaluate(async shouldRegister => {
     if (!('serviceWorker' in navigator)) throw new Error('Service Worker unsupported');
-    const scope = new URL('/cnc/', location.origin).href;
+    const expectedScope = new URL('/cnc/', location.origin).href;
     const scriptUrl = new URL('/cnc/sw.js', location.origin).href;
     const registrations = await navigator.serviceWorker.getRegistrations();
-    let registration = registrations.find(item => item.scope === scope);
+    let registration = registrations.find(item => item.scope === expectedScope);
     if (!registration && shouldRegister) {
-      registration = await navigator.serviceWorker.register(scriptUrl, { scope });
+      registration = await navigator.serviceWorker.register(scriptUrl, { scope: expectedScope });
     }
-    if (!registration) throw new Error(`Service Worker registration missing for ${scope}`);
-    return scope;
-  }, register), 15000, 'serviceWorker registration');
+    if (!registration) throw new Error(`Service Worker registration missing for ${expectedScope}`);
+    if (registration.scope !== expectedScope) {
+      throw new Error(`Service Worker scope mismatch: expected ${expectedScope}, got ${registration.scope}`);
+    }
 
-  await page.waitForFunction(async scope => {
-    const registrations = await navigator.serviceWorker.getRegistrations();
-    const registration = registrations.find(item => item.scope === scope);
-    return Boolean(registration && registration.active && registration.active.state === 'activated');
-  }, expectedScope, { timeout: 60000 });
+    const activeWorker = registration.active && registration.active.state === 'activated'
+      ? registration.active
+      : await new Promise((resolve, reject) => {
+          let worker = registration.installing || registration.waiting || registration.active;
+          const timeout = setTimeout(() => {
+            cleanup();
+            reject(new Error(`Service Worker activation timeout for ${expectedScope}`));
+          }, 60000);
+          const cleanup = () => {
+            clearTimeout(timeout);
+            registration.removeEventListener('updatefound', onUpdateFound);
+            if (worker) worker.removeEventListener('statechange', onStateChange);
+          };
+          const onStateChange = () => {
+            if (worker && worker.state === 'activated') {
+              cleanup();
+              resolve(worker);
+            }
+            if (worker && worker.state === 'redundant') {
+              cleanup();
+              reject(new Error(`Service Worker became redundant for ${expectedScope}`));
+            }
+          };
+          const watch = candidate => {
+            if (!candidate) return;
+            if (worker) worker.removeEventListener('statechange', onStateChange);
+            worker = candidate;
+            if (worker.state === 'activated') {
+              cleanup();
+              resolve(worker);
+              return;
+            }
+            worker.addEventListener('statechange', onStateChange);
+          };
+          const onUpdateFound = () => watch(registration.installing);
+          registration.addEventListener('updatefound', onUpdateFound);
+          watch(worker);
+        });
 
-  const activeRegistration = await controllerSnapshot(page);
-  if (activeRegistration.scope !== expectedScope || activeRegistration.active !== 'activated') {
-    throw new Error(`Service Worker exact scope not active: ${JSON.stringify(activeRegistration)}`);
+    return {
+      expectedScope,
+      activeState: activeWorker.state,
+      activeScript: activeWorker.scriptURL || ''
+    };
+  }, register), 75000, 'serviceWorker registration and activation');
+
+  if (activation.activeState !== 'activated') {
+    throw new Error(`Service Worker not activated: ${JSON.stringify(activation)}`);
   }
-  if (!controlledUrl.startsWith(expectedScope)) {
+  if (!activation.activeScript.endsWith('/cnc/sw.js')) {
+    throw new Error(`Unexpected active Service Worker script: ${JSON.stringify(activation)}`);
+  }
+  if (!controlledUrl.startsWith(activation.expectedScope)) {
     throw new Error(`Controlled URL outside Service Worker scope: ${controlledUrl}`);
   }
   if (await waitForController(page, 3000)) return page;
 
-  return openControlledNavigation(page, controlledUrl);
+  try {
+    return await openControlledNavigation(page, controlledUrl);
+  } catch (error) {
+    const snapshot = await controllerSnapshot(page);
+    throw new Error(`${error.message}; final=${JSON.stringify(snapshot)}`);
+  }
 }
 
 module.exports = { ensureControlled, withTimeout };
