@@ -16,39 +16,13 @@ function scopeUrl(path) {
   return new URL(path, self.registration.scope).href;
 }
 
-function requestFor(path) {
-  return new Request(scopeUrl(path), {
-    cache: 'reload',
-    credentials: 'same-origin'
-  });
-}
-
-async function fetchAndCache(cache, path) {
-  const request = requestFor(path);
-  const response = await fetch(request);
-  if (!response.ok) {
-    throw new Error(`${path} HTTP ${response.status}`);
-  }
-  await cache.put(request, response.clone());
-}
-
 self.addEventListener('install', (event) => {
   event.waitUntil((async () => {
     const staticCache = await caches.open(STATIC_CACHE);
     await caches.open(RUNTIME_CACHE);
 
-    // 安装阶段只等待最小离线核心，保证Worker尽快激活并接管页面。
-    for (const path of REQUIRED_CORE_PATHS) {
-      await fetchAndCache(staticCache, path);
-    }
-
-    for (const path of REQUIRED_CORE_PATHS) {
-      const match = await staticCache.match(requestFor(path));
-      if (!match) {
-        throw new Error(`CNC PWA核心离线资源缺失：${path}`);
-      }
-    }
-
+    // 使用浏览器标准批量预缓存，安装阶段只等待6个最小离线核心。
+    await staticCache.addAll(REQUIRED_CORE_PATHS.map(scopeUrl));
     await self.skipWaiting();
   })());
 });
@@ -97,7 +71,7 @@ self.addEventListener('fetch', (event) => {
         return fresh;
       } catch {
         const cached = await caches.match(request);
-        return cached || caches.match(requestFor('./offline.html'));
+        return cached || caches.match(scopeUrl('./offline.html'));
       }
     })());
     return;
