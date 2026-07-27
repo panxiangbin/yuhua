@@ -66,35 +66,38 @@ async function openControlledNavigation(page, controlledUrl) {
 
 async function ensureControlled(page, errors, observePage, options = {}) {
   const { register = true, controlledUrl = page.url() } = options;
+  const directoryEntry = new URL('/cnc/', page.url()).href;
+
+  // 真实公网入口是 /cnc/。先从目录URL完成注册，避免部分Chromium环境
+  // 将从 /cnc/index.html 发起的scope参数错误固化为文件级作用域。
+  if (register && page.url() !== directoryEntry) {
+    await page.goto(directoryEntry, { waitUntil: 'domcontentloaded', timeout: 30000 });
+  }
+
   const activation = await withTimeout(page.evaluate(async shouldRegister => {
     if (!('serviceWorker' in navigator)) throw new Error('Service Worker unsupported');
 
-    const scopePath = '/cnc/';
-    const scriptPath = '/cnc/sw.js';
-    const expectedScope = new URL(scopePath, location.origin).href;
-    const expectedScript = new URL(scriptPath, location.origin).href;
-
-    let registrations = await navigator.serviceWorker.getRegistrations();
+    const expectedScope = new URL('./', location.href).href;
+    const expectedScript = new URL('./sw.js', location.href).href;
+    const registrations = await navigator.serviceWorker.getRegistrations();
     let registration = registrations.find(item => item.scope === expectedScope);
 
     if (!registration && shouldRegister) {
-      // 测试使用临时浏览器档案。先清理同源错误作用域，避免首页自动注册
-      // 与显式测试注册发生竞态，再用路径形式建立唯一的 /cnc/ 注册。
       await Promise.all(
         registrations
           .filter(item => item.scope.startsWith(location.origin) && item.scope !== expectedScope)
           .map(item => item.unregister())
       );
 
-      registration = await navigator.serviceWorker.register(scriptPath, {
-        scope: scopePath,
+      registration = await navigator.serviceWorker.register('./sw.js', {
+        scope: './',
         updateViaCache: 'none'
       });
 
       if (registration.scope !== expectedScope) {
         const returnedScope = registration.scope;
         await registration.unregister();
-        throw new Error(`Service Worker scope mismatch after clean registration: expected ${expectedScope}, got ${returnedScope}`);
+        throw new Error(`Service Worker scope mismatch after directory registration: expected ${expectedScope}, got ${returnedScope}`);
       }
     }
 
