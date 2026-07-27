@@ -1,6 +1,7 @@
 const { chromium } = require('playwright');
 const { spawn } = require('child_process');
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const http = require('http');
 
@@ -50,24 +51,31 @@ async function ensureController(page, errors) {
   if (!page.url().startsWith(scope)) throw new Error(`Service Worker scope mismatch: ${scope}`);
   if (await page.evaluate(() => Boolean(navigator.serviceWorker.controller))) return page;
 
-  const controlledPage = await page.context().newPage();
+  const context = page.context();
+  await page.close();
+  await new Promise(resolve => setTimeout(resolve, 300));
+  const controlledPage = await context.newPage();
   observePage(controlledPage, errors);
   await controlledPage.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded', timeout: 30000 });
   await controlledPage.waitForFunction(() => Boolean(navigator.serviceWorker?.controller), { timeout: 30000 });
-  await page.close();
   return controlledPage;
 }
 
 (async () => {
-  let browser;
+  let context;
+  let userDataDir;
   const errors = [];
   let stage = 'server';
   try {
     await waitServer();
     stage = 'browser';
-    browser = await chromium.launch({ headless: true });
-    const context = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'allow' });
-    let page = await context.newPage();
+    userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'cnc-pwa-self-test-'));
+    context = await chromium.launchPersistentContext(userDataDir, {
+      headless: true,
+      viewport: { width: 390, height: 844 },
+      serviceWorkers: 'allow'
+    });
+    let page = context.pages()[0] || await context.newPage();
     observePage(page, errors);
 
     stage = 'controller';
@@ -98,7 +106,8 @@ async function ensureController(page, errors) {
     fs.writeFileSync(path.join(out, 'pwa-self-test-error.txt'), `stage=${stage}\n${error.stack || error}`);
     throw error;
   } finally {
-    if (browser) await browser.close().catch(() => {});
+    if (context) await context.close().catch(() => {});
+    if (userDataDir) fs.rmSync(userDataDir, { recursive: true, force: true });
     server.kill('SIGTERM');
   }
 })().catch(error => {
