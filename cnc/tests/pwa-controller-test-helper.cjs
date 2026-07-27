@@ -22,7 +22,9 @@ async function controllerSnapshot(page) {
         active: item.active?.state || '',
         activeScript: item.active?.scriptURL || '',
         installing: item.installing?.state || '',
-        waiting: item.waiting?.state || ''
+        installingScript: item.installing?.scriptURL || '',
+        waiting: item.waiting?.state || '',
+        waitingScript: item.waiting?.scriptURL || ''
       })),
       scope: registration?.scope || '',
       active: registration?.active?.state || '',
@@ -54,6 +56,49 @@ async function waitForController(page, expectedScript, timeoutMs) {
   }), { expected: expectedScript, ms: timeoutMs });
 }
 
+async function ensureWorkerActivated(page, expectedScope, expectedScript) {
+  return withTimeout(page.evaluate(async ({ scopeUrl, scriptUrl }) => {
+    if (!('serviceWorker' in navigator)) throw new Error('Service Worker unsupported');
+
+    const registration = await navigator.serviceWorker.register('/cnc/sw.js', {
+      scope: '/cnc/',
+      updateViaCache: 'none'
+    });
+    if (registration.scope !== scopeUrl) {
+      throw new Error(`Service Worker scope mismatch: expected ${scopeUrl}, got ${registration.scope}`);
+    }
+
+    const deadline = Date.now() + 60000;
+    while (Date.now() < deadline) {
+      const current = registration.active || registration.waiting || registration.installing;
+      if (current?.state === 'redundant') {
+        throw new Error(`Service Worker became redundant: ${current.scriptURL || ''}`);
+      }
+      if (registration.active?.state === 'activated') {
+        if (registration.active.scriptURL !== scriptUrl) {
+          throw new Error(`Service Worker script mismatch: expected ${scriptUrl}, got ${registration.active.scriptURL}`);
+        }
+        return {
+          scope: registration.scope,
+          state: registration.active.state,
+          script: registration.active.scriptURL
+        };
+      }
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+
+    throw new Error(`Service Worker activation timeout: ${JSON.stringify({
+      scope: registration.scope,
+      active: registration.active?.state || '',
+      activeScript: registration.active?.scriptURL || '',
+      installing: registration.installing?.state || '',
+      installingScript: registration.installing?.scriptURL || '',
+      waiting: registration.waiting?.state || '',
+      waitingScript: registration.waiting?.scriptURL || ''
+    })}`);
+  }, { scopeUrl: expectedScope, scriptUrl: expectedScript }), 65000, 'Service Worker activation');
+}
+
 async function openControlledNavigation(page, controlledUrl, expectedScript) {
   const diagnostics = [];
   for (let attempt = 1; attempt <= 4; attempt += 1) {
@@ -67,7 +112,7 @@ async function openControlledNavigation(page, controlledUrl, expectedScript) {
 }
 
 async function ensureControlled(page, errors, observePage, options = {}) {
-  const { register = true, controlledUrl = page.url() } = options;
+  const { controlledUrl = page.url() } = options;
   const directoryEntry = new URL('/cnc/', page.url()).href;
   const expectedScope = new URL('/cnc/', page.url()).href;
   const expectedScript = new URL('/cnc/sw.js', page.url()).href;
@@ -80,22 +125,11 @@ async function ensureControlled(page, errors, observePage, options = {}) {
     await page.goto(directoryEntry, { waitUntil: 'domcontentloaded', timeout: 30000 });
   }
 
-  if (register) {
-    await withTimeout(page.evaluate(async () => {
-      if (!('serviceWorker' in navigator)) throw new Error('Service Worker unsupported');
-      await navigator.serviceWorker.register('/cnc/sw.js', {
-        scope: '/cnc/',
-        updateViaCache: 'none'
-      });
-    }), 15000, 'Service Worker registration request');
-  } else {
-    await page.waitForFunction(() => 'serviceWorker' in navigator, { timeout: 10000 });
-  }
+  await ensureWorkerActivated(page, expectedScope, expectedScript);
 
-  // The browser page contract is authoritative: a passing test requires the
-  // document to be controlled by the exact CNC worker script. Playwright's
-  // context.serviceWorkers() event stream is diagnostic-only and can lag or be
-  // empty in headless persistent contexts even when page control is functional.
+  // clients.claim() may control the directory document immediately. If Chromium
+  // does not expose the controller yet, perform real same-scope navigations only
+  // after the worker is confirmed activated.
   if (await waitForController(page, expectedScript, 8000)) return page;
 
   try {
