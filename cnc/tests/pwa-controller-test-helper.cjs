@@ -68,8 +68,6 @@ async function ensureControlled(page, errors, observePage, options = {}) {
   const { register = true, controlledUrl = page.url() } = options;
   const directoryEntry = new URL('/cnc/', page.url()).href;
 
-  // 真实公网入口是 /cnc/。先从目录URL完成注册，避免部分Chromium环境
-  // 将从 /cnc/index.html 发起的scope参数错误固化为文件级作用域。
   if (register && page.url() !== directoryEntry) {
     await page.goto(directoryEntry, { waitUntil: 'domcontentloaded', timeout: 30000 });
   }
@@ -79,7 +77,7 @@ async function ensureControlled(page, errors, observePage, options = {}) {
 
     const expectedScope = new URL('./', location.href).href;
     const expectedScript = new URL('./sw.js', location.href).href;
-    const registrations = await navigator.serviceWorker.getRegistrations();
+    let registrations = await navigator.serviceWorker.getRegistrations();
     let registration = registrations.find(item => item.scope === expectedScope);
 
     if (!registration && shouldRegister) {
@@ -93,12 +91,6 @@ async function ensureControlled(page, errors, observePage, options = {}) {
         scope: './',
         updateViaCache: 'none'
       });
-
-      if (registration.scope !== expectedScope) {
-        const returnedScope = registration.scope;
-        await registration.unregister();
-        throw new Error(`Service Worker scope mismatch after directory registration: expected ${expectedScope}, got ${returnedScope}`);
-      }
     }
 
     if (!registration) throw new Error(`Service Worker registration missing for ${expectedScope}`);
@@ -106,41 +98,47 @@ async function ensureControlled(page, errors, observePage, options = {}) {
       throw new Error(`Service Worker scope mismatch: expected ${expectedScope}, got ${registration.scope}`);
     }
 
-    // 直接跟踪真实Worker对象。Actions里的Chromium偶发不会及时把
-    // registration.active字段同步回来，但installing/waiting Worker本身会持续更新state。
-    const discoveryDeadline = Date.now() + 10000;
-    let worker = registration.installing || registration.waiting || registration.active;
-    while (!worker && Date.now() < discoveryDeadline) {
-      // 某些Chromium测试环境暴露的Registration对象不实现update()；
-      // 仅在方法真实存在时主动刷新，否则继续轮询浏览器正在更新的状态字段。
-      if (typeof registration.update === 'function') {
-        await registration.update().catch(() => {});
-      }
-      await new Promise(resolve => setTimeout(resolve, 100));
-      worker = registration.installing || registration.waiting || registration.active;
-    }
-    if (!worker) {
-      throw new Error(`Service Worker object missing for ${expectedScope}; updateSupported=${typeof registration.update === 'function'}`);
-    }
+    const deadline = Date.now() + 60000;
+    let activeRegistration = registration;
+    while (Date.now() < deadline) {
+      registrations = await navigator.serviceWorker.getRegistrations();
+      const exact = registrations.find(item => item.scope === expectedScope);
+      if (exact) activeRegistration = exact;
 
-    const activationDeadline = Date.now() + 60000;
-    while (worker.state !== 'activated') {
-      if (worker.state === 'redundant') {
+      const active = activeRegistration.active;
+      if (active && active.state === 'activated') {
+        return {
+          expectedScope,
+          expectedScript,
+          activeState: active.state,
+          activeScript: active.scriptURL || ''
+        };
+      }
+
+      const candidate = activeRegistration.installing || activeRegistration.waiting || active;
+      if (candidate?.state === 'redundant') {
         throw new Error(`Service Worker became redundant for ${expectedScope}`);
       }
-      if (Date.now() >= activationDeadline) {
-        throw new Error(`Service Worker activation timeout for ${expectedScope}; worker=${worker.state}; installing=${registration.installing?.state || ''}; waiting=${registration.waiting?.state || ''}; active=${registration.active?.state || ''}`);
+
+      const readyResult = await Promise.race([
+        navigator.serviceWorker.ready.then(value => ({ value })),
+        new Promise(resolve => setTimeout(() => resolve(null), 250))
+      ]);
+      if (readyResult?.value?.scope === expectedScope && readyResult.value.active?.state === 'activated') {
+        const readyActive = readyResult.value.active;
+        return {
+          expectedScope,
+          expectedScript,
+          activeState: readyActive.state,
+          activeScript: readyActive.scriptURL || ''
+        };
       }
+
       await new Promise(resolve => setTimeout(resolve, 100));
-      worker = registration.active || registration.waiting || registration.installing || worker;
     }
 
-    return {
-      expectedScope,
-      expectedScript,
-      activeState: worker.state,
-      activeScript: worker.scriptURL || ''
-    };
+    registrations = await navigator.serviceWorker.getRegistrations();
+    throw new Error(`Service Worker activation timeout for ${expectedScope}; registrations=${JSON.stringify(registrations.map(item => ({ scope: item.scope, active: item.active?.state || '', activeScript: item.active?.scriptURL || '', installing: item.installing?.state || '', waiting: item.waiting?.state || '' })))}`);
   }, register), 75000, 'serviceWorker registration and activation');
 
   if (activation.activeState !== 'activated') {
