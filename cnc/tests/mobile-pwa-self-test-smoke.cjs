@@ -31,7 +31,14 @@ function waitServer() {
   });
 }
 
-async function ensureController(page) {
+function observePage(page, errors) {
+  page.setDefaultTimeout(30000);
+  page.setDefaultNavigationTimeout(30000);
+  page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
+  page.on('pageerror', error => errors.push(error.message));
+}
+
+async function ensureController(page, errors) {
   await page.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(async () => {
     if (!('serviceWorker' in navigator)) return false;
@@ -39,11 +46,16 @@ async function ensureController(page) {
     return Boolean(registration && registration.active && registration.active.state === 'activated');
   }, { timeout: 60000 });
 
-  if (!await page.evaluate(() => Boolean(navigator.serviceWorker.controller))) {
-    await page.goto('about:blank');
-    await page.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded', timeout: 30000 });
-  }
-  await page.waitForFunction(() => Boolean(navigator.serviceWorker?.controller), { timeout: 30000 });
+  const scope = await page.evaluate(async () => (await navigator.serviceWorker.getRegistration('./'))?.scope || '');
+  if (!page.url().startsWith(scope)) throw new Error(`Service Worker scope mismatch: ${scope}`);
+  if (await page.evaluate(() => Boolean(navigator.serviceWorker.controller))) return page;
+
+  const controlledPage = await page.context().newPage();
+  observePage(controlledPage, errors);
+  await controlledPage.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded', timeout: 30000 });
+  await controlledPage.waitForFunction(() => Boolean(navigator.serviceWorker?.controller), { timeout: 30000 });
+  await page.close();
+  return controlledPage;
 }
 
 (async () => {
@@ -55,14 +67,11 @@ async function ensureController(page) {
     stage = 'browser';
     browser = await chromium.launch({ headless: true });
     const context = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'allow' });
-    const page = await context.newPage();
-    page.setDefaultTimeout(30000);
-    page.setDefaultNavigationTimeout(30000);
-    page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
-    page.on('pageerror', error => errors.push(error.message));
+    let page = await context.newPage();
+    observePage(page, errors);
 
     stage = 'controller';
-    await ensureController(page);
+    page = await ensureController(page, errors);
     stage = 'self-test';
     await page.goto('http://127.0.0.1:4173/cnc/pwa-self-test.html', { waitUntil: 'domcontentloaded' });
     await page.waitForFunction(() => document.querySelector('#passed')?.textContent === '8' && document.querySelector('#failed')?.textContent === '0', { timeout: 60000 });
