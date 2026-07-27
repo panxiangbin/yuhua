@@ -9,8 +9,6 @@ function withTimeout(promise, ms, label) {
 }
 
 async function controllerSnapshot(page) {
-  const context = page.context();
-  const workerUrls = context.serviceWorkers().map(worker => worker.url());
   return page.evaluate(async () => {
     const expectedScope = new URL('/cnc/', location.origin).href;
     const registrations = navigator.serviceWorker ? await navigator.serviceWorker.getRegistrations() : [];
@@ -32,15 +30,16 @@ async function controllerSnapshot(page) {
       installing: registration?.installing?.state || '',
       waiting: registration?.waiting?.state || ''
     };
-  }).then(snapshot => ({ ...snapshot, playwrightWorkers: workerUrls }))
-    .catch(error => ({ error: String(error && error.message ? error.message : error), playwrightWorkers: workerUrls }));
+  }).catch(error => ({ error: String(error && error.message ? error.message : error) }));
 }
 
-async function waitForController(page, timeoutMs) {
-  if (await page.evaluate(() => Boolean(navigator.serviceWorker?.controller))) return true;
-  return page.evaluate(ms => new Promise(resolve => {
+async function waitForController(page, expectedScript, timeoutMs) {
+  const current = await page.evaluate(() => navigator.serviceWorker?.controller?.scriptURL || '');
+  if (current === expectedScript) return true;
+
+  return page.evaluate(({ expected, ms }) => new Promise(resolve => {
     if (!navigator.serviceWorker) return resolve(false);
-    if (navigator.serviceWorker.controller) return resolve(true);
+    if (navigator.serviceWorker.controller?.scriptURL === expected) return resolve(true);
     let settled = false;
     const finish = value => {
       if (settled) return;
@@ -49,42 +48,26 @@ async function waitForController(page, timeoutMs) {
       clearTimeout(timer);
       resolve(value);
     };
-    const onChange = () => finish(Boolean(navigator.serviceWorker.controller));
-    const timer = setTimeout(() => finish(Boolean(navigator.serviceWorker.controller)), ms);
+    const onChange = () => finish(navigator.serviceWorker.controller?.scriptURL === expected);
+    const timer = setTimeout(() => finish(navigator.serviceWorker.controller?.scriptURL === expected), ms);
     navigator.serviceWorker.addEventListener('controllerchange', onChange);
-  }), timeoutMs);
+  }), { expected: expectedScript, ms: timeoutMs });
 }
 
-async function waitForWorkerScript(context, expectedScript, timeoutMs = 60000) {
-  const findWorker = () => context.serviceWorkers().find(worker => worker.url() === expectedScript);
-  const existing = findWorker();
-  if (existing) return existing;
-
-  return withTimeout(new Promise(resolve => {
-    const onWorker = worker => {
-      if (worker.url() !== expectedScript) return;
-      context.off('serviceworker', onWorker);
-      resolve(worker);
-    };
-    context.on('serviceworker', onWorker);
-  }), timeoutMs, `Playwright Service Worker ${expectedScript}`);
-}
-
-async function openControlledNavigation(page, controlledUrl) {
+async function openControlledNavigation(page, controlledUrl, expectedScript) {
   const diagnostics = [];
   for (let attempt = 1; attempt <= 4; attempt += 1) {
     const url = new URL(controlledUrl);
     url.searchParams.set('__cnc_sw_probe', `${Date.now()}-${attempt}`);
     await page.goto(url.href, { waitUntil: 'domcontentloaded', timeout: 30000 });
-    if (await waitForController(page, 8000)) return page;
+    if (await waitForController(page, expectedScript, 8000)) return page;
     diagnostics.push(await controllerSnapshot(page));
   }
-  throw new Error(`Service Worker script exists but navigations were not controlled: ${JSON.stringify(diagnostics)}`);
+  throw new Error(`Navigations were not controlled by ${expectedScript}: ${JSON.stringify(diagnostics)}`);
 }
 
 async function ensureControlled(page, errors, observePage, options = {}) {
   const { register = true, controlledUrl = page.url() } = options;
-  const context = page.context();
   const directoryEntry = new URL('/cnc/', page.url()).href;
   const expectedScope = new URL('/cnc/', page.url()).href;
   const expectedScript = new URL('/cnc/sw.js', page.url()).href;
@@ -109,15 +92,14 @@ async function ensureControlled(page, errors, observePage, options = {}) {
     await page.waitForFunction(() => 'serviceWorker' in navigator, { timeout: 10000 });
   }
 
-  const worker = await waitForWorkerScript(context, expectedScript, 60000);
-  if (worker.url() !== expectedScript) {
-    throw new Error(`Unexpected Playwright Service Worker script: ${worker.url()}`);
-  }
-
-  if (await waitForController(page, 5000)) return page;
+  // The browser page contract is authoritative: a passing test requires the
+  // document to be controlled by the exact CNC worker script. Playwright's
+  // context.serviceWorkers() event stream is diagnostic-only and can lag or be
+  // empty in headless persistent contexts even when page control is functional.
+  if (await waitForController(page, expectedScript, 8000)) return page;
 
   try {
-    return await openControlledNavigation(page, controlledUrl);
+    return await openControlledNavigation(page, controlledUrl, expectedScript);
   } catch (error) {
     const snapshot = await controllerSnapshot(page);
     throw new Error(`${error.message}; final=${JSON.stringify(snapshot)}`);
