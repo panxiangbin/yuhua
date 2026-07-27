@@ -12,8 +12,7 @@ async function controllerSnapshot(page) {
   return page.evaluate(async () => {
     const expectedScope = new URL('/cnc/', location.origin).href;
     const registrations = navigator.serviceWorker ? await navigator.serviceWorker.getRegistrations() : [];
-    const registration = registrations.find(item => item.scope === expectedScope) ||
-      registrations.find(item => location.href.startsWith(item.scope));
+    const registration = registrations.find(item => item.scope === expectedScope);
     return {
       url: location.href,
       controller: navigator.serviceWorker?.controller?.scriptURL || '',
@@ -65,30 +64,30 @@ async function openControlledNavigation(page, controlledUrl) {
 
 async function ensureControlled(page, errors, observePage, options = {}) {
   const { register = true, controlledUrl = page.url() } = options;
-  const registrationState = await withTimeout(page.evaluate(async shouldRegister => {
+  const expectedScope = await withTimeout(page.evaluate(async shouldRegister => {
     if (!('serviceWorker' in navigator)) throw new Error('Service Worker unsupported');
-    const expectedScope = new URL('/cnc/', location.origin).href;
+    const scope = new URL('/cnc/', location.origin).href;
     const scriptUrl = new URL('/cnc/sw.js', location.origin).href;
     const registrations = await navigator.serviceWorker.getRegistrations();
-    let registration = registrations.find(item => item.scope === expectedScope) ||
-      registrations.find(item => location.href.startsWith(item.scope));
+    let registration = registrations.find(item => item.scope === scope);
     if (!registration && shouldRegister) {
-      registration = await navigator.serviceWorker.register(scriptUrl, { scope: expectedScope });
+      registration = await navigator.serviceWorker.register(scriptUrl, { scope });
     }
-    if (!registration) throw new Error(`Service Worker registration missing for ${expectedScope}`);
-    return { scope: registration.scope, expectedScope };
+    if (!registration) throw new Error(`Service Worker registration missing for ${scope}`);
+    return scope;
   }, register), 15000, 'serviceWorker registration');
 
-  await page.waitForFunction(async expectedScope => {
+  await page.waitForFunction(async scope => {
     const registrations = await navigator.serviceWorker.getRegistrations();
-    const registration = registrations.find(item => item.scope === expectedScope);
+    const registration = registrations.find(item => item.scope === scope);
     return Boolean(registration && registration.active && registration.active.state === 'activated');
-  }, registrationState.expectedScope, { timeout: 60000 });
+  }, expectedScope, { timeout: 60000 });
 
-  if (registrationState.scope !== registrationState.expectedScope) {
-    throw new Error(`Service Worker scope mismatch: expected ${registrationState.expectedScope}, got ${registrationState.scope}`);
+  const activeRegistration = await controllerSnapshot(page);
+  if (activeRegistration.scope !== expectedScope || activeRegistration.active !== 'activated') {
+    throw new Error(`Service Worker exact scope not active: ${JSON.stringify(activeRegistration)}`);
   }
-  if (!controlledUrl.startsWith(registrationState.expectedScope)) {
+  if (!controlledUrl.startsWith(expectedScope)) {
     throw new Error(`Controlled URL outside Service Worker scope: ${controlledUrl}`);
   }
   if (await waitForController(page, 3000)) return page;
