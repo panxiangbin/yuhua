@@ -68,13 +68,36 @@ async function ensureControlled(page, errors, observePage, options = {}) {
   const { register = true, controlledUrl = page.url() } = options;
   const activation = await withTimeout(page.evaluate(async shouldRegister => {
     if (!('serviceWorker' in navigator)) throw new Error('Service Worker unsupported');
-    const expectedScope = new URL('/cnc/', location.origin).href;
-    const scriptUrl = new URL('/cnc/sw.js', location.origin).href;
-    const registrations = await navigator.serviceWorker.getRegistrations();
+
+    const scopePath = '/cnc/';
+    const scriptPath = '/cnc/sw.js';
+    const expectedScope = new URL(scopePath, location.origin).href;
+    const expectedScript = new URL(scriptPath, location.origin).href;
+
+    let registrations = await navigator.serviceWorker.getRegistrations();
     let registration = registrations.find(item => item.scope === expectedScope);
+
     if (!registration && shouldRegister) {
-      registration = await navigator.serviceWorker.register(scriptUrl, { scope: expectedScope });
+      // 测试使用临时浏览器档案。先清理同源错误作用域，避免首页自动注册
+      // 与显式测试注册发生竞态，再用路径形式建立唯一的 /cnc/ 注册。
+      await Promise.all(
+        registrations
+          .filter(item => item.scope.startsWith(location.origin) && item.scope !== expectedScope)
+          .map(item => item.unregister())
+      );
+
+      registration = await navigator.serviceWorker.register(scriptPath, {
+        scope: scopePath,
+        updateViaCache: 'none'
+      });
+
+      if (registration.scope !== expectedScope) {
+        const returnedScope = registration.scope;
+        await registration.unregister();
+        throw new Error(`Service Worker scope mismatch after clean registration: expected ${expectedScope}, got ${returnedScope}`);
+      }
     }
+
     if (!registration) throw new Error(`Service Worker registration missing for ${expectedScope}`);
     if (registration.scope !== expectedScope) {
       throw new Error(`Service Worker scope mismatch: expected ${expectedScope}, got ${registration.scope}`);
@@ -121,6 +144,7 @@ async function ensureControlled(page, errors, observePage, options = {}) {
 
     return {
       expectedScope,
+      expectedScript,
       activeState: activeWorker.state,
       activeScript: activeWorker.scriptURL || ''
     };
@@ -129,7 +153,7 @@ async function ensureControlled(page, errors, observePage, options = {}) {
   if (activation.activeState !== 'activated') {
     throw new Error(`Service Worker not activated: ${JSON.stringify(activation)}`);
   }
-  if (!activation.activeScript.endsWith('/cnc/sw.js')) {
+  if (activation.activeScript !== activation.expectedScript) {
     throw new Error(`Unexpected active Service Worker script: ${JSON.stringify(activation)}`);
   }
   if (!controlledUrl.startsWith(activation.expectedScope)) {
