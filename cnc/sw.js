@@ -9,20 +9,7 @@ const REQUIRED_CORE_PATHS = [
   './pwa-status.html',
   './pwa-self-test.html',
   './pages-status.html',
-  './build-info.json',
-  './training-camp.html'
-];
-
-const OPTIONAL_CORE_PATHS = [
-  './manifest.webmanifest',
-  './styles.css',
-  './styles-enhanced.css',
-  './app.js',
-  './practice.html',
-  './profile.html',
-  './simulator-hub.html',
-  './data-backup.html',
-  './data-health.html'
+  './build-info.json'
 ];
 
 function scopeUrl(path) {
@@ -89,14 +76,6 @@ self.addEventListener('message', (event) => {
     if (target) {
       target.postMessage({ type: 'CNC_SW_BUILD', build: BUILD });
     }
-  }
-  if (event.data && event.data.type === 'WARM_OPTIONAL_CACHE') {
-    event.waitUntil((async () => {
-      const cache = await caches.open(STATIC_CACHE);
-      await Promise.allSettled(
-        OPTIONAL_CORE_PATHS.map((path) => fetchAndCache(cache, path))
-      );
-    })());
   }
 });
 
