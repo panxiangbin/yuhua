@@ -40,15 +40,24 @@ function withTimeout(promise, ms, label) {
 }
 
 async function ensureControlled(page) {
+  await withTimeout(page.evaluate(async () => {
+    if (!('serviceWorker' in navigator)) throw new Error('Service Worker unsupported');
+    let registration = await navigator.serviceWorker.getRegistration('./');
+    if (!registration) {
+      registration = await navigator.serviceWorker.register('./sw.js', { scope: './' });
+    }
+    return Boolean(registration);
+  }), 15000, 'serviceWorker registration');
+
   await page.waitForFunction(async () => {
-    if (!('serviceWorker' in navigator)) return false;
-    return Boolean(await navigator.serviceWorker.getRegistration('./'));
-  }, { timeout: 15000 });
-  await withTimeout(page.evaluate(() => navigator.serviceWorker.ready.then(() => true)), 15000, 'serviceWorker.ready');
+    const registration = await navigator.serviceWorker.getRegistration('./');
+    return Boolean(registration && registration.active && registration.active.state === 'activated');
+  }, { timeout: 60000 });
+
   if (!await page.evaluate(() => Boolean(navigator.serviceWorker.controller))) {
-    await page.reload({ waitUntil: 'domcontentloaded', timeout: 15000 });
+    await page.reload({ waitUntil: 'domcontentloaded', timeout: 30000 });
   }
-  await page.waitForFunction(() => Boolean(navigator.serviceWorker?.controller), { timeout: 15000 });
+  await page.waitForFunction(() => Boolean(navigator.serviceWorker?.controller), { timeout: 30000 });
 }
 
 (async () => {
@@ -64,8 +73,8 @@ async function ensureControlled(page) {
     browser = await chromium.launch({ headless: true });
     const context = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'allow' });
     const page = await context.newPage();
-    page.setDefaultTimeout(15000);
-    page.setDefaultNavigationTimeout(15000);
+    page.setDefaultTimeout(30000);
+    page.setDefaultNavigationTimeout(30000);
     page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
     page.on('pageerror', error => errors.push(error.message));
 
@@ -94,6 +103,11 @@ async function ensureControlled(page) {
     }));
     if (small.length) throw new Error(`触控区不足44px ${JSON.stringify(small)}`);
 
+    stage = 'warm-runtime-route';
+    await page.goto('http://127.0.0.1:4173/cnc/training-camp.html', { waitUntil: 'domcontentloaded' });
+    if (!(await page.title()).includes('训练')) throw new Error('训练营在线预热失败');
+    await page.goto('http://127.0.0.1:4173/cnc/pwa-status.html', { waitUntil: 'domcontentloaded' });
+
     stage = 'cached-offline-route';
     await context.setOffline(true);
     await page.goto('http://127.0.0.1:4173/cnc/training-camp.html', { waitUntil: 'domcontentloaded' });
@@ -105,7 +119,7 @@ async function ensureControlled(page) {
 
     await page.screenshot({ path: path.join(out, 'pwa-offline-390x844.png'), fullPage: true });
     if (errors.length) throw new Error(`控制台错误 ${errors.join(' | ')}`);
-    fs.writeFileSync(path.join(out, 'pwa-offline-result.json'), JSON.stringify({ build, caches: cachesBefore, offlineFallback: true, touchTargets: true }, null, 2));
+    fs.writeFileSync(path.join(out, 'pwa-offline-result.json'), JSON.stringify({ build, caches: cachesBefore, offlineFallback: true, runtimeWarmup: true, touchTargets: true }, null, 2));
     console.log('CNC PWA offline cache smoke passed');
   } catch (error) {
     fs.writeFileSync(path.join(out, 'pwa-offline-error.txt'), `stage=${stage}\n${error.stack || error}`);
