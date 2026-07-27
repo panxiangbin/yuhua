@@ -39,14 +39,19 @@ function withTimeout(promise, ms, label) {
   ]).finally(() => clearTimeout(timer));
 }
 
-async function ensureControlled(page) {
+function observePage(page, errors) {
+  page.setDefaultTimeout(30000);
+  page.setDefaultNavigationTimeout(30000);
+  page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
+  page.on('pageerror', error => errors.push(error.message));
+}
+
+async function ensureControlled(page, errors) {
   await withTimeout(page.evaluate(async () => {
     if (!('serviceWorker' in navigator)) throw new Error('Service Worker unsupported');
     let registration = await navigator.serviceWorker.getRegistration('./');
-    if (!registration) {
-      registration = await navigator.serviceWorker.register('./sw.js', { scope: './' });
-    }
-    return Boolean(registration);
+    if (!registration) registration = await navigator.serviceWorker.register('./sw.js', { scope: './' });
+    return { scope: registration.scope };
   }), 15000, 'serviceWorker registration');
 
   await page.waitForFunction(async () => {
@@ -54,12 +59,16 @@ async function ensureControlled(page) {
     return Boolean(registration && registration.active && registration.active.state === 'activated');
   }, { timeout: 60000 });
 
-  if (!await page.evaluate(() => Boolean(navigator.serviceWorker.controller))) {
-    const controlledUrl = page.url();
-    await page.goto('about:blank');
-    await page.goto(controlledUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
-  }
-  await page.waitForFunction(() => Boolean(navigator.serviceWorker?.controller), { timeout: 30000 });
+  const scope = await page.evaluate(async () => (await navigator.serviceWorker.getRegistration('./'))?.scope || '');
+  if (!page.url().startsWith(scope)) throw new Error(`Service Worker scope mismatch: ${scope}`);
+  if (await page.evaluate(() => Boolean(navigator.serviceWorker.controller))) return page;
+
+  const controlledPage = await page.context().newPage();
+  observePage(controlledPage, errors);
+  await controlledPage.goto(page.url(), { waitUntil: 'domcontentloaded', timeout: 30000 });
+  await controlledPage.waitForFunction(() => Boolean(navigator.serviceWorker?.controller), { timeout: 30000 });
+  await page.close();
+  return controlledPage;
 }
 
 (async () => {
@@ -74,15 +83,12 @@ async function ensureControlled(page) {
     stage = 'browser-launch';
     browser = await chromium.launch({ headless: true });
     const context = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'allow' });
-    const page = await context.newPage();
-    page.setDefaultTimeout(30000);
-    page.setDefaultNavigationTimeout(30000);
-    page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
-    page.on('pageerror', error => errors.push(error.message));
+    let page = await context.newPage();
+    observePage(page, errors);
 
     stage = 'home';
     await page.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded' });
-    await ensureControlled(page);
+    page = await ensureControlled(page, errors);
 
     stage = 'profile-entry';
     await page.goto('http://127.0.0.1:4173/cnc/profile.html', { waitUntil: 'domcontentloaded' });
@@ -118,7 +124,7 @@ async function ensureControlled(page) {
 
     stage = 'cache-recovery';
     await page.reload({ waitUntil: 'domcontentloaded' });
-    await ensureControlled(page);
+    page = await ensureControlled(page, errors);
     await page.waitForFunction(() => Number(document.querySelector('#cache-count')?.textContent) >= 2);
     await page.waitForFunction(() => document.querySelector('#status')?.textContent.includes('版本一致'));
 
