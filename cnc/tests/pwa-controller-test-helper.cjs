@@ -56,10 +56,9 @@ async function waitForController(page, expectedScript, timeoutMs) {
   }), { expected: expectedScript, ms: timeoutMs });
 }
 
-async function ensureWorkerActivated(page, expectedScope, expectedScript) {
+async function registerExpectedWorker(page, expectedScope, expectedScript) {
   return withTimeout(page.evaluate(async ({ scopeUrl, scriptUrl }) => {
     if (!('serviceWorker' in navigator)) throw new Error('Service Worker unsupported');
-
     const registration = await navigator.serviceWorker.register('/cnc/sw.js', {
       scope: '/cnc/',
       updateViaCache: 'none'
@@ -67,45 +66,25 @@ async function ensureWorkerActivated(page, expectedScope, expectedScript) {
     if (registration.scope !== scopeUrl) {
       throw new Error(`Service Worker scope mismatch: expected ${scopeUrl}, got ${registration.scope}`);
     }
-
-    const deadline = Date.now() + 60000;
-    while (Date.now() < deadline) {
-      const current = registration.active || registration.waiting || registration.installing;
-      if (current?.state === 'redundant') {
-        throw new Error(`Service Worker became redundant: ${current.scriptURL || ''}`);
+    const installingScript = registration.installing?.scriptURL || '';
+    const waitingScript = registration.waiting?.scriptURL || '';
+    const activeScript = registration.active?.scriptURL || '';
+    for (const actual of [installingScript, waitingScript, activeScript]) {
+      if (actual && actual !== scriptUrl) {
+        throw new Error(`Service Worker script mismatch: expected ${scriptUrl}, got ${actual}`);
       }
-      if (registration.active?.state === 'activated') {
-        if (registration.active.scriptURL !== scriptUrl) {
-          throw new Error(`Service Worker script mismatch: expected ${scriptUrl}, got ${registration.active.scriptURL}`);
-        }
-        return {
-          scope: registration.scope,
-          state: registration.active.state,
-          script: registration.active.scriptURL
-        };
-      }
-      await new Promise(resolve => setTimeout(resolve, 100));
     }
-
-    throw new Error(`Service Worker activation timeout: ${JSON.stringify({
-      scope: registration.scope,
-      active: registration.active?.state || '',
-      activeScript: registration.active?.scriptURL || '',
-      installing: registration.installing?.state || '',
-      installingScript: registration.installing?.scriptURL || '',
-      waiting: registration.waiting?.state || '',
-      waitingScript: registration.waiting?.scriptURL || ''
-    })}`);
-  }, { scopeUrl: expectedScope, scriptUrl: expectedScript }), 65000, 'Service Worker activation');
+    return { scope: registration.scope, installingScript, waitingScript, activeScript };
+  }, { scopeUrl: expectedScope, scriptUrl: expectedScript }), 15000, 'Service Worker registration');
 }
 
 async function openControlledNavigation(page, controlledUrl, expectedScript) {
   const diagnostics = [];
-  for (let attempt = 1; attempt <= 4; attempt += 1) {
+  for (let attempt = 1; attempt <= 6; attempt += 1) {
     const url = new URL(controlledUrl);
     url.searchParams.set('__cnc_sw_probe', `${Date.now()}-${attempt}`);
     await page.goto(url.href, { waitUntil: 'domcontentloaded', timeout: 30000 });
-    if (await waitForController(page, expectedScript, 8000)) return page;
+    if (await waitForController(page, expectedScript, 10000)) return page;
     diagnostics.push(await controllerSnapshot(page));
   }
   throw new Error(`Navigations were not controlled by ${expectedScript}: ${JSON.stringify(diagnostics)}`);
@@ -125,12 +104,14 @@ async function ensureControlled(page, errors, observePage, options = {}) {
     await page.goto(directoryEntry, { waitUntil: 'domcontentloaded', timeout: 30000 });
   }
 
-  await ensureWorkerActivated(page, expectedScope, expectedScript);
+  // Registration resolving only proves the browser accepted the request. The
+  // user-visible PWA contract is stricter: a subsequent same-scope navigation
+  // must be controlled by the exact expected script. Avoid treating transient
+  // Registration.active/installing snapshots as a hard gate because Chromium
+  // may expose an empty snapshot while installation proceeds in the browser.
+  await registerExpectedWorker(page, expectedScope, expectedScript);
 
-  // clients.claim() may control the directory document immediately. If Chromium
-  // does not expose the controller yet, perform real same-scope navigations only
-  // after the worker is confirmed activated.
-  if (await waitForController(page, expectedScript, 8000)) return page;
+  if (await waitForController(page, expectedScript, 10000)) return page;
 
   try {
     return await openControlledNavigation(page, controlledUrl, expectedScript);
