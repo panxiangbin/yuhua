@@ -59,7 +59,7 @@ function observePage(page, errors) {
 
     stage = 'controller';
     await page.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded' });
-    page = await ensureControlled(page, errors, observePage, { register: false });
+    page = await ensureControlled(page, errors, observePage);
     stage = 'self-test';
     await page.goto('http://127.0.0.1:4173/cnc/pwa-self-test.html', { waitUntil: 'domcontentloaded' });
     await page.waitForFunction(() => document.querySelector('#passed')?.textContent === '8' && document.querySelector('#failed')?.textContent === '0', { timeout: 60000 });
