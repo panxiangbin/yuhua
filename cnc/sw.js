@@ -9,7 +9,8 @@ const REQUIRED_CORE_PATHS = [
   './pwa-status.html',
   './pwa-self-test.html',
   './pages-status.html',
-  './build-info.json'
+  './build-info.json',
+  './training-camp.html'
 ];
 
 const OPTIONAL_CORE_PATHS = [
@@ -17,7 +18,6 @@ const OPTIONAL_CORE_PATHS = [
   './styles.css',
   './styles-enhanced.css',
   './app.js',
-  './training-camp.html',
   './practice.html',
   './profile.html',
   './simulator-hub.html',
@@ -50,15 +50,10 @@ self.addEventListener('install', (event) => {
     const staticCache = await caches.open(STATIC_CACHE);
     await caches.open(RUNTIME_CACHE);
 
-    // 安装只强制缓存最小可用离线壳，避免大型或非关键资源拖死激活。
+    // 安装阶段只等待最小离线核心，保证Worker尽快激活并接管页面。
     for (const path of REQUIRED_CORE_PATHS) {
       await fetchAndCache(staticCache, path);
     }
-
-    // 非关键资源尽力缓存；失败不会阻止核心离线能力激活。
-    await Promise.allSettled(
-      OPTIONAL_CORE_PATHS.map((path) => fetchAndCache(staticCache, path))
-    );
 
     for (const path of REQUIRED_CORE_PATHS) {
       const match = await staticCache.match(requestFor(path));
@@ -94,6 +89,14 @@ self.addEventListener('message', (event) => {
     if (target) {
       target.postMessage({ type: 'CNC_SW_BUILD', build: BUILD });
     }
+  }
+  if (event.data && event.data.type === 'WARM_OPTIONAL_CACHE') {
+    event.waitUntil((async () => {
+      const cache = await caches.open(STATIC_CACHE);
+      await Promise.allSettled(
+        OPTIONAL_CORE_PATHS.map((path) => fetchAndCache(cache, path))
+      );
+    })());
   }
 });
 
