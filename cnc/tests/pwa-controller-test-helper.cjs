@@ -15,6 +15,7 @@ async function controllerSnapshot(page) {
     const registration = registrations.find(item => item.scope === expectedScope);
     return {
       url: location.href,
+      readyState: document.readyState,
       controller: navigator.serviceWorker?.controller?.scriptURL || '',
       expectedScope,
       registrations: registrations.map(item => ({
@@ -80,12 +81,29 @@ async function registerExpectedWorker(page, expectedScope, expectedScript) {
 
 async function openControlledNavigation(page, controlledUrl, expectedScript) {
   const diagnostics = [];
-  for (let attempt = 1; attempt <= 6; attempt += 1) {
+  for (let attempt = 1; attempt <= 4; attempt += 1) {
     const url = new URL(controlledUrl);
     url.searchParams.set('__cnc_sw_probe', `${Date.now()}-${attempt}`);
-    await page.goto(url.href, { waitUntil: 'domcontentloaded', timeout: 30000 });
+
+    let navigationError = '';
+    try {
+      // A Service Worker may commit and control the new document even when a
+      // subresource keeps DOMContentLoaded pending. Treat the document commit as
+      // the navigation boundary, then observe DOM readiness separately.
+      await page.goto(url.href, { waitUntil: 'commit', timeout: 15000 });
+      await page.waitForLoadState('domcontentloaded', { timeout: 5000 }).catch(() => {});
+    } catch (error) {
+      navigationError = String(error && error.message ? error.message : error);
+      // If a new document committed before Playwright reported the timeout, it can
+      // still carry the expected controller. Inspect it before deciding to retry.
+    }
+
     if (await waitForController(page, expectedScript, 10000)) return page;
-    diagnostics.push(await controllerSnapshot(page));
+    diagnostics.push({
+      attempt,
+      navigationError,
+      snapshot: await controllerSnapshot(page)
+    });
   }
   throw new Error(`Navigations were not controlled by ${expectedScript}: ${JSON.stringify(diagnostics)}`);
 }
