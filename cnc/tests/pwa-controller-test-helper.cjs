@@ -79,7 +79,7 @@ async function ensureControlled(page, errors, observePage, options = {}) {
 
     const expectedScope = new URL('./', location.href).href;
     const expectedScript = new URL('./sw.js', location.href).href;
-    const registrations = await navigator.serviceWorker.getRegistrations();
+    let registrations = await navigator.serviceWorker.getRegistrations();
     let registration = registrations.find(item => item.scope === expectedScope);
 
     if (!registration && shouldRegister) {
@@ -106,44 +106,24 @@ async function ensureControlled(page, errors, observePage, options = {}) {
       throw new Error(`Service Worker scope mismatch: expected ${expectedScope}, got ${registration.scope}`);
     }
 
-    const activeWorker = registration.active && registration.active.state === 'activated'
-      ? registration.active
-      : await new Promise((resolve, reject) => {
-          let worker = registration.installing || registration.waiting || registration.active;
-          const timeout = setTimeout(() => {
-            cleanup();
-            reject(new Error(`Service Worker activation timeout for ${expectedScope}`));
-          }, 60000);
-          const cleanup = () => {
-            clearTimeout(timeout);
-            registration.removeEventListener('updatefound', onUpdateFound);
-            if (worker) worker.removeEventListener('statechange', onStateChange);
-          };
-          const onStateChange = () => {
-            if (worker && worker.state === 'activated') {
-              cleanup();
-              resolve(worker);
-            }
-            if (worker && worker.state === 'redundant') {
-              cleanup();
-              reject(new Error(`Service Worker became redundant for ${expectedScope}`));
-            }
-          };
-          const watch = candidate => {
-            if (!candidate) return;
-            if (worker) worker.removeEventListener('statechange', onStateChange);
-            worker = candidate;
-            if (worker.state === 'activated') {
-              cleanup();
-              resolve(worker);
-              return;
-            }
-            worker.addEventListener('statechange', onStateChange);
-          };
-          const onUpdateFound = () => watch(registration.installing);
-          registration.addEventListener('updatefound', onUpdateFound);
-          watch(worker);
-        });
+    const deadline = Date.now() + 60000;
+    let activeWorker = registration.active;
+    while (!activeWorker || activeWorker.state !== 'activated') {
+      const candidate = registration.installing || registration.waiting || registration.active;
+      if (candidate && candidate.state === 'redundant') {
+        throw new Error(`Service Worker became redundant for ${expectedScope}`);
+      }
+      if (Date.now() >= deadline) {
+        throw new Error(`Service Worker activation timeout for ${expectedScope}`);
+      }
+      await new Promise(resolve => setTimeout(resolve, 100));
+      registrations = await navigator.serviceWorker.getRegistrations();
+      registration = registrations.find(item => item.scope === expectedScope);
+      if (!registration) {
+        throw new Error(`Service Worker registration disappeared for ${expectedScope}`);
+      }
+      activeWorker = registration.active;
+    }
 
     return {
       expectedScope,
