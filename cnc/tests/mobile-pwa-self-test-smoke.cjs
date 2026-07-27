@@ -4,6 +4,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const http = require('http');
+const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.resolve(__dirname, '../test-results');
@@ -39,28 +40,6 @@ function observePage(page, errors) {
   page.on('pageerror', error => errors.push(error.message));
 }
 
-async function ensureController(page, errors) {
-  await page.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded' });
-  await page.waitForFunction(async () => {
-    if (!('serviceWorker' in navigator)) return false;
-    const registration = await navigator.serviceWorker.getRegistration('./');
-    return Boolean(registration && registration.active && registration.active.state === 'activated');
-  }, { timeout: 60000 });
-
-  const scope = await page.evaluate(async () => (await navigator.serviceWorker.getRegistration('./'))?.scope || '');
-  if (!page.url().startsWith(scope)) throw new Error(`Service Worker scope mismatch: ${scope}`);
-  if (await page.evaluate(() => Boolean(navigator.serviceWorker.controller))) return page;
-
-  const context = page.context();
-  await page.close();
-  await new Promise(resolve => setTimeout(resolve, 300));
-  const controlledPage = await context.newPage();
-  observePage(controlledPage, errors);
-  await controlledPage.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded', timeout: 30000 });
-  await controlledPage.waitForFunction(() => Boolean(navigator.serviceWorker?.controller), { timeout: 30000 });
-  return controlledPage;
-}
-
 (async () => {
   let context;
   let userDataDir;
@@ -79,7 +58,8 @@ async function ensureController(page, errors) {
     observePage(page, errors);
 
     stage = 'controller';
-    page = await ensureController(page, errors);
+    await page.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded' });
+    page = await ensureControlled(page, errors, observePage, { register: false });
     stage = 'self-test';
     await page.goto('http://127.0.0.1:4173/cnc/pwa-self-test.html', { waitUntil: 'domcontentloaded' });
     await page.waitForFunction(() => document.querySelector('#passed')?.textContent === '8' && document.querySelector('#failed')?.textContent === '0', { timeout: 60000 });
