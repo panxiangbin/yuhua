@@ -79,7 +79,7 @@ async function ensureControlled(page, errors, observePage, options = {}) {
 
     const expectedScope = new URL('./', location.href).href;
     const expectedScript = new URL('./sw.js', location.href).href;
-    let registrations = await navigator.serviceWorker.getRegistrations();
+    const registrations = await navigator.serviceWorker.getRegistrations();
     let registration = registrations.find(item => item.scope === expectedScope);
 
     if (!registration && shouldRegister) {
@@ -106,6 +106,8 @@ async function ensureControlled(page, errors, observePage, options = {}) {
       throw new Error(`Service Worker scope mismatch: expected ${expectedScope}, got ${registration.scope}`);
     }
 
+    // 保留同一个Registration对象轮询状态。部分Actions Chromium会在激活期间
+    // 让getRegistrations()短暂返回空数组，但原对象仍持续更新，这不代表注册丢失。
     const deadline = Date.now() + 60000;
     let activeWorker = registration.active;
     while (!activeWorker || activeWorker.state !== 'activated') {
@@ -114,14 +116,9 @@ async function ensureControlled(page, errors, observePage, options = {}) {
         throw new Error(`Service Worker became redundant for ${expectedScope}`);
       }
       if (Date.now() >= deadline) {
-        throw new Error(`Service Worker activation timeout for ${expectedScope}`);
+        throw new Error(`Service Worker activation timeout for ${expectedScope}; installing=${registration.installing?.state || ''}; waiting=${registration.waiting?.state || ''}; active=${registration.active?.state || ''}`);
       }
       await new Promise(resolve => setTimeout(resolve, 100));
-      registrations = await navigator.serviceWorker.getRegistrations();
-      registration = registrations.find(item => item.scope === expectedScope);
-      if (!registration) {
-        throw new Error(`Service Worker registration disappeared for ${expectedScope}`);
-      }
       activeWorker = registration.active;
     }
 
