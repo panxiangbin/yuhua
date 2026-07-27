@@ -4,11 +4,15 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const http = require('http');
-const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
+const { ensureControlled, withTimeout } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.resolve(__dirname, '../test-results');
 fs.mkdirSync(out, { recursive: true });
+
+const RUN_TIMEOUT_MS = 8 * 60 * 1000;
+const CLEANUP_TIMEOUT_MS = 10000;
+const errorPath = path.join(out, 'pwa-self-test-error.txt');
 
 const server = spawn('python3', ['-m', 'http.server', '4173', '--bind', '127.0.0.1'], {
   cwd: root,
@@ -40,11 +44,29 @@ function observePage(page, errors) {
   page.on('pageerror', error => errors.push(error.message));
 }
 
+function waitForExit(child, timeoutMs) {
+  if (!child || child.exitCode !== null || child.signalCode !== null) return Promise.resolve();
+  return Promise.race([
+    new Promise(resolve => child.once('exit', resolve)),
+    new Promise(resolve => setTimeout(resolve, timeoutMs))
+  ]);
+}
+
 (async () => {
   let context;
   let userDataDir;
   const errors = [];
   let stage = 'server';
+  let finished = false;
+
+  const watchdog = setTimeout(() => {
+    if (finished) return;
+    const message = `stage=${stage}\nPWA self-test exceeded ${RUN_TIMEOUT_MS}ms hard limit\nconsole=${errors.join(' | ')}`;
+    try { fs.writeFileSync(errorPath, message); } catch {}
+    try { server.kill('SIGKILL'); } catch {}
+    process.exit(124);
+  }, RUN_TIMEOUT_MS);
+
   try {
     await waitServer();
     stage = 'browser';
@@ -83,12 +105,20 @@ function observePage(page, errors) {
     fs.writeFileSync(path.join(out, 'pwa-self-test-result.json'), JSON.stringify(result, null, 2));
     console.log(JSON.stringify(result));
   } catch (error) {
-    fs.writeFileSync(path.join(out, 'pwa-self-test-error.txt'), `stage=${stage}\n${error.stack || error}`);
+    fs.writeFileSync(errorPath, `stage=${stage}\n${error.stack || error}\nconsole=${errors.join(' | ')}`);
     throw error;
   } finally {
-    if (context) await context.close().catch(() => {});
+    finished = true;
+    clearTimeout(watchdog);
+    if (context) {
+      await withTimeout(context.close(), CLEANUP_TIMEOUT_MS, 'browser context cleanup').catch(error => {
+        fs.appendFileSync(errorPath, `\ncleanup=${error.stack || error}`);
+      });
+    }
     if (userDataDir) fs.rmSync(userDataDir, { recursive: true, force: true });
-    server.kill('SIGTERM');
+    if (server.exitCode === null && server.signalCode === null) server.kill('SIGTERM');
+    await waitForExit(server, 3000);
+    if (server.exitCode === null && server.signalCode === null) server.kill('SIGKILL');
   }
 })().catch(error => {
   console.error(error);
