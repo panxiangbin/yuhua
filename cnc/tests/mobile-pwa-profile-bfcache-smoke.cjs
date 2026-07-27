@@ -55,7 +55,9 @@ async function ensureControlled(page) {
   }, { timeout: 60000 });
 
   if (!await page.evaluate(() => Boolean(navigator.serviceWorker.controller))) {
-    await page.reload({ waitUntil: 'domcontentloaded', timeout: 30000 });
+    const controlledUrl = page.url();
+    await page.goto('about:blank');
+    await page.goto(controlledUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
   }
   await page.waitForFunction(() => Boolean(navigator.serviceWorker?.controller), { timeout: 30000 });
 }
