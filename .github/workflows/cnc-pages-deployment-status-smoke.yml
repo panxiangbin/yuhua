@@ -1,0 +1,39 @@
+name: CNC Pages deployment status smoke
+on:
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-pages-deployment-status-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: cnc-pages-status-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Validate build marker structure
+        run: node -e "const fs=require('fs');const x=JSON.parse(fs.readFileSync('cnc/build-info.json','utf8'));if(x.app!=='cnc-training-platform'||!/^20260727-pages1$/.test(x.build)||x.pwaBuild!=='20260726-pwa2')throw new Error('invalid build marker');"
+      - name: Check JavaScript syntax
+        run: node --check cnc/tests/mobile-pages-deployment-status-smoke.cjs
+      - name: Install Playwright runtime
+        run: npm install --no-save playwright@1.52.0
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run 390x844 Pages status smoke
+        run: node cnc/tests/mobile-pages-deployment-status-smoke.cjs
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-pages-status-${{ github.run_id }}
+          path: cnc/test-results/pages-deployment-status-*
+          if-no-files-found: warn
+          retention-days: 14

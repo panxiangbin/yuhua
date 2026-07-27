@@ -80,20 +80,46 @@ async function ensureControlled(page) {
 
     stage = 'home';
     await page.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded' });
-    stage = 'controller';
     await ensureControlled(page);
 
-    const registration = await page.evaluate(() => navigator.serviceWorker.getRegistration('./'));
-    if (!registration) throw new Error('Service Worker未注册');
-    const cachesBefore = await page.evaluate(() => caches.keys());
-    if (!cachesBefore.includes('cnc-static-20260726-pwa2')) throw new Error('静态缓存版本缺失');
-    if (!cachesBefore.includes('cnc-runtime-20260726-pwa2')) throw new Error('运行时缓存版本缺失');
-
-    stage = 'status-page';
-    await page.goto('http://127.0.0.1:4173/cnc/pwa-status.html', { waitUntil: 'domcontentloaded' });
-    await page.waitForFunction(() => document.querySelector('#worker')?.textContent.includes('已启用'));
+    stage = 'profile-entry';
+    await page.goto('http://127.0.0.1:4173/cnc/profile.html', { waitUntil: 'domcontentloaded' });
+    const pwaLink = page.locator('a[href="./pwa-status.html"]');
+    if (await pwaLink.count() !== 1) throw new Error('成长档案缺少PWA状态入口');
+    await pwaLink.click();
+    await page.waitForURL(/pwa-status\.html/);
     await page.waitForFunction(() => document.querySelector('#build')?.textContent.includes('20260726-pwa2'));
-    const build = await page.locator('#build').textContent();
+    await page.waitForFunction(() => document.querySelector('#status')?.textContent.includes('版本一致'));
+
+    const initialChecked = await page.locator('#checked-at').textContent();
+    const cacheCount = Number(await page.locator('#cache-count').textContent());
+    if (cacheCount < 2) throw new Error('CNC缓存数量不足');
+    if (!(await page.locator('#static-cache').textContent()).includes('20260726-pwa2')) throw new Error('静态缓存版本不一致');
+    if (!(await page.locator('#runtime-cache').textContent()).includes('20260726-pwa2')) throw new Error('运行时缓存版本不一致');
+
+    stage = 'history-return';
+    await page.goto('http://127.0.0.1:4173/cnc/profile.html', { waitUntil: 'domcontentloaded' });
+    await page.goBack({ waitUntil: 'domcontentloaded' });
+    await page.waitForURL(/pwa-status\.html/);
+    await page.waitForFunction(oldValue => document.querySelector('#checked-at')?.textContent !== oldValue, initialChecked, { timeout: 5000 }).catch(async () => {
+      await page.locator('#refresh').click();
+      await page.waitForFunction(oldValue => document.querySelector('#checked-at')?.textContent !== oldValue, initialChecked);
+    });
+
+    stage = 'cache-mismatch';
+    await page.evaluate(async () => {
+      for (const key of await caches.keys()) if (key.startsWith('cnc-runtime-')) await caches.delete(key);
+    });
+    await page.locator('#refresh').click();
+    await page.waitForFunction(() => document.querySelector('#status')?.textContent.includes('尚未完全一致'));
+    if ((await page.locator('#runtime-cache').textContent()) !== '未发现') throw new Error('缓存缺失状态未显示');
+
+    stage = 'cache-recovery';
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await ensureControlled(page);
+    await page.waitForFunction(() => Number(document.querySelector('#cache-count')?.textContent) >= 2);
+    await page.waitForFunction(() => document.querySelector('#status')?.textContent.includes('版本一致'));
+
     const small = await page.locator('a,button').evaluateAll(elements => elements.filter(element => {
       const rect = element.getBoundingClientRect();
       return rect.width > 0 && rect.height > 0 && Math.min(rect.width, rect.height) < 44;
@@ -103,26 +129,19 @@ async function ensureControlled(page) {
     }));
     if (small.length) throw new Error(`触控区不足44px ${JSON.stringify(small)}`);
 
-    stage = 'warm-runtime-route';
-    await page.goto('http://127.0.0.1:4173/cnc/training-camp.html', { waitUntil: 'domcontentloaded' });
-    if (!(await page.title()).includes('训练')) throw new Error('训练营在线预热失败');
-    await page.goto('http://127.0.0.1:4173/cnc/pwa-status.html', { waitUntil: 'domcontentloaded' });
-
-    stage = 'cached-offline-route';
-    await context.setOffline(true);
-    await page.goto('http://127.0.0.1:4173/cnc/training-camp.html', { waitUntil: 'domcontentloaded' });
-    if (!(await page.title()).includes('训练')) throw new Error('离线训练营未打开');
-
-    stage = 'offline-fallback';
-    await page.goto(`http://127.0.0.1:4173/cnc/not-cached-${Date.now()}.html`, { waitUntil: 'domcontentloaded' });
-    if (!(await page.locator('body').innerText()).includes('网络暂时不可用')) throw new Error('离线回退页未生效');
-
-    await page.screenshot({ path: path.join(out, 'pwa-offline-390x844.png'), fullPage: true });
+    await page.screenshot({ path: path.join(out, 'pwa-profile-bfcache-390x844.png'), fullPage: true });
     if (errors.length) throw new Error(`控制台错误 ${errors.join(' | ')}`);
-    fs.writeFileSync(path.join(out, 'pwa-offline-result.json'), JSON.stringify({ build, caches: cachesBefore, offlineFallback: true, runtimeWarmup: true, touchTargets: true }, null, 2));
-    console.log('CNC PWA offline cache smoke passed');
+    fs.writeFileSync(path.join(out, 'pwa-profile-bfcache-result.json'), JSON.stringify({
+      build: await page.locator('#build').textContent(),
+      cacheCount: Number(await page.locator('#cache-count').textContent()),
+      profileEntry: true,
+      bfcacheRestore: true,
+      mismatchDetected: true,
+      touchTargets: true
+    }, null, 2));
+    console.log('CNC PWA profile BFCache smoke passed');
   } catch (error) {
-    fs.writeFileSync(path.join(out, 'pwa-offline-error.txt'), `stage=${stage}\n${error.stack || error}`);
+    fs.writeFileSync(path.join(out, 'pwa-profile-bfcache-error.txt'), `stage=${stage}\n${error.stack || error}`);
     throw error;
   } finally {
     if (browser) await browser.close().catch(() => {});

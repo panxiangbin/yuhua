@@ -1,0 +1,41 @@
+name: CNC PWA self-test smoke
+on:
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-pwa-self-test-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: cnc-pwa-self-test-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Check JavaScript syntax
+        run: node --check cnc/tests/mobile-pwa-self-test-smoke.cjs
+      - name: Validate self-test contract
+        run: node -e "const fs=require('fs');const h=fs.readFileSync('cnc/pwa-self-test.html','utf8');for(const x of ['Service Worker已注册','当前页面已被接管','运行构建号一致','静态缓存版本存在','运行时缓存版本存在','核心离线资源完整','公网构建标记与PWA一致'])if(!h.includes(x))throw new Error('missing '+x);"
+      - name: Install Playwright runtime
+        run: npm install --no-save playwright@1.52.0
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run 390x844 PWA self-test smoke
+        env:
+          DEBUG: pw:browser
+        run: node cnc/tests/mobile-pwa-self-test-smoke.cjs
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-pwa-self-test-${{ github.run_id }}
+          path: cnc/test-results/pwa-self-test-*
+          if-no-files-found: warn
+          retention-days: 14
