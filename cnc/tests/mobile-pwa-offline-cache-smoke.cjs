@@ -1,6 +1,7 @@
 const { chromium } = require('playwright');
 const http = require('http');
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 
 const root = path.resolve(__dirname, '../..');
@@ -63,16 +64,20 @@ async function ensureControlled(page, errors) {
   if (!page.url().startsWith(scope)) throw new Error(`Service Worker scope mismatch: ${scope}`);
   if (await page.evaluate(() => Boolean(navigator.serviceWorker.controller))) return page;
 
-  const controlledPage = await page.context().newPage();
-  observePage(controlledPage, errors);
-  await controlledPage.goto(page.url(), { waitUntil: 'domcontentloaded', timeout: 30000 });
-  await controlledPage.waitForFunction(() => Boolean(navigator.serviceWorker?.controller), { timeout: 30000 });
+  const context = page.context();
+  const controlledUrl = page.url();
   await page.close();
+  await new Promise(resolve => setTimeout(resolve, 300));
+  const controlledPage = await context.newPage();
+  observePage(controlledPage, errors);
+  await controlledPage.goto(controlledUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+  await controlledPage.waitForFunction(() => Boolean(navigator.serviceWorker?.controller), { timeout: 30000 });
   return controlledPage;
 }
 
 (async () => {
-  let browser;
+  let context;
+  let userDataDir;
   const errors = [];
   let stage = 'server-start';
   try {
@@ -81,9 +86,13 @@ async function ensureControlled(page, errors) {
       server.listen(4173, '127.0.0.1', resolve);
     });
     stage = 'browser-launch';
-    browser = await chromium.launch({ headless: true });
-    const context = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'allow' });
-    let page = await context.newPage();
+    userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'cnc-pwa-offline-'));
+    context = await chromium.launchPersistentContext(userDataDir, {
+      headless: true,
+      viewport: { width: 390, height: 844 },
+      serviceWorkers: 'allow'
+    });
+    let page = context.pages()[0] || await context.newPage();
     observePage(page, errors);
 
     stage = 'home';
@@ -133,7 +142,8 @@ async function ensureControlled(page, errors) {
     fs.writeFileSync(path.join(out, 'pwa-offline-error.txt'), `stage=${stage}\n${error.stack || error}`);
     throw error;
   } finally {
-    if (browser) await browser.close().catch(() => {});
+    if (context) await context.close().catch(() => {});
+    if (userDataDir) fs.rmSync(userDataDir, { recursive: true, force: true });
     await new Promise(resolve => server.close(resolve)).catch(() => {});
   }
 })().catch(error => {
