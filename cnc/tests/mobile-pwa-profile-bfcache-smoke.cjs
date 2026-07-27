@@ -1,6 +1,7 @@
 const { chromium } = require('playwright');
 const http = require('http');
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 
 const root = path.resolve(__dirname, '../..');
@@ -39,14 +40,19 @@ function withTimeout(promise, ms, label) {
   ]).finally(() => clearTimeout(timer));
 }
 
-async function ensureControlled(page) {
+function observePage(page, errors) {
+  page.setDefaultTimeout(30000);
+  page.setDefaultNavigationTimeout(30000);
+  page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
+  page.on('pageerror', error => errors.push(error.message));
+}
+
+async function ensureControlled(page, errors) {
   await withTimeout(page.evaluate(async () => {
     if (!('serviceWorker' in navigator)) throw new Error('Service Worker unsupported');
     let registration = await navigator.serviceWorker.getRegistration('./');
-    if (!registration) {
-      registration = await navigator.serviceWorker.register('./sw.js', { scope: './' });
-    }
-    return Boolean(registration);
+    if (!registration) registration = await navigator.serviceWorker.register('./sw.js', { scope: './' });
+    return { scope: registration.scope };
   }), 15000, 'serviceWorker registration');
 
   await page.waitForFunction(async () => {
@@ -54,14 +60,24 @@ async function ensureControlled(page) {
     return Boolean(registration && registration.active && registration.active.state === 'activated');
   }, { timeout: 60000 });
 
-  if (!await page.evaluate(() => Boolean(navigator.serviceWorker.controller))) {
-    await page.reload({ waitUntil: 'domcontentloaded', timeout: 30000 });
-  }
-  await page.waitForFunction(() => Boolean(navigator.serviceWorker?.controller), { timeout: 30000 });
+  const scope = await page.evaluate(async () => (await navigator.serviceWorker.getRegistration('./'))?.scope || '');
+  if (!page.url().startsWith(scope)) throw new Error(`Service Worker scope mismatch: ${scope}`);
+  if (await page.evaluate(() => Boolean(navigator.serviceWorker.controller))) return page;
+
+  const context = page.context();
+  const controlledUrl = page.url();
+  await page.close();
+  await new Promise(resolve => setTimeout(resolve, 300));
+  const controlledPage = await context.newPage();
+  observePage(controlledPage, errors);
+  await controlledPage.goto(controlledUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+  await controlledPage.waitForFunction(() => Boolean(navigator.serviceWorker?.controller), { timeout: 30000 });
+  return controlledPage;
 }
 
 (async () => {
-  let browser;
+  let context;
+  let userDataDir;
   const errors = [];
   let stage = 'server-start';
   try {
@@ -70,17 +86,18 @@ async function ensureControlled(page) {
       server.listen(4173, '127.0.0.1', resolve);
     });
     stage = 'browser-launch';
-    browser = await chromium.launch({ headless: true });
-    const context = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'allow' });
-    const page = await context.newPage();
-    page.setDefaultTimeout(30000);
-    page.setDefaultNavigationTimeout(30000);
-    page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
-    page.on('pageerror', error => errors.push(error.message));
+    userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'cnc-pwa-profile-'));
+    context = await chromium.launchPersistentContext(userDataDir, {
+      headless: true,
+      viewport: { width: 390, height: 844 },
+      serviceWorkers: 'allow'
+    });
+    let page = context.pages()[0] || await context.newPage();
+    observePage(page, errors);
 
     stage = 'home';
     await page.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded' });
-    await ensureControlled(page);
+    page = await ensureControlled(page, errors);
 
     stage = 'profile-entry';
     await page.goto('http://127.0.0.1:4173/cnc/profile.html', { waitUntil: 'domcontentloaded' });
@@ -116,7 +133,7 @@ async function ensureControlled(page) {
 
     stage = 'cache-recovery';
     await page.reload({ waitUntil: 'domcontentloaded' });
-    await ensureControlled(page);
+    page = await ensureControlled(page, errors);
     await page.waitForFunction(() => Number(document.querySelector('#cache-count')?.textContent) >= 2);
     await page.waitForFunction(() => document.querySelector('#status')?.textContent.includes('版本一致'));
 
@@ -144,7 +161,8 @@ async function ensureControlled(page) {
     fs.writeFileSync(path.join(out, 'pwa-profile-bfcache-error.txt'), `stage=${stage}\n${error.stack || error}`);
     throw error;
   } finally {
-    if (browser) await browser.close().catch(() => {});
+    if (context) await context.close().catch(() => {});
+    if (userDataDir) fs.rmSync(userDataDir, { recursive: true, force: true });
     await new Promise(resolve => server.close(resolve)).catch(() => {});
   }
 })().catch(error => {

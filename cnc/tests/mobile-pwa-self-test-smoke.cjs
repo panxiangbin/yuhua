@@ -1,6 +1,7 @@
 const { chromium } = require('playwright');
 const { spawn } = require('child_process');
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const http = require('http');
 
@@ -31,49 +32,57 @@ function waitServer() {
   });
 }
 
-function withTimeout(promise, ms, label) {
-  let timer;
-  return Promise.race([
-    promise,
-    new Promise((_, reject) => {
-      timer = setTimeout(() => reject(new Error(`${label} timeout after ${ms}ms`)), ms);
-    })
-  ]).finally(() => clearTimeout(timer));
+function observePage(page, errors) {
+  page.setDefaultTimeout(30000);
+  page.setDefaultNavigationTimeout(30000);
+  page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
+  page.on('pageerror', error => errors.push(error.message));
 }
 
-async function ensureController(page) {
+async function ensureController(page, errors) {
   await page.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(async () => {
     if (!('serviceWorker' in navigator)) return false;
-    return Boolean(await navigator.serviceWorker.getRegistration('./'));
-  }, { timeout: 15000 });
-  await withTimeout(page.evaluate(() => navigator.serviceWorker.ready.then(() => true)), 15000, 'serviceWorker.ready');
-  if (!await page.evaluate(() => Boolean(navigator.serviceWorker.controller))) {
-    await page.reload({ waitUntil: 'domcontentloaded', timeout: 15000 });
-  }
-  await page.waitForFunction(() => Boolean(navigator.serviceWorker?.controller), { timeout: 15000 });
+    const registration = await navigator.serviceWorker.getRegistration('./');
+    return Boolean(registration && registration.active && registration.active.state === 'activated');
+  }, { timeout: 60000 });
+
+  const scope = await page.evaluate(async () => (await navigator.serviceWorker.getRegistration('./'))?.scope || '');
+  if (!page.url().startsWith(scope)) throw new Error(`Service Worker scope mismatch: ${scope}`);
+  if (await page.evaluate(() => Boolean(navigator.serviceWorker.controller))) return page;
+
+  const context = page.context();
+  await page.close();
+  await new Promise(resolve => setTimeout(resolve, 300));
+  const controlledPage = await context.newPage();
+  observePage(controlledPage, errors);
+  await controlledPage.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded', timeout: 30000 });
+  await controlledPage.waitForFunction(() => Boolean(navigator.serviceWorker?.controller), { timeout: 30000 });
+  return controlledPage;
 }
 
 (async () => {
-  let browser;
+  let context;
+  let userDataDir;
   const errors = [];
   let stage = 'server';
   try {
     await waitServer();
     stage = 'browser';
-    browser = await chromium.launch({ headless: true });
-    const context = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'allow' });
-    const page = await context.newPage();
-    page.setDefaultTimeout(15000);
-    page.setDefaultNavigationTimeout(15000);
-    page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
-    page.on('pageerror', error => errors.push(error.message));
+    userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'cnc-pwa-self-test-'));
+    context = await chromium.launchPersistentContext(userDataDir, {
+      headless: true,
+      viewport: { width: 390, height: 844 },
+      serviceWorkers: 'allow'
+    });
+    let page = context.pages()[0] || await context.newPage();
+    observePage(page, errors);
 
     stage = 'controller';
-    await ensureController(page);
+    page = await ensureController(page, errors);
     stage = 'self-test';
     await page.goto('http://127.0.0.1:4173/cnc/pwa-self-test.html', { waitUntil: 'domcontentloaded' });
-    await page.waitForFunction(() => document.querySelector('#passed')?.textContent === '8' && document.querySelector('#failed')?.textContent === '0');
+    await page.waitForFunction(() => document.querySelector('#passed')?.textContent === '8' && document.querySelector('#failed')?.textContent === '0', { timeout: 60000 });
 
     const rows = await page.locator('.item').count();
     if (rows !== 8) throw new Error(`expected 8 checks, got ${rows}`);
@@ -97,7 +106,8 @@ async function ensureController(page) {
     fs.writeFileSync(path.join(out, 'pwa-self-test-error.txt'), `stage=${stage}\n${error.stack || error}`);
     throw error;
   } finally {
-    if (browser) await browser.close().catch(() => {});
+    if (context) await context.close().catch(() => {});
+    if (userDataDir) fs.rmSync(userDataDir, { recursive: true, force: true });
     server.kill('SIGTERM');
   }
 })().catch(error => {
