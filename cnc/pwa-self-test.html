@@ -30,8 +30,11 @@
   <script>
     const EXPECTED='20260728-pwa3';
     const REQUIRED=['./index.html','./offline.html','./pwa-status.html','./pages-status.html','./pwa-self-test.html','./build-info.json'];
+    const MAX_AUTO_RETRIES=20;
     let last=[];
     let inspectToken=0;
+    let retryTimer=0;
+    let retryCount=0;
     const $=selector=>document.querySelector(selector);
     function row(name,ok,detail){return{name,ok,detail:String(detail||'')}}
     async function readBuild(activeWorker){
@@ -46,12 +49,23 @@
         activeWorker.postMessage({type:'GET_BUILD'},[channel.port2]);
       });
     }
-    async function run(){
+    function scheduleRetry(){
+      clearTimeout(retryTimer);
+      if(retryCount>=MAX_AUTO_RETRIES)return;
+      retryCount+=1;
+      retryTimer=setTimeout(()=>run({auto:true}),500);
+    }
+    async function run({auto=false}={}){
       const token=++inspectToken;
+      if(!auto){retryCount=0;clearTimeout(retryTimer)}
       const output=[];
-      output.push(row('浏览器支持Service Worker','serviceWorker' in navigator,'用于离线缓存与版本更新'));
+      const supported='serviceWorker' in navigator;
+      output.push(row('浏览器支持ServiceWorker',supported,'用于离线缓存与版本更新'));
       let registration=null;
-      if('serviceWorker' in navigator)registration=await navigator.serviceWorker.getRegistration('./').catch(()=>null);
+      if(supported){
+        registration=await navigator.serviceWorker.getRegistration('./').catch(()=>null);
+        if(!registration)registration=await Promise.race([navigator.serviceWorker.ready,new Promise(resolve=>setTimeout(()=>resolve(null),1800))]).catch(()=>null);
+      }
       output.push(row('Service Worker已注册',!!registration,registration?'已找到当前作用域注册':'请先联网打开首页'));
       output.push(row('当前页面已被接管',!!navigator.serviceWorker.controller,navigator.serviceWorker.controller?'controller可用':'首次安装后可能需要重新载入'));
       const active=registration&&registration.active;
@@ -75,6 +89,8 @@
       if(token!==inspectToken)return;
       last=output;
       render();
+      if(output.some(item=>!item.ok))scheduleRetry();
+      else{retryCount=MAX_AUTO_RETRIES;clearTimeout(retryTimer)}
     }
     function render(){
       const passed=last.filter(item=>item.ok).length;
@@ -82,7 +98,7 @@
       $('#failed').textContent=last.length-passed;
       $('#results').innerHTML=last.map(item=>`<div class="item ${item.ok?'pass':'fail'}"><strong>${item.ok?'通过':'待处理'} · ${item.name}</strong><span>${item.detail}</span></div>`).join('');
       $('#status').className=`status${passed===last.length?' ok':''}`;
-      $('#status').textContent=passed===last.length?'8项检查全部通过，当前离线基础与版本标记一致。':`已通过${passed}项，仍有${last.length-passed}项需要处理。保持联网后重新运行自检。`;
+      $('#status').textContent=passed===last.length?'8项检查全部通过，当前离线基础与版本标记一致。':`已通过${passed}项，仍有${last.length-passed}项需要处理。正在等待浏览器完成缓存初始化。`;
     }
     $('#rerun').onclick=()=>run();
     $('#copy').onclick=async()=>{
