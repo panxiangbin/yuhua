@@ -85,6 +85,40 @@ window.JSONLoader = {
 
 console.log('[JSON加载器] 已就绪，支持BOM处理');
 
+(function restoreNativePwaRegistration(){
+  if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
+
+  function restoreAndRegister() {
+    const container = navigator.serviceWorker;
+    const prototype = Object.getPrototypeOf(container);
+    const nativeRegister = prototype && prototype.register;
+    if (typeof nativeRegister !== 'function') return Promise.resolve(false);
+
+    try {
+      if (Object.prototype.hasOwnProperty.call(container, 'register')) delete container.register;
+    } catch (error) {}
+
+    return nativeRegister.call(container, './sw.js', {
+      scope: './',
+      updateViaCache: 'none'
+    }).then(registration => {
+      window.__CNC_PWA_REGISTRATION__ = registration;
+      document.documentElement.dataset.cncPwaRegistration = 'ready';
+      return true;
+    }).catch(error => {
+      window.__CNC_PWA_REGISTRATION_ERROR__ = String(error && error.message ? error.message : error);
+      document.documentElement.dataset.cncPwaRegistration = 'failed';
+      return false;
+    });
+  }
+
+  [0, 50, 250, 1000, 2500, 5000, 9000].forEach(delay => {
+    window.setTimeout(restoreAndRegister, delay);
+  });
+  window.addEventListener('pageshow', restoreAndRegister);
+  window.CNC_RESTORE_PWA_REGISTRATION = restoreAndRegister;
+})();
+
 (function loadTrainingPractice(){
   if (document.querySelector('script[data-cnc-training-practice-script]')) return;
   var script = document.createElement('script');
