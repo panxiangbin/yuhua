@@ -1,0 +1,50 @@
+name: Reactor Typo Rename Impact Check
+
+on:
+  push:
+    branches: [upgrade-84h]
+    paths:
+      - "assets/specs.js"
+      - "specs/**"
+      - "downloads/specs/**"
+      - "scripts/audit-reactor-typo-rename-impact.cjs"
+      - ".github/workflows/reactor-typo-impact-check.yml"
+  pull_request:
+    paths:
+      - "assets/specs.js"
+      - "specs/**"
+      - "downloads/specs/**"
+      - "scripts/audit-reactor-typo-rename-impact.cjs"
+      - ".github/workflows/reactor-typo-impact-check.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check audit script syntax
+        run: node --check scripts/audit-reactor-typo-rename-impact.cjs
+      - name: Enforce no direct contact policy
+        run: node scripts/check-no-direct-contact.cjs
+      - name: Audit all public text files for contact leaks
+        run: node scripts/audit-public-contact-leaks.cjs
+      - name: Build safe rename impact report
+        run: node scripts/audit-reactor-typo-rename-impact.cjs
+      - name: Recheck static resources and document links
+        run: node scripts/audit-static-assets.cjs
+      - name: Upload rename impact report
+        uses: actions/upload-artifact@v4
+        with:
+          name: reactor-typo-rename-impact
+          path: |
+            test-artifacts/reactor-typo-rename-impact.json
+            test-artifacts/reactor-typo-rename-impact.csv
+          if-no-files-found: error
+          retention-days: 14
