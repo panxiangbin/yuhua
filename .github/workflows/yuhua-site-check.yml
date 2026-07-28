@@ -94,6 +94,8 @@ jobs:
             test-artifacts/video-audit-items.csv
             test-artifacts/video-duplicate-groups.json
             test-artifacts/video-duplicate-groups.csv
+            test-artifacts/video-cross-category-review.json
+            test-artifacts/video-cross-category-review.csv
           if-no-files-found: error
           retention-days: 14
       - name: Install Chinese font for visual checks
