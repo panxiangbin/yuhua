@@ -56,8 +56,7 @@ const sandbox = {
     addEventListener(type, handler) {
       if (type === "DOMContentLoaded") domReady.push(handler);
     },
-    getElementById(id) { return elements[id] || null; },
-    querySelectorAll() { return []; }
+    getElementById(id) { return elements[id] || null; }
   },
   MutationObserver: MutationObserverMock,
   setTimeout(callback) { callback(); return 1; },
