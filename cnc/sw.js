@@ -97,6 +97,14 @@ async function cacheCoreBestEffort() {
   return failures;
 }
 
+async function ensureCurrentCaches() {
+  await ensureStaticCacheShell();
+  await caches.open(RUNTIME_CACHE);
+  await cacheCoreBestEffort();
+  const names = await caches.keys();
+  return names.includes(STATIC_CACHE) && names.includes(RUNTIME_CACHE);
+}
+
 async function offlineFallbackResponse() {
   const cached = await caches.match(scopeUrl('./offline.html'));
   return cached || createOfflineResponse();
@@ -133,8 +141,7 @@ self.addEventListener('activate', (event) => {
     // 安装阶段可能因瞬时网络、缓存配额或浏览器时序只留下运行时诊断缓存。
     // 激活时再次修复核心静态缓存，并在修复完成后才接管页面，避免页面看到“已接管但静态缓存尚未就绪”的半初始化状态。
     try {
-      await cacheCoreBestEffort();
-      await ensureStaticCacheShell();
+      await ensureCurrentCaches();
     } catch (error) {
       await writeInstallDiagnostic({
         build: BUILD,
@@ -145,7 +152,6 @@ self.addEventListener('activate', (event) => {
       });
       throw error;
     }
-    await caches.open(RUNTIME_CACHE);
     await self.clients.claim();
   })());
 });
@@ -159,6 +165,24 @@ self.addEventListener('message', (event) => {
     if (target) {
       target.postMessage({ type: 'CNC_SW_BUILD', build: BUILD });
     }
+  }
+  if (event.data && event.data.type === 'ENSURE_CACHES') {
+    const target = event.ports && event.ports[0] ? event.ports[0] : event.source;
+    event.waitUntil((async () => {
+      let ready = false;
+      try {
+        ready = await ensureCurrentCaches();
+      } catch (error) {
+        await writeInstallDiagnostic({
+          build: BUILD,
+          checkedAt: new Date().toISOString(),
+          cached: 0,
+          total: REQUIRED_CORE_PATHS.length,
+          failures: [{ path: '__message_repair__', error: String(error && error.message ? error.message : error) }]
+        });
+      }
+      if (target) target.postMessage({ type: 'CNC_CACHES_READY', build: BUILD, ready });
+    })());
   }
 });
 
