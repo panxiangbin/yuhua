@@ -16,6 +16,7 @@ on:
       - "scripts/audit-yuhua-site.cjs"
       - "scripts/test-site-config.cjs"
       - "scripts/export-data-audit.cjs"
+      - "scripts/check-no-direct-contact.cjs"
       - ".github/workflows/yuhua-site-check.yml"
   pull_request:
     paths:
@@ -31,6 +32,7 @@ on:
       - "scripts/audit-yuhua-site.cjs"
       - "scripts/test-site-config.cjs"
       - "scripts/export-data-audit.cjs"
+      - "scripts/check-no-direct-contact.cjs"
 
 permissions:
   contents: read
@@ -51,6 +53,9 @@ jobs:
           node --check scripts/audit-yuhua-site.cjs
           node --check scripts/test-site-config.cjs
           node --check scripts/export-data-audit.cjs
+          node --check scripts/check-no-direct-contact.cjs
+      - name: Enforce no direct contact policy
+        run: node scripts/check-no-direct-contact.cjs
       - name: Audit website structure and product data
         run: node scripts/audit-yuhua-site.cjs
       - name: Test runtime data guard and compound search
