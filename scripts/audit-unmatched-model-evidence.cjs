@@ -8,6 +8,7 @@ const vm = require("vm");
 const root = path.resolve(__dirname, "..");
 const outputDir = path.join(root, "test-artifacts");
 const reconciliationFile = path.join(outputDir, "video-model-category-reconciliation.json");
+const MAX_TEXT_BYTES = 1024 * 1024;
 
 function text(value) {
   return String(value == null ? "" : value).trim();
@@ -37,7 +38,7 @@ function walk(directory, output = []) {
   for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
     const full = path.join(directory, entry.name);
     if (entry.isDirectory()) {
-      if ([".git", "node_modules", "test-artifacts"].includes(entry.name)) continue;
+      if ([".git", "node_modules", "test-artifacts", "assets/videos", "downloads"].includes(entry.name)) continue;
       walk(full, output);
     } else {
       output.push(full);
@@ -56,6 +57,7 @@ const unmatchedGroups = (reconciliation.groups || []).filter(
   (group) => group.decision === "产品数据库无精确型号记录"
 );
 const targetModels = [...new Set(unmatchedGroups.flatMap((group) => group.modelTokens || []).map(text).filter(Boolean))];
+const normalizedTargets = new Map(targetModels.map((model) => [model, normalize(model)]));
 
 const specsWindow = loadWindowFile("assets/specs.js");
 const pagesWindow = loadWindowFile("assets/pages.js");
@@ -63,12 +65,11 @@ const specs = Array.isArray(specsWindow.SPECS) ? specsWindow.SPECS : [];
 const pages = Array.isArray(pagesWindow.PAGES) ? pagesWindow.PAGES : [];
 const publicExtensions = new Set([".html", ".htm", ".js", ".json", ".xml", ".txt", ".md", ".csv"]);
 const files = walk(root).filter((file) => publicExtensions.has(path.extname(file).toLowerCase()));
-
-const evidence = [];
+const evidenceByModel = new Map(targetModels.map((model) => [model, []]));
 
 for (const model of targetModels) {
-  const normalizedModel = normalize(model);
-  const modelEvidence = [];
+  const normalizedModel = normalizedTargets.get(model);
+  const modelEvidence = evidenceByModel.get(model);
 
   specs.forEach((spec, index) => {
     const fields = [spec.model, spec.title, spec.series, spec.page, spec.dl].map(text);
@@ -100,40 +101,70 @@ for (const model of targetModels) {
       });
     }
   });
+}
 
-  files.forEach((file) => {
-    const relative = path.relative(root, file).replace(/\\/g, "/");
-    if (["assets/videos.js", "assets/data.js"].includes(relative)) return;
-    const filenameMatch = normalize(relative).includes(normalizedModel);
-    let contentMatch = false;
-    let excerpt = "";
+let scannedTextFiles = 0;
+let skippedLargeFiles = 0;
+for (const file of files) {
+  const relative = path.relative(root, file).replace(/\\/g, "/");
+  if (["assets/videos.js", "assets/data.js"].includes(relative)) continue;
 
-    try {
-      const content = fs.readFileSync(file, "utf8");
-      const normalizedContent = normalize(content);
-      contentMatch = normalizedContent.includes(normalizedModel);
-      if (contentMatch) {
-        const lines = content.split(/\r?\n/);
-        const lineIndex = lines.findIndex((line) => normalize(line).includes(normalizedModel));
-        if (lineIndex >= 0) excerpt = lines[lineIndex].trim().slice(0, 240);
-      }
-    } catch (_) {
-      return;
-    }
-
-    if (filenameMatch || contentMatch) {
-      modelEvidence.push({
-        sourceType: filenameMatch ? "公开文件名" : "公开文本内容",
+  const normalizedPath = normalize(relative);
+  for (const model of targetModels) {
+    if (normalizedPath.includes(normalizedTargets.get(model))) {
+      evidenceByModel.get(model).push({
+        sourceType: "公开文件名",
         source: relative,
         sourceRecord: "",
-        matchedValue: excerpt || relative,
+        matchedValue: relative,
         categoryKey: "",
         categoryName: "",
-        confidence: filenameMatch ? "中高" : "中"
+        confidence: "中高"
       });
     }
-  });
+  }
 
+  let stat;
+  try {
+    stat = fs.statSync(file);
+  } catch (_) {
+    continue;
+  }
+  if (stat.size > MAX_TEXT_BYTES) {
+    skippedLargeFiles += 1;
+    continue;
+  }
+
+  let content;
+  try {
+    content = fs.readFileSync(file, "utf8");
+    scannedTextFiles += 1;
+  } catch (_) {
+    continue;
+  }
+
+  const normalizedContent = normalize(content);
+  for (const model of targetModels) {
+    const normalizedModel = normalizedTargets.get(model);
+    if (!normalizedContent.includes(normalizedModel)) continue;
+    const lines = content.split(/\r?\n/);
+    const lineIndex = lines.findIndex((line) => normalize(line).includes(normalizedModel));
+    const excerpt = lineIndex >= 0 ? lines[lineIndex].trim().slice(0, 240) : "";
+    evidenceByModel.get(model).push({
+      sourceType: "公开文本内容",
+      source: relative,
+      sourceRecord: lineIndex >= 0 ? lineIndex + 1 : "",
+      matchedValue: excerpt,
+      categoryKey: "",
+      categoryName: "",
+      confidence: "中"
+    });
+  }
+}
+
+const evidence = [];
+for (const model of targetModels) {
+  const modelEvidence = evidenceByModel.get(model) || [];
   const uniqueEvidence = [];
   const seen = new Set();
   for (const item of modelEvidence) {
@@ -158,7 +189,7 @@ for (const model of targetModels) {
 
   evidence.push({
     model,
-    normalizedModel,
+    normalizedModel: normalizedTargets.get(model),
     evidenceCount: uniqueEvidence.length,
     conclusion,
     recommendation,
@@ -181,7 +212,11 @@ const summary = {
   modelsWithFormalEvidence: evidence.filter((item) => item.conclusion.startsWith("存在正式资料结构证据")).length,
   modelsWithWeakEvidence: evidence.filter((item) => item.conclusion.startsWith("存在弱证据")).length,
   modelsWithoutEvidence: evidence.filter((item) => item.conclusion.startsWith("仓库未发现")).length,
-  totalEvidenceItems: evidence.reduce((sum, item) => sum + item.evidenceCount, 0)
+  totalEvidenceItems: evidence.reduce((sum, item) => sum + item.evidenceCount, 0),
+  candidateFiles: files.length,
+  scannedTextFiles,
+  skippedLargeFiles,
+  maxTextBytes: MAX_TEXT_BYTES
 };
 
 const headers = [
