@@ -3,6 +3,7 @@ const http = require('http');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
@@ -30,49 +31,11 @@ const server = http.createServer((req, res) => {
   fs.createReadStream(file).pipe(res);
 });
 
-function withTimeout(promise, ms, label) {
-  let timer;
-  return Promise.race([
-    promise,
-    new Promise((_, reject) => {
-      timer = setTimeout(() => reject(new Error(`${label} timeout after ${ms}ms`)), ms);
-    })
-  ]).finally(() => clearTimeout(timer));
-}
-
 function observePage(page, errors) {
   page.setDefaultTimeout(30000);
   page.setDefaultNavigationTimeout(30000);
   page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
   page.on('pageerror', error => errors.push(error.message));
-}
-
-async function ensureControlled(page, errors) {
-  await withTimeout(page.evaluate(async () => {
-    if (!('serviceWorker' in navigator)) throw new Error('Service Worker unsupported');
-    let registration = await navigator.serviceWorker.getRegistration('./');
-    if (!registration) registration = await navigator.serviceWorker.register('./sw.js', { scope: './' });
-    return { scope: registration.scope };
-  }), 15000, 'serviceWorker registration');
-
-  await page.waitForFunction(async () => {
-    const registration = await navigator.serviceWorker.getRegistration('./');
-    return Boolean(registration && registration.active && registration.active.state === 'activated');
-  }, { timeout: 60000 });
-
-  const scope = await page.evaluate(async () => (await navigator.serviceWorker.getRegistration('./'))?.scope || '');
-  if (!page.url().startsWith(scope)) throw new Error(`Service Worker scope mismatch: ${scope}`);
-  if (await page.evaluate(() => Boolean(navigator.serviceWorker.controller))) return page;
-
-  const context = page.context();
-  const controlledUrl = page.url();
-  await page.close();
-  await new Promise(resolve => setTimeout(resolve, 300));
-  const controlledPage = await context.newPage();
-  observePage(controlledPage, errors);
-  await controlledPage.goto(controlledUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
-  await controlledPage.waitForFunction(() => Boolean(navigator.serviceWorker?.controller), { timeout: 30000 });
-  return controlledPage;
 }
 
 (async () => {
@@ -98,7 +61,7 @@ async function ensureControlled(page, errors) {
     stage = 'home';
     await page.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded' });
     stage = 'controller';
-    page = await ensureControlled(page, errors);
+    page = await ensureControlled(page, errors, observePage);
 
     const registration = await page.evaluate(() => navigator.serviceWorker.getRegistration('./'));
     if (!registration) throw new Error('Service Worker未注册');
