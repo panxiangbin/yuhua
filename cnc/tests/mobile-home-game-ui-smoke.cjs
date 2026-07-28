@@ -35,7 +35,7 @@ fs.mkdirSync(OUT, { recursive: true });
     page.on('pageerror', error => errors.push(error.message));
 
     await page.goto(`${BASE}/cnc/index.html`, { waitUntil: 'domcontentloaded', timeout: 60000 });
-    await page.locator('#xp-game-home[data-ready="true"]').waitFor({ timeout: 60000 });
+    await page.locator('#xp-game-home[data-ready="true"]').waitFor({ state: 'visible', timeout: 60000 });
 
     assert.match(await page.locator('.xp-game-hero h1').textContent(), /从零基础.*闯.*独立编程/s);
     assert.match(await page.locator('.xp-game-level-copy > strong').textContent(), /学徒 Lv\.2/);
@@ -59,7 +59,7 @@ fs.mkdirSync(OUT, { recursive: true });
     const desktop = await context.newPage();
     await desktop.setViewportSize({ width: 1280, height: 900 });
     await desktop.goto(`${BASE}/cnc/index.html`, { waitUntil: 'domcontentloaded', timeout: 60000 });
-    await desktop.locator('#xp-game-home[data-ready="true"]').waitFor({ timeout: 60000 });
+    await desktop.locator('#xp-game-home[data-ready="true"]').waitFor({ state: 'attached', timeout: 60000 });
     assert.strictEqual(await desktop.locator('#xp-game-home').evaluate(node => getComputedStyle(node).display), 'none');
     assert.notStrictEqual(await desktop.locator('.launchpad-grid').evaluate(node => getComputedStyle(node).display), 'none');
 
