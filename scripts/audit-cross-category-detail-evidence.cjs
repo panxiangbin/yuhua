@@ -97,6 +97,7 @@ products.forEach((product, productIndex) => {
   const titles = unique(otherCategorySpecs.map((entry) => entry.title));
   const targetKey = candidateKeys.length === 1 ? candidateKeys[0] : "";
   const pageExists = candidatePages.length === 1 && fs.existsSync(path.join(root, candidatePages[0]));
+  const downloadExists = candidateDownloads.length === 1 && fs.existsSync(path.join(root, candidateDownloads[0]));
   const nameMissing = !clean(product["产品名称"]);
   const titleEvidence = targetKey && titles.some((title) => titleSupportsCategory(title, targetKey));
 
@@ -112,6 +113,14 @@ products.forEach((product, productIndex) => {
     confidence = "中";
     action = "优先人工核对分类";
     reason = "精确型号唯一命中一个其他分类且页面存在，但标题或产品名称证据不足";
+  } else if (targetKey && titleEvidence && !pageExists && downloadExists) {
+    confidence = "中";
+    action = "核对分类并补建在线详情页";
+    reason = "精确型号与规格书标题支持唯一目标分类，下载资料存在，但在线页面路径缺失";
+  } else if (targetKey && !pageExists && candidatePages.length) {
+    confidence = "低";
+    action = "先修复或补充候选页面";
+    reason = "精确型号命中其他分类，但候选在线页面路径不存在，不能绑定";
   } else if (candidateKeys.length > 1 || candidatePages.length > 1) {
     confidence = "低";
     action = "禁止自动修正";
@@ -133,7 +142,8 @@ products.forEach((product, productIndex) => {
     pages: candidatePages.join(" | "),
     downloads: candidateDownloads.join(" | "),
     titleEvidence: titleEvidence ? "是" : "否",
-    pageExists: pageExists ? "是" : "否"
+    pageExists: pageExists ? "是" : "否",
+    downloadExists: downloadExists ? "是" : "否"
   });
 });
 
@@ -143,18 +153,21 @@ const summary = {
   highConfidence: rows.filter((row) => row.confidence === "高").length,
   mediumConfidence: rows.filter((row) => row.confidence === "中").length,
   lowConfidence: rows.filter((row) => row.confidence === "低").length,
+  missingCandidatePages: rows.filter((row) => row.pages && row.pageExists === "否").length,
+  existingDownloads: rows.filter((row) => row.downloadExists === "是").length,
   safetyRule: "仅生成分类与详情页建议；不修改产品数据、参数、分类或详情页绑定"
 };
 
 const report = { summary, records: rows };
 const headers = [
   "产品记录序号", "型号", "产品名称", "当前分类键", "当前分类", "候选分类键", "候选分类",
-  "证据置信度", "建议操作", "判断依据", "规格书记录", "候选页面", "下载文件", "标题支持分类", "页面存在"
+  "证据置信度", "建议操作", "判断依据", "规格书记录", "候选页面", "下载文件",
+  "标题支持分类", "页面存在", "下载文件存在"
 ];
 const csvRows = [headers.map(csvCell).join(",")].concat(rows.map((row) => [
   row.productIndex, row.model, row.productName, row.currentKey, row.currentCategory,
   row.candidateKey, row.candidateCategory, row.confidence, row.action, row.reason,
-  row.specRecords, row.pages, row.downloads, row.titleEvidence, row.pageExists
+  row.specRecords, row.pages, row.downloads, row.titleEvidence, row.pageExists, row.downloadExists
 ].map(csvCell).join(",")));
 
 fs.writeFileSync(path.join(outputDir, "cross-category-detail-evidence.json"), JSON.stringify(report, null, 2));
@@ -167,10 +180,5 @@ rows.forEach((row) => {
 
 if (!rows.length) {
   console.error("ERROR: 未找到待核对的跨分类精确型号记录，可能与上游审计基线不一致");
-  process.exitCode = 1;
-}
-
-if (rows.some((row) => row.pageExists === "否" && row.pages)) {
-  console.error("ERROR: 候选详情页路径不存在");
   process.exitCode = 1;
 }
