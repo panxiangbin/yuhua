@@ -53,7 +53,7 @@ jobs:
           grep -q "keepLegacyPanelAfterLaunch" cnc/personal-home.js
           grep -q "launch.insertAdjacentElement('afterend', panel)" cnc/personal-home.js
           grep -q "followsTools" cnc/personal-home.js
-          grep -q "xp-record-count" cnc/personal-home.js
+          grep -q "xp-game-xp-track" cnc/personal-home.js
           grep -q "body.cnc-industrial-records #view-favorites" cnc/industrial-personal-records.css
           grep -q "grid-template-columns: 1fr" cnc/industrial-personal-records.css
           grep -q "min-height: 56px" cnc/industrial-personal-records.css
