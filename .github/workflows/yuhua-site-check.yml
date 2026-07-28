@@ -18,6 +18,7 @@ on:
       - "scripts/export-data-audit.cjs"
       - "scripts/check-no-direct-contact.cjs"
       - "scripts/audit-public-contact-leaks.cjs"
+      - "scripts/audit-static-assets.cjs"
       - ".github/workflows/yuhua-site-check.yml"
   pull_request:
     paths:
@@ -35,6 +36,7 @@ on:
       - "scripts/export-data-audit.cjs"
       - "scripts/check-no-direct-contact.cjs"
       - "scripts/audit-public-contact-leaks.cjs"
+      - "scripts/audit-static-assets.cjs"
 
 permissions:
   contents: read
@@ -57,6 +59,7 @@ jobs:
           node --check scripts/export-data-audit.cjs
           node --check scripts/check-no-direct-contact.cjs
           node --check scripts/audit-public-contact-leaks.cjs
+          node --check scripts/audit-static-assets.cjs
       - name: Enforce no direct contact policy
         run: node scripts/check-no-direct-contact.cjs
       - name: Audit all public text files for contact leaks
@@ -67,6 +70,8 @@ jobs:
         run: node scripts/test-site-config.cjs
       - name: Export data review reports
         run: node scripts/export-data-audit.cjs
+      - name: Audit static assets and document links
+        run: node scripts/audit-static-assets.cjs
       - name: Upload audit reports
         uses: actions/upload-artifact@v4
         with:
@@ -76,6 +81,8 @@ jobs:
             test-artifacts/data-audit-items.csv
             test-artifacts/public-contact-audit-summary.json
             test-artifacts/public-contact-audit-items.csv
+            test-artifacts/static-asset-audit-summary.json
+            test-artifacts/static-asset-audit-items.csv
           if-no-files-found: error
           retention-days: 14
       - name: Install Chinese font for visual checks
