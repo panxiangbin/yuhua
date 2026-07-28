@@ -20,6 +20,16 @@ function normalize(value) {
     .replace(/[（）()【】[\]，,。；;：:\s_/\\·—–－]+/g, "");
 }
 
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function modelPattern(model) {
+  const parts = text(model).toUpperCase().match(/[A-Z0-9]+/g) || [];
+  const body = parts.map(escapeRegExp).join("[-_\\s]*");
+  return new RegExp(`(^|[^A-Z0-9])${body}(?=$|[^A-Z0-9])`, "i");
+}
+
 function csvCell(value) {
   return `"${text(value).replace(/"/g, '""').replace(/\r?\n/g, " ")}"`;
 }
@@ -58,6 +68,7 @@ const unmatchedGroups = (reconciliation.groups || []).filter(
 );
 const targetModels = [...new Set(unmatchedGroups.flatMap((group) => group.modelTokens || []).map(text).filter(Boolean))];
 const normalizedTargets = new Map(targetModels.map((model) => [model, normalize(model)]));
+const patterns = new Map(targetModels.map((model) => [model, modelPattern(model)]));
 
 const specsWindow = loadWindowFile("assets/specs.js");
 const pagesWindow = loadWindowFile("assets/pages.js");
@@ -68,12 +79,12 @@ const files = walk(root).filter((file) => publicExtensions.has(path.extname(file
 const evidenceByModel = new Map(targetModels.map((model) => [model, []]));
 
 for (const model of targetModels) {
-  const normalizedModel = normalizedTargets.get(model);
+  const pattern = patterns.get(model);
   const modelEvidence = evidenceByModel.get(model);
 
   specs.forEach((spec, index) => {
     const fields = [spec.model, spec.title, spec.series, spec.page, spec.dl].map(text);
-    if (fields.some((field) => normalize(field).includes(normalizedModel))) {
+    if (fields.some((field) => pattern.test(field))) {
       modelEvidence.push({
         sourceType: "规格书记录",
         source: "assets/specs.js",
@@ -89,7 +100,7 @@ for (const model of targetModels) {
   pages.forEach((page, index) => {
     const prefixes = Array.isArray(page.prefixes) ? page.prefixes : [];
     const fields = [page.page].concat(prefixes).map(text);
-    if (fields.some((field) => normalize(field).includes(normalizedModel))) {
+    if (fields.some((field) => pattern.test(field))) {
       modelEvidence.push({
         sourceType: "详情页映射",
         source: "assets/pages.js",
@@ -107,11 +118,10 @@ let scannedTextFiles = 0;
 let skippedLargeFiles = 0;
 for (const file of files) {
   const relative = path.relative(root, file).replace(/\\/g, "/");
-  if (["assets/videos.js", "assets/data.js"].includes(relative)) continue;
+  if (["assets/videos.js", "assets/data.js", "videos.json"].includes(relative)) continue;
 
-  const normalizedPath = normalize(relative);
   for (const model of targetModels) {
-    if (normalizedPath.includes(normalizedTargets.get(model))) {
+    if (patterns.get(model).test(relative)) {
       evidenceByModel.get(model).push({
         sourceType: "公开文件名",
         source: relative,
@@ -143,12 +153,11 @@ for (const file of files) {
     continue;
   }
 
-  const normalizedContent = normalize(content);
   for (const model of targetModels) {
-    const normalizedModel = normalizedTargets.get(model);
-    if (!normalizedContent.includes(normalizedModel)) continue;
+    const pattern = patterns.get(model);
+    if (!pattern.test(content)) continue;
     const lines = content.split(/\r?\n/);
-    const lineIndex = lines.findIndex((line) => normalize(line).includes(normalizedModel));
+    const lineIndex = lines.findIndex((line) => pattern.test(line));
     const excerpt = lineIndex >= 0 ? lines[lineIndex].trim().slice(0, 240) : "";
     evidenceByModel.get(model).push({
       sourceType: "公开文本内容",
@@ -216,7 +225,8 @@ const summary = {
   candidateFiles: files.length,
   scannedTextFiles,
   skippedLargeFiles,
-  maxTextBytes: MAX_TEXT_BYTES
+  maxTextBytes: MAX_TEXT_BYTES,
+  matchingMode: "型号边界匹配；排除视频数据副本与超大内嵌资源"
 };
 
 const headers = [
