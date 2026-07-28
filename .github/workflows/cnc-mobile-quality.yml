@@ -32,6 +32,7 @@ jobs:
           for file in cnc/tests/mobile-*.cjs; do node --check "$file"; done
       - name: Stability performance accessibility split query and industrial interface assertions
         run: |
+          set -euxo pipefail
           grep -q "20260721q" cnc/import-test.js
           grep -q "20260721u" cnc/import-test.js
           grep -q "20260721s" cnc/import-test.js
@@ -42,10 +43,16 @@ jobs:
           grep -q "installStartupHomeGuard" cnc/import-test.js
           grep -q "CNC_STARTUP_HOME_GUARD" cnc/import-test.js
           grep -q "personalHomeFollowsTools" cnc/import-test.js
-          grep -q "BUILD = '20260722b'" cnc/personal-home.js
-          grep -q "RECORDS_BUILD='20260722e'" cnc/personal-home.js
+          grep -q "BUILD = '20260728-game1'" cnc/personal-home.js
+          grep -q "TRAINING_BUILD = '20260728a'" cnc/personal-home.js
+          grep -q "GAME_STYLE_BUILD = '20260728a'" cnc/personal-home.js
+          grep -q "RECORDS_BUILD = '20260722e'" cnc/personal-home.js
           grep -q "industrial-personal-records.css" cnc/personal-home.js
-          grep -q "decorateRecords" cnc/personal-home.js
+          grep -q "mobile-home-game.css" cnc/personal-home.js
+          grep -q "renderGameHome" cnc/personal-home.js
+          grep -q "keepLegacyPanelAfterLaunch" cnc/personal-home.js
+          grep -q "launch.insertAdjacentElement('afterend', panel)" cnc/personal-home.js
+          grep -q "followsTools" cnc/personal-home.js
           grep -q "xp-record-count" cnc/personal-home.js
           grep -q "body.cnc-industrial-records #view-favorites" cnc/industrial-personal-records.css
           grep -q "grid-template-columns: 1fr" cnc/industrial-personal-records.css
@@ -74,9 +81,6 @@ jobs:
           grep -q "grid-template-columns:1fr!important" cnc/industrial-tools.css
           grep -q "font-size:25px" cnc/industrial-tools.css
           grep -q "mobile-industrial-tools-smoke" .github/workflows/cnc-mobile-smoke.yml
-          grep -q "keepPanelAfterTools" cnc/personal-home.js
-          grep -q "launch.insertAdjacentElement('afterend',panel)" cnc/personal-home.js
-          grep -q "followsTools" cnc/personal-home.js
           grep -q "BUILD = '20260721q'" cnc/clean-ui.js
           grep -q "QUERY_BUILD = '20260721r'" cnc/clean-ui.js
           grep -q "BUILD='20260721r'" cnc/query-modes.js
