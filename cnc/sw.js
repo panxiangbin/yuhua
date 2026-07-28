@@ -164,6 +164,16 @@ self.addEventListener('fetch', (event) => {
         if (fresh && fresh.ok) {
           const cache = await caches.open(RUNTIME_CACHE);
           await cache.put(request, fresh.clone());
+          return fresh;
+        }
+
+        const cached = await caches.match(request);
+        if (cached) return cached;
+
+        // Chromium在离线模拟时，Service Worker中的fetch有时仍会收到本地静态服务器404。
+        // 离线状态下必须返回中文回退页，而不是把404正文交给用户。
+        if (self.navigator && self.navigator.onLine === false) {
+          return offlineFallbackResponse();
         }
         return fresh;
       } catch {
