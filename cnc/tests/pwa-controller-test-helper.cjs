@@ -15,12 +15,15 @@ async function controllerSnapshot(page) {
     const registrations = container ? await container.getRegistrations() : [];
     const registration = registrations.find(item => item.scope === expectedScope);
     const prototype = container ? Object.getPrototypeOf(container) : null;
+    const descriptor = container ? Object.getOwnPropertyDescriptor(container, 'register') : null;
     return {
       url: location.href,
       readyState: document.readyState,
       controller: container?.controller?.scriptURL || '',
       expectedScope,
-      registerOwnProperty: Boolean(container && Object.prototype.hasOwnProperty.call(container, 'register')),
+      registerOwnProperty: Boolean(descriptor),
+      registerWritable: descriptor?.writable ?? null,
+      registerConfigurable: descriptor?.configurable ?? null,
       registerSource: container ? String(container.register).slice(0, 240) : '',
       nativeRegisterSource: prototype?.register ? String(prototype.register).slice(0, 240) : '',
       scripts: Array.from(document.scripts).map(script => script.src || '[inline]').filter(Boolean),
@@ -68,13 +71,21 @@ async function registerExpectedWorker(page, expectedScope, expectedScript) {
     if (!('serviceWorker' in navigator)) throw new Error('Service Worker unsupported');
     const container = navigator.serviceWorker;
     const prototype = Object.getPrototypeOf(container);
-    const ownRegister = Object.prototype.hasOwnProperty.call(container, 'register');
+    const descriptor = Object.getOwnPropertyDescriptor(container, 'register');
+    const ownRegister = Boolean(descriptor);
     const pageRegisterSource = String(container.register).slice(0, 240);
     const nativeRegister = prototype?.register;
     const scripts = Array.from(document.scripts).map(script => script.src || '[inline]').filter(Boolean);
 
     if (ownRegister && typeof nativeRegister === 'function' && container.register !== nativeRegister) {
-      throw new Error(`Service Worker register API overridden by page code; register=${pageRegisterSource}; scripts=${JSON.stringify(scripts)}`);
+      const isLockedNativeProxy =
+        descriptor?.writable === false &&
+        descriptor?.configurable === false &&
+        /nativeRegister\.call\(container,\s*scriptURL,\s*options\)/.test(pageRegisterSource);
+
+      if (!isLockedNativeProxy) {
+        throw new Error(`Service Worker register API overridden by page code; register=${pageRegisterSource}; scripts=${JSON.stringify(scripts)}`);
+      }
     }
 
     const register = typeof nativeRegister === 'function' ? nativeRegister : container.register;
@@ -93,7 +104,15 @@ async function registerExpectedWorker(page, expectedScope, expectedScript) {
         throw new Error(`Service Worker script mismatch: expected ${scriptUrl}, got ${actual}`);
       }
     }
-    return { scope: registration.scope, installingScript, waitingScript, activeScript, ownRegister, scripts };
+    return {
+      scope: registration.scope,
+      installingScript,
+      waitingScript,
+      activeScript,
+      ownRegister,
+      lockedNativeProxy: ownRegister && descriptor?.writable === false && descriptor?.configurable === false,
+      scripts
+    };
   }, { scopeUrl: expectedScope, scriptUrl: expectedScript }), 15000, 'Service Worker registration');
 }
 
