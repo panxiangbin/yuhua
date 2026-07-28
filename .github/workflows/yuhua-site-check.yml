@@ -15,6 +15,7 @@ on:
       - "assets/site-config.js"
       - "scripts/audit-yuhua-site.cjs"
       - "scripts/test-site-config.cjs"
+      - "scripts/export-data-audit.cjs"
       - ".github/workflows/yuhua-site-check.yml"
   pull_request:
     paths:
@@ -29,6 +30,7 @@ on:
       - "assets/site-config.js"
       - "scripts/audit-yuhua-site.cjs"
       - "scripts/test-site-config.cjs"
+      - "scripts/export-data-audit.cjs"
 
 permissions:
   contents: read
@@ -48,10 +50,22 @@ jobs:
           node --check assets/site-config.js
           node --check scripts/audit-yuhua-site.cjs
           node --check scripts/test-site-config.cjs
+          node --check scripts/export-data-audit.cjs
       - name: Audit website structure and product data
         run: node scripts/audit-yuhua-site.cjs
       - name: Test runtime data guard and compound search
         run: node scripts/test-site-config.cjs
+      - name: Export data review reports
+        run: node scripts/export-data-audit.cjs
+      - name: Upload data review reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-data-audit
+          path: |
+            test-artifacts/data-audit-summary.json
+            test-artifacts/data-audit-items.csv
+          if-no-files-found: error
+          retention-days: 14
       - name: Install Chinese font for visual checks
         run: |
           sudo apt-get update -qq
