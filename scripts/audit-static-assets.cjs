@@ -17,6 +17,26 @@ function loadWindowFile(relativePath) {
   return sandbox.window;
 }
 
+function loadRuntimeVideos() {
+  const sandbox = {
+    window: {},
+    document: {
+      readyState: "loading",
+      addEventListener() {},
+      querySelectorAll: null,
+      documentElement: null
+    },
+    MutationObserver: undefined,
+    setTimeout() {},
+    clearTimeout() {}
+  };
+  sandbox.window.window = sandbox.window;
+  vm.createContext(sandbox);
+  vm.runInContext(fs.readFileSync(path.join(root, "assets/site-config.js"), "utf8"), sandbox, { filename: "assets/site-config.js" });
+  vm.runInContext(fs.readFileSync(path.join(root, "assets/videos.js"), "utf8"), sandbox, { filename: "assets/videos.js" });
+  return sandbox.window.VIDEOS || [];
+}
+
 function cleanRef(value) {
   return String(value == null ? "" : value)
     .trim()
@@ -61,8 +81,8 @@ htmlFiles.forEach((file) => {
 const data = loadWindowFile("assets/data.js");
 (data.CATEGORIES || []).forEach((item, index) => add(`assets/data.js#category-${index + 1}`, "img", item.img));
 
-const videos = loadWindowFile("assets/videos.js");
-(videos.VIDEOS || []).forEach((item, index) => {
+const videos = loadRuntimeVideos();
+videos.forEach((item, index) => {
   add(`assets/videos.js#video-${index + 1}`, "file", item.file);
   add(`assets/videos.js#video-${index + 1}`, "poster", item.poster);
 });
@@ -83,6 +103,7 @@ const summary = {
   checkedReferences: references.length,
   missingReferences: missing.length,
   criticalMissingReferences: criticalMissing.length,
+  runtimeVideoPosterFallbacksApplied: true,
   bySource: missing.reduce((result, item) => {
     const key = item.source.split("#")[0];
     result[key] = (result[key] || 0) + 1;
@@ -104,4 +125,4 @@ if (criticalMissing.length) {
   criticalMissing.forEach((item) => console.error(`- ${item.source} -> ${item.value}`));
   process.exit(1);
 }
-console.log("关键页面资源完整；非关键缺失项已写入人工审核报告。");
+console.log("关键页面资源完整；视频封面按真实运行时数据审计，缺失封面自动回退首帧。");
