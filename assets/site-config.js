@@ -62,7 +62,8 @@ window.YUHUA_SITE = {
     }
 
     var mobileBar = document.querySelector(".mobile-action-bar");
-    if (mobileBar) {
+    if (mobileBar && mobileBar.getAttribute("data-no-phone-ready") !== "true") {
+      mobileBar.setAttribute("data-no-phone-ready", "true");
       mobileBar.innerHTML =
         '<a href="#products"><span>▦</span>产品中心</a>' +
         '<a href="#catalog"><span>⌕</span>型号查询</a>' +
