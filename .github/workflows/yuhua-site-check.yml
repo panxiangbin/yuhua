@@ -30,6 +30,7 @@ on:
       - "scripts/reconcile-video-model-categories.cjs"
       - "scripts/audit-unmatched-model-evidence.cjs"
       - "scripts/audit-detail-page-coverage.cjs"
+      - "scripts/classify-unresolved-detail-pages.cjs"
       - ".github/workflows/yuhua-site-check.yml"
   pull_request:
     paths:
@@ -59,6 +60,7 @@ on:
       - "scripts/reconcile-video-model-categories.cjs"
       - "scripts/audit-unmatched-model-evidence.cjs"
       - "scripts/audit-detail-page-coverage.cjs"
+      - "scripts/classify-unresolved-detail-pages.cjs"
 
 permissions:
   contents: read
@@ -91,6 +93,7 @@ jobs:
           node --check scripts/reconcile-video-model-categories.cjs
           node --check scripts/audit-unmatched-model-evidence.cjs
           node --check scripts/audit-detail-page-coverage.cjs
+          node --check scripts/classify-unresolved-detail-pages.cjs
       - name: Enforce no direct contact policy
         run: node scripts/check-no-direct-contact.cjs
       - name: Audit all public text files for contact leaks
@@ -119,6 +122,8 @@ jobs:
         run: node scripts/audit-unmatched-model-evidence.cjs
       - name: Audit exact-model detail page coverage
         run: node scripts/audit-detail-page-coverage.cjs
+      - name: Classify unresolved detail page records
+        run: node scripts/classify-unresolved-detail-pages.cjs
       - name: Upload audit reports
         uses: actions/upload-artifact@v4
         with:
@@ -148,6 +153,8 @@ jobs:
             test-artifacts/unmatched-model-evidence.csv
             test-artifacts/detail-page-coverage.json
             test-artifacts/detail-page-coverage.csv
+            test-artifacts/unresolved-detail-classification.json
+            test-artifacts/unresolved-detail-classification.csv
           if-no-files-found: error
           retention-days: 14
       - name: Install Chinese font for visual checks
