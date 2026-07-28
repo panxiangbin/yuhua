@@ -1,12 +1,97 @@
 // 予华仪器网站统一配置
-// 销售联系方式变化时，只修改本文件，不要在各页面重复替换。
+// 本站不公开电话、手机号或微信号；后续优化不得重新加入直接联系方式。
 window.YUHUA_SITE = {
   company: "巩义市予华仪器有限责任公司",
-  phone: "15517593858",
-  wechat: "15517593858",
   address: "巩义市英峪工业区",
-  officialSite: "https://www.gyyuhua.cn/"
+  officialSite: "https://www.gyyuhua.cn/",
+  publicDirectContact: false
 };
+
+// 无电话策略：移除页面中可能遗留或后续动态生成的电话、拨号、复制号码入口。
+(function installNoPhonePolicy() {
+  function removeDirectContact() {
+    if (!document.querySelectorAll) return;
+
+    ["#contactPhoneLink", "#callNow", "#copyPhone", "#mobileCall"].forEach(function (selector) {
+      var element = document.querySelector(selector);
+      if (element) element.remove();
+    });
+
+    Array.prototype.forEach.call(document.querySelectorAll('a[href^="tel:"], a[href="#contact"]'), function (link) {
+      if (link.closest && link.closest(".recommendation-actions")) {
+        link.href = "#catalog";
+        link.textContent = "继续查询型号";
+        return;
+      }
+      if (link.classList && link.classList.contains("nav-contact")) {
+        link.href = "#selector";
+        link.textContent = "选型工具";
+        return;
+      }
+      if (link.closest && link.closest("#navMobile")) {
+        link.href = "#selector";
+        link.textContent = "选型工具";
+      }
+    });
+
+    var section = document.getElementById("contact");
+    if (section) {
+      section.id = "service";
+      section.innerHTML =
+        '<div class="contact-inner">' +
+          '<div>' +
+            '<span class="section-eyebrow light">选型服务</span>' +
+            '<h2>先把型号和工况整理清楚</h2>' +
+            '<p>网站不公开直接联系方式。可先使用智能选型生成需求摘要，再通过现有业务渠道提交给销售或技术人员复核。</p>' +
+          '</div>' +
+          '<div class="contact-card service-card">' +
+            '<b class="service-card-title">推荐操作顺序</b>' +
+            '<ol class="service-steps">' +
+              '<li>查询产品型号与现有参数</li>' +
+              '<li>填写物料、容量、温度、压力和材质要求</li>' +
+              '<li>复制系统生成的完整工况摘要</li>' +
+              '<li>通过现有业务渠道提交人工确认</li>' +
+            '</ol>' +
+            '<div class="contact-actions">' +
+              '<a class="btn btn-primary compact" href="#selector">填写选型需求</a>' +
+              '<a class="btn btn-ghost compact" href="#catalog">查询产品型号</a>' +
+              '<a class="btn btn-ghost compact" href="#specs">查找规格书</a>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+    }
+
+    var mobileBar = document.querySelector(".mobile-action-bar");
+    if (mobileBar) {
+      mobileBar.innerHTML =
+        '<a href="#products"><span>▦</span>产品中心</a>' +
+        '<a href="#catalog"><span>⌕</span>型号查询</a>' +
+        '<a href="#selector"><span>✓</span>智能选型</a>';
+    }
+
+    var style = document.getElementById("no-phone-policy-style");
+    if (!style && document.head) {
+      style = document.createElement("style");
+      style.id = "no-phone-policy-style";
+      style.textContent =
+        '.service-card-title{display:block;color:#fff;font-size:18px}' +
+        '.service-steps{margin:13px 0 0;padding-left:22px;color:rgba(255,255,255,.78);font-size:13.5px}' +
+        '.service-steps li+li{margin-top:6px}';
+      document.head.appendChild(style);
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", removeDirectContact);
+  } else {
+    removeDirectContact();
+  }
+
+  if (typeof MutationObserver !== "undefined" && document.documentElement) {
+    var observer = new MutationObserver(function () { removeDirectContact(); });
+    observer.observe(document.documentElement, { childList: true, subtree: true });
+  }
+})();
 
 // 产品数据运行时保护：保留简介供全文搜索，但不让简介里的章节号、年份、功率等数字
 // 参与“温度能力”解析。data.js 随后给 window.PRODUCTS 赋值时会自动经过这里。
