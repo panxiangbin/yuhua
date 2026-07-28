@@ -127,8 +127,7 @@ window.YUHUA_SITE = {
     }
 
     function apply() {
-      var raw = input.dataset.preciseRaw || input.value;
-      var groups = queryGroups(raw);
+      var groups = queryGroups(input.value);
       var rows = Array.prototype.slice.call(tableBody.querySelectorAll("tr[data-index]"));
       var cards = Array.prototype.slice.call(mobileList.querySelectorAll(".mobile-product-card[data-index]"));
 
@@ -159,7 +158,6 @@ window.YUHUA_SITE = {
 
     input.addEventListener("input", function () {
       var prepared = prepareVisibleQuery(input.value);
-      input.dataset.preciseRaw = prepared;
       if (prepared !== input.value) input.value = prepared;
       schedule();
     }, true);
