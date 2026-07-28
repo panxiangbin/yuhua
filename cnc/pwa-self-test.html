@@ -31,6 +31,7 @@
     const EXPECTED='20260728-pwa3';
     const REQUIRED=['./index.html','./offline.html','./pwa-status.html','./pages-status.html','./pwa-self-test.html','./build-info.json'];
     let last=[];
+    let inspectToken=0;
     const $=selector=>document.querySelector(selector);
     function row(name,ok,detail){return{name,ok,detail:String(detail||'')}}
     async function readBuild(activeWorker){
@@ -46,6 +47,7 @@
       });
     }
     async function run(){
+      const token=++inspectToken;
       const output=[];
       output.push(row('浏览器支持Service Worker','serviceWorker' in navigator,'用于离线缓存与版本更新'));
       let registration=null;
@@ -70,6 +72,7 @@
       let marker=null;
       try{const response=await fetch('./build-info.json',{cache:'no-store'});if(response.ok)marker=await response.json()}catch{}
       output.push(row('公网构建标记与PWA一致',!!marker&&marker.app==='cnc-training-platform'&&marker.pwaBuild===EXPECTED,marker?`${marker.build||'无站点构建'} / ${marker.pwaBuild||'无PWA构建'}`:'构建标记读取失败'));
+      if(token!==inspectToken)return;
       last=output;
       render();
     }
@@ -81,14 +84,19 @@
       $('#status').className=`status${passed===last.length?' ok':''}`;
       $('#status').textContent=passed===last.length?'8项检查全部通过，当前离线基础与版本标记一致。':`已通过${passed}项，仍有${last.length-passed}项需要处理。保持联网后重新运行自检。`;
     }
-    $('#rerun').onclick=()=>navigator.serviceWorker.ready.then(()=>run()).catch(run);
+    $('#rerun').onclick=()=>run();
     $('#copy').onclick=async()=>{
       const text=['数控小潘 PWA离线自检',`检查时间：${new Date().toLocaleString('zh-CN',{hour12:false})}`,...last.map(item=>`${item.ok?'通过':'待处理'}｜${item.name}｜${item.detail}`)].join('\n');
       try{await navigator.clipboard.writeText(text);$('#status').textContent='诊断报告已复制。'}catch{$('#status').textContent='复制失败，请使用浏览器允许剪贴板权限后重试。'}
     };
-    addEventListener('pageshow',run);
+    addEventListener('pageshow',()=>run());
     document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')run()});
-    run().catch(()=>{$('#status').textContent='自检执行失败，请保持联网后重试。'});
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.ready.then(()=>run()).catch(()=>run());
+      navigator.serviceWorker.addEventListener('controllerchange',()=>run());
+    }else{
+      run();
+    }
   </script>
 </body>
 </html>
