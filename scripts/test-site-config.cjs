@@ -67,6 +67,21 @@ sandbox.window.window = sandbox.window;
 vm.createContext(sandbox);
 vm.runInContext(code, sandbox, { filename: "assets/site-config.js" });
 
+sandbox.window.VIDEOS = [
+  {
+    title: "缺失封面视频",
+    file: "assets/videos/img_1672.mp4",
+    poster: "assets/videos/img_1672.jpg"
+  },
+  {
+    title: "有效封面视频",
+    file: "assets/videos/yre_2010a.mp4",
+    poster: "assets/videos/yre_2010a.jpg"
+  }
+];
+assert(sandbox.window.VIDEOS[0].poster === "", "已确认缺失的视频封面没有被清空");
+assert(sandbox.window.VIDEOS[1].poster === "assets/videos/yre_2010a.jpg", "有效视频封面被错误清空");
+
 sandbox.window.PRODUCTS = [
   {
     "型号": "YSF-20L",
@@ -112,4 +127,4 @@ inputListeners.input();
 assert(rows.every((row) => row.hidden === false), "清空搜索后产品没有全部恢复显示");
 assert(cards.every((card) => card.hidden === false), "清空搜索后手机卡片没有全部恢复显示");
 
-console.log("site-config 运行时保护与复合搜索测试通过");
+console.log("site-config 视频、产品数据与复合搜索运行时保护测试通过");
