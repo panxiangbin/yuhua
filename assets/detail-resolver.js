@@ -54,6 +54,7 @@
     if (exactSpecPages[groupKey].indexOf(page) < 0) exactSpecPages[groupKey].push(page);
   });
 
+  var resolvedCount = 0;
   products.forEach(function (product) {
     if (!product || typeof product !== "object" || clean(product.detail)) return;
     var model = normalizeModel(product["型号"]);
@@ -65,5 +66,15 @@
 
     product.detail = pages[0];
     product.detailSource = "exact-spec-model";
+    resolvedCount += 1;
   });
+
+  window.YUHUA_DETAIL_RESOLVER_RESULT = {
+    resolvedCount: resolvedCount,
+    strategy: "exact-model-same-category-unique-page"
+  };
+
+  if (typeof document !== "undefined" && document.documentElement) {
+    document.documentElement.setAttribute("data-safe-detail-resolved", String(resolvedCount));
+  }
 })();
