@@ -1,5 +1,5 @@
 /* CNC PWA：版本化缓存、离线回退与安全更新。 */
-const BUILD = '20260726-pwa2';
+const BUILD = '20260728-pwa3';
 const STATIC_CACHE = `cnc-static-${BUILD}`;
 const RUNTIME_CACHE = `cnc-runtime-${BUILD}`;
 const INSTALL_DIAGNOSTIC_PATH = './pwa-install-diagnostics.json';
@@ -31,37 +31,64 @@ async function fetchWithTimeout(url, timeoutMs = 8000) {
   }
 }
 
+async function writeInstallDiagnostic(payload) {
+  try {
+    const runtimeCache = await caches.open(RUNTIME_CACHE);
+    await runtimeCache.put(scopeUrl(INSTALL_DIAGNOSTIC_PATH), new Response(JSON.stringify(payload), {
+      headers: { 'Content-Type': 'application/json; charset=utf-8' }
+    }));
+  } catch {
+    // 诊断本身属于辅助能力，任何缓存配额或浏览器存储异常都不能让Worker安装失败。
+  }
+}
+
 async function cacheCoreBestEffort() {
-  const staticCache = await caches.open(STATIC_CACHE);
-  const runtimeCache = await caches.open(RUNTIME_CACHE);
   const failures = [];
+  let staticCache;
 
-  await Promise.all(REQUIRED_CORE_PATHS.map(async (path) => {
-    try {
-      const url = scopeUrl(path);
-      const response = await fetchWithTimeout(url);
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      await staticCache.put(url, response.clone());
-    } catch (error) {
-      failures.push({ path, error: String(error && error.message ? error.message : error) });
-    }
-  }));
+  try {
+    staticCache = await caches.open(STATIC_CACHE);
+  } catch (error) {
+    failures.push({ path: '__static_cache__', error: String(error && error.message ? error.message : error) });
+  }
 
-  await runtimeCache.put(scopeUrl(INSTALL_DIAGNOSTIC_PATH), new Response(JSON.stringify({
+  if (staticCache) {
+    await Promise.all(REQUIRED_CORE_PATHS.map(async (path) => {
+      try {
+        const url = scopeUrl(path);
+        const response = await fetchWithTimeout(url);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        await staticCache.put(url, response.clone());
+      } catch (error) {
+        failures.push({ path, error: String(error && error.message ? error.message : error) });
+      }
+    }));
+  }
+
+  await writeInstallDiagnostic({
     build: BUILD,
     checkedAt: new Date().toISOString(),
-    cached: REQUIRED_CORE_PATHS.length - failures.length,
+    cached: staticCache ? REQUIRED_CORE_PATHS.length - failures.filter(item => item.path !== '__static_cache__').length : 0,
     total: REQUIRED_CORE_PATHS.length,
     failures
-  }), {
-    headers: { 'Content-Type': 'application/json; charset=utf-8' }
-  }));
+  });
 }
 
 self.addEventListener('install', (event) => {
   event.waitUntil((async () => {
-    // 单个核心资源失败只记录诊断，不再让整个Worker安装报废。
-    await cacheCoreBestEffort();
+    // 预缓存和诊断都是增强能力：无论缓存API、配额或单个资源发生什么异常，
+    // Worker都必须完成安装，确保在线导航和后续离线自检仍可继续。
+    try {
+      await cacheCoreBestEffort();
+    } catch (error) {
+      await writeInstallDiagnostic({
+        build: BUILD,
+        checkedAt: new Date().toISOString(),
+        cached: 0,
+        total: REQUIRED_CORE_PATHS.length,
+        failures: [{ path: '__install__', error: String(error && error.message ? error.message : error) }]
+      });
+    }
     await self.skipWaiting();
   })());
 });
