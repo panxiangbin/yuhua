@@ -1,1 +1,94 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#365b72"><title>PWA离线自检｜数控小潘</title><style>*{box-sizing:border-box}body{margin:0;background:#f2efe8;color:#292d30;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}.shell{max-width:820px;margin:auto;padding:14px 14px 92px}.top,.actions{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.btn{min-height:46px;padding:0 14px;border:1px solid #d8d2c6;border-radius:12px;background:#365b72;color:#fff;font-weight:900;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}.btn.alt{background:#fffdf8;color:#365b72}.card{background:#fffdf8;border:1px solid #d8d2c6;border-radius:15px;box-shadow:0 6px 16px rgba(48,44,36,.07);padding:16px;margin-top:14px}h1{font-size:29px;margin:8px 0}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat{padding:14px;border:1px solid #d8d2c6;border-radius:12px;background:#f8f5ef}.stat strong{display:block;font-size:22px;color:#365b72}.notice{line-height:1.7;color:#687078}.result{display:grid;gap:9px}.item{border:1px solid #d8d2c6;border-radius:12px;padding:12px;background:#f8f5ef;line-height:1.55}.item strong{display:block}.item.pass{border-left:4px solid #3f6b50}.item.fail{border-left:4px solid #8a5a16}.status{border-left:4px solid #8a5a16;padding:12px;background:#f8f5ef;border-radius:8px;line-height:1.6}.status.ok{border-left-color:#3f6b50}.bottom{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,820px);display:grid;grid-template-columns:repeat(5,1fr);background:#fffdf8f5;border-top:1px solid #d8d2c6;padding:7px 8px calc(7px + env(safe-area-inset-bottom))}.bottom a{min-height:48px;display:flex;align-items:center;justify-content:center;text-decoration:none;color:#687078;font-weight:900;font-size:13px}@media(max-width:620px){.summary,.top,.actions{grid-template-columns:1fr}}</style></head><body><main class="shell"><div class="top"><a class="btn alt" href="./pwa-status.html">← 返回离线状态</a><a class="btn alt" href="./profile.html">返回成长档案</a></div><section class="card"><small>PWA · 离线能力确定性诊断</small><h1>离线自检与诊断报告</h1><p class="notice">一次核对浏览器支持、Service Worker注册与接管、运行构建、静态缓存、运行时缓存、核心离线资源和公网构建标记。只读检查，不修改学习记录、不清空缓存、不发放XP。</p><div class="summary"><div class="stat"><span>检查项</span><strong id="total">8</strong></div><div class="stat"><span>通过</span><strong id="passed">0</strong></div><div class="stat"><span>待处理</span><strong id="failed">8</strong></div></div></section><section class="card"><h2>检查结果</h2><p id="status" class="status" role="status" aria-live="polite">正在执行8项检查…</p><div id="results" class="result"></div><div class="actions" style="margin-top:12px"><button class="btn" id="rerun" type="button">重新运行自检</button><button class="btn alt" id="copy" type="button">复制诊断报告</button></div><p class="notice">离线内容可能不是最新版本。报警、参数、刀补和现场操作仍须核对机床原厂手册、企业安全制度和现场条件；高风险操作须现场师傅或授权人员指导。</p></section></main><nav class="bottom" aria-label="平台主导航"><a href="./index.html">首页</a><a href="./training-camp.html">训练营</a><a href="./practice.html">练习</a><a href="./index.html#workspace">查代码</a><a href="./profile.html">我的</a></nav><script>const EXPECTED='20260726-pwa2',REQUIRED=['./index.html','./offline.html','./pwa-status.html','./pages-status.html','./pwa-self-test.html','./build-info.json'];let last=[];const $=s=>document.querySelector(s);function row(name,ok,detail){return{name,ok,detail:String(detail||'')}}async function build(worker){if(!worker)return'';return new Promise(resolve=>{const c=new MessageChannel(),t=setTimeout(()=>resolve(''),1800);c.port1.onmessage=e=>{clearTimeout(t);resolve(e.data&&e.data.type==='CNC_SW_BUILD'?String(e.data.build||''):'')};worker.postMessage({type:'GET_BUILD'},[c.port2])})}async function run(){const out=[];out.push(row('浏览器支持Service Worker','serviceWorker'in navigator,'用于离线缓存与版本更新'));let reg=null;if('serviceWorker'in navigator){reg=await navigator.serviceWorker.getRegistration('./').catch(()=>null)}out.push(row('Service Worker已注册',!!reg,reg?'已找到当前作用域注册':'请先联网打开首页'));out.push(row('当前页面已被接管',!!navigator.serviceWorker.controller,navigator.serviceWorker.controller?'controller可用':'首次安装后可能需要重新载入'));const active=reg&&reg.active,workerBuild=await build(active);out.push(row('运行构建号一致',workerBuild===EXPECTED,workerBuild||'未读取到构建号'));const keys=await caches.keys().catch(()=>[]),staticName=keys.find(x=>x===`cnc-static-${EXPECTED}`)||'',runtimeName=keys.find(x=>x===`cnc-runtime-${EXPECTED}`)||'';out.push(row('静态缓存版本存在',!!staticName,staticName||'未发现当前静态缓存'));out.push(row('运行时缓存版本存在',!!runtimeName,runtimeName||'未发现当前运行时缓存'));let missing=[...REQUIRED];if(staticName){const cache=await caches.open(staticName);missing=[];for(const url of REQUIRED){if(!await cache.match(url))missing.push(url)}}out.push(row('核心离线资源完整',missing.length===0,missing.length?`缺少：${missing.join('、')}`:`已核对${REQUIRED.length}项`));let marker=null;try{const r=await fetch('./build-info.json',{cache:'no-store'});if(r.ok)marker=await r.json()}catch{}out.push(row('公网构建标记与PWA一致',!!marker&&marker.app==='cnc-training-platform'&&marker.pwaBuild===EXPECTED,marker?`${marker.build||'无站点构建'} / ${marker.pwaBuild||'无PWA构建'}`:'构建标记读取失败'));last=out;render()}function render(){const pass=last.filter(x=>x.ok).length;$('#passed').textContent=pass;$('#failed').textContent=last.length-pass;$('#results').innerHTML=last.map(x=>`<div class="item ${x.ok?'pass':'fail'}"><strong>${x.ok?'通过':'待处理'} · ${x.name}</strong><span>${x.detail}</span></div>`).join('');$('#status').className=`status${pass===last.length?' ok':''}`;$('#status').textContent=pass===last.length?'8项检查全部通过，当前离线基础与版本标记一致。':`已通过${pass}项，仍有${last.length-pass}项需要处理。保持联网后重新运行自检。`}$('#rerun').onclick=()=>{navigator.serviceWorker.ready.then(()=>run()).catch(run)};$('#copy').onclick=async()=>{const text=['数控小潘 PWA离线自检',`检查时间：${new Date().toLocaleString('zh-CN',{hour12:false})}`,...last.map(x=>`${x.ok?'通过':'待处理'}｜${x.name}｜${x.detail}`)].join('\n');try{await navigator.clipboard.writeText(text);$('#status').textContent='诊断报告已复制。'}catch{$('#status').textContent='复制失败，请使用浏览器允许剪贴板权限后重试。'}};addEventListener('pageshow',()=>run());document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')run()});run().catch(()=>{$('#status').textContent='自检执行失败，请保持联网后重试。'});</script></body></html>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#365b72">
+  <title>PWA离线自检｜数控小潘</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#f2efe8;color:#292d30;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}.shell{max-width:820px;margin:auto;padding:14px 14px 92px}.top,.actions{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.btn{min-height:46px;padding:0 14px;border:1px solid #d8d2c6;border-radius:12px;background:#365b72;color:#fff;font-weight:900;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}.btn.alt{background:#fffdf8;color:#365b72}.card{background:#fffdf8;border:1px solid #d8d2c6;border-radius:15px;box-shadow:0 6px 16px rgba(48,44,36,.07);padding:16px;margin-top:14px}h1{font-size:29px;margin:8px 0}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat{padding:14px;border:1px solid #d8d2c6;border-radius:12px;background:#f8f5ef}.stat strong{display:block;font-size:22px;color:#365b72}.notice{line-height:1.7;color:#687078}.result{display:grid;gap:9px}.item{border:1px solid #d8d2c6;border-radius:12px;padding:12px;background:#f8f5ef;line-height:1.55}.item strong{display:block}.item.pass{border-left:4px solid #3f6b50}.item.fail{border-left:4px solid #8a5a16}.status{border-left:4px solid #8a5a16;padding:12px;background:#f8f5ef;border-radius:8px;line-height:1.6}.status.ok{border-left-color:#3f6b50}.bottom{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,820px);display:grid;grid-template-columns:repeat(5,1fr);background:#fffdf8f5;border-top:1px solid #d8d2c6;padding:7px 8px calc(7px + env(safe-area-inset-bottom))}.bottom a{min-height:48px;display:flex;align-items:center;justify-content:center;text-decoration:none;color:#687078;font-weight:900;font-size:13px}@media(max-width:620px){.summary,.top,.actions{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <div class="top"><a class="btn alt" href="./pwa-status.html">← 返回离线状态</a><a class="btn alt" href="./profile.html">返回成长档案</a></div>
+    <section class="card">
+      <small>PWA · 离线能力确定性诊断</small>
+      <h1>离线自检与诊断报告</h1>
+      <p class="notice">一次核对浏览器支持、Service Worker注册与接管、运行构建、静态缓存、运行时缓存、核心离线资源和公网构建标记。只读检查，不修改学习记录、不清空缓存、不发放XP。</p>
+      <div class="summary"><div class="stat"><span>检查项</span><strong id="total">8</strong></div><div class="stat"><span>通过</span><strong id="passed">0</strong></div><div class="stat"><span>待处理</span><strong id="failed">8</strong></div></div>
+    </section>
+    <section class="card">
+      <h2>检查结果</h2>
+      <p id="status" class="status" role="status" aria-live="polite">正在执行8项检查…</p>
+      <div id="results" class="result"></div>
+      <div class="actions" style="margin-top:12px"><button class="btn" id="rerun" type="button">重新运行自检</button><button class="btn alt" id="copy" type="button">复制诊断报告</button></div>
+      <p class="notice">离线内容可能不是最新版本。报警、参数、刀补和现场操作仍须核对机床原厂手册、企业安全制度和现场条件；高风险操作须现场师傅或授权人员指导。</p>
+    </section>
+  </main>
+  <nav class="bottom" aria-label="平台主导航"><a href="./index.html">首页</a><a href="./training-camp.html">训练营</a><a href="./practice.html">练习</a><a href="./index.html#workspace">查代码</a><a href="./profile.html">我的</a></nav>
+  <script>
+    const EXPECTED='20260728-pwa3';
+    const REQUIRED=['./index.html','./offline.html','./pwa-status.html','./pages-status.html','./pwa-self-test.html','./build-info.json'];
+    let last=[];
+    const $=selector=>document.querySelector(selector);
+    function row(name,ok,detail){return{name,ok,detail:String(detail||'')}}
+    async function readBuild(activeWorker){
+      if(!activeWorker)return'';
+      return new Promise(resolve=>{
+        const channel=new MessageChannel();
+        const timer=setTimeout(()=>resolve(''),1800);
+        channel.port1.onmessage=event=>{
+          clearTimeout(timer);
+          resolve(event.data&&event.data.type==='CNC_SW_BUILD'?String(event.data.build||''):'');
+        };
+        activeWorker.postMessage({type:'GET_BUILD'},[channel.port2]);
+      });
+    }
+    async function run(){
+      const output=[];
+      output.push(row('浏览器支持Service Worker','serviceWorker' in navigator,'用于离线缓存与版本更新'));
+      let registration=null;
+      if('serviceWorker' in navigator)registration=await navigator.serviceWorker.getRegistration('./').catch(()=>null);
+      output.push(row('Service Worker已注册',!!registration,registration?'已找到当前作用域注册':'请先联网打开首页'));
+      output.push(row('当前页面已被接管',!!navigator.serviceWorker.controller,navigator.serviceWorker.controller?'controller可用':'首次安装后可能需要重新载入'));
+      const active=registration&&registration.active;
+      const workerBuild=await readBuild(active);
+      output.push(row('运行构建号一致',workerBuild===EXPECTED,workerBuild||'未读取到构建号'));
+      const keys=await caches.keys().catch(()=>[]);
+      const staticName=keys.find(name=>name===`cnc-static-${EXPECTED}`)||'';
+      const runtimeName=keys.find(name=>name===`cnc-runtime-${EXPECTED}`)||'';
+      output.push(row('静态缓存版本存在',!!staticName,staticName||'未发现当前静态缓存'));
+      output.push(row('运行时缓存版本存在',!!runtimeName,runtimeName||'未发现当前运行时缓存'));
+      let missing=[...REQUIRED];
+      if(staticName){
+        const cache=await caches.open(staticName);
+        missing=[];
+        for(const url of REQUIRED){if(!await cache.match(url))missing.push(url)}
+      }
+      output.push(row('核心离线资源完整',missing.length===0,missing.length?`缺少：${missing.join('、')}`:`已核对${REQUIRED.length}项`));
+      let marker=null;
+      try{const response=await fetch('./build-info.json',{cache:'no-store'});if(response.ok)marker=await response.json()}catch{}
+      output.push(row('公网构建标记与PWA一致',!!marker&&marker.app==='cnc-training-platform'&&marker.pwaBuild===EXPECTED,marker?`${marker.build||'无站点构建'} / ${marker.pwaBuild||'无PWA构建'}`:'构建标记读取失败'));
+      last=output;
+      render();
+    }
+    function render(){
+      const passed=last.filter(item=>item.ok).length;
+      $('#passed').textContent=passed;
+      $('#failed').textContent=last.length-passed;
+      $('#results').innerHTML=last.map(item=>`<div class="item ${item.ok?'pass':'fail'}"><strong>${item.ok?'通过':'待处理'} · ${item.name}</strong><span>${item.detail}</span></div>`).join('');
+      $('#status').className=`status${passed===last.length?' ok':''}`;
+      $('#status').textContent=passed===last.length?'8项检查全部通过，当前离线基础与版本标记一致。':`已通过${passed}项，仍有${last.length-passed}项需要处理。保持联网后重新运行自检。`;
+    }
+    $('#rerun').onclick=()=>navigator.serviceWorker.ready.then(()=>run()).catch(run);
+    $('#copy').onclick=async()=>{
+      const text=['数控小潘 PWA离线自检',`检查时间：${new Date().toLocaleString('zh-CN',{hour12:false})}`,...last.map(item=>`${item.ok?'通过':'待处理'}｜${item.name}｜${item.detail}`)].join('\n');
+      try{await navigator.clipboard.writeText(text);$('#status').textContent='诊断报告已复制。'}catch{$('#status').textContent='复制失败，请使用浏览器允许剪贴板权限后重试。'}
+    };
+    addEventListener('pageshow',run);
+    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')run()});
+    run().catch(()=>{$('#status').textContent='自检执行失败，请保持联网后重试。'});
+  </script>
+</body>
+</html>
