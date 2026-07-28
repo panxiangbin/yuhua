@@ -7,9 +7,7 @@ window.YUHUA_SITE = {
   publicDirectContact: false
 };
 
-// 视频数据保护：
-// 1. 对仓库中已确认不存在的封面路径清空 poster，让浏览器回退到视频首帧；
-// 2. 隐藏文件名为空或仅为扩展名的无效视频记录，不猜测真实文件名。
+// 视频数据保护：清空已确认缺失的封面，并隐藏文件名为空或仅为扩展名的无效视频。
 (function installVideoDataGuard() {
   var missingPosters = {
     "assets/videos/img_1672.jpg": true,
@@ -28,8 +26,7 @@ window.YUHUA_SITE = {
     var normalized = String(file || "").trim().replace(/\\/g, "/");
     if (!normalized) return false;
     var filename = normalized.split("/").pop();
-    if (!filename || filename === "." || filename === "..") return false;
-    return !/^\.[a-z0-9]+$/i.test(filename);
+    return Boolean(filename && filename !== "." && filename !== ".." && !/^\.[a-z0-9]+$/i.test(filename));
   }
 
   Object.defineProperty(window, "VIDEOS", {
@@ -47,9 +44,9 @@ window.YUHUA_SITE = {
   });
 })();
 
-// 无电话策略：移除页面中可能遗留或后续动态生成的电话、拨号、复制号码入口。
-(function installNoPhonePolicy() {
-  function removeDirectContact() {
+// 无直接联系方式策略：清理旧控件和动态回归，保留型号查询与选型流程。
+(function installNoDirectContactPolicy() {
+  function removeLegacyDirectContact() {
     if (!document.querySelectorAll) return;
 
     ["#contactPhoneLink", "#callNow", "#copyPhone", "#mobileCall"].forEach(function (selector) {
@@ -57,85 +54,21 @@ window.YUHUA_SITE = {
       if (element) element.remove();
     });
 
-    Array.prototype.forEach.call(document.querySelectorAll('a[href^="tel:"], a[href="#contact"]'), function (link) {
-      if (link.closest && link.closest(".recommendation-actions")) {
-        link.href = "#catalog";
-        link.textContent = "继续查询型号";
-        return;
-      }
-      if (link.classList && link.classList.contains("nav-contact")) {
-        link.href = "#selector";
-        link.textContent = "选型工具";
-        return;
-      }
-      if (link.closest && link.closest("#navMobile")) {
-        link.href = "#selector";
-        link.textContent = "选型工具";
-      }
+    Array.prototype.forEach.call(document.querySelectorAll('a[href="#contact"]'), function (link) {
+      link.href = "#selector";
+      link.textContent = "选型工具";
     });
-
-    var section = document.getElementById("contact");
-    if (section) {
-      section.id = "service";
-      section.innerHTML =
-        '<div class="contact-inner">' +
-          '<div>' +
-            '<span class="section-eyebrow light">选型服务</span>' +
-            '<h2>先把型号和工况整理清楚</h2>' +
-            '<p>网站不公开直接联系方式。可先使用智能选型生成需求摘要，再通过现有业务渠道提交给销售或技术人员复核。</p>' +
-          '</div>' +
-          '<div class="contact-card service-card">' +
-            '<b class="service-card-title">推荐操作顺序</b>' +
-            '<ol class="service-steps">' +
-              '<li>查询产品型号与现有参数</li>' +
-              '<li>填写物料、容量、温度、压力和材质要求</li>' +
-              '<li>复制系统生成的完整工况摘要</li>' +
-              '<li>通过现有业务渠道提交人工确认</li>' +
-            '</ol>' +
-            '<div class="contact-actions">' +
-              '<a class="btn btn-primary compact" href="#selector">填写选型需求</a>' +
-              '<a class="btn btn-ghost compact" href="#catalog">查询产品型号</a>' +
-              '<a class="btn btn-ghost compact" href="#specs">查找规格书</a>' +
-            '</div>' +
-          '</div>' +
-        '</div>';
-    }
-
-    var mobileBar = document.querySelector(".mobile-action-bar");
-    if (mobileBar && mobileBar.getAttribute("data-no-phone-ready") !== "true") {
-      mobileBar.setAttribute("data-no-phone-ready", "true");
-      mobileBar.innerHTML =
-        '<a href="#products"><span>▦</span>产品中心</a>' +
-        '<a href="#catalog"><span>⌕</span>型号查询</a>' +
-        '<a href="#selector"><span>✓</span>智能选型</a>';
-    }
-
-    var style = document.getElementById("no-phone-policy-style");
-    if (!style && document.head) {
-      style = document.createElement("style");
-      style.id = "no-phone-policy-style";
-      style.textContent =
-        '.service-card-title{display:block;color:#fff;font-size:18px}' +
-        '.service-steps{margin:13px 0 0;padding-left:22px;color:rgba(255,255,255,.78);font-size:13.5px}' +
-        '.service-steps li+li{margin-top:6px}';
-      document.head.appendChild(style);
-    }
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", removeDirectContact);
-  } else {
-    removeDirectContact();
-  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", removeLegacyDirectContact);
+  else removeLegacyDirectContact();
 
   if (typeof MutationObserver !== "undefined" && document.documentElement) {
-    var observer = new MutationObserver(function () { removeDirectContact(); });
-    observer.observe(document.documentElement, { childList: true, subtree: true });
+    new MutationObserver(removeLegacyDirectContact).observe(document.documentElement, { childList: true, subtree: true });
   }
 })();
 
-// 产品数据运行时保护：保留简介供全文搜索，但不让简介里的章节号、年份、功率等数字
-// 参与“温度能力”解析。data.js 随后给 window.PRODUCTS 赋值时会自动经过这里。
+// 产品数据运行时保护：保留简介用于全文搜索，但不让其中的年份和章节数字污染温度筛选。
 (function installProductDataGuard() {
   var productStore = [];
   Object.defineProperty(window, "PRODUCTS", {
@@ -156,8 +89,7 @@ window.YUHUA_SITE = {
   });
 })();
 
-// 精确搜索保护：把“20L反应釜、-40℃循环泵、316L高压釜”拆成多个条件，
-// 先让主搜索获得候选结果，再要求每个工况条件都能在同一产品记录中命中。
+// 精确搜索保护：把“20L反应釜、-40℃循环泵、316L高压釜”拆成多个必要条件。
 (function installPreciseSearchGuard() {
   var expansions = {
     "浓缩": ["旋转蒸发", "蒸发器", "溶剂回收"],
@@ -221,10 +153,6 @@ window.YUHUA_SITE = {
     return groups;
   }
 
-  function productIdentity(product) {
-    return normalize(product && (product["型号"] || product["产品名称"]));
-  }
-
   function start() {
     var input = document.getElementById("searchInput");
     var tableBody = document.getElementById("tableBody");
@@ -236,7 +164,7 @@ window.YUHUA_SITE = {
 
     var productMap = {};
     (window.PRODUCTS || []).forEach(function (product) {
-      var identity = productIdentity(product);
+      var identity = normalize(product && (product["型号"] || product["产品名称"]));
       if (identity && !productMap[identity]) productMap[identity] = flatten(product);
     });
 
@@ -257,12 +185,6 @@ window.YUHUA_SITE = {
       var rows = Array.prototype.slice.call(tableBody.querySelectorAll("tr[data-index]"));
       var cards = Array.prototype.slice.call(mobileList.querySelectorAll(".mobile-product-card[data-index]"));
 
-      if (!groups.length) {
-        rows.forEach(function (row) { row.hidden = false; });
-        cards.forEach(function (card) { card.hidden = false; });
-        return;
-      }
-
       function matches(item) {
         var source = itemSearchText(item);
         return groups.every(function (group) {
@@ -272,10 +194,10 @@ window.YUHUA_SITE = {
 
       var visible = 0;
       rows.forEach(function (row) {
-        row.hidden = !matches(row);
+        row.hidden = groups.length ? !matches(row) : false;
         if (!row.hidden) visible += 1;
       });
-      cards.forEach(function (card) { card.hidden = !matches(card); });
+      cards.forEach(function (card) { card.hidden = groups.length ? !matches(card) : false; });
 
       resultCount.textContent = visible;
       if (emptyTip) emptyTip.hidden = visible > 0;
@@ -294,4 +216,19 @@ window.YUHUA_SITE = {
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
   else setTimeout(start, 0);
+})();
+
+// 安全详情页解析器在所有产品与规格书数据加载完成后执行。
+// 它只补充唯一、同分类、精确型号匹配的 detail 字段，不修改产品参数。
+(function loadSafeDetailResolver() {
+  function load() {
+    if (!document.createElement || !document.head || document.getElementById("safe-detail-resolver")) return;
+    var script = document.createElement("script");
+    script.id = "safe-detail-resolver";
+    script.src = "assets/detail-resolver.js?v=20260729a";
+    script.async = false;
+    document.head.appendChild(script);
+  }
+
+  if (window.addEventListener) window.addEventListener("load", load, { once: true });
 })();
