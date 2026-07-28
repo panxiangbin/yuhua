@@ -97,7 +97,7 @@ console.log('[JSON加载器] 已就绪，支持BOM处理');
       const timer = window.setTimeout(() => resolve(false), 5000);
       channel.port1.onmessage = event => {
         window.clearTimeout(timer);
-        resolve(Boolean(event.data && event.data.type === 'CNC_CACHES_READY'));
+        resolve(Boolean(event.data && event.data.type === 'CNC_CACHES_READY' && event.data.ready));
       };
       worker.postMessage({ type: 'ENSURE_CACHES' }, [channel.port2]);
     });
@@ -122,7 +122,7 @@ console.log('[JSON加载器] 已就绪，支持BOM处理');
       await navigator.serviceWorker.ready.catch(() => registration);
       const cachesReady = await ensureWorkerCaches(registration);
       document.documentElement.dataset.cncPwaRegistration = cachesReady ? 'ready' : 'registered';
-      return true;
+      return cachesReady;
     }).catch(error => {
       window.__CNC_PWA_REGISTRATION_ERROR__ = String(error && error.message ? error.message : error);
       document.documentElement.dataset.cncPwaRegistration = 'failed';
@@ -133,10 +133,27 @@ console.log('[JSON加载器] 已就绪，支持BOM处理');
     return restoring;
   }
 
+  function restoreAfterLateStartupLayers() {
+    // import-test.js 在本脚本之后加载，并可能在 DOMContentLoaded 中覆盖注册API和清空缓存。
+    // 把恢复动作排到同一事件循环末尾，确保所有启动层完成后再恢复原生注册与当前版本缓存。
+    window.setTimeout(restoreAndRegister, 0);
+    window.setTimeout(restoreAndRegister, 120);
+    window.setTimeout(restoreAndRegister, 500);
+    window.setTimeout(restoreAndRegister, 1200);
+  }
+
   restoreAndRegister();
-  window.setTimeout(restoreAndRegister, 500);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', restoreAfterLateStartupLayers, { once: true });
+  } else {
+    restoreAfterLateStartupLayers();
+  }
+  window.addEventListener('load', restoreAfterLateStartupLayers, { once: true });
   window.addEventListener('pageshow', event => {
-    if (event.persisted) restoreAndRegister();
+    if (event.persisted) restoreAfterLateStartupLayers();
+  });
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    window.setTimeout(restoreAndRegister, 0);
   });
   window.CNC_RESTORE_PWA_REGISTRATION = restoreAndRegister;
 })();
