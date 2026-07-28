@@ -7,6 +7,7 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
+const PWA_BUILD = '20260728-pwa3';
 fs.mkdirSync(out, { recursive: true });
 
 const types = {
@@ -66,13 +67,13 @@ function observePage(page, errors) {
     const registration = await page.evaluate(() => navigator.serviceWorker.getRegistration('./'));
     if (!registration) throw new Error('Service Worker未注册');
     const cachesBefore = await page.evaluate(() => caches.keys());
-    if (!cachesBefore.includes('cnc-static-20260726-pwa2')) throw new Error('静态缓存版本缺失');
-    if (!cachesBefore.includes('cnc-runtime-20260726-pwa2')) throw new Error('运行时缓存版本缺失');
+    if (!cachesBefore.includes(`cnc-static-${PWA_BUILD}`)) throw new Error(`静态缓存版本缺失: ${JSON.stringify(cachesBefore)}`);
+    if (!cachesBefore.includes(`cnc-runtime-${PWA_BUILD}`)) throw new Error(`运行时缓存版本缺失: ${JSON.stringify(cachesBefore)}`);
 
     stage = 'status-page';
     await page.goto('http://127.0.0.1:4173/cnc/pwa-status.html', { waitUntil: 'domcontentloaded' });
     await page.waitForFunction(() => document.querySelector('#worker')?.textContent.includes('已启用'));
-    await page.waitForFunction(() => document.querySelector('#build')?.textContent.includes('20260726-pwa2'));
+    await page.waitForFunction(expected => document.querySelector('#build')?.textContent.includes(expected), PWA_BUILD);
     const build = await page.locator('#build').textContent();
     const small = await page.locator('a,button').evaluateAll(elements => elements.filter(element => {
       const rect = element.getBoundingClientRect();
