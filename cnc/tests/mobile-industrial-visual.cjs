@@ -8,7 +8,12 @@ const outputDir = path.resolve('cnc/test-artifacts/industrial-card-sample');
 fs.mkdirSync(outputDir, { recursive: true });
 
 async function openGcodeWorkspace(page, expectIndustrialWorkspace) {
-  await page.locator('.launchpad-card[data-filter="gcode"]').click();
+  if (expectIndustrialWorkspace) {
+    const workspaceUrl = new URL('/cnc/#workspace', page.url()).href;
+    await page.goto(workspaceUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
+  } else {
+    await page.locator('.launchpad-card[data-filter="gcode"]').click();
+  }
   await page.waitForFunction(() => window.__CNC_GM_PRO_INSTALLED__ === '20260720h', null, { timeout: 30000 });
   await page.waitForSelector('#view-workspace.active', { state: 'visible', timeout: 30000 });
   if (expectIndustrialWorkspace) {
@@ -37,11 +42,9 @@ async function openG01FromWorkspace(page, expectIndustrial) {
   await button.waitFor({ state: 'attached', timeout: 15000 });
 
   if (expectIndustrial) {
-    /* 新版走真实用户动作：收起建议后点击可见结果卡。 */
     await dismissSuggestions(page);
     await card.click();
   } else {
-    /* 旧版基线的建议层会遮挡结果卡；仅为生成对照截图，在DOM中触发原按钮。 */
     await page.evaluate(() => {
       const box = document.getElementById('search-suggestions');
       if (box) {
@@ -76,9 +79,11 @@ async function openG01FromWorkspace(page, expectIndustrial) {
 async function capture(browser, baseUrl, prefix, expectIndustrial) {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   await page.goto(`${baseUrl}/cnc/?visual=${prefix}`, { waitUntil: 'domcontentloaded', timeout: 60000 });
-  await page.waitForSelector('.launchpad-card[data-filter="gcode"]', { state: 'visible', timeout: 30000 });
   if (expectIndustrial) {
+    await page.waitForSelector('#xp-game-home[data-ready="true"]', { state: 'visible', timeout: 30000 });
     await page.waitForFunction(() => window.CNC_INDUSTRIAL_SAMPLE && document.body.getAttribute('data-cnc-industrial-surface') === 'home', null, { timeout: 15000 });
+  } else {
+    await page.waitForSelector('.launchpad-card[data-filter="gcode"]', { state: 'visible', timeout: 30000 });
   }
   await page.waitForTimeout(1200);
   await page.screenshot({ path: path.join(outputDir, `${prefix}-home-390x844.png`), animations: 'disabled', fullPage: false });
@@ -95,7 +100,7 @@ async function capture(browser, baseUrl, prefix, expectIndustrial) {
   await capture(browser, baselineUrl, 'before', false);
   await capture(browser, currentUrl, 'after', true);
   await browser.close();
-  console.log('工业卡片风首页、查询工作区和详情修改前后截图已生成：', outputDir);
+  console.log('闯关首页、查询工作区和G01详情修改前后截图已生成：', outputDir);
 })().catch(error => {
   console.error(error);
   process.exit(1);
