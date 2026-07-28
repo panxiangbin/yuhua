@@ -13,6 +13,7 @@ on:
       - "assets/data.js"
       - "assets/specs.js"
       - "assets/videos.js"
+      - "assets/pages.js"
       - "assets/site-config.js"
       - "scripts/audit-yuhua-site.cjs"
       - "scripts/test-site-config.cjs"
@@ -25,6 +26,7 @@ on:
       - "scripts/map-cross-category-video-sources.cjs"
       - "scripts/triage-cross-category-video-records.cjs"
       - "scripts/reconcile-video-model-categories.cjs"
+      - "scripts/audit-unmatched-model-evidence.cjs"
       - ".github/workflows/yuhua-site-check.yml"
   pull_request:
     paths:
@@ -37,6 +39,7 @@ on:
       - "assets/data.js"
       - "assets/specs.js"
       - "assets/videos.js"
+      - "assets/pages.js"
       - "assets/site-config.js"
       - "scripts/audit-yuhua-site.cjs"
       - "scripts/test-site-config.cjs"
@@ -49,6 +52,7 @@ on:
       - "scripts/map-cross-category-video-sources.cjs"
       - "scripts/triage-cross-category-video-records.cjs"
       - "scripts/reconcile-video-model-categories.cjs"
+      - "scripts/audit-unmatched-model-evidence.cjs"
 
 permissions:
   contents: read
@@ -77,6 +81,7 @@ jobs:
           node --check scripts/map-cross-category-video-sources.cjs
           node --check scripts/triage-cross-category-video-records.cjs
           node --check scripts/reconcile-video-model-categories.cjs
+          node --check scripts/audit-unmatched-model-evidence.cjs
       - name: Enforce no direct contact policy
         run: node scripts/check-no-direct-contact.cjs
       - name: Audit all public text files for contact leaks
@@ -99,6 +104,8 @@ jobs:
         run: node scripts/triage-cross-category-video-records.cjs
       - name: Reconcile video categories with exact product models
         run: node scripts/reconcile-video-model-categories.cjs
+      - name: Search specs and pages for unmatched model evidence
+        run: node scripts/audit-unmatched-model-evidence.cjs
       - name: Upload audit reports
         uses: actions/upload-artifact@v4
         with:
@@ -124,6 +131,8 @@ jobs:
             test-artifacts/video-cross-category-record-triage.csv
             test-artifacts/video-model-category-reconciliation.json
             test-artifacts/video-model-category-reconciliation.csv
+            test-artifacts/unmatched-model-evidence.json
+            test-artifacts/unmatched-model-evidence.csv
           if-no-files-found: error
           retention-days: 14
       - name: Install Chinese font for visual checks
