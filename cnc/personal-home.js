@@ -1,48 +1,387 @@
-/* 数控小潘：个性化首页、学习进度、训练营、学习页与收藏记录页。 */
-(function(){
-'use strict';
-var BUILD = '20260722b';
-var RECORDS_BUILD='20260722e';
-var TRAINING_BUILD='20260723a';
-var VISITED_KEY='cnc_study_visited_v1',DONE_KEY='cnc_study_completed_v1',CURRENT_KEY='cnc_study_current_v1',FAVORITES_KEY='cnc_app_favorites_v2',RECENTS_KEY='cnc_app_recents_v2',PROFILE_KEY='cnc_training_profile_v1',mounted=false;
-var ROADMAP=[
-  {name:'零基础入门',range:'第 1—2 关',desc:'先认识图纸、坐标轴和机床运动方向'},
-  {name:'安全操作',range:'第 3—5 关',desc:'学会回零、工件坐标和对刀前安全检查'},
-  {name:'刀具与工艺',range:'第 6—7 关',desc:'认识常用刀具、顺逆铣与刀补方向'},
-  {name:'编程基础',range:'第 8—10 关',desc:'掌握 S、F、G00、G01 与输入规范'},
-  {name:'圆弧与孔加工',range:'第 11 关',desc:'理解圆弧插补和基础孔加工逻辑'},
-  {name:'完整程序',range:'第 12 关',desc:'把坐标、刀具、代码和安全检查串起来'},
-  {name:'独立排障',range:'持续训练',desc:'结合报警、参数、故障库建立现场排查思路'}
-];
-function read(k,f){try{var v=JSON.parse(localStorage.getItem(k));return v==null?f:v;}catch(e){return f;}}
-function write(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
-function nums(a){return Array.from(new Set((Array.isArray(a)?a:[]).map(Number).filter(function(n){return n>=1&&n<=12;}))).sort(function(a,b){return a-b;});}
-function esc(v){return String(v||'').replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-function cards(){return Array.from(document.querySelectorAll('#view-study .study-card[data-level]'));}
-function info(level){var c=document.querySelector('#view-study .study-card[data-level="'+level+'"]');return{level:Number(level)||1,title:c&&c.querySelector('h4')?c.querySelector('h4').textContent.trim():'第 '+level+' 关',desc:c&&c.querySelector('p')?c.querySelector('p').textContent.trim():'继续完成数控入门学习'};}
-function levelFromXp(xp){if(xp>=1000)return{name:'独立加工学员',level:5,next:1400};if(xp>=650)return{name:'编程入门学员',level:4,next:1000};if(xp>=350)return{name:'操作基础学员',level:3,next:650};if(xp>=150)return{name:'坐标入门学员',level:2,next:350};return{name:'CNC 新学员',level:1,next:150};}
-function profileFrom(done,visited){var saved=read(PROFILE_KEY,null),xp=done.length*100+visited.filter(function(n){return done.indexOf(n)===-1;}).length*20;var today=new Date().toISOString().slice(0,10);var profile=saved&&saved.version===1?saved:{version:1,createdAt:new Date().toISOString(),daily:{date:today,completed:false},badges:[]};profile.xp=Math.max(Number(profile.xp)||0,xp);profile.completed=done.slice();profile.visited=visited.slice();profile.updatedAt=new Date().toISOString();if(!profile.daily||profile.daily.date!==today)profile.daily={date:today,completed:false};var badges=[];if(visited.length>=1)badges.push('迈出第一步');if(done.length>=4)badges.push('坐标基础');if(done.length>=8)badges.push('安全操作');if(done.length>=12)badges.push('入门结业');profile.badges=badges;write(PROFILE_KEY,profile);return profile;}
-function state(){var visited=nums(read(VISITED_KEY,[])),done=nums(read(DONE_KEY,[])),current=read(CURRENT_KEY,null);if(!current||!current.level){var next=done.length<12?Array.from({length:12},function(_,i){return i+1;}).find(function(n){return done.indexOf(n)===-1;})||1:12;current=info(next);}return{visited:visited,done:done,current:current,favorites:read(FAVORITES_KEY,[]),recents:read(RECENTS_KEY,[]),profile:profileFrom(done,visited)};}
-function ensureToolAssets(){if(!document.querySelector('link[data-cnc-industrial-tools]')){var l=document.createElement('link');l.rel='stylesheet';l.href='./industrial-tools.css?v=20260722d';l.dataset.cncIndustrialTools='1';document.head.appendChild(l);}if(!document.querySelector('script[data-cnc-industrial-tools-script]')){var s=document.createElement('script');s.src='./industrial-tools.js?v=20260722d';s.async=true;s.dataset.cncIndustrialToolsScript='1';document.head.appendChild(s);}}
-function ensureRecordAssets(){if(!document.querySelector('link[data-cnc-industrial-records]')){var l=document.createElement('link');l.rel='stylesheet';l.href='./industrial-personal-records.css?v='+RECORDS_BUILD;l.dataset.cncIndustrialRecords='1';document.head.appendChild(l);}if(document.body)document.body.classList.add('cnc-industrial-records');}
-function ensureAssets(){if(!document.querySelector('link[data-cnc-industrial-learning]')){var l=document.createElement('link');l.rel='stylesheet';l.href='./industrial-learning.css?v=20260722c';l.dataset.cncIndustrialLearning='1';document.head.appendChild(l);}ensureToolAssets();ensureRecordAssets();if(document.body){document.body.classList.add('cnc-industrial-learning');document.body.dataset.cncTrainingBuild=TRAINING_BUILD;}if(!document.getElementById('xp-personal-home-style')){var s=document.createElement('style');s.id='xp-personal-home-style';s.textContent='.xp-personal-home{margin:18px 0 0;display:grid;gap:12px}.xp-personal-hero,.xp-continue-card,.xp-stat-card,.xp-training-overview,.xp-roadmap-card,.xp-daily-card{border:1px solid #d8d3c8;border-radius:14px;background:#fffdf9;color:#292c2f;box-shadow:0 6px 16px rgba(48,44,36,.07)}.xp-personal-hero{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(230px,.7fr);gap:14px;padding:18px}.xp-personal-kicker{margin:0 0 5px;color:#667b8d;font-size:12px;font-weight:900;letter-spacing:.06em}.xp-personal-hero h2{margin:0;font-size:24px;font-weight:950}.xp-personal-hero p{color:#687078;line-height:1.6}.xp-progress-box{padding:14px;border:1px solid #d8d3c8;border-radius:12px;background:#f2efe8}.xp-progress-number{display:flex;justify-content:space-between;align-items:flex-end}.xp-progress-number strong{font-size:30px;font-weight:950}.xp-progress-track{height:9px;margin-top:12px;background:#dfdacf;border-radius:8px;overflow:hidden}.xp-progress-fill{height:100%;background:#3f6179}.xp-personal-grid{display:grid;grid-template-columns:minmax(0,1.45fr) repeat(3,minmax(110px,.55fr));gap:10px}.xp-continue-card,.xp-stat-card{padding:15px}.xp-continue-card{display:flex;justify-content:space-between;gap:14px}.xp-continue-card small,.xp-stat-card small{color:#687078;font-size:12px;font-weight:800}.xp-continue-card strong,.xp-stat-card strong{display:block;margin-top:5px;font-size:19px;font-weight:950}.xp-continue-btn,.xp-complete-btn,.xp-daily-btn{min-height:44px;border:1px solid #29485f;border-radius:10px;padding:10px 14px;background:#3f6179;color:#fff;font-weight:950;box-shadow:0 2px 0 #29485f}.xp-continue-btn:active,.xp-complete-btn:active,.xp-daily-btn:active{transform:translateY(1px);box-shadow:none}.xp-complete-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:14px 0;padding:12px;border:1px solid #d8d3c8;border-radius:12px;background:#f2efe8}.xp-complete-btn.done,.xp-daily-btn.done{background:#dce9e3;color:#2f6d55;border-color:#8eb7a5;box-shadow:none}.xp-training-overview{margin:0 0 18px;padding:16px}.xp-training-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.xp-training-head h4{margin:3px 0 6px;font-size:22px;font-weight:950}.xp-training-head p{margin:0;color:#687078;line-height:1.55}.xp-level-chip{min-width:92px;padding:10px;border:1px solid #c7d1d8;border-radius:10px;background:#edf2f5;text-align:center}.xp-level-chip strong{display:block;font-size:22px;font-weight:950;color:#29485f}.xp-level-chip small{font-weight:850;color:#566875}.xp-training-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.xp-training-stat{padding:11px;border:1px solid #ddd8ce;border-radius:10px;background:#f7f4ee}.xp-training-stat strong{display:block;font-size:22px;font-weight:950}.xp-training-stat small{color:#687078;font-weight:800}.xp-roadmap{display:grid;gap:8px}.xp-roadmap-card{display:grid;grid-template-columns:44px 1fr;gap:11px;padding:12px;box-shadow:none}.xp-roadmap-index{display:grid;place-items:center;width:44px;height:44px;border:1px solid #c8d1d7;border-radius:10px;background:#edf2f5;color:#29485f;font-size:18px;font-weight:950}.xp-roadmap-card strong{font-size:16px;font-weight:950}.xp-roadmap-card small{display:block;margin:3px 0;color:#526b7e;font-weight:850}.xp-roadmap-card p{margin:0;color:#687078;line-height:1.45}.xp-daily-card{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:12px;padding:13px;box-shadow:none}.xp-daily-card strong{font-weight:950}.xp-daily-card p{margin:4px 0 0;color:#687078}.xp-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}.xp-badge{padding:6px 9px;border:1px solid #d2cbbd;border-radius:8px;background:#f4f0e8;font-size:12px;font-weight:850}.xp-course-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}.xp-course-meta span{padding:6px 8px;border:1px solid #ddd8ce;border-radius:8px;background:#f7f4ee;color:#59636a;font-size:11px;font-weight:800}#view-study .study-card{position:relative}#view-study .study-card.xp-completed:after{content:"已完成";position:absolute;right:12px;bottom:12px;padding:5px 9px;border-radius:7px;background:#3d8268;color:#fff;font-size:11px;font-weight:950}@media(max-width:760px){.xp-personal-hero,.xp-personal-grid,.xp-training-stats{grid-template-columns:1fr}.xp-continue-card,.xp-daily-card,.xp-training-head{flex-direction:column}.xp-continue-btn,.xp-daily-btn{width:100%;min-height:48px}.xp-training-head{display:flex}.xp-level-chip{width:100%;box-sizing:border-box}.xp-course-meta{grid-template-columns:1fr}}';document.head.appendChild(s);}}
-function keepPanelAfterTools(panel,launch){if(panel&&launch&&launch.nextElementSibling!==panel){launch.insertAdjacentElement('afterend',panel);}}
-function followsTools(){var panel=document.getElementById('xp-personal-home'),launch=document.querySelector('#view-dashboard .launchpad-grid');return Boolean(panel&&launch&&launch.nextElementSibling===panel);}
-function mark(st){cards().forEach(function(c){var n=Number(c.dataset.level);c.classList.toggle('xp-visited',st.visited.indexOf(n)!==-1);c.classList.toggle('xp-completed',st.done.indexOf(n)!==-1);c.dataset.trainingReady='true';if(!c.querySelector('.xp-course-meta')){var meta=document.createElement('div');meta.className='xp-course-meta';meta.innerHTML='<span>学习目标明确</span><span>含易错提醒</span><span>完成后可闯关</span>';c.appendChild(meta);}});}
-function trainingOverview(){var study=document.getElementById('view-study'),st=state();if(!study)return false;var panel=study.querySelector('.section-panel'),stages=panel&&panel.querySelector('.learning-stages');if(!panel||!stages)return false;var overview=document.getElementById('xp-training-overview');if(!overview){overview=document.createElement('section');overview.id='xp-training-overview';overview.className='xp-training-overview';stages.insertAdjacentElement('beforebegin',overview);}var xp=st.profile.xp||0,lv=levelFromXp(xp),next=Math.max(0,lv.next-xp),badges=st.profile.badges||[];overview.innerHTML='<div class="xp-training-head"><div><p class="xp-personal-kicker">CNC 新手训练营 · '+TRAINING_BUILD+'</p><h4>从零基础到能独立完成首件</h4><p>按“先安全、再坐标、后编程、最后排障”的顺序学习。每一关都要学会、练会、通过后再进入下一步。</p></div><div class="xp-level-chip"><strong>Lv.'+lv.level+'</strong><small>'+esc(lv.name)+'</small></div></div><div class="xp-training-stats"><div class="xp-training-stat"><strong>'+xp+'</strong><small>累计经验值</small></div><div class="xp-training-stat"><strong>'+st.done.length+'/12</strong><small>已通过关卡</small></div><div class="xp-training-stat"><strong>'+next+'</strong><small>距离下一级 XP</small></div></div><div class="xp-roadmap" role="list" aria-label="CNC 新手成长路线">'+ROADMAP.map(function(item,i){return'<article class="xp-roadmap-card" role="listitem"><span class="xp-roadmap-index">'+(i+1)+'</span><div><strong>'+esc(item.name)+'</strong><small>'+esc(item.range)+'</small><p>'+esc(item.desc)+'</p></div></article>';}).join('')+'</div><div class="xp-daily-card"><div><strong>今日训练：完成当前关卡并复习一个易错点</strong><p>'+(st.profile.daily.completed?'今日任务已完成，保持这个节奏。':'完成后可获得 20 XP，训练记录保存在本机。')+'</p></div><button class="xp-daily-btn'+(st.profile.daily.completed?' done':'')+'" type="button" data-xp-daily>'+(st.profile.daily.completed?'✓ 今日已完成':'完成今日任务')+'</button></div><div class="xp-badges" aria-label="训练徽章">'+(badges.length?badges.map(function(b){return'<span class="xp-badge">'+esc(b)+'</span>';}).join(''):'<span class="xp-badge">完成第 1 关解锁首枚徽章</span>')+'</div>';return true;}
-function render(){var d=document.getElementById('view-dashboard'),launch=d&&d.querySelector('.launchpad-grid');if(!d||!launch)return false;var st=state(),panel=document.getElementById('xp-personal-home');if(!panel){panel=document.createElement('section');panel.id='xp-personal-home';panel.className='xp-personal-home';}keepPanelAfterTools(panel,launch);var current=info(st.current.level||1),percent=Math.round(st.done.length/12*100),lv=levelFromXp(st.profile.xp||0);panel.innerHTML='<div class="xp-personal-hero"><div><p class="xp-personal-kicker">CNC 新手训练平台</p><h2>'+(st.done.length?'接着训练，向独立加工再进一步':'从零基础开始，按路线稳稳入门')+'</h2><p>当前等级：Lv.'+lv.level+' '+esc(lv.name)+'。学习、练习和成长记录都保存在本机，不登录也能继续。</p></div><div class="xp-progress-box"><div class="xp-progress-number"><strong>'+percent+'%</strong><span>已完成 '+st.done.length+' / 12 关</span></div><div class="xp-progress-track"><div class="xp-progress-fill" style="width:'+percent+'%"></div></div></div></div><div class="xp-personal-grid"><article class="xp-continue-card"><div><small>继续训练 · 第 '+current.level+' 关</small><strong>'+esc(current.title)+'</strong><p>'+esc(current.desc)+'</p></div><button class="xp-continue-btn" type="button" data-xp-continue="'+current.level+'">继续训练</button></article><article class="xp-stat-card"><small>累计经验</small><strong>'+st.profile.xp+' XP</strong></article><article class="xp-stat-card"><small>训练徽章</small><strong>'+st.profile.badges.length+'</strong></article><article class="xp-stat-card"><small>最近查看</small><strong>'+(Array.isArray(st.recents)?st.recents.length:0)+'</strong></article></div>';mark(st);trainingOverview();return true;}
-function sourceEntries(){var names=['CNC_DATA','CNC_KB_EXTRA','CNC_ALARM_DATA','CNC_WEAK_CATEGORY_DATA','CNC_GM_CODE_COMPLETE','CNC_DIAGNOSIS_DATA'];var all=[];names.forEach(function(name){var value=window[name];if(Array.isArray(value))all=all.concat(value);});return all;}
-function findEntry(id){var target=String(id||'');return sourceEntries().find(function(item){return item&&String(item.id||'')===target;})||null;}
-function countBadge(card,count){var h=card&&card.querySelector('h4');if(!h)return;var badge=h.querySelector('.xp-record-count');if(!badge){badge=document.createElement('span');badge.className='xp-record-count';h.appendChild(badge);}badge.textContent=String(count);badge.setAttribute('aria-label',count+' 条');}
-function decorateRecordButton(button){var id=button.getAttribute('data-link-entry');if(!id){button.classList.add('xp-record-empty');button.setAttribute('aria-disabled','true');return;}var entry=findEntry(id),title=(entry&&(entry.title||entry.name))||button.textContent.trim()||'知识条目',code=(entry&&entry.code)||'记录',category=(entry&&entry.category)||'点击继续查看';button.classList.remove('xp-record-empty');button.classList.add('xp-record-link');button.setAttribute('aria-label',(code?code+' ':'')+title);button.innerHTML='<span class="xp-record-code">'+esc(code)+'</span><span class="xp-record-copy"><strong>'+esc(title)+'</strong><small>'+esc(category)+'</small></span><span class="xp-record-arrow" aria-hidden="true">›</span>';}
-function decorateRecords(){ensureRecordAssets();var view=document.getElementById('view-favorites');if(!view)return false;view.dataset.industrialRecords='ready';var clouds=Array.from(view.querySelectorAll('.link-cloud'));clouds.forEach(function(cloud){cloud.setAttribute('role','list');Array.from(cloud.querySelectorAll('button')).forEach(function(button){button.setAttribute('role','listitem');decorateRecordButton(button);});});var cards=Array.from(view.querySelectorAll('.favorites-grid>.detail-card'));cards.forEach(function(card){countBadge(card,card.querySelectorAll('[data-link-entry]').length);});return clouds.length===2;}
-function scheduleRecords(){[0,60,160,360].forEach(function(delay){window.setTimeout(decorateRecords,delay);});}
-function openLesson(level){var c=document.querySelector('#view-study .study-card[data-level="'+level+'"]');if(!c)return;var st=state();st.visited=nums(st.visited.concat([level]));write(VISITED_KEY,st.visited);write(CURRENT_KEY,info(level));if(typeof window.navigate==='function')window.navigate('study');else{var n=document.querySelector('[data-route="study"]');if(n)n.click();}setTimeout(function(){c.click();c.scrollIntoView({behavior:'smooth',block:'start'});render();},80);}
-function completeBar(){var content=document.getElementById('study-detail-content'),detail=content&&content.querySelector('.lesson-detail-v2[data-level]');if(!detail)return;var level=Number(detail.dataset.level),bar=detail.querySelector('.xp-complete-bar');if(!bar){bar=document.createElement('div');bar.className='xp-complete-bar';var target=detail.querySelector('.lesson-pass-box')||detail.firstElementChild;if(target)target.insertAdjacentElement('afterend',bar);else detail.prepend(bar);}var done=state().done.indexOf(level)!==-1;bar.innerHTML='<strong>'+(done?'这一关已完成，可以继续下一关':'学完、练习并理解易错点后再标记完成')+'</strong><button type="button" class="xp-complete-btn'+(done?' done':'')+'" data-xp-complete="'+level+'">'+(done?'✓ 已完成':'通过本关')+'</button>';}
-function toggle(level){var st=state(),exists=st.done.indexOf(level)!==-1;st.done=exists?st.done.filter(function(n){return n!==level;}):nums(st.done.concat([level]));st.visited=nums(st.visited.concat([level]));write(DONE_KEY,st.done);write(VISITED_KEY,st.visited);if(!exists){var next=Array.from({length:12},function(_,i){return i+1;}).find(function(n){return st.done.indexOf(n)===-1;});if(next)write(CURRENT_KEY,info(next));}render();completeBar();mark(state());}
-function toggleDaily(){var st=state(),profile=st.profile;profile.daily.completed=!profile.daily.completed;if(profile.daily.completed)profile.xp=(Number(profile.xp)||0)+20;else profile.xp=Math.max(0,(Number(profile.xp)||0)-20);write(PROFILE_KEY,profile);render();trainingOverview();}
-function bind(){if(mounted)return;mounted=true;document.addEventListener('click',function(e){var cont=e.target.closest&&e.target.closest('[data-xp-continue]');if(cont){openLesson(Number(cont.dataset.xpContinue));return;}var done=e.target.closest&&e.target.closest('[data-xp-complete]');if(done){toggle(Number(done.dataset.xpComplete));return;}var daily=e.target.closest&&e.target.closest('[data-xp-daily]');if(daily){toggleDaily();return;}var c=e.target.closest&&e.target.closest('#view-study .study-card[data-level]');if(c){var level=Number(c.dataset.level),st=state();st.visited=nums(st.visited.concat([level]));write(VISITED_KEY,st.visited);write(CURRENT_KEY,info(level));setTimeout(function(){render();completeBar();},80);}if(e.target.closest&&e.target.closest('#favorite-toggle'))setTimeout(function(){render();scheduleRecords();},60);if(e.target.closest&&e.target.closest('[data-route="favorites"],[data-xp-route="favorites"]'))scheduleRecords();if(e.target.closest&&e.target.closest('[data-route="study"],[data-xp-route="study"]'))setTimeout(trainingOverview,80);},true);window.addEventListener('hashchange',function(){scheduleRecords();setTimeout(trainingOverview,80);});window.addEventListener('storage',function(){render();scheduleRecords();});}
-function boot(){ensureAssets();bind();render();completeBar();scheduleRecords();setTimeout(function(){ensureAssets();render();mark(state());decorateRecords();trainingOverview();},900);}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
-window.CNC_PERSONAL_HOME={build:BUILD,recordsBuild:RECORDS_BUILD,trainingBuild:TRAINING_BUILD,render:render,decorateRecords:decorateRecords,getState:state,runCheck:function(){var panel=document.getElementById('xp-personal-home'),link=document.querySelector('link[data-cnc-industrial-learning]'),records=document.querySelector('link[data-cnc-industrial-records]'),list=cards(),after=followsTools(),overview=document.getElementById('xp-training-overview'),profile=state().profile;return{passed:Boolean(panel&&document.querySelector('[data-xp-continue]')&&link&&records&&document.body.classList.contains('cnc-industrial-learning')&&document.body.classList.contains('cnc-industrial-records')&&list.length===12&&after&&overview&&profile.version===1),build:BUILD,recordsBuild:RECORDS_BUILD,trainingBuild:TRAINING_BUILD,panel:Boolean(panel),trainingOverview:Boolean(overview),profileVersion:profile.version,learningStyle:Boolean(link),recordsStyle:Boolean(records),studyCards:list.length,followsTools:after,state:state()};}};
+/* 数控小潘：手机首页闯关游戏化、学习进度、训练营与成长记录。 */
+(function () {
+  'use strict';
+
+  var BUILD = '20260728-game1';
+  var RECORDS_BUILD = '20260722e';
+  var TRAINING_BUILD = '20260728a';
+  var GAME_STYLE_BUILD = '20260728a';
+  var VISITED_KEY = 'cnc_study_visited_v1';
+  var DONE_KEY = 'cnc_study_completed_v1';
+  var CURRENT_KEY = 'cnc_study_current_v1';
+  var FAVORITES_KEY = 'cnc_app_favorites_v2';
+  var RECENTS_KEY = 'cnc_app_recents_v2';
+  var PROFILE_KEY = 'cnc_training_profile_v1';
+  var PRACTICE_KEY = 'cnc_training_practice_v1';
+  var SIMULATOR_KEY = 'cnc_training_simulator_v1';
+  var mounted = false;
+
+  var COURSES = [
+    { id: 'stage-1', title: '安全基础', file: 'course-safety-foundation.html', reason: '先学会停，再学会动。' },
+    { id: 'stage-2', title: '认识加工中心', file: 'course-machining-center-basics.html', reason: '认识主轴、工作台、刀库和三条直线轴。' },
+    { id: 'stage-3', title: '坐标轴与运动方向', file: 'course-coordinate-axes.html', reason: '分清 X、Y、Z 正方向。' },
+    { id: 'stage-4', title: '图纸、尺寸与基准', file: 'course-drawing-basics.html', reason: '按形状、位置和基准读图。' },
+    { id: 'stage-5', title: '机床坐标与工件坐标', file: 'course-machine-work-offset.html', reason: '理解 G54 和坐标偏置。' },
+    { id: 'stage-6', title: '工件装夹基础', file: 'course-workholding-basics.html', reason: '兼顾定位、夹紧和刀具通道。' },
+    { id: 'stage-7', title: '刀具基础', file: 'course-tool-basics.html', reason: '认识刀具、刀柄和伸出量。' },
+    { id: 'stage-8', title: '对刀与刀长补偿', file: 'course-tool-length-offset.html', reason: '把实物刀具、H号和程序调用连起来。' },
+    { id: 'stage-9', title: 'G00 与 G01', file: 'course-g00-g01-basics.html', reason: '学会安全定位和直线进给。' },
+    { id: 'stage-10', title: 'G02 与 G03', file: 'course-g02-g03-basics.html', reason: '判断加工平面、方向和圆心。' },
+    { id: 'stage-11', title: '孔加工循环', file: 'course-hole-cycles.html', reason: '理解 G81、G83、R 平面和返回方式。' },
+    { id: 'stage-12', title: '完整程序与首件验证', file: 'course-complete-program-first-piece.html', reason: '把图纸、装夹、程序和测量串成闭环。' }
+  ];
+
+  var ROADMAP = [
+    { name: '零基础入门', range: '第 1—3 关', desc: '先把安全、机床和坐标方向学明白' },
+    { name: '现场基础', range: '第 4—8 关', desc: '掌握图纸、坐标、装夹、刀具和对刀' },
+    { name: '编程入门', range: '第 9—11 关', desc: '掌握直线、圆弧和孔加工程序' },
+    { name: '独立首件', range: '第 12 关', desc: '完成程序验证、试切与首件测量' }
+  ];
+
+  function read(key, fallback) {
+    try {
+      var value = JSON.parse(localStorage.getItem(key));
+      return value == null ? fallback : value;
+    } catch (error) {
+      return fallback;
+    }
+  }
+
+  function write(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (error) {}
+  }
+
+  function nums(value) {
+    return Array.from(new Set((Array.isArray(value) ? value : []).map(Number).filter(function (n) {
+      return n >= 1 && n <= 12;
+    }))).sort(function (a, b) { return a - b; });
+  }
+
+  function esc(value) {
+    return String(value || '').replace(/[&<>"']/g, function (character) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character];
+    });
+  }
+
+  function cards() {
+    return Array.from(document.querySelectorAll('#view-study .study-card[data-level]'));
+  }
+
+  function info(level) {
+    var numericLevel = Number(level) || 1;
+    var card = document.querySelector('#view-study .study-card[data-level="' + numericLevel + '"]');
+    return {
+      level: numericLevel,
+      title: card && card.querySelector('h4') ? card.querySelector('h4').textContent.trim() : COURSES[numericLevel - 1].title,
+      desc: card && card.querySelector('p') ? card.querySelector('p').textContent.trim() : COURSES[numericLevel - 1].reason
+    };
+  }
+
+  function getScores(profile) {
+    return profile && profile.courseScores && typeof profile.courseScores === 'object' ? profile.courseScores : {};
+  }
+
+  function isCourseDone(profile, course) {
+    var stages = profile && Array.isArray(profile.completedStages) ? profile.completedStages : [];
+    return stages.indexOf(course.id) !== -1 || Number(getScores(profile)[course.id] || 0) >= 80;
+  }
+
+  function countWrong(practice) {
+    var wrong = practice && (practice.wrongQuestions || practice.wrong) || [];
+    return Array.isArray(wrong) ? wrong.length : Object.keys(wrong || {}).length;
+  }
+
+  function countSimulatorPassed(simulator) {
+    var source = simulator && simulator.simulators && typeof simulator.simulators === 'object' ? simulator.simulators : simulator;
+    return Object.values(source || {}).filter(function (item) {
+      return item && typeof item === 'object' && (item.passed === true || Number(item.bestScore || item.score || 0) >= 80);
+    }).length;
+  }
+
+  function levelFromXp(xp) {
+    if (xp >= 1600) return { name: '现场高手', level: 7, current: 1600, next: 2200 };
+    if (xp >= 1100) return { name: 'CNC技术员', level: 6, current: 1100, next: 1600 };
+    if (xp >= 750) return { name: '初级编程员', level: 5, current: 750, next: 1100 };
+    if (xp >= 480) return { name: '独立操作工', level: 4, current: 480, next: 750 };
+    if (xp >= 260) return { name: '初级操作工', level: 3, current: 260, next: 480 };
+    if (xp >= 100) return { name: '学徒', level: 2, current: 100, next: 260 };
+    return { name: 'CNC新人', level: 1, current: 0, next: 100 };
+  }
+
+  function legacyProfile(done, visited, saved) {
+    var profile = saved && typeof saved === 'object' ? saved : {};
+    var legacyXp = done.length * 100 + visited.filter(function (n) { return done.indexOf(n) === -1; }).length * 20;
+    profile.version = Number(profile.version) || 1;
+    profile.xp = Math.max(Number(profile.xp) || 0, legacyXp);
+    return profile;
+  }
+
+  function state() {
+    var visited = nums(read(VISITED_KEY, []));
+    var done = nums(read(DONE_KEY, []));
+    var savedProfile = read(PROFILE_KEY, {});
+    var profile = legacyProfile(done, visited, savedProfile);
+    var practice = read(PRACTICE_KEY, {});
+    var simulator = read(SIMULATOR_KEY, {});
+    var modernDone = COURSES.filter(function (course) { return isCourseDone(profile, course); });
+    var doneCount = Math.max(done.length, modernDone.length);
+    var nextCourse = COURSES.find(function (course) { return !isCourseDone(profile, course); }) || COURSES[COURSES.length - 1];
+    var nextIndex = Math.max(0, COURSES.indexOf(nextCourse));
+    var current = read(CURRENT_KEY, null);
+    if (!current || !current.level) current = info(Math.min(12, doneCount + 1));
+    return {
+      visited: visited,
+      done: done,
+      doneCount: doneCount,
+      current: current,
+      profile: profile,
+      practice: practice,
+      simulator: simulator,
+      wrongCount: countWrong(practice),
+      simulatorPassed: countSimulatorPassed(simulator),
+      nextCourse: nextCourse,
+      nextIndex: nextIndex,
+      favorites: read(FAVORITES_KEY, []),
+      recents: read(RECENTS_KEY, [])
+    };
+  }
+
+  function appendStyle(href, dataName) {
+    var selector = 'link[data-' + dataName + ']';
+    if (document.querySelector(selector)) return;
+    var link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = href;
+    link.setAttribute('data-' + dataName, '1');
+    document.head.appendChild(link);
+  }
+
+  function ensureAssets() {
+    appendStyle('./industrial-learning.css?v=20260722c', 'cnc-industrial-learning');
+    appendStyle('./industrial-tools.css?v=20260722d', 'cnc-industrial-tools');
+    appendStyle('./industrial-personal-records.css?v=' + RECORDS_BUILD, 'cnc-industrial-records');
+    appendStyle('./mobile-home-game.css?v=' + GAME_STYLE_BUILD, 'cnc-mobile-home-game');
+    if (document.body) {
+      document.body.classList.add('cnc-industrial-learning', 'cnc-industrial-records', 'cnc-game-home-enabled');
+      document.body.dataset.cncTrainingBuild = TRAINING_BUILD;
+    }
+  }
+
+  function keepLegacyPanelAfterLaunch(panel, launch) {
+    if (panel && launch && launch.nextElementSibling !== panel) launch.insertAdjacentElement('afterend', panel);
+  }
+
+  function followsTools() {
+    var panel = document.getElementById('xp-personal-home');
+    var launch = document.querySelector('#view-dashboard .launchpad-grid');
+    return Boolean(panel && launch && launch.nextElementSibling === panel);
+  }
+
+  function mark(st) {
+    cards().forEach(function (card) {
+      var level = Number(card.dataset.level);
+      card.classList.toggle('xp-visited', st.visited.indexOf(level) !== -1);
+      card.classList.toggle('xp-completed', st.done.indexOf(level) !== -1);
+      card.dataset.trainingReady = 'true';
+      if (!card.querySelector('.xp-course-meta')) {
+        var meta = document.createElement('div');
+        meta.className = 'xp-course-meta';
+        meta.innerHTML = '<span>学习目标明确</span><span>含易错提醒</span><span>完成后可闯关</span>';
+        card.appendChild(meta);
+      }
+    });
+  }
+
+  function renderLegacyPanel(st) {
+    var dashboard = document.getElementById('view-dashboard');
+    var launch = dashboard && dashboard.querySelector('.launchpad-grid');
+    if (!dashboard || !launch) return false;
+    var panel = document.getElementById('xp-personal-home');
+    if (!panel) {
+      panel = document.createElement('section');
+      panel.id = 'xp-personal-home';
+      panel.className = 'xp-personal-home';
+    }
+    keepLegacyPanelAfterLaunch(panel, launch);
+    var xp = Number(st.profile.xp) || 0;
+    var level = levelFromXp(xp);
+    var percent = Math.round(st.doneCount / 12 * 100);
+    panel.innerHTML = '<div class="xp-personal-hero"><div><p class="xp-personal-kicker">CNC 新手训练平台</p><h2>从零基础，闯到独立编程</h2><p>当前等级：Lv.' + level.level + ' ' + esc(level.name) + '。课程、题库和模拟记录都保存在本机。</p></div><div class="xp-progress-box"><div class="xp-progress-number"><strong>' + percent + '%</strong><span>已完成 ' + st.doneCount + ' / 12 关</span></div><div class="xp-progress-track"><div class="xp-progress-fill" style="width:' + percent + '%"></div></div></div></div>';
+    return true;
+  }
+
+  function renderGameHome(st) {
+    var dashboard = document.getElementById('view-dashboard');
+    var launch = dashboard && dashboard.querySelector('.launchpad-grid');
+    if (!dashboard || !launch) return false;
+    var panel = document.getElementById('xp-game-home');
+    if (!panel) {
+      panel = document.createElement('section');
+      panel.id = 'xp-game-home';
+      panel.className = 'xp-game-home';
+      launch.insertAdjacentElement('beforebegin', panel);
+    }
+
+    var xp = Number(st.profile.xp) || 0;
+    var level = levelFromXp(xp);
+    var levelSpan = Math.max(1, level.next - level.current);
+    var levelProgress = Math.max(0, Math.min(100, Math.round((xp - level.current) / levelSpan * 100)));
+    var nextNeed = Math.max(0, level.next - xp);
+    var doneCount = st.doneCount;
+    var nextNumber = Math.min(12, st.nextIndex + 1);
+    var completedItems = COURSES.slice(0, Math.min(doneCount, 3));
+    var progressRows = completedItems.map(function (course, index) {
+      return '<li class="xp-game-stage done"><span>' + (index + 1) + '</span><strong>第' + (index + 1) + '关：' + esc(course.title) + '</strong><b aria-label="已完成">✓</b></li>';
+    }).join('');
+    progressRows += '<li class="xp-game-stage current"><span>' + nextNumber + '</span><strong>第' + nextNumber + '关：' + esc(st.nextCourse.title) + '</strong><b aria-label="当前关卡">🔥</b></li>';
+    if (nextNumber < 12) progressRows += '<li class="xp-game-stage locked"><span>' + (nextNumber + 1) + '</span><strong>第' + (nextNumber + 1) + '关：' + esc(COURSES[nextNumber].title) + '</strong><b aria-label="未解锁">🔒</b></li>';
+
+    var mainLabel = doneCount ? '继续闯关' : '开始第1关';
+    var wrongCopy = st.wrongCount ? '还有 ' + st.wrongCount + ' 道错题待复习' : '查漏补缺 · 巩固提升';
+    panel.innerHTML = '' +
+      '<div class="xp-game-hero">' +
+        '<div class="xp-game-topline"><span class="xp-game-brand">CNC新手训练营</span><a href="./profile.html" class="xp-game-sign">🏅 我的成长</a></div>' +
+        '<p class="xp-game-kicker">12关主线课程 · 专项题库 · 现场模拟</p>' +
+        '<h1>从零基础，<em>闯</em>到独立编程</h1>' +
+        '<p class="xp-game-subtitle">学一点，练一点，会一点。打开首页就知道下一步该练什么。</p>' +
+        '<div class="xp-game-level-card">' +
+          '<div class="xp-game-avatar" aria-hidden="true">🧑‍🏭</div>' +
+          '<div class="xp-game-level-copy"><small>当前等级</small><strong>' + esc(level.name) + ' Lv.' + level.level + '</strong><div class="xp-game-xp-track"><span style="width:' + levelProgress + '%"></span><b>' + xp + ' / ' + level.next + ' XP</b></div><p>距离“' + esc(levelFromXp(level.next).name) + '”还差 ' + nextNeed + ' XP</p></div>' +
+        '</div>' +
+        '<div class="xp-game-hero-actions"><a class="xp-game-primary" href="./' + st.nextCourse.file + '">' + mainLabel + ' <span>›</span></a><a class="xp-game-secondary" href="./beginner-placement.html">⏱ 2分钟起点测评</a></div>' +
+      '</div>' +
+      '<div class="xp-game-main-grid">' +
+        '<article class="xp-game-progress-card"><header><span>🚩</span><h2>你的主线进度</h2></header><ol>' + progressRows + '</ol><a href="./' + st.nextCourse.file + '" class="xp-game-challenge-btn">挑战第' + nextNumber + '关 <span>›</span></a></article>' +
+        '<article class="xp-game-daily-card"><div class="xp-game-daily-image" aria-hidden="true">⚙️<span>?</span></div><small>🎯 今日挑战</small><h2>G00快速定位为什么容易撞刀？</h2><a href="./practice.html" class="xp-game-daily-btn">⭐ 答题赚10 XP</a></article>' +
+      '</div>' +
+      '<div class="xp-game-shortcuts">' +
+        '<a href="./training-camp.html"><span>🏆</span><strong>课程闯关</strong><small>系统学 · 关关进阶</small></a>' +
+        '<a href="./practice.html"><span>🎯</span><strong>每日挑战</strong><small>每日一题 · 轻松拿分</small></a>' +
+        '<a href="./practice-wrong-review.html"><span>📕</span><strong>错题复习</strong><small>' + esc(wrongCopy) + '</small></a>' +
+        '<a href="./simulator-hub.html"><span>🏭</span><strong>模拟车间</strong><small>已通过 ' + st.simulatorPassed + ' / 13 项</small></a>' +
+      '</div>' +
+      '<nav class="xp-game-bottom-nav" aria-label="CNC训练平台主导航">' +
+        '<a class="active" href="./index.html"><span>⌂</span><b>首页</b></a>' +
+        '<a href="./training-camp.html"><span>⚔</span><b>闯关</b></a>' +
+        '<a href="./practice.html"><span>◎</span><b>挑战</b></a>' +
+        '<a href="./simulator-hub.html"><span>▣</span><b>模拟</b></a>' +
+        '<a href="./profile.html"><span>♙</span><b>我的</b></a>' +
+      '</nav>';
+    panel.dataset.ready = 'true';
+    return true;
+  }
+
+  function trainingOverview() {
+    var study = document.getElementById('view-study');
+    var st = state();
+    if (!study) return false;
+    var mainPanel = study.querySelector('.section-panel');
+    var stages = mainPanel && mainPanel.querySelector('.learning-stages');
+    if (!mainPanel || !stages) return false;
+    var overview = document.getElementById('xp-training-overview');
+    if (!overview) {
+      overview = document.createElement('section');
+      overview.id = 'xp-training-overview';
+      overview.className = 'xp-training-overview';
+      stages.insertAdjacentElement('beforebegin', overview);
+    }
+    var xp = Number(st.profile.xp) || 0;
+    var level = levelFromXp(xp);
+    overview.innerHTML = '<div class="xp-training-head"><div><p class="xp-personal-kicker">CNC 新手训练营</p><h4>从零基础到能独立完成首件</h4><p>按“先安全、再坐标、后编程、最后排障”的顺序学习。</p></div><div class="xp-level-chip"><strong>Lv.' + level.level + '</strong><small>' + esc(level.name) + '</small></div></div><div class="xp-training-stats"><div class="xp-training-stat"><strong>' + xp + '</strong><small>累计经验值</small></div><div class="xp-training-stat"><strong>' + st.doneCount + '/12</strong><small>已通过关卡</small></div><div class="xp-training-stat"><strong>' + st.wrongCount + '</strong><small>待复习错题</small></div></div><div class="xp-roadmap">' + ROADMAP.map(function (item, index) { return '<article class="xp-roadmap-card"><span class="xp-roadmap-index">' + (index + 1) + '</span><div><strong>' + esc(item.name) + '</strong><small>' + esc(item.range) + '</small><p>' + esc(item.desc) + '</p></div></article>'; }).join('') + '</div>';
+    return true;
+  }
+
+  function sourceEntries() {
+    var names = ['CNC_DATA', 'CNC_KB_EXTRA', 'CNC_ALARM_DATA', 'CNC_WEAK_CATEGORY_DATA', 'CNC_GM_CODE_COMPLETE', 'CNC_DIAGNOSIS_DATA'];
+    var all = [];
+    names.forEach(function (name) { if (Array.isArray(window[name])) all = all.concat(window[name]); });
+    return all;
+  }
+
+  function findEntry(id) {
+    var target = String(id || '');
+    return sourceEntries().find(function (item) { return item && String(item.id || '') === target; }) || null;
+  }
+
+  function decorateRecords() {
+    var view = document.getElementById('view-favorites');
+    if (!view) return false;
+    Array.from(view.querySelectorAll('[data-link-entry]')).forEach(function (button) {
+      var entry = findEntry(button.getAttribute('data-link-entry'));
+      if (!entry) return;
+      button.setAttribute('aria-label', ((entry.code || '') + ' ' + (entry.title || entry.name || '')).trim());
+    });
+    return true;
+  }
+
+  function render() {
+    ensureAssets();
+    var st = state();
+    var legacyReady = renderLegacyPanel(st);
+    var gameReady = renderGameHome(st);
+    mark(st);
+    trainingOverview();
+    return legacyReady && gameReady;
+  }
+
+  function bind() {
+    if (mounted) return;
+    mounted = true;
+    window.addEventListener('pageshow', render);
+    window.addEventListener('storage', render);
+    window.addEventListener('hashchange', function () { window.setTimeout(trainingOverview, 80); });
+    document.addEventListener('click', function (event) {
+      var studyCard = event.target.closest && event.target.closest('#view-study .study-card[data-level]');
+      if (studyCard) {
+        var level = Number(studyCard.dataset.level);
+        var st = state();
+        write(VISITED_KEY, nums(st.visited.concat([level])));
+        write(CURRENT_KEY, info(level));
+        window.setTimeout(render, 100);
+      }
+    }, true);
+  }
+
+  function boot() {
+    ensureAssets();
+    bind();
+    render();
+    window.setTimeout(render, 900);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true });
+  else boot();
+
+  window.CNC_PERSONAL_HOME = {
+    build: BUILD,
+    recordsBuild: RECORDS_BUILD,
+    trainingBuild: TRAINING_BUILD,
+    render: render,
+    decorateRecords: decorateRecords,
+    getState: state,
+    runCheck: function () {
+      var panel = document.getElementById('xp-personal-home');
+      var gamePanel = document.getElementById('xp-game-home');
+      var learningStyle = document.querySelector('link[data-cnc-industrial-learning]');
+      var recordsStyle = document.querySelector('link[data-cnc-industrial-records]');
+      var gameStyle = document.querySelector('link[data-cnc-mobile-home-game]');
+      var list = cards();
+      var overview = document.getElementById('xp-training-overview');
+      var st = state();
+      return {
+        passed: Boolean(panel && gamePanel && gamePanel.dataset.ready === 'true' && learningStyle && recordsStyle && gameStyle && list.length === 12 && followsTools() && overview && st.profile.version),
+        build: BUILD,
+        recordsBuild: RECORDS_BUILD,
+        trainingBuild: TRAINING_BUILD,
+        panel: Boolean(panel),
+        gamePanel: Boolean(gamePanel),
+        gameStyle: Boolean(gameStyle),
+        trainingOverview: Boolean(overview),
+        profileVersion: st.profile.version,
+        studyCards: list.length,
+        followsTools: followsTools(),
+        state: st
+      };
+    }
+  };
 })();
