@@ -30,7 +30,7 @@
       <a href="#selector">智能选型</a>
       <a href="#specs">规格书</a>
       <a href="#videos">产品视频</a>
-      <a class="nav-contact" href="#contact">联系咨询</a>
+      <a class="nav-contact" href="#selector">选型工具</a>
     </nav>
     <button class="nav-toggle" id="navToggle" aria-label="打开菜单" aria-controls="navMobile" aria-expanded="false">
       <span></span><span></span><span></span>
@@ -44,7 +44,7 @@
   <a href="#selector">智能选型</a>
   <a href="#specs">规格书</a>
   <a href="#videos">产品视频</a>
-  <a href="#contact">联系咨询</a>
+  <a href="#selector">选型工具</a>
 </nav>
 
 <main id="main">
@@ -346,23 +346,25 @@
   </div>
 </section>
 
-<section class="contact-section" id="contact">
+<section class="contact-section" id="service">
   <div class="contact-inner">
     <div>
-      <span class="section-eyebrow light">联系咨询</span>
-      <h2>把型号或工况发给予华仪器</h2>
-      <p>电话与微信号码集中读取配置文件，后续更换销售联系方式不必逐页修改。</p>
+      <span class="section-eyebrow light">选型服务</span>
+      <h2>先把型号和工况整理清楚</h2>
+      <p>网站不公开直接联系方式。可先使用智能选型生成需求摘要，再通过现有业务渠道提交给销售或技术人员复核。</p>
     </div>
-    <div class="contact-card">
-      <a id="contactPhoneLink" class="contact-primary" href="#selector">
-        <span>电话 / 微信</span>
-        <b id="contactPhoneText">查看联系方式</b>
-      </a>
-      <p id="contactAddress">巩义市英峪工业区</p>
+    <div class="contact-card service-card">
+      <b class="service-card-title">推荐操作顺序</b>
+      <ol class="service-steps">
+        <li>查询产品型号与现有参数</li>
+        <li>填写物料、容量、温度、压力和材质要求</li>
+        <li>复制系统生成的完整工况摘要</li>
+        <li>通过现有业务渠道提交人工确认</li>
+      </ol>
       <div class="contact-actions">
-        <a class="btn btn-primary compact" id="callNow" href="#selector">电话咨询</a>
-        <button class="btn btn-ghost compact" type="button" id="copyPhone">复制号码</button>
-        <a class="btn btn-ghost compact" href="#selector">填写选型需求</a>
+        <a class="btn btn-primary compact" href="#selector">填写选型需求</a>
+        <a class="btn btn-ghost compact" href="#catalog">查询产品型号</a>
+        <a class="btn btn-ghost compact" href="#specs">查找规格书</a>
       </div>
     </div>
   </div>
@@ -375,7 +377,7 @@
 </footer>
 
 <div class="mobile-action-bar" aria-label="快捷操作">
-  <a id="mobileCall" href="#contact"><span>☎</span>电话咨询</a>
+  <a href="#products"><span>▦</span>产品中心</a>
   <a href="#catalog"><span>⌕</span>型号查询</a>
   <a href="#selector"><span>✓</span>智能选型</a>
 </div>
