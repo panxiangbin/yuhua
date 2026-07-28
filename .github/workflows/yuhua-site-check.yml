@@ -14,6 +14,7 @@ on:
       - "assets/specs.js"
       - "assets/site-config.js"
       - "scripts/audit-yuhua-site.cjs"
+      - "scripts/test-site-config.cjs"
       - ".github/workflows/yuhua-site-check.yml"
   pull_request:
     paths:
@@ -27,6 +28,7 @@ on:
       - "assets/specs.js"
       - "assets/site-config.js"
       - "scripts/audit-yuhua-site.cjs"
+      - "scripts/test-site-config.cjs"
 
 permissions:
   contents: read
@@ -45,5 +47,8 @@ jobs:
           node --check app.js
           node --check assets/site-config.js
           node --check scripts/audit-yuhua-site.cjs
+          node --check scripts/test-site-config.cjs
       - name: Audit website structure and product data
         run: node scripts/audit-yuhua-site.cjs
+      - name: Test runtime data guard and compound search
+        run: node scripts/test-site-config.cjs
