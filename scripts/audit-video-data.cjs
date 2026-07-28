@@ -57,12 +57,17 @@ function chooseSuggestedKeep(group) {
   })[0];
 }
 
+function uniqueNonEmpty(values) {
+  return [...new Set(values.map(text).filter(Boolean))];
+}
+
 const windowData = loadWindowFile("assets/videos.js");
 const videos = Array.isArray(windowData.VIDEOS) ? windowData.VIDEOS : [];
 const issues = [];
 const filesByPath = new Map();
 const hashes = new Map();
 const duplicateGroups = [];
+const crossCategoryGroups = [];
 
 function addIssue(type, video, evidence, severity = "review") {
   issues.push({
@@ -150,23 +155,59 @@ hashes.forEach((group, hash) => {
   const groupId = `DUP-${String(duplicateGroups.length + 1).padStart(3, "0")}`;
   const totalBytes = group.reduce((sum, item) => sum + item.size, 0);
   const reclaimableBytes = totalBytes - suggestedKeep.size;
+  const categoryKeys = uniqueNonEmpty(group.map((item) => item.video.key));
+  const categoryNames = uniqueNonEmpty(group.map((item) => item.video.sub || item.video.key));
+  const titles = uniqueNonEmpty(group.map((item) => item.video.title));
+  const crossCategory = categoryKeys.length > 1;
 
-  duplicateGroups.push({
+  const duplicateGroup = {
     groupId,
     sha256: hash,
     copies: uniquePaths.length,
     fileSizeBytes: suggestedKeep.size,
     reclaimableBytes,
     suggestedKeep: suggestedKeep.file,
+    crossCategory,
+    categoryKeyCount: categoryKeys.length,
+    categoryKeys,
+    categoryNames,
+    titleCount: titles.length,
+    titles,
     reason: "仅按路径稳定性、目录层级和文件名长度生成审核建议；删除前必须人工确认标题、分类和页面用途。",
     items: group.map((item) => ({
       action: item.file === suggestedKeep.file ? "建议保留" : "可考虑移除副本",
       file: item.file,
       title: text(item.video.title),
+      categoryKey: text(item.video.key),
       category: text(item.video.sub || item.video.key),
       sizeBytes: item.size
     }))
-  });
+  };
+
+  duplicateGroups.push(duplicateGroup);
+
+  if (crossCategory) {
+    const reviewId = `CAT-${String(crossCategoryGroups.length + 1).padStart(3, "0")}`;
+    const reviewGroup = {
+      reviewId,
+      duplicateGroupId: groupId,
+      sha256: hash,
+      categoryKeys,
+      categoryNames,
+      titles,
+      suggestedKeep: suggestedKeep.file,
+      reviewReason: "完全相同的视频内容被用于多个产品分类。可能是通用企业视频，也可能是分类标注错误；必须人工确认，不自动改分类或删除文件。",
+      items: duplicateGroup.items
+    };
+    crossCategoryGroups.push(reviewGroup);
+
+    group.forEach((item) => addIssue(
+      "完全重复视频跨产品分类复用",
+      item.video,
+      `${reviewId} / ${groupId}；分类键=${categoryKeys.join(" | ")}；分类名称=${categoryNames.join(" | ")}`,
+      "review"
+    ));
+  }
 
   group.forEach((item) => addIssue(
     "不同路径的视频内容完全重复",
@@ -182,6 +223,8 @@ const summary = {
   uniqueReferencedFiles: filesByPath.size,
   readableVideoFiles: [...hashes.values()].reduce((sum, group) => sum + group.length, 0),
   duplicateContentGroups: duplicateGroups.length,
+  crossCategoryDuplicateGroups: crossCategoryGroups.length,
+  crossCategoryDuplicateRecords: crossCategoryGroups.reduce((sum, group) => sum + group.items.length, 0),
   duplicateCopiesBeyondSuggestedKeep: duplicateGroups.reduce((sum, group) => sum + group.copies - 1, 0),
   potentialReclaimableBytes: duplicateGroups.reduce((sum, group) => sum + group.reclaimableBytes, 0),
   issueRecords: issues.length,
@@ -202,7 +245,8 @@ const csvRows = [headers.map(csvCell).join(",")].concat(issues.map((issue) => [
 ].map(csvCell).join(",")));
 
 const duplicateHeaders = [
-  "重复组", "建议动作", "视频标题", "分类", "文件路径", "文件大小Bytes",
+  "重复组", "建议动作", "视频标题", "分类键", "分类", "文件路径", "文件大小Bytes",
+  "跨分类复用", "分类键数量", "分类键集合", "分类名称集合", "标题数量",
   "建议保留路径", "可释放空间Bytes", "SHA256", "说明"
 ];
 const duplicateCsvRows = [duplicateHeaders.map(csvCell).join(",")];
@@ -212,9 +256,15 @@ duplicateGroups.forEach((group) => {
       group.groupId,
       item.action,
       item.title,
+      item.categoryKey,
       item.category,
       item.file,
       item.sizeBytes,
+      group.crossCategory ? "是" : "否",
+      group.categoryKeyCount,
+      group.categoryKeys.join(" | "),
+      group.categoryNames.join(" | "),
+      group.titleCount,
       group.suggestedKeep,
       group.reclaimableBytes,
       group.sha256,
@@ -223,10 +273,37 @@ duplicateGroups.forEach((group) => {
   });
 });
 
+const categoryReviewHeaders = [
+  "复核组", "重复组", "分类键数量", "分类键集合", "分类名称集合", "标题集合",
+  "视频标题", "当前分类键", "当前分类", "文件路径", "建议保留路径", "SHA256", "复核原因"
+];
+const categoryReviewRows = [categoryReviewHeaders.map(csvCell).join(",")];
+crossCategoryGroups.forEach((group) => {
+  group.items.forEach((item) => {
+    categoryReviewRows.push([
+      group.reviewId,
+      group.duplicateGroupId,
+      group.categoryKeys.length,
+      group.categoryKeys.join(" | "),
+      group.categoryNames.join(" | "),
+      group.titles.join(" | "),
+      item.title,
+      item.categoryKey,
+      item.category,
+      item.file,
+      group.suggestedKeep,
+      group.sha256,
+      group.reviewReason
+    ].map(csvCell).join(","));
+  });
+});
+
 fs.writeFileSync(path.join(outputDir, "video-audit-summary.json"), JSON.stringify(summary, null, 2));
 fs.writeFileSync(path.join(outputDir, "video-audit-items.csv"), `\uFEFF${csvRows.join("\n")}`);
 fs.writeFileSync(path.join(outputDir, "video-duplicate-groups.json"), JSON.stringify(duplicateGroups, null, 2));
 fs.writeFileSync(path.join(outputDir, "video-duplicate-groups.csv"), `\uFEFF${duplicateCsvRows.join("\n")}`);
+fs.writeFileSync(path.join(outputDir, "video-cross-category-review.json"), JSON.stringify(crossCategoryGroups, null, 2));
+fs.writeFileSync(path.join(outputDir, "video-cross-category-review.csv"), `\uFEFF${categoryReviewRows.join("\n")}`);
 
 console.log(JSON.stringify(summary, null, 2));
 console.log("视频审计只输出报告，不修改视频标题、分类、文件路径或媒体文件。");
