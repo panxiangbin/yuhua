@@ -32,6 +32,7 @@ on:
       - "scripts/audit-detail-page-coverage.cjs"
       - "scripts/classify-unresolved-detail-pages.cjs"
       - "scripts/audit-cross-category-detail-evidence.cjs"
+      - "scripts/triage-medium-cross-category-details.cjs"
       - ".github/workflows/yuhua-site-check.yml"
   pull_request:
     paths:
@@ -63,6 +64,7 @@ on:
       - "scripts/audit-detail-page-coverage.cjs"
       - "scripts/classify-unresolved-detail-pages.cjs"
       - "scripts/audit-cross-category-detail-evidence.cjs"
+      - "scripts/triage-medium-cross-category-details.cjs"
 
 permissions:
   contents: read
@@ -97,6 +99,7 @@ jobs:
           node --check scripts/audit-detail-page-coverage.cjs
           node --check scripts/classify-unresolved-detail-pages.cjs
           node --check scripts/audit-cross-category-detail-evidence.cjs
+          node --check scripts/triage-medium-cross-category-details.cjs
       - name: Enforce no direct contact policy
         run: node scripts/check-no-direct-contact.cjs
       - name: Audit all public text files for contact leaks
@@ -129,6 +132,8 @@ jobs:
         run: node scripts/classify-unresolved-detail-pages.cjs
       - name: Audit cross-category detail evidence
         run: node scripts/audit-cross-category-detail-evidence.cjs
+      - name: Triage medium-confidence cross-category details
+        run: node scripts/triage-medium-cross-category-details.cjs
       - name: Upload audit reports
         uses: actions/upload-artifact@v4
         with:
@@ -162,6 +167,8 @@ jobs:
             test-artifacts/unresolved-detail-classification.csv
             test-artifacts/cross-category-detail-evidence.json
             test-artifacts/cross-category-detail-evidence.csv
+            test-artifacts/medium-cross-category-detail-triage.json
+            test-artifacts/medium-cross-category-detail-triage.csv
           if-no-files-found: error
           retention-days: 14
       - name: Install Chinese font for visual checks
