@@ -23,6 +23,7 @@ on:
       - "scripts/audit-video-data.cjs"
       - "scripts/classify-cross-category-videos.cjs"
       - "scripts/map-cross-category-video-sources.cjs"
+      - "scripts/triage-cross-category-video-records.cjs"
       - ".github/workflows/yuhua-site-check.yml"
   pull_request:
     paths:
@@ -45,6 +46,7 @@ on:
       - "scripts/audit-video-data.cjs"
       - "scripts/classify-cross-category-videos.cjs"
       - "scripts/map-cross-category-video-sources.cjs"
+      - "scripts/triage-cross-category-video-records.cjs"
 
 permissions:
   contents: read
@@ -71,6 +73,7 @@ jobs:
           node --check scripts/audit-video-data.cjs
           node --check scripts/classify-cross-category-videos.cjs
           node --check scripts/map-cross-category-video-sources.cjs
+          node --check scripts/triage-cross-category-video-records.cjs
       - name: Enforce no direct contact policy
         run: node scripts/check-no-direct-contact.cjs
       - name: Audit all public text files for contact leaks
@@ -89,6 +92,8 @@ jobs:
         run: node scripts/classify-cross-category-videos.cjs
       - name: Map cross-category videos to source records
         run: node scripts/map-cross-category-video-sources.cjs
+      - name: Triage cross-category records by model evidence
+        run: node scripts/triage-cross-category-video-records.cjs
       - name: Upload audit reports
         uses: actions/upload-artifact@v4
         with:
@@ -110,6 +115,8 @@ jobs:
             test-artifacts/video-cross-category-classification.csv
             test-artifacts/video-cross-category-source-map.json
             test-artifacts/video-cross-category-source-map.csv
+            test-artifacts/video-cross-category-record-triage.json
+            test-artifacts/video-cross-category-record-triage.csv
           if-no-files-found: error
           retention-days: 14
       - name: Install Chinese font for visual checks
