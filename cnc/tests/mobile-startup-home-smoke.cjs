@@ -59,17 +59,9 @@ async function createPage(browser) {
   assert.equal(startupReport.passed, true);
   assert.ok(startupReport.forceCount >= 1, '测试必须真实触发一次自动跳转拦截');
 
-  // 手机新版首页隐藏旧工具卡片。用真实可见按钮触发一次用户点击，验证用户路由不会被首页稳定锁拉回。
-  await first.page.evaluate(() => {
-    const button = document.createElement('button');
-    button.id = 'startup-user-study-trigger';
-    button.type = 'button';
-    button.textContent = '进入新手学习';
-    button.style.cssText = 'position:fixed;left:16px;bottom:90px;z-index:99999;min-height:48px;padding:0 18px';
-    button.addEventListener('click', () => window.navigate('study'));
-    document.body.appendChild(button);
-  });
-  await first.page.locator('#startup-user-study-trigger').click();
+  // 通过产品现有的手机目录和真实路由按钮操作，验证用户主动导航不会被首页稳定锁拉回。
+  await first.page.locator('#sidebar-open').click();
+  await first.page.locator('#sidebar .tree-item[data-route="study"]').click();
   await first.page.waitForSelector('#view-study.active', { state: 'visible', timeout: 15000 });
   await first.page.waitForTimeout(2100);
   assert.equal(
