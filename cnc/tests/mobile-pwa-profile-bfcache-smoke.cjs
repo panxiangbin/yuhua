@@ -98,6 +98,8 @@ function observePage(page, errors) {
     stage = 'cache-recovery';
     await page.reload({ waitUntil: 'domcontentloaded' });
     page = await ensureControlled(page, errors, observePage);
+    await page.waitForFunction(expected => caches.keys().then(keys => keys.includes(`cnc-runtime-${expected}`)), PWA_BUILD);
+    await page.locator('#refresh').click();
     await page.waitForFunction(() => Number(document.querySelector('#cache-count')?.textContent) >= 2);
     await page.waitForFunction(() => document.querySelector('#status')?.textContent.includes('版本一致'));
 
