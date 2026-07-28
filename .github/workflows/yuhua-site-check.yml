@@ -12,6 +12,7 @@ on:
       - "sitemap.xml"
       - "assets/data.js"
       - "assets/specs.js"
+      - "assets/videos.js"
       - "assets/site-config.js"
       - "scripts/audit-yuhua-site.cjs"
       - "scripts/test-site-config.cjs"
@@ -19,6 +20,7 @@ on:
       - "scripts/check-no-direct-contact.cjs"
       - "scripts/audit-public-contact-leaks.cjs"
       - "scripts/audit-static-assets.cjs"
+      - "scripts/audit-video-data.cjs"
       - ".github/workflows/yuhua-site-check.yml"
   pull_request:
     paths:
@@ -30,6 +32,7 @@ on:
       - "sitemap.xml"
       - "assets/data.js"
       - "assets/specs.js"
+      - "assets/videos.js"
       - "assets/site-config.js"
       - "scripts/audit-yuhua-site.cjs"
       - "scripts/test-site-config.cjs"
@@ -37,6 +40,7 @@ on:
       - "scripts/check-no-direct-contact.cjs"
       - "scripts/audit-public-contact-leaks.cjs"
       - "scripts/audit-static-assets.cjs"
+      - "scripts/audit-video-data.cjs"
 
 permissions:
   contents: read
@@ -60,6 +64,7 @@ jobs:
           node --check scripts/check-no-direct-contact.cjs
           node --check scripts/audit-public-contact-leaks.cjs
           node --check scripts/audit-static-assets.cjs
+          node --check scripts/audit-video-data.cjs
       - name: Enforce no direct contact policy
         run: node scripts/check-no-direct-contact.cjs
       - name: Audit all public text files for contact leaks
@@ -72,6 +77,8 @@ jobs:
         run: node scripts/export-data-audit.cjs
       - name: Audit static assets and document links
         run: node scripts/audit-static-assets.cjs
+      - name: Audit video data and duplicate media
+        run: node scripts/audit-video-data.cjs
       - name: Upload audit reports
         uses: actions/upload-artifact@v4
         with:
@@ -83,6 +90,8 @@ jobs:
             test-artifacts/public-contact-audit-items.csv
             test-artifacts/static-asset-audit-summary.json
             test-artifacts/static-asset-audit-items.csv
+            test-artifacts/video-audit-summary.json
+            test-artifacts/video-audit-items.csv
           if-no-files-found: error
           retention-days: 14
       - name: Install Chinese font for visual checks
