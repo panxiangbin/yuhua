@@ -37,7 +37,7 @@ const specsData = loadDataFile("assets/specs.js");
 
 [
   "searchInput", "tableBody", "mobileProductList", "selectorForm",
-  "selectorResult", "specBody", "contactPhoneText"
+  "selectorResult", "specBody", "service"
 ].forEach((id) => {
   if (!html.includes(`id="${id}"`)) fail(`index.html 缺少 #${id}`);
 });
