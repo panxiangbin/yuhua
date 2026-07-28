@@ -9,8 +9,8 @@ fs.mkdirSync(outputDir, { recursive: true });
 
 async function openGcodeWorkspace(page, expectIndustrialWorkspace) {
   if (expectIndustrialWorkspace) {
-    const workspaceUrl = new URL('/cnc/#workspace', page.url()).href;
-    await page.goto(workspaceUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await page.waitForFunction(() => typeof window.navigate === 'function', null, { timeout: 30000 });
+    await page.evaluate(() => window.navigate('workspace'));
   } else {
     await page.locator('.launchpad-card[data-filter="gcode"]').click();
   }
