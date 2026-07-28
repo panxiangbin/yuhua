@@ -7,6 +7,36 @@ window.YUHUA_SITE = {
   publicDirectContact: false
 };
 
+// 视频数据保护：对仓库中已确认不存在的封面路径清空 poster，
+// 让浏览器回退到视频首帧；不猜测、不替换未经确认的图片。
+(function installVideoDataGuard() {
+  var missingPosters = {
+    "assets/videos/img_1672.jpg": true,
+    "assets/videos/img_1659.jpg": true,
+    "assets/videos/img_1669.jpg": true,
+    "assets/videos/img_1660.jpg": true,
+    "assets/videos/img_1670.jpg": true,
+    "assets/videos/img_1655.jpg": true,
+    "assets/videos/img_1671.jpg": true,
+    "assets/videos/img_1678.jpg": true,
+    "assets/videos/dji_20260115_143343_503_video.jpg": true
+  };
+  var videoStore = [];
+
+  Object.defineProperty(window, "VIDEOS", {
+    configurable: true,
+    enumerable: true,
+    get: function () { return videoStore; },
+    set: function (value) {
+      videoStore = Array.isArray(value) ? value.map(function (video) {
+        if (!video || typeof video !== "object") return video;
+        if (missingPosters[String(video.poster || "")]) video.poster = "";
+        return video;
+      }) : [];
+    }
+  });
+})();
+
 // 无电话策略：移除页面中可能遗留或后续动态生成的电话、拨号、复制号码入口。
 (function installNoPhonePolicy() {
   function removeDirectContact() {
