@@ -5,6 +5,7 @@
 
   var products = Array.isArray(window.PRODUCTS) ? window.PRODUCTS : [];
   var specs = Array.isArray(window.SPECS) ? window.SPECS : [];
+  var pages = Array.isArray(window.PAGES) ? window.PAGES : [];
   if (!products.length || !specs.length) return;
 
   var GENERIC_MODELS = {
@@ -42,6 +43,27 @@
     return /[A-Z]/.test(model) && /[0-9]/.test(model);
   }
 
+  // 保留现有 pages.js 前缀映射的优先级，避免重复覆盖或把既有覆盖误算为新增。
+  var existingPrefixPages = [];
+  pages.forEach(function (page) {
+    var pagePath = clean(page && page.page);
+    var key = clean(page && page.key);
+    if (!pagePath) return;
+    (page.prefixes || []).forEach(function (prefix) {
+      var normalizedPrefix = normalizeModel(prefix);
+      if (!normalizedPrefix) return;
+      existingPrefixPages.push({ prefix: normalizedPrefix, page: pagePath, key: key });
+    });
+  });
+  existingPrefixPages.sort(function (a, b) { return b.prefix.length - a.prefix.length; });
+
+  function hasExistingPrefixDetail(model, key) {
+    return existingPrefixPages.some(function (entry) {
+      if (entry.key && key && entry.key !== key) return false;
+      return model.indexOf(entry.prefix) === 0;
+    });
+  }
+
   var exactSpecPages = Object.create(null);
   specs.forEach(function (spec) {
     var model = normalizeModel(spec && spec.model);
@@ -59,12 +81,12 @@
     if (!product || typeof product !== "object" || clean(product.detail)) return;
     var model = normalizeModel(product["型号"]);
     var key = clean(product.key);
-    if (!isUsableModel(model) || !key) return;
+    if (!isUsableModel(model) || !key || hasExistingPrefixDetail(model, key)) return;
 
-    var pages = exactSpecPages[key + "::" + model] || [];
-    if (pages.length !== 1) return;
+    var matchedPages = exactSpecPages[key + "::" + model] || [];
+    if (matchedPages.length !== 1) return;
 
-    product.detail = pages[0];
+    product.detail = matchedPages[0];
     product.detailSource = "exact-spec-model";
     resolvedCount += 1;
   });
