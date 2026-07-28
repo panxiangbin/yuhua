@@ -131,27 +131,18 @@ async function openControlledNavigation(page, controlledUrl, expectedScript) {
     }
 
     if (await waitForController(page, expectedScript, 10000)) return page;
-    diagnostics.push({
-      attempt,
-      navigationError,
-      snapshot: await controllerSnapshot(page)
-    });
+    diagnostics.push({ attempt, navigationError, snapshot: await controllerSnapshot(page) });
   }
   throw new Error(`Navigations were not controlled by ${expectedScript}: ${JSON.stringify(diagnostics)}`);
 }
 
 async function ensureControlled(page, errors, observePage, options = {}) {
   const { controlledUrl = page.url() } = options;
-  const directoryEntry = new URL('/cnc/', page.url()).href;
   const expectedScope = new URL('/cnc/', page.url()).href;
   const expectedScript = new URL('/cnc/sw.js', page.url()).href;
 
   if (!controlledUrl.startsWith(expectedScope)) {
     throw new Error(`Controlled URL outside Service Worker scope: ${controlledUrl}`);
-  }
-
-  if (page.url() !== directoryEntry) {
-    await page.goto(directoryEntry, { waitUntil: 'domcontentloaded', timeout: 30000 });
   }
 
   await registerExpectedWorker(page, expectedScope, expectedScript);
