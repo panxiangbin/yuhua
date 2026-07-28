@@ -74,6 +74,18 @@ async function cacheCoreBestEffort() {
   });
 }
 
+async function offlineFallbackResponse() {
+  const cached = await caches.match(scopeUrl('./offline.html'));
+  if (cached) return cached;
+
+  // 即使缓存初始化或配额出现异常，也必须给导航请求返回可读页面，不能暴露浏览器错误页。
+  return new Response(`<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>网络暂时不可用</title></head><body><main><h1>网络暂时不可用</h1><p>离线页面缓存暂未就绪，请恢复网络后重试。</p><p>报警、参数、刀补和现场操作请以机床原厂手册、企业安全制度和现场条件为准。</p></main></body></html>`, {
+    status: 503,
+    statusText: 'Offline',
+    headers: { 'Content-Type': 'text/html; charset=utf-8' }
+  });
+}
+
 self.addEventListener('install', (event) => {
   event.waitUntil((async () => {
     // 预缓存和诊断都是增强能力：无论缓存API、配额或单个资源发生什么异常，
@@ -122,10 +134,10 @@ self.addEventListener('message', (event) => {
 
 self.addEventListener('fetch', (event) => {
   const request = event.request;
-  if(request.method!=='GET') return;
+  if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
-  if(url.origin!==location.origin) return;
+  if (url.origin !== location.origin) return;
 
   if (request.mode === 'navigate') {
     event.respondWith((async () => {
@@ -138,7 +150,7 @@ self.addEventListener('fetch', (event) => {
         return fresh;
       } catch {
         const cached = await caches.match(request);
-        return cached || caches.match(scopeUrl('./offline.html'));
+        return cached || offlineFallbackResponse();
       }
     })());
     return;
