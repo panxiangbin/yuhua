@@ -56,7 +56,8 @@ const sandbox = {
     addEventListener(type, handler) {
       if (type === "DOMContentLoaded") domReady.push(handler);
     },
-    getElementById(id) { return elements[id] || null; }
+    getElementById(id) { return elements[id] || null; },
+    querySelectorAll() { return []; }
   },
   MutationObserver: MutationObserverMock,
   setTimeout(callback) { callback(); return 1; },
@@ -74,13 +75,20 @@ sandbox.window.VIDEOS = [
     poster: "assets/videos/img_1672.jpg"
   },
   {
+    title: "无效空文件名视频",
+    file: "assets/videos/.mp4",
+    poster: "assets/videos/.jpg"
+  },
+  {
     title: "有效封面视频",
     file: "assets/videos/yre_2010a.mp4",
     poster: "assets/videos/yre_2010a.jpg"
   }
 ];
+assert(sandbox.window.VIDEOS.length === 2, "无效空文件名视频没有被隐藏");
 assert(sandbox.window.VIDEOS[0].poster === "", "已确认缺失的视频封面没有被清空");
 assert(sandbox.window.VIDEOS[1].poster === "assets/videos/yre_2010a.jpg", "有效视频封面被错误清空");
+assert(sandbox.window.VIDEOS.every((video) => video.file !== "assets/videos/.mp4"), "无效视频记录仍然保留在前台数据中");
 
 sandbox.window.PRODUCTS = [
   {
