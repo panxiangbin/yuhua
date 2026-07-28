@@ -1,0 +1,49 @@
+name: Yuhua Website Check
+
+on:
+  push:
+    branches: [main, upgrade-84h]
+    paths:
+      - "index.html"
+      - "app.js"
+      - "styles.css"
+      - "404.html"
+      - "robots.txt"
+      - "sitemap.xml"
+      - "assets/data.js"
+      - "assets/specs.js"
+      - "assets/site-config.js"
+      - "scripts/audit-yuhua-site.cjs"
+      - ".github/workflows/yuhua-site-check.yml"
+  pull_request:
+    paths:
+      - "index.html"
+      - "app.js"
+      - "styles.css"
+      - "404.html"
+      - "robots.txt"
+      - "sitemap.xml"
+      - "assets/data.js"
+      - "assets/specs.js"
+      - "assets/site-config.js"
+      - "scripts/audit-yuhua-site.cjs"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check JavaScript syntax
+        run: |
+          node --check app.js
+          node --check assets/site-config.js
+          node --check scripts/audit-yuhua-site.cjs
+      - name: Audit website structure and product data
+        run: node scripts/audit-yuhua-site.cjs
