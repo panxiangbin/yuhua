@@ -17,6 +17,14 @@ function scopeUrl(path) {
   return new URL(path, self.registration.scope).href;
 }
 
+function createOfflineResponse() {
+  return new Response(`<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>网络暂时不可用</title></head><body><main><h1>网络暂时不可用</h1><p>离线页面缓存暂未就绪，请恢复网络后重试。</p><p>报警、参数、刀补和现场操作请以机床原厂手册、企业安全制度和现场条件为准。</p></main></body></html>`, {
+    status: 503,
+    statusText: 'Offline',
+    headers: { 'Content-Type': 'text/html; charset=utf-8' }
+  });
+}
+
 async function fetchWithTimeout(url, timeoutMs = 8000) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -48,12 +56,15 @@ async function cacheCoreBestEffort() {
 
   try {
     staticCache = await caches.open(STATIC_CACHE);
+    // 先写入一个真实响应，保证静态缓存不会在网络预热全部失败时仍是空缓存。
+    // 后续联网获取到正式 offline.html 后会覆盖这份兜底页面。
+    await staticCache.put(scopeUrl('./offline.html'), createOfflineResponse());
   } catch (error) {
     failures.push({ path: '__static_cache__', error: String(error && error.message ? error.message : error) });
   }
 
   if (staticCache) {
-    await Promise.all(REQUIRED_CORE_PATHS.map(async (path) => {
+    for (const path of REQUIRED_CORE_PATHS) {
       try {
         const url = scopeUrl(path);
         const response = await fetchWithTimeout(url);
@@ -62,7 +73,7 @@ async function cacheCoreBestEffort() {
       } catch (error) {
         failures.push({ path, error: String(error && error.message ? error.message : error) });
       }
-    }));
+    }
   }
 
   await writeInstallDiagnostic({
@@ -78,14 +89,7 @@ async function cacheCoreBestEffort() {
 
 async function offlineFallbackResponse() {
   const cached = await caches.match(scopeUrl('./offline.html'));
-  if (cached) return cached;
-
-  // 即使缓存初始化或配额出现异常，也必须给导航请求返回可读页面，不能暴露浏览器错误页。
-  return new Response(`<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>网络暂时不可用</title></head><body><main><h1>网络暂时不可用</h1><p>离线页面缓存暂未就绪，请恢复网络后重试。</p><p>报警、参数、刀补和现场操作请以机床原厂手册、企业安全制度和现场条件为准。</p></main></body></html>`, {
-    status: 503,
-    statusText: 'Offline',
-    headers: { 'Content-Type': 'text/html; charset=utf-8' }
-  });
+  return cached || createOfflineResponse();
 }
 
 self.addEventListener('install', (event) => {
@@ -129,7 +133,6 @@ self.addEventListener('activate', (event) => {
         failures: [{ path: '__activate__', error: String(error && error.message ? error.message : error) }]
       });
     }
-    await caches.open(STATIC_CACHE);
     await caches.open(RUNTIME_CACHE);
     await self.clients.claim();
   })());
