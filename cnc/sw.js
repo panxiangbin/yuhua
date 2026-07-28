@@ -72,6 +72,8 @@ async function cacheCoreBestEffort() {
     total: REQUIRED_CORE_PATHS.length,
     failures
   });
+
+  return failures;
 }
 
 async function offlineFallbackResponse() {
@@ -107,16 +109,29 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('activate', (event) => {
   event.waitUntil((async () => {
-    // 先接管作用域内已打开页面，再做缓存清理，缩短首次接管窗口。
-    await self.clients.claim();
     const names = await caches.keys();
     await Promise.all(
       names
         .filter((name) => name.startsWith('cnc-') && !name.endsWith(BUILD))
         .map((name) => caches.delete(name))
     );
+
+    // 安装阶段可能因瞬时网络、缓存配额或浏览器时序只留下运行时诊断缓存。
+    // 激活时再次修复核心静态缓存，并在修复完成后才接管页面，避免页面看到“已接管但静态缓存尚未就绪”的半初始化状态。
+    try {
+      await cacheCoreBestEffort();
+    } catch (error) {
+      await writeInstallDiagnostic({
+        build: BUILD,
+        checkedAt: new Date().toISOString(),
+        cached: 0,
+        total: REQUIRED_CORE_PATHS.length,
+        failures: [{ path: '__activate__', error: String(error && error.message ? error.message : error) }]
+      });
+    }
     await caches.open(STATIC_CACHE);
     await caches.open(RUNTIME_CACHE);
+    await self.clients.claim();
   })());
 });
 
