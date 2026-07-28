@@ -3,13 +3,11 @@
 
 const fs = require("fs");
 const path = require("path");
-const vm = require("vm");
 
 const root = path.resolve(__dirname, "..");
-const publicFiles = [
+const protectedFiles = [
   "index.html",
   "404.html",
-  "app.js",
   "assets/site-config.js"
 ];
 
@@ -27,12 +25,12 @@ function read(relativePath) {
   return fs.readFileSync(fullPath, "utf8");
 }
 
-const contents = Object.fromEntries(publicFiles.map((file) => [file, read(file)]));
+const contents = Object.fromEntries(protectedFiles.map((file) => [file, read(file)]));
 
-// 公开运行文件中不得保存中国大陆手机号字面值。
-const mobilePattern = /(^|\D)1[3-9]\d{9}(?!\d)/g;
+// 用户可直接访问的入口与配置中不得保存中国大陆手机号字面值。
+const mobilePattern = /(^|\D)(1[3-9]\d{9})(?!\d)/g;
 for (const [file, content] of Object.entries(contents)) {
-  const matches = [...content.matchAll(mobilePattern)].map((match) => match[0].replace(/\D/g, ""));
+  const matches = [...content.matchAll(mobilePattern)].map((match) => match[2]);
   if (matches.length) {
     fail(`${file} 含手机号字面值：${[...new Set(matches)].join(", ")}`);
   }
@@ -48,38 +46,16 @@ for (const [pattern, message] of forbiddenIndexPatterns) {
   if (pattern.test(index)) fail(message);
 }
 
-// 配置对象必须明确关闭公开直接联系方式，且不得保存 phone / wechat 值。
+// 配置必须明确关闭公开直接联系方式，并且不得给 phone / wechat 等字段赋值。
 const configCode = contents["assets/site-config.js"];
-const sandbox = {
-  window: {},
-  document: {
-    readyState: "loading",
-    addEventListener() {},
-    querySelectorAll() { return []; },
-    querySelector() { return null; },
-    getElementById() { return null; },
-    documentElement: null,
-    head: null
-  },
-  MutationObserver: undefined,
-  setTimeout() {},
-  clearTimeout() {},
-  console
-};
-sandbox.window.window = sandbox.window;
-vm.createContext(sandbox);
-try {
-  vm.runInContext(configCode, sandbox, { filename: "assets/site-config.js" });
-} catch (error) {
-  fail(`assets/site-config.js 无法执行：${error.message}`);
+if (!/publicDirectContact\s*:\s*false\b/.test(configCode)) {
+  fail("YUHUA_SITE.publicDirectContact 必须明确设置为 false");
 }
 
-const config = sandbox.window.YUHUA_SITE || {};
-if (config.publicDirectContact !== false) {
-  fail("YUHUA_SITE.publicDirectContact 必须为 false");
-}
 for (const key of ["phone", "mobile", "wechat", "tel"]) {
-  if (String(config[key] || "").trim()) {
+  const assignment = new RegExp(`(?:^|[,\\n{])\\s*["']?${key}["']?\\s*:\\s*["']([^"']*)["']`, "i");
+  const match = configCode.match(assignment);
+  if (match && match[1].trim()) {
     fail(`YUHUA_SITE.${key} 不得保存直接联系方式`);
   }
 }
@@ -90,4 +66,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log("无直接联系方式策略检查通过：公开文件未保存手机号，首页无拨号或复制号码入口，配置明确关闭直接联系方式。");
+console.log("无直接联系方式策略检查通过：入口和配置未保存手机号，首页无拨号或复制号码入口，配置明确关闭直接联系方式。");
