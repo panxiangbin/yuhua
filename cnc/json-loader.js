@@ -88,6 +88,56 @@ console.log('[JSON加载器] 已就绪，支持BOM处理');
 (function restoreNativePwaRegistration(){
   if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
   let restoring = null;
+  const container = navigator.serviceWorker;
+  const prototype = Object.getPrototypeOf(container);
+  const nativeRegister = prototype && prototype.register;
+  const cacheStorage = 'caches' in window ? window.caches : null;
+  const cachePrototype = cacheStorage && Object.getPrototypeOf(cacheStorage);
+  const nativeCacheDelete = cachePrototype && cachePrototype.delete;
+
+  if (typeof nativeRegister !== 'function') return;
+
+  function safeRegister(scriptURL, options) {
+    return nativeRegister.call(container, scriptURL, options);
+  }
+
+  // 旧启动层会在本脚本之后尝试把 register 改成“假成功”函数。
+  // 将同名自有属性锁定为原生代理，既保留浏览器真实行为，也阻止后续覆盖。
+  try {
+    Object.defineProperty(container, 'register', {
+      configurable: false,
+      enumerable: false,
+      writable: false,
+      value: safeRegister
+    });
+  } catch (error) {
+    try { container.register = safeRegister; } catch (ignored) {}
+  }
+
+  // 旧启动层还会在 DOMContentLoaded 中清空同源全部缓存。
+  // 启动窗口内拒绝页面脚本删除缓存，版本淘汰统一交给 sw.js 的 activate 流程。
+  if (cacheStorage && typeof nativeCacheDelete === 'function') {
+    try {
+      Object.defineProperty(cacheStorage, 'delete', {
+        configurable: true,
+        enumerable: false,
+        writable: false,
+        value: function protectedCacheDelete() { return Promise.resolve(false); }
+      });
+      window.setTimeout(() => {
+        try {
+          Object.defineProperty(cacheStorage, 'delete', {
+            configurable: true,
+            enumerable: false,
+            writable: true,
+            value: function deleteCache(name) {
+              return nativeCacheDelete.call(cacheStorage, name);
+            }
+          });
+        } catch (error) {}
+      }, 2500);
+    } catch (error) {}
+  }
 
   function ensureWorkerCaches(registration) {
     const worker = registration && (registration.active || registration.waiting || registration.installing);
@@ -105,16 +155,7 @@ console.log('[JSON加载器] 已就绪，支持BOM处理');
 
   function restoreAndRegister() {
     if (restoring) return restoring;
-    const container = navigator.serviceWorker;
-    const prototype = Object.getPrototypeOf(container);
-    const nativeRegister = prototype && prototype.register;
-    if (typeof nativeRegister !== 'function') return Promise.resolve(false);
-
-    try {
-      if (Object.prototype.hasOwnProperty.call(container, 'register')) delete container.register;
-    } catch (error) {}
-
-    restoring = nativeRegister.call(container, './sw.js', {
+    restoring = safeRegister('./sw.js', {
       scope: './',
       updateViaCache: 'none'
     }).then(async registration => {
@@ -134,12 +175,9 @@ console.log('[JSON加载器] 已就绪，支持BOM处理');
   }
 
   function restoreAfterLateStartupLayers() {
-    // import-test.js 在本脚本之后加载，并可能在 DOMContentLoaded 中覆盖注册API和清空缓存。
-    // 把恢复动作排到同一事件循环末尾，确保所有启动层完成后再恢复原生注册与当前版本缓存。
     window.setTimeout(restoreAndRegister, 0);
-    window.setTimeout(restoreAndRegister, 120);
-    window.setTimeout(restoreAndRegister, 500);
-    window.setTimeout(restoreAndRegister, 1200);
+    window.setTimeout(restoreAndRegister, 160);
+    window.setTimeout(restoreAndRegister, 650);
   }
 
   restoreAndRegister();
