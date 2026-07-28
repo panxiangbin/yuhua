@@ -87,8 +87,24 @@ console.log('[JSON加载器] 已就绪，支持BOM处理');
 
 (function restoreNativePwaRegistration(){
   if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
+  let restoring = null;
+
+  function ensureWorkerCaches(registration) {
+    const worker = registration && (registration.active || registration.waiting || registration.installing);
+    if (!worker) return Promise.resolve(false);
+    return new Promise(resolve => {
+      const channel = new MessageChannel();
+      const timer = window.setTimeout(() => resolve(false), 5000);
+      channel.port1.onmessage = event => {
+        window.clearTimeout(timer);
+        resolve(Boolean(event.data && event.data.type === 'CNC_CACHES_READY'));
+      };
+      worker.postMessage({ type: 'ENSURE_CACHES' }, [channel.port2]);
+    });
+  }
 
   function restoreAndRegister() {
+    if (restoring) return restoring;
     const container = navigator.serviceWorker;
     const prototype = Object.getPrototypeOf(container);
     const nativeRegister = prototype && prototype.register;
@@ -98,25 +114,30 @@ console.log('[JSON加载器] 已就绪，支持BOM处理');
       if (Object.prototype.hasOwnProperty.call(container, 'register')) delete container.register;
     } catch (error) {}
 
-    return nativeRegister.call(container, './sw.js', {
+    restoring = nativeRegister.call(container, './sw.js', {
       scope: './',
       updateViaCache: 'none'
-    }).then(registration => {
+    }).then(async registration => {
       window.__CNC_PWA_REGISTRATION__ = registration;
-      document.documentElement.dataset.cncPwaRegistration = 'ready';
+      await navigator.serviceWorker.ready.catch(() => registration);
+      const cachesReady = await ensureWorkerCaches(registration);
+      document.documentElement.dataset.cncPwaRegistration = cachesReady ? 'ready' : 'registered';
       return true;
     }).catch(error => {
       window.__CNC_PWA_REGISTRATION_ERROR__ = String(error && error.message ? error.message : error);
       document.documentElement.dataset.cncPwaRegistration = 'failed';
       return false;
+    }).finally(() => {
+      restoring = null;
     });
+    return restoring;
   }
 
   restoreAndRegister();
-  [0, 50, 250, 1000, 2500, 5000, 9000].forEach(delay => {
-    window.setTimeout(restoreAndRegister, delay);
+  window.setTimeout(restoreAndRegister, 500);
+  window.addEventListener('pageshow', event => {
+    if (event.persisted) restoreAndRegister();
   });
-  window.addEventListener('pageshow', restoreAndRegister);
   window.CNC_RESTORE_PWA_REGISTRATION = restoreAndRegister;
 })();
 
