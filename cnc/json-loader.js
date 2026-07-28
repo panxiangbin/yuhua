@@ -112,6 +112,7 @@ console.log('[JSON加载器] 已就绪，支持BOM处理');
     });
   }
 
+  restoreAndRegister();
   [0, 50, 250, 1000, 2500, 5000, 9000].forEach(delay => {
     window.setTimeout(restoreAndRegister, delay);
   });
