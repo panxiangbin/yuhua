@@ -7,8 +7,9 @@ window.YUHUA_SITE = {
   publicDirectContact: false
 };
 
-// 视频数据保护：对仓库中已确认不存在的封面路径清空 poster，
-// 让浏览器回退到视频首帧；不猜测、不替换未经确认的图片。
+// 视频数据保护：
+// 1. 对仓库中已确认不存在的封面路径清空 poster，让浏览器回退到视频首帧；
+// 2. 隐藏文件名为空或仅为扩展名的无效视频记录，不猜测真实文件名。
 (function installVideoDataGuard() {
   var missingPosters = {
     "assets/videos/img_1672.jpg": true,
@@ -23,13 +24,22 @@ window.YUHUA_SITE = {
   };
   var videoStore = [];
 
+  function hasUsableVideoFile(file) {
+    var normalized = String(file || "").trim().replace(/\\/g, "/");
+    if (!normalized) return false;
+    var filename = normalized.split("/").pop();
+    if (!filename || filename === "." || filename === "..") return false;
+    return !/^\.[a-z0-9]+$/i.test(filename);
+  }
+
   Object.defineProperty(window, "VIDEOS", {
     configurable: true,
     enumerable: true,
     get: function () { return videoStore; },
     set: function (value) {
-      videoStore = Array.isArray(value) ? value.map(function (video) {
-        if (!video || typeof video !== "object") return video;
+      videoStore = Array.isArray(value) ? value.filter(function (video) {
+        return video && typeof video === "object" && hasUsableVideoFile(video.file);
+      }).map(function (video) {
         if (missingPosters[String(video.poster || "")]) video.poster = "";
         return video;
       }) : [];
