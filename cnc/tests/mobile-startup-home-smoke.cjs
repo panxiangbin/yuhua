@@ -20,8 +20,14 @@ async function createPage(browser) {
 async function trustedClickHiddenRoute(page, selector) {
   const route = page.locator(selector);
   await route.waitFor({ state: 'attached', timeout: 15000 });
-  await route.evaluate(node => {
+  const markerId = `cnc-smoke-route-marker-${Date.now()}`;
+  await route.evaluate((node, id) => {
+    const marker = document.createElement('span');
+    marker.id = id;
+    marker.hidden = true;
+    node.parentNode.insertBefore(marker, node);
     node.dataset.smokeOriginalStyle = node.getAttribute('style') || '';
+    document.body.appendChild(node);
     Object.assign(node.style, {
       position: 'fixed',
       left: '16px',
@@ -34,14 +40,24 @@ async function trustedClickHiddenRoute(page, selector) {
       pointerEvents: 'auto',
       zIndex: '2147483647'
     });
-  });
-  await route.click();
-  await route.evaluate(node => {
-    const original = node.dataset.smokeOriginalStyle || '';
-    if (original) node.setAttribute('style', original);
-    else node.removeAttribute('style');
-    delete node.dataset.smokeOriginalStyle;
-  });
+  }, markerId);
+  try {
+    await route.click({ timeout: 15000 });
+  } finally {
+    await page.evaluate(({ selector, markerId }) => {
+      const node = document.querySelector(selector);
+      const marker = document.getElementById(markerId);
+      if (!node) return;
+      const original = node.dataset.smokeOriginalStyle || '';
+      if (original) node.setAttribute('style', original);
+      else node.removeAttribute('style');
+      delete node.dataset.smokeOriginalStyle;
+      if (marker && marker.parentNode) {
+        marker.parentNode.insertBefore(node, marker);
+        marker.remove();
+      }
+    }, { selector, markerId });
+  }
 }
 
 (async () => {
@@ -86,8 +102,8 @@ async function trustedClickHiddenRoute(page, selector) {
   assert.equal(startupReport.passed, true);
   assert.ok(startupReport.forceCount >= 1, '测试必须真实触发一次自动跳转拦截');
 
-  // 等待启动保护窗口完整结束后，把手机端隐藏的既有路由按钮临时放入视口，
-  // 再由 Playwright 发出真实浏览器点击；产品路由与首页保护逻辑均按原链路执行。
+  // 等待启动保护窗口完整结束后，把手机端隐藏的既有路由按钮临时移到 body 可视区，
+  // 再由 Playwright 发出可信点击；点击后恢复原DOM位置和样式。
   await first.page.waitForTimeout(3500);
   await trustedClickHiddenRoute(first.page, '#sidebar .tree-item[data-route="study"]');
   await first.page.waitForSelector('#view-study.active', { state: 'visible', timeout: 15000 });
