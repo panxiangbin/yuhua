@@ -34,7 +34,12 @@ const assert = require('node:assert/strict');
 
   const button = page.locator('[data-complete-today]');
   assert.ok(await button.isEnabled());
-  assert.ok((await button.evaluate(node => node.getBoundingClientRect().height)) >= 44);
+  await page.waitForFunction(() => {
+    const node = document.querySelector('[data-complete-today]');
+    return Boolean(node && node.getBoundingClientRect().height >= 44);
+  }, null, { timeout: 10000 });
+  const buttonHeight = await button.evaluate(node => node.getBoundingClientRect().height);
+  assert.ok(buttonHeight >= 44, `完成今日训练按钮高度应不少于44px，实际为 ${buttonHeight}px`);
   await button.click();
 
   const after = await page.evaluate(() => window.CNC_TRAINING_PROFILE.snapshot());
@@ -52,6 +57,6 @@ const assert = require('node:assert/strict');
   assert.equal(stored.xp, 420);
   assert.equal(stored.trainingDays.length, 3);
   assert.deepEqual(errors, []);
-  console.log('每日训练记录、连续天数、20XP、防重复与3天徽章通过', { before: before.streak, after: after.streak, badges: after.badges });
+  console.log('每日训练记录、连续天数、20XP、防重复与3天徽章通过', { before: before.streak, after: after.streak, badges: after.badges, buttonHeight });
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });
