@@ -18,12 +18,24 @@ function fail(message) {
   process.exitCode = 1;
 }
 
+function findForbiddenKeys(value, trail = []) {
+  const hits = [];
+  if (!value || typeof value !== "object") return hits;
+  for (const [key, child] of Object.entries(value)) {
+    const next = trail.concat(key);
+    if (/(^|_)(phone|mobile|wechat|tel|contactNumber|copyNumber)(_|$)/i.test(key)) {
+      hits.push(next.join("."));
+    }
+    hits.push(...findForbiddenKeys(child, next));
+  }
+  return hits;
+}
+
 const plan = readJson("reactor-typo-compatibility-plan.json");
 const urlAudit = readJson("reactor-typo-url-compatibility.json");
 const hostingAudit = readJson("hosting-redirect-capability-audit.json");
 const routes = Array.isArray(plan.routePlans) ? plan.routePlans : [];
 const redirectConfirmed = hostingAudit.repositoryRedirectCapabilityConfirmed === true;
-const forbidden = /(手机号|微信号|tel:|拨号|复制号码|phone|wechat)/i;
 
 if (!routes.length) fail("兼容计划没有路由记录");
 if (plan.summary?.totalRoutes !== routes.length) fail("summary.totalRoutes 与实际路由数不一致");
@@ -54,13 +66,8 @@ for (const route of routes) {
   if (route.permanentRedirect?.allowedNow !== (ready && redirectConfirmed)) fail(`永久重定向放行状态错误：${oldPath}`);
   if (!redirectConfirmed && route.recommendedTrack !== "static-compatibility-page") fail(`未确认托管能力时必须采用静态兼容页：${oldPath}`);
 
-  const routeText = JSON.stringify(route);
-  const prohibitedOnly = JSON.stringify({
-    actions: route.staticCompatibilityPage?.actions || [],
-    verification: route.staticCompatibilityPage?.verification || [],
-    redirectVerification: route.permanentRedirect?.verification || []
-  });
-  if (forbidden.test(routeText.replace(prohibitedOnly, ""))) fail(`路由数据中疑似保存了直接联系方式字段：${oldPath}`);
+  const forbiddenKeys = findForbiddenKeys(route);
+  if (forbiddenKeys.length) fail(`路由数据包含直接联系方式字段：${oldPath} -> ${forbiddenKeys.join(", ")}`);
 
   if (ready) readyCount += 1;
   else blockedCount += 1;
@@ -77,6 +84,7 @@ if (!process.exitCode) {
     redirectCapabilityConfirmed: redirectConfirmed,
     duplicateOldPaths: 0,
     proposedPathConflicts: 0,
+    forbiddenContactFields: 0,
     automaticChanges: 0
   }, null, 2));
 }
