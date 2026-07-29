@@ -10,8 +10,14 @@ fs.mkdirSync(outputDir, { recursive: true });
 async function trustedClickHiddenRoute(page, selector) {
   const route = page.locator(selector);
   await route.waitFor({ state: 'attached', timeout: 15000 });
-  await route.evaluate(node => {
+  const markerId = `cnc-visual-route-marker-${Date.now()}`;
+  await route.evaluate((node, id) => {
+    const marker = document.createElement('span');
+    marker.id = id;
+    marker.hidden = true;
+    node.parentNode.insertBefore(marker, node);
     node.dataset.visualOriginalStyle = node.getAttribute('style') || '';
+    document.body.appendChild(node);
     Object.assign(node.style, {
       position: 'fixed',
       left: '16px',
@@ -24,20 +30,30 @@ async function trustedClickHiddenRoute(page, selector) {
       pointerEvents: 'auto',
       zIndex: '2147483647'
     });
-  });
-  await route.click();
-  await route.evaluate(node => {
-    const original = node.dataset.visualOriginalStyle || '';
-    if (original) node.setAttribute('style', original);
-    else node.removeAttribute('style');
-    delete node.dataset.visualOriginalStyle;
-  });
+  }, markerId);
+  try {
+    await route.click({ timeout: 15000 });
+  } finally {
+    await page.evaluate(({ selector, markerId }) => {
+      const node = document.querySelector(selector);
+      const marker = document.getElementById(markerId);
+      if (!node) return;
+      const original = node.dataset.visualOriginalStyle || '';
+      if (original) node.setAttribute('style', original);
+      else node.removeAttribute('style');
+      delete node.dataset.visualOriginalStyle;
+      if (marker && marker.parentNode) {
+        marker.parentNode.insertBefore(node, marker);
+        marker.remove();
+      }
+    }, { selector, markerId });
+  }
 }
 
 async function openGcodeWorkspace(page, expectIndustrialWorkspace) {
   if (expectIndustrialWorkspace) {
-    // 手机端旧侧栏按产品设计隐藏。测试仅把既有路由按钮临时放入视口，
-    // 再由 Playwright 产生可信点击，产品路由、首页保护和工作区初始化仍走真实链路。
+    // 手机端旧侧栏按产品设计隐藏。测试把既有路由按钮临时移到 body 可视区，
+    // 由 Playwright 产生可信点击，随后恢复原DOM位置；产品路由和工作区初始化仍走真实链路。
     await trustedClickHiddenRoute(
       page,
       '#sidebar .tree-item[data-route="workspace"][data-filter="gcode"]'
