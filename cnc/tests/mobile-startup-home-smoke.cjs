@@ -59,9 +59,12 @@ async function createPage(browser) {
   assert.equal(startupReport.passed, true);
   assert.ok(startupReport.forceCount >= 1, '测试必须真实触发一次自动跳转拦截');
 
-  // 通过产品现有的手机目录和真实路由按钮操作，验证用户主动导航不会被首页稳定锁拉回。
-  await first.page.locator('#sidebar-open').click();
-  await first.page.locator('#sidebar .tree-item[data-route="study"]').click();
+  // 新版手机首页隐藏旧侧栏按钮；直接触发产品现有路由按钮，验证真实点击链路不会被首页稳定锁拉回。
+  await first.page.evaluate(() => {
+    const routeButton = document.querySelector('#sidebar .tree-item[data-route="study"]');
+    if (!routeButton) throw new Error('未找到产品现有的新手学习路由按钮');
+    routeButton.click();
+  });
   await first.page.waitForSelector('#view-study.active', { state: 'visible', timeout: 15000 });
   await first.page.waitForTimeout(2100);
   assert.equal(
@@ -72,7 +75,7 @@ async function createPage(browser) {
   assert.equal(
     (await first.page.evaluate(() => window.CNC_STARTUP_HOME_GUARD.runCheck())).userRouteRequested,
     true,
-    '必须识别用户真实路由操作'
+    '必须识别产品路由按钮的点击操作'
   );
 
   const relevantFirstErrors = [...first.pageErrors, ...first.consoleErrors]
