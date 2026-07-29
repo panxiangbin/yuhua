@@ -1,0 +1,30 @@
+name: PWA Version Consistency Audit
+
+on:
+  pull_request:
+    paths:
+      - "cnc/sw.js"
+      - "cnc/build-info.json"
+      - "cnc/pwa-status.html"
+      - "scripts/audit-pwa-version-consistency.cjs"
+      - "scripts/check-no-direct-contact.cjs"
+      - "scripts/audit-public-contact-leaks.cjs"
+      - ".github/workflows/pwa-version-consistency-audit.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: JavaScript syntax
+        run: node --check scripts/audit-pwa-version-consistency.cjs
+      - name: No direct contact information
+        run: |
+          node scripts/check-no-direct-contact.cjs
+          node scripts/audit-public-contact-leaks.cjs
+      - name: PWA version consistency
+        run: node scripts/audit-pwa-version-consistency.cjs
