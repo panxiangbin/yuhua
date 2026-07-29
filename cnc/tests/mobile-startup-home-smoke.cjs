@@ -17,6 +17,33 @@ async function createPage(browser) {
   return { page, pageErrors, consoleErrors };
 }
 
+async function trustedClickHiddenRoute(page, selector) {
+  const route = page.locator(selector);
+  await route.waitFor({ state: 'attached', timeout: 15000 });
+  await route.evaluate(node => {
+    node.dataset.smokeOriginalStyle = node.getAttribute('style') || '';
+    Object.assign(node.style, {
+      position: 'fixed',
+      left: '16px',
+      top: '16px',
+      width: '160px',
+      height: '48px',
+      display: 'block',
+      visibility: 'visible',
+      opacity: '1',
+      pointerEvents: 'auto',
+      zIndex: '2147483647'
+    });
+  });
+  await route.click();
+  await route.evaluate(node => {
+    const original = node.dataset.smokeOriginalStyle || '';
+    if (original) node.setAttribute('style', original);
+    else node.removeAttribute('style');
+    delete node.dataset.smokeOriginalStyle;
+  });
+}
+
 (async () => {
   const browser = await chromium.launch({ headless: true });
 
@@ -59,12 +86,10 @@ async function createPage(browser) {
   assert.equal(startupReport.passed, true);
   assert.ok(startupReport.forceCount >= 1, '测试必须真实触发一次自动跳转拦截');
 
-  // 等待启动保护窗口完整结束后，通过 Playwright 发出浏览器可信点击；
-  // force 只绕过手机端隐藏旧侧栏的可见性限制，不绕过产品路由和首页保护逻辑。
+  // 等待启动保护窗口完整结束后，把手机端隐藏的既有路由按钮临时放入视口，
+  // 再由 Playwright 发出真实浏览器点击；产品路由与首页保护逻辑均按原链路执行。
   await first.page.waitForTimeout(3500);
-  const studyRoute = first.page.locator('#sidebar .tree-item[data-route="study"]');
-  await studyRoute.waitFor({ state: 'attached', timeout: 15000 });
-  await studyRoute.click({ force: true });
+  await trustedClickHiddenRoute(first.page, '#sidebar .tree-item[data-route="study"]');
   await first.page.waitForSelector('#view-study.active', { state: 'visible', timeout: 15000 });
   await first.page.waitForTimeout(2100);
   assert.equal(
