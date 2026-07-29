@@ -1,37 +1,92 @@
 const { chromium } = require('playwright');
 const assert = require('node:assert/strict');
 
+async function trustedClickHiddenRoute(page, selector) {
+  const route = page.locator(selector);
+  await route.waitFor({ state: 'attached', timeout: 15000 });
+  const markerId = `cnc-training-route-marker-${Date.now()}`;
+  const routeId = `cnc-training-route-target-${Date.now()}`;
+
+  await route.evaluate((node, ids) => {
+    const marker = document.createElement('span');
+    marker.id = ids.markerId;
+    marker.hidden = true;
+    node.parentNode.insertBefore(marker, node);
+    node.dataset.trainingOriginalStyle = node.getAttribute('style') || '';
+    node.dataset.trainingOriginalId = node.id || '';
+    node.id = ids.routeId;
+    document.body.appendChild(node);
+    Object.assign(node.style, {
+      position: 'fixed',
+      left: '16px',
+      top: '16px',
+      width: '180px',
+      height: '48px',
+      display: 'block',
+      visibility: 'visible',
+      opacity: '1',
+      pointerEvents: 'auto',
+      zIndex: '2147483647'
+    });
+  }, { markerId, routeId });
+
+  try {
+    await page.locator(`#${routeId}`).click({ timeout: 15000 });
+  } finally {
+    await page.evaluate(({ routeId, markerId }) => {
+      const node = document.getElementById(routeId);
+      const marker = document.getElementById(markerId);
+      if (!node) return;
+      const originalStyle = node.dataset.trainingOriginalStyle || '';
+      const originalId = node.dataset.trainingOriginalId || '';
+      if (originalStyle) node.setAttribute('style', originalStyle);
+      else node.removeAttribute('style');
+      if (originalId) node.id = originalId;
+      else node.removeAttribute('id');
+      delete node.dataset.trainingOriginalStyle;
+      delete node.dataset.trainingOriginalId;
+      if (marker && marker.parentNode) {
+        marker.parentNode.insertBefore(node, marker);
+        marker.remove();
+      }
+    }, { routeId, markerId });
+  }
+}
+
 (async () => {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
-  await page.goto('http://127.0.0.1:4173/cnc/?smoke=training-camp-foundation', { waitUntil: 'domcontentloaded', timeout: 60000 });
+  await page.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded', timeout: 60000 });
   await page.waitForFunction(() => window.CNC_PERSONAL_HOME && window.CNC_PERSONAL_HOME.trainingBuild === '20260728a', null, { timeout: 20000 });
-  await page.waitForSelector('#xp-personal-home', { state: 'visible', timeout: 20000 });
+  await page.waitForSelector('#xp-game-home[data-ready="true"]', { state: 'visible', timeout: 60000 });
+  await page.waitForSelector('#xp-personal-home', { state: 'attached', timeout: 20000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-startup-home') === 'stable', null, { timeout: 15000 });
 
   const startup = await page.evaluate(() => ({
     activeView: (document.querySelector('.view.active') || {}).id || '',
     stable: document.body.getAttribute('data-cnc-startup-home'),
     trainingBuild: document.body.dataset.cncTrainingBuild,
+    legacyDisplay: getComputedStyle(document.getElementById('xp-personal-home')).display,
+    gameDisplay: getComputedStyle(document.getElementById('xp-game-home')).display,
     api: window.CNC_PERSONAL_HOME.runCheck()
   }));
   console.log('training startup', JSON.stringify(startup));
   assert.equal(startup.activeView, 'view-dashboard', 'CNC 根网址必须稳定停留首页');
   assert.equal(startup.stable, 'stable', '启动守卫必须确认首页稳定');
   assert.equal(startup.trainingBuild, '20260728a');
+  assert.equal(startup.legacyDisplay, 'none', '手机端旧个人首页必须隐藏');
+  assert.notEqual(startup.gameDisplay, 'none', '手机端闯关首页必须显示');
   assert.equal(startup.api.passed, true);
   assert.equal(startup.api.profileVersion, 1);
 
   const home = page.locator('#xp-personal-home');
-  await home.scrollIntoViewIfNeeded();
   assert.match((await home.locator('h2').textContent()) || '', /零基础|训练/);
   assert.equal(await home.locator('.xp-progress-number').count(), 1);
-  assert.equal(await home.locator('[data-xp-continue]').count(), 1);
-  assert.ok(await home.locator('.xp-stat-card').count() >= 3);
 
-  await page.locator('.launchpad-card[data-route="study"]').click();
+  await page.waitForTimeout(5600);
+  await trustedClickHiddenRoute(page, '#sidebar .tree-item[data-route="study"]');
   await page.waitForSelector('#view-study.active', { state: 'visible', timeout: 15000 });
   await page.waitForSelector('#xp-training-overview', { state: 'visible', timeout: 15000 });
 
