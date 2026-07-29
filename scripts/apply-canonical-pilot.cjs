@@ -43,10 +43,37 @@ function assertNoDirectContact(html, file) {
   }
 }
 
+function validateTarget(item) {
+  const url = new URL(item.canonical);
+  if (url.protocol !== 'https:' || url.hostname !== 'www.gyyuhua.cn' || url.search || url.hash) {
+    throw new Error(`${item.file}: unsafe canonical target ${item.canonical}`);
+  }
+  const expectedPath = `/${item.file}`;
+  if (decodeURI(url.pathname) !== expectedPath) {
+    throw new Error(`${item.file}: canonical path mismatch ${url.pathname}`);
+  }
+}
+
 function transform(html, item) {
+  validateTarget(item);
+  const beforeBodyHash = sha256(getBody(html));
   const canonicalMatches = html.match(/<link\b[^>]*rel\s*=\s*["'][^"']*canonical[^"']*["'][^>]*>/gi) || [];
-  if (canonicalMatches.length > 0) {
-    throw new Error(`${item.file}: canonical already exists; refusing to modify`);
+
+  if (canonicalMatches.length > 1) {
+    throw new Error(`${item.file}: multiple canonical links found; refusing to modify`);
+  }
+
+  if (canonicalMatches.length === 1) {
+    if (!canonicalMatches[0].includes(`href="${item.canonical}"`) && !canonicalMatches[0].includes(`href='${item.canonical}'`)) {
+      throw new Error(`${item.file}: existing canonical does not match approved target`);
+    }
+    assertNoDirectContact(html, item.file);
+    return {
+      output: html,
+      beforeBodyHash,
+      afterBodyHash: beforeBodyHash,
+      alreadyPresent: true
+    };
   }
 
   const headMatches = html.match(/<head\b[^>]*>[\s\S]*?<\/head>/gi) || [];
@@ -66,16 +93,6 @@ function transform(html, item) {
     throw new Error(`${item.file}: <base> detected; refusing to modify`);
   }
 
-  const url = new URL(item.canonical);
-  if (url.protocol !== 'https:' || url.hostname !== 'www.gyyuhua.cn' || url.search || url.hash) {
-    throw new Error(`${item.file}: unsafe canonical target ${item.canonical}`);
-  }
-  const expectedPath = `/${item.file}`;
-  if (decodeURI(url.pathname) !== expectedPath) {
-    throw new Error(`${item.file}: canonical path mismatch ${url.pathname}`);
-  }
-
-  const beforeBodyHash = sha256(getBody(html));
   const title = titleMatches[0];
   const canonicalTag = `\n  <link rel="canonical" href="${item.canonical}" />`;
   const output = html.replace(title, title + canonicalTag);
@@ -91,7 +108,7 @@ function transform(html, item) {
   }
 
   assertNoDirectContact(output, item.file);
-  return { output, beforeBodyHash, afterBodyHash };
+  return { output, beforeBodyHash, afterBodyHash, alreadyPresent: false };
 }
 
 const report = {
@@ -102,7 +119,8 @@ const report = {
     bodyMustRemainByteIdentical: true,
     noProductDataChanges: true,
     noDirectContactAllowed: true,
-    officialHostOnly: 'www.gyyuhua.cn'
+    officialHostOnly: 'www.gyyuhua.cn',
+    idempotentWhenAlreadyApplied: true
   }
 };
 
@@ -113,14 +131,15 @@ for (const item of PILOT) {
   assertNoDirectContact(source, item.file);
   const result = transform(source, item);
 
-  if (WRITE) fs.writeFileSync(absolute, result.output, 'utf8');
+  if (WRITE && !result.alreadyPresent) fs.writeFileSync(absolute, result.output, 'utf8');
   report.changed.push({
     file: item.file,
     canonical: item.canonical,
     bodyHashBefore: result.beforeBodyHash,
     bodyHashAfter: result.afterBodyHash,
     bodyUnchanged: result.beforeBodyHash === result.afterBodyHash,
-    written: WRITE
+    alreadyPresent: result.alreadyPresent,
+    written: WRITE && !result.alreadyPresent
   });
 }
 
@@ -132,7 +151,7 @@ fs.writeFileSync(
   'utf8'
 );
 
-console.log(`${WRITE ? 'Applied' : 'Validated'} canonical pilot for ${report.changed.length} pages.`);
+console.log(`${WRITE ? 'Applied or verified' : 'Validated'} canonical pilot for ${report.changed.length} pages.`);
 for (const item of report.changed) {
-  console.log(`- ${item.file} -> ${item.canonical} (body unchanged: ${item.bodyUnchanged})`);
+  console.log(`- ${item.file} -> ${item.canonical} (body unchanged: ${item.bodyUnchanged}, already present: ${item.alreadyPresent})`);
 }
