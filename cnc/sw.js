@@ -1,5 +1,5 @@
 /* CNC PWA：版本化缓存、离线回退与安全更新。 */
-const BUILD = '20260730-pwa4';
+const BUILD = '20260730-pwa5';
 const STATIC_CACHE = `cnc-static-${BUILD}`;
 const RUNTIME_CACHE = `cnc-runtime-${BUILD}`;
 const INSTALL_DIAGNOSTIC_PATH = './pwa-install-diagnostics.json';
@@ -38,7 +38,6 @@ async function writeInstallDiagnostic(payload) {
       headers: { 'Content-Type': 'application/json; charset=utf-8' }
     }));
   } catch (error) {
-    // 诊断记录本身失败时不能让 Service Worker 生命周期报废。
     console.warn('[CNC PWA] install diagnostic unavailable', error);
   }
 }
@@ -73,47 +72,50 @@ async function cacheCoreBestEffort() {
   });
 }
 
+async function cleanupOldCachesBestEffort() {
+  try {
+    const names = await caches.keys();
+    await Promise.all(
+      names
+        .filter((name) => name.startsWith('cnc-') && !name.endsWith(BUILD))
+        .map((name) => caches.delete(name).catch(() => false))
+    );
+  } catch (error) {
+    console.warn('[CNC PWA] old cache cleanup unavailable', error);
+  }
+}
+
+function startBackgroundMaintenance() {
+  Promise.allSettled([
+    cleanupOldCachesBestEffort(),
+    cacheCoreBestEffort()
+  ]).catch(() => {});
+}
+
 self.addEventListener('install', (event) => {
-  // 安装阶段只完成立即激活，不再依赖网络、Cache API 或诊断写入。
-  // 任何预缓存异常都不应导致浏览器丢弃整个 Worker 注册。
-  event.waitUntil(Promise.resolve()
-    .then(() => self.skipWaiting())
-    .catch((error) => {
+  event.waitUntil(
+    self.skipWaiting().catch((error) => {
       console.warn('[CNC PWA] skipWaiting unavailable', error);
-    }));
+    })
+  );
 });
 
 self.addEventListener('activate', (event) => {
-  event.waitUntil((async () => {
-    // 每个步骤独立容错：即使缓存不可用，也必须优先保住 Worker 激活与页面接管。
-    try {
-      await self.clients.claim();
-    } catch (error) {
-      console.warn('[CNC PWA] clients.claim unavailable', error);
-    }
-
-    try {
-      const names = await caches.keys();
-      await Promise.all(
-        names
-          .filter((name) => name.startsWith('cnc-') && !name.endsWith(BUILD))
-          .map((name) => caches.delete(name).catch(() => false))
-      );
-    } catch (error) {
-      console.warn('[CNC PWA] old cache cleanup unavailable', error);
-    }
-
-    try {
-      await cacheCoreBestEffort();
-    } catch (error) {
-      console.warn('[CNC PWA] core cache warmup unavailable', error);
-    }
-  })());
+  // 激活门禁只依赖 clients.claim()：网络、Cache API 或预缓存异常不得再阻止注册生效。
+  event.waitUntil(
+    self.clients.claim()
+      .catch((error) => {
+        console.warn('[CNC PWA] clients.claim unavailable', error);
+      })
+      .then(() => {
+        startBackgroundMaintenance();
+      })
+  );
 });
 
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
+    self.skipWaiting().catch(() => {});
   }
   if (event.data && event.data.type === 'GET_BUILD') {
     const target = event.ports && event.ports[0] ? event.ports[0] : event.source;
@@ -128,7 +130,7 @@ self.addEventListener('fetch', (event) => {
   if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
-  if (url.origin !== location.origin) return;
+  if (url.origin !== self.location.origin) return;
 
   if (request.mode === 'navigate') {
     event.respondWith((async () => {
@@ -144,8 +146,12 @@ self.addEventListener('fetch', (event) => {
         }
         return fresh;
       } catch {
-        const cached = await caches.match(request);
-        return cached || caches.match(scopeUrl('./offline.html'));
+        const cached = await caches.match(request).catch(() => null);
+        const fallback = await caches.match(scopeUrl('./offline.html')).catch(() => null);
+        return cached || fallback || new Response('Offline', {
+          status: 503,
+          headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+        });
       }
     })());
     return;
