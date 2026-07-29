@@ -10,6 +10,7 @@ on:
       - "scripts/audit-reactor-typo-rename-impact.cjs"
       - "scripts/build-reactor-typo-atomic-rename-plan.cjs"
       - "scripts/audit-reactor-typo-url-compatibility.cjs"
+      - "scripts/audit-hosting-redirect-capability.cjs"
       - ".github/workflows/reactor-typo-impact-check.yml"
   pull_request:
     paths:
@@ -19,6 +20,7 @@ on:
       - "scripts/audit-reactor-typo-rename-impact.cjs"
       - "scripts/build-reactor-typo-atomic-rename-plan.cjs"
       - "scripts/audit-reactor-typo-url-compatibility.cjs"
+      - "scripts/audit-hosting-redirect-capability.cjs"
       - ".github/workflows/reactor-typo-impact-check.yml"
 
 permissions:
@@ -38,6 +40,7 @@ jobs:
           node --check scripts/audit-reactor-typo-rename-impact.cjs
           node --check scripts/build-reactor-typo-atomic-rename-plan.cjs
           node --check scripts/audit-reactor-typo-url-compatibility.cjs
+          node --check scripts/audit-hosting-redirect-capability.cjs
       - name: Enforce no direct contact policy
         run: node scripts/check-no-direct-contact.cjs
       - name: Audit all public text files for contact leaks
@@ -48,6 +51,8 @@ jobs:
         run: node scripts/build-reactor-typo-atomic-rename-plan.cjs
       - name: Audit legacy URL compatibility risk
         run: node scripts/audit-reactor-typo-url-compatibility.cjs
+      - name: Audit hosting redirect capability evidence
+        run: node scripts/audit-hosting-redirect-capability.cjs
       - name: Recheck static resources and document links
         run: node scripts/audit-static-assets.cjs
       - name: Upload rename audit reports
@@ -61,5 +66,7 @@ jobs:
             test-artifacts/reactor-typo-atomic-rename-plan.csv
             test-artifacts/reactor-typo-url-compatibility.json
             test-artifacts/reactor-typo-url-compatibility.csv
+            test-artifacts/hosting-redirect-capability-audit.json
+            test-artifacts/hosting-redirect-capability-audit.csv
           if-no-files-found: error
           retention-days: 14
