@@ -71,6 +71,7 @@ function resolveLocal(source, value) {
   if (!cleaned) return null;
   const withoutSitePrefix = cleaned.replace(/^\/yuhua\//, "/");
   if (withoutSitePrefix.startsWith("/")) return path.join(root, withoutSitePrefix.replace(/^\/+/, ""));
+  if (source.endsWith(".js")) return path.resolve(root, withoutSitePrefix);
   return path.resolve(path.dirname(path.join(root, source)), withoutSitePrefix);
 }
 
