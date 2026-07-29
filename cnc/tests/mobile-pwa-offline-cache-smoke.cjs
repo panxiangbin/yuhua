@@ -7,6 +7,9 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
+const buildInfo = JSON.parse(fs.readFileSync(path.join(root, 'cnc/build-info.json'), 'utf8'));
+const expectedPwaBuild = String(buildInfo.pwaBuild || '').trim();
+if (!expectedPwaBuild) throw new Error('build-info.json 缺少 pwaBuild');
 fs.mkdirSync(out, { recursive: true });
 
 const types = {
@@ -66,13 +69,13 @@ function observePage(page, errors) {
     const registration = await page.evaluate(() => navigator.serviceWorker.getRegistration('./'));
     if (!registration) throw new Error('Service Worker未注册');
     const cachesBefore = await page.evaluate(() => caches.keys());
-    if (!cachesBefore.includes('cnc-static-20260726-pwa2')) throw new Error('静态缓存版本缺失');
-    if (!cachesBefore.includes('cnc-runtime-20260726-pwa2')) throw new Error('运行时缓存版本缺失');
+    if (!cachesBefore.includes(`cnc-static-${expectedPwaBuild}`)) throw new Error(`静态缓存版本缺失：${expectedPwaBuild}`);
+    if (!cachesBefore.includes(`cnc-runtime-${expectedPwaBuild}`)) throw new Error(`运行时缓存版本缺失：${expectedPwaBuild}`);
 
     stage = 'status-page';
     await page.goto('http://127.0.0.1:4173/cnc/pwa-status.html', { waitUntil: 'domcontentloaded' });
     await page.waitForFunction(() => document.querySelector('#worker')?.textContent.includes('已启用'));
-    await page.waitForFunction(() => document.querySelector('#build')?.textContent.includes('20260726-pwa2'));
+    await page.waitForFunction(expected => document.querySelector('#build')?.textContent.includes(expected), expectedPwaBuild);
     const build = await page.locator('#build').textContent();
     const small = await page.locator('a,button').evaluateAll(elements => elements.filter(element => {
       const rect = element.getBoundingClientRect();
@@ -99,7 +102,7 @@ function observePage(page, errors) {
 
     await page.screenshot({ path: path.join(out, 'pwa-offline-390x844.png'), fullPage: true });
     if (errors.length) throw new Error(`控制台错误 ${errors.join(' | ')}`);
-    fs.writeFileSync(path.join(out, 'pwa-offline-result.json'), JSON.stringify({ build, caches: cachesBefore, offlineFallback: true, runtimeWarmup: true, touchTargets: true }, null, 2));
+    fs.writeFileSync(path.join(out, 'pwa-offline-result.json'), JSON.stringify({ build, expectedPwaBuild, caches: cachesBefore, offlineFallback: true, runtimeWarmup: true, touchTargets: true }, null, 2));
     console.log('CNC PWA offline cache smoke passed');
   } catch (error) {
     fs.writeFileSync(path.join(out, 'pwa-offline-error.txt'), `stage=${stage}\n${error.stack || error}`);
