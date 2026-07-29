@@ -5,6 +5,7 @@ const ROOT = process.cwd();
 const OUT_DIR = path.join(ROOT, 'test-artifacts');
 const SKIP_DIRS = new Set(['.git', 'node_modules', 'test-artifacts']);
 const findings = [];
+let routedFragmentReferences = 0;
 
 function walk(dir) {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -37,13 +38,45 @@ function normalizeLocalTarget(sourceFile, href) {
   return { targetFile, fragmentRaw, fragment: decodeFragment(fragmentRaw) };
 }
 
+function extractRouteMapKeys(source) {
+  const keys = new Set();
+  const routeMapRegex = /(?:const|let|var)\s+routeMap\s*=\s*\{([\s\S]*?)\};/g;
+  let mapMatch;
+  while ((mapMatch = routeMapRegex.exec(source))) {
+    const entryRegex = /(?:["']([^"']+)["']|([A-Za-z_$][\w$-]*))\s*:/g;
+    let entryMatch;
+    while ((entryMatch = entryRegex.exec(mapMatch[1]))) {
+      const key = (entryMatch[1] || entryMatch[2] || '').trim();
+      if (key) keys.add(key);
+    }
+  }
+  return keys;
+}
+
+function collectRoutedFragments(file, html) {
+  const fragments = extractRouteMapKeys(html);
+  const scriptRegex = /<script\b[^>]*\bsrc\s*=\s*(["'])(.*?)\1[^>]*>/gi;
+  let scriptMatch;
+  while ((scriptMatch = scriptRegex.exec(html))) {
+    const src = scriptMatch[2].trim();
+    if (!src || /^(?:[a-z][a-z0-9+.-]*:|\/\/|data:)/i.test(src)) continue;
+    const cleanSrc = src.split(/[?#]/)[0];
+    if (!cleanSrc.toLowerCase().endsWith('.js')) continue;
+    const scriptFile = path.resolve(path.dirname(file), cleanSrc);
+    if (!fs.existsSync(scriptFile) || !fs.statSync(scriptFile).isFile()) continue;
+    const script = fs.readFileSync(scriptFile, 'utf8');
+    for (const key of extractRouteMapKeys(script)) fragments.add(key);
+  }
+  return fragments;
+}
+
 const htmlFiles = walk(ROOT).sort();
 const pageCache = new Map();
 
 function inspectPage(file) {
   if (pageCache.has(file)) return pageCache.get(file);
   if (!fs.existsSync(file) || !fs.statSync(file).isFile()) {
-    const result = { exists: false, ids: new Map() };
+    const result = { exists: false, ids: new Map(), routedFragments: new Set() };
     pageCache.set(file, result);
     return result;
   }
@@ -56,7 +89,12 @@ function inspectPage(file) {
     if (!id) continue;
     ids.set(id, (ids.get(id) || 0) + 1);
   }
-  const result = { exists: true, html, ids };
+  const result = {
+    exists: true,
+    html,
+    ids,
+    routedFragments: collectRoutedFragments(file, html),
+  };
   pageCache.set(file, result);
   return result;
 }
@@ -87,9 +125,12 @@ for (const file of htmlFiles) {
       findings.push({ severity: 'high', type: 'missing-fragment-page', source: rel, target: targetRel, fragment: target.fragment, detail: href });
       continue;
     }
-    if (!targetPage.ids.has(target.fragment)) {
-      findings.push({ severity: 'medium', type: 'missing-fragment-id', source: rel, target: targetRel, fragment: target.fragment, detail: href });
+    if (targetPage.ids.has(target.fragment)) continue;
+    if (targetPage.routedFragments.has(target.fragment)) {
+      routedFragmentReferences += 1;
+      continue;
     }
+    findings.push({ severity: 'medium', type: 'missing-fragment-id', source: rel, target: targetRel, fragment: target.fragment, detail: href });
   }
 }
 
@@ -104,11 +145,13 @@ const summary = {
   findings: findings.length,
   highSeverity: findings.filter(x => x.severity === 'high').length,
   mediumSeverity: findings.filter(x => x.severity === 'medium').length,
+  routedFragmentReferences,
   counts,
   policy: {
     modifiesHtml: false,
     modifiesProductData: false,
     directContactDataAdded: false,
+    recognizesApplicationRoutes: true,
   },
 };
 fs.writeFileSync(path.join(OUT_DIR, 'html-fragment-audit-summary.json'), JSON.stringify(summary, null, 2) + '\n');
