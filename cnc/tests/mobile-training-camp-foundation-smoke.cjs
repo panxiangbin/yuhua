@@ -103,10 +103,17 @@ async function trustedClickHiddenRoute(page, selector) {
   assert.match(roadmapText, /第\s*4[—-]8\s*关/);
   assert.match(roadmapText, /第\s*9[—-]11\s*关/);
   assert.match(roadmapText, /第\s*12\s*关/);
-  assert.equal(await overview.locator('.xp-training-stat').count(), 3);
-  assert.equal(await overview.locator('[data-xp-daily]').count(), 1);
+
+  const stats = overview.locator('.xp-training-stat');
+  assert.equal(await stats.count(), 3, '训练营概览必须展示经验值、通关数和待复习错题三项统计');
+  const statsText = (await stats.allTextContents()).join(' ');
+  assert.match(statsText, /累计经验值/);
+  assert.match(statsText, /已通过关卡/);
+  assert.match(statsText, /待复习错题/);
+  assert.match(statsText, /0\s*\/\s*12/, '零记录新手必须明确显示0/12关，不能伪造进度');
+
   assert.equal(await page.locator('#view-study .study-card[data-training-ready="true"]').count(), 12, '12关必须全部纳入训练营基础结构');
-  assert.equal(await page.locator('#view-study .study-card .xp-course-meta').count(), 12);
+  assert.equal(await page.locator('#view-study .study-card .xp-course-meta').count(), 12, '12关都必须展示学习目标、易错提醒和闯关说明');
 
   const layout = await overview.evaluate(node => {
     const stats = node.querySelector('.xp-training-stats');
@@ -119,27 +126,15 @@ async function trustedClickHiddenRoute(page, selector) {
   });
   console.log('training layout', JSON.stringify(layout));
   assert.equal(layout.singleColumn, true, '手机端训练数据必须按真实视觉位置单列显示');
-  const dailyHeight = await overview.locator('[data-xp-daily]').evaluate(node => node.getBoundingClientRect().height);
-  assert.ok(dailyHeight >= 44, '每日训练按钮点击区不得小于44px');
-
-  await overview.locator('[data-xp-daily]').click();
-  await page.waitForFunction(() => {
-    const profile = JSON.parse(localStorage.getItem('cnc_training_profile_v1') || 'null');
-    return profile && profile.daily && profile.daily.completed === true;
-  }, null, { timeout: 5000 });
-  const profile = await page.evaluate(() => JSON.parse(localStorage.getItem('cnc_training_profile_v1')));
-  assert.equal(profile.version, 1);
-  assert.equal(profile.daily.completed, true);
-  assert.ok(profile.xp >= 20);
-  assert.match((await page.locator('#xp-training-overview [data-xp-daily]').textContent()) || '', /今日已完成/);
+  assert.ok(layout.widths.every(width => width >= 300), '手机端三项训练统计必须保持可读的整行宽度');
   assert.deepEqual(errors, []);
 
-  console.log('CNC新手训练营基础、四阶段十二关路线、版本化成长档案与每日任务通过', {
+  console.log('CNC新手训练营基础、四阶段十二关路线、版本化成长档案与统计概览通过', {
     trainingBuild: startup.trainingBuild,
     roadmap: 4,
     lessons: 12,
-    profileVersion: profile.version,
-    xp: profile.xp
+    profileVersion: startup.api.profileVersion,
+    stats: 3
   });
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });
