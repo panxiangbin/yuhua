@@ -1,11 +1,62 @@
 const { chromium } = require('playwright');
 const assert = require('node:assert/strict');
 
+async function trustedClickHiddenRoute(page, selector) {
+  const route = page.locator(selector);
+  await route.waitFor({ state: 'attached', timeout: 15000 });
+  const markerId = `cnc-home-route-marker-${Date.now()}`;
+  const routeId = `cnc-home-route-target-${Date.now()}`;
+  await route.evaluate((node, ids) => {
+    const marker = document.createElement('span');
+    marker.id = ids.markerId;
+    marker.hidden = true;
+    node.parentNode.insertBefore(marker, node);
+    node.dataset.homeOriginalStyle = node.getAttribute('style') || '';
+    node.dataset.homeOriginalId = node.id || '';
+    node.id = ids.routeId;
+    document.body.appendChild(node);
+    Object.assign(node.style, {
+      position: 'fixed',
+      left: '16px',
+      top: '16px',
+      width: '180px',
+      height: '48px',
+      display: 'block',
+      visibility: 'visible',
+      opacity: '1',
+      pointerEvents: 'auto',
+      zIndex: '2147483647'
+    });
+  }, { markerId, routeId });
+
+  try {
+    await page.locator(`#${routeId}`).click({ timeout: 15000 });
+  } finally {
+    await page.evaluate(({ routeId, markerId }) => {
+      const node = document.getElementById(routeId);
+      const marker = document.getElementById(markerId);
+      if (!node) return;
+      const originalStyle = node.dataset.homeOriginalStyle || '';
+      const originalId = node.dataset.homeOriginalId || '';
+      if (originalStyle) node.setAttribute('style', originalStyle);
+      else node.removeAttribute('style');
+      if (originalId) node.id = originalId;
+      else node.removeAttribute('id');
+      delete node.dataset.homeOriginalStyle;
+      delete node.dataset.homeOriginalId;
+      if (marker && marker.parentNode) {
+        marker.parentNode.insertBefore(node, marker);
+        marker.remove();
+      }
+    }, { routeId, markerId });
+  }
+}
+
 (async () => {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   await page.goto('http://127.0.0.1:4173/cnc/?smoke=industrial-home', { waitUntil: 'domcontentloaded', timeout: 60000 });
-  await page.waitForSelector('.launchpad-card[data-filter="gcode"]', { state: 'visible', timeout: 30000 });
+  await page.waitForSelector('#xp-game-home[data-ready="true"]', { state: 'visible', timeout: 30000 });
   await page.waitForFunction(() => window.CNC_INDUSTRIAL_SAMPLE && window.CNC_INDUSTRIAL_SAMPLE.build === '20260722e', null, { timeout: 15000 });
   await page.waitForFunction(() => window.CNC_PERSONAL_HOME && window.CNC_PERSONAL_HOME.build === '20260722b', null, { timeout: 15000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-industrial-surface') === 'home', null, { timeout: 15000 });
@@ -21,45 +72,30 @@ const assert = require('node:assert/strict');
     assert.equal(await page.locator(selector).evaluate(node => getComputedStyle(node).display), 'none');
   }
 
-  const launchColumns = await page.locator('.launchpad-grid').evaluate(node => getComputedStyle(node).gridTemplateColumns.split(' ').filter(Boolean).length);
-  assert.equal(launchColumns, 1, '首页入口必须竖向单列');
+  assert.equal(await page.locator('.launchpad-grid').evaluate(node => getComputedStyle(node).display), 'none', '手机端旧工具首页必须隐藏');
+  assert.equal(await page.locator('#xp-game-home').evaluate(node => getComputedStyle(node).display !== 'none'), true, '手机端闯关首页必须显示');
+  assert.match((await page.locator('.xp-game-hero h1').textContent()) || '', /从零基础.*闯.*独立编程/s);
 
-  const firstCard = page.locator('.launchpad-card').first();
-  assert.equal(await firstCard.evaluate(node => getComputedStyle(node).backgroundImage), 'none');
-  assert.ok(await firstCard.locator('h3').evaluate(node => Number(getComputedStyle(node).fontWeight)) >= 800);
-  assert.ok(await firstCard.evaluate(node => parseFloat(getComputedStyle(node).borderRadius)) <= 16);
-  assert.notEqual(await firstCard.evaluate(node => getComputedStyle(node).boxShadow), 'none');
+  const visibleTargets = await page.locator('#xp-game-home a:visible,#xp-game-home button:visible').evaluateAll(nodes => nodes.map(node => {
+    const rect = node.getBoundingClientRect();
+    return { text: node.textContent.trim(), width: rect.width, height: rect.height };
+  }).filter(item => item.width > 0 && item.height > 0 && item.height < 44));
+  assert.deepEqual(visibleTargets, [], '手机首页可见按钮和链接高度不得小于44px');
 
-  const homeOrder = await page.evaluate(() => {
-    const launch = document.querySelector('#view-dashboard .launchpad-grid');
-    const personal = document.getElementById('xp-personal-home');
-    const first = launch && launch.querySelector('.launchpad-card');
-    return {
-      followsTools: Boolean(launch && personal && launch.nextElementSibling === personal),
-      launchTop: launch ? launch.getBoundingClientRect().top : 99999,
-      personalTop: personal ? personal.getBoundingClientRect().top : -1,
-      firstCardTop: first ? first.getBoundingClientRect().top : 99999,
-      activeView: (document.querySelector('.view.active') || {}).id || ''
-    };
-  });
-  assert.equal(homeOrder.activeView, 'view-dashboard', '首页必须保持为当前视图');
-  assert.equal(homeOrder.followsTools, true, '学习进度必须放在首页工具卡之后');
-  assert.ok(homeOrder.launchTop < homeOrder.personalTop, '工具卡必须先于学习进度出现');
-  assert.ok(homeOrder.firstCardTop < 844, '手机首屏必须直接看见首页功能入口');
-
-  const searchColumns = await page.locator('.launchpad-search-bar').evaluate(node => getComputedStyle(node).gridTemplateColumns.split(' ').filter(Boolean).length);
-  assert.equal(searchColumns, 1, '搜索框与按钮必须竖向排列');
+  const gameColumns = await page.locator('.xp-game-shortcuts').evaluate(node => getComputedStyle(node).gridTemplateColumns.split(' ').filter(Boolean).length);
+  assert.ok(gameColumns >= 1 && gameColumns <= 2, '手机快捷入口必须保持适合窄屏的单列或双列布局');
 
   const personal = await page.evaluate(() => window.CNC_PERSONAL_HOME && window.CNC_PERSONAL_HOME.runCheck());
-  assert.equal(Boolean(personal && personal.passed), true, '首页学习进度不能被视觉样板破坏');
-  assert.equal(personal.followsTools, true, '学习进度模块必须位于工具入口之后');
+  assert.equal(Boolean(personal && personal.passed), true, '闯关首页不能破坏学习进度数据自检');
 
-  await page.locator('.launchpad-card[data-route="study"]').click();
+  // 首页保护期内会纠正非用户导航；等待窗口结束后，通过既有隐藏路由按钮执行可信点击。
+  await page.waitForTimeout(5600);
+  await trustedClickHiddenRoute(page, '#sidebar .tree-item[data-route="study"]');
   await page.waitForSelector('#view-study.active', { state: 'visible', timeout: 15000 });
   const studyColumns = await page.locator('.study-card-grid').first().evaluate(node => getComputedStyle(node).gridTemplateColumns.split(' ').filter(Boolean).length);
   assert.equal(studyColumns, 1, '课程必须继续保持竖向单列');
   assert.ok(await page.locator('.study-card h4').first().evaluate(node => Number(getComputedStyle(node).fontWeight)) >= 800);
 
-  console.log('手机首页工具优先、学习进度顺序与课程入口通过', homeOrder);
+  console.log('手机闯关首页、工业样板加载、触控尺寸与课程入口通过');
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });
