@@ -92,7 +92,17 @@ async function trustedClickHiddenRoute(page, selector) {
 
   const overview = page.locator('#xp-training-overview');
   assert.match((await overview.locator('h4').textContent()) || '', /独立完成首件/);
-  assert.equal(await overview.locator('.xp-roadmap-card').count(), 7, '必须展示完整七阶段成长路线');
+  const roadmapCards = overview.locator('.xp-roadmap-card');
+  assert.equal(await roadmapCards.count(), 4, '必须展示完整四阶段成长路线');
+  const roadmapText = (await roadmapCards.allTextContents()).join(' ');
+  assert.match(roadmapText, /零基础入门/);
+  assert.match(roadmapText, /现场基础/);
+  assert.match(roadmapText, /编程入门/);
+  assert.match(roadmapText, /独立首件/);
+  assert.match(roadmapText, /第\s*1[—-]3\s*关/);
+  assert.match(roadmapText, /第\s*4[—-]8\s*关/);
+  assert.match(roadmapText, /第\s*9[—-]11\s*关/);
+  assert.match(roadmapText, /第\s*12\s*关/);
   assert.equal(await overview.locator('.xp-training-stat').count(), 3);
   assert.equal(await overview.locator('[data-xp-daily]').count(), 1);
   assert.equal(await page.locator('#view-study .study-card[data-training-ready="true"]').count(), 12, '12关必须全部纳入训练营基础结构');
@@ -124,9 +134,9 @@ async function trustedClickHiddenRoute(page, selector) {
   assert.match((await page.locator('#xp-training-overview [data-xp-daily]').textContent()) || '', /今日已完成/);
   assert.deepEqual(errors, []);
 
-  console.log('CNC新手训练营基础、七阶段路线、版本化成长档案与每日任务通过', {
+  console.log('CNC新手训练营基础、四阶段十二关路线、版本化成长档案与每日任务通过', {
     trainingBuild: startup.trainingBuild,
-    roadmap: 7,
+    roadmap: 4,
     lessons: 12,
     profileVersion: profile.version,
     xp: profile.xp
