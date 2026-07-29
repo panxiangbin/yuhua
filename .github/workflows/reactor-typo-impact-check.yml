@@ -9,6 +9,7 @@ on:
       - "downloads/specs/**"
       - "scripts/audit-reactor-typo-rename-impact.cjs"
       - "scripts/build-reactor-typo-atomic-rename-plan.cjs"
+      - "scripts/audit-reactor-typo-url-compatibility.cjs"
       - ".github/workflows/reactor-typo-impact-check.yml"
   pull_request:
     paths:
@@ -17,6 +18,7 @@ on:
       - "downloads/specs/**"
       - "scripts/audit-reactor-typo-rename-impact.cjs"
       - "scripts/build-reactor-typo-atomic-rename-plan.cjs"
+      - "scripts/audit-reactor-typo-url-compatibility.cjs"
       - ".github/workflows/reactor-typo-impact-check.yml"
 
 permissions:
@@ -35,6 +37,7 @@ jobs:
         run: |
           node --check scripts/audit-reactor-typo-rename-impact.cjs
           node --check scripts/build-reactor-typo-atomic-rename-plan.cjs
+          node --check scripts/audit-reactor-typo-url-compatibility.cjs
       - name: Enforce no direct contact policy
         run: node scripts/check-no-direct-contact.cjs
       - name: Audit all public text files for contact leaks
@@ -43,6 +46,8 @@ jobs:
         run: node scripts/audit-reactor-typo-rename-impact.cjs
       - name: Build non-executing atomic rename plan
         run: node scripts/build-reactor-typo-atomic-rename-plan.cjs
+      - name: Audit legacy URL compatibility risk
+        run: node scripts/audit-reactor-typo-url-compatibility.cjs
       - name: Recheck static resources and document links
         run: node scripts/audit-static-assets.cjs
       - name: Upload rename audit reports
@@ -54,5 +59,7 @@ jobs:
             test-artifacts/reactor-typo-rename-impact.csv
             test-artifacts/reactor-typo-atomic-rename-plan.json
             test-artifacts/reactor-typo-atomic-rename-plan.csv
+            test-artifacts/reactor-typo-url-compatibility.json
+            test-artifacts/reactor-typo-url-compatibility.csv
           if-no-files-found: error
           retention-days: 14
