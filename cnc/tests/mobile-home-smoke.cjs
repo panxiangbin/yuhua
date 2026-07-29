@@ -1,5 +1,9 @@
 const { chromium } = require('playwright');
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+
+const DIAGNOSTIC_DIR = 'cnc/test-artifacts/industrial-card-sample';
+fs.mkdirSync(DIAGNOSTIC_DIR, { recursive: true });
 
 async function trustedClickHiddenRoute(page, selector) {
   const route = page.locator(selector);
@@ -55,9 +59,45 @@ async function trustedClickHiddenRoute(page, selector) {
 (async () => {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const consoleErrors = [];
+  const pageErrors = [];
+  const failedRequests = [];
+  page.on('console', message => { if (message.type() === 'error') consoleErrors.push(message.text()); });
+  page.on('pageerror', error => pageErrors.push(String(error.stack || error.message || error)));
+  page.on('requestfailed', request => failedRequests.push({ url: request.url(), error: request.failure() }));
+
   // 使用与专项闯关首页、Pages 和公网一致的规范入口，避免目录 URL + 测试查询串触发非生产启动分支。
   await page.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded', timeout: 60000 });
-  await page.waitForSelector('#xp-game-home[data-ready="true"]', { state: 'visible', timeout: 60000 });
+  try {
+    await page.waitForSelector('#xp-game-home[data-ready="true"]', { state: 'visible', timeout: 60000 });
+  } catch (error) {
+    const diagnostic = await page.evaluate(() => {
+      const panel = document.getElementById('xp-game-home');
+      const dashboard = document.getElementById('view-dashboard');
+      const launch = dashboard && dashboard.querySelector('.launchpad-grid');
+      const personal = window.CNC_PERSONAL_HOME;
+      let selfCheck = null;
+      try { selfCheck = personal && typeof personal.runCheck === 'function' ? personal.runCheck() : null; } catch (checkError) { selfCheck = { error: String(checkError.stack || checkError) }; }
+      return {
+        url: location.href,
+        readyState: document.readyState,
+        panelExists: Boolean(panel),
+        panelReady: panel && panel.dataset.ready || null,
+        panelDisplay: panel ? getComputedStyle(panel).display : null,
+        dashboardExists: Boolean(dashboard),
+        launchExists: Boolean(launch),
+        personalHomeBuild: personal && personal.build || null,
+        personalHomeCheck: selfCheck,
+        bodyClasses: document.body ? document.body.className : null,
+        activeView: document.querySelector('.view.active') && document.querySelector('.view.active').id || null,
+        scripts: Array.from(document.scripts).map(script => script.src || '[inline]').filter(src => /personal-home|app\.js|industrial/i.test(src))
+      };
+    });
+    fs.writeFileSync(`${DIAGNOSTIC_DIR}/mobile-home-startup-timeout.json`, JSON.stringify({ diagnostic, consoleErrors, pageErrors, failedRequests }, null, 2));
+    await page.screenshot({ path: `${DIAGNOSTIC_DIR}/mobile-home-startup-timeout-390x844.png`, fullPage: true });
+    throw error;
+  }
+
   await page.waitForFunction(() => window.CNC_INDUSTRIAL_SAMPLE && window.CNC_INDUSTRIAL_SAMPLE.build === '20260722e', null, { timeout: 60000 });
   await page.waitForFunction(() => window.CNC_PERSONAL_HOME && window.CNC_PERSONAL_HOME.build === '20260722b', null, { timeout: 60000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-industrial-surface') === 'home', null, { timeout: 60000 });
@@ -97,6 +137,9 @@ async function trustedClickHiddenRoute(page, selector) {
   assert.equal(studyColumns, 1, '课程必须继续保持竖向单列');
   assert.ok(await page.locator('.study-card h4').first().evaluate(node => Number(getComputedStyle(node).fontWeight)) >= 800);
 
+  assert.deepEqual(pageErrors, [], `手机首页不能出现页面错误：${pageErrors.join(' | ')}`);
+  assert.deepEqual(consoleErrors, [], `手机首页不能出现控制台错误：${consoleErrors.join(' | ')}`);
+  assert.deepEqual(failedRequests, [], `手机首页不能出现资源请求失败：${JSON.stringify(failedRequests)}`);
   console.log('手机闯关首页、工业样板加载、触控尺寸与课程入口通过');
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });
