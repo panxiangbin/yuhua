@@ -7,7 +7,7 @@ const assert = require('node:assert/strict');
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.goto('http://127.0.0.1:4173/cnc/?smoke=training-camp-foundation', { waitUntil: 'domcontentloaded', timeout: 60000 });
-  await page.waitForFunction(() => window.CNC_PERSONAL_HOME && window.CNC_PERSONAL_HOME.trainingBuild === '20260723a', null, { timeout: 20000 });
+  await page.waitForFunction(() => window.CNC_PERSONAL_HOME && window.CNC_PERSONAL_HOME.trainingBuild === '20260728a', null, { timeout: 20000 });
   await page.waitForSelector('#xp-personal-home', { state: 'visible', timeout: 20000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-startup-home') === 'stable', null, { timeout: 15000 });
 
@@ -20,7 +20,7 @@ const assert = require('node:assert/strict');
   console.log('training startup', JSON.stringify(startup));
   assert.equal(startup.activeView, 'view-dashboard', 'CNC 根网址必须稳定停留首页');
   assert.equal(startup.stable, 'stable', '启动守卫必须确认首页稳定');
-  assert.equal(startup.trainingBuild, '20260723a');
+  assert.equal(startup.trainingBuild, '20260728a');
   assert.equal(startup.api.passed, true);
   assert.equal(startup.api.profileVersion, 1);
 
