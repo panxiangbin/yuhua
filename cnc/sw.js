@@ -1,5 +1,5 @@
 /* CNC PWA：版本化缓存、离线回退与安全更新。 */
-const BUILD = '20260730-pwa3';
+const BUILD = '20260730-pwa4';
 const STATIC_CACHE = `cnc-static-${BUILD}`;
 const RUNTIME_CACHE = `cnc-runtime-${BUILD}`;
 const INSTALL_DIAGNOSTIC_PATH = './pwa-install-diagnostics.json';
@@ -38,71 +38,76 @@ async function writeInstallDiagnostic(payload) {
       headers: { 'Content-Type': 'application/json; charset=utf-8' }
     }));
   } catch (error) {
-    // 诊断记录本身失败时不能让 Service Worker 安装报废。
+    // 诊断记录本身失败时不能让 Service Worker 生命周期报废。
     console.warn('[CNC PWA] install diagnostic unavailable', error);
   }
 }
 
 async function cacheCoreBestEffort() {
-  const staticCache = await caches.open(STATIC_CACHE);
   const failures = [];
+  let cached = 0;
 
-  await Promise.all(REQUIRED_CORE_PATHS.map(async (path) => {
-    try {
-      const url = scopeUrl(path);
-      const response = await fetchWithTimeout(url);
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      await staticCache.put(url, response.clone());
-    } catch (error) {
-      failures.push({ path, error: String(error && error.message ? error.message : error) });
-    }
-  }));
+  try {
+    const staticCache = await caches.open(STATIC_CACHE);
+    await Promise.all(REQUIRED_CORE_PATHS.map(async (path) => {
+      try {
+        const url = scopeUrl(path);
+        const response = await fetchWithTimeout(url);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        await staticCache.put(url, response.clone());
+        cached += 1;
+      } catch (error) {
+        failures.push({ path, error: String(error && error.message ? error.message : error) });
+      }
+    }));
+  } catch (error) {
+    failures.push({ path: 'cache-open', error: String(error && error.message ? error.message : error) });
+  }
 
   await writeInstallDiagnostic({
     build: BUILD,
     checkedAt: new Date().toISOString(),
-    cached: REQUIRED_CORE_PATHS.length - failures.length,
+    cached,
     total: REQUIRED_CORE_PATHS.length,
     failures
   });
 }
 
 self.addEventListener('install', (event) => {
-  event.waitUntil((async () => {
-    // 缓存或诊断异常不能阻断 Worker 安装；否则浏览器会立即丢弃注册，
-    // 页面也无法获得离线回退和后续自修复能力。
-    try {
-      await cacheCoreBestEffort();
-    } catch (error) {
-      await writeInstallDiagnostic({
-        build: BUILD,
-        checkedAt: new Date().toISOString(),
-        cached: 0,
-        total: REQUIRED_CORE_PATHS.length,
-        failures: [{ path: 'install', error: String(error && error.message ? error.message : error) }]
-      });
-    }
-
-    try {
-      await self.skipWaiting();
-    } catch (error) {
+  // 安装阶段只完成立即激活，不再依赖网络、Cache API 或诊断写入。
+  // 任何预缓存异常都不应导致浏览器丢弃整个 Worker 注册。
+  event.waitUntil(Promise.resolve()
+    .then(() => self.skipWaiting())
+    .catch((error) => {
       console.warn('[CNC PWA] skipWaiting unavailable', error);
-    }
-  })());
+    }));
 });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil((async () => {
-    // 先接管作用域内已打开页面，再做缓存清理，缩短首次接管窗口。
-    await self.clients.claim();
-    const names = await caches.keys();
-    await Promise.all(
-      names
-        .filter((name) => name.startsWith('cnc-') && !name.endsWith(BUILD))
-        .map((name) => caches.delete(name))
-    );
-    await caches.open(STATIC_CACHE);
-    await caches.open(RUNTIME_CACHE);
+    // 每个步骤独立容错：即使缓存不可用，也必须优先保住 Worker 激活与页面接管。
+    try {
+      await self.clients.claim();
+    } catch (error) {
+      console.warn('[CNC PWA] clients.claim unavailable', error);
+    }
+
+    try {
+      const names = await caches.keys();
+      await Promise.all(
+        names
+          .filter((name) => name.startsWith('cnc-') && !name.endsWith(BUILD))
+          .map((name) => caches.delete(name).catch(() => false))
+      );
+    } catch (error) {
+      console.warn('[CNC PWA] old cache cleanup unavailable', error);
+    }
+
+    try {
+      await cacheCoreBestEffort();
+    } catch (error) {
+      console.warn('[CNC PWA] core cache warmup unavailable', error);
+    }
   })());
 });
 
@@ -120,18 +125,22 @@ self.addEventListener('message', (event) => {
 
 self.addEventListener('fetch', (event) => {
   const request = event.request;
-  if(request.method!=='GET') return;
+  if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
-  if(url.origin!==location.origin) return;
+  if (url.origin !== location.origin) return;
 
   if (request.mode === 'navigate') {
     event.respondWith((async () => {
       try {
         const fresh = await fetch(request);
         if (fresh && fresh.ok) {
-          const cache = await caches.open(RUNTIME_CACHE);
-          await cache.put(request, fresh.clone());
+          try {
+            const cache = await caches.open(RUNTIME_CACHE);
+            await cache.put(request, fresh.clone());
+          } catch (error) {
+            console.warn('[CNC PWA] navigation cache write unavailable', error);
+          }
         }
         return fresh;
       } catch {
@@ -143,12 +152,16 @@ self.addEventListener('fetch', (event) => {
   }
 
   event.respondWith((async () => {
-    const cached = await caches.match(request);
+    const cached = await caches.match(request).catch(() => null);
     const refresh = fetch(request)
       .then(async (response) => {
         if (response && response.ok) {
-          const cache = await caches.open(RUNTIME_CACHE);
-          await cache.put(request, response.clone());
+          try {
+            const cache = await caches.open(RUNTIME_CACHE);
+            await cache.put(request, response.clone());
+          } catch (error) {
+            console.warn('[CNC PWA] runtime cache write unavailable', error);
+          }
         }
         return response;
       })
