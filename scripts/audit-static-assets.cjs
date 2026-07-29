@@ -9,6 +9,18 @@ const root = path.resolve(__dirname, "..");
 const outDir = path.join(root, "test-artifacts");
 fs.mkdirSync(outDir, { recursive: true });
 
+const ignoredDirs = new Set([".git", "node_modules", "test-artifacts"]);
+
+function walk(dir, predicate, result = []) {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (entry.isDirectory() && ignoredDirs.has(entry.name)) continue;
+    const absolute = path.join(dir, entry.name);
+    if (entry.isDirectory()) walk(absolute, predicate, result);
+    else if (predicate(absolute)) result.push(absolute);
+  }
+  return result;
+}
+
 function loadWindowFile(relativePath) {
   const filePath = path.join(root, relativePath);
   const sandbox = { window: {} };
@@ -38,10 +50,7 @@ function loadRuntimeVideos() {
 }
 
 function cleanRef(value) {
-  return String(value == null ? "" : value)
-    .trim()
-    .replace(/[?#].*$/, "")
-    .replace(/^\.\//, "");
+  return String(value == null ? "" : value).trim().replace(/[?#].*$/, "");
 }
 
 function isLocalFile(value) {
@@ -50,14 +59,27 @@ function isLocalFile(value) {
     !ref.startsWith("#") &&
     !ref.startsWith("data:") &&
     !ref.startsWith("javascript:") &&
-    !/^[a-z]+:/i.test(ref) &&
-    !ref.startsWith("//");
+    !ref.startsWith("mailto:") &&
+    !ref.startsWith("tel:") &&
+    !/^[a-z][a-z0-9+.-]*:/i.test(ref) &&
+    !ref.startsWith("//") &&
+    !/[{}<>]/.test(ref);
 }
 
-function exists(relativePath) {
-  const cleaned = cleanRef(relativePath).replace(/^\/yuhua\//, "").replace(/^\//, "");
-  if (!cleaned) return true;
-  return fs.existsSync(path.join(root, cleaned));
+function resolveLocal(source, value) {
+  const cleaned = cleanRef(value);
+  if (!cleaned) return null;
+  const withoutSitePrefix = cleaned.replace(/^\/yuhua\//, "/");
+  if (withoutSitePrefix.startsWith("/")) return path.join(root, withoutSitePrefix.replace(/^\/+/, ""));
+  return path.resolve(path.dirname(path.join(root, source)), withoutSitePrefix);
+}
+
+function exists(source, value) {
+  const absolute = resolveLocal(source, value);
+  if (!absolute) return true;
+  const relative = path.relative(root, absolute);
+  if (relative.startsWith("..") || path.isAbsolute(relative)) return false;
+  return fs.existsSync(absolute);
 }
 
 const references = [];
@@ -66,47 +88,58 @@ function add(source, field, value, critical = false) {
   references.push({ source, field, value: String(value).trim(), critical });
 }
 
-const htmlFiles = ["index.html", "404.html"];
-const attrPattern = /\b(?:src|href|poster)\s*=\s*["']([^"']+)["']/gi;
+const htmlFiles = walk(root, (file) => file.toLowerCase().endsWith(".html"))
+  .map((file) => path.relative(root, file).split(path.sep).join("/"))
+  .sort();
+const attrPattern = /\b(src|href|poster)\s*=\s*["']([^"']+)["']/gi;
 htmlFiles.forEach((file) => {
   const content = fs.readFileSync(path.join(root, file), "utf8");
   let match;
   while ((match = attrPattern.exec(content))) {
-    const value = match[1];
-    const critical = file === "index.html" && /^(?:styles\.css|app\.js|assets\/site-config\.js|assets\/data\.js|assets\/videos\.js|assets\/pages\.js|assets\/specs\.js)/.test(cleanRef(value));
-    add(file, "html-asset", value, critical);
+    const field = match[1].toLowerCase();
+    const value = match[2];
+    const cleaned = cleanRef(value).replace(/^\.\//, "");
+    const critical = file === "index.html" && /^(?:styles\.css|app\.js|assets\/site-config\.js|assets\/data\.js|assets\/videos\.js|assets\/pages\.js|assets\/specs\.js)/.test(cleaned);
+    add(file, `html-${field}`, value, critical);
   }
 });
 
 const data = loadWindowFile("assets/data.js");
-(data.CATEGORIES || []).forEach((item, index) => add(`assets/data.js#category-${index + 1}`, "img", item.img));
+(data.CATEGORIES || []).forEach((item, index) => add("assets/data.js", `category-${index + 1}-img`, item.img));
 
 const videos = loadRuntimeVideos();
 videos.forEach((item, index) => {
-  add(`assets/videos.js#video-${index + 1}`, "file", item.file);
-  add(`assets/videos.js#video-${index + 1}`, "poster", item.poster);
+  add("assets/videos.js", `video-${index + 1}-file`, item.file);
+  add("assets/videos.js", `video-${index + 1}-poster`, item.poster);
 });
 
 const pages = loadWindowFile("assets/pages.js");
-(pages.PAGES || []).forEach((item, index) => add(`assets/pages.js#page-${index + 1}`, "page", item.page));
+(pages.PAGES || []).forEach((item, index) => add("assets/pages.js", `page-${index + 1}`, item.page));
 
 const specs = loadWindowFile("assets/specs.js");
 (specs.SPECS || []).forEach((item, index) => {
-  add(`assets/specs.js#spec-${index + 1}`, "page", item.page);
-  add(`assets/specs.js#spec-${index + 1}`, "download", item.dl);
+  add("assets/specs.js", `spec-${index + 1}-page`, item.page);
+  add("assets/specs.js", `spec-${index + 1}-download`, item.dl);
 });
 
-const missing = references.filter((item) => !exists(item.value));
+const unique = Array.from(new Map(references.map((item) => [`${item.source}\0${item.field}\0${item.value}`, item])).values());
+const missing = unique.filter((item) => !exists(item.source, item.value));
 const criticalMissing = missing.filter((item) => item.critical);
+const htmlMissing = missing.filter((item) => item.field.startsWith("html-"));
 const summary = {
   generatedAt: new Date().toISOString(),
-  checkedReferences: references.length,
+  scannedHtmlFiles: htmlFiles.length,
+  checkedReferences: unique.length,
   missingReferences: missing.length,
+  missingHtmlReferences: htmlMissing.length,
   criticalMissingReferences: criticalMissing.length,
   runtimeVideoPosterFallbacksApplied: true,
+  enforcement: {
+    criticalMissingFailsCi: true,
+    nonCriticalMissingRequiresReview: true
+  },
   bySource: missing.reduce((result, item) => {
-    const key = item.source.split("#")[0];
-    result[key] = (result[key] || 0) + 1;
+    result[item.source] = (result[item.source] || 0) + 1;
     return result;
   }, {})
 };
@@ -125,4 +158,4 @@ if (criticalMissing.length) {
   criticalMissing.forEach((item) => console.error(`- ${item.source} -> ${item.value}`));
   process.exit(1);
 }
-console.log("关键页面资源完整；视频封面按真实运行时数据审计，缺失封面自动回退首帧。");
+console.log(`已扫描 ${htmlFiles.length} 个 HTML 页面；关键资源完整，其他缺失引用已进入人工审核报告。`);
