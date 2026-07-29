@@ -59,7 +59,8 @@ async function createPage(browser) {
   assert.equal(startupReport.passed, true);
   assert.ok(startupReport.forceCount >= 1, '测试必须真实触发一次自动跳转拦截');
 
-  // 新版手机首页隐藏旧侧栏按钮；直接触发产品现有路由按钮，验证真实点击链路不会被首页稳定锁拉回。
+  // 等待启动保护窗口完整结束后，再走产品现有路由按钮；避免把保护期内的程序点击误判为真实用户点击失败。
+  await first.page.waitForTimeout(3500);
   await first.page.evaluate(() => {
     const routeButton = document.querySelector('#sidebar .tree-item[data-route="study"]');
     if (!routeButton) throw new Error('未找到产品现有的新手学习路由按钮');
