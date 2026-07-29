@@ -43,24 +43,34 @@ const versions = {
     'cnc/sw.js'
   ),
   buildInfo: String(buildInfo.pwaBuild || '').trim(),
-  statusPage: matchVersion(
-    statusText,
-    /(?:const|let|var)\s+EXPECTED\s*=\s*['"]([^'"]+)['"]/,
-    'cnc/pwa-status.html'
-  ),
 };
 
 if (!versions.buildInfo) {
   throw new Error('cnc/build-info.json 缺少 pwaBuild');
 }
 
-const uniqueVersions = new Set(Object.values(versions));
-if (uniqueVersions.size !== 1) {
+if (versions.serviceWorker !== versions.buildInfo) {
   console.error('PWA 版本不一致:');
   for (const [source, version] of Object.entries(versions)) {
     console.error(`- ${source}: ${version}`);
   }
   process.exit(1);
+}
+
+const statusRequirements = [
+  { name: '读取 build-info.json', regex: /fetch\(\s*['"]\.\/build-info\.json['"]/ },
+  { name: '使用 pwaBuild 字段', regex: /\bpwaBuild\b/ },
+  { name: '版本读取失败提示', regex: /(?:版本|构建).*(?:读取|加载).*失败|(?:读取|加载).*(?:版本|构建).*失败/ },
+];
+
+for (const requirement of statusRequirements) {
+  if (!requirement.regex.test(statusText)) {
+    throw new Error(`cnc/pwa-status.html 缺少动态版本要求: ${requirement.name}`);
+  }
+}
+
+if (/(?:const|let|var)\s+EXPECTED\s*=\s*['"][^'"]+['"]/.test(statusText)) {
+  throw new Error('cnc/pwa-status.html 不得重新硬编码 EXPECTED 版本');
 }
 
 const directContactPatterns = [
@@ -79,4 +89,5 @@ for (const [source, text] of Object.entries({ serviceWorker: swText, buildInfo: 
 }
 
 console.log(`PWA 版本一致: ${versions.serviceWorker}`);
+console.log('状态页已从 build-info.json 动态读取版本');
 console.log('直接联系方式检查通过');
