@@ -59,13 +59,12 @@ async function createPage(browser) {
   assert.equal(startupReport.passed, true);
   assert.ok(startupReport.forceCount >= 1, '测试必须真实触发一次自动跳转拦截');
 
-  // 等待启动保护窗口完整结束后，再走产品现有路由按钮；避免把保护期内的程序点击误判为真实用户点击失败。
+  // 等待启动保护窗口完整结束后，通过 Playwright 发出浏览器可信点击；
+  // force 只绕过手机端隐藏旧侧栏的可见性限制，不绕过产品路由和首页保护逻辑。
   await first.page.waitForTimeout(3500);
-  await first.page.evaluate(() => {
-    const routeButton = document.querySelector('#sidebar .tree-item[data-route="study"]');
-    if (!routeButton) throw new Error('未找到产品现有的新手学习路由按钮');
-    routeButton.click();
-  });
+  const studyRoute = first.page.locator('#sidebar .tree-item[data-route="study"]');
+  await studyRoute.waitFor({ state: 'attached', timeout: 15000 });
+  await studyRoute.click({ force: true });
   await first.page.waitForSelector('#view-study.active', { state: 'visible', timeout: 15000 });
   await first.page.waitForTimeout(2100);
   assert.equal(
@@ -76,7 +75,7 @@ async function createPage(browser) {
   assert.equal(
     (await first.page.evaluate(() => window.CNC_STARTUP_HOME_GUARD.runCheck())).userRouteRequested,
     true,
-    '必须识别产品路由按钮的点击操作'
+    '必须识别产品路由按钮的可信点击操作'
   );
 
   const relevantFirstErrors = [...first.pageErrors, ...first.consoleErrors]
