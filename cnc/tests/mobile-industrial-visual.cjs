@@ -7,13 +7,41 @@ const baselineUrl = process.env.BASELINE_URL || 'http://127.0.0.1:4174';
 const outputDir = path.resolve('cnc/test-artifacts/industrial-card-sample');
 fs.mkdirSync(outputDir, { recursive: true });
 
+async function trustedClickHiddenRoute(page, selector) {
+  const route = page.locator(selector);
+  await route.waitFor({ state: 'attached', timeout: 15000 });
+  await route.evaluate(node => {
+    node.dataset.visualOriginalStyle = node.getAttribute('style') || '';
+    Object.assign(node.style, {
+      position: 'fixed',
+      left: '16px',
+      top: '16px',
+      width: '180px',
+      height: '48px',
+      display: 'block',
+      visibility: 'visible',
+      opacity: '1',
+      pointerEvents: 'auto',
+      zIndex: '2147483647'
+    });
+  });
+  await route.click();
+  await route.evaluate(node => {
+    const original = node.dataset.visualOriginalStyle || '';
+    if (original) node.setAttribute('style', original);
+    else node.removeAttribute('style');
+    delete node.dataset.visualOriginalStyle;
+  });
+}
+
 async function openGcodeWorkspace(page, expectIndustrialWorkspace) {
   if (expectIndustrialWorkspace) {
-    // 通过 Playwright 发出浏览器可信点击；force 只绕过手机端隐藏旧侧栏的可见性限制，
-    // 产品路由、首页保护和工作区初始化仍按真实业务链路执行。
-    const routeButton = page.locator('#sidebar .tree-item[data-route="workspace"][data-filter="gcode"]');
-    await routeButton.waitFor({ state: 'attached', timeout: 15000 });
-    await routeButton.click({ force: true });
+    // 手机端旧侧栏按产品设计隐藏。测试仅把既有路由按钮临时放入视口，
+    // 再由 Playwright 产生可信点击，产品路由、首页保护和工作区初始化仍走真实链路。
+    await trustedClickHiddenRoute(
+      page,
+      '#sidebar .tree-item[data-route="workspace"][data-filter="gcode"]'
+    );
   } else {
     await page.locator('.launchpad-card[data-filter="gcode"]').click();
   }
