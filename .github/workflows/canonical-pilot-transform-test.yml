@@ -1,0 +1,50 @@
+name: Canonical Pilot Transform Test
+
+on:
+  push:
+    branches: [upgrade-84h]
+    paths:
+      - "cnc/cnc_program_checker_optimizer.html"
+      - "cnc/cnc-calculator-suite.html"
+      - "scripts/test-canonical-pilot-transform.cjs"
+      - "scripts/check-no-direct-contact.cjs"
+      - "scripts/audit-public-contact-leaks.cjs"
+      - ".github/workflows/canonical-pilot-transform-test.yml"
+  pull_request:
+    paths:
+      - "cnc/cnc_program_checker_optimizer.html"
+      - "cnc/cnc-calculator-suite.html"
+      - "scripts/test-canonical-pilot-transform.cjs"
+      - "scripts/check-no-direct-contact.cjs"
+      - "scripts/audit-public-contact-leaks.cjs"
+      - ".github/workflows/canonical-pilot-transform-test.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  simulate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check simulation script syntax
+        run: node --check scripts/test-canonical-pilot-transform.cjs
+      - name: Enforce no direct contact policy
+        run: node scripts/check-no-direct-contact.cjs
+      - name: Audit public text for contact leaks
+        run: node scripts/audit-public-contact-leaks.cjs
+      - name: Simulate canonical insertion without modifying HTML
+        run: node scripts/test-canonical-pilot-transform.cjs
+      - name: Upload simulation report
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-pilot-transform-test
+          path: |
+            test-artifacts/canonical-pilot-transform-test.json
+            test-artifacts/canonical-pilot-transform-test.csv
+          if-no-files-found: error
+          retention-days: 14
