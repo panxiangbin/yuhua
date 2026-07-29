@@ -1,5 +1,5 @@
 /* CNC PWA：版本化缓存、离线回退与安全更新。 */
-const BUILD = '20260726-pwa2';
+const BUILD = '20260730-pwa3';
 const STATIC_CACHE = `cnc-static-${BUILD}`;
 const RUNTIME_CACHE = `cnc-runtime-${BUILD}`;
 const INSTALL_DIAGNOSTIC_PATH = './pwa-install-diagnostics.json';
@@ -31,9 +31,20 @@ async function fetchWithTimeout(url, timeoutMs = 8000) {
   }
 }
 
+async function writeInstallDiagnostic(payload) {
+  try {
+    const runtimeCache = await caches.open(RUNTIME_CACHE);
+    await runtimeCache.put(scopeUrl(INSTALL_DIAGNOSTIC_PATH), new Response(JSON.stringify(payload), {
+      headers: { 'Content-Type': 'application/json; charset=utf-8' }
+    }));
+  } catch (error) {
+    // 诊断记录本身失败时不能让 Service Worker 安装报废。
+    console.warn('[CNC PWA] install diagnostic unavailable', error);
+  }
+}
+
 async function cacheCoreBestEffort() {
   const staticCache = await caches.open(STATIC_CACHE);
-  const runtimeCache = await caches.open(RUNTIME_CACHE);
   const failures = [];
 
   await Promise.all(REQUIRED_CORE_PATHS.map(async (path) => {
@@ -47,22 +58,36 @@ async function cacheCoreBestEffort() {
     }
   }));
 
-  await runtimeCache.put(scopeUrl(INSTALL_DIAGNOSTIC_PATH), new Response(JSON.stringify({
+  await writeInstallDiagnostic({
     build: BUILD,
     checkedAt: new Date().toISOString(),
     cached: REQUIRED_CORE_PATHS.length - failures.length,
     total: REQUIRED_CORE_PATHS.length,
     failures
-  }), {
-    headers: { 'Content-Type': 'application/json; charset=utf-8' }
-  }));
+  });
 }
 
 self.addEventListener('install', (event) => {
   event.waitUntil((async () => {
-    // 单个核心资源失败只记录诊断，不再让整个Worker安装报废。
-    await cacheCoreBestEffort();
-    await self.skipWaiting();
+    // 缓存或诊断异常不能阻断 Worker 安装；否则浏览器会立即丢弃注册，
+    // 页面也无法获得离线回退和后续自修复能力。
+    try {
+      await cacheCoreBestEffort();
+    } catch (error) {
+      await writeInstallDiagnostic({
+        build: BUILD,
+        checkedAt: new Date().toISOString(),
+        cached: 0,
+        total: REQUIRED_CORE_PATHS.length,
+        failures: [{ path: 'install', error: String(error && error.message ? error.message : error) }]
+      });
+    }
+
+    try {
+      await self.skipWaiting();
+    } catch (error) {
+      console.warn('[CNC PWA] skipWaiting unavailable', error);
+    }
   })());
 });
 
