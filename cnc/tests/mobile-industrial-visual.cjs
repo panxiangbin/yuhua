@@ -9,7 +9,7 @@ fs.mkdirSync(outputDir, { recursive: true });
 
 async function openGcodeWorkspace(page, expectIndustrialWorkspace) {
   if (expectIndustrialWorkspace) {
-    // 新版手机首页隐藏旧侧栏；触发产品现有 G/M 代码路由按钮，继续验证同一业务导航链路。
+    // 启动保护窗口结束后触发产品现有 G/M 代码路由按钮，验证真实业务导航链路。
     await page.evaluate(() => {
       const routeButton = document.querySelector('#sidebar .tree-item[data-route="workspace"][data-filter="gcode"]');
       if (!routeButton) throw new Error('未找到产品现有的 G/M 代码路由按钮');
@@ -24,6 +24,7 @@ async function openGcodeWorkspace(page, expectIndustrialWorkspace) {
     await page.waitForFunction(() => window.CNC_INDUSTRIAL_WORKSPACE && window.CNC_INDUSTRIAL_WORKSPACE.build === '20260721v', null, { timeout: 15000 });
     await page.waitForFunction(() => document.body.getAttribute('data-cnc-industrial-workspace') === 'true', null, { timeout: 15000 });
   }
+  await page.waitForSelector('#search-input', { state: 'visible', timeout: 15000 });
   await page.waitForTimeout(800);
 }
 
@@ -86,11 +87,12 @@ async function capture(browser, baseUrl, prefix, expectIndustrial) {
   if (expectIndustrial) {
     await page.waitForSelector('#xp-game-home[data-ready="true"]', { state: 'visible', timeout: 30000 });
     await page.waitForFunction(() => window.CNC_INDUSTRIAL_SAMPLE && document.body.getAttribute('data-cnc-industrial-surface') === 'home', null, { timeout: 15000 });
-    await page.waitForTimeout(2200);
+    // 首页保护期内会主动纠正非用户导航；完整等待保护窗口结束后再进入查询工作区。
+    await page.waitForTimeout(5600);
   } else {
     await page.waitForSelector('.launchpad-card[data-filter="gcode"]', { state: 'visible', timeout: 30000 });
+    await page.waitForTimeout(1200);
   }
-  await page.waitForTimeout(1200);
   await page.screenshot({ path: path.join(outputDir, `${prefix}-home-390x844.png`), animations: 'disabled', fullPage: false });
   await openGcodeWorkspace(page, expectIndustrial);
   await page.screenshot({ path: path.join(outputDir, `${prefix}-gcode-workspace-390x844.png`), animations: 'disabled', fullPage: false });
