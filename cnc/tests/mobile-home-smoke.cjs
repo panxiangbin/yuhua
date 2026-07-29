@@ -55,7 +55,8 @@ async function trustedClickHiddenRoute(page, selector) {
 (async () => {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
-  await page.goto('http://127.0.0.1:4173/cnc/?smoke=industrial-home', { waitUntil: 'domcontentloaded', timeout: 60000 });
+  // 使用与专项闯关首页、Pages 和公网一致的规范入口，避免目录 URL + 测试查询串触发非生产启动分支。
+  await page.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded', timeout: 60000 });
   await page.waitForSelector('#xp-game-home[data-ready="true"]', { state: 'visible', timeout: 60000 });
   await page.waitForFunction(() => window.CNC_INDUSTRIAL_SAMPLE && window.CNC_INDUSTRIAL_SAMPLE.build === '20260722e', null, { timeout: 60000 });
   await page.waitForFunction(() => window.CNC_PERSONAL_HOME && window.CNC_PERSONAL_HOME.build === '20260722b', null, { timeout: 60000 });
