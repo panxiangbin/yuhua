@@ -9,12 +9,11 @@ fs.mkdirSync(outputDir, { recursive: true });
 
 async function openGcodeWorkspace(page, expectIndustrialWorkspace) {
   if (expectIndustrialWorkspace) {
-    // 启动保护窗口结束后触发产品现有 G/M 代码路由按钮，验证真实业务导航链路。
-    await page.evaluate(() => {
-      const routeButton = document.querySelector('#sidebar .tree-item[data-route="workspace"][data-filter="gcode"]');
-      if (!routeButton) throw new Error('未找到产品现有的 G/M 代码路由按钮');
-      routeButton.click();
-    });
+    // 通过 Playwright 发出浏览器可信点击；force 只绕过手机端隐藏旧侧栏的可见性限制，
+    // 产品路由、首页保护和工作区初始化仍按真实业务链路执行。
+    const routeButton = page.locator('#sidebar .tree-item[data-route="workspace"][data-filter="gcode"]');
+    await routeButton.waitFor({ state: 'attached', timeout: 15000 });
+    await routeButton.click({ force: true });
   } else {
     await page.locator('.launchpad-card[data-filter="gcode"]').click();
   }
