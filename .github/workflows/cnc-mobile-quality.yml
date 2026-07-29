@@ -141,7 +141,9 @@ jobs:
           grep -q "isParameterEntry" cnc/query-modes.js
           grep -q "isFaultEntry" cnc/query-modes.js
           grep -q "queryPolling" cnc/tests/mobile-performance-smoke.cjs
-          grep -q "工具卡必须先于学习进度出现" cnc/tests/mobile-home-smoke.cjs
+          grep -q "手机端旧工具首页必须隐藏" cnc/tests/mobile-home-smoke.cjs
+          grep -q "手机端闯关首页必须显示" cnc/tests/mobile-home-smoke.cjs
+          grep -q "手机首页可见按钮和链接高度不得小于44px" cnc/tests/mobile-home-smoke.cjs
           grep -q "clean-ui.css" cnc/import-test.js
           grep -q "vivid-ui.css" cnc/import-test.js
           grep -q "数控小潘 CNC速查与学习助手" cnc/import-test.js
