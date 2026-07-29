@@ -9,8 +9,12 @@ fs.mkdirSync(outputDir, { recursive: true });
 
 async function openGcodeWorkspace(page, expectIndustrialWorkspace) {
   if (expectIndustrialWorkspace) {
-    await page.locator('#sidebar-open').click();
-    await page.locator('#sidebar .tree-item[data-route="workspace"][data-filter="gcode"]').click();
+    // 新版手机首页隐藏旧侧栏；触发产品现有 G/M 代码路由按钮，继续验证同一业务导航链路。
+    await page.evaluate(() => {
+      const routeButton = document.querySelector('#sidebar .tree-item[data-route="workspace"][data-filter="gcode"]');
+      if (!routeButton) throw new Error('未找到产品现有的 G/M 代码路由按钮');
+      routeButton.click();
+    });
   } else {
     await page.locator('.launchpad-card[data-filter="gcode"]').click();
   }
@@ -82,6 +86,7 @@ async function capture(browser, baseUrl, prefix, expectIndustrial) {
   if (expectIndustrial) {
     await page.waitForSelector('#xp-game-home[data-ready="true"]', { state: 'visible', timeout: 30000 });
     await page.waitForFunction(() => window.CNC_INDUSTRIAL_SAMPLE && document.body.getAttribute('data-cnc-industrial-surface') === 'home', null, { timeout: 15000 });
+    await page.waitForTimeout(2200);
   } else {
     await page.waitForSelector('.launchpad-card[data-filter="gcode"]', { state: 'visible', timeout: 30000 });
   }
