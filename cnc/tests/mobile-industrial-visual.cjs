@@ -11,12 +11,15 @@ async function trustedClickHiddenRoute(page, selector) {
   const route = page.locator(selector);
   await route.waitFor({ state: 'attached', timeout: 15000 });
   const markerId = `cnc-visual-route-marker-${Date.now()}`;
-  await route.evaluate((node, id) => {
+  const routeId = `cnc-visual-route-target-${Date.now()}`;
+  await route.evaluate((node, ids) => {
     const marker = document.createElement('span');
-    marker.id = id;
+    marker.id = ids.markerId;
     marker.hidden = true;
     node.parentNode.insertBefore(marker, node);
     node.dataset.visualOriginalStyle = node.getAttribute('style') || '';
+    node.dataset.visualOriginalId = node.id || '';
+    node.id = ids.routeId;
     document.body.appendChild(node);
     Object.assign(node.style, {
       position: 'fixed',
@@ -30,23 +33,27 @@ async function trustedClickHiddenRoute(page, selector) {
       pointerEvents: 'auto',
       zIndex: '2147483647'
     });
-  }, markerId);
+  }, { markerId, routeId });
   try {
-    await route.click({ timeout: 15000 });
+    await page.locator(`#${routeId}`).click({ timeout: 15000 });
   } finally {
-    await page.evaluate(({ selector, markerId }) => {
-      const node = document.querySelector(selector);
+    await page.evaluate(({ routeId, markerId }) => {
+      const node = document.getElementById(routeId);
       const marker = document.getElementById(markerId);
       if (!node) return;
-      const original = node.dataset.visualOriginalStyle || '';
-      if (original) node.setAttribute('style', original);
+      const originalStyle = node.dataset.visualOriginalStyle || '';
+      const originalId = node.dataset.visualOriginalId || '';
+      if (originalStyle) node.setAttribute('style', originalStyle);
       else node.removeAttribute('style');
+      if (originalId) node.id = originalId;
+      else node.removeAttribute('id');
       delete node.dataset.visualOriginalStyle;
+      delete node.dataset.visualOriginalId;
       if (marker && marker.parentNode) {
         marker.parentNode.insertBefore(node, marker);
         marker.remove();
       }
-    }, { selector, markerId });
+    }, { routeId, markerId });
   }
 }
 
