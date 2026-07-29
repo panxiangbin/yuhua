@@ -6,6 +6,7 @@ on:
     paths:
       - "**/*.html"
       - "scripts/audit-canonical-links.cjs"
+      - "scripts/classify-canonical-page-types.cjs"
       - "scripts/check-no-direct-contact.cjs"
       - "scripts/audit-public-contact-leaks.cjs"
       - ".github/workflows/canonical-link-audit.yml"
@@ -13,6 +14,7 @@ on:
     paths:
       - "**/*.html"
       - "scripts/audit-canonical-links.cjs"
+      - "scripts/classify-canonical-page-types.cjs"
       - "scripts/check-no-direct-contact.cjs"
       - "scripts/audit-public-contact-leaks.cjs"
       - ".github/workflows/canonical-link-audit.yml"
@@ -30,13 +32,17 @@ jobs:
         with:
           node-version: "22"
       - name: Check audit script syntax
-        run: node --check scripts/audit-canonical-links.cjs
+        run: |
+          node --check scripts/audit-canonical-links.cjs
+          node --check scripts/classify-canonical-page-types.cjs
       - name: Enforce no direct contact policy
         run: node scripts/check-no-direct-contact.cjs
       - name: Audit public text for contact leaks
         run: node scripts/audit-public-contact-leaks.cjs
       - name: Audit canonical link coverage and safety
         run: node scripts/audit-canonical-links.cjs
+      - name: Classify canonical gaps by page type
+        run: node scripts/classify-canonical-page-types.cjs
       - name: Upload canonical audit report
         uses: actions/upload-artifact@v4
         with:
@@ -44,5 +50,7 @@ jobs:
           path: |
             test-artifacts/canonical-link-audit.json
             test-artifacts/canonical-link-audit.csv
+            test-artifacts/canonical-page-type-classification.json
+            test-artifacts/canonical-page-type-classification.csv
           if-no-files-found: error
           retention-days: 14
