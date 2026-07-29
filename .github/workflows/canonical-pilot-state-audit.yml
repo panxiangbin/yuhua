@@ -1,0 +1,40 @@
+name: Canonical Pilot State Audit
+
+on:
+  push:
+    branches:
+      - upgrade-84h
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Check script syntax
+        run: node --check scripts/audit-canonical-pilot-state.cjs
+
+      - name: Audit canonical pilot state and direct-contact policy
+        run: node scripts/audit-canonical-pilot-state.cjs
+
+      - name: Upload audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-pilot-state-audit
+          path: test-artifacts/canonical-pilot-state-audit.json
+          if-no-files-found: error
