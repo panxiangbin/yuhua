@@ -1,0 +1,53 @@
+name: One-time remove legacy direct contact code
+
+on:
+  push:
+    branches: [upgrade-84h]
+    paths:
+      - '.github/workflows/one-time-remove-direct-contact-code.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  sanitize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: upgrade-84h
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Remove prohibited contact code and this one-time workflow
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          app = Path('app.js')
+          source = app.read_text(encoding='utf-8')
+          pattern = re.compile(r'\n  function initContact\(\) \{.*?\n  \}\n\n  function initCategories\(\)', re.S)
+          updated, count = pattern.subn('\n  function initCategories()', source, count=1)
+          if count != 1:
+              raise SystemExit(f'expected one initContact block, found {count}')
+          updated, call_count = re.subn(r'^  initContact\(\);\n', '', updated, count=1, flags=re.M)
+          if call_count != 1:
+              raise SystemExit(f'expected one initContact call, found {call_count}')
+          app.write_text(updated, encoding='utf-8')
+          Path('.github/workflows/one-time-remove-direct-contact-code.yml').unlink()
+          PY
+      - name: Verify syntax and direct-contact policy
+        run: |
+          node --check app.js
+          node scripts/check-no-direct-contact.cjs
+          node scripts/audit-public-contact-leaks.cjs
+          ! grep -Eq 'contactPhoneText|contactPhoneLink|copyPhone|callNow|mobileCall|微信同号|href[[:space:]]*=[[:space:]]*["'"'"']tel:' app.js
+      - name: Commit sanitized application code
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add app.js .github/workflows/one-time-remove-direct-contact-code.yml
+          git commit -m 'fix(security): remove legacy direct contact runtime'
+          git push origin HEAD:upgrade-84h
