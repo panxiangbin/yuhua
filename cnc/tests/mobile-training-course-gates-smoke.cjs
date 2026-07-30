@@ -94,7 +94,9 @@ async function trustedClickHiddenRoute(page, selector) {
   assert.match((await page.locator('.xp-practice-gate').textContent()) || '', /当前 0 分/);
   assert.match((await page.locator('.xp-practice-gate').textContent()) || '', /达到 80 分/);
 
-  await page.locator('[data-xp-complete="9"]').click();
+  const completeButton = page.locator('[data-complete-level="9"], [data-xp-complete="9"]').first();
+  await completeButton.waitFor({ state: 'visible', timeout: 15000 });
+  await completeButton.click();
   await page.waitForTimeout(150);
   const blocked = await page.evaluate(() => ({
     done: JSON.parse(localStorage.getItem('cnc_study_completed_v1') || '[]'),
@@ -148,9 +150,9 @@ async function trustedClickHiddenRoute(page, selector) {
 
   const closeButton = page.locator('[data-practice-close]');
   if (await closeButton.isVisible()) await closeButton.click();
-  await page.locator('[data-xp-complete="9"]').click();
+  await completeButton.click();
   await page.waitForFunction(() => JSON.parse(localStorage.getItem('cnc_study_completed_v1') || '[]').includes(9));
-  assert.match((await page.locator('.xp-complete-bar').textContent()) || '', /这一关已完成/);
+  assert.match((await page.locator('.lesson-complete-row, .xp-complete-bar').first().textContent()) || '', /这一关已完成/);
   assert.deepEqual(errors, []);
   console.log('课程0分、50分拦截，80分及格线、100分通关与历史最高分记录通过', { blocked, result, buildConsistency });
   await browser.close();
