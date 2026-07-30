@@ -72,6 +72,7 @@ function waitForExit(child, timeoutMs) {
     stage = 'browser';
     userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'cnc-pwa-self-test-'));
     context = await chromium.launchPersistentContext(userDataDir, {
+      channel: 'chromium',
       headless: true,
       viewport: { width: 390, height: 844 },
       serviceWorkers: 'allow'
