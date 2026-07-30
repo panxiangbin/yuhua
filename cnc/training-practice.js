@@ -1,7 +1,7 @@
 /* CNC 新手训练平台：在线练习、答案解析、错题记录、成绩制课程闯关与重做。 */
 (function(){
 'use strict';
-var BUILD='20260730b',STORE_KEY='cnc_training_practice_v1',PROFILE_KEY='cnc_training_profile_v1',DONE_KEY='cnc_study_completed_v1',PASS_SCORE=80;
+var BUILD='20260730c',STORE_KEY='cnc_training_practice_v1',PROFILE_KEY='cnc_training_profile_v1',DONE_KEY='cnc_study_completed_v1',PASS_SCORE=80;
 var QUESTIONS=[
 {id:'safe-stop-first',type:'single',stage:'安全操作',title:'机床出现异常运动时，新手第一反应应该是什么？',options:['继续观察，等程序自己结束','立即使用进给保持或急停，先让运动停止','直接修改程序后继续运行','把进给倍率调到100%'],answer:1,explain:'先停止危险运动，再判断原因。急停、进给保持的具体使用应按机床状态和现场制度执行。',risk:'高',system:'通用原则'},
 {id:'axis-z-direction',type:'single',stage:'坐标基础',title:'立式加工中心中，Z轴通常与哪个方向平行？',options:['主轴轴线','工作台左右方向','工作台前后方向','刀库旋转方向'],answer:0,explain:'机床坐标轴按右手笛卡尔坐标系定义；立式加工中心Z轴通常与主轴轴线平行，具体正方向以机床标识为准。',risk:'低',system:'加工中心通用'},
@@ -46,8 +46,7 @@ function lessonLevel(){var detail=document.querySelector('#study-detail-content 
 function scoreHtml(req){return '<div class="xp-practice-score" aria-label="本关成绩 '+req.score+' 分，及格线 '+req.passScore+' 分"><div><strong>'+req.score+'</strong><span>/100</span></div><div class="xp-practice-score-track"><i style="width:'+Math.max(0,Math.min(100,req.score))+'%"></i></div><small>及格线 '+req.passScore+' 分 · 历史最高 '+req.bestScore+' 分</small></div>';}
 function gateMessage(level){var req=requirement(level),bar=document.querySelector('#study-detail-content .xp-complete-bar');if(!bar)return false;var old=bar.querySelector('.xp-practice-gate'),signature=[req.level,req.score,req.bestScore,req.qualified?'1':'0',req.missing.join(',')].join('|');if(old&&old.dataset.gateSignature===signature)return true;if(old)old.remove();var note=document.createElement('div');note.className='xp-practice-gate '+(req.qualified?'is-ready':'is-locked');note.dataset.gateSignature=signature;note.dataset.level=String(req.level);note.setAttribute('aria-live','polite');note.innerHTML=scoreHtml(req)+(req.qualified?'<strong>闯关成绩已达标</strong><span>本关成绩达到 '+req.passScore+' 分，可以记录通关。</span>':'<strong>闯关成绩未达标</strong><span>当前 '+req.score+' 分；还需答对 '+req.missing.length+' 道本关练习，并达到 '+req.passScore+' 分。</span><button type="button" data-practice-gate="'+level+'">继续本关练习</button>');bar.appendChild(note);return true;}
 function refreshGateStatus(expectedLevel){var level=lessonLevel();if(expectedLevel&&level!==Number(expectedLevel))return false;return level?gateMessage(level):false;}
-function studyVisible(){var study=document.getElementById('view-study');if(!study)return false;return !study.hidden&&study.getAttribute('aria-hidden')!=='true'&&getComputedStyle(study).display!=='none';}
-function lifecycleTick(){if(!document.getElementById('xp-practice-entry'))ensureEntry();if(studyVisible())refreshGateStatus();}
+function lifecycleTick(){if(!document.getElementById('xp-practice-entry'))ensureEntry();refreshGateStatus();}
 function startGateLifecycle(){if(gateLifecycleTimer)return;gateLifecycleTimer=window.setInterval(lifecycleTick,500);var root=document.body||document.documentElement;if(typeof MutationObserver!=='undefined'&&root&&!gateObserver){gateObserver=new MutationObserver(lifecycleTick);gateObserver.observe(root,{childList:true,subtree:true,attributes:true,attributeFilter:['class','data-level','hidden','aria-hidden']});}lifecycleTick();}
 function stopGateLifecycle(){if(gateObserver){gateObserver.disconnect();gateObserver=null;}if(gateLifecycleTimer){window.clearInterval(gateLifecycleTimer);gateLifecycleTimer=0;}}
 function refreshGateStatusWhenReady(expectedLevel){startGateLifecycle();return refreshGateStatus(expectedLevel);}
