@@ -57,8 +57,58 @@ async function waitForController(page, expectedScript, timeoutMs) {
   }), { expected: expectedScript, ms: timeoutMs });
 }
 
+async function inspectWorkerResponse(page, expectedScript) {
+  return page.evaluate(async scriptUrl => {
+    try {
+      const response = await fetch(scriptUrl, { cache: 'no-store', credentials: 'same-origin' });
+      const source = await response.text();
+      return {
+        ok: response.ok,
+        status: response.status,
+        contentType: response.headers.get('content-type') || '',
+        contentLength: source.length,
+        sourcePrefix: source.slice(0, 120)
+      };
+    } catch (error) {
+      return { fetchError: String(error && error.message ? error.message : error) };
+    }
+  }, expectedScript);
+}
+
+async function registrationSnapshot(page, expectedScope) {
+  return page.evaluate(async scopeUrl => {
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    const registration = registrations.find(item => item.scope === scopeUrl);
+    return {
+      registrations: registrations.map(item => ({
+        scope: item.scope,
+        installing: item.installing?.state || '',
+        waiting: item.waiting?.state || '',
+        active: item.active?.state || '',
+        installingScript: item.installing?.scriptURL || '',
+        waitingScript: item.waiting?.scriptURL || '',
+        activeScript: item.active?.scriptURL || ''
+      })),
+      matched: registration ? {
+        scope: registration.scope,
+        installing: registration.installing?.state || '',
+        waiting: registration.waiting?.state || '',
+        active: registration.active?.state || ''
+      } : null
+    };
+  }, expectedScope).catch(error => ({ snapshotError: String(error && error.message ? error.message : error) }));
+}
+
 async function registerExpectedWorker(page, expectedScope, expectedScript) {
-  return withTimeout(page.evaluate(async ({ scopeUrl, scriptUrl }) => {
+  const response = await inspectWorkerResponse(page, expectedScript);
+  if (!response.ok) {
+    throw new Error(`Service Worker script response invalid: ${JSON.stringify(response)}`);
+  }
+  if (!/javascript|ecmascript/i.test(response.contentType)) {
+    throw new Error(`Service Worker script MIME type invalid: ${JSON.stringify(response)}`);
+  }
+
+  const result = await withTimeout(page.evaluate(async ({ scopeUrl, scriptUrl }) => {
     if (!('serviceWorker' in navigator)) throw new Error('Service Worker unsupported');
     const registration = await navigator.serviceWorker.register('/cnc/sw.js', {
       scope: '/cnc/',
@@ -67,16 +117,40 @@ async function registerExpectedWorker(page, expectedScope, expectedScript) {
     if (registration.scope !== scopeUrl) {
       throw new Error(`Service Worker scope mismatch: expected ${scopeUrl}, got ${registration.scope}`);
     }
-    const installingScript = registration.installing?.scriptURL || '';
-    const waitingScript = registration.waiting?.scriptURL || '';
-    const activeScript = registration.active?.scriptURL || '';
-    for (const actual of [installingScript, waitingScript, activeScript]) {
-      if (actual && actual !== scriptUrl) {
-        throw new Error(`Service Worker script mismatch: expected ${scriptUrl}, got ${actual}`);
-      }
+    const worker = registration.installing || registration.waiting || registration.active;
+    const states = [];
+    if (worker) {
+      states.push(worker.state);
+      await new Promise(resolve => {
+        if (worker.state === 'activated' || worker.state === 'redundant') return resolve();
+        const timer = setTimeout(resolve, 12000);
+        const onStateChange = () => {
+          states.push(worker.state);
+          if (worker.state === 'activated' || worker.state === 'redundant') {
+            clearTimeout(timer);
+            worker.removeEventListener('statechange', onStateChange);
+            resolve();
+          }
+        };
+        worker.addEventListener('statechange', onStateChange);
+      });
     }
-    return { scope: registration.scope, installingScript, waitingScript, activeScript };
+    return {
+      scope: registration.scope,
+      states,
+      installingScript: registration.installing?.scriptURL || '',
+      waitingScript: registration.waiting?.scriptURL || '',
+      activeScript: registration.active?.scriptURL || '',
+      activeState: registration.active?.state || '',
+      workerState: worker?.state || ''
+    };
   }, { scopeUrl: expectedScope, scriptUrl: expectedScript }), 15000, 'Service Worker registration');
+
+  if (result.workerState === 'redundant' || result.states.includes('redundant')) {
+    const snapshot = await registrationSnapshot(page, expectedScope);
+    throw new Error(`Service Worker became redundant during installation: result=${JSON.stringify(result)} response=${JSON.stringify(response)} snapshot=${JSON.stringify(snapshot)}`);
+  }
+  return { ...result, response };
 }
 
 async function openControlledNavigation(page, controlledUrl, expectedScript) {
@@ -123,10 +197,8 @@ async function ensureControlled(page, errors, observePage, options = {}) {
   }
 
   // Registration resolving only proves the browser accepted the request. The
-  // user-visible PWA contract is stricter: a subsequent same-scope navigation
-  // must be controlled by the exact expected script. Avoid treating transient
-  // Registration.active/installing snapshots as a hard gate because Chromium
-  // may expose an empty snapshot while installation proceeds in the browser.
+  // user-visible PWA contract is stricter: the worker must survive installation
+  // and a subsequent same-scope navigation must be controlled by the exact script.
   await registerExpectedWorker(page, expectedScope, expectedScript);
 
   if (await waitForController(page, expectedScript, 10000)) return page;
@@ -135,7 +207,8 @@ async function ensureControlled(page, errors, observePage, options = {}) {
     return await openControlledNavigation(page, controlledUrl, expectedScript);
   } catch (error) {
     const snapshot = await controllerSnapshot(page);
-    throw new Error(`${error.message}; final=${JSON.stringify(snapshot)}`);
+    const response = await inspectWorkerResponse(page, expectedScript);
+    throw new Error(`${error.message}; final=${JSON.stringify(snapshot)}; workerResponse=${JSON.stringify(response)}`);
   }
 }
 
