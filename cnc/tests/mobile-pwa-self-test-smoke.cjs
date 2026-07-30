@@ -69,8 +69,10 @@ function waitForExit(child, timeoutMs) {
   try {
     await waitServer();
     stage = 'browser';
+    // Use Playwright's bundled Chromium instead of the system channel. The bundled
+    // browser is version-matched to Playwright and avoids channel-specific headless
+    // Service Worker registration regressions in CI.
     browser = await chromium.launch({
-      channel: 'chromium',
       headless: true
     });
     context = await browser.newContext({
