@@ -9,6 +9,10 @@ const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
 fs.mkdirSync(out, { recursive: true });
 
+const buildInfo = JSON.parse(fs.readFileSync(path.join(root, 'cnc/build-info.json'), 'utf8'));
+const expectedPwaBuild = String(buildInfo.pwaBuild || '').trim();
+if (!expectedPwaBuild) throw new Error('cnc/build-info.json 缺少 pwaBuild');
+
 const types = {
   '.html': 'text/html',
   '.js': 'text/javascript',
@@ -68,14 +72,14 @@ function observePage(page, errors) {
     if (await pwaLink.count() !== 1) throw new Error('成长档案缺少PWA状态入口');
     await pwaLink.click();
     await page.waitForURL(/pwa-status\.html/);
-    await page.waitForFunction(() => document.querySelector('#build')?.textContent.includes('20260726-pwa2'));
+    await page.waitForFunction(expected => document.querySelector('#build')?.textContent.includes(expected), expectedPwaBuild);
     await page.waitForFunction(() => document.querySelector('#status')?.textContent.includes('版本一致'));
 
     const initialChecked = await page.locator('#checked-at').textContent();
     const cacheCount = Number(await page.locator('#cache-count').textContent());
     if (cacheCount < 2) throw new Error('CNC缓存数量不足');
-    if (!(await page.locator('#static-cache').textContent()).includes('20260726-pwa2')) throw new Error('静态缓存版本不一致');
-    if (!(await page.locator('#runtime-cache').textContent()).includes('20260726-pwa2')) throw new Error('运行时缓存版本不一致');
+    if (!(await page.locator('#static-cache').textContent()).includes(expectedPwaBuild)) throw new Error('静态缓存版本不一致');
+    if (!(await page.locator('#runtime-cache').textContent()).includes(expectedPwaBuild)) throw new Error('运行时缓存版本不一致');
 
     stage = 'history-return';
     await page.goto('http://127.0.0.1:4173/cnc/profile.html', { waitUntil: 'domcontentloaded' });
@@ -112,6 +116,7 @@ function observePage(page, errors) {
     await page.screenshot({ path: path.join(out, 'pwa-profile-bfcache-390x844.png'), fullPage: true });
     if (errors.length) throw new Error(`控制台错误 ${errors.join(' | ')}`);
     fs.writeFileSync(path.join(out, 'pwa-profile-bfcache-result.json'), JSON.stringify({
+      expectedPwaBuild,
       build: await page.locator('#build').textContent(),
       cacheCount: Number(await page.locator('#cache-count').textContent()),
       profileEntry: true,
