@@ -3,6 +3,8 @@ on:
   pull_request:
     paths:
       - 'cnc/**'
+      - 'scripts/check-no-direct-contact.cjs'
+      - 'scripts/audit-public-contact-leaks.cjs'
       - '.github/workflows/cnc-pwa-offline-cache-smoke.yml'
   workflow_dispatch:
 permissions:
@@ -19,6 +21,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: Check direct-contact policy
+        run: |
+          node scripts/check-no-direct-contact.cjs
+          node scripts/audit-public-contact-leaks.cjs
+      - name: Check test syntax
+        run: node --check cnc/tests/mobile-pwa-offline-cache-smoke.cjs
       - name: Install Playwright test runtime
         run: npm install --no-save playwright@1.52.0
       - name: Install Chromium
@@ -26,7 +34,10 @@ jobs:
       - name: Run 390x844 offline cache smoke
         env:
           DEBUG: pw:browser
-        run: node cnc/tests/mobile-pwa-offline-cache-smoke.cjs
+        run: >-
+          xvfb-run --auto-servernum
+          --server-args='-screen 0 1280x1024x24'
+          node cnc/tests/mobile-pwa-offline-cache-smoke.cjs
       - name: Upload diagnostics
         if: always()
         uses: actions/upload-artifact@v4
