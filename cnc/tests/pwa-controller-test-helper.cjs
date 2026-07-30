@@ -136,12 +136,22 @@ async function registerExpectedWorker(page, expectedScope, expectedScript) {
     throw new Error(`Service Worker script MIME type invalid: ${JSON.stringify(response)}`);
   }
 
-  const result = await withTimeout(page.evaluate(async ({ scopeUrl }) => {
+  const result = await withTimeout(page.evaluate(async ({ scopeUrl, registrationTimeoutMs }) => {
     if (!('serviceWorker' in navigator)) throw new Error('Service Worker unsupported');
-    const registration = await navigator.serviceWorker.register('/cnc/sw.js', {
-      scope: '/cnc/',
-      updateViaCache: 'none'
-    });
+
+    // Keep the timeout inside the page execution. An outer Promise.race alone can
+    // reject in Node while leaving a hung Runtime.evaluate command attached to the
+    // page, which blocks every later diagnostic call until the global watchdog fires.
+    const registration = await Promise.race([
+      navigator.serviceWorker.register('/cnc/sw.js', {
+        scope: '/cnc/',
+        updateViaCache: 'none'
+      }),
+      new Promise((_, reject) => {
+        setTimeout(() => reject(new Error(`navigator.serviceWorker.register timeout after ${registrationTimeoutMs}ms`)), registrationTimeoutMs);
+      })
+    ]);
+
     if (registration.scope !== scopeUrl) {
       throw new Error(`Service Worker scope mismatch: expected ${scopeUrl}, got ${registration.scope}`);
     }
@@ -172,7 +182,7 @@ async function registerExpectedWorker(page, expectedScope, expectedScript) {
       activeState: registration.active?.state || '',
       workerState: worker?.state || ''
     };
-  }, { scopeUrl: expectedScope }), 15000, 'Service Worker registration');
+  }, { scopeUrl: expectedScope, registrationTimeoutMs: 12000 }), 15000, 'Service Worker registration');
 
   if (result.workerState === 'redundant' || result.states.includes('redundant')) {
     const snapshot = await registrationSnapshot(page, expectedScope);
