@@ -1,0 +1,46 @@
+name: Public Contact Audit Regression
+
+on:
+  push:
+    branches: [upgrade-84h]
+    paths:
+      - "scripts/audit-public-contact-leaks.cjs"
+      - "scripts/test-public-contact-audit-regressions.cjs"
+      - ".github/workflows/public-contact-audit-regression.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "scripts/audit-public-contact-leaks.cjs"
+      - "scripts/test-public-contact-audit-regressions.cjs"
+      - ".github/workflows/public-contact-audit-regression.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check scripts syntax
+        run: |
+          node --check scripts/audit-public-contact-leaks.cjs
+          node --check scripts/test-public-contact-audit-regressions.cjs
+      - name: Run contact audit regression fixtures
+        run: node scripts/test-public-contact-audit-regressions.cjs
+      - name: Enforce live repository contact policy
+        run: node scripts/audit-public-contact-leaks.cjs
+      - name: Upload live audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-contact-audit-regression
+          path: |
+            test-artifacts/public-contact-audit-summary.json
+            test-artifacts/public-contact-audit-items.csv
+          if-no-files-found: error
+          retention-days: 14
