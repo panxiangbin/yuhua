@@ -1,7 +1,6 @@
 const { chromium } = require('playwright');
 const http = require('http');
 const fs = require('fs');
-const os = require('os');
 const path = require('path');
 const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
@@ -43,8 +42,8 @@ function observePage(page, errors) {
 }
 
 (async () => {
+  let browser;
   let context;
-  let userDataDir;
   const errors = [];
   let stage = 'server-start';
   try {
@@ -53,13 +52,15 @@ function observePage(page, errors) {
       server.listen(4173, '127.0.0.1', resolve);
     });
     stage = 'browser-launch';
-    userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'cnc-pwa-profile-'));
-    context = await chromium.launchPersistentContext(userDataDir, {
-      headless: true,
+    // Use Playwright's version-matched Chromium in a fresh temporary context.
+    // This keeps the BFCache assertions while preventing persistent profile state
+    // from deleting or corrupting Service Worker registrations between CI runs.
+    browser = await chromium.launch({ headless: true });
+    context = await browser.newContext({
       viewport: { width: 390, height: 844 },
       serviceWorkers: 'allow'
     });
-    let page = context.pages()[0] || await context.newPage();
+    let page = await context.newPage();
     observePage(page, errors);
 
     stage = 'home';
@@ -130,7 +131,7 @@ function observePage(page, errors) {
     throw error;
   } finally {
     if (context) await context.close().catch(() => {});
-    if (userDataDir) fs.rmSync(userDataDir, { recursive: true, force: true });
+    if (browser) await browser.close().catch(() => {});
     await new Promise(resolve => server.close(resolve)).catch(() => {});
   }
 })().catch(error => {
