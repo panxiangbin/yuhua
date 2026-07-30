@@ -161,34 +161,6 @@
     }
   }
 
-  function initContact() {
-    var config = window.YUHUA_SITE || {};
-    var phone = text(config.phone);
-    var address = text(config.address) || "巩义市英峪工业区";
-    var phoneText = $("#contactPhoneText");
-    var phoneLink = $("#contactPhoneLink");
-    var callNow = $("#callNow");
-    var mobileCall = $("#mobileCall");
-    var copyPhone = $("#copyPhone");
-    var addressEl = $("#contactAddress");
-
-    if (addressEl) addressEl.textContent = address;
-    if (!phone) {
-      if (phoneText) phoneText.textContent = "请在配置文件填写销售号码";
-      return;
-    }
-
-    if (phoneText) phoneText.textContent = phone + "（微信同号）";
-    [phoneLink, callNow, mobileCall].forEach(function (element) {
-      if (element) element.href = "tel:" + phone.replace(/[^\d+]/g, "");
-    });
-    if (copyPhone) {
-      copyPhone.addEventListener("click", function () {
-        copyText(phone, "联系方式已复制");
-      });
-    }
-  }
-
   function initCategories() {
     var grid = $("#catGrid");
     if (!grid) return;
@@ -908,7 +880,6 @@
   }
 
   initStats();
-  initContact();
   initNavigation();
   initApplications();
   initCategories();
