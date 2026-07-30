@@ -3,38 +3,55 @@ const assert = require('node:assert/strict');
 
 (async () => {
   const browser = await chromium.launch({ headless: true });
-  const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
-  const consoleErrors = [];
-  page.on('console', message => { if (message.type() === 'error') consoleErrors.push(message.text()); });
-  page.on('pageerror', error => consoleErrors.push(error.message));
-  await page.addInitScript(() => localStorage.setItem('cnc_app_recents_v2', '[]'));
+  const mobile = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    deviceScaleFactor: 2,
+    isMobile: true,
+    hasTouch: true
+  });
+  const mobileErrors = [];
+  await mobile.addInitScript(() => localStorage.setItem('cnc_app_recents_v2', '[]'));
+  const page = await mobile.newPage();
+  page.on('console', message => { if (message.type() === 'error') mobileErrors.push(message.text()); });
+  page.on('pageerror', error => mobileErrors.push(error.message));
+
   await page.goto('http://127.0.0.1:4173/cnc/?smoke=dashboard-recents', { waitUntil: 'domcontentloaded', timeout: 60000 });
   await page.waitForFunction(() => window.CNC_INDUSTRIAL_SAMPLE && window.CNC_INDUSTRIAL_SAMPLE.build === '20260722e', null, { timeout: 20000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-industrial-surface') === 'home', null, { timeout: 15000 });
-  await page.waitForSelector('#dashboard-recent-section', { state: 'visible', timeout: 20000 });
+  await page.waitForSelector('#xp-game-home[data-ready="true"]', { state: 'visible', timeout: 60000 });
 
-  const emptyText = ((await page.locator('#dashboard-recent-list .recent-empty').textContent()) || '').trim();
-  assert.match(emptyText, /还没有最近查看/);
-  assert.doesNotMatch(emptyText, /干干净净|装进来吧/);
-  assert.ok(await page.locator('#dashboard-recent-section').evaluate(node => parseFloat(getComputedStyle(node).borderRadius)) <= 16);
-  assert.equal(await page.locator('#dashboard-recent-list').evaluate(node => getComputedStyle(node).gridTemplateColumns.split(' ').filter(Boolean).length), 1);
+  // 手机新版首页明确隐藏旧工具首页板块，不能再把隐藏状态误判为产品失败。
+  assert.equal(await page.locator('#dashboard-recent-section').evaluate(node => getComputedStyle(node).display), 'none');
 
+  // 从手机端真实打开一个工业知识条目，确认最近查看记录仍会被写入。
   await page.locator('.xp-bottom-nav [data-xp-filter="gcode"]').click();
   await page.waitForSelector('#view-workspace.active', { state: 'visible', timeout: 15000 });
   await page.locator('#search-input').fill('G01');
   await page.waitForSelector('#result-list [data-open-entry]', { state: 'visible', timeout: 15000 });
   await page.locator('#result-list [data-open-entry]').first().click();
   await page.waitForSelector('#detail-panel.mobile-open', { state: 'visible', timeout: 15000 });
-  await page.locator('#detail-back-btn').click();
-  await page.locator('.xp-bottom-nav [data-xp-route="dashboard"]').click();
-  await page.waitForSelector('#view-dashboard.active', { state: 'visible', timeout: 15000 });
-  await page.waitForSelector('#dashboard-recent-list .recent-card', { state: 'visible', timeout: 15000 });
-  await page.waitForFunction(() => {
+  const savedRecents = await page.evaluate(() => JSON.parse(localStorage.getItem('cnc_app_recents_v2') || '[]'));
+  assert.ok(Array.isArray(savedRecents) && savedRecents.length > 0, '手机端打开条目后必须写入最近查看记录');
+  assert.equal(mobileErrors.length, 0, '手机端最近查看写入不应产生控制台错误: ' + mobileErrors.join(' | '));
+  await mobile.close();
+
+  // 桌面端仍保留工具型首页，并负责呈现最近查看卡片。
+  const desktop = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const desktopErrors = [];
+  await desktop.addInitScript((recents) => localStorage.setItem('cnc_app_recents_v2', JSON.stringify(recents)), savedRecents);
+  const desktopPage = await desktop.newPage();
+  desktopPage.on('console', message => { if (message.type() === 'error') desktopErrors.push(message.text()); });
+  desktopPage.on('pageerror', error => desktopErrors.push(error.message));
+  await desktopPage.goto('http://127.0.0.1:4173/cnc/?smoke=dashboard-recents-desktop', { waitUntil: 'domcontentloaded', timeout: 60000 });
+  await desktopPage.waitForFunction(() => window.CNC_INDUSTRIAL_SAMPLE && window.CNC_INDUSTRIAL_SAMPLE.build === '20260722e', null, { timeout: 20000 });
+  await desktopPage.waitForSelector('#dashboard-recent-section', { state: 'visible', timeout: 20000 });
+  await desktopPage.waitForSelector('#dashboard-recent-list .recent-card', { state: 'visible', timeout: 15000 });
+  await desktopPage.waitForFunction(() => {
     const card = document.querySelector('#dashboard-recent-list .recent-card');
     return Boolean(card && card.getBoundingClientRect().height >= 56);
   }, null, { timeout: 15000 });
 
-  const card = page.locator('#dashboard-recent-list .recent-card').first();
+  const card = desktopPage.locator('#dashboard-recent-list .recent-card').first();
   assert.equal(await card.getAttribute('role'), 'button');
   assert.equal(await card.getAttribute('tabindex'), '0');
   assert.match((await card.getAttribute('aria-label')) || '', /继续查看/);
@@ -46,10 +63,11 @@ const assert = require('node:assert/strict');
   assert.ok(await card.locator('.recent-card-meta strong').evaluate(node => Number(getComputedStyle(node).fontWeight)) >= 800);
 
   await card.focus();
-  await page.keyboard.press('Enter');
-  await page.waitForSelector('#view-workspace.active', { state: 'visible', timeout: 15000 });
-  assert.equal(consoleErrors.length, 0, '首页最近查看流程不应产生控制台错误: ' + consoleErrors.join(' | '));
+  await desktopPage.keyboard.press('Enter');
+  await desktopPage.waitForSelector('#view-workspace.active', { state: 'visible', timeout: 15000 });
+  assert.equal(desktopErrors.length, 0, '桌面首页最近查看流程不应产生控制台错误: ' + desktopErrors.join(' | '));
 
-  console.log('手机首页最近查看工业卡、空状态与键盘继续查看通过');
+  console.log('手机端最近查看写入与桌面端工业卡继续查看通过');
+  await desktop.close();
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });
