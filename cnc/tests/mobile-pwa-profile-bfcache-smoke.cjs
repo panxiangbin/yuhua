@@ -45,6 +45,14 @@ function observePage(page, errors) {
   let browser;
   let context;
   const errors = [];
+  const runtimeDiagnostics = {
+    node: process.version,
+    platform: process.platform,
+    arch: process.arch,
+    chromiumExecutable: chromium.executablePath(),
+    browserVersion: '',
+    serviceWorkerEvents: []
+  };
   let stage = 'server-start';
   try {
     await new Promise((resolve, reject) => {
@@ -56,9 +64,24 @@ function observePage(page, errors) {
     // headless modes can accept the worker response while discarding the
     // registration before the BFCache assertions start.
     browser = await chromium.launch({ channel: 'chromium', headless: false });
+    runtimeDiagnostics.browserVersion = browser.version();
     context = await browser.newContext({
       viewport: { width: 390, height: 844 },
       serviceWorkers: 'allow'
+    });
+    context.on('serviceworker', worker => {
+      runtimeDiagnostics.serviceWorkerEvents.push({
+        type: 'created',
+        url: worker.url(),
+        at: new Date().toISOString()
+      });
+      worker.on('close', () => {
+        runtimeDiagnostics.serviceWorkerEvents.push({
+          type: 'closed',
+          url: worker.url(),
+          at: new Date().toISOString()
+        });
+      });
     });
     let page = await context.newPage();
     observePage(page, errors);
@@ -123,11 +146,12 @@ function observePage(page, errors) {
       profileEntry: true,
       bfcacheRestore: true,
       mismatchDetected: true,
-      touchTargets: true
+      touchTargets: true,
+      runtimeDiagnostics
     }, null, 2));
     console.log('CNC PWA profile BFCache smoke passed');
   } catch (error) {
-    fs.writeFileSync(path.join(out, 'pwa-profile-bfcache-error.txt'), `stage=${stage}\n${error.stack || error}`);
+    fs.writeFileSync(path.join(out, 'pwa-profile-bfcache-error.txt'), `stage=${stage}\nruntime=${JSON.stringify(runtimeDiagnostics, null, 2)}\n${error.stack || error}`);
     throw error;
   } finally {
     if (context) await context.close().catch(() => {});
