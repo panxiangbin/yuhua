@@ -44,6 +44,14 @@ function observePage(page, errors) {
   let browser;
   let context;
   const errors = [];
+  const runtimeDiagnostics = {
+    node: process.version,
+    platform: process.platform,
+    arch: process.arch,
+    chromiumExecutable: chromium.executablePath(),
+    browserVersion: '',
+    serviceWorkerEvents: []
+  };
   let stage = 'server-start';
   try {
     await new Promise((resolve, reject) => {
@@ -51,13 +59,27 @@ function observePage(page, errors) {
       server.listen(4173, '127.0.0.1', resolve);
     });
     stage = 'browser-launch';
-    browser = await chromium.launch({
-      channel: 'chromium',
-      headless: true
-    });
+    // Use full headed Chromium under Xvfb in CI so offline-cache assertions
+    // exercise the same Service Worker lifecycle as a normal browser session.
+    browser = await chromium.launch({ channel: 'chromium', headless: false });
+    runtimeDiagnostics.browserVersion = browser.version();
     context = await browser.newContext({
       viewport: { width: 390, height: 844 },
       serviceWorkers: 'allow'
+    });
+    context.on('serviceworker', worker => {
+      runtimeDiagnostics.serviceWorkerEvents.push({
+        type: 'created',
+        url: worker.url(),
+        at: new Date().toISOString()
+      });
+      worker.on('close', () => {
+        runtimeDiagnostics.serviceWorkerEvents.push({
+          type: 'closed',
+          url: worker.url(),
+          at: new Date().toISOString()
+        });
+      });
     });
     let page = await context.newPage();
     observePage(page, errors);
@@ -103,10 +125,18 @@ function observePage(page, errors) {
 
     await page.screenshot({ path: path.join(out, 'pwa-offline-390x844.png'), fullPage: true });
     if (errors.length) throw new Error(`控制台错误 ${errors.join(' | ')}`);
-    fs.writeFileSync(path.join(out, 'pwa-offline-result.json'), JSON.stringify({ build, expectedPwaBuild, caches: cachesBefore, offlineFallback: true, runtimeWarmup: true, touchTargets: true }, null, 2));
+    fs.writeFileSync(path.join(out, 'pwa-offline-result.json'), JSON.stringify({
+      build,
+      expectedPwaBuild,
+      caches: cachesBefore,
+      offlineFallback: true,
+      runtimeWarmup: true,
+      touchTargets: true,
+      runtimeDiagnostics
+    }, null, 2));
     console.log('CNC PWA offline cache smoke passed');
   } catch (error) {
-    fs.writeFileSync(path.join(out, 'pwa-offline-error.txt'), `stage=${stage}\n${error.stack || error}`);
+    fs.writeFileSync(path.join(out, 'pwa-offline-error.txt'), `stage=${stage}\nruntime=${JSON.stringify(runtimeDiagnostics, null, 2)}\n${error.stack || error}`);
     throw error;
   } finally {
     if (context) await context.close().catch(() => {});
