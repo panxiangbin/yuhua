@@ -60,7 +60,21 @@ async function trustedClickHiddenRoute(page, selector) {
   page.on('pageerror', error => errors.push(error.message));
 
   await page.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded', timeout: 60000 });
-  await page.waitForFunction(() => window.CNC_TRAINING_PRACTICE && window.CNC_TRAINING_PRACTICE.build === '20260723e', null, { timeout: 20000 });
+  await page.waitForFunction(() => window.CNC_TRAINING_PRACTICE && /^\d{8}[a-z]$/.test(window.CNC_TRAINING_PRACTICE.build), null, { timeout: 20000 });
+  const buildConsistency = await page.evaluate(() => {
+    const build = window.CNC_TRAINING_PRACTICE.build;
+    const style = document.querySelector('link[data-cnc-training-practice]');
+    const profileScript = document.querySelector('script[data-cnc-training-profile-script]');
+    return {
+      build,
+      bodyBuild: document.body.dataset.cncPracticeBuild || '',
+      styleHref: style ? style.getAttribute('href') || '' : '',
+      profileSrc: profileScript ? profileScript.getAttribute('src') || '' : ''
+    };
+  });
+  assert.equal(buildConsistency.bodyBuild, buildConsistency.build, '练习API与页面构建标识必须一致');
+  assert.ok(buildConsistency.styleHref.endsWith(`training-practice.css?v=${buildConsistency.build}`), '练习样式资源版本必须与API构建一致');
+  assert.ok(buildConsistency.profileSrc.endsWith(`training-profile.js?v=${buildConsistency.build}`), '成长档案脚本版本必须与API构建一致');
   await page.waitForSelector('#xp-game-home[data-ready="true"]', { state: 'visible', timeout: 60000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-startup-home') === 'stable', null, { timeout: 15000 });
   assert.equal(await page.locator('.view.active').getAttribute('id'), 'view-dashboard', '根网址必须稳定停留首页');
@@ -72,6 +86,7 @@ async function trustedClickHiddenRoute(page, selector) {
     const practice = window.CNC_TRAINING_PRACTICE;
     return Boolean(practice && practice.runCheck && practice.runCheck().passed);
   }, null, { timeout: 15000 });
+  assert.equal((await page.evaluate(() => window.CNC_TRAINING_PRACTICE.runCheck().build)), buildConsistency.build, '运行自检构建号必须与页面构建一致');
 
   await page.locator('#view-study .study-card[data-level="9"]').click();
   await page.waitForSelector('#study-detail-content .lesson-detail-v2[data-level="9"]', { state: 'visible', timeout: 15000 });
@@ -137,6 +152,6 @@ async function trustedClickHiddenRoute(page, selector) {
   await page.waitForFunction(() => JSON.parse(localStorage.getItem('cnc_study_completed_v1') || '[]').includes(9));
   assert.match((await page.locator('.xp-complete-bar').textContent()) || '', /这一关已完成/);
   assert.deepEqual(errors, []);
-  console.log('课程0分、50分拦截，80分及格线、100分通关与历史最高分记录通过', { blocked, result });
+  console.log('课程0分、50分拦截，80分及格线、100分通关与历史最高分记录通过', { blocked, result, buildConsistency });
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });
