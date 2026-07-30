@@ -18,10 +18,18 @@ const assert = require('node:assert/strict');
   await page.goto('http://127.0.0.1:4173/cnc/?smoke=dashboard-recents', { waitUntil: 'domcontentloaded', timeout: 60000 });
   await page.waitForFunction(() => window.CNC_INDUSTRIAL_SAMPLE && window.CNC_INDUSTRIAL_SAMPLE.build === '20260722e', null, { timeout: 20000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-industrial-surface') === 'home', null, { timeout: 15000 });
-  await page.waitForSelector('#xp-game-home[data-ready="true"]', { state: 'visible', timeout: 60000 });
+  await page.waitForSelector('#xp-game-home[data-ready="true"]', { state: 'attached', timeout: 60000 });
 
-  // 手机新版首页明确隐藏旧工具首页板块，不能再把隐藏状态误判为产品失败。
+  // 手机首页样式是动态加载资源。必须等待样式表真正生效，而不是把 DOM 已挂载误当成视觉已就绪。
+  await page.waitForFunction(() => {
+    const gameStyle = document.querySelector('link[data-cnc-mobile-home-game]');
+    const gameHome = document.querySelector('#xp-game-home[data-ready="true"]');
+    const recent = document.querySelector('#dashboard-recent-section');
+    if (!gameStyle || !gameHome || !recent) return false;
+    return getComputedStyle(gameHome).display !== 'none' && getComputedStyle(recent).display === 'none';
+  }, null, { timeout: 20000 });
   assert.equal(await page.locator('#dashboard-recent-section').evaluate(node => getComputedStyle(node).display), 'none');
+  await page.waitForSelector('#xp-game-home[data-ready="true"]', { state: 'visible', timeout: 15000 });
 
   // 从手机端真实打开一个工业知识条目，确认最近查看记录仍会被写入。
   await page.locator('.xp-bottom-nav [data-xp-filter="gcode"]').click();
