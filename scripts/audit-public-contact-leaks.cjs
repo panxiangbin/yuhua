@@ -37,7 +37,15 @@ function csvCell(value) {
 const findings = [];
 const files = walk(root);
 const mobilePattern = /(^|\D)(1[3-9]\d{9})(?!\d)/g;
-const directLinkPattern = /(?:href\s*=\s*["'](?:tel|callto|sms|facetime):|\b(?:tel|callto|sms|facetime):\s*)/ig;
+// Only flag executable/direct contact destinations. Plain scheme strings used by URL
+// sanitizers (for example `ref.startsWith("tel:")`) are safety controls, not leaks.
+const directLinkPatterns = [
+  /href\s*=\s*["']\s*(?:tel|callto|sms|facetime):/ig,
+  /\.href\s*=\s*["'`]\s*(?:tel|callto|sms|facetime):/ig,
+  /setAttribute\s*\(\s*["']href["']\s*,\s*["'`]\s*(?:tel|callto|sms|facetime):/ig,
+  /(?:window\.)?open\s*\(\s*["'`]\s*(?:tel|callto|sms|facetime):/ig,
+  /location(?:\.href)?\s*=\s*["'`]\s*(?:tel|callto|sms|facetime):/ig
+];
 const visibleContactPattern = />\s*(?:电话咨询|联系电话|手机号|手机号码|微信同号|微信客服|添加微信|加微信|复制号码|复制电话|复制手机号)\s*</ig;
 const directControlPattern = /(?:id|class|data-[\w-]+)\s*=\s*["'][^"']*(?:contactPhone|copyPhone|copyMobile|copyNumber|callNow|mobileCall|wechatContact|wechatService)[^"']*["']/ig;
 
@@ -60,16 +68,19 @@ for (const relativePath of files) {
         action: "移除；不得保存在公开站点文件中"
       });
     }
-    if (directLinkPattern.test(line)) {
+    if (directLinkPatterns.some((pattern) => {
+      const matched = pattern.test(line);
+      pattern.lastIndex = 0;
+      return matched;
+    })) {
       findings.push({
         file: relativePath,
         line: index + 1,
         type: "直接联系链接",
-        evidence: "tel:/callto:/sms:/facetime: 链接",
+        evidence: "tel:/callto:/sms:/facetime: 可执行链接",
         action: "移除直接联系入口"
       });
     }
-    directLinkPattern.lastIndex = 0;
     if (visibleContactPattern.test(line)) {
       findings.push({
         file: relativePath,
@@ -114,8 +125,10 @@ fs.writeFileSync(path.join(outputDir, "public-contact-audit-items.csv"), `\uFEFF
 
 console.log(JSON.stringify(summary, null, 2));
 if (findings.length) {
+  // File paths and line numbers are safe to print; sensitive numeric evidence remains masked.
+  for (const item of findings) console.error(`${item.file}:${item.line} ${item.type}（${item.evidence}）`);
   console.error("公开站点文件发现直接联系方式，已生成脱敏审计清单；为防止泄漏，本检查已阻断提交。");
   process.exit(1);
 }
 
-console.log("公开文本文件未发现手机号、直接联系链接、直接联系方式文案或拨号/复制号码控件。");
+console.log("公开文本文件未发现手机号、可执行直接联系链接、直接联系方式文案或拨号/复制号码控件。");
