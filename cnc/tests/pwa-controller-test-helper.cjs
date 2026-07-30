@@ -99,6 +99,34 @@ async function registrationSnapshot(page, expectedScope) {
   }, expectedScope).catch(error => ({ snapshotError: String(error && error.message ? error.message : error) }));
 }
 
+async function startChromiumServiceWorkerDiagnostics(page) {
+  const events = [];
+  let session = null;
+  try {
+    session = await page.context().newCDPSession(page);
+    session.on('ServiceWorker.workerRegistrationUpdated', payload => {
+      events.push({ type: 'registration', registrations: payload.registrations || [] });
+    });
+    session.on('ServiceWorker.workerVersionUpdated', payload => {
+      events.push({ type: 'version', versions: payload.versions || [] });
+    });
+    session.on('ServiceWorker.workerErrorReported', payload => {
+      events.push({ type: 'error', errorMessage: payload.errorMessage || {} });
+    });
+    await session.send('ServiceWorker.enable');
+  } catch (error) {
+    events.push({ type: 'diagnostic-unavailable', error: String(error && error.message ? error.message : error) });
+  }
+  return {
+    events,
+    async stop() {
+      if (!session) return;
+      try { await session.send('ServiceWorker.disable'); } catch {}
+      try { await session.detach(); } catch {}
+    }
+  };
+}
+
 async function registerExpectedWorker(page, expectedScope, expectedScript) {
   const response = await inspectWorkerResponse(page, expectedScript);
   if (!response.ok) {
@@ -108,7 +136,7 @@ async function registerExpectedWorker(page, expectedScope, expectedScript) {
     throw new Error(`Service Worker script MIME type invalid: ${JSON.stringify(response)}`);
   }
 
-  const result = await withTimeout(page.evaluate(async ({ scopeUrl, scriptUrl }) => {
+  const result = await withTimeout(page.evaluate(async ({ scopeUrl }) => {
     if (!('serviceWorker' in navigator)) throw new Error('Service Worker unsupported');
     const registration = await navigator.serviceWorker.register('/cnc/sw.js', {
       scope: '/cnc/',
@@ -144,7 +172,7 @@ async function registerExpectedWorker(page, expectedScope, expectedScript) {
       activeState: registration.active?.state || '',
       workerState: worker?.state || ''
     };
-  }, { scopeUrl: expectedScope, scriptUrl: expectedScript }), 15000, 'Service Worker registration');
+  }, { scopeUrl: expectedScope }), 15000, 'Service Worker registration');
 
   if (result.workerState === 'redundant' || result.states.includes('redundant')) {
     const snapshot = await registrationSnapshot(page, expectedScope);
@@ -161,15 +189,10 @@ async function openControlledNavigation(page, controlledUrl, expectedScript) {
 
     let navigationError = '';
     try {
-      // A Service Worker may commit and control the new document even when a
-      // subresource keeps DOMContentLoaded pending. Treat the document commit as
-      // the navigation boundary, then observe DOM readiness separately.
       await page.goto(url.href, { waitUntil: 'commit', timeout: 15000 });
       await page.waitForLoadState('domcontentloaded', { timeout: 5000 }).catch(() => {});
     } catch (error) {
       navigationError = String(error && error.message ? error.message : error);
-      // If a new document committed before Playwright reported the timeout, it can
-      // still carry the expected controller. Inspect it before deciding to retry.
     }
 
     if (await waitForController(page, expectedScript, 10000)) return page;
@@ -187,28 +210,31 @@ async function ensureControlled(page, errors, observePage, options = {}) {
   const directoryEntry = new URL('/cnc/', page.url()).href;
   const expectedScope = new URL('/cnc/', page.url()).href;
   const expectedScript = new URL('/cnc/sw.js', page.url()).href;
-
-  if (!controlledUrl.startsWith(expectedScope)) {
-    throw new Error(`Controlled URL outside Service Worker scope: ${controlledUrl}`);
-  }
-
-  if (page.url() !== directoryEntry) {
-    await page.goto(directoryEntry, { waitUntil: 'domcontentloaded', timeout: 30000 });
-  }
-
-  // Registration resolving only proves the browser accepted the request. The
-  // user-visible PWA contract is stricter: the worker must survive installation
-  // and a subsequent same-scope navigation must be controlled by the exact script.
-  await registerExpectedWorker(page, expectedScope, expectedScript);
-
-  if (await waitForController(page, expectedScript, 10000)) return page;
+  const chromiumDiagnostics = await startChromiumServiceWorkerDiagnostics(page);
 
   try {
-    return await openControlledNavigation(page, controlledUrl, expectedScript);
-  } catch (error) {
-    const snapshot = await controllerSnapshot(page);
-    const response = await inspectWorkerResponse(page, expectedScript);
-    throw new Error(`${error.message}; final=${JSON.stringify(snapshot)}; workerResponse=${JSON.stringify(response)}`);
+    if (!controlledUrl.startsWith(expectedScope)) {
+      throw new Error(`Controlled URL outside Service Worker scope: ${controlledUrl}`);
+    }
+
+    if (page.url() !== directoryEntry) {
+      await page.goto(directoryEntry, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    }
+
+    const registration = await registerExpectedWorker(page, expectedScope, expectedScript);
+    console.log(`[PWA controller] registration=${JSON.stringify(registration)}`);
+
+    if (await waitForController(page, expectedScript, 10000)) return page;
+
+    try {
+      return await openControlledNavigation(page, controlledUrl, expectedScript);
+    } catch (error) {
+      const snapshot = await controllerSnapshot(page);
+      const response = await inspectWorkerResponse(page, expectedScript);
+      throw new Error(`${error.message}; final=${JSON.stringify(snapshot)}; workerResponse=${JSON.stringify(response)}; chromiumServiceWorkerEvents=${JSON.stringify(chromiumDiagnostics.events)}`);
+    }
+  } finally {
+    await chromiumDiagnostics.stop();
   }
 }
 
