@@ -1,7 +1,6 @@
 const { chromium } = require('playwright');
 const { spawn } = require('child_process');
 const fs = require('fs');
-const os = require('os');
 const path = require('path');
 const http = require('http');
 const { ensureControlled, withTimeout } = require('./pwa-controller-test-helper.cjs');
@@ -53,8 +52,8 @@ function waitForExit(child, timeoutMs) {
 }
 
 (async () => {
+  let browser;
   let context;
-  let userDataDir;
   const errors = [];
   let stage = 'server';
   let finished = false;
@@ -70,14 +69,15 @@ function waitForExit(child, timeoutMs) {
   try {
     await waitServer();
     stage = 'browser';
-    userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'cnc-pwa-self-test-'));
-    context = await chromium.launchPersistentContext(userDataDir, {
+    browser = await chromium.launch({
       channel: 'chromium',
-      headless: true,
+      headless: true
+    });
+    context = await browser.newContext({
       viewport: { width: 390, height: 844 },
       serviceWorkers: 'allow'
     });
-    let page = context.pages()[0] || await context.newPage();
+    let page = await context.newPage();
     observePage(page, errors);
 
     stage = 'controller';
@@ -111,10 +111,14 @@ function waitForExit(child, timeoutMs) {
   } finally {
     if (context) {
       await withTimeout(context.close(), CLEANUP_TIMEOUT_MS, 'browser context cleanup').catch(error => {
-        fs.appendFileSync(errorPath, `\ncleanup=${error.stack || error}`);
+        fs.appendFileSync(errorPath, `\ncontextCleanup=${error.stack || error}`);
       });
     }
-    if (userDataDir) fs.rmSync(userDataDir, { recursive: true, force: true });
+    if (browser) {
+      await withTimeout(browser.close(), CLEANUP_TIMEOUT_MS, 'browser cleanup').catch(error => {
+        fs.appendFileSync(errorPath, `\nbrowserCleanup=${error.stack || error}`);
+      });
+    }
     if (server.exitCode === null && server.signalCode === null) server.kill('SIGTERM');
     await waitForExit(server, 3000);
     if (server.exitCode === null && server.signalCode === null) server.kill('SIGKILL');
