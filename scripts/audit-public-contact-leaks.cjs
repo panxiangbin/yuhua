@@ -37,8 +37,9 @@ function csvCell(value) {
 const findings = [];
 const files = walk(root);
 const mobilePattern = /(^|\D)(1[3-9]\d{9})(?!\d)/g;
-const telLinkPattern = /(?:href\s*=\s*["']tel:|\btel:\s*)/ig;
-const visibleContactPattern = />\s*(?:电话咨询|联系电话|手机号|手机号码|微信同号|添加微信|复制号码)\s*</ig;
+const directLinkPattern = /(?:href\s*=\s*["'](?:tel|callto|sms|facetime):|\b(?:tel|callto|sms|facetime):\s*)/ig;
+const visibleContactPattern = />\s*(?:电话咨询|联系电话|手机号|手机号码|微信同号|微信客服|添加微信|加微信|复制号码|复制电话|复制手机号)\s*</ig;
+const directControlPattern = /(?:id|class|data-[\w-]+)\s*=\s*["'][^"']*(?:contactPhone|copyPhone|copyMobile|copyNumber|callNow|mobileCall|wechatContact|wechatService)[^"']*["']/ig;
 
 for (const relativePath of files) {
   let content;
@@ -56,29 +57,39 @@ for (const relativePath of files) {
         line: index + 1,
         type: "大陆手机号字面值",
         evidence: maskMobile(mobile),
-        action: "待移除或改为不公开的内部资料"
+        action: "移除；不得保存在公开站点文件中"
       });
     }
-    if (telLinkPattern.test(line)) {
+    if (directLinkPattern.test(line)) {
       findings.push({
         file: relativePath,
         line: index + 1,
-        type: "拨号链接",
-        evidence: "tel: 链接",
-        action: "移除拨号入口"
+        type: "直接联系链接",
+        evidence: "tel:/callto:/sms:/facetime: 链接",
+        action: "移除直接联系入口"
       });
     }
-    telLinkPattern.lastIndex = 0;
+    directLinkPattern.lastIndex = 0;
     if (visibleContactPattern.test(line)) {
       findings.push({
         file: relativePath,
         line: index + 1,
         type: "直接联系方式文案",
         evidence: "电话/微信/号码相关可见文案",
-        action: "改为产品查询或选型服务入口"
+        action: "改为产品查询、资料申请或选型服务入口"
       });
     }
     visibleContactPattern.lastIndex = 0;
+    if (directControlPattern.test(line)) {
+      findings.push({
+        file: relativePath,
+        line: index + 1,
+        type: "直接联系方式控件",
+        evidence: "拨号、微信或复制号码控件标识",
+        action: "删除控件及其事件处理逻辑"
+      });
+    }
+    directControlPattern.lastIndex = 0;
   });
 }
 
@@ -103,7 +114,8 @@ fs.writeFileSync(path.join(outputDir, "public-contact-audit-items.csv"), `\uFEFF
 
 console.log(JSON.stringify(summary, null, 2));
 if (findings.length) {
-  console.log("发现历史公开文件可能仍含直接联系方式，已生成脱敏审计清单；本步骤只审计，不自动改写产品资料。");
-} else {
-  console.log("公开文本文件未发现手机号、拨号链接或直接联系方式文案。");
+  console.error("公开站点文件发现直接联系方式，已生成脱敏审计清单；为防止泄漏，本检查已阻断提交。");
+  process.exit(1);
 }
+
+console.log("公开文本文件未发现手机号、直接联系链接、直接联系方式文案或拨号/复制号码控件。");
