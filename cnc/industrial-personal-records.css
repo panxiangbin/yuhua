@@ -143,3 +143,8 @@
     font-weight: 850 !important;
   }
 }
+
+/* 桌面工具首页的最近查看元信息需要形成明确视觉层级。 */
+body.cnc-industrial-records #dashboard-recent-list .recent-card-meta strong {
+  font-weight: 800;
+}
