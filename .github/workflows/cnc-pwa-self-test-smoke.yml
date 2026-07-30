@@ -3,6 +3,8 @@ on:
   pull_request:
     paths:
       - 'cnc/**'
+      - 'scripts/check-no-direct-contact.cjs'
+      - 'scripts/audit-public-contact-leaks.cjs'
       - '.github/workflows/cnc-pwa-self-test-smoke.yml'
   workflow_dispatch:
 permissions:
@@ -21,16 +23,20 @@ jobs:
           node-version: 20
       - name: Check JavaScript syntax
         run: node --check cnc/tests/mobile-pwa-self-test-smoke.cjs
+      - name: Enforce no direct contact policy
+        run: node scripts/check-no-direct-contact.cjs
+      - name: Audit public text for contact leaks
+        run: node scripts/audit-public-contact-leaks.cjs
       - name: Validate self-test contract
         run: node -e "const fs=require('fs');const h=fs.readFileSync('cnc/pwa-self-test.html','utf8');for(const x of ['Service Worker已注册','当前页面已被接管','运行构建号一致','静态缓存版本存在','运行时缓存版本存在','核心离线资源完整','公网构建标记与PWA一致'])if(!h.includes(x))throw new Error('missing '+x);"
       - name: Install Playwright runtime
         run: npm install --no-save playwright@1.52.0
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Run 390x844 PWA self-test smoke
+      - name: Run 390x844 PWA self-test smoke in headed Chromium
         env:
           DEBUG: pw:browser
-        run: node cnc/tests/mobile-pwa-self-test-smoke.cjs
+        run: xvfb-run --auto-servernum --server-args='-screen 0 1280x1024x24' node cnc/tests/mobile-pwa-self-test-smoke.cjs
       - name: Upload diagnostics
         if: always()
         uses: actions/upload-artifact@v4
