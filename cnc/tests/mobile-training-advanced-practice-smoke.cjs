@@ -60,7 +60,21 @@ async function trustedClickHiddenRoute(page, selector) {
   page.on('pageerror', error => errors.push(error.message));
 
   await page.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded', timeout: 60000 });
-  await page.waitForFunction(() => window.CNC_TRAINING_PRACTICE && window.CNC_TRAINING_PRACTICE.build === '20260723e', null, { timeout: 20000 });
+  await page.waitForFunction(() => window.CNC_TRAINING_PRACTICE && /^\d{8}[a-z]$/.test(window.CNC_TRAINING_PRACTICE.build), null, { timeout: 20000 });
+  const buildConsistency = await page.evaluate(() => {
+    const build = window.CNC_TRAINING_PRACTICE.build;
+    const style = document.querySelector('link[data-cnc-training-practice]');
+    const profileScript = document.querySelector('script[data-cnc-training-profile-script]');
+    return {
+      build,
+      bodyBuild: document.body.dataset.cncPracticeBuild || '',
+      styleHref: style ? style.getAttribute('href') || '' : '',
+      profileSrc: profileScript ? profileScript.getAttribute('src') || '' : ''
+    };
+  });
+  assert.equal(buildConsistency.bodyBuild, buildConsistency.build, '练习API与页面构建标识必须一致');
+  assert.ok(buildConsistency.styleHref.endsWith(`training-practice.css?v=${buildConsistency.build}`), '练习样式资源版本必须与API构建一致');
+  assert.ok(buildConsistency.profileSrc.endsWith(`training-profile.js?v=${buildConsistency.build}`), '成长档案脚本版本必须与API构建一致');
   await page.waitForSelector('#xp-game-home[data-ready="true"]', { state: 'visible', timeout: 60000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-startup-home') === 'stable', null, { timeout: 15000 });
   assert.equal(await page.locator('.view.active').getAttribute('id'), 'view-dashboard', '根网址必须稳定停留首页');
@@ -78,6 +92,7 @@ async function trustedClickHiddenRoute(page, selector) {
   }, null, { timeout: 15000 });
 
   const api = await page.evaluate(() => window.CNC_TRAINING_PRACTICE.runCheck());
+  assert.equal(api.build, buildConsistency.build, '高级练习检查结果与页面构建标识必须一致');
   assert.equal(api.passed, true, `advanced practice readiness failed: ${JSON.stringify(api)}`);
   assert.equal(api.questions, 9);
   assert.equal(api.lessonGates, 12);
