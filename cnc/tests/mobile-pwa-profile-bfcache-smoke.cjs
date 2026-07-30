@@ -52,10 +52,10 @@ function observePage(page, errors) {
       server.listen(4173, '127.0.0.1', resolve);
     });
     stage = 'browser-launch';
-    // Use Playwright's full Chromium channel in a fresh temporary context.
-    // Headless Shell has repeatedly accepted the worker script response but
-    // discarded the registration before the BFCache assertions can begin.
-    browser = await chromium.launch({ channel: 'chromium', headless: true });
+    // Run full Chromium in headed mode under Xvfb in CI. The current Linux
+    // headless modes can accept the worker response while discarding the
+    // registration before the BFCache assertions start.
+    browser = await chromium.launch({ channel: 'chromium', headless: false });
     context = await browser.newContext({
       viewport: { width: 390, height: 844 },
       serviceWorkers: 'allow'
