@@ -12,6 +12,7 @@ fs.mkdirSync(out, { recursive: true });
 const RUN_TIMEOUT_MS = 8 * 60 * 1000;
 const CLEANUP_TIMEOUT_MS = 10000;
 const CONTROLLER_RETRY_DELAY_MS = 3000;
+const CONTROLLER_ACQUISITION_TIMEOUT_MS = 90 * 1000;
 const errorPath = path.join(out, 'pwa-self-test-error.txt');
 
 const server = spawn('python3', ['-m', 'http.server', '4173', '--bind', '127.0.0.1'], {
@@ -105,7 +106,11 @@ async function ensureControlledAfterRegistrationSettles(page, errors) {
 
     stage = 'controller';
     await page.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded' });
-    page = await ensureControlledAfterRegistrationSettles(page, errors);
+    page = await withTimeout(
+      ensureControlledAfterRegistrationSettles(page, errors),
+      CONTROLLER_ACQUISITION_TIMEOUT_MS,
+      'Service Worker controller acquisition'
+    );
     stage = 'self-test';
     await page.goto('http://127.0.0.1:4173/cnc/pwa-self-test.html', { waitUntil: 'domcontentloaded' });
     await page.waitForFunction(() => document.querySelector('#passed')?.textContent === '8' && document.querySelector('#failed')?.textContent === '0', { timeout: 60000 });
