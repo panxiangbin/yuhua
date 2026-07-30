@@ -89,10 +89,13 @@ async function ensureControlledAfterRegistrationSettles(page, errors) {
   try {
     await waitServer();
     stage = 'browser';
-    // Use Playwright's bundled Chromium instead of the system channel. The bundled
-    // browser is version-matched to Playwright and avoids channel-specific headless
-    // Service Worker registration regressions in CI.
+    // The default headless launch uses Chromium Headless Shell. CI diagnostics show
+    // that shell resolving register() with an empty registration which is then
+    // discarded. Playwright's bundled `chromium` channel uses the version-matched
+    // full Chromium in new-headless mode, preserving real Service Worker behavior
+    // without depending on a system-installed browser.
     browser = await chromium.launch({
+      channel: 'chromium',
       headless: true
     });
     context = await browser.newContext({
