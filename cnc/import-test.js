@@ -152,6 +152,9 @@
 
   function disableServiceWorkerRegistration() {
     if (!('serviceWorker' in navigator)) return;
+    window.__CNC_DISABLE_SERVICE_WORKER__ = true;
+
+    var nativeContainer = navigator.serviceWorker;
 
     function fakeRegistration() {
       return Promise.resolve({
@@ -180,7 +183,7 @@
     }
 
     try {
-      navigator.serviceWorker.getRegistrations().then(function (registrations) {
+      nativeContainer.getRegistrations().then(function (registrations) {
         return Promise.all(registrations.map(function (registration) {
           if (/\/yuhua\/cnc\/|\/cnc\//.test(registration.scope)) return registration.unregister();
           return false;
@@ -188,11 +191,27 @@
       }).catch(function () {});
     } catch (error) {}
 
-    // Chromium 新版本可能拒绝在 ServiceWorkerContainer 实例上覆写 register，
-    // 仅靠实例赋值会让页面尾部的旧注册脚本重新接管当前页。
-    // 先尝试实例，再尝试其原型；PWA 自检页不加载本脚本，因此离线诊断能力不受影响。
-    var blocked = replaceRegister(navigator.serviceWorker);
-    if (!blocked) blocked = replaceRegister(Object.getPrototypeOf(navigator.serviceWorker));
+    // Chromium 新版本可能不允许直接覆写 ServiceWorkerContainer.register。
+    // 先尝试容器实例和原型；仍不可写时，用绑定原生方法的代理整体遮蔽
+    // navigator.serviceWorker，只替换 register，保留 controller、ready 和事件能力。
+    var blocked = replaceRegister(nativeContainer);
+    if (!blocked) blocked = replaceRegister(Object.getPrototypeOf(nativeContainer));
+    if (!blocked && typeof Proxy === 'function') {
+      try {
+        var proxy = new Proxy(nativeContainer, {
+          get: function (target, property) {
+            if (property === 'register') return fakeRegistration;
+            var value = Reflect.get(target, property, target);
+            return typeof value === 'function' ? value.bind(target) : value;
+          }
+        });
+        Object.defineProperty(navigator, 'serviceWorker', {
+          configurable: true,
+          value: proxy
+        });
+        blocked = navigator.serviceWorker.register === fakeRegistration;
+      } catch (error) {}
+    }
     window.__CNC_SW_REGISTRATION_BLOCKED__ = blocked;
   }
 
