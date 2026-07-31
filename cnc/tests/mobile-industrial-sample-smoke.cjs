@@ -257,18 +257,40 @@ const assert = require('node:assert/strict');
     /industrial-card|CNC工业卡片|TypeError|ReferenceError/i.test(text)
   ));
   assert.deepEqual(relevantErrors, [], `工业样板存在控制台错误：${relevantErrors.join(' | ')}`);
-  assert.equal(
-    await page.evaluate(() => Boolean(navigator.serviceWorker && navigator.serviceWorker.controller)),
-    false,
-    '缓存控制状态不能回退'
+
+  await page.waitForFunction(
+    () => Boolean(navigator.serviceWorker && navigator.serviceWorker.controller),
+    null,
+    { timeout: 15000 }
   );
+  const serviceWorkerState = await page.evaluate(async () => {
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    const cncRegistrations = registrations.filter(registration => {
+      try {
+        return new URL(registration.scope).pathname === '/cnc/';
+      } catch {
+        return false;
+      }
+    });
+    return {
+      controlled: Boolean(navigator.serviceWorker.controller),
+      controllerUrl: navigator.serviceWorker.controller
+        ? navigator.serviceWorker.controller.scriptURL
+        : '',
+      cncRegistrationCount: cncRegistrations.length
+    };
+  });
+  assert.equal(serviceWorkerState.controlled, true, '工业样板页面必须由Service Worker接管');
+  assert.match(serviceWorkerState.controllerUrl, /\/cnc\/sw\.js(?:\?|$)/, '控制器必须来自/cnc/sw.js');
+  assert.equal(serviceWorkerState.cncRegistrationCount, 1, '工业样板不得重复注册/cnc/ Service Worker');
 
   console.log('手机闯关首页、单层导航、工业卡片后备层与G01详情样板通过', {
     mobileHomeState,
     home,
     nav,
     gcodeTarget,
-    detail
+    detail,
+    serviceWorkerState
   });
   await browser.close();
 })().catch(error => {
