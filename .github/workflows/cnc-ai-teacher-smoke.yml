@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'cnc/ai-teacher.html'
+      - 'cnc/ai-teacher-intake.html'
       - 'cnc/profile.html'
       - 'cnc/build-info.json'
       - 'cnc/tests/mobile-ai-teacher-smoke.cjs'
@@ -25,12 +26,15 @@ jobs:
       - name: Validate local-only safety contract
         run: |
           set -euxo pipefail
-          grep -q "20260801-ai-teacher1" cnc/ai-teacher.html
+          grep -q "20260801-ai-handoff1" cnc/ai-teacher.html
           grep -q "localOnly: true" cnc/ai-teacher.html
           grep -q "externalModel: false" cnc/ai-teacher.html
           grep -q "不调用外部模型" cnc/ai-teacher.html
           grep -q "不会给出脱离具体机床" cnc/ai-teacher.html
           grep -q "核对机床原厂手册" cnc/ai-teacher.html
+          grep -q "ai-teacher-intake.html" cnc/ai-teacher.html
+          grep -q "先生成现场问诊单" cnc/ai-teacher.html
+          test -f cnc/ai-teacher-intake.html
           ! grep -Eqi "https?://|fetch\(|XMLHttpRequest|WebSocket|EventSource" cnc/ai-teacher.html
       - name: Check JavaScript syntax
         run: |
