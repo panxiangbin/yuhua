@@ -67,7 +67,7 @@
 <script>
 (() => {
   'use strict';
-  const BUILD = '20260801-ai-teacher1';
+  const BUILD = '20260801-ai-handoff1';
   const KEYS = {
     profile: 'cnc_training_profile_v1',
     practice: 'cnc_training_practice_v1',
@@ -88,6 +88,14 @@
     {name:'故障排查',keys:['troubleshooting','alarm','故障','报警']}
   ];
   const SAFETY_SCOPE = '以下内容面向FANUC类立式加工中心的新手学习框架，不代表所有系统与机型一致。具体地址、编号、正负方向、单位、权限、联锁及操作顺序必须核对原厂手册、企业制度、受控工艺和现场条件。';
+  const INTAKE_CATEGORY = {
+    alarm: 'alarm',
+    'work-offset': 'coordinate',
+    'tool-offset': 'offset',
+    'program-check': 'program',
+    'first-piece': 'measurement',
+    unknown: 'other'
+  };
 
   function read(key) {
     try {
@@ -154,6 +162,10 @@
     };
   }
   function route(text, href, primary = false) { return {text,href,primary}; }
+  function intakeRoute(intent) {
+    const category = INTAKE_CATEGORY[intent] || 'other';
+    return `./ai-teacher-intake.html?source=ai-teacher&category=${encodeURIComponent(category)}`;
+  }
   function recommendation(intent, state) {
     const personalized = `你的本机记录显示：主线完成 ${state.completed.size}/12，待复习错题 ${state.wrong.length} 道，模拟通过 ${state.simulationPass}/13；当前优先补强“${state.weakest.name}”。`;
     if (intent === 'next') {
@@ -196,7 +208,7 @@
         steps:['确认受控图纸和工艺指定的工件零点。','确认工件实际装夹方向、定位面和测量基准。','按本机规定测得X/Y/Z基准并记录原始值。','核对写入的是正确坐标系、轴、单位和正负方向。','用图形检查、空运行、单段和低倍率做分层验证。'],
         donts:['不要把回参考点当成G54已经正确。','不要照抄别台机床的G54数值。','不要同时改G54和多把刀补来追尺寸。'],
         reasons:['程序即使语法正确，错误G54仍会让整条轨迹整体偏移。','测量、装夹和写入任一环节不一致，都会把正确程序带到错误位置。'],
-        scope:SAFETY_SCOPE,routes:[route('学习第5关坐标课程','./course-machine-work-offset.html',true),route('练工件坐标模拟','./simulator-work-offset-setting.html')]
+        scope:SAFETY_SCOPE,routes:[route('学习第5关坐标课程','./course-machine-work-offset.html',true),route('练工件坐标模拟','./simulator-work-offset-setting.html'),route('现场情况不完整？生成问诊单',intakeRoute('work-offset'))]
       },
       'tool-offset':{
         title:'H号核对必须把实物刀具、刀位、测量值和程序调用串起来',
@@ -204,7 +216,7 @@
         steps:['核对实物刀具、刀位号和程序T号。','确认刀具重新装夹、换刀或伸出变化后已经重新测量。','核对补偿页地址、单位、正负和当前值。','核对程序中的G43与H号调用。','首次运动用单段、低倍率和足够安全距离验证。'],
         donts:['不要仅凭编号相同就认为补偿正确。','不要给出或照抄脱离机床与测量基准的固定H值。','不要在原因不明时同时修改G54和H/D补偿。'],
         reasons:['刀长补偿是“刀尖在哪里”的数据链，任何一环过期都会影响Z向位置。','不同系统、测量基准和刀补管理方式可能不同。'],
-        scope:SAFETY_SCOPE,routes:[route('学习第8关对刀课程','./course-tool-length-offset.html',true),route('练刀长补偿核对','./simulator-tool-length-offset-check.html')]
+        scope:SAFETY_SCOPE,routes:[route('学习第8关对刀课程','./course-tool-length-offset.html',true),route('练刀长补偿核对','./simulator-tool-length-offset-check.html'),route('现场情况不完整？生成问诊单',intakeRoute('tool-offset'))]
       },
       'program-check':{
         title:'陌生程序先验证数据链，再验证路径，最后才接近工件',
@@ -212,7 +224,7 @@
         steps:['核对程序版本、受控图纸和工艺文件。','逐段检查模态、坐标系、刀具、H/D号、主轴冷却和固定循环。','确认工件、夹具、刀具通道与安全位置。','先做图形检查，再按企业制度做安全空运行。','首次接近使用单段、低倍率并保持可观察、可停止。','首件停机测量，复验后再放行。'],
         donts:['不要只看程序末尾有M30就认为完整。','不要把图形模拟代替实物核对、空运行和首件测量。','不要在运行中边猜边改多个变量。'],
         reasons:['陌生程序风险来自程序、坐标、刀补、装夹和现场状态的组合。','分层验证能让每一步只回答一个问题，便于定位真实根因。'],
-        scope:SAFETY_SCOPE,routes:[route('学习第12关完整程序','./course-complete-program-first-piece.html',true),route('练程序空运行模拟','./simulator-program-dry-run.html')]
+        scope:SAFETY_SCOPE,routes:[route('学习第12关完整程序','./course-complete-program-first-piece.html',true),route('练程序空运行模拟','./simulator-program-dry-run.html'),route('先整理现场证据',intakeRoute('program-check'))]
       },
       alarm:{
         title:'报警后第一步是停止继续冒险，并保留真实现场',
@@ -220,7 +232,7 @@
         steps:['停止继续运行；按现场风险选择进给保持、急停或其他受控停止方式。','记录完整报警号、报警原文、系统/机型、发生程序段、轴位置和当时动作。','检查人员、刀具、工件、夹具及周边是否存在继续运动危险。','按原厂手册和企业流程分类排查，一次只处理一个已确认原因。','原因处理后，按规定复位，并用单段低倍率分层恢复验证。'],
         donts:['不要连续按复位并反复启动。','不要只根据网上相似报警号直接改参数或屏蔽联锁。','不要在原因不明或报警重复时继续加工。'],
         reasons:['完整现场信息是定位根因的证据，过早复位可能清除线索。','同一报警编号在不同系统、版本或厂家配置中含义可能不同。'],
-        scope:SAFETY_SCOPE,routes:[route('练报警排查模拟','./simulator-alarm-troubleshooting.html',true),route('做报警专项题','./practice-alarm-parameter-first-piece.html')]
+        scope:SAFETY_SCOPE,routes:[route('先生成现场问诊单',intakeRoute('alarm'),true),route('练报警排查模拟','./simulator-alarm-troubleshooting.html'),route('做报警专项题','./practice-alarm-parameter-first-piece.html')]
       },
       'first-piece':{
         title:'首件超差先确认“测量可信”，再判断是整体偏移还是单项问题',
@@ -228,7 +240,7 @@
         steps:['停机并保留当前状态，确认量具、工件清洁、温度和测量方法。','复测关键尺寸，必要时由第二人按同一基准复核。','判断偏差模式：整体同向、单刀相关、渐进漂移还是随机波动。','按偏差模式检查G54、装夹基准、H/D号、刀具磨损或测量链。','仅由授权人员做小量、可记录的单项修正。','重新加工或复验关联尺寸，按企业首件制度放行。'],
         donts:['不要看到超差就大幅追刀补。','不要同时改G54和多把刀补。','不要只复测一个尺寸就宣布问题解决。'],
         reasons:['测量不可信时，任何补偿都会把误差带入加工。','偏差模式能帮助区分坐标、单刀、过程和测量问题。'],
-        scope:SAFETY_SCOPE,routes:[route('练首件检查模拟','./simulator-first-piece-inspection.html',true),route('练测量误差分类','./simulator-measurement-vs-machining-error.html')]
+        scope:SAFETY_SCOPE,routes:[route('练首件检查模拟','./simulator-first-piece-inspection.html',true),route('练测量误差分类','./simulator-measurement-vs-machining-error.html'),route('整理首件超差证据',intakeRoute('first-piece'))]
       }
     };
     return library[intent] || {
@@ -237,7 +249,7 @@
       steps:['说明你遇到的是课程理解、程序验证、报警、坐标刀补、首件测量还是学习路线问题。','补充系统/机型和当前处于“学习、仿真、空运行、首件或生产”哪个阶段。','从上方快捷问题选择最接近的一项，先完成受控训练。'],
       donts:['不要仅凭一句模糊描述修改参数、坐标或刀补。','不要提供或执行未经核对的固定加工数值。'],
       reasons:['缺少系统、机型、现场状态和完整现象时，直接给操作步骤容易误导。'],
-      scope:SAFETY_SCOPE,routes:[route('查看训练路线','./training-camp.html',true),route('进入故障问诊','./index.html#workspace')]
+      scope:SAFETY_SCOPE,routes:[route('先生成现场问诊单',intakeRoute('unknown'),true),route('查看训练路线','./training-camp.html')]
     };
   }
   function detectIntent(text) {
@@ -306,6 +318,7 @@
     externalModel: false,
     storageKeys: Object.values(KEYS),
     detectIntent,
+    intakeRoute,
     getSummary: () => {
       const state = learningState();
       return {courses:state.completed.size,wrong:state.wrong.length,simulations:state.simulationPass,weakest:state.weakest.name};
