@@ -23,6 +23,16 @@ const types = {
 const server = http.createServer((req, res) => {
   let requestPath = decodeURIComponent(req.url.split('?')[0]);
   if (requestPath === '/' || requestPath === '/cnc/') requestPath = '/cnc/index.html';
+
+  // A normal missing file returns HTTP 404, which is still a successful fetch
+  // from the Service Worker's perspective. This dedicated probe deliberately
+  // drops the connection so the navigation fetch rejects and the offline
+  // fallback branch is exercised deterministically in Chromium.
+  if (requestPath.startsWith('/cnc/__offline_probe__')) {
+    req.socket.destroy();
+    return;
+  }
+
   const file = path.normalize(path.join(root, requestPath));
   if (!file.startsWith(root) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) {
     res.writeHead(404);
@@ -76,6 +86,7 @@ async function readExpectedRegistration(page) {
     serviceWorkerEvents: []
   };
   let stage = 'server-start';
+  let fallbackState = null;
   try {
     await new Promise((resolve, reject) => {
       server.once('error', reject);
@@ -155,8 +166,23 @@ async function readExpectedRegistration(page) {
     if (!(await page.title()).includes('训练')) throw new Error('离线训练营未打开');
 
     stage = 'offline-fallback';
-    await page.goto(`http://127.0.0.1:4173/cnc/not-cached-${Date.now()}.html`, { waitUntil: 'domcontentloaded' });
-    if (!(await page.locator('body').innerText()).includes('网络暂时不可用')) throw new Error('离线回退页未生效');
+    // Playwright's offline emulation can behave differently for localhost
+    // navigation requests. Restore network and use a server-side connection
+    // drop so the Service Worker receives a real rejected fetch every time.
+    await context.setOffline(false);
+    const fallbackUrl = `http://127.0.0.1:4173/cnc/__offline_probe__${Date.now()}.html`;
+    const fallbackResponse = await page.goto(fallbackUrl, { waitUntil: 'domcontentloaded' });
+    fallbackState = {
+      requestUrl: fallbackUrl,
+      finalUrl: page.url(),
+      status: fallbackResponse ? fallbackResponse.status() : null,
+      title: await page.title(),
+      body: (await page.locator('body').innerText()).slice(0, 1000),
+      controller: await page.evaluate(() => navigator.serviceWorker.controller?.scriptURL || '')
+    };
+    if (!fallbackState.body.includes('网络暂时不可用')) {
+      throw new Error(`离线回退页未生效：${JSON.stringify(fallbackState)}`);
+    }
 
     await page.screenshot({ path: path.join(out, 'pwa-offline-390x844.png'), fullPage: true });
     if (errors.length) throw new Error(`控制台错误 ${errors.join(' | ')}`);
@@ -166,13 +192,14 @@ async function readExpectedRegistration(page) {
       registration,
       caches: cachesBefore,
       offlineFallback: true,
+      fallbackState,
       runtimeWarmup: true,
       touchTargets: true,
       runtimeDiagnostics
     }, null, 2));
     console.log('CNC PWA offline cache smoke passed');
   } catch (error) {
-    fs.writeFileSync(path.join(out, 'pwa-offline-error.txt'), `stage=${stage}\nruntime=${JSON.stringify(runtimeDiagnostics, null, 2)}\n${error.stack || error}`);
+    fs.writeFileSync(path.join(out, 'pwa-offline-error.txt'), `stage=${stage}\nruntime=${JSON.stringify(runtimeDiagnostics, null, 2)}\nfallback=${JSON.stringify(fallbackState, null, 2)}\n${error.stack || error}`);
     throw error;
   } finally {
     if (context) await context.close().catch(() => {});
