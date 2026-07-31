@@ -19,6 +19,23 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: Validate AI teacher offline core contract
+        run: |
+          node --check cnc/tests/mobile-pwa-offline-cache-smoke.cjs
+          node --check cnc/sw.js
+          node - <<'NODE'
+          const fs = require('fs');
+          const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
+          const sw = fs.readFileSync('cnc/sw.js', 'utf8');
+          const test = fs.readFileSync('cnc/tests/mobile-pwa-offline-cache-smoke.cjs', 'utf8');
+          const swBuild = sw.match(/const BUILD = '([^']+)'/)?.[1];
+          if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
+          for (const file of ['./ai-teacher.html', './ai-teacher-intake.html']) {
+            if (!sw.includes(`'${file}'`)) throw new Error(`${file} missing from Service Worker core cache`);
+            if (!test.includes(file)) throw new Error(`${file} missing from offline browser verification`);
+          }
+          if (!String(info.contentStage || '').includes('AI老师离线核心')) throw new Error('build marker missing AI offline capability');
+          NODE
       - name: Install Playwright test runtime
         run: npm install --no-save playwright@1.52.0
       - name: Install Chromium
