@@ -11,6 +11,13 @@ const path = require('node:path');
   page.on('pageerror', error => pageErrors.push(String(error.message || error)));
   page.on('console', message => { if (message.type() === 'error') consoleErrors.push(message.text()); });
 
+  async function goHome() {
+    const homeNav = page.locator('.xp-bottom-nav [data-xp-route="dashboard"]');
+    await homeNav.waitFor({ state: 'visible', timeout: 15000 });
+    await homeNav.click();
+    await page.waitForSelector('#view-dashboard.active', { state: 'visible', timeout: 15000 });
+  }
+
   await page.goto('http://127.0.0.1:4173/cnc/?smoke=industrial-workspace', { waitUntil: 'domcontentloaded', timeout: 60000 });
   await page.waitForFunction(() => (
     window.CNC_TRUST_NAV?.build === '20260721s'
@@ -143,8 +150,7 @@ const path = require('node:path');
   await page.waitForFunction(() => !document.getElementById('detail-panel')?.classList.contains('mobile-open'), null, { timeout: 15000 });
   await page.waitForFunction(() => document.getElementById('search-input').value === 'G01', null, { timeout: 15000 });
   await page.locator('#search-clear-btn').click();
-  await page.locator('#home-btn').click();
-  await page.waitForSelector('#view-dashboard.active', { state: 'visible', timeout: 15000 });
+  await goHome();
 
   for (const mode of ['alarm', 'parameter', 'fault']) {
     await page.locator('#sidebar-open').click();
@@ -155,8 +161,7 @@ const path = require('node:path');
     await page.waitForFunction(expected => document.body.getAttribute('data-cnc-industrial-mode') === expected, mode, { timeout: 15000 });
     await page.waitForSelector('#result-list .result-card', { state: 'visible', timeout: 15000 });
     assert.ok(await page.locator('#result-list .result-card').count() > 0);
-    await page.locator('#home-btn').click();
-    await page.waitForSelector('#view-dashboard.active', { state: 'visible', timeout: 15000 });
+    await goHome();
   }
 
   const relevantErrors = [...pageErrors, ...consoleErrors].filter(text => /industrial-workspace|CNC工业查询|TypeError|ReferenceError/i.test(text));
