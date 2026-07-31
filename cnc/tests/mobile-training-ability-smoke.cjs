@@ -11,6 +11,7 @@ const assert = require('node:assert/strict');
   await page.goto('http://127.0.0.1:4173/cnc/?smoke=ability-analysis', { waitUntil: 'domcontentloaded', timeout: 60000 });
   await page.waitForFunction(() => window.CNC_TRAINING_PROFILE?.build === '20260724a', null, { timeout: 20000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-startup-home') === 'stable', null, { timeout: 15000 });
+  await page.waitForFunction(() => window.CNC_GAME_QUERY_NAV?.build === '20260731d', null, { timeout: 15000 });
   assert.equal(await page.locator('.view.active').getAttribute('id'), 'view-dashboard');
 
   await page.evaluate(() => {
@@ -22,7 +23,14 @@ const assert = require('node:assert/strict');
     }));
   });
 
-  await page.locator('.xp-bottom-nav [data-xp-route="favorites"]').click();
+  // 从手机首页可见的“现场速查”进入工作区，再使用恢复后的工具导航进入“我的”。
+  await page.locator('#xp-game-home [data-xp-query-filter="gcode"]').click();
+  await page.waitForSelector('#view-workspace.active', { state: 'visible', timeout: 15000 });
+  await page.waitForFunction(() => {
+    const node = document.querySelector('body > .xp-bottom-nav');
+    return node && node.getClientRects().length > 0 && node.getAttribute('aria-hidden') === 'false' && !node.hasAttribute('inert');
+  }, null, { timeout: 15000 });
+  await page.locator('body > .xp-bottom-nav [data-xp-route="favorites"]').click();
   await page.waitForSelector('#view-favorites.active #xp-training-profile', { state: 'visible', timeout: 10000 });
   await page.evaluate(() => window.CNC_TRAINING_PROFILE.render());
 
@@ -55,6 +63,6 @@ const assert = require('node:assert/strict');
   await page.locator('[data-ability-train="11"]').first().click();
   await page.waitForSelector('#view-study.active #study-detail-content .lesson-detail-v2[data-level="11"]', { state: 'visible', timeout: 15000 });
   assert.deepEqual(errors, []);
-  console.log('六维阶段能力、薄弱项识别与针对训练入口通过', { abilities: data.abilities, weakest: data.weakest, layout });
+  console.log('单层首页真实导航、六维阶段能力、薄弱项识别与针对训练入口通过', { abilities: data.abilities, weakest: data.weakest, layout });
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });
