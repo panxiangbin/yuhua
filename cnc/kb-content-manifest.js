@@ -135,15 +135,12 @@
     if (!dashboard) return false;
 
     mountGameQueryPanel();
-    var remountScheduled = false;
+    var remounting = false;
     var mountObserver = new MutationObserver(function () {
-      if (document.querySelector('#xp-game-home .xp-game-query-panel')) return;
-      if (remountScheduled) return;
-      remountScheduled = true;
-      window.setTimeout(function () {
-        remountScheduled = false;
-        mountGameQueryPanel();
-      }, 0);
+      if (document.querySelector('#xp-game-home .xp-game-query-panel') || remounting) return;
+      remounting = true;
+      mountGameQueryPanel();
+      remounting = false;
     });
     mountObserver.observe(dashboard, { childList: true, subtree: true });
 
