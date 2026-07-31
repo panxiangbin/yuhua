@@ -61,10 +61,10 @@
       panel.setAttribute('aria-labelledby', 'xp-game-query-title');
       panel.innerHTML = '<div class="xp-game-query-head"><div><h2 id="xp-game-query-title">现场速查</h2><p>查代码、报警、参数和故障，进入后可继续筛选。</p></div><span aria-hidden="true">🔎</span></div>' +
         '<div class="xp-game-query-grid">' +
-          '<button type="button" class="xp-game-query-button" data-xp-query-filter="gcode" aria-label="进入G代码和M代码查询"><span>G</span><span><strong>G/M代码</strong><small>格式 · 含义 · 示例</small></span></button>' +
-          '<button type="button" class="xp-game-query-button" data-xp-query-filter="alarm" aria-label="进入报警排查"><span>!</span><span><strong>报警排查</strong><small>报警号 · 原因 · 顺序</small></span></button>' +
-          '<button type="button" class="xp-game-query-button" data-xp-query-filter="parameter" aria-label="进入参数速查"><span>P</span><span><strong>参数速查</strong><small>作用 · 风险 · 核验</small></span></button>' +
-          '<button type="button" class="xp-game-query-button" data-xp-query-filter="fault" aria-label="进入故障问诊"><span>?</span><span><strong>故障问诊</strong><small>现象 · 检查 · 边界</small></span></button>' +
+          '<button type="button" class="xp-game-query-button" data-xp-query-filter="gcode" data-xp-filter="gcode" aria-label="进入G代码和M代码查询"><span>G</span><span><strong>G/M代码</strong><small>格式 · 含义 · 示例</small></span></button>' +
+          '<button type="button" class="xp-game-query-button" data-xp-query-filter="alarm" data-xp-filter="alarm" aria-label="进入报警排查"><span>!</span><span><strong>报警排查</strong><small>报警号 · 原因 · 顺序</small></span></button>' +
+          '<button type="button" class="xp-game-query-button" data-xp-query-filter="parameter" data-xp-filter="parameter" aria-label="进入参数速查"><span>P</span><span><strong>参数速查</strong><small>作用 · 风险 · 核验</small></span></button>' +
+          '<button type="button" class="xp-game-query-button" data-xp-query-filter="fault" data-xp-filter="fault" aria-label="进入故障问诊"><span>?</span><span><strong>故障问诊</strong><small>现象 · 检查 · 边界</small></span></button>' +
         '</div>';
       var gameNav = home.querySelector('.xp-game-bottom-nav');
       if (gameNav) gameNav.insertAdjacentElement('beforebegin', panel);
