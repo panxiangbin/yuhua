@@ -98,7 +98,14 @@ const assert = require('node:assert/strict');
       legacy && legacy.getClientRects().length === 0;
   }, null, { timeout: 15000 });
 
+  // 底部导航可能先于主应用的 navigate 函数挂载；必须等到导航增强层和主路由都可交互，
+  // 再用真实点击验证“查代码”入口，避免退回点击已隐藏旧工具卡的后备路径。
+  await page.waitForFunction(() => window.CNC_TRUST_NAV &&
+    window.CNC_TRUST_NAV.build === '20260721s' &&
+    (window.__CNC_TRUST_READY_AT__ || 0) > 0 &&
+    typeof window.navigate === 'function', null, { timeout: 20000 });
   const gcodeNav = page.locator('.xp-bottom-nav button[data-xp-filter="gcode"]');
+  await gcodeNav.waitFor({ state: 'visible', timeout: 15000 });
   await gcodeNav.click();
   await page.waitForFunction(() => {
     const workspace = document.getElementById('view-workspace');
