@@ -24,7 +24,7 @@ const assert = require('node:assert/strict');
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-industrial-surface') === 'home', null, { timeout: 15000 });
   await page.waitForSelector('#xp-game-home[data-ready="true"]', { state: 'attached', timeout: 60000 });
 
-  // 手机首页样式由 personal-home.js 动态声明。必须等真实 load 完成，再验证最终计算样式；资源失败会直接报错。
+  // 手机首页样式由 personal-home.js 动态声明。必须等真实 load 完成；资源失败会直接报错。
   const gameStyle = page.locator('link[data-cnc-mobile-home-game]');
   await gameStyle.waitFor({ state: 'attached', timeout: 20000 });
   assert.match((await gameStyle.getAttribute('href')) || '', /mobile-home-game\.css\?v=\d{8}[a-z0-9-]*$/i, '手机闯关首页必须声明版本化样式资源');
@@ -36,13 +36,30 @@ const assert = require('node:assert/strict');
       link.addEventListener('error', () => { clearTimeout(timer); reject(new Error('手机闯关首页样式资源加载失败: ' + link.href)); }, { once: true });
     });
   });
-  await page.waitForFunction(() => {
+
+  const mobileHomeState = await page.evaluate(async () => {
+    const link = document.querySelector('link[data-cnc-mobile-home-game]');
     const gameHome = document.querySelector('#xp-game-home[data-ready="true"]');
     const recent = document.querySelector('#dashboard-recent-section');
-    if (!gameHome || !recent) return false;
-    return getComputedStyle(gameHome).display !== 'none' && getComputedStyle(recent).display === 'none';
-  }, null, { timeout: 15000 });
-  assert.equal(await page.locator('#dashboard-recent-section').evaluate(node => getComputedStyle(node).display), 'none');
+    const cssText = link ? await fetch(link.href, { cache: 'no-store' }).then(response => response.text()) : '';
+    return {
+      innerWidth: window.innerWidth,
+      mediaMatches: window.matchMedia('(max-width:760px)').matches,
+      bodyClasses: document.body.className,
+      linkHref: link ? link.href : '',
+      stylesheetReady: Boolean(link && link.sheet),
+      servedCssHasRecentRule: cssText.includes('#dashboard-recent-section'),
+      gameDisplay: gameHome ? getComputedStyle(gameHome).display : 'missing',
+      recentDisplay: recent ? getComputedStyle(recent).display : 'missing'
+    };
+  });
+  assert.equal(mobileHomeState.innerWidth, 390, '手机视口必须为390px: ' + JSON.stringify(mobileHomeState));
+  assert.equal(mobileHomeState.mediaMatches, true, '手机媒体查询必须命中: ' + JSON.stringify(mobileHomeState));
+  assert.match(mobileHomeState.bodyClasses, /cnc-game-home-enabled/, '手机闯关首页状态类必须存在: ' + JSON.stringify(mobileHomeState));
+  assert.equal(mobileHomeState.stylesheetReady, true, '手机闯关首页样式表必须完成解析: ' + JSON.stringify(mobileHomeState));
+  assert.equal(mobileHomeState.servedCssHasRecentRule, true, '实际服务的手机首页CSS必须包含最近查看隐藏规则: ' + JSON.stringify(mobileHomeState));
+  assert.notEqual(mobileHomeState.gameDisplay, 'none', '手机闯关首页必须可见: ' + JSON.stringify(mobileHomeState));
+  assert.equal(mobileHomeState.recentDisplay, 'none', '旧最近查看区域在手机端必须隐藏: ' + JSON.stringify(mobileHomeState));
   await page.waitForSelector('#xp-game-home[data-ready="true"]', { state: 'visible', timeout: 15000 });
 
   // 从手机端真实打开一个工业知识条目，确认最近查看记录仍会被写入。
