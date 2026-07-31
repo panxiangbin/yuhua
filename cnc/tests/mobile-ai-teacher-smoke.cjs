@@ -48,7 +48,7 @@ fs.mkdirSync(OUT, { recursive: true });
       localStorage.setItem('cnc_training_exam_v1', JSON.stringify({ version: 1, highestScore: 73 }));
     });
     await page.reload({ waitUntil: 'domcontentloaded' });
-    await page.waitForFunction(() => window.CNC_AI_TEACHER?.build === '20260801-ai-teacher1');
+    await page.waitForFunction(() => window.CNC_AI_TEACHER?.build === '20260801-ai-handoff1');
 
     assert.equal(await page.locator('#course-progress').textContent(), '4/12');
     assert.equal(await page.locator('#wrong-count').textContent(), '2');
@@ -60,11 +60,15 @@ fs.mkdirSync(OUT, { recursive: true });
       localOnly: window.CNC_AI_TEACHER.localOnly,
       externalModel: window.CNC_AI_TEACHER.externalModel,
       summary: window.CNC_AI_TEACHER.getSummary(),
-      storageKeys: window.CNC_AI_TEACHER.storageKeys
+      storageKeys: window.CNC_AI_TEACHER.storageKeys,
+      alarmIntake: window.CNC_AI_TEACHER.intakeRoute('alarm'),
+      unknownIntake: window.CNC_AI_TEACHER.intakeRoute('unknown')
     }));
     assert.equal(api.localOnly, true);
     assert.equal(api.externalModel, false);
     assert.equal(api.summary.weakest, '故障排查');
+    assert.match(api.alarmIntake, /ai-teacher-intake\.html\?source=ai-teacher&category=alarm$/);
+    assert.match(api.unknownIntake, /category=other$/);
     assert.deepEqual(api.storageKeys.sort(), [
       'cnc_training_exam_v1',
       'cnc_training_practice_v1',
@@ -86,7 +90,10 @@ fs.mkdirSync(OUT, { recursive: true });
     assert.match(alarmAnswer, /记录完整报警号/);
     assert.match(alarmAnswer, /不要连续按复位/);
     assert.match(alarmAnswer, /核对原厂手册/);
-    assert.match(await page.locator('#answer-routes a').first().getAttribute('href'), /simulator-alarm-troubleshooting\.html/);
+    const alarmRoutes = await page.locator('#answer-routes a').evaluateAll(nodes => nodes.map(node => ({ text: node.textContent.trim(), href: node.getAttribute('href') })));
+    assert.equal(alarmRoutes[0].text, '先生成现场问诊单');
+    assert.match(alarmRoutes[0].href, /ai-teacher-intake\.html\?source=ai-teacher&category=alarm$/);
+    assert.match(alarmRoutes[1].href, /simulator-alarm-troubleshooting\.html/);
 
     await page.locator('#question').fill('G54怎么找正');
     await page.locator('#ask-form button[type="submit"]').click();
@@ -95,6 +102,15 @@ fs.mkdirSync(OUT, { recursive: true });
     assert.match(g54Answer, /工件零点/);
     assert.match(g54Answer, /不要照抄别台机床的G54数值/);
     assert.match(g54Answer, /原厂手册/);
+    const g54Hrefs = await page.locator('#answer-routes a').evaluateAll(nodes => nodes.map(node => node.getAttribute('href')));
+    assert.ok(g54Hrefs.some(href => /ai-teacher-intake\.html\?source=ai-teacher&category=coordinate$/.test(href)));
+
+    await page.locator('#question').fill('我的现场情况说不清楚');
+    await page.locator('#ask-form button[type="submit"]').click();
+    assert.match(await page.locator('#answer-title').textContent(), /先把问题归类/);
+    const unknownFirstRoute = page.locator('#answer-routes a').first();
+    assert.equal(await unknownFirstRoute.textContent(), '先生成现场问诊单');
+    assert.match(await unknownFirstRoute.getAttribute('href'), /category=other$/);
 
     const touchTargets = await page.locator('a:visible,button:visible,input:visible').evaluateAll(nodes => nodes.map(node => {
       const rect = node.getBoundingClientRect();
@@ -108,7 +124,7 @@ fs.mkdirSync(OUT, { recursive: true });
     assert.equal(errors.length, 0, errors.join(' | '));
 
     await page.screenshot({ path: `${OUT}/ai-teacher-390x844.png`, fullPage: true });
-    fs.writeFileSync(`${OUT}/result.json`, JSON.stringify({ api, touchTargets, requests, errors }, null, 2));
+    fs.writeFileSync(`${OUT}/result.json`, JSON.stringify({ api, alarmRoutes, g54Hrefs, touchTargets, requests, errors }, null, 2));
     console.log('CNC AI teacher smoke passed');
   } finally {
     await browser.close();
