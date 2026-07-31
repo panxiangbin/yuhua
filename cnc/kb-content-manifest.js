@@ -2,6 +2,28 @@
   'use strict';
 
   var GAME_QUERY_BUILD = '20260731b';
+  var INDUSTRIAL_TOOLS_BUILD = '20260722d';
+
+  // 换算工具增强层原先已有完整实现和真实浏览器门禁，但首页启动链没有加载它，
+  // 导致工具 API 永远不就绪。这里仅接通现有 CNC 专用 CSS/JS，不改公式和测试。
+  function ensureIndustrialToolsAssets() {
+    if (!document.querySelector('link[data-cnc-industrial-tools]')) {
+      var link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = './industrial-tools.css?v=' + INDUSTRIAL_TOOLS_BUILD;
+      link.dataset.cncIndustrialTools = INDUSTRIAL_TOOLS_BUILD;
+      document.head.appendChild(link);
+    }
+    if (!document.querySelector('script[data-cnc-industrial-tools-script]')) {
+      var script = document.createElement('script');
+      script.src = './industrial-tools.js?v=' + INDUSTRIAL_TOOLS_BUILD;
+      script.async = true;
+      script.dataset.cncIndustrialToolsScript = INDUSTRIAL_TOOLS_BUILD;
+      document.head.appendChild(script);
+    }
+  }
+
+  ensureIndustrialToolsAssets();
 
   // 兼容旧版首页精选图渲染器：它读取 image.path，
   // 新图库数据统一使用 image.src。应用主脚本执行前补齐同源字段，
@@ -212,12 +234,14 @@
   }
 
   window.CNC_KB_CONTENT_MANIFEST = {
-    build: '20260731f',
+    build: '20260731g',
     enhancedImagesNormalized: Array.isArray(enhanced)
       ? enhanced.filter(function (image) { return image && image.path === image.src; }).length
       : 0,
     recentCardKeyboardNavigation: true,
     startupGuardBridge: true,
+    industrialToolsBuild: INDUSTRIAL_TOOLS_BUILD,
+    industrialToolsConnected: true,
     mobileGameQueryNavigation: GAME_QUERY_BUILD
   };
 })();
