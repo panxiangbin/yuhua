@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var GAME_QUERY_BUILD = '20260731b';
+  var GAME_QUERY_BUILD = '20260731c';
   var INDUSTRIAL_TOOLS_BUILD = '20260722d';
 
   // 换算工具增强层原先已有完整实现和真实浏览器门禁，但首页启动链没有加载它，
@@ -40,8 +40,8 @@
     var style = document.createElement('style');
     style.dataset.cncGameQueryNav = GAME_QUERY_BUILD;
     style.textContent = '@media (max-width:760px){' +
-      'body.cnc-game-query-home-active #view-dashboard{padding-bottom:164px!important}' +
-      'body.cnc-game-query-home-active>.xp-bottom-nav{display:grid!important;left:8px!important;right:8px!important;bottom:calc(65px + env(safe-area-inset-bottom))!important;width:auto!important;z-index:72!important;border:1px solid rgba(111,174,255,.38)!important;border-radius:14px 14px 0 0!important;box-shadow:0 -7px 20px rgba(0,0,0,.24)!important}' +
+      'body.cnc-game-query-home-active #view-dashboard{padding-bottom:96px!important}' +
+      'body.cnc-game-query-home-active>.xp-bottom-nav{display:none!important}' +
       '.xp-game-query-panel{margin-top:12px;padding:13px;border:1px solid rgba(117,178,255,.35);border-radius:17px;background:linear-gradient(180deg,#123b75,#092751);box-shadow:0 12px 28px rgba(0,0,0,.2)}' +
       '.xp-game-query-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}' +
       '.xp-game-query-head h2{margin:0;color:#fff;font-size:17px;line-height:1.35;font-weight:1000}' +
@@ -68,8 +68,10 @@
     document.body.classList.toggle('cnc-game-query-home-active', active);
     var utility = document.querySelector('body>.xp-bottom-nav');
     if (utility) {
-      utility.setAttribute('aria-hidden', 'false');
-      utility.dataset.cncGameUtility = active ? 'separated' : 'standard';
+      utility.setAttribute('aria-hidden', active ? 'true' : 'false');
+      utility.dataset.cncGameUtility = active ? 'hidden-on-game-home' : 'standard';
+      if (active) utility.setAttribute('inert', '');
+      else utility.removeAttribute('inert');
     }
   }
 
@@ -184,7 +186,13 @@
           build: GAME_QUERY_BUILD,
           buttons: buttons.length,
           dashboardActive: dashboardActive(),
-          utilitySeparated: Boolean(utility && utility.dataset.cncGameUtility === 'separated')
+          utilityHidden: Boolean(
+            utility &&
+            utility.dataset.cncGameUtility === 'hidden-on-game-home' &&
+            utility.getAttribute('aria-hidden') === 'true' &&
+            utility.hasAttribute('inert') &&
+            utility.getClientRects().length === 0
+          )
         };
       }
     };
@@ -231,7 +239,7 @@
   }
 
   window.CNC_KB_CONTENT_MANIFEST = {
-    build: '20260731g',
+    build: '20260731h',
     enhancedImagesNormalized: Array.isArray(enhanced)
       ? enhanced.filter(function (image) { return image && image.path === image.src; }).length
       : 0,
