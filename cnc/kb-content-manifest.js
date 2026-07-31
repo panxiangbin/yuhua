@@ -13,7 +13,7 @@
 
   // 最近查看卡片是 article + role=button。旧增强层虽然补了 tabindex，
   // 但 Enter 后只合成 click，启动导航层可能把工作区切换吞掉。
-  // 在捕获阶段按真实条目 ID 直接调用应用导航，保证键盘与鼠标结果一致；
+  // 在捕获阶段先把真实可信键盘事件交给启动首页守卫确认，再按条目 ID 导航；
   // Space 同样支持，并阻止页面滚动。
   document.addEventListener('keydown', function (event) {
     if (event.key !== 'Enter' && event.key !== ' ') return;
@@ -22,6 +22,11 @@
       ? target.closest('#dashboard-recent-list .recent-card[data-entry-id]')
       : null;
     if (!card) return;
+
+    var startupGuard = window.CNC_STARTUP_HOME_GUARD;
+    if (startupGuard && typeof startupGuard.acceptTrustedRouteEvent === 'function') {
+      startupGuard.acceptTrustedRouteEvent(event);
+    }
 
     event.preventDefault();
     event.stopImmediatePropagation();
@@ -40,10 +45,11 @@
   }, true);
 
   window.CNC_KB_CONTENT_MANIFEST = {
-    build: '20260731c',
+    build: '20260731d',
     enhancedImagesNormalized: Array.isArray(enhanced)
       ? enhanced.filter(function (image) { return image && image.path === image.src; }).length
       : 0,
-    recentCardKeyboardNavigation: true
+    recentCardKeyboardNavigation: true,
+    startupGuardBridge: true
   };
 })();
