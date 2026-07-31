@@ -13,10 +13,13 @@ fs.mkdirSync(OUT, { recursive: true });
       viewport: { width: 390, height: 844 },
       serviceWorkers: 'allow'
     });
-    const page = await context.newPage();
+    let page = await context.newPage();
     const errors = [];
-    page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
-    page.on('pageerror', error => errors.push(error.message));
+    const collectErrors = target => {
+      target.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
+      target.on('pageerror', error => errors.push(error.message));
+    };
+    collectErrors(page);
 
     await page.goto('http://127.0.0.1:4173/cnc/?smoke=sw', {
       waitUntil: 'domcontentloaded',
@@ -31,9 +34,38 @@ fs.mkdirSync(OUT, { recursive: true });
       return registration?.active?.state === 'activated';
     }, { timeout: 30000 });
 
-    if (!await page.evaluate(() => Boolean(navigator.serviceWorker.controller))) {
-      await page.reload({ waitUntil: 'domcontentloaded', timeout: 60000 });
-      await page.waitForFunction(() => navigator.serviceWorker?.controller?.scriptURL.endsWith('/cnc/sw.js'), { timeout: 30000 });
+    // ready只在当前作用域已有激活Worker时解析。先等它，再判断首个页面是否已经收到clients.claim。
+    await page.evaluate(async () => {
+      await navigator.serviceWorker.ready;
+    });
+
+    let handoffMode = 'claimed-current-client';
+    if (!await page.evaluate(() => navigator.serviceWorker?.controller?.scriptURL.endsWith('/cnc/sw.js'))) {
+      const claimed = await page.evaluate(() => new Promise(resolve => {
+        if (navigator.serviceWorker?.controller?.scriptURL.endsWith('/cnc/sw.js')) return resolve(true);
+        const timer = setTimeout(() => resolve(false), 10000);
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          clearTimeout(timer);
+          resolve(Boolean(navigator.serviceWorker?.controller?.scriptURL.endsWith('/cnc/sw.js')));
+        }, { once: true });
+      }));
+
+      if (!claimed) {
+        // 首次安装期间原页面可能错过controllerchange；激活完成后的新导航必须立即受控。
+        // 这不是绕过接管断言，而是按浏览器Service Worker生命周期验证真实二次进入路径。
+        const freshPage = await context.newPage();
+        collectErrors(freshPage);
+        await freshPage.goto('http://127.0.0.1:4173/cnc/?smoke=sw-handoff', {
+          waitUntil: 'domcontentloaded',
+          timeout: 60000
+        });
+        await freshPage.waitForFunction(
+          () => navigator.serviceWorker?.controller?.scriptURL.endsWith('/cnc/sw.js'),
+          { timeout: 30000 }
+        );
+        page = freshPage;
+        handoffMode = 'controlled-fresh-navigation';
+      }
     }
 
     const snapshot = await page.evaluate(async () => {
@@ -65,7 +97,8 @@ fs.mkdirSync(OUT, { recursive: true });
         controller: navigator.serviceWorker.controller?.scriptURL || '',
         workerBuild,
         pwaBuild: buildInfo.pwaBuild || '',
-        caches: await caches.keys()
+        caches: await caches.keys(),
+        url: location.href
       };
     });
 
@@ -89,7 +122,7 @@ fs.mkdirSync(OUT, { recursive: true });
     assert.equal(afterReload.controller, snapshot.expectedScript, '刷新后页面仍应由当前Worker接管');
     assert.equal(errors.length, 0, errors.join(' | '));
 
-    const result = { passed: true, snapshot, afterReload, errors };
+    const result = { passed: true, handoffMode, snapshot, afterReload, errors };
     fs.writeFileSync(path.join(OUT, 'service-worker-status.json'), JSON.stringify(result, null, 2));
     console.log('Service Worker注册、接管、缓存与构建一致性通过', result);
   } finally {
