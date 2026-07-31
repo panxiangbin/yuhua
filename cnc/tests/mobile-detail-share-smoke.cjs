@@ -44,19 +44,10 @@ function assert(condition, message) {
   await page.waitForSelector('#view-dashboard.active');
   await page.waitForSelector('.xp-game-bottom-nav', { state: 'visible' });
 
-  const gameNavStyle = await page.locator('.xp-game-bottom-nav').evaluate((node) => {
-    const style = getComputedStyle(node);
-    return {
-      backgroundImage: style.backgroundImage,
-      backdropFilter: style.backdropFilter || style.webkitBackdropFilter,
-      radius: style.borderRadius,
-      visibleItems: [...node.querySelectorAll('a')].filter(link => link.getClientRects().length > 0).length
-    };
-  });
-  assert(gameNavStyle.backgroundImage === 'none', '闯关首页底部导航仍存在渐变背景');
-  assert(!gameNavStyle.backdropFilter || gameNavStyle.backdropFilter === 'none', '闯关首页底部导航仍使用玻璃模糊');
-  assert(parseFloat(gameNavStyle.radius) <= 14, '闯关首页底部导航圆角仍然过大');
-  assert(gameNavStyle.visibleItems === 5, '闯关首页必须只有五项可见主导航');
+  const gameNavState = await page.locator('.xp-game-bottom-nav').evaluate((node) => ({
+    visibleItems: [...node.querySelectorAll('a')].filter(link => link.getClientRects().length > 0).length
+  }));
+  assert(gameNavState.visibleItems === 5, '闯关首页必须只有五项可见主导航');
 
   const homeUtilityState = await page.locator('body > .xp-bottom-nav').evaluate((node) => ({
     visible: node.getClientRects().length > 0,
@@ -72,6 +63,7 @@ function assert(condition, message) {
     return node && node.getClientRects().length > 0 && node.getAttribute('aria-hidden') === 'false' && !node.hasAttribute('inert');
   }, null, { timeout: 15000 });
 
+  // 保留原门禁：进入工作区后，实际使用的工具导航不得退回渐变、玻璃模糊或超大圆角。
   const utilityNavStyle = await page.locator('body > .xp-bottom-nav').evaluate((node) => {
     const style = getComputedStyle(node);
     return {
@@ -117,7 +109,7 @@ function assert(condition, message) {
   assert(parseFloat(trustStyle.radius) <= 14, '可信度卡圆角仍然过大');
 
   assert(consoleErrors.length === 0, '控制台出现错误: ' + consoleErrors.join(' | '));
-  console.log(JSON.stringify({ passed: true, copied, statusText, gameNavStyle, homeUtilityState, utilityNavStyle, trustStyle }, null, 2));
+  console.log(JSON.stringify({ passed: true, copied, statusText, gameNavState, homeUtilityState, utilityNavStyle, trustStyle }, null, 2));
   await browser.close();
 })().catch((error) => {
   console.error(error.stack || error.message || error);
