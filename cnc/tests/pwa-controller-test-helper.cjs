@@ -11,20 +11,23 @@ function withTimeout(promise, ms, label) {
 async function controllerSnapshot(page) {
   return page.evaluate(async () => {
     const expectedScope = new URL('/cnc/', location.origin).href;
-    const container = navigator.serviceWorker;
-    const registrations = container ? await container.getRegistrations() : [];
+    const pageContainer = navigator.serviceWorker;
+    const nativeContainer = window.__CNC_NATIVE_SERVICE_WORKER__ || pageContainer;
+    const registrations = nativeContainer ? await nativeContainer.getRegistrations() : [];
     const registration = registrations.find(item => item.scope === expectedScope);
-    const prototype = container ? Object.getPrototypeOf(container) : null;
-    const descriptor = container ? Object.getOwnPropertyDescriptor(container, 'register') : null;
+    const prototype = nativeContainer ? Object.getPrototypeOf(nativeContainer) : null;
+    const descriptor = pageContainer ? Object.getOwnPropertyDescriptor(pageContainer, 'register') : null;
     return {
       url: location.href,
       readyState: document.readyState,
-      controller: container?.controller?.scriptURL || '',
+      controller: pageContainer?.controller?.scriptURL || '',
       expectedScope,
+      preservedNativeContainer: Boolean(nativeContainer && nativeContainer !== pageContainer),
+      declaredPageBlock: window.__CNC_SW_REGISTRATION_BLOCKED__ === true,
       registerOwnProperty: Boolean(descriptor),
       registerWritable: descriptor?.writable ?? null,
       registerConfigurable: descriptor?.configurable ?? null,
-      registerSource: container ? String(container.register).slice(0, 240) : '',
+      registerSource: pageContainer ? String(pageContainer.register).slice(0, 240) : '',
       nativeRegisterSource: prototype?.register ? String(prototype.register).slice(0, 240) : '',
       scripts: Array.from(document.scripts).map(script => script.src || '[inline]').filter(Boolean),
       registrations: registrations.map(item => ({
@@ -69,27 +72,34 @@ async function waitForController(page, expectedScript, timeoutMs) {
 async function registerExpectedWorker(page, expectedScope, expectedScript) {
   return withTimeout(page.evaluate(async ({ scopeUrl, scriptUrl }) => {
     if (!('serviceWorker' in navigator)) throw new Error('Service Worker unsupported');
-    const container = navigator.serviceWorker;
+    const pageContainer = navigator.serviceWorker;
+    const container = window.__CNC_NATIVE_SERVICE_WORKER__ || pageContainer;
     const prototype = Object.getPrototypeOf(container);
-    const descriptor = Object.getOwnPropertyDescriptor(container, 'register');
+    const descriptor = Object.getOwnPropertyDescriptor(pageContainer, 'register');
     const ownRegister = Boolean(descriptor);
-    const pageRegisterSource = String(container.register).slice(0, 240);
+    const pageRegisterSource = String(pageContainer.register).slice(0, 240);
     const nativeRegister = prototype?.register;
     const scripts = Array.from(document.scripts).map(script => script.src || '[inline]').filter(Boolean);
+    const declaredPageBlock = window.__CNC_SW_REGISTRATION_BLOCKED__ === true;
+    const nativeContainerPreserved = window.__CNC_NATIVE_SERVICE_WORKER__ === container;
 
-    if (ownRegister && typeof nativeRegister === 'function' && container.register !== nativeRegister) {
+    if (typeof nativeRegister !== 'function') {
+      throw new Error(`Native Service Worker register API unavailable; pageRegister=${pageRegisterSource}; scripts=${JSON.stringify(scripts)}`);
+    }
+
+    if (ownRegister && pageContainer.register !== nativeRegister) {
       const isLockedNativeProxy =
         descriptor?.writable === false &&
         descriptor?.configurable === false &&
         /nativeRegister\.call\(container,\s*scriptURL,\s*options\)/.test(pageRegisterSource);
+      const isDeclaredPageIsolation = declaredPageBlock && nativeContainerPreserved;
 
-      if (!isLockedNativeProxy) {
-        throw new Error(`Service Worker register API overridden by page code; register=${pageRegisterSource}; scripts=${JSON.stringify(scripts)}`);
+      if (!isLockedNativeProxy && !isDeclaredPageIsolation) {
+        throw new Error(`Service Worker register API overridden without preserved native container; register=${pageRegisterSource}; scripts=${JSON.stringify(scripts)}`);
       }
     }
 
-    const register = typeof nativeRegister === 'function' ? nativeRegister : container.register;
-    const registration = await register.call(container, '/cnc/sw.js', {
+    const registration = await nativeRegister.call(container, '/cnc/sw.js', {
       scope: '/cnc/',
       updateViaCache: 'none'
     });
@@ -110,6 +120,8 @@ async function registerExpectedWorker(page, expectedScope, expectedScript) {
       waitingScript,
       activeScript,
       ownRegister,
+      declaredPageBlock,
+      nativeContainerPreserved,
       lockedNativeProxy: ownRegister && descriptor?.writable === false && descriptor?.configurable === false,
       scripts
     };
