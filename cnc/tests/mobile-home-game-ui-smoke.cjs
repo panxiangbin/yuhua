@@ -36,6 +36,10 @@ fs.mkdirSync(OUT, { recursive: true });
 
     await page.goto(`${BASE}/cnc/index.html`, { waitUntil: 'domcontentloaded', timeout: 60000 });
     await page.locator('#xp-game-home[data-ready="true"]').waitFor({ state: 'visible', timeout: 60000 });
+    await page.waitForFunction(() => (
+      window.CNC_GAME_QUERY_NAV?.build === '20260731a'
+      && window.CNC_GAME_QUERY_NAV.runCheck().passed
+    ), null, { timeout: 30000 });
 
     assert.match(await page.locator('.xp-game-hero h1').textContent(), /从零基础.*闯.*独立编程/s);
     assert.match(await page.locator('.xp-game-level-copy > strong').textContent(), /学徒 Lv\.2/);
@@ -45,8 +49,31 @@ fs.mkdirSync(OUT, { recursive: true });
     assert.match(await page.locator('.xp-game-secondary').getAttribute('href'), /beginner-placement\.html/);
     assert.match(await page.locator('.xp-game-shortcuts a').nth(2).textContent(), /3 道错题/);
     assert.match(await page.locator('.xp-game-shortcuts a').nth(3).textContent(), /4 \/ 13/);
-    assert.strictEqual(await page.locator('.xp-game-bottom-nav a').count(), 5);
+
+    const gameNav = page.locator('.xp-game-bottom-nav a');
+    assert.strictEqual(await gameNav.count(), 5);
+    assert.deepStrictEqual(await gameNav.locator('b').allTextContents(), ['首页', '闯关', '挑战', '模拟', '我的']);
     assert.strictEqual(await page.locator('.launchpad-grid').evaluate(node => getComputedStyle(node).display), 'none');
+
+    const queryButtons = page.locator('#xp-game-home .xp-game-query-button');
+    assert.strictEqual(await queryButtons.count(), 4);
+    assert.deepStrictEqual(await queryButtons.locator('strong').allTextContents(), ['G/M代码', '报警排查', '参数速查', '故障问诊']);
+    assert.deepStrictEqual(await queryButtons.evaluateAll(nodes => nodes.map(node => node.dataset.xpQueryFilter)), ['gcode', 'alarm', 'parameter', 'fault']);
+
+    const utilityState = await page.locator('.xp-bottom-nav').evaluate(node => ({
+      visible: node.getClientRects().length > 0,
+      ariaHidden: node.getAttribute('aria-hidden')
+    }));
+    assert.deepStrictEqual(utilityState, { visible: false, ariaHidden: 'true' });
+
+    const queryApi = await page.evaluate(() => window.CNC_GAME_QUERY_NAV.runCheck());
+    assert.deepStrictEqual(queryApi, {
+      passed: true,
+      build: '20260731a',
+      buttons: 4,
+      dashboardActive: true,
+      utilityHidden: true
+    });
 
     const smallTargets = await page.locator('#xp-game-home a:visible,#xp-game-home button:visible').evaluateAll(nodes => nodes.map(node => {
       const rect = node.getBoundingClientRect();
@@ -60,10 +87,11 @@ fs.mkdirSync(OUT, { recursive: true });
     await desktop.setViewportSize({ width: 1280, height: 900 });
     await desktop.goto(`${BASE}/cnc/index.html`, { waitUntil: 'domcontentloaded', timeout: 60000 });
     await desktop.locator('#xp-game-home[data-ready="true"]').waitFor({ state: 'attached', timeout: 60000 });
+    await desktop.waitForFunction(() => window.CNC_GAME_QUERY_NAV?.runCheck().passed, null, { timeout: 30000 });
     assert.strictEqual(await desktop.locator('#xp-game-home').evaluate(node => getComputedStyle(node).display), 'none');
     assert.notStrictEqual(await desktop.locator('.launchpad-grid').evaluate(node => getComputedStyle(node).display), 'none');
 
-    console.log('CNC mobile game home UI smoke passed');
+    console.log('CNC手机闯关首页、主导航与现场速查入口通过', queryApi);
   } finally {
     await browser.close();
   }
