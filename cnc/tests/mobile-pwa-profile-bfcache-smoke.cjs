@@ -24,6 +24,17 @@ const types = {
 const server = http.createServer((req, res) => {
   let requestPath = decodeURIComponent(req.url.split('?')[0]);
   if (requestPath === '/' || requestPath === '/cnc/') requestPath = '/cnc/index.html';
+
+  // Chromium may implicitly request an origin-level favicon even though this
+  // smoke test owns only the pages and assets under /cnc/. Neutralize that one
+  // browser-generated request; every explicit /cnc/ resource remains subject to
+  // the normal strict 404 behavior below.
+  if (requestPath === '/favicon.ico') {
+    res.writeHead(204, { 'Cache-Control': 'no-store' });
+    res.end();
+    return;
+  }
+
   const file = path.normalize(path.join(root, requestPath));
   if (!file.startsWith(root) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) {
     res.writeHead(404);
