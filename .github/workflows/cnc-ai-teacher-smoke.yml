@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'cnc/ai-teacher.html'
+      - 'cnc/ai-teacher-intake.html'
       - 'cnc/profile.html'
       - 'cnc/build-info.json'
       - 'cnc/tests/mobile-ai-teacher-smoke.cjs'
@@ -25,13 +26,31 @@ jobs:
       - name: Validate local-only safety contract
         run: |
           set -euxo pipefail
-          grep -q "20260801-ai-teacher1" cnc/ai-teacher.html
+          grep -q "20260801-ai-handoff1" cnc/ai-teacher.html
           grep -q "localOnly: true" cnc/ai-teacher.html
           grep -q "externalModel: false" cnc/ai-teacher.html
           grep -q "不调用外部模型" cnc/ai-teacher.html
           grep -q "不会给出脱离具体机床" cnc/ai-teacher.html
           grep -q "核对机床原厂手册" cnc/ai-teacher.html
+          grep -q "ai-teacher-intake.html" cnc/ai-teacher.html
+          grep -q "先生成现场问诊单" cnc/ai-teacher.html
+          test -f cnc/ai-teacher-intake.html
           ! grep -Eqi "https?://|fetch\(|XMLHttpRequest|WebSocket|EventSource" cnc/ai-teacher.html
+      - name: Validate site and AI teacher build consistency
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const page = fs.readFileSync('cnc/ai-teacher.html', 'utf8');
+          const pageBuild = page.match(/const BUILD = '([^']+)'/)?.[1];
+          const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
+          if (!pageBuild) throw new Error('AI teacher build marker missing');
+          if (info.build !== pageBuild) {
+            throw new Error(`site/AI teacher build mismatch: ${info.build || 'missing'} / ${pageBuild}`);
+          }
+          if (!String(info.contentStage || '').includes('AI老师问诊闭环')) {
+            throw new Error('site build marker lost AI teacher intake handoff capability');
+          }
+          NODE
       - name: Check JavaScript syntax
         run: |
           node --check cnc/tests/mobile-ai-teacher-smoke.cjs

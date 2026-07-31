@@ -181,3 +181,37 @@
   // 初始化时打印一条日志
   console.log('[CNC_ENV] 环境检测模块已加载。模式: ' + getMode() + ', 协议: ' + detectProtocol() + ', fetch: ' + supportsFetch());
 })();
+
+/*
+ * PWA 可靠启动：在首页其余增强脚本运行前，直接使用浏览器原生注册方法。
+ * 这样即使后续兼容层检查或包装 Service Worker API，也不会错过首次注册窗口。
+ */
+(function bootstrapCncPwa() {
+  'use strict';
+  if (!('serviceWorker' in navigator) || window.location.protocol === 'file:') return;
+
+  var container = navigator.serviceWorker;
+  var prototype = Object.getPrototypeOf(container);
+  var nativeRegister = prototype && prototype.register;
+  if (typeof nativeRegister !== 'function') return;
+
+  window.__CNC_NATIVE_SERVICE_WORKER__ = container;
+  window.__CNC_PWA_BOOTSTRAP__ = {
+    build: '20260728-pwa3',
+    state: 'registering',
+    scope: new URL('./', window.location.href).href,
+    script: new URL('./sw.js', window.location.href).href
+  };
+
+  nativeRegister.call(container, './sw.js', {
+    scope: './',
+    updateViaCache: 'none'
+  }).then(function (registration) {
+    window.__CNC_PWA_BOOTSTRAP__.state = 'registered';
+    window.__CNC_PWA_BOOTSTRAP__.scope = registration.scope;
+  }).catch(function (error) {
+    window.__CNC_PWA_BOOTSTRAP__.state = 'error';
+    window.__CNC_PWA_BOOTSTRAP__.error = String(error && error.message ? error.message : error);
+    console.error('[CNC PWA] Service Worker 注册失败：' + window.__CNC_PWA_BOOTSTRAP__.error);
+  });
+})();
