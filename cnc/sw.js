@@ -1,12 +1,13 @@
 /* CNC PWA：版本化缓存、离线回退与安全更新。 */
-const BUILD = '20260730-pwa5';
+const BUILD = '20260731-pwa6';
 const STATIC_CACHE = `cnc-static-${BUILD}`;
 const RUNTIME_CACHE = `cnc-runtime-${BUILD}`;
 const INSTALL_DIAGNOSTIC_PATH = './pwa-install-diagnostics.json';
+const OFFLINE_FALLBACK_PATH = './offline.html';
 
 const REQUIRED_CORE_PATHS = [
   './index.html',
-  './offline.html',
+  OFFLINE_FALLBACK_PATH,
   './pwa-status.html',
   './pwa-self-test.html',
   './pages-status.html',
@@ -39,6 +40,26 @@ async function writeInstallDiagnostic(payload) {
     }));
   } catch (error) {
     console.warn('[CNC PWA] install diagnostic unavailable', error);
+  }
+}
+
+async function cacheOfflineFallbackBestEffort() {
+  const url = scopeUrl(OFFLINE_FALLBACK_PATH);
+  try {
+    const staticCache = await caches.open(STATIC_CACHE);
+    const existing = await staticCache.match(url);
+    if (existing) return { cached: true, source: 'existing' };
+
+    const response = await fetchWithTimeout(url, 5000);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    await staticCache.put(url, response.clone());
+    return { cached: true, source: 'network' };
+  } catch (error) {
+    console.warn('[CNC PWA] offline fallback cache unavailable', error);
+    return {
+      cached: false,
+      error: String(error && error.message ? error.message : error)
+    };
   }
 }
 
@@ -93,10 +114,15 @@ function startBackgroundMaintenance() {
 }
 
 self.addEventListener('install', (event) => {
+  // The fallback page must be attempted before activation completes. The helper
+  // always resolves, so a temporary network or Cache API failure cannot block
+  // Service Worker installation, while successful installs have an immediate
+  // offline navigation response instead of a plain 503 race window.
   event.waitUntil(
-    self.skipWaiting().catch((error) => {
-      console.warn('[CNC PWA] skipWaiting unavailable', error);
-    })
+    Promise.allSettled([
+      cacheOfflineFallbackBestEffort(),
+      self.skipWaiting()
+    ])
   );
 });
 
@@ -147,7 +173,7 @@ self.addEventListener('fetch', (event) => {
         return fresh;
       } catch {
         const cached = await caches.match(request).catch(() => null);
-        const fallback = await caches.match(scopeUrl('./offline.html')).catch(() => null);
+        const fallback = await caches.match(scopeUrl(OFFLINE_FALLBACK_PATH)).catch(() => null);
         return cached || fallback || new Response('Offline', {
           status: 503,
           headers: { 'Content-Type': 'text/plain; charset=utf-8' }
