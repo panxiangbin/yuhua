@@ -11,13 +11,25 @@ function withTimeout(promise, ms, label) {
 async function controllerSnapshot(page) {
   return page.evaluate(async () => {
     const expectedScope = new URL('/cnc/', location.origin).href;
-    const registrations = navigator.serviceWorker ? await navigator.serviceWorker.getRegistrations() : [];
+    const pageContainer = navigator.serviceWorker;
+    const nativeContainer = window.__CNC_NATIVE_SERVICE_WORKER__ || pageContainer;
+    const registrations = nativeContainer ? await nativeContainer.getRegistrations() : [];
     const registration = registrations.find(item => item.scope === expectedScope);
+    const prototype = nativeContainer ? Object.getPrototypeOf(nativeContainer) : null;
+    const descriptor = pageContainer ? Object.getOwnPropertyDescriptor(pageContainer, 'register') : null;
     return {
       url: location.href,
       readyState: document.readyState,
-      controller: navigator.serviceWorker?.controller?.scriptURL || '',
+      controller: pageContainer?.controller?.scriptURL || '',
       expectedScope,
+      preservedNativeContainer: Boolean(nativeContainer && nativeContainer !== pageContainer),
+      declaredPageBlock: window.__CNC_SW_REGISTRATION_BLOCKED__ === true,
+      registerOwnProperty: Boolean(descriptor),
+      registerWritable: descriptor?.writable ?? null,
+      registerConfigurable: descriptor?.configurable ?? null,
+      registerSource: pageContainer ? String(pageContainer.register).slice(0, 240) : '',
+      nativeRegisterSource: prototype?.register ? String(prototype.register).slice(0, 240) : '',
+      scripts: Array.from(document.scripts).map(script => script.src || '[inline]').filter(Boolean),
       registrations: registrations.map(item => ({
         scope: item.scope,
         active: item.active?.state || '',
@@ -60,7 +72,34 @@ async function waitForController(page, expectedScript, timeoutMs) {
 async function registerExpectedWorker(page, expectedScope, expectedScript) {
   return withTimeout(page.evaluate(async ({ scopeUrl, scriptUrl }) => {
     if (!('serviceWorker' in navigator)) throw new Error('Service Worker unsupported');
-    const registration = await navigator.serviceWorker.register('/cnc/sw.js', {
+    const pageContainer = navigator.serviceWorker;
+    const container = window.__CNC_NATIVE_SERVICE_WORKER__ || pageContainer;
+    const prototype = Object.getPrototypeOf(container);
+    const descriptor = Object.getOwnPropertyDescriptor(pageContainer, 'register');
+    const ownRegister = Boolean(descriptor);
+    const pageRegisterSource = String(pageContainer.register).slice(0, 240);
+    const nativeRegister = prototype?.register;
+    const scripts = Array.from(document.scripts).map(script => script.src || '[inline]').filter(Boolean);
+    const declaredPageBlock = window.__CNC_SW_REGISTRATION_BLOCKED__ === true;
+    const nativeContainerPreserved = window.__CNC_NATIVE_SERVICE_WORKER__ === container;
+
+    if (typeof nativeRegister !== 'function') {
+      throw new Error(`Native Service Worker register API unavailable; pageRegister=${pageRegisterSource}; scripts=${JSON.stringify(scripts)}`);
+    }
+
+    if (ownRegister && pageContainer.register !== nativeRegister) {
+      const isLockedNativeProxy =
+        descriptor?.writable === false &&
+        descriptor?.configurable === false &&
+        /nativeRegister\.call\(container,\s*scriptURL,\s*options\)/.test(pageRegisterSource);
+      const isDeclaredPageIsolation = declaredPageBlock && nativeContainerPreserved;
+
+      if (!isLockedNativeProxy && !isDeclaredPageIsolation) {
+        throw new Error(`Service Worker register API overridden without preserved native container; register=${pageRegisterSource}; scripts=${JSON.stringify(scripts)}`);
+      }
+    }
+
+    const registration = await nativeRegister.call(container, '/cnc/sw.js', {
       scope: '/cnc/',
       updateViaCache: 'none'
     });
@@ -75,7 +114,17 @@ async function registerExpectedWorker(page, expectedScope, expectedScript) {
         throw new Error(`Service Worker script mismatch: expected ${scriptUrl}, got ${actual}`);
       }
     }
-    return { scope: registration.scope, installingScript, waitingScript, activeScript };
+    return {
+      scope: registration.scope,
+      installingScript,
+      waitingScript,
+      activeScript,
+      ownRegister,
+      declaredPageBlock,
+      nativeContainerPreserved,
+      lockedNativeProxy: ownRegister && descriptor?.writable === false && descriptor?.configurable === false,
+      scripts
+    };
   }, { scopeUrl: expectedScope, scriptUrl: expectedScript }), 15000, 'Service Worker registration');
 }
 
@@ -87,30 +136,20 @@ async function openControlledNavigation(page, controlledUrl, expectedScript) {
 
     let navigationError = '';
     try {
-      // A Service Worker may commit and control the new document even when a
-      // subresource keeps DOMContentLoaded pending. Treat the document commit as
-      // the navigation boundary, then observe DOM readiness separately.
       await page.goto(url.href, { waitUntil: 'commit', timeout: 15000 });
       await page.waitForLoadState('domcontentloaded', { timeout: 5000 }).catch(() => {});
     } catch (error) {
       navigationError = String(error && error.message ? error.message : error);
-      // If a new document committed before Playwright reported the timeout, it can
-      // still carry the expected controller. Inspect it before deciding to retry.
     }
 
     if (await waitForController(page, expectedScript, 10000)) return page;
-    diagnostics.push({
-      attempt,
-      navigationError,
-      snapshot: await controllerSnapshot(page)
-    });
+    diagnostics.push({ attempt, navigationError, snapshot: await controllerSnapshot(page) });
   }
   throw new Error(`Navigations were not controlled by ${expectedScript}: ${JSON.stringify(diagnostics)}`);
 }
 
 async function ensureControlled(page, errors, observePage, options = {}) {
   const { controlledUrl = page.url() } = options;
-  const directoryEntry = new URL('/cnc/', page.url()).href;
   const expectedScope = new URL('/cnc/', page.url()).href;
   const expectedScript = new URL('/cnc/sw.js', page.url()).href;
 
@@ -118,15 +157,6 @@ async function ensureControlled(page, errors, observePage, options = {}) {
     throw new Error(`Controlled URL outside Service Worker scope: ${controlledUrl}`);
   }
 
-  if (page.url() !== directoryEntry) {
-    await page.goto(directoryEntry, { waitUntil: 'domcontentloaded', timeout: 30000 });
-  }
-
-  // Registration resolving only proves the browser accepted the request. The
-  // user-visible PWA contract is stricter: a subsequent same-scope navigation
-  // must be controlled by the exact expected script. Avoid treating transient
-  // Registration.active/installing snapshots as a hard gate because Chromium
-  // may expose an empty snapshot while installation proceeds in the browser.
   await registerExpectedWorker(page, expectedScope, expectedScript);
 
   if (await waitForController(page, expectedScript, 10000)) return page;

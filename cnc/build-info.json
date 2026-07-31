@@ -1,10 +1,10 @@
 {
   "app": "cnc-training-platform",
   "name": "数控小潘 CNC随身助手",
-  "build": "20260727-pages1",
-  "pwaBuild": "20260726-pwa2",
-  "contentStage": "课程12关 · 专项75题 · 模拟13项 · 数据可靠性与PWA阶段",
-  "generatedAt": "2026-07-27T02:00:00+08:00",
+  "build": "20260728-mobile-game1",
+  "pwaBuild": "20260728-pwa3",
+  "contentStage": "课程12关 · 专项75题 · 模拟13项 · 起点测评 · 手机闯关首页 · PWA可靠性",
+  "generatedAt": "2026-07-28T14:18:00+08:00",
   "source": "GitHub Pages static build marker",
   "scope": "/cnc/"
 }

@@ -66,11 +66,16 @@
     var delays = [0, 50, 140, 320, 700, 1200, 1800, 3000, 5000, 8000, 12000];
 
     function isRouteTarget(target) {
-      return target && target.closest && target.closest('[data-route],[data-filter],[data-xp-route],[data-xp-filter],[data-xp-continue]');
+      return target && target.closest && target.closest(
+        '[data-route],[data-filter],[data-xp-route],[data-xp-filter],[data-xp-continue],#dashboard-recent-list .recent-card[data-entry-id]'
+      );
     }
 
     function rememberUserRoute(event) {
-      if (event && event.isTrusted && isRouteTarget(event.target)) userRouteRequested = true;
+      if (!event || !event.isTrusted || !isRouteTarget(event.target)) return false;
+      if (event.type === 'keydown' && event.key !== 'Enter' && event.key !== ' ') return false;
+      userRouteRequested = true;
+      return true;
     }
 
     function activateDashboardFallback() {
@@ -112,6 +117,7 @@
 
     document.addEventListener('pointerdown', rememberUserRoute, true);
     document.addEventListener('click', rememberUserRoute, true);
+    document.addEventListener('keydown', rememberUserRoute, true);
     window.addEventListener('pageshow', function (event) {
       if (event.persisted) {
         userRouteRequested = false;
@@ -129,6 +135,7 @@
       build: STARTUP_HOME_BUILD,
       canonicalRoot: canonicalRoot,
       forceHome: forceHome,
+      acceptTrustedRouteEvent: rememberUserRoute,
       runCheck: function () {
         var active = document.querySelector('.view.active');
         return {
@@ -145,33 +152,72 @@
 
   function disableServiceWorkerRegistration() {
     if (!('serviceWorker' in navigator)) return;
-    try {
-      navigator.serviceWorker.getRegistrations().then(function (registrations) {
-        registrations.forEach(function (registration) {
-          if (/\/yuhua\/cnc\/|\/cnc\//.test(registration.scope)) registration.unregister();
+    window.__CNC_DISABLE_SERVICE_WORKER__ = true;
+
+    var nativeContainer = navigator.serviceWorker;
+    window.__CNC_NATIVE_SERVICE_WORKER__ = nativeContainer;
+
+    function fakeRegistration() {
+      return Promise.resolve({
+        scope: location.href,
+        unregister: function () { return Promise.resolve(true); }
+      });
+    }
+
+    function installContainerFacade() {
+      try {
+        var facade = {};
+        ['getRegistration', 'getRegistrations', 'startMessages', 'addEventListener', 'removeEventListener', 'dispatchEvent'].forEach(function (name) {
+          if (typeof nativeContainer[name] === 'function') facade[name] = nativeContainer[name].bind(nativeContainer);
         });
+        Object.defineProperties(facade, {
+          register: {
+            configurable: false,
+            enumerable: true,
+            writable: false,
+            value: fakeRegistration
+          },
+          controller: {
+            configurable: false,
+            enumerable: true,
+            get: function () { return nativeContainer.controller; }
+          },
+          ready: {
+            configurable: false,
+            enumerable: true,
+            get: function () { return nativeContainer.ready; }
+          },
+          oncontrollerchange: {
+            configurable: false,
+            enumerable: true,
+            get: function () { return nativeContainer.oncontrollerchange; },
+            set: function (handler) { nativeContainer.oncontrollerchange = handler; }
+          }
+        });
+        Object.defineProperty(navigator, 'serviceWorker', {
+          configurable: true,
+          value: facade
+        });
+        return navigator.serviceWorker === facade && navigator.serviceWorker.register === fakeRegistration;
+      } catch (error) {
+        return false;
+      }
+    }
+
+    try {
+      nativeContainer.getRegistrations().then(function (registrations) {
+        return Promise.all(registrations.map(function (registration) {
+          if (/\/yuhua\/cnc\/|\/cnc\//.test(registration.scope)) return registration.unregister();
+          return false;
+        }));
       }).catch(function () {});
     } catch (error) {}
-    try {
-      Object.defineProperty(navigator.serviceWorker, 'register', {
-        configurable: true,
-        value: function () {
-          return Promise.resolve({
-            scope: location.href,
-            unregister: function () { return Promise.resolve(true); }
-          });
-        }
-      });
-    } catch (error) {
-      try {
-        navigator.serviceWorker.register = function () {
-          return Promise.resolve({
-            scope: location.href,
-            unregister: function () { return Promise.resolve(true); }
-          });
-        };
-      } catch (ignored) {}
-    }
+
+    // 当前首页只获得独立门面：注册入口被拦截，controller、ready 和事件仍转发给
+    // 原生容器。这样既不会触发 Proxy 对不可配置 register 的不变量错误，也不会
+    // 修改浏览器原型；PWA 自检与离线门禁仍可通过保存的原生容器执行真实注册。
+    var blocked = installContainerFacade();
+    window.__CNC_SW_REGISTRATION_BLOCKED__ = blocked;
   }
 
   function setMeta(name, value, property) {
@@ -428,6 +474,7 @@
         personalHome: Boolean(personal.passed),
         personalHomeFollowsTools: Boolean(personal.followsTools),
         gcodeLoaded: window.__CNC_GM_PRO_INSTALLED__ === PRO_BUILD,
+        serviceWorkerRegistrationBlocked: window.__CNC_SW_REGISTRATION_BLOCKED__ === true,
         serviceWorkerControlled: Boolean(navigator.serviceWorker && navigator.serviceWorker.controller),
         lesson9Corrected: Boolean(lesson9 && lesson9.textContent.indexOf('不保证直线') !== -1),
         lesson10Corrected: Boolean(lesson10 && lesson10.textContent.indexOf('最小输入单位') !== -1)
@@ -448,6 +495,7 @@
         && result.trustNav
         && result.personalHome
         && result.personalHomeFollowsTools
+        && result.serviceWorkerRegistrationBlocked
         && !result.serviceWorkerControlled
         && result.lesson9Corrected
         && result.lesson10Corrected;

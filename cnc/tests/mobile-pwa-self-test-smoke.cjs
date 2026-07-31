@@ -13,6 +13,7 @@ fs.mkdirSync(out, { recursive: true });
 const RUN_TIMEOUT_MS = 8 * 60 * 1000;
 const CLEANUP_TIMEOUT_MS = 10000;
 const errorPath = path.join(out, 'pwa-self-test-error.txt');
+const diagnosticsPath = path.join(out, 'pwa-self-test-diagnostics.json');
 
 const server = spawn('python3', ['-m', 'http.server', '4173', '--bind', '127.0.0.1'], {
   cwd: root,
@@ -52,8 +53,31 @@ function waitForExit(child, timeoutMs) {
   ]);
 }
 
+async function collectDiagnostics(page, errors, stage) {
+  if (!page) return { stage, errors };
+  return page.evaluate(async () => {
+    const registration = 'serviceWorker' in navigator ? await navigator.serviceWorker.getRegistration('./').catch(() => null) : null;
+    return {
+      url: location.href,
+      passed: document.querySelector('#passed')?.textContent || '',
+      failed: document.querySelector('#failed')?.textContent || '',
+      status: document.querySelector('#status')?.textContent || '',
+      rows: [...document.querySelectorAll('.item')].map(item => item.innerText.trim()),
+      caches: await caches.keys().catch(() => []),
+      controller: navigator.serviceWorker?.controller?.scriptURL || '',
+      registration: registration ? {
+        scope: registration.scope,
+        active: registration.active?.state || '',
+        waiting: registration.waiting?.state || '',
+        installing: registration.installing?.state || ''
+      } : null
+    };
+  }).then(state => ({ stage, errors, ...state })).catch(error => ({ stage, errors, diagnosticError: String(error) }));
+}
+
 (async () => {
   let context;
+  let page;
   let userDataDir;
   const errors = [];
   let stage = 'server';
@@ -76,7 +100,7 @@ function waitForExit(child, timeoutMs) {
       viewport: { width: 390, height: 844 },
       serviceWorkers: 'allow'
     });
-    let page = context.pages()[0] || await context.newPage();
+    page = context.pages()[0] || await context.newPage();
     observePage(page, errors);
 
     stage = 'controller';
@@ -105,7 +129,10 @@ function waitForExit(child, timeoutMs) {
     fs.writeFileSync(path.join(out, 'pwa-self-test-result.json'), JSON.stringify(result, null, 2));
     console.log(JSON.stringify(result));
   } catch (error) {
-    fs.writeFileSync(errorPath, `stage=${stage}\n${error.stack || error}\nconsole=${errors.join(' | ')}`);
+    const diagnostics = await collectDiagnostics(page, errors, stage);
+    fs.writeFileSync(diagnosticsPath, JSON.stringify(diagnostics, null, 2));
+    if (page) await page.screenshot({ path: path.join(out, 'pwa-self-test-failure-390x844.png'), fullPage: true }).catch(() => {});
+    fs.writeFileSync(errorPath, `stage=${stage}\n${error.stack || error}\nconsole=${errors.join(' | ')}\ndiagnostics=${JSON.stringify(diagnostics)}`);
     throw error;
   } finally {
     if (context) {

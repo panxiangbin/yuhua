@@ -88,9 +88,29 @@
     border-radius: 10px;
   }
 
+  /* 手机端图标按钮必须满足最小触控面积。 */
   .icon-button {
-    width: 38px;
-    height: 38px;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* 详情返回按钮不是 icon-button，单独锁定44px触控高度，避免主题层按文字高度收缩到38px。 */
+  #detail-panel #detail-back-btn {
+    height: 44px !important;
+    min-height: 44px !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* 手机主导航与工具导航使用实色工业界面，不使用玻璃模糊，避免文字边缘发虚。 */
+  .xp-game-bottom-nav,
+  body > .xp-bottom-nav {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
   }
 
   /* 顶部栏优化 */

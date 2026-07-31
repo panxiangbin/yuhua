@@ -15,11 +15,32 @@ const assert = require('assert');
 
   await page.goto('http://127.0.0.1:4173/cnc/?detail-style=20260722d', { waitUntil: 'networkidle' });
   await page.waitForSelector('#view-dashboard.active');
-  await page.waitForSelector('.xp-bottom-nav');
+
+  const homeUtilityState = await page.locator('body > .xp-bottom-nav').evaluate(node => ({
+    visible: node.getClientRects().length > 0,
+    ariaHidden: node.getAttribute('aria-hidden'),
+    inert: node.hasAttribute('inert')
+  }));
+  assert.deepStrictEqual(homeUtilityState, { visible: false, ariaHidden: 'true', inert: true }, '手机首页工具导航隐藏语义异常');
+
+  async function ensureWorkspaceAndUtilityNav() {
+    if (await page.locator('#view-dashboard.active').count()) {
+      const quickEntry = page.locator('#xp-game-home [data-xp-query-filter="gcode"]');
+      await quickEntry.waitFor({ state: 'visible', timeout: 15000 });
+      await quickEntry.click();
+    }
+    await page.waitForSelector('#view-workspace.active', { state: 'visible', timeout: 15000 });
+    await page.waitForFunction(() => {
+      const node = document.querySelector('body > .xp-bottom-nav');
+      return node && node.getClientRects().length > 0 && node.getAttribute('aria-hidden') === 'false' && !node.hasAttribute('inert');
+    }, null, { timeout: 15000 });
+  }
 
   async function enterFilter(filter) {
-    const bottomButton = page.locator(`.xp-bottom-nav [data-xp-filter="${filter}"]`);
+    await ensureWorkspaceAndUtilityNav();
+    const bottomButton = page.locator(`body > .xp-bottom-nav [data-xp-filter="${filter}"]`);
     if (await bottomButton.count()) {
+      await bottomButton.waitFor({ state: 'visible', timeout: 10000 });
       await bottomButton.click();
       return;
     }
@@ -79,12 +100,12 @@ const assert = require('assert');
   }
 
   await openAndCheck('alarm', 'alarm');
-  await page.locator('.xp-bottom-nav [data-xp-route="dashboard"]').click();
+  await page.locator('body > .xp-bottom-nav [data-xp-route="dashboard"]').click();
   await page.waitForSelector('#view-dashboard.active');
   await openAndCheck('parameter', 'parameter');
 
   assert.deepStrictEqual(errors, [], `console errors: ${errors.join(' | ')}`);
-  console.log('PASS mobile industrial detail pages', JSON.stringify({ errors: errors.length }));
+  console.log('PASS mobile industrial detail pages', JSON.stringify({ homeUtilityState, errors: errors.length }));
   await browser.close();
 })().catch(err => {
   console.error(err);

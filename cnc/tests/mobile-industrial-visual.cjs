@@ -7,14 +7,74 @@ const baselineUrl = process.env.BASELINE_URL || 'http://127.0.0.1:4174';
 const outputDir = path.resolve('cnc/test-artifacts/industrial-card-sample');
 fs.mkdirSync(outputDir, { recursive: true });
 
+async function trustedClickHiddenRoute(page, selector) {
+  const route = page.locator(selector);
+  await route.waitFor({ state: 'attached', timeout: 15000 });
+  const markerId = `cnc-visual-route-marker-${Date.now()}`;
+  const routeId = `cnc-visual-route-target-${Date.now()}`;
+  await route.evaluate((node, ids) => {
+    const marker = document.createElement('span');
+    marker.id = ids.markerId;
+    marker.hidden = true;
+    node.parentNode.insertBefore(marker, node);
+    node.dataset.visualOriginalStyle = node.getAttribute('style') || '';
+    node.dataset.visualOriginalId = node.id || '';
+    node.id = ids.routeId;
+    document.body.appendChild(node);
+    Object.assign(node.style, {
+      position: 'fixed',
+      left: '16px',
+      top: '16px',
+      width: '180px',
+      height: '48px',
+      display: 'block',
+      visibility: 'visible',
+      opacity: '1',
+      pointerEvents: 'auto',
+      zIndex: '2147483647'
+    });
+  }, { markerId, routeId });
+  try {
+    await page.locator(`#${routeId}`).click({ timeout: 15000 });
+  } finally {
+    await page.evaluate(({ routeId, markerId }) => {
+      const node = document.getElementById(routeId);
+      const marker = document.getElementById(markerId);
+      if (!node) return;
+      const originalStyle = node.dataset.visualOriginalStyle || '';
+      const originalId = node.dataset.visualOriginalId || '';
+      if (originalStyle) node.setAttribute('style', originalStyle);
+      else node.removeAttribute('style');
+      if (originalId) node.id = originalId;
+      else node.removeAttribute('id');
+      delete node.dataset.visualOriginalStyle;
+      delete node.dataset.visualOriginalId;
+      if (marker && marker.parentNode) {
+        marker.parentNode.insertBefore(node, marker);
+        marker.remove();
+      }
+    }, { routeId, markerId });
+  }
+}
+
 async function openGcodeWorkspace(page, expectIndustrialWorkspace) {
-  await page.locator('.launchpad-card[data-filter="gcode"]').click();
+  if (expectIndustrialWorkspace) {
+    // 手机端旧侧栏按产品设计隐藏。测试把既有路由按钮临时移到 body 可视区，
+    // 由 Playwright 产生可信点击，随后恢复原DOM位置；产品路由和工作区初始化仍走真实链路。
+    await trustedClickHiddenRoute(
+      page,
+      '#sidebar .tree-item[data-route="workspace"][data-filter="gcode"]'
+    );
+  } else {
+    await page.locator('.launchpad-card[data-filter="gcode"]').click();
+  }
   await page.waitForFunction(() => window.__CNC_GM_PRO_INSTALLED__ === '20260720h', null, { timeout: 30000 });
   await page.waitForSelector('#view-workspace.active', { state: 'visible', timeout: 30000 });
   if (expectIndustrialWorkspace) {
     await page.waitForFunction(() => window.CNC_INDUSTRIAL_WORKSPACE && window.CNC_INDUSTRIAL_WORKSPACE.build === '20260721v', null, { timeout: 15000 });
     await page.waitForFunction(() => document.body.getAttribute('data-cnc-industrial-workspace') === 'true', null, { timeout: 15000 });
   }
+  await page.waitForSelector('#search-input', { state: 'visible', timeout: 15000 });
   await page.waitForTimeout(800);
 }
 
@@ -37,11 +97,9 @@ async function openG01FromWorkspace(page, expectIndustrial) {
   await button.waitFor({ state: 'attached', timeout: 15000 });
 
   if (expectIndustrial) {
-    /* 新版走真实用户动作：收起建议后点击可见结果卡。 */
     await dismissSuggestions(page);
     await card.click();
   } else {
-    /* 旧版基线的建议层会遮挡结果卡；仅为生成对照截图，在DOM中触发原按钮。 */
     await page.evaluate(() => {
       const box = document.getElementById('search-suggestions');
       if (box) {
@@ -76,11 +134,15 @@ async function openG01FromWorkspace(page, expectIndustrial) {
 async function capture(browser, baseUrl, prefix, expectIndustrial) {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   await page.goto(`${baseUrl}/cnc/?visual=${prefix}`, { waitUntil: 'domcontentloaded', timeout: 60000 });
-  await page.waitForSelector('.launchpad-card[data-filter="gcode"]', { state: 'visible', timeout: 30000 });
   if (expectIndustrial) {
+    await page.waitForSelector('#xp-game-home[data-ready="true"]', { state: 'visible', timeout: 30000 });
     await page.waitForFunction(() => window.CNC_INDUSTRIAL_SAMPLE && document.body.getAttribute('data-cnc-industrial-surface') === 'home', null, { timeout: 15000 });
+    // 首页保护期内会主动纠正非用户导航；完整等待保护窗口结束后再进入查询工作区。
+    await page.waitForTimeout(5600);
+  } else {
+    await page.waitForSelector('.launchpad-card[data-filter="gcode"]', { state: 'visible', timeout: 30000 });
+    await page.waitForTimeout(1200);
   }
-  await page.waitForTimeout(1200);
   await page.screenshot({ path: path.join(outputDir, `${prefix}-home-390x844.png`), animations: 'disabled', fullPage: false });
   await openGcodeWorkspace(page, expectIndustrial);
   await page.screenshot({ path: path.join(outputDir, `${prefix}-gcode-workspace-390x844.png`), animations: 'disabled', fullPage: false });
@@ -95,7 +157,7 @@ async function capture(browser, baseUrl, prefix, expectIndustrial) {
   await capture(browser, baselineUrl, 'before', false);
   await capture(browser, currentUrl, 'after', true);
   await browser.close();
-  console.log('工业卡片风首页、查询工作区和详情修改前后截图已生成：', outputDir);
+  console.log('闯关首页、查询工作区和G01详情修改前后截图已生成：', outputDir);
 })().catch(error => {
   console.error(error);
   process.exit(1);

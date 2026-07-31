@@ -7,6 +7,7 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
+const PWA_BUILD = '20260728-pwa3';
 fs.mkdirSync(out, { recursive: true });
 
 const types = {
@@ -38,9 +39,48 @@ function observePage(page, errors) {
   page.on('pageerror', error => errors.push(error.message));
 }
 
+async function captureDiagnostics(page, context, stage, errors) {
+  const diagnostic = {
+    stage,
+    url: page ? page.url() : '',
+    title: '',
+    body: '',
+    controller: null,
+    registration: null,
+    caches: [],
+    offline: null,
+    consoleErrors: errors
+  };
+  try { diagnostic.title = await page.title(); } catch {}
+  try { diagnostic.body = (await page.locator('body').innerText()).slice(0, 4000); } catch {}
+  try {
+    diagnostic.controller = await page.evaluate(() => navigator.serviceWorker.controller ? {
+      scriptURL: navigator.serviceWorker.controller.scriptURL,
+      state: navigator.serviceWorker.controller.state
+    } : null);
+  } catch {}
+  try {
+    diagnostic.registration = await page.evaluate(async () => {
+      const reg = await navigator.serviceWorker.getRegistration('./');
+      if (!reg) return null;
+      return {
+        scope: reg.scope,
+        active: reg.active ? { scriptURL: reg.active.scriptURL, state: reg.active.state } : null,
+        waiting: reg.waiting ? { scriptURL: reg.waiting.scriptURL, state: reg.waiting.state } : null,
+        installing: reg.installing ? { scriptURL: reg.installing.scriptURL, state: reg.installing.state } : null
+      };
+    });
+  } catch {}
+  try { diagnostic.caches = await page.evaluate(() => caches.keys()); } catch {}
+  try { diagnostic.offline = await context.isOffline(); } catch {}
+  fs.writeFileSync(path.join(out, 'pwa-offline-diagnostic.json'), JSON.stringify(diagnostic, null, 2));
+  try { await page.screenshot({ path: path.join(out, 'pwa-offline-failure.png'), fullPage: true }); } catch {}
+}
+
 (async () => {
   let context;
   let userDataDir;
+  let page;
   const errors = [];
   let stage = 'server-start';
   try {
@@ -55,7 +95,7 @@ function observePage(page, errors) {
       viewport: { width: 390, height: 844 },
       serviceWorkers: 'allow'
     });
-    let page = context.pages()[0] || await context.newPage();
+    page = context.pages()[0] || await context.newPage();
     observePage(page, errors);
 
     stage = 'home';
@@ -66,13 +106,13 @@ function observePage(page, errors) {
     const registration = await page.evaluate(() => navigator.serviceWorker.getRegistration('./'));
     if (!registration) throw new Error('Service Worker未注册');
     const cachesBefore = await page.evaluate(() => caches.keys());
-    if (!cachesBefore.includes('cnc-static-20260726-pwa2')) throw new Error('静态缓存版本缺失');
-    if (!cachesBefore.includes('cnc-runtime-20260726-pwa2')) throw new Error('运行时缓存版本缺失');
+    if (!cachesBefore.includes(`cnc-static-${PWA_BUILD}`)) throw new Error(`静态缓存版本缺失: ${JSON.stringify(cachesBefore)}`);
+    if (!cachesBefore.includes(`cnc-runtime-${PWA_BUILD}`)) throw new Error(`运行时缓存版本缺失: ${JSON.stringify(cachesBefore)}`);
 
     stage = 'status-page';
     await page.goto('http://127.0.0.1:4173/cnc/pwa-status.html', { waitUntil: 'domcontentloaded' });
     await page.waitForFunction(() => document.querySelector('#worker')?.textContent.includes('已启用'));
-    await page.waitForFunction(() => document.querySelector('#build')?.textContent.includes('20260726-pwa2'));
+    await page.waitForFunction(expected => document.querySelector('#build')?.textContent.includes(expected), PWA_BUILD);
     const build = await page.locator('#build').textContent();
     const small = await page.locator('a,button').evaluateAll(elements => elements.filter(element => {
       const rect = element.getBoundingClientRect();
@@ -102,6 +142,7 @@ function observePage(page, errors) {
     fs.writeFileSync(path.join(out, 'pwa-offline-result.json'), JSON.stringify({ build, caches: cachesBefore, offlineFallback: true, runtimeWarmup: true, touchTargets: true }, null, 2));
     console.log('CNC PWA offline cache smoke passed');
   } catch (error) {
+    if (page && context) await captureDiagnostics(page, context, stage, errors);
     fs.writeFileSync(path.join(out, 'pwa-offline-error.txt'), `stage=${stage}\n${error.stack || error}`);
     throw error;
   } finally {

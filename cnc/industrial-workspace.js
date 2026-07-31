@@ -65,32 +65,67 @@
     }
   }
 
-  function closeSuggestions() {
+  function activeSuggestionContext() {
+    var input = document.getElementById('search-input');
+    var box = document.getElementById('search-suggestions');
+    return Boolean(
+      input && box && document.activeElement === input &&
+      String(input.value || '').trim() && box.querySelector('.suggestion-item')
+    );
+  }
+
+  function revealActiveSuggestions() {
+    if (!activeSuggestionContext()) return false;
+    var input = document.getElementById('search-input');
+    var box = document.getElementById('search-suggestions');
+    if (document.body) document.body.removeAttribute('data-cnc-suggestions-suppressed');
+    box.hidden = false;
+    box.style.display = 'block';
+    box.setAttribute('aria-hidden', 'false');
+    input.setAttribute('aria-expanded', 'true');
+    return true;
+  }
+
+  function closeSuggestions(force) {
     if (suggestionCloseTimer !== null) {
       window.clearTimeout(suggestionCloseTimer);
       suggestionCloseTimer = null;
     }
+    if (!force && activeSuggestionContext()) return false;
     var box = document.getElementById('search-suggestions');
-    if (!box) return;
+    if (!box) return false;
     if (window.CNC_FRONTEND && typeof window.CNC_FRONTEND.closeSuggestionBox === 'function') {
       window.CNC_FRONTEND.closeSuggestionBox(box);
-      return;
+      return true;
     }
     box.style.display = 'none';
     box.hidden = true;
     box.setAttribute('aria-hidden', 'true');
+    return true;
   }
 
   function scheduleSuggestionClose(query) {
-    if (query !== lastSuggestionQuery && document.body) document.body.removeAttribute('data-cnc-suggestions-suppressed');
-    if (query === lastSuggestionQuery && suggestionCloseTimer !== null) return;
-    lastSuggestionQuery = query;
-    if (suggestionCloseTimer !== null) window.clearTimeout(suggestionCloseTimer);
-    suggestionCloseTimer = window.setTimeout(function () {
+    var normalized = String(query || '').trim();
+    if (suggestionCloseTimer !== null) {
+      window.clearTimeout(suggestionCloseTimer);
       suggestionCloseTimer = null;
+    }
+    if (query !== lastSuggestionQuery && document.body) {
+      document.body.removeAttribute('data-cnc-suggestions-suppressed');
+    }
+    lastSuggestionQuery = query;
+
+    if (!normalized) {
       if (document.body) document.body.setAttribute('data-cnc-suggestions-suppressed', 'true');
-      closeSuggestions();
-    }, 900);
+      closeSuggestions(true);
+      return;
+    }
+
+    // 搜索引擎、列表重绘和窗口滚动在同一输入事件附近可能竞争显示状态。
+    // 仅在输入框仍然持有焦点且已有真实选项时有限次数恢复显示，不使用持续轮询或DOM观察器。
+    [0, 40, 120].forEach(function (delay) {
+      window.setTimeout(revealActiveSuggestions, delay);
+    });
   }
 
   function activeViewId() {
@@ -132,7 +167,7 @@
       document.body.removeAttribute('data-cnc-industrial-workspace');
       document.body.removeAttribute('data-cnc-industrial-mode');
       document.body.removeAttribute('data-cnc-suggestions-suppressed');
-      closeSuggestions();
+      closeSuggestions(true);
       return false;
     }
     document.body.setAttribute('data-cnc-industrial-workspace', 'true');
@@ -173,7 +208,7 @@
     if (window.CNC_CLEAN_UI && typeof window.CNC_CLEAN_UI.rememberUserQuery === 'function') window.CNC_CLEAN_UI.rememberUserQuery('');
     lastSuggestionQuery = '';
     if (document.body) document.body.setAttribute('data-cnc-suggestions-suppressed', 'true');
-    closeSuggestions();
+    closeSuggestions(true);
   }
 
   function boot() {
@@ -197,7 +232,7 @@
       var nestedButton = resultCard.querySelector('[data-open-entry]');
       entryId = nestedButton ? nestedButton.getAttribute('data-open-entry') : '';
     }
-    if (resultCard || openButton) closeSuggestions();
+    if (resultCard || openButton) closeSuggestions(true);
     if (entryId) scheduleOpenFallback(entryId);
     if (backButton) settleClosedDetail();
     if (clearButton) window.setTimeout(rememberClearedSearch, 0);
@@ -208,7 +243,7 @@
   }, false);
 
   document.addEventListener('pointerdown', function (event) {
-    if (event.target && event.target.closest && event.target.closest('#result-list')) closeSuggestions();
+    if (event.target && event.target.closest && event.target.closest('#result-list')) closeSuggestions(true);
   }, true);
 
   document.addEventListener('input', function (event) {
@@ -218,8 +253,12 @@
     }
   }, true);
 
-  document.addEventListener('keydown', function (event) { if (event.key === 'Escape') closeSuggestions(); }, true);
-  window.addEventListener('scroll', function () { if (activeViewId() === 'view-workspace') closeSuggestions(); }, { passive: true });
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') closeSuggestions(true);
+  }, true);
+  window.addEventListener('scroll', function () {
+    if (activeViewId() === 'view-workspace') closeSuggestions(false);
+  }, { passive: true });
   window.addEventListener('hashchange', scheduleInteractionSync);
   window.addEventListener('popstate', scheduleInteractionSync);
   document.addEventListener('DOMContentLoaded', boot, { once: true });

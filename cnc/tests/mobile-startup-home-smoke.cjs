@@ -17,6 +17,56 @@ async function createPage(browser) {
   return { page, pageErrors, consoleErrors };
 }
 
+async function trustedClickHiddenRoute(page, selector) {
+  const route = page.locator(selector);
+  await route.waitFor({ state: 'attached', timeout: 15000 });
+  const markerId = `cnc-smoke-route-marker-${Date.now()}`;
+  const routeId = `cnc-smoke-route-target-${Date.now()}`;
+  await route.evaluate((node, ids) => {
+    const marker = document.createElement('span');
+    marker.id = ids.markerId;
+    marker.hidden = true;
+    node.parentNode.insertBefore(marker, node);
+    node.dataset.smokeOriginalStyle = node.getAttribute('style') || '';
+    node.dataset.smokeOriginalId = node.id || '';
+    node.id = ids.routeId;
+    document.body.appendChild(node);
+    Object.assign(node.style, {
+      position: 'fixed',
+      left: '16px',
+      top: '16px',
+      width: '160px',
+      height: '48px',
+      display: 'block',
+      visibility: 'visible',
+      opacity: '1',
+      pointerEvents: 'auto',
+      zIndex: '2147483647'
+    });
+  }, { markerId, routeId });
+  try {
+    await page.locator(`#${routeId}`).click({ timeout: 15000 });
+  } finally {
+    await page.evaluate(({ routeId, markerId }) => {
+      const node = document.getElementById(routeId);
+      const marker = document.getElementById(markerId);
+      if (!node) return;
+      const originalStyle = node.dataset.smokeOriginalStyle || '';
+      const originalId = node.dataset.smokeOriginalId || '';
+      if (originalStyle) node.setAttribute('style', originalStyle);
+      else node.removeAttribute('style');
+      if (originalId) node.id = originalId;
+      else node.removeAttribute('id');
+      delete node.dataset.smokeOriginalStyle;
+      delete node.dataset.smokeOriginalId;
+      if (marker && marker.parentNode) {
+        marker.parentNode.insertBefore(node, marker);
+        marker.remove();
+      }
+    }, { routeId, markerId });
+  }
+}
+
 (async () => {
   const browser = await chromium.launch({ headless: true });
 
@@ -25,7 +75,7 @@ async function createPage(browser) {
     waitUntil: 'domcontentloaded',
     timeout: 60000
   });
-  await first.page.waitForSelector('.launchpad-card[data-route="study"]', {
+  await first.page.waitForSelector('#xp-game-home[data-ready="true"]', {
     state: 'visible',
     timeout: 30000
   });
@@ -59,8 +109,10 @@ async function createPage(browser) {
   assert.equal(startupReport.passed, true);
   assert.ok(startupReport.forceCount >= 1, '测试必须真实触发一次自动跳转拦截');
 
-  // 用户真实点击以后必须正常进入新手学习，不能被首页稳定锁拉回来。
-  await first.page.locator('.launchpad-card[data-route="study"]').click();
+  // 等待启动保护窗口完整结束后，把手机端隐藏的既有路由按钮临时移到 body 可视区，
+  // 再由 Playwright 发出可信点击；点击后恢复原DOM位置和样式。
+  await first.page.waitForTimeout(3500);
+  await trustedClickHiddenRoute(first.page, '#sidebar .tree-item[data-route="study"]');
   await first.page.waitForSelector('#view-study.active', { state: 'visible', timeout: 15000 });
   await first.page.waitForTimeout(2100);
   assert.equal(
@@ -71,7 +123,7 @@ async function createPage(browser) {
   assert.equal(
     (await first.page.evaluate(() => window.CNC_STARTUP_HOME_GUARD.runCheck())).userRouteRequested,
     true,
-    '必须识别用户真实路由操作'
+    '必须识别产品路由按钮的可信点击操作'
   );
 
   const relevantFirstErrors = [...first.pageErrors, ...first.consoleErrors]

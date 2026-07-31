@@ -7,6 +7,7 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
+const PWA_BUILD = '20260728-pwa3';
 fs.mkdirSync(out, { recursive: true });
 
 const types = {
@@ -68,14 +69,14 @@ function observePage(page, errors) {
     if (await pwaLink.count() !== 1) throw new Error('成长档案缺少PWA状态入口');
     await pwaLink.click();
     await page.waitForURL(/pwa-status\.html/);
-    await page.waitForFunction(() => document.querySelector('#build')?.textContent.includes('20260726-pwa2'));
+    await page.waitForFunction(expected => document.querySelector('#build')?.textContent.includes(expected), PWA_BUILD);
     await page.waitForFunction(() => document.querySelector('#status')?.textContent.includes('版本一致'));
 
     const initialChecked = await page.locator('#checked-at').textContent();
     const cacheCount = Number(await page.locator('#cache-count').textContent());
     if (cacheCount < 2) throw new Error('CNC缓存数量不足');
-    if (!(await page.locator('#static-cache').textContent()).includes('20260726-pwa2')) throw new Error('静态缓存版本不一致');
-    if (!(await page.locator('#runtime-cache').textContent()).includes('20260726-pwa2')) throw new Error('运行时缓存版本不一致');
+    if (!(await page.locator('#static-cache').textContent()).includes(PWA_BUILD)) throw new Error('静态缓存版本不一致');
+    if (!(await page.locator('#runtime-cache').textContent()).includes(PWA_BUILD)) throw new Error('运行时缓存版本不一致');
 
     stage = 'history-return';
     await page.goto('http://127.0.0.1:4173/cnc/profile.html', { waitUntil: 'domcontentloaded' });
@@ -97,6 +98,8 @@ function observePage(page, errors) {
     stage = 'cache-recovery';
     await page.reload({ waitUntil: 'domcontentloaded' });
     page = await ensureControlled(page, errors, observePage);
+    await page.waitForFunction(expected => caches.keys().then(keys => keys.includes(`cnc-runtime-${expected}`)), PWA_BUILD);
+    await page.locator('#refresh').click();
     await page.waitForFunction(() => Number(document.querySelector('#cache-count')?.textContent) >= 2);
     await page.waitForFunction(() => document.querySelector('#status')?.textContent.includes('版本一致'));
 
