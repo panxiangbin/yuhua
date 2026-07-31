@@ -42,19 +42,6 @@ const assert = require('node:assert/strict');
     const gameHome = document.querySelector('#xp-game-home[data-ready="true"]');
     const recent = document.querySelector('#dashboard-recent-section');
     const cssText = link ? await fetch(link.href, { cache: 'no-store' }).then(response => response.text()) : '';
-    const allRecentRules = [];
-    const collectRules = (rules, href, media) => {
-      Array.from(rules || []).forEach((rule) => {
-        const nextMedia = rule.conditionText || media || '';
-        if (rule.cssRules) collectRules(rule.cssRules, href, nextMedia);
-        if (rule.selectorText && (rule.selectorText.includes('dashboard-recent-section') || rule.selectorText.includes('.recent-section'))) {
-          allRecentRules.push({ href, media: nextMedia, cssText: rule.cssText });
-        }
-      });
-    };
-    Array.from(document.styleSheets).forEach((sheet) => {
-      try { collectRules(sheet.cssRules, sheet.href || 'inline', ''); } catch (error) {}
-    });
     return {
       innerWidth: window.innerWidth,
       mediaMatches: window.matchMedia('(max-width:760px)').matches,
@@ -62,11 +49,8 @@ const assert = require('node:assert/strict');
       linkHref: link ? link.href : '',
       stylesheetReady: Boolean(link && link.sheet),
       servedCssHasRecentRule: cssText.includes('#dashboard-recent-section'),
-      allRecentRules,
       gameDisplay: gameHome ? getComputedStyle(gameHome).display : 'missing',
-      recentDisplay: recent ? getComputedStyle(recent).display : 'missing',
-      recentInlineStyle: recent ? recent.getAttribute('style') : 'missing',
-      recentDisplayPriority: recent ? recent.style.getPropertyPriority('display') : 'missing'
+      recentDisplay: recent ? getComputedStyle(recent).display : 'missing'
     };
   });
   assert.equal(mobileHomeState.innerWidth, 390, '手机视口必须为390px: ' + JSON.stringify(mobileHomeState));
@@ -78,9 +62,15 @@ const assert = require('node:assert/strict');
   assert.equal(mobileHomeState.recentDisplay, 'none', '旧最近查看区域在手机端必须隐藏: ' + JSON.stringify(mobileHomeState));
   await page.waitForSelector('#xp-game-home[data-ready="true"]', { state: 'visible', timeout: 15000 });
 
-  // 从手机端真实打开一个工业知识条目，确认最近查看记录仍会被写入。
-  await page.locator('.xp-bottom-nav [data-xp-filter="gcode"]').click();
+  // 等可信导航控制器完成初始化，再通过真实可见底部按钮进入查代码工作区。
+  await page.waitForFunction(() => window.CNC_TRUST_NAV && window.CNC_TRUST_NAV.build === '20260721s' && (window.__CNC_TRUST_READY_AT__ || 0) > 0, null, { timeout: 15000 });
+  const gcodeNav = page.locator('.xp-bottom-nav button[data-xp-filter="gcode"]');
+  await gcodeNav.waitFor({ state: 'visible', timeout: 15000 });
+  await gcodeNav.click();
   await page.waitForSelector('#view-workspace.active', { state: 'visible', timeout: 15000 });
+  await page.waitForFunction(() => document.querySelector('.xp-bottom-nav button[data-xp-filter="gcode"]')?.getAttribute('aria-current') === 'page', null, { timeout: 15000 });
+
+  // 从手机端真实打开一个工业知识条目，确认最近查看记录仍会被写入。
   await page.locator('#search-input').fill('G01');
   await page.waitForSelector('#result-list [data-open-entry]', { state: 'visible', timeout: 15000 });
   await page.locator('#result-list [data-open-entry]').first().click();
