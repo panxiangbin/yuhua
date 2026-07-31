@@ -155,7 +155,13 @@ async function readNavigationState(page, label) {
     await page.waitForTimeout(1100);
 
     stage = 'history-return';
-    const returnToStatus = page.waitForURL(/pwa-status\.html/, { timeout: 15000 });
+    // BFCache restoration reuses the existing document and does not fire a new
+    // load event. Wait only until the history navigation commits, then validate
+    // the preserved in-memory token and pageshow.persisted below.
+    const returnToStatus = page.waitForURL(/pwa-status\.html/, {
+      waitUntil: 'commit',
+      timeout: 15000
+    });
     const backResponse = await page.goBack({ waitUntil: 'commit', timeout: 15000 });
     await returnToStatus;
     runtimeDiagnostics.history.push(await readNavigationState(page, 'status-after-back'));
