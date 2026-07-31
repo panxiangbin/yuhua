@@ -164,41 +164,43 @@
       });
     }
 
-    function installContainerProxy() {
-      if (typeof Proxy !== 'function') return false;
+    function installContainerFacade() {
       try {
-        var proxy = new Proxy(nativeContainer, {
-          get: function (target, property) {
-            if (property === 'register') return fakeRegistration;
-            var value = Reflect.get(target, property, target);
-            return typeof value === 'function' ? value.bind(target) : value;
+        var facade = {};
+        ['getRegistration', 'getRegistrations', 'startMessages', 'addEventListener', 'removeEventListener', 'dispatchEvent'].forEach(function (name) {
+          if (typeof nativeContainer[name] === 'function') facade[name] = nativeContainer[name].bind(nativeContainer);
+        });
+        Object.defineProperties(facade, {
+          register: {
+            configurable: false,
+            enumerable: true,
+            writable: false,
+            value: fakeRegistration
+          },
+          controller: {
+            configurable: false,
+            enumerable: true,
+            get: function () { return nativeContainer.controller; }
+          },
+          ready: {
+            configurable: false,
+            enumerable: true,
+            get: function () { return nativeContainer.ready; }
+          },
+          oncontrollerchange: {
+            configurable: false,
+            enumerable: true,
+            get: function () { return nativeContainer.oncontrollerchange; },
+            set: function (handler) { nativeContainer.oncontrollerchange = handler; }
           }
         });
         Object.defineProperty(navigator, 'serviceWorker', {
           configurable: true,
-          value: proxy
+          value: facade
         });
-        return navigator.serviceWorker === proxy && navigator.serviceWorker.register === fakeRegistration;
+        return navigator.serviceWorker === facade && navigator.serviceWorker.register === fakeRegistration;
       } catch (error) {
         return false;
-      }
-    }
-
-    function replaceInstanceRegister() {
-      try {
-        Object.defineProperty(nativeContainer, 'register', {
-          configurable: true,
-          writable: true,
-          value: fakeRegistration
-        });
-        return nativeContainer.register === fakeRegistration;
-      } catch (error) {
-        try {
-          nativeContainer.register = fakeRegistration;
-          return nativeContainer.register === fakeRegistration;
-        } catch (ignored) {
-          return false;
-        }
       }
     }
 
@@ -211,10 +213,10 @@
       }).catch(function () {});
     } catch (error) {}
 
-    // 只遮蔽当前页面的注册入口，不再修改 ServiceWorkerContainer 或 Navigator 原型。
-    // PWA 自检和离线门禁使用保存的原生容器执行真实注册，避免污染浏览器原生 API。
-    var blocked = installContainerProxy();
-    if (!blocked) blocked = replaceInstanceRegister();
+    // 当前首页只获得独立门面：注册入口被拦截，controller、ready 和事件仍转发给
+    // 原生容器。这样既不会触发 Proxy 对不可配置 register 的不变量错误，也不会
+    // 修改浏览器原型；PWA 自检与离线门禁仍可通过保存的原生容器执行真实注册。
+    var blocked = installContainerFacade();
     window.__CNC_SW_REGISTRATION_BLOCKED__ = blocked;
   }
 
