@@ -24,16 +24,24 @@ const assert = require('node:assert/strict');
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-industrial-surface') === 'home', null, { timeout: 15000 });
   await page.waitForSelector('#xp-game-home[data-ready="true"]', { state: 'attached', timeout: 60000 });
 
-  // 手机首页样式由 personal-home.js 动态声明。验证资源链接与最终计算样式，避免依赖 document.styleSheets 的浏览器枚举时序。
+  // 手机首页样式由 personal-home.js 动态声明。必须等真实 load 完成，再验证最终计算样式；资源失败会直接报错。
   const gameStyle = page.locator('link[data-cnc-mobile-home-game]');
   await gameStyle.waitFor({ state: 'attached', timeout: 20000 });
   assert.match((await gameStyle.getAttribute('href')) || '', /mobile-home-game\.css\?v=\d{8}[a-z0-9-]*$/i, '手机闯关首页必须声明版本化样式资源');
+  await gameStyle.evaluate((link) => {
+    if (link.sheet) return true;
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => reject(new Error('手机闯关首页样式资源加载超时: ' + link.href)), 20000);
+      link.addEventListener('load', () => { clearTimeout(timer); resolve(true); }, { once: true });
+      link.addEventListener('error', () => { clearTimeout(timer); reject(new Error('手机闯关首页样式资源加载失败: ' + link.href)); }, { once: true });
+    });
+  });
   await page.waitForFunction(() => {
     const gameHome = document.querySelector('#xp-game-home[data-ready="true"]');
     const recent = document.querySelector('#dashboard-recent-section');
     if (!gameHome || !recent) return false;
     return getComputedStyle(gameHome).display !== 'none' && getComputedStyle(recent).display === 'none';
-  }, null, { timeout: 20000 });
+  }, null, { timeout: 15000 });
   assert.equal(await page.locator('#dashboard-recent-section').evaluate(node => getComputedStyle(node).display), 'none');
   await page.waitForSelector('#xp-game-home[data-ready="true"]', { state: 'visible', timeout: 15000 });
 
