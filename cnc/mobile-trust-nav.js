@@ -124,18 +124,16 @@
     var route = button.dataset.xpRoute || '';
     var filter = button.dataset.xpFilter || '';
 
-    // 底部按钮本身是用户真实点击。直接调用应用导航，避免再合成点击隐藏的首页卡片，
-    // 否则启动保护期会把“查代码”重新纠正回首页。
-    if (typeof window.navigate === 'function') {
-      if (route) window.navigate(route);
-      else if (filter === 'alarm') window.navigate('workspace', { filter: 'params', keyword: '报警' });
-      else if (filter) window.navigate('workspace', { filter: filter });
+    // “查代码”原来会合成点击隐藏的首页卡片，启动保护期可能把它纠正回首页。
+    // 这里只修正该真实缺陷；学习、我的、报警继续沿用各自既有入口，避免改变既有语义。
+    if (filter === 'gcode' && typeof window.navigate === 'function') {
+      window.navigate('workspace', { filter: 'gcode' });
       return true;
     }
 
     var target = route
-      ? document.querySelector('#sidebar [data-route="' + route + '"],[data-route="' + route + '"]')
-      : document.querySelector('#sidebar [data-route="workspace"][data-filter="' + filter + '"],[data-route="workspace"][data-filter="' + filter + '"]');
+      ? document.querySelector('[data-route="' + route + '"]')
+      : document.querySelector('[data-route="workspace"][data-filter="' + filter + '"],[data-filter="' + filter + '"]');
     if (target) {
       target.click();
       return true;
