@@ -37,7 +37,7 @@ fs.mkdirSync(OUT, { recursive: true });
     await page.goto(`${BASE}/cnc/index.html`, { waitUntil: 'domcontentloaded', timeout: 60000 });
     await page.locator('#xp-game-home[data-ready="true"]').waitFor({ state: 'visible', timeout: 60000 });
     await page.waitForFunction(() => (
-      window.CNC_GAME_QUERY_NAV?.build === '20260731a'
+      window.CNC_GAME_QUERY_NAV?.build === '20260731b'
       && window.CNC_GAME_QUERY_NAV.runCheck().passed
     ), null, { timeout: 30000 });
 
@@ -60,22 +60,36 @@ fs.mkdirSync(OUT, { recursive: true });
     assert.deepStrictEqual(await queryButtons.locator('strong').allTextContents(), ['G/M代码', '报警排查', '参数速查', '故障问诊']);
     assert.deepStrictEqual(await queryButtons.evaluateAll(nodes => nodes.map(node => node.dataset.xpQueryFilter)), ['gcode', 'alarm', 'parameter', 'fault']);
 
-    const utilityState = await page.locator('.xp-bottom-nav').evaluate(node => ({
-      visible: node.getClientRects().length > 0,
-      ariaHidden: node.getAttribute('aria-hidden')
-    }));
-    assert.deepStrictEqual(utilityState, { visible: false, ariaHidden: 'true' });
+    const navigationLayout = await page.evaluate(() => {
+      const utility = document.querySelector('body > .xp-bottom-nav');
+      const game = document.querySelector('.xp-game-bottom-nav');
+      const utilityRect = utility.getBoundingClientRect();
+      const gameRect = game.getBoundingClientRect();
+      return {
+        utilityVisible: utility.getClientRects().length > 0,
+        utilityAriaHidden: utility.getAttribute('aria-hidden'),
+        utilityMode: utility.dataset.cncGameUtility,
+        utilityBottom: Math.round(utilityRect.bottom),
+        gameTop: Math.round(gameRect.top),
+        overlap: Math.max(0, Math.min(utilityRect.bottom, gameRect.bottom) - Math.max(utilityRect.top, gameRect.top))
+      };
+    });
+    assert.strictEqual(navigationLayout.utilityVisible, true);
+    assert.strictEqual(navigationLayout.utilityAriaHidden, 'false');
+    assert.strictEqual(navigationLayout.utilityMode, 'separated');
+    assert.ok(Math.abs(navigationLayout.utilityBottom - navigationLayout.gameTop) <= 2, JSON.stringify(navigationLayout));
+    assert.strictEqual(navigationLayout.overlap, 0);
 
     const queryApi = await page.evaluate(() => window.CNC_GAME_QUERY_NAV.runCheck());
     assert.deepStrictEqual(queryApi, {
       passed: true,
-      build: '20260731a',
+      build: '20260731b',
       buttons: 4,
       dashboardActive: true,
-      utilityHidden: true
+      utilitySeparated: true
     });
 
-    const smallTargets = await page.locator('#xp-game-home a:visible,#xp-game-home button:visible').evaluateAll(nodes => nodes.map(node => {
+    const smallTargets = await page.locator('#xp-game-home a:visible,#xp-game-home button:visible,.xp-bottom-nav button:visible').evaluateAll(nodes => nodes.map(node => {
       const rect = node.getBoundingClientRect();
       return { text: node.textContent.trim(), width: rect.width, height: rect.height };
     }).filter(item => item.width > 0 && item.height > 0 && item.height < 44));
@@ -91,7 +105,7 @@ fs.mkdirSync(OUT, { recursive: true });
     assert.strictEqual(await desktop.locator('#xp-game-home').evaluate(node => getComputedStyle(node).display), 'none');
     assert.notStrictEqual(await desktop.locator('.launchpad-grid').evaluate(node => getComputedStyle(node).display), 'none');
 
-    console.log('CNC手机闯关首页、主导航与现场速查入口通过', queryApi);
+    console.log('CNC手机闯关首页、双层无重叠导航与现场速查入口通过', { queryApi, navigationLayout });
   } finally {
     await browser.close();
   }
