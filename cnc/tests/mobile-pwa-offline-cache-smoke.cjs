@@ -24,6 +24,16 @@ const server = http.createServer((req, res) => {
   let requestPath = decodeURIComponent(req.url.split('?')[0]);
   if (requestPath === '/' || requestPath === '/cnc/') requestPath = '/cnc/index.html';
 
+  // Chromium can implicitly request the origin-level favicon even though the
+  // PWA pages and assets under /cnc/ are the only resources this smoke test owns.
+  // Return an empty success for that browser-generated request only; every
+  // explicit /cnc/ resource still uses the normal 404 path and remains audited.
+  if (requestPath === '/favicon.ico') {
+    res.writeHead(204, { 'Cache-Control': 'no-store' });
+    res.end();
+    return;
+  }
+
   // A normal missing file returns HTTP 404, which is still a successful fetch
   // from the Service Worker's perspective. This dedicated probe deliberately
   // drops the connection so the navigation fetch rejects and the offline
