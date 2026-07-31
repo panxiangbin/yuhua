@@ -42,6 +42,14 @@ const assert = require('node:assert/strict');
     const gameHome = document.querySelector('#xp-game-home[data-ready="true"]');
     const recent = document.querySelector('#dashboard-recent-section');
     const cssText = link ? await fetch(link.href, { cache: 'no-store' }).then(response => response.text()) : '';
+    const matchingRules = [];
+    const collectRules = (rules) => {
+      Array.from(rules || []).forEach((rule) => {
+        if (rule.cssRules) collectRules(rule.cssRules);
+        if (rule.selectorText && rule.selectorText.includes('dashboard-recent-section')) matchingRules.push(rule.cssText);
+      });
+    };
+    if (link && link.sheet) collectRules(link.sheet.cssRules);
     return {
       innerWidth: window.innerWidth,
       mediaMatches: window.matchMedia('(max-width:760px)').matches,
@@ -49,8 +57,11 @@ const assert = require('node:assert/strict');
       linkHref: link ? link.href : '',
       stylesheetReady: Boolean(link && link.sheet),
       servedCssHasRecentRule: cssText.includes('#dashboard-recent-section'),
+      parsedRecentRules: matchingRules,
       gameDisplay: gameHome ? getComputedStyle(gameHome).display : 'missing',
-      recentDisplay: recent ? getComputedStyle(recent).display : 'missing'
+      recentDisplay: recent ? getComputedStyle(recent).display : 'missing',
+      recentInlineStyle: recent ? recent.getAttribute('style') : 'missing',
+      recentDisplayPriority: recent ? recent.style.getPropertyPriority('display') : 'missing'
     };
   });
   assert.equal(mobileHomeState.innerWidth, 390, '手机视口必须为390px: ' + JSON.stringify(mobileHomeState));
