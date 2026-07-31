@@ -37,7 +37,7 @@ fs.mkdirSync(OUT, { recursive: true });
     await page.goto(`${BASE}/cnc/index.html`, { waitUntil: 'domcontentloaded', timeout: 60000 });
     await page.locator('#xp-game-home[data-ready="true"]').waitFor({ state: 'visible', timeout: 60000 });
     await page.waitForFunction(() => (
-      window.CNC_GAME_QUERY_NAV?.build === '20260731c'
+      window.CNC_GAME_QUERY_NAV?.build === '20260731d'
       && window.CNC_GAME_QUERY_NAV.runCheck().passed
     ), null, { timeout: 30000 });
 
@@ -53,6 +53,8 @@ fs.mkdirSync(OUT, { recursive: true });
     const gameNav = page.locator('.xp-game-bottom-nav a');
     assert.strictEqual(await gameNav.count(), 5);
     assert.deepStrictEqual(await gameNav.locator('b').allTextContents(), ['首页', '闯关', '挑战', '模拟', '我的']);
+    assert.deepStrictEqual(await gameNav.evaluateAll(nodes => nodes.map(node => node.getAttribute('aria-label'))), ['训练首页', '课程闯关', '每日挑战', '模拟车间', '成长档案']);
+    assert.strictEqual(await gameNav.first().getAttribute('aria-current'), 'page');
     assert.strictEqual(await page.locator('.launchpad-grid').evaluate(node => getComputedStyle(node).display), 'none');
 
     const queryButtons = page.locator('#xp-game-home .xp-game-query-button');
@@ -81,7 +83,7 @@ fs.mkdirSync(OUT, { recursive: true });
     const queryApi = await page.evaluate(() => window.CNC_GAME_QUERY_NAV.runCheck());
     assert.deepStrictEqual(queryApi, {
       passed: true,
-      build: '20260731c',
+      build: '20260731d',
       buttons: 4,
       dashboardActive: true,
       utilityHidden: true
@@ -129,7 +131,7 @@ fs.mkdirSync(OUT, { recursive: true });
     assert.strictEqual(await desktop.locator('#xp-game-home').evaluate(node => getComputedStyle(node).display), 'none');
     assert.notStrictEqual(await desktop.locator('.launchpad-grid').evaluate(node => getComputedStyle(node).display), 'none');
 
-    console.log('CNC手机闯关首页单层导航、现场速查与工作区工具导航恢复通过', { queryApi, navigationLayout, workspaceUtility });
+    console.log('CNC手机闯关首页单层导航、无障碍语义、现场速查与工作区工具导航恢复通过', { queryApi, navigationLayout, workspaceUtility });
   } finally {
     await browser.close();
   }
