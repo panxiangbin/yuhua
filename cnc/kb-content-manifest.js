@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var GAME_QUERY_BUILD = '20260731a';
+  var GAME_QUERY_BUILD = '20260731b';
 
   // 兼容旧版首页精选图渲染器：它读取 image.path，
   // 新图库数据统一使用 image.src。应用主脚本执行前补齐同源字段，
@@ -18,7 +18,8 @@
     var style = document.createElement('style');
     style.dataset.cncGameQueryNav = GAME_QUERY_BUILD;
     style.textContent = '@media (max-width:760px){' +
-      'body.cnc-game-query-home-active>.xp-bottom-nav{display:none!important}' +
+      'body.cnc-game-query-home-active #view-dashboard{padding-bottom:164px!important}' +
+      'body.cnc-game-query-home-active>.xp-bottom-nav{display:grid!important;left:8px!important;right:8px!important;bottom:64px!important;width:auto!important;z-index:72!important;border:1px solid rgba(111,174,255,.38)!important;border-radius:14px 14px 0 0!important;box-shadow:0 -7px 20px rgba(0,0,0,.24)!important}' +
       '.xp-game-query-panel{margin-top:12px;padding:13px;border:1px solid rgba(117,178,255,.35);border-radius:17px;background:linear-gradient(180deg,#123b75,#092751);box-shadow:0 12px 28px rgba(0,0,0,.2)}' +
       '.xp-game-query-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}' +
       '.xp-game-query-head h2{margin:0;color:#fff;font-size:17px;line-height:1.35;font-weight:1000}' +
@@ -41,9 +42,13 @@
 
   function syncMobileNavigation() {
     if (!document.body) return;
-    document.body.classList.toggle('cnc-game-query-home-active', dashboardActive());
+    var active = dashboardActive();
+    document.body.classList.toggle('cnc-game-query-home-active', active);
     var utility = document.querySelector('body>.xp-bottom-nav');
-    if (utility) utility.setAttribute('aria-hidden', dashboardActive() ? 'true' : 'false');
+    if (utility) {
+      utility.setAttribute('aria-hidden', 'false');
+      utility.dataset.cncGameUtility = active ? 'separated' : 'standard';
+    }
   }
 
   function mountGameQueryPanel() {
@@ -140,12 +145,13 @@
       runCheck: function () {
         var panel = document.querySelector('#xp-game-home .xp-game-query-panel[data-ready="true"]');
         var buttons = panel ? panel.querySelectorAll('[data-xp-query-filter]') : [];
+        var utility = document.querySelector('body>.xp-bottom-nav');
         return {
           passed: Boolean(panel && buttons.length === 4),
           build: GAME_QUERY_BUILD,
           buttons: buttons.length,
           dashboardActive: dashboardActive(),
-          utilityHidden: document.body.classList.contains('cnc-game-query-home-active')
+          utilitySeparated: Boolean(utility && utility.dataset.cncGameUtility === 'separated')
         };
       }
     };
@@ -192,7 +198,7 @@
   }
 
   window.CNC_KB_CONTENT_MANIFEST = {
-    build: '20260731e',
+    build: '20260731f',
     enhancedImagesNormalized: Array.isArray(enhanced)
       ? enhanced.filter(function (image) { return image && image.path === image.src; }).length
       : 0,
