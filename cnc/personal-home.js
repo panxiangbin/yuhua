@@ -156,9 +156,21 @@
     document.head.appendChild(link);
   }
 
+  function appendScript(src, dataName) {
+    var selector = 'script[data-' + dataName + ']';
+    if (window.CNC_INDUSTRIAL_TOOLS && window.CNC_INDUSTRIAL_TOOLS.build === '20260722d') return;
+    if (document.querySelector(selector)) return;
+    var script = document.createElement('script');
+    script.src = src;
+    script.async = true;
+    script.setAttribute('data-' + dataName, '1');
+    document.head.appendChild(script);
+  }
+
   function ensureAssets() {
     appendStyle('./industrial-learning.css?v=20260722c', 'cnc-industrial-learning');
     appendStyle('./industrial-tools.css?v=20260722d', 'cnc-industrial-tools');
+    appendScript('./industrial-tools.js?v=20260722d', 'cnc-industrial-tools-script');
     appendStyle('./industrial-personal-records.css?v=' + RECORDS_BUILD, 'cnc-industrial-records');
     appendStyle('./mobile-home-game.css?v=' + GAME_STYLE_BUILD, 'cnc-mobile-home-game');
     if (document.body) {
