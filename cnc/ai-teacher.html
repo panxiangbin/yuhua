@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>AI CNC老师｜数控小潘</title>
+  <meta name="description" content="依据本机学习档案提供安全、可解释、可追溯的CNC新手训练建议；不上传数据，不替代原厂手册和现场指导。">
+  <style>
+    :root{color-scheme:light;--bg:#f2efe8;--card:#fffdf8;--ink:#292d30;--muted:#687078;--line:#d8d2c6;--blue:#365b72;--blue-soft:#e9f0f4;--ok:#3f6b50;--warn:#8a5a16;--bad:#8a4034}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}.shell{max-width:900px;margin:auto;padding:14px 14px 104px}.top{display:flex;gap:10px;justify-content:space-between;align-items:center}.btn{min-height:46px;padding:0 14px;border:1px solid var(--line);border-radius:12px;background:var(--blue);color:#fff;text-decoration:none;font-weight:900;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}.btn.alt{background:var(--card);color:var(--blue)}.hero,.panel{background:var(--card);border:1px solid var(--line);border-radius:15px;box-shadow:0 6px 16px rgba(48,44,36,.07);padding:16px;margin-top:14px}.hero h1{font-size:30px;margin:6px 0 10px}.hero p,.panel p,.answer-copy{color:var(--muted);line-height:1.7}.tag{display:inline-flex;min-height:30px;align-items:center;padding:0 10px;border-radius:999px;background:var(--blue-soft);color:var(--blue);font-weight:900}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}.summary div{padding:12px;border:1px solid var(--line);border-radius:12px;background:#f8f5ef;text-align:center}.summary strong{display:block;font-size:24px;color:var(--blue);overflow-wrap:anywhere}.quick{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.quick button{min-height:52px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#f8f5ef;color:var(--ink);font-size:15px;font-weight:900;text-align:left;cursor:pointer}.quick button:hover,.quick button:focus-visible{border-color:var(--blue);outline:3px solid rgba(54,91,114,.14)}.ask{display:grid;grid-template-columns:1fr auto;gap:10px;margin-top:12px}.ask input{min-height:48px;border:1px solid var(--line);border-radius:12px;background:#fff;padding:0 13px;font-size:16px;color:var(--ink)}.answer{display:none}.answer.show{display:block}.answer h2{font-size:24px;margin:0 0 8px}.answer-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.answer-card{padding:14px;border:1px solid var(--line);border-radius:12px;background:#f8f5ef}.answer-card h3{margin:0 0 8px;font-size:17px}.answer-card ul,.answer-card ol{margin:0;padding-left:20px;line-height:1.65}.answer-card.risk{border-left:4px solid var(--bad)}.answer-card.scope{border-left:4px solid var(--warn)}.route{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.notice{border-left:4px solid var(--warn)}.privacy{border-left:4px solid var(--ok)}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}.bottom{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,900px);display:grid;grid-template-columns:repeat(5,1fr);background:#fffdf8;border-top:1px solid var(--line);padding:7px 8px calc(7px + env(safe-area-inset-bottom))}.bottom a{min-height:48px;display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--muted);font-weight:900;font-size:13px}.bottom a.active{color:var(--blue)}@media(max-width:620px){.summary,.quick,.answer-grid{grid-template-columns:1fr 1fr}.hero h1{font-size:27px}}@media(max-width:430px){.summary,.quick,.answer-grid,.ask{grid-template-columns:1fr}.ask .btn{width:100%}}
+  </style>
+</head>
+<body>
+<main class="shell">
+  <div class="top"><a class="btn alt" href="./profile.html">← 返回成长档案</a><a class="btn" href="./training-camp.html">进入训练营</a></div>
+  <section class="hero">
+    <span class="tag">本地基础版 · 不需要API Key</span>
+    <h1>AI CNC老师</h1>
+    <p>它会读取本机已有的课程、错题、模拟和能力记录，给出“先学什么、先查什么、哪里不能猜”的可解释建议。所有判断都在浏览器本地完成，不上传学习数据，也不会远程控制机床。</p>
+    <div class="summary" aria-label="本地学习状态">
+      <div><strong id="course-progress">0/12</strong><span>主线课程</span></div>
+      <div><strong id="wrong-count">0</strong><span>待复习错题</span></div>
+      <div><strong id="sim-progress">0/13</strong><span>模拟通过</span></div>
+      <div><strong id="weakest">安全基础</strong><span>优先补强</span></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>先问一个新手最常遇到的问题</h2>
+    <div class="quick" id="quick-questions">
+      <button type="button" data-intent="next">我下一步应该学什么？</button>
+      <button type="button" data-intent="work-offset">G54 工件坐标为什么容易错？</button>
+      <button type="button" data-intent="tool-offset">刀长补偿 H 号怎么核对？</button>
+      <button type="button" data-intent="program-check">陌生程序上机前怎么验证？</button>
+      <button type="button" data-intent="alarm">机床报警后第一步做什么？</button>
+      <button type="button" data-intent="first-piece">首件超差应该先查哪里？</button>
+    </div>
+    <form class="ask" id="ask-form">
+      <label for="question" style="position:absolute;left:-9999px">输入CNC学习问题</label>
+      <input id="question" autocomplete="off" maxlength="120" placeholder="例如：G54怎么找正、报警后怎么办、首件超差怎么查">
+      <button class="btn" type="submit">给我训练建议</button>
+    </form>
+  </section>
+
+  <section class="panel answer" id="answer" aria-live="polite" aria-atomic="true">
+    <h2 id="answer-title">训练建议</h2>
+    <p class="answer-copy" id="answer-copy"></p>
+    <div class="answer-grid">
+      <div class="answer-card"><h3>先做什么</h3><ol id="answer-steps"></ol></div>
+      <div class="answer-card risk"><h3>不要这样做</h3><ul id="answer-donts"></ul></div>
+      <div class="answer-card"><h3>为什么这样判断</h3><ul id="answer-reasons"></ul></div>
+      <div class="answer-card scope"><h3>适用范围与核验</h3><p id="answer-scope"></p></div>
+    </div>
+    <div class="route" id="answer-routes"></div>
+  </section>
+
+  <section class="panel privacy">
+    <strong>隐私与可解释性</strong>
+    <p>本页不调用外部模型、不请求云端接口，只读取本机 <code>cnc_training_profile_v1</code>、<code>cnc_training_practice_v1</code>、<code>cnc_training_simulator_v1</code> 和 <code>cnc_training_exam_v1</code>。每条建议都由公开的关键词规则和学习记录生成，可在页面中看到理由与训练入口。</p>
+  </section>
+  <section class="panel notice">
+    <strong>安全边界</strong>
+    <p>本工具不会给出脱离具体机床、系统、刀具、材料、装夹和企业制度的固定转速、进给、安全高度、刀补值、参数值或报警复位步骤。报警编号、参数权限、G/M代码、H/D号规则、刀补正负、联锁和恢复流程可能因系统与机型不同；实际操作必须核对机床原厂手册、受控工艺文件和现场条件，并由现场师傅或授权人员指导。</p>
+  </section>
+</main>
+<nav class="bottom" aria-label="平台主导航"><a href="./index.html">首页</a><a href="./training-camp.html">训练营</a><a href="./practice.html">练习</a><a href="./index.html#workspace">查代码</a><a class="active" aria-current="page" href="./profile.html">我的</a></nav>
+<script>
+(() => {
+  'use strict';
+  const BUILD = '20260801-ai-teacher1';
+  const KEYS = {
+    profile: 'cnc_training_profile_v1',
+    practice: 'cnc_training_practice_v1',
+    simulator: 'cnc_training_simulator_v1',
+    exam: 'cnc_training_exam_v1'
+  };
+  const COURSE_LINKS = [
+    './course-safety-foundation.html','./course-machining-center-basics.html','./course-coordinate-axes.html','./course-drawing-basics.html',
+    './course-machine-work-offset.html','./course-workholding-basics.html','./course-tool-basics.html','./course-tool-length-offset.html',
+    './course-g00-g01-basics.html','./course-g02-g03-basics.html','./course-hole-cycles-basics.html','./course-complete-program-first-piece.html'
+  ];
+  const ABILITY_DEFS = [
+    {name:'安全基础',keys:['safety','安全']},
+    {name:'坐标与对刀',keys:['coordinate','offset','坐标','对刀']},
+    {name:'图纸与工艺',keys:['drawing','process','图纸','工艺']},
+    {name:'程序验证',keys:['program','verification','程序','验证']},
+    {name:'首件与测量',keys:['inspection','measurement','首件','测量']},
+    {name:'故障排查',keys:['troubleshooting','alarm','故障','报警']}
+  ];
+  const SAFETY_SCOPE = '以下内容面向FANUC类立式加工中心的新手学习框架，不代表所有系统与机型一致。具体地址、编号、正负方向、单位、权限、联锁及操作顺序必须核对原厂手册、企业制度、受控工艺和现场条件。';
+
+  function read(key) {
+    try {
+      const value = JSON.parse(localStorage.getItem(key) || 'null');
+      return value && typeof value === 'object' ? value : {};
+    } catch {
+      return {};
+    }
+  }
+  function asArray(value) { return Array.isArray(value) ? value : []; }
+  function wrongRows(practice) {
+    const value = practice.wrongQuestions || practice.wrong || [];
+    return Array.isArray(value) ? value : Object.values(value || {});
+  }
+  function simulatorRows(simulator) {
+    const root = simulator.simulators && typeof simulator.simulators === 'object' ? simulator.simulators : simulator;
+    return Object.values(root || {}).filter(value => value && typeof value === 'object' && ('passed' in value || 'bestScore' in value || 'score' in value));
+  }
+  function completedCourses(profile) {
+    const completed = new Set(asArray(profile.completed).map(Number).filter(n => n >= 1 && n <= 12));
+    const scores = profile.lessonScores && typeof profile.lessonScores === 'object' ? profile.lessonScores : {};
+    Object.entries(scores).forEach(([key, value]) => {
+      const level = Number(String(key).match(/\d+/)?.[0] || key);
+      if (level >= 1 && level <= 12 && Number(value && value.score !== undefined ? value.score : value) >= 80) completed.add(level);
+    });
+    return completed;
+  }
+  function normalizedAbilityValue(value) {
+    const number = Number(value && value.score !== undefined ? value.score : value);
+    return Number.isFinite(number) ? Math.max(0, Math.min(100, number)) : null;
+  }
+  function abilitySnapshot(profile, wrong) {
+    const raw = profile.abilities && typeof profile.abilities === 'object' ? profile.abilities : {};
+    return ABILITY_DEFS.map(def => {
+      let score = null;
+      Object.entries(raw).forEach(([key, value]) => {
+        if (def.keys.some(alias => key.toLowerCase().includes(alias.toLowerCase()))) {
+          const candidate = normalizedAbilityValue(value);
+          if (candidate !== null) score = score === null ? candidate : Math.max(score, candidate);
+        }
+      });
+      const mistakes = wrong.filter(row => {
+        const text = `${row.ability || ''} ${row.dimension || ''} ${row.category || ''} ${row.title || ''}`;
+        return def.keys.some(alias => text.toLowerCase().includes(alias.toLowerCase()));
+      }).length;
+      const base = score === null ? 50 : score;
+      return {name:def.name,score:Math.max(0,base - mistakes * 5),mistakes,hasData:score !== null || mistakes > 0};
+    });
+  }
+  function learningState() {
+    const profile = read(KEYS.profile);
+    const practice = read(KEYS.practice);
+    const simulator = read(KEYS.simulator);
+    const exam = read(KEYS.exam);
+    const completed = completedCourses(profile);
+    const wrong = wrongRows(practice);
+    const simulations = simulatorRows(simulator);
+    const abilities = abilitySnapshot(profile, wrong);
+    const weakest = [...abilities].sort((a,b) => a.score - b.score || b.mistakes - a.mistakes)[0];
+    return {
+      profile, practice, simulator, exam, completed, wrong, simulations, abilities, weakest,
+      simulationPass: simulations.filter(row => row.passed === true || Number(row.bestScore || row.score || 0) >= 100).length,
+      nextCourse: Array.from({length:12},(_,i)=>i+1).find(level => !completed.has(level)) || 12
+    };
+  }
+  function route(text, href, primary = false) { return {text,href,primary}; }
+  function recommendation(intent, state) {
+    const personalized = `你的本机记录显示：主线完成 ${state.completed.size}/12，待复习错题 ${state.wrong.length} 道，模拟通过 ${state.simulationPass}/13；当前优先补强“${state.weakest.name}”。`;
+    if (intent === 'next') {
+      const hasWrong = state.wrong.length > 0;
+      const allCourses = state.completed.size >= 12;
+      const allSimulations = state.simulationPass >= 13;
+      if (hasWrong) return {
+        title:'先把高风险错题变成正确动作', copy:personalized,
+        steps:['先进入跨专项错题，优先处理高风险和重复错误。','重新阅读对应解析，写出“错误动作—可能后果—正确核验”三句话。','错题清零后，再回到当前未完成主线或模拟训练。'],
+        donts:['不要只记答案字母，不理解现场动作。','不要因为一次答对就直接把自己当成具备独立上机能力。'],
+        reasons:[`当前仍有 ${state.wrong.length} 道错题，继续堆新内容容易重复同类错误。`,`薄弱能力为“${state.weakest.name}”，应优先闭环而不是平均用力。`],
+        scope:SAFETY_SCOPE,routes:[route('复习跨专项错题','./practice-wrong-review.html',true),route('查看成长档案','./profile.html')]
+      };
+      if (!allCourses) return {
+        title:`继续第 ${state.nextCourse} 关主线课程`, copy:personalized,
+        steps:['先完成推荐课程正文与示例。','完成本关练习并达到80分。','再做对应现场模拟，确认自己会按顺序核对。'],
+        donts:['不要跳过安全、坐标、装夹和刀补基础直接背程序。','不要把课程通关等同于获得独立操作授权。'],
+        reasons:[`主线课程尚有 ${12-state.completed.size} 关未达标。`,'按课程—专项—模拟的顺序，更适合零基础建立完整动作链。'],
+        scope:SAFETY_SCOPE,routes:[route(`进入第${state.nextCourse}关`,COURSE_LINKS[state.nextCourse-1],true),route('查看12关路线','./training-camp.html')]
+      };
+      if (!allSimulations) return {
+        title:'把会答题推进到会按流程检查',copy:personalized,
+        steps:['进入模拟训练中心。','优先选择与薄弱能力相同的模拟。','必须完成错误路径复盘，再追求满分。'],
+        donts:['不要只重复已经满分的模拟。','不要把网页模拟结果当作现场放行依据。'],
+        reasons:[`12关已完成，但模拟仅通过 ${state.simulationPass}/13。`,'模拟训练能暴露步骤顺序、风险判断和异常停止能力。'],
+        scope:SAFETY_SCOPE,routes:[route('进入模拟训练中心','./simulator-hub.html',true),route('查看能力画像','./profile.html')]
+      };
+      return {
+        title:'进入综合复习与现场带教阶段',copy:personalized,
+        steps:['按成长档案最低能力安排复习。','用受控图纸和指定练习件，在现场师傅监督下复述完整流程。','把现场发现的新问题记录为下一轮专项练习。'],
+        donts:['不要因为平台全通关就自行改参数、刀补或启动陌生程序。','不要跳过企业上机授权和首件放行制度。'],
+        reasons:['主线与模拟已完成，下一步价值最高的是跨模块复盘和受监督的现场迁移。'],
+        scope:SAFETY_SCOPE,routes:[route('查看成长档案','./profile.html',true),route('基础阶段考试','./stage-exam-foundation.html')]
+      };
+    }
+    const library = {
+      'work-offset':{
+        title:'G54先找“零件的零”，再核对系统里的偏置',
+        copy:'G54错误常见原因不是程序语法，而是图纸基准、装夹基准、测量方法和坐标写入没有形成同一条数据链。',
+        steps:['确认受控图纸和工艺指定的工件零点。','确认工件实际装夹方向、定位面和测量基准。','按本机规定测得X/Y/Z基准并记录原始值。','核对写入的是正确坐标系、轴、单位和正负方向。','用图形检查、空运行、单段和低倍率做分层验证。'],
+        donts:['不要把回参考点当成G54已经正确。','不要照抄别台机床的G54数值。','不要同时改G54和多把刀补来追尺寸。'],
+        reasons:['程序即使语法正确，错误G54仍会让整条轨迹整体偏移。','测量、装夹和写入任一环节不一致，都会把正确程序带到错误位置。'],
+        scope:SAFETY_SCOPE,routes:[route('学习第5关坐标课程','./course-machine-work-offset.html',true),route('练工件坐标模拟','./simulator-work-offset-setting.html')]
+      },
+      'tool-offset':{
+        title:'H号核对必须把实物刀具、刀位、测量值和程序调用串起来',
+        copy:'只看“T03配H03”还不够；编号一致但补偿值过期，同样会造成Z向风险。',
+        steps:['核对实物刀具、刀位号和程序T号。','确认刀具重新装夹、换刀或伸出变化后已经重新测量。','核对补偿页地址、单位、正负和当前值。','核对程序中的G43与H号调用。','首次运动用单段、低倍率和足够安全距离验证。'],
+        donts:['不要仅凭编号相同就认为补偿正确。','不要给出或照抄脱离机床与测量基准的固定H值。','不要在原因不明时同时修改G54和H/D补偿。'],
+        reasons:['刀长补偿是“刀尖在哪里”的数据链，任何一环过期都会影响Z向位置。','不同系统、测量基准和刀补管理方式可能不同。'],
+        scope:SAFETY_SCOPE,routes:[route('学习第8关对刀课程','./course-tool-length-offset.html',true),route('练刀长补偿核对','./simulator-tool-length-offset-check.html')]
+      },
+      'program-check':{
+        title:'陌生程序先验证数据链，再验证路径，最后才接近工件',
+        copy:'图形看起来正确不等于可以直接加工；图形通常不知道真实刀具、夹具、毛坯和当前补偿是否正确。',
+        steps:['核对程序版本、受控图纸和工艺文件。','逐段检查模态、坐标系、刀具、H/D号、主轴冷却和固定循环。','确认工件、夹具、刀具通道与安全位置。','先做图形检查，再按企业制度做安全空运行。','首次接近使用单段、低倍率并保持可观察、可停止。','首件停机测量，复验后再放行。'],
+        donts:['不要只看程序末尾有M30就认为完整。','不要把图形模拟代替实物核对、空运行和首件测量。','不要在运行中边猜边改多个变量。'],
+        reasons:['陌生程序风险来自程序、坐标、刀补、装夹和现场状态的组合。','分层验证能让每一步只回答一个问题，便于定位真实根因。'],
+        scope:SAFETY_SCOPE,routes:[route('学习第12关完整程序','./course-complete-program-first-piece.html',true),route('练程序空运行模拟','./simulator-program-dry-run.html')]
+      },
+      alarm:{
+        title:'报警后第一步是停止继续冒险，并保留真实现场',
+        copy:'先确保人员、刀具、工件和机床处于可控状态，再记录信息和分类排查；不是连续按复位试运气。',
+        steps:['停止继续运行；按现场风险选择进给保持、急停或其他受控停止方式。','记录完整报警号、报警原文、系统/机型、发生程序段、轴位置和当时动作。','检查人员、刀具、工件、夹具及周边是否存在继续运动危险。','按原厂手册和企业流程分类排查，一次只处理一个已确认原因。','原因处理后，按规定复位，并用单段低倍率分层恢复验证。'],
+        donts:['不要连续按复位并反复启动。','不要只根据网上相似报警号直接改参数或屏蔽联锁。','不要在原因不明或报警重复时继续加工。'],
+        reasons:['完整现场信息是定位根因的证据，过早复位可能清除线索。','同一报警编号在不同系统、版本或厂家配置中含义可能不同。'],
+        scope:SAFETY_SCOPE,routes:[route('练报警排查模拟','./simulator-alarm-troubleshooting.html',true),route('做报警专项题','./practice-alarm-parameter-first-piece.html')]
+      },
+      'first-piece':{
+        title:'首件超差先确认“测量可信”，再判断是整体偏移还是单项问题',
+        copy:'首件超差不能一律归结为刀补；量具、温度、清洁、基准、装夹、坐标和刀具状态都可能造成不同模式的偏差。',
+        steps:['停机并保留当前状态，确认量具、工件清洁、温度和测量方法。','复测关键尺寸，必要时由第二人按同一基准复核。','判断偏差模式：整体同向、单刀相关、渐进漂移还是随机波动。','按偏差模式检查G54、装夹基准、H/D号、刀具磨损或测量链。','仅由授权人员做小量、可记录的单项修正。','重新加工或复验关联尺寸，按企业首件制度放行。'],
+        donts:['不要看到超差就大幅追刀补。','不要同时改G54和多把刀补。','不要只复测一个尺寸就宣布问题解决。'],
+        reasons:['测量不可信时，任何补偿都会把误差带入加工。','偏差模式能帮助区分坐标、单刀、过程和测量问题。'],
+        scope:SAFETY_SCOPE,routes:[route('练首件检查模拟','./simulator-first-piece-inspection.html',true),route('练测量误差分类','./simulator-measurement-vs-machining-error.html')]
+      }
+    };
+    return library[intent] || {
+      title:'先把问题归类，再进入对应训练',
+      copy:`我没有把这句话匹配到安全受控的基础主题。${personalized}`,
+      steps:['说明你遇到的是课程理解、程序验证、报警、坐标刀补、首件测量还是学习路线问题。','补充系统/机型和当前处于“学习、仿真、空运行、首件或生产”哪个阶段。','从上方快捷问题选择最接近的一项，先完成受控训练。'],
+      donts:['不要仅凭一句模糊描述修改参数、坐标或刀补。','不要提供或执行未经核对的固定加工数值。'],
+      reasons:['缺少系统、机型、现场状态和完整现象时，直接给操作步骤容易误导。'],
+      scope:SAFETY_SCOPE,routes:[route('查看训练路线','./training-camp.html',true),route('进入故障问诊','./index.html#workspace')]
+    };
+  }
+  function detectIntent(text) {
+    const value = String(text || '').toLowerCase();
+    const rules = [
+      ['alarm',['报警','alarm','复位','故障码']],
+      ['first-piece',['首件','超差','尺寸不对','测量','偏大','偏小']],
+      ['tool-offset',['刀长','h号','h 号','g43','刀补','补偿']],
+      ['work-offset',['g54','工件坐标','找正','零点','坐标偏置']],
+      ['program-check',['陌生程序','新程序','上机','空运行','单段','程序验证','程序检查']],
+      ['next',['下一步','先学','怎么练','学习路线','推荐']]
+    ];
+    return rules.find(([,keywords]) => keywords.some(keyword => value.includes(keyword)))?.[0] || 'unknown';
+  }
+  function fillList(id, rows, ordered = false) {
+    const root = document.getElementById(id);
+    root.replaceChildren(...rows.map(text => {
+      const item = document.createElement('li');
+      item.textContent = text;
+      return item;
+    }));
+    if (ordered) root.setAttribute('aria-label','建议步骤');
+  }
+  function renderAnswer(intent) {
+    const state = learningState();
+    const result = recommendation(intent, state);
+    document.getElementById('answer-title').textContent = result.title;
+    document.getElementById('answer-copy').textContent = result.copy;
+    fillList('answer-steps', result.steps, true);
+    fillList('answer-donts', result.donts);
+    fillList('answer-reasons', result.reasons);
+    document.getElementById('answer-scope').textContent = result.scope;
+    const routeRoot = document.getElementById('answer-routes');
+    routeRoot.replaceChildren(...result.routes.map(item => {
+      const link = document.createElement('a');
+      link.className = `btn${item.primary ? '' : ' alt'}`;
+      link.href = item.href;
+      link.textContent = item.text;
+      return link;
+    }));
+    const answer = document.getElementById('answer');
+    answer.classList.add('show');
+    answer.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+  function renderSummary() {
+    const state = learningState();
+    document.getElementById('course-progress').textContent = `${state.completed.size}/12`;
+    document.getElementById('wrong-count').textContent = String(state.wrong.length);
+    document.getElementById('sim-progress').textContent = `${state.simulationPass}/13`;
+    document.getElementById('weakest').textContent = state.weakest.name;
+    return state;
+  }
+  document.getElementById('quick-questions').addEventListener('click', event => {
+    const button = event.target.closest('[data-intent]');
+    if (button) renderAnswer(button.dataset.intent);
+  });
+  document.getElementById('ask-form').addEventListener('submit', event => {
+    event.preventDefault();
+    renderAnswer(detectIntent(document.getElementById('question').value));
+  });
+  window.addEventListener('pageshow', renderSummary);
+  const initialState = renderSummary();
+  window.CNC_AI_TEACHER = {
+    build: BUILD,
+    localOnly: true,
+    externalModel: false,
+    storageKeys: Object.values(KEYS),
+    detectIntent,
+    getSummary: () => {
+      const state = learningState();
+      return {courses:state.completed.size,wrong:state.wrong.length,simulations:state.simulationPass,weakest:state.weakest.name};
+    },
+    initialSummary: {courses:initialState.completed.size,wrong:initialState.wrong.length,simulations:initialState.simulationPass,weakest:initialState.weakest.name}
+  };
+})();
+</script>
+</body>
+</html>
