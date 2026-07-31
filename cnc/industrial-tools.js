@@ -4,6 +4,7 @@
 var BUILD='20260722d';
 var DIAG_BUILD='20260722f';
 var mounted=false;
+var apiPublished=false;
 function ensureDiagnosisAssets(){
   if(!document.querySelector('link[data-cnc-industrial-diagnosis]')){var link=document.createElement('link');link.rel='stylesheet';link.href='./industrial-diagnosis.css?v='+DIAG_BUILD;link.dataset.cncIndustrialDiagnosis='1';document.head.appendChild(link);}
   if(!document.querySelector('script[data-cnc-industrial-diagnosis-script]')){var script=document.createElement('script');script.src='./industrial-diagnosis.js?v='+DIAG_BUILD;script.async=true;script.dataset.cncIndustrialDiagnosisScript='1';document.head.appendChild(script);}
@@ -83,12 +84,28 @@ function bind(){
   window.addEventListener('hashchange',function(){if(location.hash==='#calculator')window.setTimeout(decorate,40);});
   window.addEventListener('pageshow',function(){ensureGameHomeEntry();window.setTimeout(decorate,40);});
 }
-function boot(){ensureDiagnosisAssets();bind();decorate();[80,220,500,900].forEach(function(delay){window.setTimeout(ensureGameHomeEntry,delay);});}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
-window.CNC_INDUSTRIAL_TOOLS={build:BUILD,diagnosisBuild:DIAG_BUILD,polling:false,observer:false,refresh:decorate,ensureGameHomeEntry:ensureGameHomeEntry,runCheck:function(){
+var api={build:BUILD,diagnosisBuild:DIAG_BUILD,polling:false,observer:false,refresh:decorate,ensureGameHomeEntry:ensureGameHomeEntry,runCheck:function(){
   var view=document.getElementById('view-calculator');
   var cards=view?Array.from(view.querySelectorAll('.calc-card')):[];
   var accessible=cards.every(function(card){var h=card.querySelector('.calc-card-header'),r=card.querySelector('.calc-result');return h&&h.getAttribute('role')==='button'&&h.hasAttribute('aria-expanded')&&r&&r.getAttribute('aria-live')==='polite';});
   return{passed:Boolean(document.body.classList.contains('cnc-industrial-tools')&&cards.length===6&&accessible),build:BUILD,diagnosisBuild:DIAG_BUILD,cards:cards.length,accessible:accessible,gameHomeEntry:Boolean(document.querySelector('#xp-game-home [data-route="calculator"]')),polling:false,observer:false};
 }};
+function publishApiWhenStable(){
+  if(apiPublished)return;
+  ensureGameHomeEntry();
+  var entry=document.querySelector('#xp-game-home [data-route="calculator"]');
+  if(!entry||!entry.isConnected){window.setTimeout(publishApiWhenStable,120);return;}
+  apiPublished=true;
+  window.CNC_INDUSTRIAL_TOOLS=api;
+}
+function boot(){
+  ensureDiagnosisAssets();
+  bind();
+  decorate();
+  [80,220,500,900].forEach(function(delay){window.setTimeout(ensureGameHomeEntry,delay);});
+  // 首页启动链在900ms执行一次有限兜底重绘。入口在此之前虽可见，仍可能被替换。
+  // 等兜底重绘结束并确认按钮仍连接DOM后再发布工具API就绪，避免快速点击拿到失效节点。
+  window.setTimeout(publishApiWhenStable,1120);
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
