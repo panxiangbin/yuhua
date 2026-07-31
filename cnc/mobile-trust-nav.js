@@ -120,6 +120,29 @@
     });
   }
 
+  function navigateFromBottomButton(button) {
+    var route = button.dataset.xpRoute || '';
+    var filter = button.dataset.xpFilter || '';
+
+    // 底部按钮本身是用户真实点击。直接调用应用导航，避免再合成点击隐藏的首页卡片，
+    // 否则启动保护期会把“查代码”重新纠正回首页。
+    if (typeof window.navigate === 'function') {
+      if (route) window.navigate(route);
+      else if (filter === 'alarm') window.navigate('workspace', { filter: 'params', keyword: '报警' });
+      else if (filter) window.navigate('workspace', { filter: filter });
+      return true;
+    }
+
+    var target = route
+      ? document.querySelector('#sidebar [data-route="' + route + '"],[data-route="' + route + '"]')
+      : document.querySelector('#sidebar [data-route="workspace"][data-filter="' + filter + '"],[data-route="workspace"][data-filter="' + filter + '"]');
+    if (target) {
+      target.click();
+      return true;
+    }
+    return false;
+  }
+
   function nav() {
     if (document.querySelector('.xp-bottom-nav')) return;
     var node = document.createElement('nav');
@@ -134,10 +157,7 @@
     node.addEventListener('click', function (event) {
       var button = event.target.closest('button');
       if (!button) return;
-      var target = button.dataset.xpRoute
-        ? document.querySelector('[data-route="' + button.dataset.xpRoute + '"]')
-        : document.querySelector('[data-route="workspace"][data-filter="' + button.dataset.xpFilter + '"],[data-filter="' + button.dataset.xpFilter + '"]');
-      if (target) target.click();
+      navigateFromBottomButton(button);
       syncNavState(button.dataset.xpRoute || button.dataset.xpFilter);
       scheduleTrust();
     });
