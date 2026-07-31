@@ -74,7 +74,7 @@ fs.mkdirSync(OUT, { recursive: true });
       '不要连续按复位并反复启动',
       '不要照抄别台机床的参数、坐标或刀补值',
       '核对机床原厂手册',
-      '不用于整理信息，不给出固定转速'
+      '本单只用于整理信息，不给出固定转速'
     ]) assert.match(report, new RegExp(expected.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
 
     const trainingHref = await page.locator('#training-link').getAttribute('href');
