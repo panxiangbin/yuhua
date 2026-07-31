@@ -150,74 +150,38 @@
     };
   }
 
-  function disableServiceWorkerRegistration() {
-    if (!('serviceWorker' in navigator)) return;
-    window.__CNC_DISABLE_SERVICE_WORKER__ = true;
+  function ensureServiceWorkerRegistration() {
+    if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
 
-    var nativeContainer = navigator.serviceWorker;
-    window.__CNC_NATIVE_SERVICE_WORKER__ = nativeContainer;
+    var container = window.__CNC_NATIVE_SERVICE_WORKER__ || navigator.serviceWorker;
+    var prototype = Object.getPrototypeOf(container);
+    var nativeRegister = prototype && prototype.register;
+    if (typeof nativeRegister !== 'function') return;
 
-    function fakeRegistration() {
-      return Promise.resolve({
-        scope: location.href,
-        unregister: function () { return Promise.resolve(true); }
-      });
-    }
+    window.__CNC_NATIVE_SERVICE_WORKER__ = container;
+    window.__CNC_SW_REGISTRATION_BLOCKED__ = false;
 
-    function installContainerFacade() {
-      try {
-        var facade = {};
-        ['getRegistration', 'getRegistrations', 'startMessages', 'addEventListener', 'removeEventListener', 'dispatchEvent'].forEach(function (name) {
-          if (typeof nativeContainer[name] === 'function') facade[name] = nativeContainer[name].bind(nativeContainer);
-        });
-        Object.defineProperties(facade, {
-          register: {
-            configurable: false,
-            enumerable: true,
-            writable: false,
-            value: fakeRegistration
-          },
-          controller: {
-            configurable: false,
-            enumerable: true,
-            get: function () { return nativeContainer.controller; }
-          },
-          ready: {
-            configurable: false,
-            enumerable: true,
-            get: function () { return nativeContainer.ready; }
-          },
-          oncontrollerchange: {
-            configurable: false,
-            enumerable: true,
-            get: function () { return nativeContainer.oncontrollerchange; },
-            set: function (handler) { nativeContainer.oncontrollerchange = handler; }
-          }
-        });
-        Object.defineProperty(navigator, 'serviceWorker', {
-          configurable: true,
-          value: facade
-        });
-        return navigator.serviceWorker === facade && navigator.serviceWorker.register === fakeRegistration;
-      } catch (error) {
-        return false;
-      }
-    }
+    var bootstrap = window.__CNC_PWA_BOOTSTRAP__;
+    if (bootstrap && (bootstrap.state === 'registering' || bootstrap.state === 'registered')) return;
 
-    try {
-      nativeContainer.getRegistrations().then(function (registrations) {
-        return Promise.all(registrations.map(function (registration) {
-          if (/\/yuhua\/cnc\/|\/cnc\//.test(registration.scope)) return registration.unregister();
-          return false;
-        }));
-      }).catch(function () {});
-    } catch (error) {}
+    window.__CNC_PWA_BOOTSTRAP__ = {
+      build: '20260728-pwa3',
+      state: 'registering',
+      scope: new URL('./', location.href).href,
+      script: new URL('./sw.js', location.href).href
+    };
 
-    // 当前首页只获得独立门面：注册入口被拦截，controller、ready 和事件仍转发给
-    // 原生容器。这样既不会触发 Proxy 对不可配置 register 的不变量错误，也不会
-    // 修改浏览器原型；PWA 自检与离线门禁仍可通过保存的原生容器执行真实注册。
-    var blocked = installContainerFacade();
-    window.__CNC_SW_REGISTRATION_BLOCKED__ = blocked;
+    nativeRegister.call(container, './sw.js', {
+      scope: './',
+      updateViaCache: 'none'
+    }).then(function (registration) {
+      window.__CNC_PWA_BOOTSTRAP__.state = 'registered';
+      window.__CNC_PWA_BOOTSTRAP__.scope = registration.scope;
+    }).catch(function (error) {
+      window.__CNC_PWA_BOOTSTRAP__.state = 'error';
+      window.__CNC_PWA_BOOTSTRAP__.error = String(error && error.message ? error.message : error);
+      console.error('[CNC PWA] Service Worker 注册失败：' + window.__CNC_PWA_BOOTSTRAP__.error);
+    });
   }
 
   function setMeta(name, value, property) {
@@ -371,16 +335,6 @@
     return window.__CNC_GCODE_PRO_LOADING__;
   }
 
-  function clearLegacyCaches() {
-    try {
-      if ('caches' in window) {
-        caches.keys().then(function (names) {
-          return Promise.all(names.map(function (name) { return caches.delete(name); }));
-        }).catch(function () {});
-      }
-    } catch (error) {}
-  }
-
   function bindLazyLoading() {
     document.addEventListener('click', function (event) {
       var target = event.target.closest('[data-filter]');
@@ -408,11 +362,10 @@
     correctCourseCards();
     injectStaticCards();
     bindLazyLoading();
-    clearLegacyCaches();
   }
 
   installStartupHomeGuard();
-  disableServiceWorkerRegistration();
+  ensureServiceWorkerRegistration();
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot, { once: true });
   } else {
@@ -444,6 +397,7 @@
       var cleanApi = window.CNC_CLEAN_UI || {};
       var trustApi = window.CNC_TRUST_NAV || {};
       var workspaceReady = !workspaceCheck || workspaceCheck.passed;
+      var pwaBootstrap = window.__CNC_PWA_BOOTSTRAP__ || {};
       var result = {
         passed: true,
         build: BUILD,
@@ -475,6 +429,8 @@
         personalHomeFollowsTools: Boolean(personal.followsTools),
         gcodeLoaded: window.__CNC_GM_PRO_INSTALLED__ === PRO_BUILD,
         serviceWorkerRegistrationBlocked: window.__CNC_SW_REGISTRATION_BLOCKED__ === true,
+        serviceWorkerRegistrationAllowed: Boolean(pwaBootstrap.state === 'registering' || pwaBootstrap.state === 'registered'),
+        serviceWorkerBootstrapState: pwaBootstrap.state || '',
         serviceWorkerControlled: Boolean(navigator.serviceWorker && navigator.serviceWorker.controller),
         lesson9Corrected: Boolean(lesson9 && lesson9.textContent.indexOf('不保证直线') !== -1),
         lesson10Corrected: Boolean(lesson10 && lesson10.textContent.indexOf('最小输入单位') !== -1)
@@ -495,8 +451,8 @@
         && result.trustNav
         && result.personalHome
         && result.personalHomeFollowsTools
-        && result.serviceWorkerRegistrationBlocked
-        && !result.serviceWorkerControlled
+        && result.serviceWorkerRegistrationAllowed
+        && !result.serviceWorkerRegistrationBlocked
         && result.lesson9Corrected
         && result.lesson10Corrected;
       console.log('[CNC工业卡片界面检查]', result);
