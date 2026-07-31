@@ -106,6 +106,13 @@
     align-items: center;
   }
 
+  /* 手机主导航与工具导航使用实色工业界面，不使用玻璃模糊，避免文字边缘发虚。 */
+  .xp-game-bottom-nav,
+  body > .xp-bottom-nav {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+
   /* 顶部栏优化 */
   .topbar {
     padding: 10px 12px;
