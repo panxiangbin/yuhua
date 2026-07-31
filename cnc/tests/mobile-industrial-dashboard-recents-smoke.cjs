@@ -42,14 +42,19 @@ const assert = require('node:assert/strict');
     const gameHome = document.querySelector('#xp-game-home[data-ready="true"]');
     const recent = document.querySelector('#dashboard-recent-section');
     const cssText = link ? await fetch(link.href, { cache: 'no-store' }).then(response => response.text()) : '';
-    const matchingRules = [];
-    const collectRules = (rules) => {
+    const allRecentRules = [];
+    const collectRules = (rules, href, media) => {
       Array.from(rules || []).forEach((rule) => {
-        if (rule.cssRules) collectRules(rule.cssRules);
-        if (rule.selectorText && rule.selectorText.includes('dashboard-recent-section')) matchingRules.push(rule.cssText);
+        const nextMedia = rule.conditionText || media || '';
+        if (rule.cssRules) collectRules(rule.cssRules, href, nextMedia);
+        if (rule.selectorText && (rule.selectorText.includes('dashboard-recent-section') || rule.selectorText.includes('.recent-section'))) {
+          allRecentRules.push({ href, media: nextMedia, cssText: rule.cssText });
+        }
       });
     };
-    if (link && link.sheet) collectRules(link.sheet.cssRules);
+    Array.from(document.styleSheets).forEach((sheet) => {
+      try { collectRules(sheet.cssRules, sheet.href || 'inline', ''); } catch (error) {}
+    });
     return {
       innerWidth: window.innerWidth,
       mediaMatches: window.matchMedia('(max-width:760px)').matches,
@@ -57,7 +62,7 @@ const assert = require('node:assert/strict');
       linkHref: link ? link.href : '',
       stylesheetReady: Boolean(link && link.sheet),
       servedCssHasRecentRule: cssText.includes('#dashboard-recent-section'),
-      parsedRecentRules: matchingRules,
+      allRecentRules,
       gameDisplay: gameHome ? getComputedStyle(gameHome).display : 'missing',
       recentDisplay: recent ? getComputedStyle(recent).display : 'missing',
       recentInlineStyle: recent ? recent.getAttribute('style') : 'missing',
