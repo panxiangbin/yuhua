@@ -15,7 +15,6 @@
   var PRACTICE_KEY = 'cnc_training_practice_v1';
   var SIMULATOR_KEY = 'cnc_training_simulator_v1';
   var mounted = false;
-  var recordsObserver = null;
   var recordsDecorateScheduled = false;
 
   var COURSES = [
@@ -274,6 +273,7 @@
         '<a href="./practice-wrong-review.html"><span>📕</span><strong>错题复习</strong><small>' + esc(wrongCopy) + '</small></a>' +
         '<a href="./simulator-hub.html"><span>🏭</span><strong>模拟车间</strong><small>已通过 ' + st.simulatorPassed + ' / 13 项</small></a>' +
       '</div>' +
+      '<button type="button" class="xp-game-tools-entry" data-route="calculator" data-cnc-industrial-tools-entry="true" aria-label="进入换算工具，计算转速、进给、锥度和直径"><span class="xp-game-tools-icon" aria-hidden="true">ƒ</span><span><strong>换算工具</strong><small>转速 · 进给 · 锥度 · 直径</small></span><span class="xp-game-tools-arrow" aria-hidden="true">›</span></button>' +
       '<nav class="xp-game-bottom-nav" aria-label="CNC训练平台主导航">' +
         '<a class="active" href="./index.html"><span>⌂</span><b>首页</b></a>' +
         '<a href="./training-camp.html"><span>⚔</span><b>闯关</b></a>' +
@@ -380,14 +380,6 @@
     }, 0);
   }
 
-  function watchRecords() {
-    var view = document.getElementById('view-favorites');
-    if (!view || recordsObserver) return false;
-    recordsObserver = new MutationObserver(function () { scheduleRecords(); });
-    recordsObserver.observe(view, { childList: true, subtree: true });
-    return true;
-  }
-
   function render() {
     ensureAssets();
     var st = state();
@@ -431,7 +423,6 @@
   function boot() {
     ensureAssets();
     bind();
-    watchRecords();
     render();
     window.setTimeout(render, 900);
   }
@@ -468,7 +459,7 @@
         studyCards: list.length,
         followsTools: followsTools(),
         recordsReady: Boolean(document.querySelector('#view-favorites[data-industrial-records="ready"]')),
-        recordsObserver: Boolean(recordsObserver),
+        recordsObserver: false,
         state: st
       };
     }
