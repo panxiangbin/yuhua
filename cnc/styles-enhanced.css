@@ -88,12 +88,22 @@
     border-radius: 10px;
   }
 
-  /* 手机端图标按钮必须满足最小触控面积，避免动态详情样式尚未加载时退回38px。 */
+  /* 手机端图标按钮必须满足最小触控面积。 */
   .icon-button {
     width: 44px;
     height: 44px;
     min-width: 44px;
     min-height: 44px;
+  }
+
+  /* 详情返回按钮不是 icon-button，单独锁定44px触控高度，避免主题层按文字高度收缩到38px。 */
+  #detail-panel #detail-back-btn {
+    height: 44px !important;
+    min-height: 44px !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    display: inline-flex;
+    align-items: center;
   }
 
   /* 顶部栏优化 */
