@@ -42,9 +42,37 @@ function assert(condition, message) {
 
   await page.goto(BASE_URL, { waitUntil: 'networkidle' });
   await page.waitForSelector('#view-dashboard.active');
-  await page.waitForSelector('.xp-bottom-nav');
+  await page.waitForSelector('.xp-game-bottom-nav', { state: 'visible' });
 
-  const navStyle = await page.locator('.xp-bottom-nav').evaluate((node) => {
+  const gameNavStyle = await page.locator('.xp-game-bottom-nav').evaluate((node) => {
+    const style = getComputedStyle(node);
+    return {
+      backgroundImage: style.backgroundImage,
+      backdropFilter: style.backdropFilter || style.webkitBackdropFilter,
+      radius: style.borderRadius,
+      visibleItems: [...node.querySelectorAll('a')].filter(link => link.getClientRects().length > 0).length
+    };
+  });
+  assert(gameNavStyle.backgroundImage === 'none', '闯关首页底部导航仍存在渐变背景');
+  assert(!gameNavStyle.backdropFilter || gameNavStyle.backdropFilter === 'none', '闯关首页底部导航仍使用玻璃模糊');
+  assert(parseFloat(gameNavStyle.radius) <= 14, '闯关首页底部导航圆角仍然过大');
+  assert(gameNavStyle.visibleItems === 5, '闯关首页必须只有五项可见主导航');
+
+  const homeUtilityState = await page.locator('body > .xp-bottom-nav').evaluate((node) => ({
+    visible: node.getClientRects().length > 0,
+    ariaHidden: node.getAttribute('aria-hidden'),
+    inert: node.hasAttribute('inert')
+  }));
+  assert(!homeUtilityState.visible && homeUtilityState.ariaHidden === 'true' && homeUtilityState.inert, '手机首页工具导航隐藏语义异常');
+
+  await page.locator('#xp-game-home [data-xp-query-filter="gcode"]').click();
+  await page.waitForSelector('#view-workspace.active', { state: 'visible', timeout: 15000 });
+  await page.waitForFunction(() => {
+    const node = document.querySelector('body > .xp-bottom-nav');
+    return node && node.getClientRects().length > 0 && node.getAttribute('aria-hidden') === 'false' && !node.hasAttribute('inert');
+  }, null, { timeout: 15000 });
+
+  const utilityNavStyle = await page.locator('body > .xp-bottom-nav').evaluate((node) => {
     const style = getComputedStyle(node);
     return {
       backgroundImage: style.backgroundImage,
@@ -52,11 +80,13 @@ function assert(condition, message) {
       radius: style.borderRadius
     };
   });
-  assert(navStyle.backgroundImage === 'none', '底部导航仍存在渐变背景');
-  assert(!navStyle.backdropFilter || navStyle.backdropFilter === 'none', '底部导航仍使用玻璃模糊');
-  assert(parseFloat(navStyle.radius) <= 14, '底部导航圆角仍然过大');
+  assert(utilityNavStyle.backgroundImage === 'none', '查询工作区底部导航仍存在渐变背景');
+  assert(!utilityNavStyle.backdropFilter || utilityNavStyle.backdropFilter === 'none', '查询工作区底部导航仍使用玻璃模糊');
+  assert(parseFloat(utilityNavStyle.radius) <= 14, '查询工作区底部导航圆角仍然过大');
 
-  await page.locator('.xp-bottom-nav [data-xp-filter="gcode"]').click();
+  const gcodeButton = page.locator('body > .xp-bottom-nav [data-xp-filter="gcode"]');
+  await gcodeButton.waitFor({ state: 'visible', timeout: 10000 });
+  await gcodeButton.click();
   await page.waitForSelector('#view-workspace.active');
   await page.locator('#search-input').fill('G01');
   await page.waitForFunction(() => document.querySelectorAll('#result-list [data-open-entry]').length > 0);
@@ -87,7 +117,7 @@ function assert(condition, message) {
   assert(parseFloat(trustStyle.radius) <= 14, '可信度卡圆角仍然过大');
 
   assert(consoleErrors.length === 0, '控制台出现错误: ' + consoleErrors.join(' | '));
-  console.log(JSON.stringify({ passed: true, copied, statusText, navStyle, trustStyle }, null, 2));
+  console.log(JSON.stringify({ passed: true, copied, statusText, gameNavStyle, homeUtilityState, utilityNavStyle, trustStyle }, null, 2));
   await browser.close();
 })().catch((error) => {
   console.error(error.stack || error.message || error);
