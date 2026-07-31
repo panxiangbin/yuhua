@@ -1,0 +1,60 @@
+name: CNC AI teacher smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/ai-teacher.html'
+      - 'cnc/profile.html'
+      - 'cnc/build-info.json'
+      - 'cnc/tests/mobile-ai-teacher-smoke.cjs'
+      - '.github/workflows/cnc-ai-teacher-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ai-teacher:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Validate local-only safety contract
+        run: |
+          set -euxo pipefail
+          grep -q "20260801-ai-teacher1" cnc/ai-teacher.html
+          grep -q "localOnly: true" cnc/ai-teacher.html
+          grep -q "externalModel: false" cnc/ai-teacher.html
+          grep -q "不调用外部模型" cnc/ai-teacher.html
+          grep -q "不会给出脱离具体机床" cnc/ai-teacher.html
+          grep -q "核对机床原厂手册" cnc/ai-teacher.html
+          ! grep -Eqi "https?://|fetch\(|XMLHttpRequest|WebSocket|EventSource" cnc/ai-teacher.html
+      - name: Check JavaScript syntax
+        run: |
+          node --check cnc/tests/mobile-ai-teacher-smoke.cjs
+          python3 - <<'PY'
+          from pathlib import Path
+          text=Path('cnc/ai-teacher.html').read_text(encoding='utf-8')
+          script=text.split('<script>',1)[1].split('</script>',1)[0]
+          Path('/tmp/cnc-ai-teacher.js').write_text(script,encoding='utf-8')
+          PY
+          node --check /tmp/cnc-ai-teacher.js
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save playwright@1.54.1
+          npx playwright install --with-deps chromium
+      - name: Start static server
+        run: python3 -m http.server 4173 --directory . > /tmp/cnc-ai-teacher-server.log 2>&1 &
+      - name: Chromium 390x844 local AI teacher
+        run: node cnc/tests/mobile-ai-teacher-smoke.cjs
+      - name: Upload AI teacher diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-ai-teacher-diagnostics
+          path: artifacts/ai-teacher/
+          if-no-files-found: warn
+          retention-days: 14
