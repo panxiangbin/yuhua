@@ -82,15 +82,24 @@
   }
 
   function scheduleSuggestionClose(query) {
-    if (query !== lastSuggestionQuery && document.body) document.body.removeAttribute('data-cnc-suggestions-suppressed');
-    if (query === lastSuggestionQuery && suggestionCloseTimer !== null) return;
-    lastSuggestionQuery = query;
-    if (suggestionCloseTimer !== null) window.clearTimeout(suggestionCloseTimer);
-    suggestionCloseTimer = window.setTimeout(function () {
+    var normalized = String(query || '').trim();
+    if (suggestionCloseTimer !== null) {
+      window.clearTimeout(suggestionCloseTimer);
       suggestionCloseTimer = null;
-      if (document.body) document.body.setAttribute('data-cnc-suggestions-suppressed', 'true');
-      closeSuggestions();
-    }, 900);
+    }
+    if (query !== lastSuggestionQuery && document.body) {
+      document.body.removeAttribute('data-cnc-suggestions-suppressed');
+    }
+    lastSuggestionQuery = query;
+
+    // 有输入时保持建议列表可见，交给 Enter、Escape、滚动、清空或结果点击关闭。
+    // 旧版 900ms 定时关闭会让屏幕阅读器和键盘用户还没来得及选择就失去列表。
+    if (normalized) {
+      if (document.body) document.body.removeAttribute('data-cnc-suggestions-suppressed');
+      return;
+    }
+    if (document.body) document.body.setAttribute('data-cnc-suggestions-suppressed', 'true');
+    closeSuggestions();
   }
 
   function activeViewId() {
