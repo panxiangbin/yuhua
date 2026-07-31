@@ -40,6 +40,29 @@ function observePage(page, errors) {
   page.on('pageerror', error => errors.push(error.message));
 }
 
+async function waitForProductionCaches(page) {
+  await page.waitForFunction(expectedBuild => {
+    return caches.keys().then(names => (
+      names.includes(`cnc-static-${expectedBuild}`) &&
+      names.includes(`cnc-runtime-${expectedBuild}`)
+    ));
+  }, expectedPwaBuild, { timeout: 60000 });
+}
+
+async function readExpectedRegistration(page) {
+  return page.evaluate(async () => {
+    const expectedScope = new URL('/cnc/', location.origin).href;
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    const registration = registrations.find(item => item.scope === expectedScope);
+    if (!registration) return null;
+    return {
+      scope: registration.scope,
+      activeScript: registration.active?.scriptURL || '',
+      activeState: registration.active?.state || ''
+    };
+  });
+}
+
 (async () => {
   let browser;
   let context;
@@ -84,13 +107,25 @@ function observePage(page, errors) {
     let page = await context.newPage();
     observePage(page, errors);
 
-    stage = 'home';
-    await page.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded' });
+    stage = 'bootstrap';
+    // Register from the quiet offline page. Entering through index.html starts a
+    // second inline register() call and can transiently remove the registration
+    // that the shared helper has just installed.
+    await page.goto('http://127.0.0.1:4173/cnc/offline.html', { waitUntil: 'domcontentloaded' });
     stage = 'controller';
     page = await ensureControlled(page, errors, observePage);
 
-    const registration = await page.evaluate(() => navigator.serviceWorker.getRegistration('./'));
-    if (!registration) throw new Error('Service Worker未注册');
+    stage = 'registration-ready';
+    const registration = await readExpectedRegistration(page);
+    if (!registration) throw new Error('未找到 /cnc/ 作用域的 Service Worker 注册');
+    if (registration.activeScript !== 'http://127.0.0.1:4173/cnc/sw.js' || registration.activeState !== 'activated') {
+      throw new Error(`Service Worker 注册未激活：${JSON.stringify(registration)}`);
+    }
+
+    stage = 'cache-ready';
+    // Activation intentionally performs cache maintenance asynchronously. Wait
+    // for both production cache versions before testing offline navigation.
+    await waitForProductionCaches(page);
     const cachesBefore = await page.evaluate(() => caches.keys());
     if (!cachesBefore.includes(`cnc-static-${expectedPwaBuild}`)) throw new Error(`静态缓存版本缺失：${expectedPwaBuild}`);
     if (!cachesBefore.includes(`cnc-runtime-${expectedPwaBuild}`)) throw new Error(`运行时缓存版本缺失：${expectedPwaBuild}`);
@@ -128,6 +163,7 @@ function observePage(page, errors) {
     fs.writeFileSync(path.join(out, 'pwa-offline-result.json'), JSON.stringify({
       build,
       expectedPwaBuild,
+      registration,
       caches: cachesBefore,
       offlineFallback: true,
       runtimeWarmup: true,
