@@ -78,12 +78,22 @@
 
   function openQueryMode(button, event) {
     var filter = button && button.getAttribute('data-xp-query-filter');
-    if (!filter || typeof window.navigate !== 'function') return false;
+    if (!filter) return false;
     var guard = window.CNC_STARTUP_HOME_GUARD;
     if (guard && typeof guard.acceptTrustedRouteEvent === 'function') {
       guard.acceptTrustedRouteEvent(event);
     }
-    window.navigate('workspace', { filter: filter });
+
+    // 复用应用已经验证过的原始工作区入口，确保启动首页守卫、查询模式拆分层
+    // 和主路由按同一条真实事件链切换；仅在入口尚未生成时退回全局导航。
+    var routeTarget = document.querySelector(
+      '.launchpad-card[data-route="workspace"][data-filter="' + filter + '"],' +
+      '#sidebar [data-route="workspace"][data-filter="' + filter + '"]'
+    );
+    if (routeTarget) routeTarget.click();
+    else if (typeof window.navigate === 'function') window.navigate('workspace', { filter: filter });
+    else return false;
+
     if (filter === 'gcode' && typeof window.CNC_LOAD_GCODE_PRO === 'function') {
       window.CNC_LOAD_GCODE_PRO();
     }
