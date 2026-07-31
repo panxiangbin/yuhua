@@ -16,6 +16,15 @@ const path = require('node:path');
     await homeNav.waitFor({ state: 'visible', timeout: 15000 });
     await homeNav.click();
     await page.waitForSelector('#view-dashboard.active', { state: 'visible', timeout: 15000 });
+    await page.waitForSelector('#xp-game-home .xp-game-query-panel[data-ready="true"]', { state: 'visible', timeout: 15000 });
+  }
+
+  async function openMode(mode) {
+    const button = page.locator(`#xp-game-home [data-xp-query-filter="${mode}"]`);
+    await button.waitFor({ state: 'visible', timeout: 15000 });
+    await button.click();
+    await page.waitForSelector('#view-workspace.active', { state: 'visible', timeout: 15000 });
+    await page.waitForFunction(expected => document.body.getAttribute('data-cnc-query-mode') === expected, mode, { timeout: 15000 });
   }
 
   await page.goto('http://127.0.0.1:4173/cnc/?smoke=industrial-workspace', { waitUntil: 'domcontentloaded', timeout: 60000 });
@@ -23,24 +32,25 @@ const path = require('node:path');
     window.CNC_TRUST_NAV?.build === '20260721s'
     && window.__CNC_TRUST_READY_AT__ > 0
     && window.CNC_QUERY_MODES?.build === '20260721r'
+    && window.CNC_GAME_QUERY_NAV?.runCheck().passed
     && typeof window.navigate === 'function'
   ), null, { timeout: 30000 });
 
   const mobileHomeState = await page.evaluate(() => {
     const game = document.getElementById('xp-game-home');
     const legacy = document.querySelector('.launchpad-card[data-filter="gcode"]');
+    const quick = document.querySelectorAll('#xp-game-home [data-xp-query-filter]');
     return {
       gameVisible: Boolean(game && game.getClientRects().length),
       legacyHidden: Boolean(legacy && legacy.getClientRects().length === 0),
-      enabled: document.body.classList.contains('cnc-game-home-enabled')
+      enabled: document.body.classList.contains('cnc-game-home-enabled'),
+      quickCount: quick.length,
+      quickVisible: Array.from(quick).every(node => node.getClientRects().length > 0)
     };
   });
-  assert.deepEqual(mobileHomeState, { gameVisible: true, legacyHidden: true, enabled: true });
+  assert.deepEqual(mobileHomeState, { gameVisible: true, legacyHidden: true, enabled: true, quickCount: 4, quickVisible: true });
 
-  const gcodeNav = page.locator('.xp-bottom-nav [data-xp-filter="gcode"]');
-  await gcodeNav.waitFor({ state: 'visible', timeout: 15000 });
-  await gcodeNav.click();
-  await page.waitForSelector('#view-workspace.active', { state: 'visible', timeout: 30000 });
+  await openMode('gcode');
   await page.waitForFunction(() => window.__CNC_GM_PRO_INSTALLED__ === '20260720h', null, { timeout: 30000 });
   await page.waitForFunction(() => window.CNC_INDUSTRIAL_WORKSPACE?.build === '20260721v', null, { timeout: 15000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-industrial-workspace') === 'true', null, { timeout: 15000 });
@@ -152,21 +162,23 @@ const path = require('node:path');
   await page.locator('#search-clear-btn').click();
   await goHome();
 
-  for (const mode of ['alarm', 'parameter', 'fault']) {
-    await page.locator('#sidebar-open').click();
-    const route = page.locator(`#sidebar .tree-item[data-filter="${mode}"]`);
-    await route.waitFor({ state: 'visible', timeout: 15000 });
-    await route.click();
-    await page.waitForSelector('#view-workspace.active', { state: 'visible', timeout: 15000 });
-    await page.waitForFunction(expected => document.body.getAttribute('data-cnc-industrial-mode') === expected, mode, { timeout: 15000 });
+  const journeys = {
+    alarm: { title: /报警排查/, placeholder: /SV0401|报警号/ },
+    parameter: { title: /参数速查/, placeholder: /1815|参数号/ },
+    fault: { title: /故障问诊/, placeholder: /回零失败|异常/ }
+  };
+  for (const mode of Object.keys(journeys)) {
+    await openMode(mode);
     await page.waitForSelector('#result-list .result-card', { state: 'visible', timeout: 15000 });
     assert.ok(await page.locator('#result-list .result-card').count() > 0);
+    assert.match((await page.locator('#workspace-title').textContent()) || '', journeys[mode].title);
+    assert.match((await page.locator('#search-input').getAttribute('placeholder')) || '', journeys[mode].placeholder);
     await goHome();
   }
 
-  const relevantErrors = [...pageErrors, ...consoleErrors].filter(text => /industrial-workspace|CNC工业查询|TypeError|ReferenceError/i.test(text));
+  const relevantErrors = [...pageErrors, ...consoleErrors].filter(text => /industrial-workspace|CNC工业查询|game-query|TypeError|ReferenceError/i.test(text));
   assert.deepEqual(relevantErrors, []);
-  console.log('手机可见导航、查询工作区与键盘搜索建议通过', { mobileHomeState, workspace });
+  console.log('手机闯关首页现场速查、查询工作区与键盘搜索建议通过', { mobileHomeState, workspace });
   await browser.close();
 })().catch(error => {
   try {
