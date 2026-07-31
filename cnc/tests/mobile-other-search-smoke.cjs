@@ -6,9 +6,14 @@ const assert = require('node:assert/strict');
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   await page.goto('http://127.0.0.1:4173/cnc/?smoke=other-search-r', { waitUntil: 'domcontentloaded', timeout: 60000 });
 
-  await page.waitForFunction(() => window.CNC_QUERY_MODES && window.CNC_QUERY_MODES.build === '20260721r', null, { timeout: 30000 });
-  const paramsCard = page.locator('.launchpad-card[data-filter="parameter"]').first();
-  await paramsCard.waitFor({ state: 'visible', timeout: 30000 });
+  await page.waitForFunction(() => {
+    const modes = window.CNC_QUERY_MODES;
+    const nav = window.CNC_GAME_QUERY_NAV;
+    const entry = document.querySelector('#xp-game-home [data-xp-query-filter="parameter"]');
+    return Boolean(modes && modes.build === '20260721r' && nav && nav.runCheck().passed && entry && entry.getClientRects().length);
+  }, null, { timeout: 30000 });
+  const paramsCard = page.locator('#xp-game-home [data-xp-query-filter="parameter"]');
+  assert.equal(await paramsCard.count(), 1, '手机首页必须只有一个可见参数速查入口');
   await paramsCard.click();
 
   await page.waitForSelector('#view-workspace.active #result-list .result-card', { state: 'visible', timeout: 30000 });
