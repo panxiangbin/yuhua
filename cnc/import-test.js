@@ -72,9 +72,10 @@
     }
 
     function rememberUserRoute(event) {
-      if (!event || !event.isTrusted || !isRouteTarget(event.target)) return;
-      if (event.type === 'keydown' && event.key !== 'Enter' && event.key !== ' ') return;
+      if (!event || !event.isTrusted || !isRouteTarget(event.target)) return false;
+      if (event.type === 'keydown' && event.key !== 'Enter' && event.key !== ' ') return false;
       userRouteRequested = true;
+      return true;
     }
 
     function activateDashboardFallback() {
@@ -134,6 +135,7 @@
       build: STARTUP_HOME_BUILD,
       canonicalRoot: canonicalRoot,
       forceHome: forceHome,
+      acceptTrustedRouteEvent: rememberUserRoute,
       runCheck: function () {
         var active = document.querySelector('.view.active');
         return {
