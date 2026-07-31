@@ -1,9 +1,41 @@
 /* CNC PWA：版本化缓存、离线回退与安全更新。 */
-const BUILD = '20260731-pwa6';
+const BUILD = '20260731-pwa7';
 const STATIC_CACHE = `cnc-static-${BUILD}`;
 const RUNTIME_CACHE = `cnc-runtime-${BUILD}`;
 const INSTALL_DIAGNOSTIC_PATH = './pwa-install-diagnostics.json';
 const OFFLINE_FALLBACK_PATH = './offline.html';
+const EMERGENCY_OFFLINE_HTML = `<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#365b72">
+  <meta name="robots" content="noindex,nofollow">
+  <title>网络暂时不可用｜数控小潘 CNC随身助手</title>
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;background:#f2efe8;color:#292d30;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+    main{min-height:100vh;display:grid;place-items:center;padding:22px}
+    section{max-width:560px;background:#fffdf8;border:1px solid #d8d2c6;border-radius:16px;box-shadow:0 8px 24px rgba(48,44,36,.09);padding:24px}
+    strong{color:#365b72}
+    h1{font-size:30px;margin:10px 0}
+    p{line-height:1.7;color:#687078}
+    .notice{border-left:4px solid #8a5a16;background:#f8f5ef;padding:12px;border-radius:8px}
+    button{width:100%;min-height:48px;margin-top:18px;border:0;border-radius:12px;background:#365b72;color:#fff;font-weight:900;font-size:16px;cursor:pointer}
+  </style>
+</head>
+<body>
+  <main>
+    <section>
+      <strong>CNC离线模式</strong>
+      <h1>网络暂时不可用</h1>
+      <p>离线回退页尚未写入缓存，但已经缓存过的页面仍可能继续打开。恢复网络后请重新加载。</p>
+      <p class="notice"><b>安全提醒：</b>离线内容可能不是最新版本。报警、参数、刀补和现场操作必须再次核对机床原厂手册、企业安全制度和现场条件。</p>
+      <button type="button" onclick="location.reload()">重新连接</button>
+    </section>
+  </main>
+</body>
+</html>`;
 
 const REQUIRED_CORE_PATHS = [
   './index.html',
@@ -16,6 +48,19 @@ const REQUIRED_CORE_PATHS = [
 
 function scopeUrl(path) {
   return new URL(path, self.registration.scope).href;
+}
+
+function createEmergencyOfflineResponse() {
+  return new Response(EMERGENCY_OFFLINE_HTML, {
+    status: 503,
+    statusText: 'Service Unavailable',
+    headers: {
+      'Content-Type': 'text/html; charset=utf-8',
+      'Cache-Control': 'no-store',
+      'Retry-After': '60',
+      'X-Robots-Tag': 'noindex, nofollow'
+    }
+  });
 }
 
 async function fetchWithTimeout(url, timeoutMs = 8000) {
@@ -114,10 +159,9 @@ function startBackgroundMaintenance() {
 }
 
 self.addEventListener('install', (event) => {
-  // The fallback page must be attempted before activation completes. The helper
-  // always resolves, so a temporary network or Cache API failure cannot block
-  // Service Worker installation, while successful installs have an immediate
-  // offline navigation response instead of a plain 503 race window.
+  // The normal offline page is attempted before activation. If that best-effort
+  // cache write still fails, navigation handling has an inline emergency page,
+  // so users never fall through to an unhelpful plain-text "Offline" response.
   event.waitUntil(
     Promise.allSettled([
       cacheOfflineFallbackBestEffort(),
@@ -173,11 +217,11 @@ self.addEventListener('fetch', (event) => {
         return fresh;
       } catch {
         const cached = await caches.match(request).catch(() => null);
-        const fallback = await caches.match(scopeUrl(OFFLINE_FALLBACK_PATH)).catch(() => null);
-        return cached || fallback || new Response('Offline', {
-          status: 503,
-          headers: { 'Content-Type': 'text/plain; charset=utf-8' }
-        });
+        const staticCache = await caches.open(STATIC_CACHE).catch(() => null);
+        const fallback = staticCache
+          ? await staticCache.match(scopeUrl(OFFLINE_FALLBACK_PATH), { ignoreSearch: true }).catch(() => null)
+          : null;
+        return cached || fallback || createEmergencyOfflineResponse();
       }
     })());
     return;
