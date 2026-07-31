@@ -217,7 +217,7 @@ async function openControlledNavigation(page, controlledUrl, expectedScript) {
 
 async function ensureControlled(page, errors, observePage, options = {}) {
   const { controlledUrl = page.url() } = options;
-  const directoryEntry = new URL('/cnc/', page.url()).href;
+  const bootstrapEntry = new URL('/cnc/offline.html', page.url()).href;
   const expectedScope = new URL('/cnc/', page.url()).href;
   const expectedScript = new URL('/cnc/sw.js', page.url()).href;
   const chromiumDiagnostics = await startChromiumServiceWorkerDiagnostics(page);
@@ -227,14 +227,22 @@ async function ensureControlled(page, errors, observePage, options = {}) {
       throw new Error(`Controlled URL outside Service Worker scope: ${controlledUrl}`);
     }
 
-    if (page.url() !== directoryEntry) {
-      await page.goto(directoryEntry, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    // Register from a quiet same-origin page. The main index registers the same
+    // worker inline; entering through it here creates two concurrent register()
+    // calls and can leave Chromium with a transient empty registration object.
+    if (page.url() !== bootstrapEntry) {
+      await page.goto(bootstrapEntry, { waitUntil: 'domcontentloaded', timeout: 30000 });
     }
 
     const registration = await registerExpectedWorker(page, expectedScope, expectedScript);
     console.log(`[PWA controller] registration=${JSON.stringify(registration)}`);
 
-    if (await waitForController(page, expectedScript, 10000)) return page;
+    if (await waitForController(page, expectedScript, 10000)) {
+      if (page.url() !== controlledUrl) {
+        return await openControlledNavigation(page, controlledUrl, expectedScript);
+      }
+      return page;
+    }
 
     try {
       return await openControlledNavigation(page, controlledUrl, expectedScript);
