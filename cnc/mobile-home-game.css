@@ -5,7 +5,11 @@
   :root{--xp-navy:#061a36;--xp-navy-2:#0b2a57;--xp-blue:#1577ff;--xp-blue-2:#0c58d8;--xp-yellow:#ffbd21;--xp-orange:#ff7a16;--xp-green:#22bd72;--xp-purple:#7758f6;--xp-line:rgba(255,255,255,.14);--xp-card:#0d2d5b;--xp-text:#f7fbff;--xp-muted:#b8cae4}
   body.cnc-game-home-enabled{background:#061a36}
   body.cnc-game-home-enabled .main-shell{min-width:0;background:#061a36}
-  body.cnc-game-home-enabled .topbar{display:none!important}
+  body.cnc-game-home-enabled .topbar{display:block!important;position:fixed;z-index:90;top:12px;left:14px;width:44px;height:44px;min-height:44px;padding:0;border:0;background:transparent;box-shadow:none;pointer-events:none}
+  body.cnc-game-home-enabled .topbar-left{display:block}
+  body.cnc-game-home-enabled .topbar-left>*:not(#sidebar-open),
+  body.cnc-game-home-enabled .topbar-right{display:none!important}
+  body.cnc-game-home-enabled #sidebar-open{display:inline-flex!important;align-items:center;justify-content:center;width:44px;height:44px;min-width:44px;min-height:44px;margin:0;border:1px solid rgba(255,255,255,.25);border-radius:12px;background:rgba(7,35,76,.88);color:#fff;box-shadow:0 8px 20px rgba(0,0,0,.24);pointer-events:auto}
   body.cnc-game-home-enabled #view-dashboard{padding:0 0 96px!important;background:radial-gradient(circle at 82% 7%,rgba(31,121,255,.36),transparent 26%),linear-gradient(180deg,#071a35 0,#08244a 52%,#071a35 100%);color:var(--xp-text)}
   body.cnc-game-home-enabled #view-dashboard>.launchpad-grid,
   body.cnc-game-home-enabled #view-dashboard>.fan-suggestion-panel,
@@ -22,7 +26,7 @@
   .xp-game-hero:before{content:"";position:absolute;right:-46px;top:65px;width:215px;height:215px;border:1px solid rgba(76,172,255,.32);border-radius:50%;box-shadow:0 0 0 22px rgba(47,128,255,.07),0 0 0 45px rgba(47,128,255,.04)}
   .xp-game-hero:after{content:"⚙";position:absolute;right:20px;top:90px;color:rgba(255,255,255,.11);font-size:128px;line-height:1;transform:rotate(14deg)}
   .xp-game-topline,.xp-game-kicker,.xp-game-hero h1,.xp-game-subtitle,.xp-game-level-card,.xp-game-hero-actions{position:relative;z-index:1}
-  .xp-game-topline{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .xp-game-topline{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-left:50px}
   .xp-game-brand{font-size:14px;font-weight:950;letter-spacing:.04em;color:#fff}
   .xp-game-sign{min-height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0 12px;border:1px solid rgba(255,255,255,.2);border-radius:12px;background:rgba(255,255,255,.08);color:#dceaff;text-decoration:none;font-size:12px;font-weight:900}
   .xp-game-kicker{margin:24px 0 7px;color:#9fc6ff;font-size:12px;font-weight:900;letter-spacing:.04em}
