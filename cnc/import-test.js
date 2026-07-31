@@ -155,6 +155,7 @@
     window.__CNC_DISABLE_SERVICE_WORKER__ = true;
 
     var nativeContainer = navigator.serviceWorker;
+    window.__CNC_NATIVE_SERVICE_WORKER__ = nativeContainer;
 
     function fakeRegistration() {
       return Promise.resolve({
@@ -163,19 +164,38 @@
       });
     }
 
-    function replaceRegister(target) {
-      if (!target) return false;
+    function installContainerProxy() {
+      if (typeof Proxy !== 'function') return false;
       try {
-        Object.defineProperty(target, 'register', {
+        var proxy = new Proxy(nativeContainer, {
+          get: function (target, property) {
+            if (property === 'register') return fakeRegistration;
+            var value = Reflect.get(target, property, target);
+            return typeof value === 'function' ? value.bind(target) : value;
+          }
+        });
+        Object.defineProperty(navigator, 'serviceWorker', {
+          configurable: true,
+          value: proxy
+        });
+        return navigator.serviceWorker === proxy && navigator.serviceWorker.register === fakeRegistration;
+      } catch (error) {
+        return false;
+      }
+    }
+
+    function replaceInstanceRegister() {
+      try {
+        Object.defineProperty(nativeContainer, 'register', {
           configurable: true,
           writable: true,
           value: fakeRegistration
         });
-        return target.register === fakeRegistration;
+        return nativeContainer.register === fakeRegistration;
       } catch (error) {
         try {
-          target.register = fakeRegistration;
-          return target.register === fakeRegistration;
+          nativeContainer.register = fakeRegistration;
+          return nativeContainer.register === fakeRegistration;
         } catch (ignored) {
           return false;
         }
@@ -191,38 +211,10 @@
       }).catch(function () {});
     } catch (error) {}
 
-    // Chromium 新版本可能不允许直接覆写 ServiceWorkerContainer.register。
-    // 先尝试容器实例和原型；仍不可写时，用绑定原生方法的代理整体遮蔽。
-    // 若 Navigator 实例也不能定义同名属性，再替换可配置的原型 getter，确保
-    // 页面尾部旧注册脚本读到的仍是代理容器；PWA 自检页不加载本脚本。
-    var blocked = replaceRegister(nativeContainer);
-    if (!blocked) blocked = replaceRegister(Object.getPrototypeOf(nativeContainer));
-    if (!blocked && typeof Proxy === 'function') {
-      try {
-        var proxy = new Proxy(nativeContainer, {
-          get: function (target, property) {
-            if (property === 'register') return fakeRegistration;
-            var value = Reflect.get(target, property, target);
-            return typeof value === 'function' ? value.bind(target) : value;
-          }
-        });
-        try {
-          Object.defineProperty(navigator, 'serviceWorker', {
-            configurable: true,
-            value: proxy
-          });
-        } catch (instanceError) {
-          var navigatorPrototype = Object.getPrototypeOf(navigator);
-          var descriptor = Object.getOwnPropertyDescriptor(navigatorPrototype, 'serviceWorker') || {};
-          Object.defineProperty(navigatorPrototype, 'serviceWorker', {
-            configurable: true,
-            enumerable: descriptor.enumerable !== false,
-            get: function () { return proxy; }
-          });
-        }
-        blocked = navigator.serviceWorker.register === fakeRegistration;
-      } catch (error) {}
-    }
+    // 只遮蔽当前页面的注册入口，不再修改 ServiceWorkerContainer 或 Navigator 原型。
+    // PWA 自检和离线门禁使用保存的原生容器执行真实注册，避免污染浏览器原生 API。
+    var blocked = installContainerProxy();
+    if (!blocked) blocked = replaceInstanceRegister();
     window.__CNC_SW_REGISTRATION_BLOCKED__ = blocked;
   }
 
