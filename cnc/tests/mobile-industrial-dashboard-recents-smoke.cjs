@@ -10,10 +10,14 @@ const assert = require('node:assert/strict');
     hasTouch: true
   });
   const mobileErrors = [];
+  const mobileHttpErrors = [];
   await mobile.addInitScript(() => localStorage.setItem('cnc_app_recents_v2', '[]'));
   const page = await mobile.newPage();
   page.on('console', message => { if (message.type() === 'error') mobileErrors.push(message.text()); });
   page.on('pageerror', error => mobileErrors.push(error.message));
+  page.on('response', response => {
+    if (response.status() >= 400) mobileHttpErrors.push(`${response.status()} ${response.url()}`);
+  });
 
   await page.goto('http://127.0.0.1:4173/cnc/?smoke=dashboard-recents', { waitUntil: 'domcontentloaded', timeout: 60000 });
   await page.waitForFunction(() => window.CNC_INDUSTRIAL_SAMPLE && window.CNC_INDUSTRIAL_SAMPLE.build === '20260722e', null, { timeout: 20000 });
@@ -42,16 +46,21 @@ const assert = require('node:assert/strict');
   await page.waitForSelector('#detail-panel.mobile-open', { state: 'visible', timeout: 15000 });
   const savedRecents = await page.evaluate(() => JSON.parse(localStorage.getItem('cnc_app_recents_v2') || '[]'));
   assert.ok(Array.isArray(savedRecents) && savedRecents.length > 0, '手机端打开条目后必须写入最近查看记录');
-  assert.equal(mobileErrors.length, 0, '手机端最近查看写入不应产生控制台错误: ' + mobileErrors.join(' | '));
+  assert.equal(mobileErrors.length, 0, '手机端最近查看写入不应产生控制台错误: ' + mobileErrors.join(' | ') + '; HTTP错误: ' + mobileHttpErrors.join(' | '));
+  assert.equal(mobileHttpErrors.length, 0, '手机端最近查看写入不应请求失败资源: ' + mobileHttpErrors.join(' | '));
   await mobile.close();
 
   // 桌面端仍保留工具型首页，并负责呈现最近查看卡片。
   const desktop = await browser.newContext({ viewport: { width: 1280, height: 900 } });
   const desktopErrors = [];
+  const desktopHttpErrors = [];
   await desktop.addInitScript((recents) => localStorage.setItem('cnc_app_recents_v2', JSON.stringify(recents)), savedRecents);
   const desktopPage = await desktop.newPage();
   desktopPage.on('console', message => { if (message.type() === 'error') desktopErrors.push(message.text()); });
   desktopPage.on('pageerror', error => desktopErrors.push(error.message));
+  desktopPage.on('response', response => {
+    if (response.status() >= 400) desktopHttpErrors.push(`${response.status()} ${response.url()}`);
+  });
   await desktopPage.goto('http://127.0.0.1:4173/cnc/?smoke=dashboard-recents-desktop', { waitUntil: 'domcontentloaded', timeout: 60000 });
   await desktopPage.waitForFunction(() => window.CNC_INDUSTRIAL_SAMPLE && window.CNC_INDUSTRIAL_SAMPLE.build === '20260722e', null, { timeout: 20000 });
   await desktopPage.waitForSelector('#dashboard-recent-section', { state: 'visible', timeout: 20000 });
@@ -75,7 +84,8 @@ const assert = require('node:assert/strict');
   await card.focus();
   await desktopPage.keyboard.press('Enter');
   await desktopPage.waitForSelector('#view-workspace.active', { state: 'visible', timeout: 15000 });
-  assert.equal(desktopErrors.length, 0, '桌面首页最近查看流程不应产生控制台错误: ' + desktopErrors.join(' | '));
+  assert.equal(desktopErrors.length, 0, '桌面首页最近查看流程不应产生控制台错误: ' + desktopErrors.join(' | ') + '; HTTP错误: ' + desktopHttpErrors.join(' | '));
+  assert.equal(desktopHttpErrors.length, 0, '桌面首页最近查看流程不应请求失败资源: ' + desktopHttpErrors.join(' | '));
 
   console.log('手机端最近查看写入与桌面端工业卡继续查看通过');
   await desktop.close();
