@@ -20,6 +20,11 @@ function relative(file) {
   return path.relative(root, file).split(path.sep).join('/');
 }
 
+function isProductionSource(file) {
+  const filePath = relative(file);
+  return !filePath.startsWith('cnc/tests/');
+}
+
 function fail(message, details = {}) {
   return { level: 'error', message, ...details };
 }
@@ -60,7 +65,9 @@ if (fs.existsSync(workerFile)) {
   }
 }
 
-const sourceFiles = walk(cncRoot).filter(file => /\.(?:html|js|cjs|mjs)$/i.test(file));
+const sourceFiles = walk(cncRoot)
+  .filter(file => /\.(?:html|js|cjs|mjs)$/i.test(file))
+  .filter(isProductionSource);
 const registrations = [];
 for (const file of sourceFiles) {
   const source = fs.readFileSync(file, 'utf8');
@@ -88,7 +95,7 @@ for (const file of sourceFiles) {
 }
 
 if (!registrations.length) {
-  findings.push(fail('未找到任何 Service Worker 注册调用', { root: 'cnc/' }));
+  findings.push(fail('未找到任何生产环境 Service Worker 注册调用', { root: 'cnc/', excluded: 'cnc/tests/' }));
 }
 
 const report = {
@@ -96,6 +103,7 @@ const report = {
   expectedWorkerPath,
   expectedScope,
   expectedBuild,
+  excludedPaths: ['cnc/tests/'],
   registrations,
   checkedFiles: [...new Set(checkedFiles)].sort(),
   findings,
@@ -110,4 +118,4 @@ if (!report.passed) {
   process.exit(1);
 }
 
-console.log(`PWA registration contract audit passed: ${registrations.length} registration(s), build ${expectedBuild}`);
+console.log(`PWA registration contract audit passed: ${registrations.length} production registration(s), build ${expectedBuild}`);
