@@ -16,8 +16,8 @@ const assert = require('node:assert/strict');
     const game = document.getElementById('xp-game-home');
     const legacy = document.querySelector('.launchpad-card[data-filter="gcode"]');
     return document.body.classList.contains('cnc-game-home-enabled') &&
-      game && getComputedStyle(game).display !== 'none' &&
-      legacy && getComputedStyle(legacy).display === 'none';
+      game && game.getClientRects().length > 0 &&
+      legacy && legacy.getClientRects().length === 0;
   }, null, { timeout: 30000 });
   await page.waitForTimeout(900);
 
@@ -30,8 +30,8 @@ const assert = require('node:assert/strict');
     const game = document.getElementById('xp-game-home');
     const legacy = document.querySelector('.launchpad-card[data-filter="gcode"]');
     return {
-      gameVisible: Boolean(game && getComputedStyle(game).display !== 'none'),
-      legacyHidden: Boolean(legacy && getComputedStyle(legacy).display === 'none'),
+      gameVisible: Boolean(game && game.getClientRects().length > 0),
+      legacyHidden: Boolean(legacy && legacy.getClientRects().length === 0),
       enabled: document.body.classList.contains('cnc-game-home-enabled')
     };
   });
@@ -94,8 +94,8 @@ const assert = require('node:assert/strict');
   await page.waitForFunction(() => {
     const game = document.getElementById('xp-game-home');
     const legacy = document.querySelector('.launchpad-card[data-filter="gcode"]');
-    return game && getComputedStyle(game).display !== 'none' &&
-      legacy && getComputedStyle(legacy).display === 'none';
+    return game && game.getClientRects().length > 0 &&
+      legacy && legacy.getClientRects().length === 0;
   }, null, { timeout: 15000 });
 
   const gcodeNav = page.locator('.xp-bottom-nav button[data-xp-filter="gcode"]');
