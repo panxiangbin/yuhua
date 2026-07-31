@@ -192,8 +192,9 @@
     } catch (error) {}
 
     // Chromium 新版本可能不允许直接覆写 ServiceWorkerContainer.register。
-    // 先尝试容器实例和原型；仍不可写时，用绑定原生方法的代理整体遮蔽
-    // navigator.serviceWorker，只替换 register，保留 controller、ready 和事件能力。
+    // 先尝试容器实例和原型；仍不可写时，用绑定原生方法的代理整体遮蔽。
+    // 若 Navigator 实例也不能定义同名属性，再替换可配置的原型 getter，确保
+    // 页面尾部旧注册脚本读到的仍是代理容器；PWA 自检页不加载本脚本。
     var blocked = replaceRegister(nativeContainer);
     if (!blocked) blocked = replaceRegister(Object.getPrototypeOf(nativeContainer));
     if (!blocked && typeof Proxy === 'function') {
@@ -205,10 +206,20 @@
             return typeof value === 'function' ? value.bind(target) : value;
           }
         });
-        Object.defineProperty(navigator, 'serviceWorker', {
-          configurable: true,
-          value: proxy
-        });
+        try {
+          Object.defineProperty(navigator, 'serviceWorker', {
+            configurable: true,
+            value: proxy
+          });
+        } catch (instanceError) {
+          var navigatorPrototype = Object.getPrototypeOf(navigator);
+          var descriptor = Object.getOwnPropertyDescriptor(navigatorPrototype, 'serviceWorker') || {};
+          Object.defineProperty(navigatorPrototype, 'serviceWorker', {
+            configurable: true,
+            enumerable: descriptor.enumerable !== false,
+            get: function () { return proxy; }
+          });
+        }
         blocked = navigator.serviceWorker.register === fakeRegistration;
       } catch (error) {}
     }
