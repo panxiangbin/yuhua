@@ -18,6 +18,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: JavaScript syntax
         run: |
+          node --check cnc/runtime-env-detector.js
           node --check cnc/mobile-gcode-pro.js
           node --check cnc/clean-ui.js
           node --check cnc/query-modes.js
@@ -149,9 +150,15 @@ jobs:
           grep -q "数控小潘 CNC速查与学习助手" cnc/import-test.js
           grep -q "不保证直线" cnc/import-test.js
           grep -q "最小输入单位" cnc/import-test.js
-          grep -q "disableServiceWorkerRegistration" cnc/import-test.js
+          grep -q "ensureServiceWorkerRegistration" cnc/import-test.js
+          grep -q "__CNC_PWA_BOOTSTRAP__" cnc/runtime-env-detector.js cnc/import-test.js
+          grep -q "updateViaCache: 'none'" cnc/runtime-env-detector.js cnc/import-test.js
           grep -q "loadGcodePro" cnc/import-test.js
           grep -q "正在恢复数控网站" cnc-recover.html
+          if grep -Eq "fakeRegistration|registration\.unregister|clearLegacyCaches|caches\.delete" cnc/import-test.js; then
+            echo "Homepage startup must not block PWA registration, unregister workers, or clear managed caches"
+            exit 1
+          fi
           if grep -q "setInterval" cnc/clean-ui.js cnc/query-modes.js cnc/mobile-trust-nav.js cnc/industrial-card-sample.js cnc/industrial-workspace.js cnc/industrial-tools.js cnc/industrial-diagnosis.js cnc/personal-home.js cnc/import-test.js; then
             echo "CNC startup layers must not keep polling intervals"
             exit 1
