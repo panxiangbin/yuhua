@@ -152,33 +152,48 @@
 
   function disableServiceWorkerRegistration() {
     if (!('serviceWorker' in navigator)) return;
+
+    function fakeRegistration() {
+      return Promise.resolve({
+        scope: location.href,
+        unregister: function () { return Promise.resolve(true); }
+      });
+    }
+
+    function replaceRegister(target) {
+      if (!target) return false;
+      try {
+        Object.defineProperty(target, 'register', {
+          configurable: true,
+          writable: true,
+          value: fakeRegistration
+        });
+        return target.register === fakeRegistration;
+      } catch (error) {
+        try {
+          target.register = fakeRegistration;
+          return target.register === fakeRegistration;
+        } catch (ignored) {
+          return false;
+        }
+      }
+    }
+
     try {
       navigator.serviceWorker.getRegistrations().then(function (registrations) {
-        registrations.forEach(function (registration) {
-          if (/\/yuhua\/cnc\/|\/cnc\//.test(registration.scope)) registration.unregister();
-        });
+        return Promise.all(registrations.map(function (registration) {
+          if (/\/yuhua\/cnc\/|\/cnc\//.test(registration.scope)) return registration.unregister();
+          return false;
+        }));
       }).catch(function () {});
     } catch (error) {}
-    try {
-      Object.defineProperty(navigator.serviceWorker, 'register', {
-        configurable: true,
-        value: function () {
-          return Promise.resolve({
-            scope: location.href,
-            unregister: function () { return Promise.resolve(true); }
-          });
-        }
-      });
-    } catch (error) {
-      try {
-        navigator.serviceWorker.register = function () {
-          return Promise.resolve({
-            scope: location.href,
-            unregister: function () { return Promise.resolve(true); }
-          });
-        };
-      } catch (ignored) {}
-    }
+
+    // Chromium 新版本可能拒绝在 ServiceWorkerContainer 实例上覆写 register，
+    // 仅靠实例赋值会让页面尾部的旧注册脚本重新接管当前页。
+    // 先尝试实例，再尝试其原型；PWA 自检页不加载本脚本，因此离线诊断能力不受影响。
+    var blocked = replaceRegister(navigator.serviceWorker);
+    if (!blocked) blocked = replaceRegister(Object.getPrototypeOf(navigator.serviceWorker));
+    window.__CNC_SW_REGISTRATION_BLOCKED__ = blocked;
   }
 
   function setMeta(name, value, property) {
@@ -435,6 +450,7 @@
         personalHome: Boolean(personal.passed),
         personalHomeFollowsTools: Boolean(personal.followsTools),
         gcodeLoaded: window.__CNC_GM_PRO_INSTALLED__ === PRO_BUILD,
+        serviceWorkerRegistrationBlocked: window.__CNC_SW_REGISTRATION_BLOCKED__ === true,
         serviceWorkerControlled: Boolean(navigator.serviceWorker && navigator.serviceWorker.controller),
         lesson9Corrected: Boolean(lesson9 && lesson9.textContent.indexOf('不保证直线') !== -1),
         lesson10Corrected: Boolean(lesson10 && lesson10.textContent.indexOf('最小输入单位') !== -1)
@@ -455,6 +471,7 @@
         && result.trustNav
         && result.personalHome
         && result.personalHomeFollowsTools
+        && result.serviceWorkerRegistrationBlocked
         && !result.serviceWorkerControlled
         && result.lesson9Corrected
         && result.lesson10Corrected;
