@@ -14,6 +14,7 @@
     {"name":"训练营","short_name":"训练营","url":"./training-camp.html"},
     {"name":"专项练习","short_name":"练习","url":"./practice.html"},
     {"name":"成长档案","short_name":"我的","url":"./profile.html"},
+    {"name":"AI老师现场问诊","short_name":"问诊单","url":"./ai-teacher-intake.html"},
     {"name":"离线自检","short_name":"自检","url":"./pwa-self-test.html"}
   ],
   "icons": [
