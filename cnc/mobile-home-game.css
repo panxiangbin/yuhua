@@ -14,6 +14,7 @@
   body.cnc-game-home-enabled #view-dashboard>.featured-images-preview,
   body.cnc-game-home-enabled #view-dashboard>.faq-preview-section,
   body.cnc-game-home-enabled #xp-personal-home{display:none!important}
+  body.cnc-game-home-enabled #dashboard-recent-section{display:none!important}
   #xp-game-home{display:block;width:100%;max-width:520px;margin:0 auto;padding:0 14px 18px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
   #xp-game-home *{box-sizing:border-box}
   #xp-game-home a{-webkit-tap-highlight-color:transparent}
