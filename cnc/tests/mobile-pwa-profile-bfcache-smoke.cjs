@@ -41,6 +41,17 @@ function observePage(page, errors) {
   page.on('pageerror', error => errors.push(error.message));
 }
 
+async function readNavigationState(page, label) {
+  return page.evaluate(currentLabel => ({
+    label: currentLabel,
+    href: location.href,
+    historyLength: history.length,
+    navigationType: performance.getEntriesByType('navigation').at(-1)?.type || '',
+    checkedAt: document.querySelector('#checked-at')?.textContent || '',
+    timestamp: Date.now()
+  }), label);
+}
+
 (async () => {
   let browser;
   let context;
@@ -52,7 +63,8 @@ function observePage(page, errors) {
     chromiumExecutable: chromium.executablePath(),
     browserVersion: '',
     bfcacheDefaultArgRemoved: true,
-    serviceWorkerEvents: []
+    serviceWorkerEvents: [],
+    history: []
   };
   let stage = 'server-start';
   try {
@@ -101,8 +113,10 @@ function observePage(page, errors) {
     await page.goto('http://127.0.0.1:4173/cnc/profile.html', { waitUntil: 'domcontentloaded' });
     const pwaLink = page.locator('a[href="./pwa-status.html"]');
     if (await pwaLink.count() !== 1) throw new Error('成长档案缺少PWA状态入口');
-    await pwaLink.click();
-    await page.waitForURL(/pwa-status\.html/);
+    await Promise.all([
+      page.waitForURL(/pwa-status\.html/),
+      pwaLink.click()
+    ]);
     await page.waitForFunction(expected => document.querySelector('#build')?.textContent.includes(expected), expectedPwaBuild);
     await page.waitForFunction(() => document.querySelector('#status')?.textContent.includes('版本一致'));
 
@@ -112,17 +126,55 @@ function observePage(page, errors) {
     if (!(await page.locator('#static-cache').textContent()).includes(expectedPwaBuild)) throw new Error('静态缓存版本不一致');
     if (!(await page.locator('#runtime-cache').textContent()).includes(expectedPwaBuild)) throw new Error('运行时缓存版本不一致');
 
-    stage = 'history-return';
-    await page.goto('http://127.0.0.1:4173/cnc/profile.html', { waitUntil: 'domcontentloaded' });
-    // A real BFCache restore does not fire DOMContentLoaded again. Waiting for it
-    // makes a successful history restore look like a timeout, so wait only for the
-    // navigation commit and then assert the URL and page-level refresh behavior.
-    await page.goBack({ waitUntil: 'commit', timeout: 15000 });
-    await page.waitForURL(/pwa-status\.html/);
-    await page.waitForFunction(oldValue => document.querySelector('#checked-at')?.textContent !== oldValue, initialChecked, { timeout: 5000 }).catch(async () => {
-      await page.locator('#refresh').click();
-      await page.waitForFunction(oldValue => document.querySelector('#checked-at')?.textContent !== oldValue, initialChecked);
+    const bfcacheToken = await page.evaluate(() => {
+      const token = `cnc-bfcache-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+      window.__cncBfCacheProbe = { token, pageshows: [] };
+      window.addEventListener('pageshow', event => {
+        window.__cncBfCacheProbe?.pageshows.push({
+          persisted: event.persisted,
+          href: location.href,
+          at: Date.now()
+        });
+      });
+      return token;
     });
+    runtimeDiagnostics.history.push(await readNavigationState(page, 'status-before-leave'));
+
+    stage = 'history-leave';
+    // Leave through the page's real return link so the history stack matches a
+    // user journey exactly: status page -> profile page -> browser Back.
+    const profileLink = page.locator('a[href="./profile.html"]').first();
+    if (await profileLink.count() !== 1) throw new Error('PWA状态页缺少成长档案返回入口');
+    await Promise.all([
+      page.waitForURL(/profile\.html/),
+      profileLink.click()
+    ]);
+    runtimeDiagnostics.history.push(await readNavigationState(page, 'profile-after-link'));
+    // checked-at is rendered only to second precision. Ensure the return happens
+    // in a later second before asserting the pageshow-triggered refresh.
+    await page.waitForTimeout(1100);
+
+    stage = 'history-return';
+    const returnToStatus = page.waitForURL(/pwa-status\.html/, { timeout: 15000 });
+    const backResponse = await page.goBack({ waitUntil: 'commit', timeout: 15000 });
+    await returnToStatus;
+    runtimeDiagnostics.history.push(await readNavigationState(page, 'status-after-back'));
+    runtimeDiagnostics.backResponseStatus = backResponse ? backResponse.status() : null;
+
+    const bfcacheState = await page.evaluate(token => ({
+      tokenMatches: window.__cncBfCacheProbe?.token === token,
+      pageshows: window.__cncBfCacheProbe?.pageshows || [],
+      href: location.href,
+      navigationType: performance.getEntriesByType('navigation').at(-1)?.type || ''
+    }), bfcacheToken);
+    runtimeDiagnostics.bfcacheState = bfcacheState;
+    if (!bfcacheState.tokenMatches || !bfcacheState.pageshows.some(item => item.persisted === true)) {
+      throw new Error(`页面未从BFCache恢复：${JSON.stringify(bfcacheState)}`);
+    }
+
+    await page.waitForFunction(oldValue => document.querySelector('#checked-at')?.textContent !== oldValue, initialChecked, { timeout: 10000 });
+    await page.waitForFunction(expected => document.querySelector('#build')?.textContent.includes(expected), expectedPwaBuild);
+    await page.waitForFunction(() => document.querySelector('#status')?.textContent.includes('版本一致'));
 
     stage = 'cache-mismatch';
     await page.evaluate(async () => {
@@ -155,6 +207,7 @@ function observePage(page, errors) {
       cacheCount: Number(await page.locator('#cache-count').textContent()),
       profileEntry: true,
       bfcacheRestore: true,
+      bfcacheState,
       mismatchDetected: true,
       touchTargets: true,
       runtimeDiagnostics
