@@ -94,11 +94,20 @@ const assert = require('node:assert/strict');
   });
   await desktopPage.goto('http://127.0.0.1:4173/cnc/?smoke=dashboard-recents-desktop', { waitUntil: 'domcontentloaded', timeout: 60000 });
   await desktopPage.waitForFunction(() => window.CNC_INDUSTRIAL_SAMPLE && window.CNC_INDUSTRIAL_SAMPLE.build === '20260722e', null, { timeout: 20000 });
+  await desktopPage.waitForFunction(() => window.CNC_TRUST_NAV && window.CNC_TRUST_NAV.build === '20260721s' && (window.__CNC_TRUST_READY_AT__ || 0) > 0, null, { timeout: 15000 });
+  await desktopPage.waitForFunction(() => {
+    const loading = document.querySelector('#loading-screen');
+    return !loading || getComputedStyle(loading).display === 'none';
+  }, null, { timeout: 15000 });
   await desktopPage.waitForSelector('#dashboard-recent-section', { state: 'visible', timeout: 20000 });
   await desktopPage.waitForSelector('#dashboard-recent-list .recent-card', { state: 'visible', timeout: 15000 });
   await desktopPage.waitForFunction(() => {
     const card = document.querySelector('#dashboard-recent-list .recent-card');
-    return Boolean(card && card.getBoundingClientRect().height >= 56);
+    return Boolean(
+      card &&
+      card.getBoundingClientRect().height >= 56 &&
+      card.dataset.industrialKeyboardBound === 'true'
+    );
   }, null, { timeout: 15000 });
 
   const card = desktopPage.locator('#dashboard-recent-list .recent-card').first();
@@ -113,7 +122,8 @@ const assert = require('node:assert/strict');
   assert.ok(await card.locator('.recent-card-meta strong').evaluate(node => Number(getComputedStyle(node).fontWeight)) >= 800);
 
   await card.focus();
-  await desktopPage.keyboard.press('Enter');
+  assert.equal(await card.evaluate(node => document.activeElement === node), true, '桌面最近查看卡片必须可通过键盘聚焦');
+  await card.press('Enter');
   await desktopPage.waitForSelector('#view-workspace.active', { state: 'visible', timeout: 15000 });
   assert.equal(desktopErrors.length, 0, '桌面首页最近查看流程不应产生控制台错误: ' + desktopErrors.join(' | ') + '; HTTP错误: ' + desktopHttpErrors.join(' | '));
   assert.equal(desktopHttpErrors.length, 0, '桌面首页最近查看流程不应请求失败资源: ' + desktopHttpErrors.join(' | '));
