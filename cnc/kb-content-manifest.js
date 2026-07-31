@@ -103,14 +103,17 @@
     if (!dashboard) return false;
 
     mountGameQueryPanel();
-    var mountObserver = null;
-    if (!document.querySelector('#xp-game-home .xp-game-query-panel')) {
-      mountObserver = new MutationObserver(function () {
-        if (mountGameQueryPanel()) mountObserver.disconnect();
-      });
-      mountObserver.observe(dashboard, { childList: true, subtree: true });
-      window.setTimeout(function () { if (mountObserver) mountObserver.disconnect(); }, 15000);
-    }
+    var remountScheduled = false;
+    var mountObserver = new MutationObserver(function () {
+      if (document.querySelector('#xp-game-home .xp-game-query-panel')) return;
+      if (remountScheduled) return;
+      remountScheduled = true;
+      window.setTimeout(function () {
+        remountScheduled = false;
+        mountGameQueryPanel();
+      }, 0);
+    });
+    mountObserver.observe(dashboard, { childList: true, subtree: true });
 
     var viewObserver = new MutationObserver(syncMobileNavigation);
     viewObserver.observe(dashboard, { attributes: true, attributeFilter: ['class'] });
@@ -139,6 +142,7 @@
       build: GAME_QUERY_BUILD,
       polling: false,
       observer: true,
+      persistentRemount: true,
       mount: mountGameQueryPanel,
       sync: syncMobileNavigation,
       open: openQueryMode,
