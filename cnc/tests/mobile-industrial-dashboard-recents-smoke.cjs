@@ -124,7 +124,29 @@ const assert = require('node:assert/strict');
   await card.focus();
   assert.equal(await card.evaluate(node => document.activeElement === node), true, '桌面最近查看卡片必须可通过键盘聚焦');
   await card.press('Enter');
-  await desktopPage.waitForSelector('#view-workspace.active', { state: 'visible', timeout: 15000 });
+  await desktopPage.waitForTimeout(600);
+  const keyboardNavigationState = await desktopPage.evaluate(() => {
+    const guard = window.CNC_STARTUP_HOME_GUARD;
+    let guardReport = null;
+    try { guardReport = guard && typeof guard.runCheck === 'function' ? guard.runCheck() : null; } catch (error) {
+      guardReport = { error: String(error && error.message ? error.message : error) };
+    }
+    return {
+      activeView: document.querySelector('.view.active')?.id || '',
+      dashboardActive: document.querySelector('#view-dashboard')?.classList.contains('active') || false,
+      workspaceActive: document.querySelector('#view-workspace')?.classList.contains('active') || false,
+      focusedClass: document.activeElement?.className || '',
+      guardKeys: guard ? Object.keys(guard) : [],
+      guardReport,
+      manifest: window.CNC_KB_CONTENT_MANIFEST || null,
+      href: location.href
+    };
+  });
+  assert.equal(
+    keyboardNavigationState.workspaceActive,
+    true,
+    '桌面最近查看卡片按 Enter 后必须进入工作区，诊断=' + JSON.stringify(keyboardNavigationState)
+  );
   assert.equal(desktopErrors.length, 0, '桌面首页最近查看流程不应产生控制台错误: ' + desktopErrors.join(' | ') + '; HTTP错误: ' + desktopHttpErrors.join(' | '));
   assert.equal(desktopHttpErrors.length, 0, '桌面首页最近查看流程不应请求失败资源: ' + desktopHttpErrors.join(' | '));
 
