@@ -51,6 +51,7 @@ function observePage(page, errors) {
     arch: process.arch,
     chromiumExecutable: chromium.executablePath(),
     browserVersion: '',
+    bfcacheDefaultArgRemoved: true,
     serviceWorkerEvents: []
   };
   let stage = 'server-start';
@@ -60,10 +61,14 @@ function observePage(page, errors) {
       server.listen(4173, '127.0.0.1', resolve);
     });
     stage = 'browser-launch';
-    // Run full Chromium in headed mode under Xvfb in CI. The current Linux
-    // headless modes can accept the worker response while discarding the
-    // registration before the BFCache assertions start.
-    browser = await chromium.launch({ channel: 'chromium', headless: false });
+    // BFCache is the behavior under test. Playwright normally launches Chromium
+    // with --disable-back-forward-cache, so remove only that default argument and
+    // retain every other Playwright safety and automation default.
+    browser = await chromium.launch({
+      channel: 'chromium',
+      headless: false,
+      ignoreDefaultArgs: ['--disable-back-forward-cache']
+    });
     runtimeDiagnostics.browserVersion = browser.version();
     context = await browser.newContext({
       viewport: { width: 390, height: 844 },
@@ -86,8 +91,10 @@ function observePage(page, errors) {
     let page = await context.newPage();
     observePage(page, errors);
 
-    stage = 'home';
-    await page.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded' });
+    stage = 'bootstrap';
+    // Register from the quiet same-scope page. Opening index.html first triggers
+    // its inline register() and races the explicit test registration.
+    await page.goto('http://127.0.0.1:4173/cnc/offline.html', { waitUntil: 'domcontentloaded' });
     page = await ensureControlled(page, errors, observePage);
 
     stage = 'profile-entry';
