@@ -7,7 +7,8 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const PWA_BUILD = '20260728-pwa3';
+const PWA_BUILD = '20260801-pwa4';
+const AI_CORE_PATHS = ['./ai-teacher.html', './ai-teacher-intake.html'];
 fs.mkdirSync(out, { recursive: true });
 
 const types = {
@@ -48,6 +49,7 @@ async function captureDiagnostics(page, context, stage, errors) {
     controller: null,
     registration: null,
     caches: [],
+    staticEntries: [],
     offline: null,
     consoleErrors: errors
   };
@@ -71,7 +73,13 @@ async function captureDiagnostics(page, context, stage, errors) {
       };
     });
   } catch {}
-  try { diagnostic.caches = await page.evaluate(() => caches.keys()); } catch {}
+  try {
+    diagnostic.caches = await page.evaluate(() => caches.keys());
+    diagnostic.staticEntries = await page.evaluate(async expected => {
+      const cache = await caches.open(`cnc-static-${expected}`);
+      return (await cache.keys()).map(request => request.url);
+    }, PWA_BUILD);
+  } catch {}
   try { diagnostic.offline = await context.isOffline(); } catch {}
   fs.writeFileSync(path.join(out, 'pwa-offline-diagnostic.json'), JSON.stringify(diagnostic, null, 2));
   try { await page.screenshot({ path: path.join(out, 'pwa-offline-failure.png'), fullPage: true }); } catch {}
@@ -88,6 +96,7 @@ async function captureDiagnostics(page, context, stage, errors) {
       server.once('error', reject);
       server.listen(4173, '127.0.0.1', resolve);
     });
+
     stage = 'browser-launch';
     userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'cnc-pwa-offline-'));
     context = await chromium.launchPersistentContext(userDataDir, {
@@ -109,7 +118,36 @@ async function captureDiagnostics(page, context, stage, errors) {
     if (!cachesBefore.includes(`cnc-static-${PWA_BUILD}`)) throw new Error(`静态缓存版本缺失: ${JSON.stringify(cachesBefore)}`);
     if (!cachesBefore.includes(`cnc-runtime-${PWA_BUILD}`)) throw new Error(`运行时缓存版本缺失: ${JSON.stringify(cachesBefore)}`);
 
+    stage = 'ai-core-precache';
+    const missingAiCore = await page.evaluate(async ({ build, paths }) => {
+      const cache = await caches.open(`cnc-static-${build}`);
+      const missing = [];
+      for (const item of paths) {
+        if (!await cache.match(new URL(item, location.href))) missing.push(item);
+      }
+      return missing;
+    }, { build: PWA_BUILD, paths: AI_CORE_PATHS });
+    if (missingAiCore.length) throw new Error(`AI老师核心预缓存缺失: ${missingAiCore.join('、')}`);
+
+    stage = 'cold-offline-ai-teacher';
+    await context.setOffline(true);
+    await page.goto('http://127.0.0.1:4173/cnc/ai-teacher.html', { waitUntil: 'domcontentloaded' });
+    if (!(await page.title()).includes('AI CNC老师')) throw new Error('AI CNC老师首次安装后离线打开失败');
+    const teacherBody = await page.locator('body').innerText();
+    if (!teacherBody.includes('不需要API Key') || !teacherBody.includes('不上传学习数据')) {
+      throw new Error('AI CNC老师离线页丢失本地安全说明');
+    }
+
+    stage = 'cold-offline-intake';
+    await page.goto('http://127.0.0.1:4173/cnc/ai-teacher-intake.html', { waitUntil: 'domcontentloaded' });
+    if (!(await page.title()).includes('现场问诊单')) throw new Error('现场问诊单首次安装后离线打开失败');
+    const intakeBody = await page.locator('body').innerText();
+    if (!intakeBody.includes('不需要API Key') || !intakeBody.includes('不会替你修改参数')) {
+      throw new Error('现场问诊单离线页丢失安全边界');
+    }
+
     stage = 'status-page';
+    await context.setOffline(false);
     await page.goto('http://127.0.0.1:4173/cnc/pwa-status.html', { waitUntil: 'domcontentloaded' });
     await page.waitForFunction(() => document.querySelector('#worker')?.textContent.includes('已启用'));
     await page.waitForFunction(expected => document.querySelector('#build')?.textContent.includes(expected), PWA_BUILD);
@@ -139,7 +177,16 @@ async function captureDiagnostics(page, context, stage, errors) {
 
     await page.screenshot({ path: path.join(out, 'pwa-offline-390x844.png'), fullPage: true });
     if (errors.length) throw new Error(`控制台错误 ${errors.join(' | ')}`);
-    fs.writeFileSync(path.join(out, 'pwa-offline-result.json'), JSON.stringify({ build, caches: cachesBefore, offlineFallback: true, runtimeWarmup: true, touchTargets: true }, null, 2));
+    fs.writeFileSync(path.join(out, 'pwa-offline-result.json'), JSON.stringify({
+      build,
+      caches: cachesBefore,
+      offlineFallback: true,
+      runtimeWarmup: true,
+      aiTeacherColdOffline: true,
+      intakeColdOffline: true,
+      aiCorePaths: AI_CORE_PATHS,
+      touchTargets: true
+    }, null, 2));
     console.log('CNC PWA offline cache smoke passed');
   } catch (error) {
     if (page && context) await captureDiagnostics(page, context, stage, errors);
