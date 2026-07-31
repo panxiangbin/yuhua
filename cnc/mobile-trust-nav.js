@@ -120,15 +120,29 @@
     });
   }
 
-  function navigateFromBottomButton(button) {
+  function navigateFromBottomButton(button, routeEvent) {
     var route = button.dataset.xpRoute || '';
     var filter = button.dataset.xpFilter || '';
 
-    // “查代码”原来会合成点击隐藏的首页卡片，启动保护期可能把它纠正回首页。
-    // 这里只修正该真实缺陷；学习、我的、报警继续沿用各自既有入口，避免改变既有语义。
-    if (filter === 'gcode' && typeof window.navigate === 'function') {
-      window.navigate('workspace', { filter: 'gcode' });
-      return true;
+    // “查代码”必须复用已经被完整回归验证的侧栏工作区路由。
+    // 原底栏直接调用 navigate，在启动保护、动态增强层同时就绪时可能只改了底栏状态，
+    // 工作区却未真正激活。先把本次可信点击明确交给启动保护，再走既有路由按钮；
+    // 只有路由按钮不存在时才退回直接调用，并同步触发 G 代码增强层加载。
+    if (filter === 'gcode') {
+      if (routeEvent && window.CNC_STARTUP_HOME_GUARD &&
+          typeof window.CNC_STARTUP_HOME_GUARD.acceptTrustedRouteEvent === 'function') {
+        window.CNC_STARTUP_HOME_GUARD.acceptTrustedRouteEvent(routeEvent);
+      }
+      var gcodeTarget = document.querySelector('#sidebar [data-route="workspace"][data-filter="gcode"]');
+      if (gcodeTarget) {
+        gcodeTarget.click();
+        return true;
+      }
+      if (typeof window.navigate === 'function') {
+        window.navigate('workspace', { filter: 'gcode' });
+        if (typeof window.CNC_LOAD_GCODE_PRO === 'function') window.CNC_LOAD_GCODE_PRO();
+        return true;
+      }
     }
 
     var target = route
@@ -155,7 +169,7 @@
     node.addEventListener('click', function (event) {
       var button = event.target.closest('button');
       if (!button) return;
-      navigateFromBottomButton(button);
+      navigateFromBottomButton(button, event);
       syncNavState(button.dataset.xpRoute || button.dataset.xpFilter);
       scheduleTrust();
     });
