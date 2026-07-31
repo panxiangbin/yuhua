@@ -9,6 +9,13 @@ function ensureDiagnosisAssets(){
   if(!document.querySelector('link[data-cnc-industrial-diagnosis]')){var link=document.createElement('link');link.rel='stylesheet';link.href='./industrial-diagnosis.css?v='+DIAG_BUILD;link.dataset.cncIndustrialDiagnosis='1';document.head.appendChild(link);}
   if(!document.querySelector('script[data-cnc-industrial-diagnosis-script]')){var script=document.createElement('script');script.src='./industrial-diagnosis.js?v='+DIAG_BUILD;script.async=true;script.dataset.cncIndustrialDiagnosisScript='1';document.head.appendChild(script);}
 }
+function ensureMobileDirectoryAccess(){
+  if(document.querySelector('style[data-cnc-mobile-directory-access]'))return;
+  var style=document.createElement('style');
+  style.dataset.cncMobileDirectoryAccess='1';
+  style.textContent='@media(max-width:760px){body.cnc-game-home-enabled.cnc-game-query-home-active .topbar{display:flex!important;position:absolute!important;z-index:18!important;top:14px!important;left:14px!important;width:44px!important;height:44px!important;padding:0!important;border:0!important;border-radius:12px!important;background:transparent!important;box-shadow:none!important;backdrop-filter:none!important}body.cnc-game-home-enabled.cnc-game-query-home-active .topbar-left{display:block!important;width:44px!important;height:44px!important}body.cnc-game-home-enabled.cnc-game-query-home-active .topbar-left>:not(#sidebar-open),body.cnc-game-home-enabled.cnc-game-query-home-active .topbar-right{display:none!important}body.cnc-game-home-enabled.cnc-game-query-home-active #sidebar-open{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:44px!important;height:44px!important;border:1px solid rgba(255,255,255,.28)!important;border-radius:12px!important;background:rgba(4,27,60,.82)!important;color:#fff!important;box-shadow:0 8px 20px rgba(0,0,0,.22)!important}body.cnc-game-home-enabled.cnc-game-query-home-active .xp-game-topline{padding-left:52px!important}}';
+  document.head.appendChild(style);
+}
 function ensureGameHomeEntry(){
   var home=document.getElementById('xp-game-home');
   if(!home)return false;
@@ -88,7 +95,7 @@ var api={build:BUILD,diagnosisBuild:DIAG_BUILD,polling:false,observer:false,refr
   var view=document.getElementById('view-calculator');
   var cards=view?Array.from(view.querySelectorAll('.calc-card')):[];
   var accessible=cards.every(function(card){var h=card.querySelector('.calc-card-header'),r=card.querySelector('.calc-result');return h&&h.getAttribute('role')==='button'&&h.hasAttribute('aria-expanded')&&r&&r.getAttribute('aria-live')==='polite';});
-  return{passed:Boolean(document.body.classList.contains('cnc-industrial-tools')&&cards.length===6&&accessible),build:BUILD,diagnosisBuild:DIAG_BUILD,cards:cards.length,accessible:accessible,gameHomeEntry:Boolean(document.querySelector('#xp-game-home [data-route="calculator"]')),polling:false,observer:false};
+  return{passed:Boolean(document.body.classList.contains('cnc-industrial-tools')&&cards.length===6&&accessible),build:BUILD,diagnosisBuild:DIAG_BUILD,cards:cards.length,accessible:accessible,gameHomeEntry:Boolean(document.querySelector('#xp-game-home [data-route="calculator"]')),mobileDirectoryAccess:Boolean(document.querySelector('style[data-cnc-mobile-directory-access]')),polling:false,observer:false};
 }};
 function publishApiWhenStable(){
   if(apiPublished)return;
@@ -100,6 +107,7 @@ function publishApiWhenStable(){
 }
 function boot(){
   ensureDiagnosisAssets();
+  ensureMobileDirectoryAccess();
   bind();
   decorate();
   [80,220,500,900].forEach(function(delay){window.setTimeout(ensureGameHomeEntry,delay);});
