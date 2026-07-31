@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var GAME_QUERY_BUILD = '20260731c';
+  var GAME_QUERY_BUILD = '20260731d';
   var INDUSTRIAL_TOOLS_BUILD = '20260722d';
 
   // 换算工具增强层原先已有完整实现和真实浏览器门禁，但首页启动链没有加载它，
@@ -62,10 +62,23 @@
     return Boolean(dashboard && dashboard.classList.contains('active'));
   }
 
+  function enhanceGameNavAccessibility() {
+    var nav = document.querySelector('#xp-game-home .xp-game-bottom-nav');
+    if (!nav) return false;
+    var labels = ['训练首页', '课程闯关', '每日挑战', '模拟车间', '成长档案'];
+    Array.from(nav.querySelectorAll('a')).forEach(function (anchor, index) {
+      anchor.setAttribute('aria-label', labels[index] || anchor.textContent.trim());
+      if (index === 0 && dashboardActive()) anchor.setAttribute('aria-current', 'page');
+      else anchor.removeAttribute('aria-current');
+    });
+    return true;
+  }
+
   function syncMobileNavigation() {
     if (!document.body) return;
     var active = dashboardActive();
     document.body.classList.toggle('cnc-game-query-home-active', active);
+    enhanceGameNavAccessibility();
     var utility = document.querySelector('body>.xp-bottom-nav');
     if (utility) {
       utility.setAttribute('aria-hidden', active ? 'true' : 'false');
@@ -96,6 +109,7 @@
       existing = panel;
     }
     existing.dataset.ready = 'true';
+    enhanceGameNavAccessibility();
     syncMobileNavigation();
     return true;
   }
@@ -239,7 +253,7 @@
   }
 
   window.CNC_KB_CONTENT_MANIFEST = {
-    build: '20260731h',
+    build: '20260731i',
     enhancedImagesNormalized: Array.isArray(enhanced)
       ? enhanced.filter(function (image) { return image && image.path === image.src; }).length
       : 0,
@@ -247,6 +261,7 @@
     startupGuardBridge: true,
     industrialToolsBuild: INDUSTRIAL_TOOLS_BUILD,
     industrialToolsConnected: true,
-    mobileGameQueryNavigation: GAME_QUERY_BUILD
+    mobileGameQueryNavigation: GAME_QUERY_BUILD,
+    mobileGameNavAccessibleNames: true
   };
 })();
