@@ -37,7 +37,7 @@ fs.mkdirSync(OUT, { recursive: true });
     await page.goto(`${BASE}/cnc/index.html`, { waitUntil: 'domcontentloaded', timeout: 60000 });
     await page.locator('#xp-game-home[data-ready="true"]').waitFor({ state: 'visible', timeout: 60000 });
     await page.waitForFunction(() => (
-      window.CNC_GAME_QUERY_NAV?.build === '20260731b'
+      window.CNC_GAME_QUERY_NAV?.build === '20260731c'
       && window.CNC_GAME_QUERY_NAV.runCheck().passed
     ), null, { timeout: 30000 });
 
@@ -63,30 +63,28 @@ fs.mkdirSync(OUT, { recursive: true });
     const navigationLayout = await page.evaluate(() => {
       const utility = document.querySelector('body > .xp-bottom-nav');
       const game = document.querySelector('.xp-game-bottom-nav');
-      const utilityRect = utility.getBoundingClientRect();
       const gameRect = game.getBoundingClientRect();
       return {
         utilityVisible: utility.getClientRects().length > 0,
         utilityAriaHidden: utility.getAttribute('aria-hidden'),
         utilityMode: utility.dataset.cncGameUtility,
-        utilityBottom: Math.round(utilityRect.bottom),
-        gameTop: Math.round(gameRect.top),
-        overlap: Math.max(0, Math.min(utilityRect.bottom, gameRect.bottom) - Math.max(utilityRect.top, gameRect.top))
+        utilityInert: utility.hasAttribute('inert'),
+        gameBottomGap: Math.round(window.innerHeight - gameRect.bottom)
       };
     });
-    assert.strictEqual(navigationLayout.utilityVisible, true);
-    assert.strictEqual(navigationLayout.utilityAriaHidden, 'false');
-    assert.strictEqual(navigationLayout.utilityMode, 'separated');
-    assert.ok(Math.abs(navigationLayout.utilityBottom - navigationLayout.gameTop) <= 2, JSON.stringify(navigationLayout));
-    assert.strictEqual(navigationLayout.overlap, 0);
+    assert.strictEqual(navigationLayout.utilityVisible, false);
+    assert.strictEqual(navigationLayout.utilityAriaHidden, 'true');
+    assert.strictEqual(navigationLayout.utilityMode, 'hidden-on-game-home');
+    assert.strictEqual(navigationLayout.utilityInert, true);
+    assert.ok(Math.abs(navigationLayout.gameBottomGap) <= 2, JSON.stringify(navigationLayout));
 
     const queryApi = await page.evaluate(() => window.CNC_GAME_QUERY_NAV.runCheck());
     assert.deepStrictEqual(queryApi, {
       passed: true,
-      build: '20260731b',
+      build: '20260731c',
       buttons: 4,
       dashboardActive: true,
-      utilitySeparated: true
+      utilityHidden: true
     });
 
     const smallTargets = await page.locator('#xp-game-home a:visible,#xp-game-home button:visible,.xp-bottom-nav button:visible').evaluateAll(nodes => nodes.map(node => {
@@ -97,6 +95,32 @@ fs.mkdirSync(OUT, { recursive: true });
     assert.strictEqual(errors.length, 0, errors.join(' | '));
     await page.screenshot({ path: `${OUT}/mobile-home-game-390x844.png`, fullPage: true });
 
+    await queryButtons.first().click();
+    await page.waitForFunction(() => document.getElementById('view-workspace')?.classList.contains('active'), null, { timeout: 30000 });
+    await page.waitForFunction(() => {
+      const utility = document.querySelector('body > .xp-bottom-nav');
+      return utility
+        && utility.getClientRects().length > 0
+        && utility.getAttribute('aria-hidden') === 'false'
+        && utility.dataset.cncGameUtility === 'standard'
+        && !utility.hasAttribute('inert');
+    }, null, { timeout: 30000 });
+    const workspaceUtility = await page.evaluate(() => {
+      const utility = document.querySelector('body > .xp-bottom-nav');
+      return {
+        visible: utility.getClientRects().length > 0,
+        ariaHidden: utility.getAttribute('aria-hidden'),
+        mode: utility.dataset.cncGameUtility,
+        inert: utility.hasAttribute('inert')
+      };
+    });
+    assert.deepStrictEqual(workspaceUtility, {
+      visible: true,
+      ariaHidden: 'false',
+      mode: 'standard',
+      inert: false
+    });
+
     const desktop = await context.newPage();
     await desktop.setViewportSize({ width: 1280, height: 900 });
     await desktop.goto(`${BASE}/cnc/index.html`, { waitUntil: 'domcontentloaded', timeout: 60000 });
@@ -105,7 +129,7 @@ fs.mkdirSync(OUT, { recursive: true });
     assert.strictEqual(await desktop.locator('#xp-game-home').evaluate(node => getComputedStyle(node).display), 'none');
     assert.notStrictEqual(await desktop.locator('.launchpad-grid').evaluate(node => getComputedStyle(node).display), 'none');
 
-    console.log('CNC手机闯关首页、双层无重叠导航与现场速查入口通过', { queryApi, navigationLayout });
+    console.log('CNC手机闯关首页单层导航、现场速查与工作区工具导航恢复通过', { queryApi, navigationLayout, workspaceUtility });
   } finally {
     await browser.close();
   }
