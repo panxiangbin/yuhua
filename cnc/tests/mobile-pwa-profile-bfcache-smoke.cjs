@@ -114,7 +114,10 @@ function observePage(page, errors) {
 
     stage = 'history-return';
     await page.goto('http://127.0.0.1:4173/cnc/profile.html', { waitUntil: 'domcontentloaded' });
-    await page.goBack({ waitUntil: 'domcontentloaded' });
+    // A real BFCache restore does not fire DOMContentLoaded again. Waiting for it
+    // makes a successful history restore look like a timeout, so wait only for the
+    // navigation commit and then assert the URL and page-level refresh behavior.
+    await page.goBack({ waitUntil: 'commit', timeout: 15000 });
     await page.waitForURL(/pwa-status\.html/);
     await page.waitForFunction(oldValue => document.querySelector('#checked-at')?.textContent !== oldValue, initialChecked, { timeout: 5000 }).catch(async () => {
       await page.locator('#refresh').click();
