@@ -15,6 +15,8 @@
   var PRACTICE_KEY = 'cnc_training_practice_v1';
   var SIMULATOR_KEY = 'cnc_training_simulator_v1';
   var mounted = false;
+  var recordsObserver = null;
+  var recordsDecorateScheduled = false;
 
   var COURSES = [
     { id: 'stage-1', title: '安全基础', file: 'course-safety-foundation.html', reason: '先学会停，再学会动。' },
@@ -315,14 +317,74 @@
     return sourceEntries().find(function (item) { return item && String(item.id || '') === target; }) || null;
   }
 
+  function recordCode(entry) {
+    return String(entry && (entry.code || entry.id) || '条目').trim();
+  }
+
+  function recordTitle(entry) {
+    return String(entry && (entry.title || entry.name) || '知识条目').trim();
+  }
+
   function decorateRecords() {
     var view = document.getElementById('view-favorites');
     if (!view) return false;
-    Array.from(view.querySelectorAll('[data-link-entry]')).forEach(function (button) {
-      var entry = findEntry(button.getAttribute('data-link-entry'));
-      if (!entry) return;
-      button.setAttribute('aria-label', ((entry.code || '') + ' ' + (entry.title || entry.name || '')).trim());
+    var recordCards = Array.from(view.querySelectorAll('.favorites-grid > .detail-card'));
+    if (recordCards.length !== 2) return false;
+
+    recordCards.forEach(function (card) {
+      var heading = card.querySelector('h4');
+      var cloud = card.querySelector('.link-cloud');
+      if (!heading || !cloud) return;
+      var entryButtons = Array.from(cloud.querySelectorAll('[data-link-entry]'));
+      var badge = heading.querySelector('.xp-record-count');
+      if (!badge) {
+        badge = document.createElement('span');
+        badge.className = 'xp-record-count';
+        heading.appendChild(badge);
+      }
+      badge.textContent = String(entryButtons.length);
+      badge.setAttribute('aria-label', '共' + entryButtons.length + '条');
+
+      Array.from(cloud.querySelectorAll('button')).forEach(function (button) {
+        var entryId = button.getAttribute('data-link-entry');
+        if (!entryId) {
+          button.classList.add('xp-record-empty');
+          button.setAttribute('aria-label', button.textContent.trim() || '暂无记录');
+          return;
+        }
+        var entry = findEntry(entryId);
+        if (!entry) return;
+        var code = recordCode(entry);
+        var title = recordTitle(entry);
+        var category = String(entry.category || entry.system || '知识条目').trim();
+        if (button.dataset.cncIndustrialRecord !== entryId) {
+          button.innerHTML = '<span class="xp-record-code">' + esc(code) + '</span>' +
+            '<span class="xp-record-copy"><strong>' + esc(title) + '</strong><small>' + esc(category) + '</small></span>' +
+            '<span class="xp-record-arrow" aria-hidden="true">›</span>';
+          button.dataset.cncIndustrialRecord = entryId;
+        }
+        button.setAttribute('aria-label', (code + ' ' + title + '，' + category).trim());
+      });
     });
+
+    view.dataset.industrialRecords = 'ready';
+    return true;
+  }
+
+  function scheduleRecords() {
+    if (recordsDecorateScheduled) return;
+    recordsDecorateScheduled = true;
+    window.setTimeout(function () {
+      recordsDecorateScheduled = false;
+      decorateRecords();
+    }, 0);
+  }
+
+  function watchRecords() {
+    var view = document.getElementById('view-favorites');
+    if (!view || recordsObserver) return false;
+    recordsObserver = new MutationObserver(function () { scheduleRecords(); });
+    recordsObserver.observe(view, { childList: true, subtree: true });
     return true;
   }
 
@@ -333,17 +395,29 @@
     var gameReady = renderGameHome(st);
     mark(st);
     trainingOverview();
+    scheduleRecords();
     return legacyReady && gameReady;
   }
 
   function bind() {
     if (mounted) return;
     mounted = true;
-    window.addEventListener('pageshow', render);
-    window.addEventListener('storage', render);
-    window.addEventListener('hashchange', function () { window.setTimeout(trainingOverview, 80); });
+    window.addEventListener('pageshow', function () { render(); scheduleRecords(); });
+    window.addEventListener('storage', function () { render(); scheduleRecords(); });
+    window.addEventListener('hashchange', function () {
+      window.setTimeout(trainingOverview, 80);
+      window.setTimeout(decorateRecords, 80);
+    });
     document.addEventListener('click', function (event) {
-      var studyCard = event.target.closest && event.target.closest('#view-study .study-card[data-level]');
+      var target = event.target && event.target.closest ? event.target : null;
+      var favoritesRoute = target && target.closest('.xp-bottom-nav [data-xp-route="favorites"],[data-route="favorites"]');
+      if (favoritesRoute) {
+        var guard = window.CNC_STARTUP_HOME_GUARD;
+        if (guard && typeof guard.acceptTrustedRouteEvent === 'function') guard.acceptTrustedRouteEvent(event);
+        [0, 60, 180, 420].forEach(function (delay) { window.setTimeout(decorateRecords, delay); });
+      }
+
+      var studyCard = target && target.closest('#view-study .study-card[data-level]');
       if (studyCard) {
         var level = Number(studyCard.dataset.level);
         var st = state();
@@ -357,6 +431,7 @@
   function boot() {
     ensureAssets();
     bind();
+    watchRecords();
     render();
     window.setTimeout(render, 900);
   }
@@ -392,6 +467,8 @@
         profileVersion: st.profile.version,
         studyCards: list.length,
         followsTools: followsTools(),
+        recordsReady: Boolean(document.querySelector('#view-favorites[data-industrial-records="ready"]')),
+        recordsObserver: Boolean(recordsObserver),
         state: st
       };
     }
