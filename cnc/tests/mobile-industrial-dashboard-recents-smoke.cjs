@@ -62,13 +62,20 @@ const assert = require('node:assert/strict');
   assert.equal(mobileHomeState.recentDisplay, 'none', '旧最近查看区域在手机端必须隐藏: ' + JSON.stringify(mobileHomeState));
   await page.waitForSelector('#xp-game-home[data-ready="true"]', { state: 'visible', timeout: 15000 });
 
-  // 等可信导航控制器完成初始化，再通过真实可见底部按钮进入查代码工作区。
+  // 手机闯关首页只显示一层主导航。通过首页真实可见的“现场速查”进入查代码工作区，
+  // 并确认后台工具导航在离开首页后恢复可见、可访问。
   await page.waitForFunction(() => window.CNC_TRUST_NAV && window.CNC_TRUST_NAV.build === '20260721s' && (window.__CNC_TRUST_READY_AT__ || 0) > 0, null, { timeout: 15000 });
-  const gcodeNav = page.locator('.xp-bottom-nav button[data-xp-filter="gcode"]');
-  await gcodeNav.waitFor({ state: 'visible', timeout: 15000 });
-  await gcodeNav.click();
+  await page.waitForFunction(() => window.CNC_GAME_QUERY_NAV?.build === '20260731d', null, { timeout: 15000 });
+  await page.locator('#xp-game-home [data-xp-query-filter="gcode"]').click();
   await page.waitForSelector('#view-workspace.active', { state: 'visible', timeout: 15000 });
-  await page.waitForFunction(() => document.querySelector('.xp-bottom-nav button[data-xp-filter="gcode"]')?.getAttribute('aria-current') === 'page', null, { timeout: 15000 });
+  await page.waitForFunction(() => {
+    const nav = document.querySelector('body > .xp-bottom-nav');
+    const gcode = nav?.querySelector('button[data-xp-filter="gcode"]');
+    return Boolean(
+      nav && nav.getClientRects().length > 0 && nav.getAttribute('aria-hidden') === 'false' &&
+      !nav.hasAttribute('inert') && gcode?.getAttribute('aria-current') === 'page'
+    );
+  }, null, { timeout: 15000 });
 
   // 从手机端真实打开一个工业知识条目，确认最近查看记录仍会被写入。
   await page.locator('#search-input').fill('G01');
@@ -150,7 +157,7 @@ const assert = require('node:assert/strict');
   assert.equal(desktopErrors.length, 0, '桌面首页最近查看流程不应产生控制台错误: ' + desktopErrors.join(' | ') + '; HTTP错误: ' + desktopHttpErrors.join(' | '));
   assert.equal(desktopHttpErrors.length, 0, '桌面首页最近查看流程不应请求失败资源: ' + desktopHttpErrors.join(' | '));
 
-  console.log('手机端最近查看写入与桌面端工业卡继续查看通过');
+  console.log('单层首页真实入口、手机端最近查看写入与桌面端工业卡继续查看通过');
   await desktop.close();
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });
