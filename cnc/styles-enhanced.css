@@ -88,9 +88,12 @@
     border-radius: 10px;
   }
 
+  /* 手机端图标按钮必须满足最小触控面积，避免动态详情样式尚未加载时退回38px。 */
   .icon-button {
-    width: 38px;
-    height: 38px;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
   }
 
   /* 顶部栏优化 */
