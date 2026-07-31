@@ -11,10 +11,39 @@
     });
   }
 
+  // 最近查看卡片是 article + role=button。旧增强层虽然补了 tabindex，
+  // 但 Enter 后只合成 click，启动导航层可能把工作区切换吞掉。
+  // 在捕获阶段按真实条目 ID 直接调用应用导航，保证键盘与鼠标结果一致；
+  // Space 同样支持，并阻止页面滚动。
+  document.addEventListener('keydown', function (event) {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    var target = event.target;
+    var card = target && target.closest
+      ? target.closest('#dashboard-recent-list .recent-card[data-entry-id]')
+      : null;
+    if (!card) return;
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    var entryId = card.dataset.entryId;
+    try {
+      state.selectedId = entryId;
+      if (typeof window.navigate === 'function') {
+        window.navigate('workspace');
+        return;
+      }
+    } catch (error) {}
+
+    // 仅在应用全局导航尚未就绪时退回原生点击，不伪造完成状态。
+    card.click();
+  }, true);
+
   window.CNC_KB_CONTENT_MANIFEST = {
-    build: '20260731b',
+    build: '20260731c',
     enhancedImagesNormalized: Array.isArray(enhanced)
       ? enhanced.filter(function (image) { return image && image.path === image.src; }).length
-      : 0
+      : 0,
+    recentCardKeyboardNavigation: true
   };
 })();
