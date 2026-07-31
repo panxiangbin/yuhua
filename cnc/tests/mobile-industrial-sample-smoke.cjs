@@ -10,15 +10,51 @@ const assert = require('node:assert/strict');
   page.on('console', message => { if (message.type() === 'error') consoleErrors.push(message.text()); });
 
   await page.goto('http://127.0.0.1:4173/cnc/?smoke=industrial-sample', { waitUntil: 'domcontentloaded', timeout: 60000 });
-  await page.waitForSelector('.launchpad-card[data-filter="gcode"]', { state: 'visible', timeout: 30000 });
   await page.waitForFunction(() => window.CNC_INDUSTRIAL_SAMPLE && window.CNC_INDUSTRIAL_SAMPLE.build === '20260722e', null, { timeout: 15000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-industrial-surface') === 'home', null, { timeout: 15000 });
+  await page.waitForFunction(() => {
+    const game = document.getElementById('xp-game-home');
+    const legacy = document.querySelector('.launchpad-card[data-filter="gcode"]');
+    return document.body.classList.contains('cnc-game-home-enabled') &&
+      game && getComputedStyle(game).display !== 'none' &&
+      legacy && getComputedStyle(legacy).display === 'none';
+  }, null, { timeout: 30000 });
   await page.waitForTimeout(900);
 
   const tokens = await page.evaluate(() => window.CNC_INDUSTRIAL_SAMPLE.tokens);
   assert.equal(tokens.canvas, '#f1efe9');
   assert.equal(tokens.surface, '#fffdf9');
   assert.equal(tokens.cardRadius, '14px');
+
+  const mobileHomeState = await page.evaluate(() => {
+    const game = document.getElementById('xp-game-home');
+    const legacy = document.querySelector('.launchpad-card[data-filter="gcode"]');
+    return {
+      gameVisible: Boolean(game && getComputedStyle(game).display !== 'none'),
+      legacyHidden: Boolean(legacy && getComputedStyle(legacy).display === 'none'),
+      enabled: document.body.classList.contains('cnc-game-home-enabled')
+    };
+  });
+  assert.equal(mobileHomeState.enabled, true, '手机端必须启用闯关首页');
+  assert.equal(mobileHomeState.gameVisible, true, '手机端闯关首页必须真实可见');
+  assert.equal(mobileHomeState.legacyHidden, true, '旧工具首页在手机端必须隐藏');
+
+  const nav = await page.locator('.xp-bottom-nav').evaluate(node => {
+    const style = getComputedStyle(node);
+    const firstButton = node.querySelector('button').getBoundingClientRect();
+    return { radius: parseFloat(style.borderRadius), backgroundImage: style.backgroundImage, buttonHeight: firstButton.height };
+  });
+  assert.ok(nav.radius <= 16, `底部导航圆角过大：${nav.radius}`);
+  assert.equal(nav.backgroundImage, 'none', '底部导航不应使用大面积渐变');
+  assert.ok(nav.buttonHeight >= 48, '底部导航按钮点击区不足');
+
+  const personal = await page.evaluate(() => window.CNC_PERSONAL_HOME && window.CNC_PERSONAL_HOME.runCheck());
+  assert.equal(Boolean(personal && personal.passed), true, '学习进度和继续学习功能必须保留');
+
+  // 新手机首页会主动隐藏旧工具卡；这里短暂关闭闯关首页状态，继续严格验证
+  // 工业卡片后备层本身没有退化，然后立即恢复真实手机首页状态。
+  await page.evaluate(() => document.body.classList.remove('cnc-game-home-enabled'));
+  await page.waitForSelector('.launchpad-card[data-filter="gcode"]', { state: 'visible', timeout: 15000 });
 
   const home = await page.locator('#view-dashboard').evaluate(node => {
     const first = node.querySelector('.launchpad-card');
@@ -54,19 +90,21 @@ const assert = require('node:assert/strict');
   assert.ok(home.iconRadius <= 12, `图标圆角不能夸张：${home.iconRadius}`);
   assert.ok(home.searchHeight >= 50 && home.buttonHeight >= 48, '搜索框与按钮点击区必须足够大');
 
-  const nav = await page.locator('.xp-bottom-nav').evaluate(node => {
-    const style = getComputedStyle(node);
-    const firstButton = node.querySelector('button').getBoundingClientRect();
-    return { radius: parseFloat(style.borderRadius), backgroundImage: style.backgroundImage, buttonHeight: firstButton.height };
-  });
-  assert.ok(nav.radius <= 16, `底部导航圆角过大：${nav.radius}`);
-  assert.equal(nav.backgroundImage, 'none', '底部导航不应使用大面积渐变');
-  assert.ok(nav.buttonHeight >= 48, '底部导航按钮点击区不足');
+  await page.evaluate(() => document.body.classList.add('cnc-game-home-enabled'));
+  await page.waitForFunction(() => {
+    const game = document.getElementById('xp-game-home');
+    const legacy = document.querySelector('.launchpad-card[data-filter="gcode"]');
+    return game && getComputedStyle(game).display !== 'none' &&
+      legacy && getComputedStyle(legacy).display === 'none';
+  }, null, { timeout: 15000 });
 
-  const personal = await page.evaluate(() => window.CNC_PERSONAL_HOME && window.CNC_PERSONAL_HOME.runCheck());
-  assert.equal(Boolean(personal && personal.passed), true, '学习进度和继续学习功能必须保留');
-
-  await page.locator('.launchpad-card[data-filter="gcode"]').click();
+  const gcodeNav = page.locator('.xp-bottom-nav button[data-xp-filter="gcode"]');
+  await gcodeNav.click();
+  await page.waitForFunction(() => {
+    const workspace = document.getElementById('view-workspace');
+    const input = document.getElementById('search-input');
+    return workspace && workspace.classList.contains('active') && input && getComputedStyle(input).display !== 'none';
+  }, null, { timeout: 30000 });
   await page.waitForFunction(() => window.__CNC_GM_PRO_INSTALLED__ === '20260720h', null, { timeout: 30000 });
   await page.locator('#search-input').fill('G1');
   await page.waitForTimeout(900);
@@ -139,6 +177,6 @@ const assert = require('node:assert/strict');
   assert.deepEqual(relevantErrors, [], `工业样板存在控制台错误：${relevantErrors.join(' | ')}`);
   assert.equal(await page.evaluate(() => Boolean(navigator.serviceWorker && navigator.serviceWorker.controller)), false, '缓存控制状态不能回退');
 
-  console.log('锤子工业卡片风首页与G01详情样板通过', { home, nav, detail });
+  console.log('手机闯关首页、工业卡片后备层与G01详情样板通过', { mobileHomeState, home, nav, detail });
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });
