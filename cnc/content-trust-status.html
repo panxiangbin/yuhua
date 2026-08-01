@@ -11,14 +11,20 @@
     .hero,.card{background:#fff;border:1px solid #dfe5ec;border-radius:18px;box-shadow:0 10px 28px rgba(31,45,61,.07)}
     .hero{padding:22px}.eyebrow{margin:0 0 8px;color:#1d5d4f;font-weight:800}.hero h1{margin:0;font-size:clamp(26px,7vw,40px)}
     .notice{margin:18px 0 0;padding:14px 16px;border-left:5px solid #b45309;border-radius:12px;background:#fff7ed;line-height:1.7;font-weight:700}
-    .summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:16px 0}.metric{padding:16px;text-align:center}.metric strong{display:block;font-size:28px}.metric span{color:#52606d}
-    .card{padding:18px;margin-top:14px}.card h2{margin:0 0 12px;font-size:20px}.dataset{padding:14px 0;border-top:1px solid #e7ebf0}.dataset:first-of-type{border-top:0}
-    .dataset-head{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}.dataset code{overflow-wrap:anywhere;font-weight:800}.badge{display:inline-flex;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:800;white-space:nowrap}
+    .summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:16px 0}.metric{padding:16px;text-align:center}.metric strong{display:block;font-size:28px}.metric span{color:#52606d}
+    .card{padding:18px;margin-top:14px}.card h2{margin:0 0 12px;font-size:20px}.section-intro{margin:0 0 12px;color:#52606d;line-height:1.65}
+    .dataset,.queue-item{padding:14px 0;border-top:1px solid #e7ebf0}.dataset:first-of-type,.queue-item:first-of-type{border-top:0}
+    .dataset-head,.queue-head{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}.dataset-title,.queue-title{display:flex;gap:8px;align-items:center;flex-wrap:wrap;min-width:0}.dataset code,.queue-item code{overflow-wrap:anywhere;font-weight:800}
+    .badge{display:inline-flex;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:800;white-space:nowrap}
     .reviewed_scope{background:#e8f5ee;color:#17613f}.pending_manual_verification,.pending_system_scope_review{background:#fff1d6;color:#8a4b00}
-    .dataset p{margin:9px 0 0;line-height:1.65;color:#465463}.dataset ul{margin:8px 0 0;padding-left:20px;color:#52606d;line-height:1.65}
+    .priority-P0{background:#fee2e2;color:#991b1b}.priority-P1{background:#ffedd5;color:#9a3412}.priority-P2{background:#e0f2fe;color:#075985}
+    .dataset p,.queue-item p{margin:9px 0 0;line-height:1.65;color:#465463}.dataset ul,.queue-item ul{margin:8px 0 0;padding-left:20px;color:#52606d;line-height:1.65}
+    .evidence-title{margin-top:11px;font-weight:800;color:#334155}.next-action{padding:10px 12px;border-radius:10px;background:#f1f5f9;color:#334155!important}
+    .queue-item[data-priority="P0"]{border-left:4px solid #dc2626;padding-left:12px}.queue-item[data-priority="P1"]{border-left:4px solid #ea580c;padding-left:12px}.queue-item[data-priority="P2"]{border-left:4px solid #0284c7;padding-left:12px}
     .footer{margin-top:18px;color:#52606d;line-height:1.7}.error{padding:16px;border-radius:12px;background:#fee2e2;color:#991b1b;font-weight:700}
     a{color:#155e75;font-weight:700}.skip-link{position:absolute;left:-9999px}.skip-link:focus{left:12px;top:12px;z-index:10;background:#fff;padding:10px;border-radius:8px}
-    @media(max-width:640px){.summary{grid-template-columns:1fr}.dataset-head{display:grid}.shell{padding-top:16px}}
+    @media(max-width:760px){.summary{grid-template-columns:repeat(2,minmax(0,1fr))}.dataset-head,.queue-head{display:grid}.shell{padding-top:16px}}
+    @media(max-width:390px){.summary{grid-template-columns:1fr 1fr}.metric{padding:13px 8px}.metric strong{font-size:25px}}
   </style>
 </head>
 <body>
@@ -34,11 +40,18 @@
     <section class="summary" aria-label="可信度统计">
       <article class="card metric"><strong id="dataset-count">—</strong><span>登记数据集</span></article>
       <article class="card metric"><strong id="pending-count">—</strong><span>待逐条复核</span></article>
+      <article class="card metric"><strong id="p0-count">—</strong><span>P0 优先复核</span></article>
       <article class="card metric"><strong id="operational-count">—</strong><span>可直接上机使用</span></article>
     </section>
 
+    <section class="card" aria-labelledby="queue-title">
+      <h2 id="queue-title">复核优先队列</h2>
+      <p class="section-intro">P0 先处理报警和 G/M 代码等可能直接影响程序解释、机床动作或安全恢复的内容；排序只表示复核先后，不表示内容已经核实。</p>
+      <div id="review-queue" aria-live="polite">正在生成复核队列……</div>
+    </section>
+
     <section class="card" aria-labelledby="dataset-title">
-      <h2 id="dataset-title">数据集状态</h2>
+      <h2 id="dataset-title">数据集状态与证据要求</h2>
       <div id="dataset-list" aria-live="polite">正在读取可信度清单……</div>
     </section>
 
@@ -46,31 +59,51 @@
       <h2>状态怎么理解</h2>
       <p><strong>reviewed_scope</strong> 只代表已写明主要教学系统、适用范围和核对要求，不代表适用于所有机床。</p>
       <p><strong>pending</strong> 代表内容中含报警、参数、刀补、数值范围或现场动作，尚未完成逐条原厂资料复核，不能据此直接改参数或恢复生产。</p>
+      <p><strong>P0 / P1 / P2</strong> 是资料复核优先级，不是内容正确率、危险等级或上机许可。</p>
       <p><a href="./">返回 CNC 新手训练平台</a></p>
     </section>
   </main>
   <script>
     (async function () {
       const list = document.getElementById('dataset-list');
+      const queue = document.getElementById('review-queue');
       try {
         const response = await fetch('./content-trust-manifest.json', { cache: 'no-store' });
         if (!response.ok) throw new Error('HTTP ' + response.status);
         const manifest = await response.json();
         const datasets = Array.isArray(manifest.datasets) ? manifest.datasets : [];
+        const rank = { P0: 0, P1: 1, P2: 2 };
+        const sorted = datasets.slice().sort(function (a, b) {
+          const priority = (rank[a.reviewPriority] ?? 99) - (rank[b.reviewPriority] ?? 99);
+          return priority || String(a.path).localeCompare(String(b.path), 'zh-CN');
+        });
         document.getElementById('required-notice').textContent = manifest.requiredNotice;
         document.getElementById('dataset-count').textContent = datasets.length;
         document.getElementById('pending-count').textContent = datasets.filter((item) => String(item.status).startsWith('pending_')).length;
+        document.getElementById('p0-count').textContent = datasets.filter((item) => item.reviewPriority === 'P0').length;
         document.getElementById('operational-count').textContent = datasets.filter((item) => item.allowOperationalUse === true).length;
+
+        queue.innerHTML = sorted.map((item) => {
+          return '<article class="queue-item" data-priority="' + escapeHtml(item.reviewPriority) + '">' +
+            '<div class="queue-head"><div class="queue-title"><span class="badge priority-' + escapeHtml(item.reviewPriority) + '">' + escapeHtml(item.reviewPriority) + '</span><code>' + escapeHtml(item.path) + '</code></div><span class="badge ' + escapeHtml(item.status) + '">' + escapeHtml(item.status) + '</span></div>' +
+            '<p class="next-action"><strong>下一步：</strong>' + escapeHtml(item.nextAction) + '</p></article>';
+        }).join('');
+
         list.innerHTML = datasets.map((item) => {
           const basis = (item.reviewBasis || []).map((text) => '<li>' + escapeHtml(text) + '</li>').join('');
+          const evidence = (item.requiredEvidence || []).map((text) => '<li>' + escapeHtml(text) + '</li>').join('');
           return '<article class="dataset">' +
-            '<div class="dataset-head"><code>' + escapeHtml(item.path) + '</code><span class="badge ' + escapeHtml(item.status) + '">' + escapeHtml(item.status) + '</span></div>' +
+            '<div class="dataset-head"><div class="dataset-title"><code>' + escapeHtml(item.path) + '</code><span class="badge priority-' + escapeHtml(item.reviewPriority) + '">' + escapeHtml(item.reviewPriority) + '</span></div><span class="badge ' + escapeHtml(item.status) + '">' + escapeHtml(item.status) + '</span></div>' +
             '<p><strong>适用范围：</strong>' + escapeHtml(item.applicability) + '</p>' +
             '<p><strong>使用边界：</strong>' + (item.allowOperationalUse ? '可直接上机使用' : '不可直接上机使用') + '</p>' +
-            '<ul>' + basis + '</ul></article>';
+            '<p class="evidence-title">当前复核依据</p><ul>' + basis + '</ul>' +
+            '<p class="evidence-title">完成复核所需证据</p><ul class="evidence-list">' + evidence + '</ul>' +
+            '<p class="next-action"><strong>下一步：</strong>' + escapeHtml(item.nextAction) + '</p></article>';
         }).join('');
       } catch (error) {
-        list.innerHTML = '<div class="error" role="alert">可信度清单读取失败：' + escapeHtml(error.message) + '</div>';
+        const message = '<div class="error" role="alert">可信度清单读取失败：' + escapeHtml(error.message) + '</div>';
+        list.innerHTML = message;
+        queue.innerHTML = message;
       }
     })();
     function escapeHtml(value) {

@@ -44,18 +44,36 @@ jobs:
           if (manifest.requiredNotice !== '教学参考，需按机床说明书、现场工艺和空运行验证') {
             throw new Error('统一教学参考提示被修改');
           }
+          for (const priority of ['P0', 'P1', 'P2']) {
+            if (!manifest.priorityDefinitions || !manifest.priorityDefinitions[priority]) {
+              throw new Error(`缺少复核优先级定义：${priority}`);
+            }
+          }
           for (const path of required) {
             const item = manifest.datasets.find((entry) => entry.path === path);
             if (!item) throw new Error(`缺少可信度登记：${path}`);
             if (item.allowOperationalUse !== false) throw new Error(`禁止把未核实数据标记为可直接上机：${path}`);
+            if (!['P0', 'P1', 'P2'].includes(item.reviewPriority)) throw new Error(`复核优先级无效：${path}`);
+            if (!Array.isArray(item.requiredEvidence) || item.requiredEvidence.length < 2) throw new Error(`证据要求不足：${path}`);
+            if (!item.nextAction || item.nextAction.length < 12) throw new Error(`下一步复核动作不足：${path}`);
           }
+          const p0 = manifest.datasets.filter((item) => item.reviewPriority === 'P0').map((item) => item.path).sort();
+          const expectedP0 = ['cnc/alarm-data.js', 'cnc/gm-code-complete.js'].sort();
+          if (JSON.stringify(p0) !== JSON.stringify(expectedP0)) throw new Error(`P0 队列错误：${p0.join(', ')}`);
           const page = fs.readFileSync('cnc/content-trust-status.html', 'utf8');
-          for (const token of ['CONTENT TRUST STATUS', 'pending_manual_verification', '可直接上机使用', 'content-trust-manifest.json']) {
+          for (const token of ['CONTENT TRUST STATUS', 'pending_manual_verification', '可直接上机使用', 'content-trust-manifest.json', 'P0 优先复核', 'review-queue', 'requiredEvidence', 'nextAction']) {
             if (!page.includes(token)) throw new Error(`可信度状态页缺少契约：${token}`);
           }
           const test = fs.readFileSync('cnc/tests/content-trust-baseline-smoke.cjs', 'utf8');
+          for (const token of ['EXPECTED_P0_DATASETS', 'requiredEvidence', 'nextAction', 'p0Datasets', 'operationalDatasets']) {
+            if (!test.includes(token)) throw new Error(`结构化可信度门禁缺少契约：${token}`);
+          }
+          const mobileTest = fs.readFileSync('cnc/tests/mobile-content-trust-status-smoke.cjs', 'utf8');
+          for (const token of ['queuePriorities', 'queueP0Items', 'evidenceItems', 'datasetNextActions']) {
+            if (!mobileTest.includes(token)) throw new Error(`手机可信度门禁缺少契约：${token}`);
+          }
           for (const forbidden of ['process.exit(0)', 'test.skip(', 'allowOperationalUse !== true']) {
-            if (test.includes(forbidden)) throw new Error(`内容可信度门禁禁止绕过：${forbidden}`);
+            if (test.includes(forbidden) || mobileTest.includes(forbidden)) throw new Error(`内容可信度门禁禁止绕过：${forbidden}`);
           }
           NODE
 

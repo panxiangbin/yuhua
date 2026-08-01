@@ -19,6 +19,11 @@ const ALLOWED_STATUSES = new Set([
   'pending_manual_verification',
   'pending_system_scope_review'
 ]);
+const ALLOWED_PRIORITIES = new Set(['P0', 'P1', 'P2']);
+const EXPECTED_P0_DATASETS = new Set([
+  'cnc/alarm-data.js',
+  'cnc/gm-code-complete.js'
+]);
 
 function fail(message) {
   throw new Error(message);
@@ -49,6 +54,14 @@ try {
 if (manifest.schemaVersion !== 1) errors.push('schemaVersion 必须为 1');
 if (manifest.requiredNotice !== REQUIRED_NOTICE) errors.push('requiredNotice 与平台统一教学提示不一致');
 if (!Array.isArray(manifest.datasets)) errors.push('datasets 必须为数组');
+if (!manifest.priorityDefinitions || typeof manifest.priorityDefinitions !== 'object') {
+  errors.push('缺少 priorityDefinitions 复核优先级说明');
+} else {
+  for (const priority of ALLOWED_PRIORITIES) {
+    const definition = manifest.priorityDefinitions[priority];
+    if (!definition || String(definition).length < 16) errors.push(`${priority} 缺少清楚的复核优先级定义`);
+  }
+}
 
 const datasetByPath = new Map((manifest.datasets || []).map((item) => [item.path, item]));
 for (const requiredPath of REQUIRED_DATASETS) {
@@ -58,10 +71,18 @@ for (const requiredPath of REQUIRED_DATASETS) {
 for (const item of manifest.datasets || []) {
   const source = readText(item.path);
   if (!ALLOWED_STATUSES.has(item.status)) errors.push(`${item.path} 使用了不允许的状态：${item.status}`);
+  if (!ALLOWED_PRIORITIES.has(item.reviewPriority)) errors.push(`${item.path} 使用了不允许的复核优先级：${item.reviewPriority}`);
   if (item.allowOperationalUse !== false) errors.push(`${item.path} 不得标记为可直接上机使用`);
   if (item.notice !== REQUIRED_NOTICE) errors.push(`${item.path} 缺少统一教学参考提示`);
   if (!item.applicability || item.applicability.length < 12) errors.push(`${item.path} 缺少明确适用范围`);
   if (!Array.isArray(item.reviewBasis) || item.reviewBasis.length < 2) errors.push(`${item.path} 缺少复核依据`);
+  if (!Array.isArray(item.requiredEvidence) || item.requiredEvidence.length < 2) errors.push(`${item.path} 缺少至少两项完成复核所需证据`);
+  if (!item.nextAction || item.nextAction.length < 12) errors.push(`${item.path} 缺少清楚的下一步复核动作`);
+
+  const evidenceText = Array.isArray(item.requiredEvidence) ? item.requiredEvidence.join(' ') : '';
+  if (item.status.startsWith('pending_') && !/(?:原厂|机床厂|正式|标准|企业)/.test(evidenceText)) {
+    errors.push(`${item.path} 的待复核证据未指向原厂、机床厂或正式可追溯资料`);
+  }
 
   const numericAdviceCount = countMatches(source, /(?:建议|目标|控制在|降低|提高|减半|预热|余量|悬伸)[^\n]{0,45}\d+(?:\.\d+)?(?:\s*[~～±-]\s*\d+(?:\.\d+)?)?\s*(?:%|mm|分钟|倍|rpm|m\/min)?/g);
   const systemSpecificCount = countMatches(source, /(?:参数|报警|刀补|G\d{2,3}|M\d{2,3}|回参考点|回零|伺服|主轴)/g);
@@ -74,12 +95,26 @@ for (const item of manifest.datasets || []) {
   findings.push({
     path: item.path,
     status: item.status,
+    reviewPriority: item.reviewPriority,
     allowOperationalUse: item.allowOperationalUse,
+    evidenceCount: Array.isArray(item.requiredEvidence) ? item.requiredEvidence.length : 0,
+    nextAction: item.nextAction || '',
     numericAdviceCount,
     systemSpecificCount,
     actionCount,
     bytes: Buffer.byteLength(source)
   });
+}
+
+const actualP0 = new Set((manifest.datasets || []).filter((item) => item.reviewPriority === 'P0').map((item) => item.path));
+if (actualP0.size !== EXPECTED_P0_DATASETS.size) {
+  errors.push(`P0 数据集必须为 ${EXPECTED_P0_DATASETS.size} 项，实际 ${actualP0.size} 项`);
+}
+for (const path of EXPECTED_P0_DATASETS) {
+  if (!actualP0.has(path)) errors.push(`P0 优先队列缺少：${path}`);
+}
+for (const path of actualP0) {
+  if (!EXPECTED_P0_DATASETS.has(path)) errors.push(`未经审计的数据集不得进入 P0：${path}`);
 }
 
 const learning = readText('cnc/learning-content-data.js');
@@ -96,12 +131,15 @@ if (diagnosisEntryCount < 20) errors.push(`诊断数据条目异常偏少：${di
 
 const alarmManifest = datasetByPath.get('cnc/alarm-data.js');
 const diagnosisManifest = datasetByPath.get('cnc/diagnosis-data.js');
+const gmManifest = datasetByPath.get('cnc/gm-code-complete.js');
 if (alarmManifest && alarmManifest.status !== 'pending_manual_verification') {
   errors.push('报警数据尚未逐条核对原厂资料，必须保持 pending_manual_verification');
 }
 if (diagnosisManifest && diagnosisManifest.status !== 'pending_manual_verification') {
   errors.push('诊断数据含经验性数值建议，必须保持 pending_manual_verification');
 }
+if (alarmManifest && alarmManifest.reviewPriority !== 'P0') errors.push('报警数据必须保持 P0 优先复核');
+if (gmManifest && gmManifest.reviewPriority !== 'P0') errors.push('G/M 代码数据必须保持 P0 优先复核');
 
 const report = {
   generatedAt: new Date().toISOString(),
@@ -112,7 +150,9 @@ const report = {
     registeredDatasets: (manifest.datasets || []).length,
     alarmEntries: alarmEntryCount,
     diagnosisEntries: diagnosisEntryCount,
-    pendingDatasets: (manifest.datasets || []).filter((item) => item.status.startsWith('pending_')).length
+    pendingDatasets: (manifest.datasets || []).filter((item) => item.status.startsWith('pending_')).length,
+    p0Datasets: actualP0.size,
+    operationalDatasets: (manifest.datasets || []).filter((item) => item.allowOperationalUse === true).length
   },
   findings,
   errors
@@ -125,12 +165,14 @@ fs.writeFileSync(
     `CNC 内容可信度基线：${report.result}`,
     `登记数据集：${report.counts.registeredDatasets}`,
     `待逐条复核数据集：${report.counts.pendingDatasets}`,
+    `P0 优先复核数据集：${report.counts.p0Datasets}`,
+    `可直接上机使用：${report.counts.operationalDatasets}`,
     `报警条目：${report.counts.alarmEntries}`,
     `诊断条目：${report.counts.diagnosisEntries}`,
     '',
-    ...findings.map((item) => `${item.path} | ${item.status} | 数值建议 ${item.numericAdviceCount} | 系统相关 ${item.systemSpecificCount} | 现场动作 ${item.actionCount}`),
+    ...findings.map((item) => `${item.path} | ${item.reviewPriority} | ${item.status} | 证据 ${item.evidenceCount} | 数值建议 ${item.numericAdviceCount} | 系统相关 ${item.systemSpecificCount} | 现场动作 ${item.actionCount}`),
     '',
-    ...(errors.length ? errors.map((item) => `ERROR: ${item}`) : ['PASS: 未把待复核内容伪装成已核实或可直接上机使用。'])
+    ...(errors.length ? errors.map((item) => `ERROR: ${item}`) : ['PASS: P0 复核顺序、证据要求和上机边界均已明确，未把待复核内容伪装成已核实。'])
   ].join('\n') + '\n'
 );
 
