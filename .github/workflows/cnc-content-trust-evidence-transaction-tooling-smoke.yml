@@ -1,0 +1,109 @@
+name: CNC content trust evidence transaction tooling smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-content-trust-evidence-transaction-tooling-smoke.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-content-trust-evidence-transaction-tooling-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  evidence-transaction-tooling:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Check transaction tooling syntax
+        run: |
+          node --check cnc/tools/validate-content-trust-source-record.cjs
+          node --check cnc/tools/validate-content-trust-evidence-ledger.cjs
+          node --check cnc/tools/validate-content-trust-evidence-transaction.cjs
+          node --check cnc/tools/generate-content-trust-evidence-transaction.cjs
+          node --check cnc/tests/content-trust-evidence-transaction-tooling-smoke.cjs
+          node -e "JSON.parse(require('fs').readFileSync('cnc/content-trust-evidence-transaction.schema.json','utf8'))"
+          node -e "JSON.parse(require('fs').readFileSync('cnc/content-trust-evidence-transaction-template.json','utf8'))"
+          node -e "JSON.parse(require('fs').readFileSync('cnc/content-trust-evidence-ledger.json','utf8'))"
+          node -e "JSON.parse(require('fs').readFileSync('cnc/content-trust-manifest.json','utf8'))"
+
+      - name: Verify transaction tooling contract
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const schema = JSON.parse(fs.readFileSync('cnc/content-trust-evidence-transaction.schema.json', 'utf8'));
+          const template = JSON.parse(fs.readFileSync('cnc/content-trust-evidence-transaction-template.json', 'utf8'));
+          const generator = fs.readFileSync('cnc/tools/generate-content-trust-evidence-transaction.cjs', 'utf8');
+          const test = fs.readFileSync('cnc/tests/content-trust-evidence-transaction-tooling-smoke.cjs', 'utf8');
+
+          if (schema.additionalProperties !== false) throw new Error('事务 Schema 必须禁止未受控根字段');
+          if (schema.properties.operationSummary.additionalProperties !== false) throw new Error('事务汇总 Schema 必须禁止未受控字段');
+          for (const token of [
+            'expectedBaseLedgerSha256',
+            'nextLedgerSha256',
+            'operationSummary',
+            'datasetsChanged',
+            'sourceRecordsAdded',
+            'itemReviewRecordsAdded',
+            'reviewedItemsAdded',
+            'stateTransitions'
+          ]) {
+            if (!schema.required.includes(token) && !schema.properties.operationSummary.required.includes(token)) {
+              throw new Error(`事务 Schema 缺少契约字段：${token}`);
+            }
+          }
+          if (template.expectedBaseLedgerSha256 !== '' || template.nextLedgerSha256 !== '') {
+            throw new Error('空白模板不得预填伪造摘要');
+          }
+          for (const token of [
+            'validateTransaction',
+            'summaryFromCounts',
+            '输出路径不得覆盖基线台账、目标台账或可信度清单',
+            '工具只计算摘要和真实差异，不生成任何技术结论'
+          ]) {
+            if (!generator.includes(token)) throw new Error(`事务生成工具缺少契约：${token}`);
+          }
+          for (const token of [
+            'Schema 与正式校验器字段保持一致',
+            '空白模板字段受控且不能直接提交',
+            '生成器计算真实哈希和差异汇总',
+            '目标台账变化后旧事务摘要立即失效',
+            '输出路径不得覆盖输入文件'
+          ]) {
+            if (!test.includes(token)) throw new Error(`事务工具测试缺少场景：${token}`);
+          }
+          for (const forbidden of ['test.skip(', 'process.exit(0)', 'allowOperationalUse = true']) {
+            if (generator.includes(forbidden) || test.includes(forbidden)) {
+              throw new Error(`事务工具门禁禁止绕过：${forbidden}`);
+            }
+          }
+          NODE
+
+      - name: Validate production evidence ledger
+        run: node cnc/tools/validate-content-trust-evidence-ledger.cjs
+
+      - name: Run transaction tooling scenarios
+        run: node cnc/tests/content-trust-evidence-transaction-tooling-smoke.cjs
+
+      - name: Upload transaction tooling diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-content-trust-evidence-transaction-tooling-${{ github.run_id }}
+          path: artifacts/content-trust-evidence-transaction-tooling
+          if-no-files-found: warn
+          retention-days: 14
