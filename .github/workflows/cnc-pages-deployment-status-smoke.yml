@@ -29,7 +29,7 @@ jobs:
           node --check cnc/ui-knowledge-tree.js
       - name: Verify exact-resource gate contract
         run: >-
-          node -e "const fs=require('fs');const text=fs.readFileSync('cnc/tests/pages-exact-resource-deployment-smoke.cjs','utf8');for(const token of ['mobile-trust-nav.js','ui-knowledge-tree.js','knowledge-tree-lazy','sha256','exactBytesMatch','globalMutationObserverAbsent','lazyMaterializationPresent','fullRecursiveFirstPaintAbsent']){if(!text.includes(token))throw new Error('missing exact-resource contract: '+token);}"
+          node -e "const fs=require('fs');const text=fs.readFileSync('cnc/tests/pages-exact-resource-deployment-smoke.cjs','utf8');for(const token of ['mobile-trust-nav.js','ui-knowledge-tree.js','content-trust-status.html','content-trust-manifest.json','knowledge-tree-lazy','content-trust-page','content-trust-manifest','sha256','exactBytesMatch','globalMutationObserverAbsent','lazyMaterializationPresent','fullRecursiveFirstPaintAbsent','operationalCount']){if(!text.includes(token))throw new Error('missing exact-resource contract: '+token);}"
       - name: Install Playwright runtime
         run: npm install --no-save playwright@1.52.0
       - name: Install Chromium
@@ -45,6 +45,16 @@ jobs:
         env:
           CNC_EXACT_RESOURCE_PATH: cnc/ui-knowledge-tree.js
           CNC_EXACT_RESOURCE_CONTRACT: knowledge-tree-lazy
+        run: node cnc/tests/pages-exact-resource-deployment-smoke.cjs
+      - name: Verify Pages content trust status deployment
+        env:
+          CNC_EXACT_RESOURCE_PATH: cnc/content-trust-status.html
+          CNC_EXACT_RESOURCE_CONTRACT: content-trust-page
+        run: node cnc/tests/pages-exact-resource-deployment-smoke.cjs
+      - name: Verify Pages content trust manifest deployment
+        env:
+          CNC_EXACT_RESOURCE_PATH: cnc/content-trust-manifest.json
+          CNC_EXACT_RESOURCE_CONTRACT: content-trust-manifest
         run: node cnc/tests/pages-exact-resource-deployment-smoke.cjs
       - name: Upload diagnostics
         if: always()
