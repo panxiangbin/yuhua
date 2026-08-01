@@ -17,6 +17,15 @@
     "requiredNotice": {
       "const": "教学参考，需按机床说明书、现场工艺和空运行验证"
     },
+    "instructions": {
+      "type": "array",
+      "minItems": 5,
+      "items": {
+        "type": "string",
+        "minLength": 4
+      },
+      "description": "可选的模板填写说明；只用于指导登记，不属于技术复核证据。"
+    },
     "records": {
       "type": "array",
       "items": {
