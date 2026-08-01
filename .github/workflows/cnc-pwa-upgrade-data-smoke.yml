@@ -1,0 +1,65 @@
+name: CNC PWA upgrade data smoke
+on:
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-pwa-upgrade-data-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: cnc-pwa-upgrade-data-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Validate PWA upgrade data contract
+        run: |
+          node --check cnc/tests/mobile-pwa-upgrade-data-smoke.cjs
+          node --check cnc/sw.js
+          node - <<'NODE'
+          const fs = require('fs');
+          const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
+          const sw = fs.readFileSync('cnc/sw.js', 'utf8');
+          const test = fs.readFileSync('cnc/tests/mobile-pwa-upgrade-data-smoke.cjs', 'utf8');
+          const swBuild = sw.match(/const BUILD = '([^']+)'/)?.[1];
+          if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
+          if (!test.includes(`const CURRENT_PWA_BUILD = '${info.pwaBuild}'`)) throw new Error('upgrade test current PWA build mismatch');
+          for (const required of [
+            "const PREVIOUS_PWA_BUILD = '20260728-pwa3'",
+            'cnc_training_profile_v1',
+            'cnc_training_practice_v1',
+            'cnc_training_simulator_v1',
+            'indexedDB.open',
+            'other-app-cache-v1',
+            'ai-teacher.html',
+            'ai-teacher-intake.html'
+          ]) {
+            if (!test.includes(required)) throw new Error(`upgrade contract missing: ${required}`);
+          }
+          if (!sw.includes("name.startsWith('cnc-')") || !sw.includes('!name.endsWith(BUILD)')) {
+            throw new Error('Service Worker old CNC cache cleanup contract missing');
+          }
+          NODE
+      - name: Install Playwright test runtime
+        run: npm install --no-save playwright@1.52.0
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run 390x844 PWA upgrade data smoke
+        env:
+          DEBUG: pw:browser
+        run: node cnc/tests/mobile-pwa-upgrade-data-smoke.cjs
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-pwa-upgrade-data-${{ github.run_id }}
+          path: cnc/test-results/pwa-upgrade-data-*
+          if-no-files-found: warn
+          retention-days: 14
