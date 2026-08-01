@@ -1,0 +1,57 @@
+name: CNC content trust source record Pages smoke
+on:
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-content-trust-source-record-pages-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: cnc-source-record-pages-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+jobs:
+  source-record-pages:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Check source record Pages test syntax
+        run: node --check cnc/tests/pages-content-trust-source-record-deployment-smoke.cjs
+      - name: Verify source record Pages gate contract
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const text = fs.readFileSync('cnc/tests/pages-content-trust-source-record-deployment-smoke.cjs', 'utf8');
+          for (const token of [
+            'content-trust-source-record.schema.json',
+            'content-trust-source-record-template.json',
+            'draft/2020-12/schema',
+            'onMachineValidationRequired',
+            'blankTemplatePreserved',
+            'noUnverifiedSourceClaim',
+            'exactBytesMatch',
+            'exactSha256Match',
+            'noUnverifiedContentClaim',
+            "cache: 'no-store'",
+            'const attempts = 18'
+          ]) {
+            if (!text.includes(token)) throw new Error(`来源记录 Pages 门禁缺少契约：${token}`);
+          }
+          for (const forbidden of ['process.exit(0)', 'test.skip(', 'CNC_PAGES_VERIFY_ATTEMPTS', 'records.length > 0']) {
+            if (text.includes(forbidden)) throw new Error(`来源记录 Pages 门禁禁止绕过：${forbidden}`);
+          }
+          NODE
+      - name: Verify source record schema and blank template deployment
+        run: node cnc/tests/pages-content-trust-source-record-deployment-smoke.cjs
+      - name: Upload source record Pages diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-content-trust-source-record-pages-${{ github.run_id }}
+          path: cnc/test-results/pages-deployment-status-source-record*
+          if-no-files-found: warn
+          retention-days: 14
