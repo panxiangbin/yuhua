@@ -1,0 +1,82 @@
+name: CNC AI teacher Pages deployment smoke
+on:
+  pull_request:
+    paths:
+      - 'cnc/ai-teacher.html'
+      - 'cnc/sw.js'
+      - 'cnc/build-info.json'
+      - 'cnc/tests/pages-ai-teacher-deployment-smoke.cjs'
+      - 'cnc/docs/ai-teacher-pages-deployment-contract.md'
+      - '.github/workflows/cnc-ai-teacher-pages-deployment-smoke.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'cnc/ai-teacher.html'
+      - 'cnc/sw.js'
+      - 'cnc/build-info.json'
+      - 'cnc/tests/pages-ai-teacher-deployment-smoke.cjs'
+      - 'cnc/docs/ai-teacher-pages-deployment-contract.md'
+      - '.github/workflows/cnc-ai-teacher-pages-deployment-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: cnc-ai-teacher-pages-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+jobs:
+  ai-teacher-pages:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Validate deployment test syntax and anti-bypass contract
+        run: |
+          node --check cnc/tests/pages-ai-teacher-deployment-smoke.cjs
+          node - <<'NODE'
+          const fs = require('fs');
+          const text = fs.readFileSync('cnc/tests/pages-ai-teacher-deployment-smoke.cjs', 'utf8');
+          for (const token of [
+            'cnc/ai-teacher.html',
+            'cnc/sw.js',
+            'cnc/build-info.json',
+            'requireLocalMainMatch',
+            'branchDeploymentPending',
+            'exactBytesMatch',
+            'exactSha256Match',
+            'BLOCK_RULES',
+            '已阻断高风险请求',
+            '依据来源与可信状态',
+            'content-trust-status.html',
+            'content-trust-evidence.html',
+            '资料清单与逐条复核记录不能互相代替',
+            "'./ai-teacher.html'",
+            'AI老师问诊闭环',
+            'noExternalNetworking'
+          ]) {
+            if (!text.includes(token)) throw new Error(`缺少 AI 老师公网部署契约：${token}`);
+          }
+          for (const forbidden of [
+            'test.skip(',
+            'describe.skip(',
+            'it.skip(',
+            'process.exit(0)',
+            'CNC_PAGES_VERIFY_ATTEMPTS || 0',
+            'allowOperationalUse: true'
+          ]) {
+            if (text.includes(forbidden)) throw new Error(`检测到门禁绕过或危险声明：${forbidden}`);
+          }
+          NODE
+      - name: Verify AI teacher, Service Worker and build info on Pages
+        run: node cnc/tests/pages-ai-teacher-deployment-smoke.cjs
+      - name: Upload AI teacher Pages diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-ai-teacher-pages-${{ github.run_id }}
+          path: cnc/test-results/ai-teacher-pages-deployment/
+          if-no-files-found: warn
+          retention-days: 14
