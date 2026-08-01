@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-01T22:58:00+08:00",
+  "scope": "CNC 高风险内容逐条复核所需原厂、机床厂、标准和现场可追溯资料的准备状态",
+  "requiredNotice": "教学参考，需按机床说明书、现场工艺和空运行验证",
+  "requiredSourceFields": [
+    "publisher",
+    "documentTitle",
+    "documentCodeOrRevision",
+    "applicableSystemOrMachine",
+    "pageOrSection",
+    "reviewedAt",
+    "reviewer",
+    "verificationNotes"
+  ],
+  "stateDefinitions": {
+    "awaiting_sources": "尚未取得足够的可追溯资料，不允许开始宣称逐条复核完成。",
+    "sources_ready": "资料字段完整且适用范围可确认，可以开始逐条复核，但仍不可直接上机使用。",
+    "in_review": "正在按条目记录来源、适用条件和复核结果，未覆盖条目继续保持待复核。",
+    "review_complete": "只有条目覆盖完整、证据字段完整、复核记录可追溯时才能进入；仍需现场工艺和空运行验证。"
+  },
+  "datasets": [
+    {
+      "path": "cnc/alarm-data.js",
+      "reviewPriority": "P0",
+      "state": "awaiting_sources",
+      "readyForItemReview": false,
+      "reviewedItemCount": 0,
+      "sourceRecords": [],
+      "blockedReason": "尚未提供对应数控系统系列的原厂报警手册、控制器软件版本和机床厂报警或梯形图说明。",
+      "requestedSources": [
+        "对应数控系统系列的原厂报警手册（含手册编号、版本和页码）",
+        "机床厂报警、M 代码或 PLC 梯形图说明",
+        "控制器软件版本、机床型号和选配配置记录"
+      ]
+    },
+    {
+      "path": "cnc/gm-code-complete.js",
+      "reviewPriority": "P0",
+      "state": "awaiting_sources",
+      "readyForItemReview": false,
+      "reviewedItemCount": 0,
+      "sourceRecords": [],
+      "blockedReason": "尚未提供对应系统系列编程手册、机床厂 M 代码表及参数或选配配置，不能确认代码差异。",
+      "requestedSources": [
+        "对应系统系列的原厂编程手册（含版本和章节）",
+        "机床厂 M 代码表、选配功能和宏程序说明",
+        "相关参数、控制器系列和机床配置记录"
+      ]
+    },
+    {
+      "path": "cnc/diagnosis-data.js",
+      "reviewPriority": "P1",
+      "state": "awaiting_sources",
+      "readyForItemReview": false,
+      "reviewedItemCount": 0,
+      "sourceRecords": [],
+      "blockedReason": "经验性数值和诊断顺序缺少材料、刀具、机床、装夹及测量条件对应的正式资料和现场记录。",
+      "requestedSources": [
+        "机床原厂维护或操作手册",
+        "刀具与材料供应商正式切削数据",
+        "现场测量、首件检验和工艺变更记录"
+      ]
+    },
+    {
+      "path": "cnc/weak-category-data.js",
+      "reviewPriority": "P1",
+      "state": "awaiting_sources",
+      "readyForItemReview": false,
+      "reviewedItemCount": 0,
+      "sourceRecords": [],
+      "blockedReason": "条目跨报警、参数、刀补、工艺和安全动作，尚未完成分类，也没有对应类别的可追溯资料。",
+      "requestedSources": [
+        "条目所属类别的原厂手册或正式标准",
+        "企业工艺卡、检验规范或安全制度",
+        "现场验证记录或可追溯培训资料"
+      ]
+    },
+    {
+      "path": "cnc/learning-content-data.js",
+      "reviewPriority": "P2",
+      "state": "awaiting_sources",
+      "readyForItemReview": false,
+      "reviewedItemCount": 0,
+      "sourceRecords": [],
+      "blockedReason": "课程已有文件级适用范围，但尚未按 12 关逐课登记手册名称、版本、章节和复核日期。",
+      "requestedSources": [
+        "对应课程使用的数控系统编程或操作手册",
+        "机床厂操作与安全说明",
+        "现场工艺文件或企业培训规范"
+      ]
+    }
+  ]
+}
