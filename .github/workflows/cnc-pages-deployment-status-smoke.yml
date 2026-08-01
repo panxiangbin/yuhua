@@ -25,17 +25,26 @@ jobs:
       - name: Check JavaScript syntax
         run: >-
           node --check cnc/tests/mobile-pages-deployment-status-smoke.cjs &&
-          node --check cnc/tests/pages-exact-resource-deployment-smoke.cjs
+          node --check cnc/tests/pages-exact-resource-deployment-smoke.cjs &&
+          node --check cnc/ui-knowledge-tree.js
       - name: Verify exact-resource gate contract
         run: >-
-          node -e "const fs=require('fs');const text=fs.readFileSync('cnc/tests/pages-exact-resource-deployment-smoke.cjs','utf8');for(const token of ['mobile-trust-nav.js','sha256','exactBytesMatch','globalMutationObserverAbsent']){if(!text.includes(token))throw new Error('missing exact-resource contract: '+token);}"
+          node -e "const fs=require('fs');const text=fs.readFileSync('cnc/tests/pages-exact-resource-deployment-smoke.cjs','utf8');for(const token of ['mobile-trust-nav.js','ui-knowledge-tree.js','knowledge-tree-lazy','sha256','exactBytesMatch','globalMutationObserverAbsent','lazyMaterializationPresent','fullRecursiveFirstPaintAbsent']){if(!text.includes(token))throw new Error('missing exact-resource contract: '+token);}"
       - name: Install Playwright runtime
         run: npm install --no-save playwright@1.52.0
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Run 390x844 Pages status smoke
         run: node cnc/tests/mobile-pages-deployment-status-smoke.cjs
-      - name: Verify Pages exact CNC resource deployment
+      - name: Verify Pages mobile navigation resource deployment
+        env:
+          CNC_EXACT_RESOURCE_PATH: cnc/mobile-trust-nav.js
+          CNC_EXACT_RESOURCE_CONTRACT: mobile-trust-nav
+        run: node cnc/tests/pages-exact-resource-deployment-smoke.cjs
+      - name: Verify Pages knowledge tree lazy resource deployment
+        env:
+          CNC_EXACT_RESOURCE_PATH: cnc/ui-knowledge-tree.js
+          CNC_EXACT_RESOURCE_CONTRACT: knowledge-tree-lazy
         run: node cnc/tests/pages-exact-resource-deployment-smoke.cjs
       - name: Upload diagnostics
         if: always()
