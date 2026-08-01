@@ -22,6 +22,7 @@ jobs:
       - name: Check audit syntax and contract
         run: |
           node --check cnc/tests/mobile-accessibility-foundation-smoke.cjs
+          node --check cnc/mobile-trust-nav.js
           node - <<'NODE'
           const fs = require('fs');
           const test = fs.readFileSync('cnc/tests/mobile-accessibility-foundation-smoke.cjs', 'utf8');
@@ -37,6 +38,21 @@ jobs:
             '390, height: 844'
           ]) {
             if (!test.includes(marker)) throw new Error(`无障碍审计缺少契约：${marker}`);
+          }
+
+          const implementation = fs.readFileSync('cnc/mobile-trust-nav.js', 'utf8');
+          for (const marker of [
+            "var SYNC_DELAYS = [0, 80, 240, 600]",
+            'window.CNC_ACCESSIBILITY_FOUNDATION',
+            'polling: false',
+            'observer: false',
+            "window.addEventListener('keydown', handleSidebarKeydown, true)",
+            'scheduleAccessibilitySync()'
+          ]) {
+            if (!implementation.includes(marker)) throw new Error(`无障碍实现缺少稳定性契约：${marker}`);
+          }
+          if (implementation.includes('new MutationObserver')) {
+            throw new Error('无障碍基础层不得恢复全局 MutationObserver，避免同值属性写入造成微任务循环');
           }
           NODE
       - name: Install Playwright Chromium
