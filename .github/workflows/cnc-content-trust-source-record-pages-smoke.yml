@@ -19,8 +19,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-      - name: Check source record Pages test syntax
-        run: node --check cnc/tests/pages-content-trust-source-record-deployment-smoke.cjs
+      - name: Check source record test and validator syntax
+        run: |
+          node --check cnc/tools/validate-content-trust-source-record.cjs
+          node --check cnc/tests/content-trust-source-record-template-smoke.cjs
+          node --check cnc/tests/pages-content-trust-source-record-deployment-smoke.cjs
+          node -e "JSON.parse(require('fs').readFileSync('cnc/content-trust-source-record.schema.json','utf8'))"
       - name: Verify source record Pages gate contract
         run: |
           node - <<'NODE'
@@ -31,10 +35,13 @@ jobs:
             'content-trust-source-record-template.json',
             'draft/2020-12/schema',
             'onMachineValidationRequired',
+            'instructionsSchemaPresent',
             'blankTemplatePreserved',
             'noUnverifiedSourceClaim',
             'exactBytesMatch',
             'exactSha256Match',
+            'localMatchesMain',
+            'branchDeploymentPending',
             'noUnverifiedContentClaim',
             "cache: 'no-store'",
             'const attempts = 18'
@@ -45,6 +52,10 @@ jobs:
             if (text.includes(forbidden)) throw new Error(`来源记录 Pages 门禁禁止绕过：${forbidden}`);
           }
           NODE
+      - name: Validate schema, template and root field controls
+        run: |
+          node cnc/tools/validate-content-trust-source-record.cjs cnc/content-trust-source-record-template.json
+          node cnc/tests/content-trust-source-record-template-smoke.cjs
       - name: Verify source record schema and blank template deployment
         run: node cnc/tests/pages-content-trust-source-record-deployment-smoke.cjs
       - name: Upload source record Pages diagnostics
@@ -52,6 +63,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: cnc-content-trust-source-record-pages-${{ github.run_id }}
-          path: cnc/test-results/pages-deployment-status-source-record*
+          path: |
+            cnc/test-results/pages-deployment-status-source-record*
+            artifacts/content-trust-source-record-template
           if-no-files-found: warn
           retention-days: 14
