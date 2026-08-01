@@ -59,11 +59,18 @@ async function fetchBytes(url, label) {
 }
 
 function assertResourceContract(text, label) {
-  if (!text.includes("var BUILD = '20260721s';")) {
-    throw new Error(`${label}缺少 mobile-trust-nav 构建标识`);
+  const required = [
+    'window.CNC_TRUST_NAV',
+    'window.CNC_ACCESSIBILITY_FOUNDATION',
+    'var SYNC_DELAYS = [0, 80, 240, 600]',
+    'polling: false',
+    'observer: false'
+  ];
+  for (const token of required) {
+    if (!text.includes(token)) throw new Error(`${label}缺少无障碍同步契约：${token}`);
   }
-  if (!text.includes('window.CNC_TRUST_NAV')) {
-    throw new Error(`${label}缺少 CNC_TRUST_NAV 就绪契约`);
+  if (!/var\s+BUILD\s*=\s*['"]20\d{6}[a-z0-9-]*['"]/.test(text)) {
+    throw new Error(`${label}缺少 mobile-trust-nav 构建标识`);
   }
   if (/new\s+MutationObserver\s*\(/.test(text)) {
     throw new Error(`${label}重新引入全局 MutationObserver，可能造成无障碍同步微任务循环`);
