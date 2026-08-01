@@ -43,6 +43,10 @@ function assert(condition, message) {
   await page.goto(BASE_URL, { waitUntil: 'networkidle' });
   await page.waitForSelector('#view-dashboard.active');
   await page.waitForSelector('.xp-game-bottom-nav', { state: 'visible' });
+  await page.waitForFunction(() => {
+    const node = document.querySelector('.xp-game-bottom-nav');
+    return node && [...node.querySelectorAll('a')].filter(link => link.getClientRects().length > 0).length === 5;
+  }, null, { timeout: 15000 });
 
   const gameNavState = await page.locator('.xp-game-bottom-nav').evaluate((node) => ({
     visibleItems: [...node.querySelectorAll('a')].filter(link => link.getClientRects().length > 0).length
