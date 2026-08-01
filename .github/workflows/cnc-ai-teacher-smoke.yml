@@ -7,6 +7,7 @@ on:
       - 'cnc/ai-teacher-intake.html'
       - 'cnc/profile.html'
       - 'cnc/build-info.json'
+      - 'cnc/docs/ai-teacher-trust-boundary-contract.md'
       - 'cnc/tests/mobile-ai-teacher-smoke.cjs'
       - '.github/workflows/cnc-ai-teacher-smoke.yml'
   workflow_dispatch:
@@ -23,19 +24,31 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Validate local-only safety contract
+      - name: Validate local-only safety and trust contract
         run: |
           set -euxo pipefail
           grep -q "20260801-ai-handoff1" cnc/ai-teacher.html
-          grep -q "localOnly: true" cnc/ai-teacher.html
-          grep -q "externalModel: false" cnc/ai-teacher.html
+          grep -q "localOnly:true\|localOnly: true" cnc/ai-teacher.html
+          grep -q "externalModel:false\|externalModel: false" cnc/ai-teacher.html
           grep -q "不调用外部模型" cnc/ai-teacher.html
           grep -q "不会给出脱离具体机床" cnc/ai-teacher.html
           grep -q "核对机床原厂手册" cnc/ai-teacher.html
           grep -q "ai-teacher-intake.html" cnc/ai-teacher.html
-          grep -q "先生成现场问诊单" cnc/ai-teacher.html
+          grep -q "先生成现场问诊单\|生成现场问诊单" cnc/ai-teacher.html
+          grep -q "classifyQuestion" cnc/ai-teacher.html
+          grep -q "BLOCK_RULES" cnc/ai-teacher.html
+          grep -q "已阻断高风险请求" cnc/ai-teacher.html
+          grep -q "无法给出可直接上机" cnc/ai-teacher.html
+          grep -q "content-trust-status.html" cnc/ai-teacher.html
+          grep -q "content-trust-evidence.html" cnc/ai-teacher.html
+          grep -q "依据来源与可信状态" cnc/ai-teacher.html
+          grep -q "资料清单与逐条复核记录不能互相代替" cnc/ai-teacher.html
           test -f cnc/ai-teacher-intake.html
+          test -f cnc/content-trust-status.html
+          test -f cnc/content-trust-evidence.html
+          test -f cnc/docs/ai-teacher-trust-boundary-contract.md
           ! grep -Eqi "https?://|fetch\(|XMLHttpRequest|WebSocket|EventSource" cnc/ai-teacher.html
+          ! grep -Eq "test\.skip\(|describe\.skip\(|it\.skip\(" cnc/tests/mobile-ai-teacher-smoke.cjs
       - name: Validate site and AI teacher build consistency
         run: |
           node - <<'NODE'
