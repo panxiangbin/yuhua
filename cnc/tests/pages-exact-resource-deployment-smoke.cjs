@@ -8,11 +8,18 @@ fs.mkdirSync(resultsDir, { recursive: true });
 
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
-const resourcePath = String(process.env.CNC_EXACT_RESOURCE_PATH || 'cnc/mobile-trust-nav.js').replace(/^\/+/, '');
+const defaultResourceByContract = {
+  'mobile-trust-nav': 'cnc/mobile-trust-nav.js',
+  'knowledge-tree-lazy': 'cnc/ui-knowledge-tree.js'
+};
 const resourceContract = String(process.env.CNC_EXACT_RESOURCE_CONTRACT || 'mobile-trust-nav');
-const supportedContracts = new Set(['mobile-trust-nav', 'knowledge-tree-lazy']);
-if (!supportedContracts.has(resourceContract)) {
+if (!Object.prototype.hasOwnProperty.call(defaultResourceByContract, resourceContract)) {
   throw new Error(`不支持的具体资源契约：${resourceContract}`);
+}
+const resourcePath = String(process.env.CNC_EXACT_RESOURCE_PATH || defaultResourceByContract[resourceContract]).replace(/^\/+/, '');
+const expectedResourcePath = defaultResourceByContract[resourceContract];
+if (resourcePath !== expectedResourcePath) {
+  throw new Error(`具体资源路径与契约不匹配：${resourceContract} 应使用 ${expectedResourcePath}，实际为 ${resourcePath}`);
 }
 const publicResourceUrl = `${publicRoot}/${resourcePath}`;
 const mainResourceUrl = `${mainRoot}/${resourcePath}`;
