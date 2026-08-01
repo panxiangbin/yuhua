@@ -43,7 +43,10 @@ const REQUIRED_NOTICE = '教学参考，需按机床说明书、现场工艺和�
       datasetCount: Number(document.getElementById('dataset-count')?.textContent),
       readyCount: Number(document.getElementById('ready-count')?.textContent),
       sourceCount: Number(document.getElementById('source-count')?.textContent),
+      itemReviewCount: Number(document.getElementById('item-review-count')?.textContent),
+      boundaryText: document.querySelector('.record-boundary')?.textContent?.trim() || '',
       cards: document.querySelectorAll('.dataset').length,
+      metricCards: document.querySelectorAll('.summary .metric').length,
       awaitingBadges: document.querySelectorAll('.dataset .awaiting_sources').length,
       requestedLists: document.querySelectorAll('.dataset .requested-sources').length,
       requestedItems: document.querySelectorAll('.dataset .requested-sources li').length,
@@ -60,8 +63,13 @@ const REQUIRED_NOTICE = '教学参考，需按机床说明书、现场工艺和�
     if (data.lang !== 'zh-CN') findings.push(`页面语言应为 zh-CN，实际 ${data.lang}`);
     if (data.notice !== REQUIRED_NOTICE) findings.push('统一教学参考提示未正确显示');
     if (data.datasetCount !== 5 || data.cards !== 5) findings.push(`登记数据集应为 5，实际统计 ${data.datasetCount} / 卡片 ${data.cards}`);
+    if (data.metricCards !== 4) findings.push(`资料准备度摘要应有 4 项，实际 ${data.metricCards}`);
     if (data.readyCount !== 0) findings.push(`资料已齐可逐条复核必须为 0，实际 ${data.readyCount}`);
-    if (data.sourceCount !== 0) findings.push(`已登记来源记录当前必须为 0，实际 ${data.sourceCount}`);
+    if (data.sourceCount !== 0) findings.push(`资料清单记录当前必须为 0，实际 ${data.sourceCount}`);
+    if (data.itemReviewCount !== 0) findings.push(`逐条复核记录当前必须为 0，实际 ${data.itemReviewCount}`);
+    if (!data.boundaryText.includes('资料清单记录') || !data.boundaryText.includes('逐条复核记录') || !data.boundaryText.includes('不能互相代替')) {
+      findings.push('页面没有清楚说明资料清单与逐条复核记录的边界');
+    }
     if (data.awaitingBadges !== 5) findings.push(`5 个数据集都应保持 awaiting_sources，实际 ${data.awaitingBadges}`);
     if (data.p0Cards !== 2) findings.push(`P0 资料准备项应为 2，实际 ${data.p0Cards}`);
     if (data.priorities.slice(0, 2).some((priority) => priority !== 'P0')) findings.push(`前两项必须为 P0，实际顺序 ${data.priorities.join(' > ')}`);
@@ -87,7 +95,9 @@ const REQUIRED_NOTICE = '教学参考，需按机床说明书、现场工艺和�
 
     await page.screenshot({ path: path.join(OUTPUT_DIR, 'content-trust-evidence-390x844.png'), fullPage: true });
     fs.writeFileSync(path.join(OUTPUT_DIR, 'report.json'), JSON.stringify(report, null, 2) + '\n');
-    fs.writeFileSync(path.join(OUTPUT_DIR, 'findings.txt'), (findings.length ? findings : ['PASS: 手机端如实显示 5 个数据集仍等待资料、0 条来源记录、0 项可开始逐条复核，并列出 P0 优先资料请求。']).join('\n') + '\n');
+    fs.writeFileSync(path.join(OUTPUT_DIR, 'findings.txt'), (findings.length ? findings : [
+      'PASS: 手机端如实显示 5 个数据集仍等待资料、0 条资料清单记录、0 条逐条复核记录，并明确两类记录不能互相代替。'
+    ]).join('\n') + '\n');
 
     if (findings.length) throw new Error(findings.join('\n'));
     console.log('CNC 手机端内容复核资料准备度验证通过', data);
