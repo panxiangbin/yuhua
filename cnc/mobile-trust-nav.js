@@ -399,10 +399,10 @@
 (function () {
   'use strict';
 
-  var BUILD = '20260801-a11y1';
-  var observer = null;
-  var syncTimer = 0;
+  var BUILD = '20260801-a11y2';
+  var syncTimers = [];
   var FOCUSABLE = 'button,a[href],input,select,textarea,[contenteditable="true"],[tabindex]';
+  var SYNC_DELAYS = [0, 80, 240, 600];
 
   function installStyles() {
     if (document.getElementById('cnc-accessibility-foundation-style')) return;
@@ -474,39 +474,6 @@
     });
   }
 
-  function scheduleHiddenSync() {
-    window.clearTimeout(syncTimer);
-    syncTimer = window.setTimeout(syncHiddenRegions, 0);
-  }
-
-  function setSidebarState(open, returnFocus) {
-    var sidebar = document.getElementById('sidebar');
-    var trigger = document.getElementById('sidebar-open');
-    var mask = document.getElementById('sidebar-mask');
-    var close = document.getElementById('sidebar-close');
-    if (!sidebar || !trigger) return false;
-
-    trigger.setAttribute('aria-controls', 'sidebar');
-    trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
-    if (sidebar.getAttribute('aria-hidden') !== (open ? 'false' : 'true')) {
-      sidebar.setAttribute('aria-hidden', open ? 'false' : 'true');
-    }
-    applyHiddenState(sidebar, !open);
-
-    if (open) {
-      sidebar.classList.add('open');
-      if (mask) mask.hidden = false;
-      window.setTimeout(function () {
-        if (close && sidebar.classList.contains('open')) close.focus();
-      }, 0);
-    } else {
-      sidebar.classList.remove('open');
-      if (mask) mask.hidden = true;
-      if (returnFocus) window.setTimeout(function () { trigger.focus(); }, 0);
-    }
-    return true;
-  }
-
   function setAttr(node, name, value) {
     if (node && node.getAttribute(name) !== value) node.setAttribute(name, value);
   }
@@ -522,59 +489,48 @@
     setAttr(loading, 'aria-hidden', 'true');
   }
 
-  function bindSidebarKeyboard() {
-    if (document.documentElement.dataset.cncA11ySidebarBound === 'true') return;
-    document.documentElement.dataset.cncA11ySidebarBound = 'true';
+  function syncAccessibilityState() {
+    ensureMainAndSkipLink();
+    ensureStatusSemantics();
+    syncHiddenRegions();
+  }
 
-    document.addEventListener('click', function (event) {
-      if (!event.target || !event.target.closest) return;
-      if (event.target.closest('#sidebar-open')) setSidebarState(true, false);
-      if (event.target.closest('#sidebar-close,#sidebar-mask')) setSidebarState(false, true);
-      scheduleHiddenSync();
-    });
-
-    document.addEventListener('keydown', function (event) {
-      var sidebar = document.getElementById('sidebar');
-      if (!sidebar || !sidebar.classList.contains('open')) return;
-
-      if (event.key === 'Escape') {
-        event.preventDefault();
-        event.stopPropagation();
-        var close = document.getElementById('sidebar-close');
-        if (close) close.click();
-        setSidebarState(false, true);
-        return;
-      }
-
-      if (event.key !== 'Tab') return;
-      var focusable = Array.from(sidebar.querySelectorAll(FOCUSABLE)).filter(function (node) {
-        return !node.disabled && node.getAttribute('tabindex') !== '-1' && node.getClientRects().length > 0;
-      });
-      if (!focusable.length) return;
-      var first = focusable[0];
-      var last = focusable[focusable.length - 1];
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
+  function scheduleAccessibilitySync() {
+    syncTimers.forEach(function (timer) { window.clearTimeout(timer); });
+    syncTimers = SYNC_DELAYS.map(function (delay) {
+      return window.setTimeout(syncAccessibilityState, delay);
     });
   }
 
-  function observeDynamicLayers() {
-    if (observer || !document.body) return;
-    observer = new MutationObserver(function () {
-      ensureStatusSemantics();
-      scheduleHiddenSync();
-    });
-    observer.observe(document.body, {
-      subtree: true,
-      childList: true,
-      attributes: true,
-      attributeFilter: ['aria-hidden', 'hidden', 'class']
-    });
+  function setSidebarState(open, returnFocus) {
+    var sidebar = document.getElementById('sidebar');
+    var trigger = document.getElementById('sidebar-open');
+    var mask = document.getElementById('sidebar-mask');
+    var close = document.getElementById('sidebar-close');
+    if (!sidebar || !trigger) return false;
+
+    trigger.setAttribute('aria-controls', 'sidebar');
+    trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (sidebar.getAttribute('aria-hidden') !== (open ? 'false' : 'true')) {
+      sidebar.setAttribute('aria-hidden', open ? 'false' : 'true');
+    }
+
+    if (open) {
+      sidebar.hidden = false;
+      applyHiddenState(sidebar, false);
+      sidebar.classList.add('open');
+      if (mask) mask.hidden = false;
+      window.setTimeout(function () {
+        if (close && sidebar.classList.contains('open')) close.focus();
+      }, 0);
+    } else {
+      sidebar.classList.remove('open');
+      applyHiddenState(sidebar, true);
+      sidebar.hidden = window.innerWidth <= 760;
+      if (mask) mask.hidden = true;
+      if (returnFocus) window.setTimeout(function () { trigger.focus(); }, 0);
+    }
+    return true;
   }
 
   function initialSidebarState() {
@@ -584,17 +540,80 @@
     setSidebarState(open, false);
   }
 
+  function handleSidebarKeydown(event) {
+    var sidebar = document.getElementById('sidebar');
+    if (!sidebar || !sidebar.classList.contains('open')) return;
+
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      setSidebarState(false, true);
+      scheduleAccessibilitySync();
+      return;
+    }
+
+    if (event.key !== 'Tab') return;
+    var focusable = Array.from(sidebar.querySelectorAll(FOCUSABLE)).filter(function (node) {
+      return !node.disabled && node.getAttribute('tabindex') !== '-1' && node.getClientRects().length > 0;
+    });
+    if (!focusable.length) return;
+    var first = focusable[0];
+    var last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  }
+
+  function bindSidebarKeyboard() {
+    if (document.documentElement.dataset.cncA11ySidebarBound === 'true') return;
+    document.documentElement.dataset.cncA11ySidebarBound = 'true';
+
+    document.addEventListener('click', function (event) {
+      if (!event.target || !event.target.closest) return;
+      if (event.target.closest('#sidebar-open')) setSidebarState(true, false);
+      if (event.target.closest('#sidebar-close,#sidebar-mask')) setSidebarState(false, true);
+      scheduleAccessibilitySync();
+    }, true);
+
+    window.addEventListener('keydown', handleSidebarKeydown, true);
+  }
+
+  function bindBoundedSyncEvents() {
+    if (document.documentElement.dataset.cncA11ySyncBound === 'true') return;
+    document.documentElement.dataset.cncA11ySyncBound = 'true';
+
+    document.addEventListener('click', function (event) {
+      if (!event.target || !event.target.closest) return;
+      if (event.target.closest(
+        '[data-route],[data-filter],[data-entry-id],[data-open-entry],[data-close],button,a[href],input,select,textarea'
+      )) scheduleAccessibilitySync();
+    }, true);
+    document.addEventListener('submit', scheduleAccessibilitySync, true);
+    window.addEventListener('hashchange', scheduleAccessibilitySync);
+    window.addEventListener('pageshow', scheduleAccessibilitySync);
+    window.addEventListener('resize', function () {
+      initialSidebarState();
+      scheduleAccessibilitySync();
+    }, { passive: true });
+  }
+
   function boot() {
     installStyles();
     ensureMainAndSkipLink();
     ensureStatusSemantics();
     bindSidebarKeyboard();
+    bindBoundedSyncEvents();
     initialSidebarState();
     syncHiddenRegions();
-    observeDynamicLayers();
-    window.addEventListener('resize', initialSidebarState, { passive: true });
+    scheduleAccessibilitySync();
     window.CNC_ACCESSIBILITY_FOUNDATION = {
       build: BUILD,
+      polling: false,
+      observer: false,
       sync: function () {
         ensureMainAndSkipLink();
         ensureStatusSemantics();
