@@ -4,6 +4,12 @@ on:
     paths:
       - 'cnc/**'
       - '.github/workflows/cnc-pages-deployment-status-smoke.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-pages-deployment-status-smoke.yml'
   workflow_dispatch:
 permissions:
   contents: read
@@ -27,6 +33,7 @@ jobs:
           node --check cnc/tests/mobile-pages-deployment-status-smoke.cjs &&
           node --check cnc/tests/pages-exact-resource-deployment-smoke.cjs &&
           node --check cnc/tests/pages-content-trust-evidence-deployment-smoke.cjs &&
+          node --check cnc/tests/pages-content-trust-evidence-transaction-deployment-smoke.cjs &&
           node --check cnc/tools/validate-content-trust-evidence-ledger.cjs &&
           node --check cnc/ui-knowledge-tree.js
       - name: Verify exact-resource gate contract
@@ -73,6 +80,38 @@ jobs:
             if (text.includes(forbidden)) throw new Error(`evidence deployment gate forbidden bypass or frozen baseline: ${forbidden}`);
           }
           NODE
+          node - <<'NODE'
+          const fs = require('fs');
+          const text = fs.readFileSync('cnc/tests/pages-content-trust-evidence-transaction-deployment-smoke.cjs', 'utf8');
+          for (const token of [
+            'content-trust-evidence-transaction.schema.json',
+            'content-trust-evidence-transaction-template.json',
+            'expectedBaseLedgerSha256',
+            'nextLedgerSha256',
+            'operationSummary',
+            'datasetsChanged',
+            'sourceRecordsAdded',
+            'itemReviewRecordsAdded',
+            'reviewedItemsAdded',
+            'stateTransitions',
+            'requireLocalMainMatch',
+            'exactBytesMatch',
+            'exactSha256Match',
+            'schemaTemplateFieldAlignment',
+            'noFakeTransactionMetadata',
+            'noUnverifiedContentClaim'
+          ]) {
+            if (!text.includes(token)) throw new Error(`missing evidence transaction deployment contract: ${token}`);
+          }
+          for (const forbidden of [
+            'test.skip(',
+            'CNC_PAGES_VERIFY_ATTEMPTS || 0',
+            "template.expectedBaseLedgerSha256 = '0'.repeat(64)",
+            'allowOperationalUse: true'
+          ]) {
+            if (text.includes(forbidden)) throw new Error(`evidence transaction deployment gate forbidden bypass: ${forbidden}`);
+          }
+          NODE
       - name: Install Playwright runtime
         run: npm install --no-save playwright@1.52.0
       - name: Install Chromium
@@ -101,6 +140,8 @@ jobs:
         run: node cnc/tests/pages-exact-resource-deployment-smoke.cjs
       - name: Verify Pages content trust evidence deployment and semantics
         run: node cnc/tests/pages-content-trust-evidence-deployment-smoke.cjs
+      - name: Verify Pages evidence transaction Schema and template deployment
+        run: node cnc/tests/pages-content-trust-evidence-transaction-deployment-smoke.cjs
       - name: Upload diagnostics
         if: always()
         uses: actions/upload-artifact@v4
