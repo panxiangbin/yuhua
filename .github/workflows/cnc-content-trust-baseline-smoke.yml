@@ -31,9 +31,12 @@ jobs:
         run: |
           node --check cnc/tests/content-trust-baseline-smoke.cjs
           node --check cnc/tests/mobile-content-trust-status-smoke.cjs
+          node --check cnc/tests/content-trust-evidence-readiness-smoke.cjs
+          node --check cnc/tests/mobile-content-trust-evidence-smoke.cjs
           node - <<'NODE'
           const fs = require('fs');
           const manifest = JSON.parse(fs.readFileSync('cnc/content-trust-manifest.json', 'utf8'));
+          const ledger = JSON.parse(fs.readFileSync('cnc/content-trust-evidence-ledger.json', 'utf8'));
           const required = [
             'cnc/learning-content-data.js',
             'cnc/alarm-data.js',
@@ -41,7 +44,8 @@ jobs:
             'cnc/gm-code-complete.js',
             'cnc/weak-category-data.js'
           ];
-          if (manifest.requiredNotice !== '教学参考，需按机床说明书、现场工艺和空运行验证') {
+          const notice = '教学参考，需按机床说明书、现场工艺和空运行验证';
+          if (manifest.requiredNotice !== notice || ledger.requiredNotice !== notice) {
             throw new Error('统一教学参考提示被修改');
           }
           for (const priority of ['P0', 'P1', 'P2']) {
@@ -51,34 +55,61 @@ jobs:
           }
           for (const path of required) {
             const item = manifest.datasets.find((entry) => entry.path === path);
+            const evidence = ledger.datasets.find((entry) => entry.path === path);
             if (!item) throw new Error(`缺少可信度登记：${path}`);
+            if (!evidence) throw new Error(`缺少证据准备度登记：${path}`);
             if (item.allowOperationalUse !== false) throw new Error(`禁止把未核实数据标记为可直接上机：${path}`);
             if (!['P0', 'P1', 'P2'].includes(item.reviewPriority)) throw new Error(`复核优先级无效：${path}`);
+            if (item.reviewPriority !== evidence.reviewPriority) throw new Error(`可信度与证据台账优先级不一致：${path}`);
             if (!Array.isArray(item.requiredEvidence) || item.requiredEvidence.length < 2) throw new Error(`证据要求不足：${path}`);
             if (!item.nextAction || item.nextAction.length < 12) throw new Error(`下一步复核动作不足：${path}`);
+            if (!Array.isArray(evidence.requestedSources) || evidence.requestedSources.length < 2) throw new Error(`资料请求不足：${path}`);
+          }
+          const requiredSourceFields = ['publisher','documentTitle','documentCodeOrRevision','applicableSystemOrMachine','pageOrSection','reviewedAt','reviewer','verificationNotes'];
+          for (const field of requiredSourceFields) {
+            if (!ledger.requiredSourceFields.includes(field)) throw new Error(`证据台账缺少来源字段：${field}`);
           }
           const p0 = manifest.datasets.filter((item) => item.reviewPriority === 'P0').map((item) => item.path).sort();
+          const evidenceP0 = ledger.datasets.filter((item) => item.reviewPriority === 'P0').map((item) => item.path).sort();
           const expectedP0 = ['cnc/alarm-data.js', 'cnc/gm-code-complete.js'].sort();
           if (JSON.stringify(p0) !== JSON.stringify(expectedP0)) throw new Error(`P0 队列错误：${p0.join(', ')}`);
+          if (JSON.stringify(evidenceP0) !== JSON.stringify(expectedP0)) throw new Error(`P0 资料队列错误：${evidenceP0.join(', ')}`);
           const page = fs.readFileSync('cnc/content-trust-status.html', 'utf8');
           for (const token of ['CONTENT TRUST STATUS', 'pending_manual_verification', '可直接上机使用', 'content-trust-manifest.json', 'P0 优先复核', 'review-queue', 'requiredEvidence', 'nextAction']) {
             if (!page.includes(token)) throw new Error(`可信度状态页缺少契约：${token}`);
           }
+          const evidencePage = fs.readFileSync('cnc/content-trust-evidence.html', 'utf8');
+          for (const token of ['内容复核资料准备度', 'content-trust-evidence-ledger.json', 'ready-count', 'source-count', 'requested-sources', 'blockedReason']) {
+            if (!evidencePage.includes(token)) throw new Error(`证据准备度页面缺少契约：${token}`);
+          }
           const test = fs.readFileSync('cnc/tests/content-trust-baseline-smoke.cjs', 'utf8');
+          const evidenceTest = fs.readFileSync('cnc/tests/content-trust-evidence-readiness-smoke.cjs', 'utf8');
+          const mobileTest = fs.readFileSync('cnc/tests/mobile-content-trust-status-smoke.cjs', 'utf8');
+          const evidenceMobileTest = fs.readFileSync('cnc/tests/mobile-content-trust-evidence-smoke.cjs', 'utf8');
           for (const token of ['EXPECTED_P0_DATASETS', 'requiredEvidence', 'nextAction', 'p0Datasets', 'operationalDatasets']) {
             if (!test.includes(token)) throw new Error(`结构化可信度门禁缺少契约：${token}`);
           }
-          const mobileTest = fs.readFileSync('cnc/tests/mobile-content-trust-status-smoke.cjs', 'utf8');
+          for (const token of ['REQUIRED_SOURCE_FIELDS', 'completeSourceRecord', 'readyForItemReview', 'review_complete', 'sourceRecords']) {
+            if (!evidenceTest.includes(token)) throw new Error(`证据准备度门禁缺少契约：${token}`);
+          }
           for (const token of ['queuePriorities', 'queueP0Items', 'evidenceItems', 'datasetNextActions']) {
             if (!mobileTest.includes(token)) throw new Error(`手机可信度门禁缺少契约：${token}`);
           }
+          for (const token of ['readyCount', 'sourceCount', 'requestedItems', 'blockedCards']) {
+            if (!evidenceMobileTest.includes(token)) throw new Error(`手机证据准备度门禁缺少契约：${token}`);
+          }
           for (const forbidden of ['process.exit(0)', 'test.skip(', 'allowOperationalUse !== true']) {
-            if (test.includes(forbidden) || mobileTest.includes(forbidden)) throw new Error(`内容可信度门禁禁止绕过：${forbidden}`);
+            if ([test, evidenceTest, mobileTest, evidenceMobileTest].some((text) => text.includes(forbidden))) {
+              throw new Error(`内容可信度门禁禁止绕过：${forbidden}`);
+            }
           }
           NODE
 
       - name: Run structured content trust audit
         run: node cnc/tests/content-trust-baseline-smoke.cjs
+
+      - name: Run evidence readiness audit
+        run: node cnc/tests/content-trust-evidence-readiness-smoke.cjs
 
       - name: Install Playwright Chromium
         run: |
@@ -93,6 +124,9 @@ jobs:
       - name: Run 390x844 mobile trust status smoke
         run: node cnc/tests/mobile-content-trust-status-smoke.cjs
 
+      - name: Run 390x844 mobile evidence readiness smoke
+        run: node cnc/tests/mobile-content-trust-evidence-smoke.cjs
+
       - name: Upload trust diagnostics
         if: always()
         uses: actions/upload-artifact@v4
@@ -101,6 +135,8 @@ jobs:
           path: |
             artifacts/content-trust-baseline
             artifacts/content-trust-status
+            artifacts/content-trust-evidence-readiness
+            artifacts/content-trust-evidence-status
             /tmp/cnc-content-trust-server.log
           if-no-files-found: warn
           retention-days: 14
