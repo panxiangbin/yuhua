@@ -40,14 +40,54 @@ function assert(condition, message) {
   });
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
-  await page.goto(BASE_URL, { waitUntil: 'networkidle' });
-  await page.waitForSelector('#view-dashboard.active');
-  await page.waitForSelector('.xp-game-bottom-nav', { state: 'visible' });
+  const testUrl = new URL(BASE_URL);
+  testUrl.searchParams.set('smoke', 'detail-share');
+  await page.goto(testUrl.toString(), { waitUntil: 'domcontentloaded', timeout: 60000 });
+  await page.waitForSelector('#view-dashboard.active', { timeout: 20000 });
+  await page.waitForSelector('#xp-game-home .xp-game-bottom-nav', { state: 'visible', timeout: 20000 });
 
-  const gameNavState = await page.locator('.xp-game-bottom-nav').evaluate((node) => ({
-    visibleItems: [...node.querySelectorAll('a')].filter(link => link.getClientRects().length > 0).length
-  }));
-  assert(gameNavState.visibleItems === 5, '闯关首页必须只有五项可见主导航');
+  // 依赖产品自己的导航就绪信号，而不是在异步初始化过程中碰巧读到一次“五项”。
+  // 同时要求五个固定入口连续稳定至少 500ms，避免旧导航和新导航交接时的瞬态误判。
+  await page.waitForFunction(() => {
+    const trustReady = window.CNC_TRUST_NAV?.build === '20260721s'
+      && (window.__CNC_TRUST_READY_AT__ || 0) > 0;
+    const queryReady = window.CNC_GAME_QUERY_NAV?.build === '20260731d'
+      && typeof window.CNC_GAME_QUERY_NAV.runCheck === 'function'
+      && window.CNC_GAME_QUERY_NAV.runCheck().utilityHidden;
+    const links = [...document.querySelectorAll('#xp-game-home .xp-game-bottom-nav a')];
+    const labels = links.map(link => link.getAttribute('aria-label'));
+    const expected = ['训练首页', '课程闯关', '每日挑战', '模拟车间', '成长档案'];
+    const stable = trustReady
+      && queryReady
+      && document.body.classList.contains('cnc-game-home-enabled')
+      && links.length === 5
+      && links.every(link => link.getClientRects().length > 0)
+      && labels.every((label, index) => label === expected[index]);
+
+    if (!stable) {
+      delete window.__CNC_DETAIL_SHARE_NAV_STABLE_SINCE__;
+      return false;
+    }
+    if (!window.__CNC_DETAIL_SHARE_NAV_STABLE_SINCE__) {
+      window.__CNC_DETAIL_SHARE_NAV_STABLE_SINCE__ = performance.now();
+    }
+    return performance.now() - window.__CNC_DETAIL_SHARE_NAV_STABLE_SINCE__ >= 500;
+  }, null, { timeout: 30000 });
+
+  const gameNavState = await page.locator('#xp-game-home .xp-game-bottom-nav').evaluate((node) => {
+    const links = [...node.querySelectorAll('a')];
+    return {
+      totalItems: links.length,
+      visibleItems: links.filter(link => link.getClientRects().length > 0).length,
+      labels: links.map(link => link.getAttribute('aria-label')),
+      trustBuild: window.CNC_TRUST_NAV?.build || '',
+      queryBuild: window.CNC_GAME_QUERY_NAV?.build || '',
+      readyAt: window.__CNC_TRUST_READY_AT__ || 0
+    };
+  });
+  assert(gameNavState.totalItems === 5, `闯关首页主导航总数异常：${JSON.stringify(gameNavState)}`);
+  assert(gameNavState.visibleItems === 5, `闯关首页必须只有五项可见主导航：${JSON.stringify(gameNavState)}`);
+  assert(JSON.stringify(gameNavState.labels) === JSON.stringify(['训练首页', '课程闯关', '每日挑战', '模拟车间', '成长档案']), `闯关首页主导航名称或顺序异常：${JSON.stringify(gameNavState)}`);
 
   const homeUtilityState = await page.locator('body > .xp-bottom-nav').evaluate((node) => ({
     visible: node.getClientRects().length > 0,
