@@ -11,11 +11,11 @@
     .hero,.card{background:#fff;border:1px solid #dfe5ec;border-radius:18px;box-shadow:0 10px 28px rgba(31,45,61,.07)}
     .hero,.card{padding:20px}.hero h1{margin:0;font-size:clamp(26px,7vw,40px)}.hero p,.card p{line-height:1.7;color:#465463}
     .notice{margin-top:16px;padding:14px 16px;border-left:5px solid #b45309;border-radius:12px;background:#fff7ed;font-weight:800;line-height:1.7}
-    .summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:16px 0}.metric{text-align:center}.metric strong{display:block;font-size:28px}.metric span{color:#52606d}
+    .summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:16px 0}.metric{text-align:center}.metric strong{display:block;font-size:28px}.metric span{color:#52606d}
     .dataset{padding:16px 0;border-top:1px solid #e7ebf0}.dataset:first-child{border-top:0}.head{display:flex;gap:10px;justify-content:space-between;align-items:flex-start}.title{display:flex;gap:8px;align-items:center;flex-wrap:wrap;min-width:0}
     code{overflow-wrap:anywhere;font-weight:800}.badge{display:inline-flex;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:800;white-space:nowrap}.priority-P0{background:#fee2e2;color:#991b1b}.priority-P1{background:#ffedd5;color:#9a3412}.priority-P2{background:#e0f2fe;color:#075985}.awaiting_sources{background:#fff1d6;color:#8a4b00}
-    ul{padding-left:20px;line-height:1.7;color:#52606d}.blocked{padding:10px 12px;border-radius:10px;background:#fef2f2;color:#991b1b!important}.footer{margin-top:16px}.error{padding:16px;border-radius:12px;background:#fee2e2;color:#991b1b;font-weight:700}.skip-link{position:absolute;left:-9999px}.skip-link:focus{left:12px;top:12px;z-index:10;background:#fff;padding:10px;border-radius:8px}a{color:#155e75;font-weight:700}
-    @media(max-width:680px){.summary{grid-template-columns:1fr}.head{display:grid}.shell{padding-top:16px}}
+    ul{padding-left:20px;line-height:1.7;color:#52606d}.blocked{padding:10px 12px;border-radius:10px;background:#fef2f2;color:#991b1b!important}.record-boundary{padding:10px 12px;border-radius:10px;background:#eff6ff;color:#1e3a5f!important}.footer{margin-top:16px}.error{padding:16px;border-radius:12px;background:#fee2e2;color:#991b1b;font-weight:700}.skip-link{position:absolute;left:-9999px}.skip-link:focus{left:12px;top:12px;z-index:10;background:#fff;padding:10px;border-radius:8px}a{color:#155e75;font-weight:700}
+    @media(max-width:680px){.summary{grid-template-columns:repeat(2,minmax(0,1fr))}.head{display:grid}.shell{padding-top:16px}}
   </style>
 </head>
 <body>
@@ -24,12 +24,14 @@
     <section class="hero">
       <h1>CNC 内容复核资料准备度</h1>
       <p>这里公开说明逐条复核还缺哪些可追溯资料。没有手册名称、版本、章节、适用系统和复核记录时，不把内容标记成“已核实”。</p>
+      <p class="record-boundary"><strong>记录边界：</strong>“资料清单记录”只证明已取得并登记可追溯资料；“逐条复核记录”才对应具体报警、代码、诊断或课程条目。两者不能互相代替。</p>
       <div class="notice" id="required-notice">教学参考，需按机床说明书、现场工艺和空运行验证</div>
     </section>
     <section class="summary" aria-label="资料准备度统计">
       <article class="card metric"><strong id="dataset-count">—</strong><span>登记数据集</span></article>
       <article class="card metric"><strong id="ready-count">—</strong><span>资料已齐可逐条复核</span></article>
-      <article class="card metric"><strong id="source-count">—</strong><span>已登记来源记录</span></article>
+      <article class="card metric"><strong id="source-count">—</strong><span>资料清单记录</span></article>
+      <article class="card metric"><strong id="item-review-count">—</strong><span>逐条复核记录</span></article>
     </section>
     <section class="card" aria-labelledby="list-title">
       <h2 id="list-title">资料缺口与请求清单</h2>
@@ -37,7 +39,8 @@
     </section>
     <section class="card footer">
       <h2>什么情况下才算资料准备完成</h2>
-      <p>每条来源至少要记录发布机构、文档名称、编号或版本、适用系统或机床、页码或章节、复核日期、复核人和复核说明。资料准备完成只代表可以开始逐条复核，不代表可直接上机使用。</p>
+      <p>每条资料清单至少要记录发布机构、文档名称、编号或版本、适用系统或机床、页码或章节、复核日期、复核人和复核说明。资料准备完成只代表可以开始逐条复核，不代表具体条目已经核实，更不代表可直接上机使用。</p>
+      <p>逐条复核还必须记录稳定条目键、来源类型、证据位置、适用范围、复核结论，并继续要求现场工艺和空运行验证。</p>
       <p><a href="./content-trust-status.html">返回内容可信度状态</a> · <a href="./">返回 CNC 新手训练平台</a></p>
     </section>
   </main>
@@ -53,15 +56,18 @@
         document.getElementById('dataset-count').textContent = datasets.length;
         document.getElementById('ready-count').textContent = datasets.filter((item) => item.readyForItemReview === true).length;
         document.getElementById('source-count').textContent = datasets.reduce((sum, item) => sum + (Array.isArray(item.sourceRecords) ? item.sourceRecords.length : 0), 0);
+        document.getElementById('item-review-count').textContent = datasets.reduce((sum, item) => sum + (Array.isArray(item.itemReviewRecords) ? item.itemReviewRecords.length : 0), 0);
         const rank = { P0: 0, P1: 1, P2: 2 };
         const sorted = datasets.slice().sort((a, b) => (rank[a.reviewPriority] ?? 99) - (rank[b.reviewPriority] ?? 99) || String(a.path).localeCompare(String(b.path), 'zh-CN'));
         list.innerHTML = sorted.map((item) => {
           const requested = (item.requestedSources || []).map((text) => '<li>' + escapeHtml(text) + '</li>').join('');
+          const sourceCount = Array.isArray(item.sourceRecords) ? item.sourceRecords.length : 0;
+          const itemReviewCount = Array.isArray(item.itemReviewRecords) ? item.itemReviewRecords.length : 0;
           return '<article class="dataset" data-priority="' + escapeHtml(item.reviewPriority) + '">' +
             '<div class="head"><div class="title"><span class="badge priority-' + escapeHtml(item.reviewPriority) + '">' + escapeHtml(item.reviewPriority) + '</span><code>' + escapeHtml(item.path) + '</code></div><span class="badge ' + escapeHtml(item.state) + '">' + escapeHtml(item.state) + '</span></div>' +
             '<p class="blocked"><strong>当前阻断：</strong>' + escapeHtml(item.blockedReason) + '</p>' +
             '<p><strong>需要提供：</strong></p><ul class="requested-sources">' + requested + '</ul>' +
-            '<p><strong>已登记来源：</strong>' + (Array.isArray(item.sourceRecords) ? item.sourceRecords.length : 0) + '；<strong>已逐条复核：</strong>' + Number(item.reviewedItemCount || 0) + '</p></article>';
+            '<p><strong>资料清单记录：</strong>' + sourceCount + '；<strong>逐条复核记录：</strong>' + itemReviewCount + '；<strong>已复核唯一条目：</strong>' + Number(item.reviewedItemCount || 0) + '</p></article>';
         }).join('');
       } catch (error) {
         list.innerHTML = '<div class="error" role="alert">证据台账读取失败：' + escapeHtml(error.message) + '</div>';
