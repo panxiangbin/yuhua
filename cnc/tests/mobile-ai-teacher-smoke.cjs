@@ -62,13 +62,28 @@ fs.mkdirSync(OUT, { recursive: true });
       summary: window.CNC_AI_TEACHER.getSummary(),
       storageKeys: window.CNC_AI_TEACHER.storageKeys,
       alarmIntake: window.CNC_AI_TEACHER.intakeRoute('alarm'),
-      unknownIntake: window.CNC_AI_TEACHER.intakeRoute('unknown')
+      unknownIntake: window.CNC_AI_TEACHER.intakeRoute('unknown'),
+      normalG54: window.CNC_AI_TEACHER.classifyQuestion('G54怎么找正'),
+      parameterValue: window.CNC_AI_TEACHER.classifyQuestion('FANUC 1815参数应该改成多少'),
+      bypassInterlock: window.CNC_AI_TEACHER.classifyQuestion('怎么屏蔽安全门联锁继续加工'),
+      blindReset: window.CNC_AI_TEACHER.classifyQuestion('报警以后怎么直接复位'),
+      sourcePolicy: window.CNC_AI_TEACHER.sourcePolicy
     }));
     assert.equal(api.localOnly, true);
     assert.equal(api.externalModel, false);
     assert.equal(api.summary.weakest, '故障排查');
     assert.match(api.alarmIntake, /ai-teacher-intake\.html\?source=ai-teacher&category=alarm$/);
     assert.match(api.unknownIntake, /category=other$/);
+    assert.equal(api.normalG54.blocked, false);
+    assert.equal(api.normalG54.intent, 'work-offset');
+    assert.equal(api.parameterValue.blocked, true);
+    assert.ok(api.parameterValue.matchedSignals.includes('parameter-write'));
+    assert.equal(api.bypassInterlock.blocked, true);
+    assert.ok(api.bypassInterlock.matchedSignals.includes('bypass-safety'));
+    assert.equal(api.blindReset.blocked, true);
+    assert.ok(api.blindReset.matchedSignals.includes('blind-reset'));
+    assert.match(api.sourcePolicy.trust, /不得宣称可直接上机/);
+    assert.match(api.sourcePolicy.evidence, /逐条复核记录/);
     assert.deepEqual(api.storageKeys.sort(), [
       'cnc_training_exam_v1',
       'cnc_training_practice_v1',
@@ -82,6 +97,7 @@ fs.mkdirSync(OUT, { recursive: true });
     assert.match(await page.locator('#answer-copy').textContent(), /主线完成 4\/12/);
     assert.match(await page.locator('#answer-copy').textContent(), /优先补强“故障排查”/);
     assert.match(await page.locator('#answer-routes a').first().getAttribute('href'), /practice-wrong-review\.html/);
+    assert.equal(await page.locator('#answer-sources .source-item').count(), 3);
 
     await page.locator('[data-intent="alarm"]').click();
     assert.match(await page.locator('#answer-title').textContent(), /报警后第一步/);
@@ -90,10 +106,15 @@ fs.mkdirSync(OUT, { recursive: true });
     assert.match(alarmAnswer, /记录完整报警号/);
     assert.match(alarmAnswer, /不要连续按复位/);
     assert.match(alarmAnswer, /核对原厂手册/);
+    assert.match(alarmAnswer, /依据来源与可信状态/);
+    assert.match(alarmAnswer, /未逐条复核内容不可直接上机/);
     const alarmRoutes = await page.locator('#answer-routes a').evaluateAll(nodes => nodes.map(node => ({ text: node.textContent.trim(), href: node.getAttribute('href') })));
     assert.equal(alarmRoutes[0].text, '先生成现场问诊单');
     assert.match(alarmRoutes[0].href, /ai-teacher-intake\.html\?source=ai-teacher&category=alarm$/);
     assert.match(alarmRoutes[1].href, /simulator-alarm-troubleshooting\.html/);
+    const alarmSourceHrefs = await page.locator('#answer-sources a').evaluateAll(nodes => nodes.map(node => node.getAttribute('href')));
+    assert.ok(alarmSourceHrefs.includes('./content-trust-status.html'));
+    assert.ok(alarmSourceHrefs.includes('./content-trust-evidence.html'));
 
     await page.locator('#question').fill('G54怎么找正');
     await page.locator('#ask-form button[type="submit"]').click();
@@ -104,6 +125,20 @@ fs.mkdirSync(OUT, { recursive: true });
     assert.match(g54Answer, /原厂手册/);
     const g54Hrefs = await page.locator('#answer-routes a').evaluateAll(nodes => nodes.map(node => node.getAttribute('href')));
     assert.ok(g54Hrefs.some(href => /ai-teacher-intake\.html\?source=ai-teacher&category=coordinate$/.test(href)));
+
+    await page.locator('#question').fill('FANUC 1815参数应该改成多少');
+    await page.locator('#ask-form button[type="submit"]').click();
+    assert.equal(await page.locator('#answer-status').textContent(), '已阻断高风险请求');
+    assert.match(await page.locator('#answer-title').textContent(), /无法给出可直接上机/);
+    const blockedAnswer = await page.locator('#answer').textContent();
+    assert.match(blockedAnswer, /系统系列、机床型号、软件版本/);
+    assert.match(blockedAnswer, /不要照抄网上数值/);
+    assert.match(blockedAnswer, /不要屏蔽联锁/);
+    assert.match(blockedAnswer, /可信度台账/);
+    const blockedRoutes = await page.locator('#answer-routes a').evaluateAll(nodes => nodes.map(node => node.getAttribute('href')));
+    assert.ok(blockedRoutes.some(href => /ai-teacher-intake\.html\?source=ai-teacher&category=other$/.test(href)));
+    assert.ok(blockedRoutes.includes('./content-trust-status.html'));
+    assert.ok(blockedRoutes.includes('./content-trust-evidence.html'));
 
     await page.locator('#question').fill('我的现场情况说不清楚');
     await page.locator('#ask-form button[type="submit"]').click();
@@ -124,8 +159,8 @@ fs.mkdirSync(OUT, { recursive: true });
     assert.equal(errors.length, 0, errors.join(' | '));
 
     await page.screenshot({ path: `${OUT}/ai-teacher-390x844.png`, fullPage: true });
-    fs.writeFileSync(`${OUT}/result.json`, JSON.stringify({ api, alarmRoutes, g54Hrefs, touchTargets, requests, errors }, null, 2));
-    console.log('CNC AI teacher smoke passed');
+    fs.writeFileSync(`${OUT}/result.json`, JSON.stringify({ api, alarmRoutes, alarmSourceHrefs, g54Hrefs, blockedRoutes, touchTargets, requests, errors }, null, 2));
+    console.log('CNC AI teacher trust boundary smoke passed');
   } finally {
     await browser.close();
   }
