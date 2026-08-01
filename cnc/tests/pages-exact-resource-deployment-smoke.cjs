@@ -9,11 +9,20 @@ fs.mkdirSync(resultsDir, { recursive: true });
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
 const resourcePath = String(process.env.CNC_EXACT_RESOURCE_PATH || 'cnc/mobile-trust-nav.js').replace(/^\/+/, '');
+const resourceContract = String(process.env.CNC_EXACT_RESOURCE_CONTRACT || 'mobile-trust-nav');
+const supportedContracts = new Set(['mobile-trust-nav', 'knowledge-tree-lazy']);
+if (!supportedContracts.has(resourceContract)) {
+  throw new Error(`不支持的具体资源契约：${resourceContract}`);
+}
 const publicResourceUrl = `${publicRoot}/${resourcePath}`;
 const mainResourceUrl = `${mainRoot}/${resourcePath}`;
+const resultId = resourceContract.replace(/[^a-z0-9-]+/gi, '-').toLowerCase();
+const resultPath = path.join(resultsDir, `pages-deployment-status-resource-${resultId}.json`);
+const errorPath = path.join(resultsDir, `pages-deployment-status-resource-${resultId}-error.txt`);
 const diagnostics = {
   checkedAt: new Date().toISOString(),
   resourcePath,
+  resourceContract,
   mainResourceUrl,
   publicResourceUrl,
   attempts: []
@@ -58,7 +67,7 @@ async function fetchBytes(url, label) {
   };
 }
 
-function assertResourceContract(text, label) {
+function assertMobileTrustNavContract(text, label) {
   const required = [
     'window.CNC_TRUST_NAV',
     'window.CNC_ACCESSIBILITY_FOUNDATION',
@@ -75,6 +84,35 @@ function assertResourceContract(text, label) {
   if (/new\s+MutationObserver\s*\(/.test(text)) {
     throw new Error(`${label}重新引入全局 MutationObserver，可能造成无障碍同步微任务循环`);
   }
+  return {
+    accessibilitySyncContractPresent: true,
+    globalMutationObserverAbsent: true
+  };
+}
+
+function assertKnowledgeTreeLazyContract(text, label) {
+  const required = [
+    'materializeChildren(nodeEl, node, childLevel)',
+    "group.dataset.rendered === 'true'",
+    'data-rendered="false"',
+    'if (open) this.materializeChildren(nodeEl, node, level + 1)',
+    'if (initiallyOpen && hasChildren) this.materializeChildren(nodeEl, node, level + 1)'
+  ];
+  for (const token of required) {
+    if (!text.includes(token)) throw new Error(`${label}缺少知识树按需渲染契约：${token}`);
+  }
+  if (/if\s*\(hasChildren\)\s*node\.children\.forEach/.test(text)) {
+    throw new Error(`${label}恢复了知识树全量递归首屏渲染`);
+  }
+  return {
+    lazyMaterializationPresent: true,
+    fullRecursiveFirstPaintAbsent: true
+  };
+}
+
+function assertResourceContract(text, label) {
+  if (resourceContract === 'mobile-trust-nav') return assertMobileTrustNavContract(text, label);
+  return assertKnowledgeTreeLazyContract(text, label);
 }
 
 async function waitForExactResource() {
@@ -112,44 +150,36 @@ async function waitForExactResource() {
     const localPath = path.join(root, resourcePath);
     const localBuffer = fs.readFileSync(localPath);
     const localText = localBuffer.toString('utf8').replace(/^\uFEFF/, '');
-    assertResourceContract(localText, '当前分支本地资源');
+    const localContract = assertResourceContract(localText, '当前分支本地资源');
     diagnostics.local = {
       path: localPath,
       bytes: localBuffer.length,
-      sha256: sha256(localBuffer)
+      sha256: sha256(localBuffer),
+      contract: localContract
     };
 
     const published = await waitForExactResource();
     const mainText = published.main.buffer.toString('utf8').replace(/^\uFEFF/, '');
     const pagesText = published.pages.buffer.toString('utf8').replace(/^\uFEFF/, '');
-    assertResourceContract(mainText, 'main资源');
-    assertResourceContract(pagesText, 'Pages公网资源');
+    const mainContract = assertResourceContract(mainText, 'main资源');
+    const pagesContract = assertResourceContract(pagesText, 'Pages公网资源');
 
-    diagnostics.main = { ...published.main, buffer: undefined };
-    diagnostics.pages = { ...published.pages, buffer: undefined };
+    diagnostics.main = { ...published.main, buffer: undefined, contract: mainContract };
+    diagnostics.pages = { ...published.pages, buffer: undefined, contract: pagesContract };
     diagnostics.verified = {
       publicReachable: true,
       exactBytesMatch: true,
       exactSha256Match: true,
-      accessibilitySyncContractPresent: true,
-      globalMutationObserverAbsent: true
+      resourceContract,
+      contractChecks: pagesContract
     };
 
-    fs.writeFileSync(
-      path.join(resultsDir, 'pages-deployment-status-resource-result.json'),
-      JSON.stringify(diagnostics, null, 2)
-    );
-    console.log(`CNC Pages exact resource verified: ${resourcePath} ${published.pages.sha256}`);
+    fs.writeFileSync(resultPath, JSON.stringify(diagnostics, null, 2));
+    console.log(`CNC Pages exact resource verified: ${resourcePath} ${published.pages.sha256} (${resourceContract})`);
   } catch (error) {
     diagnostics.error = String(error && error.stack || error);
-    fs.writeFileSync(
-      path.join(resultsDir, 'pages-deployment-status-resource-result.json'),
-      JSON.stringify(diagnostics, null, 2)
-    );
-    fs.writeFileSync(
-      path.join(resultsDir, 'pages-deployment-status-resource-error.txt'),
-      diagnostics.error
-    );
+    fs.writeFileSync(resultPath, JSON.stringify(diagnostics, null, 2));
+    fs.writeFileSync(errorPath, diagnostics.error);
     throw error;
   }
 })().catch(error => {
