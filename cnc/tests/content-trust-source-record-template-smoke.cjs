@@ -4,6 +4,8 @@ const fs = require('fs');
 const path = require('path');
 const {
   REQUIRED_NOTICE,
+  ROOT_REQUIRED_FIELDS,
+  ROOT_OPTIONAL_FIELDS,
   REQUIRED_FIELDS,
   DATASET_PATHS,
   SOURCE_TYPES,
@@ -29,12 +31,25 @@ try {
 }
 
 if (schema.$schema !== 'https://json-schema.org/draft/2020-12/schema') errors.push('JSON Schema 必须使用 draft 2020-12');
+if (schema.type !== 'object' || schema.additionalProperties !== false) errors.push('Schema 根对象必须禁止未声明字段');
 if (schema.properties?.schemaVersion?.const !== 1) errors.push('Schema 的 schemaVersion 必须固定为 1');
 if (schema.properties?.requiredNotice?.const !== REQUIRED_NOTICE) errors.push('Schema 的统一教学提示不一致');
+if (schema.properties?.instructions?.type !== 'array' || schema.properties?.instructions?.minItems < 5) {
+  errors.push('Schema 必须受控定义至少 5 条模板填写说明');
+}
 if (template.schemaVersion !== 1) errors.push('模板 schemaVersion 必须为 1');
 if (template.requiredNotice !== REQUIRED_NOTICE) errors.push('模板统一教学提示不一致');
 if (!Array.isArray(template.instructions) || template.instructions.length < 5) errors.push('模板必须提供至少 5 条使用说明');
 if (!Array.isArray(template.records) || template.records.length !== 0) errors.push('空白模板不得预填或伪造来源记录');
+
+const allowedRootFields = new Set([...ROOT_REQUIRED_FIELDS, ...ROOT_OPTIONAL_FIELDS]);
+for (const key of Object.keys(template)) {
+  if (!allowedRootFields.has(key)) errors.push(`模板含未受控顶层字段：${key}`);
+}
+const templateValidationErrors = validateDocument(template);
+if (templateValidationErrors.length) {
+  errors.push(`空白模板与正式校验器不一致：${templateValidationErrors.join(' | ')}`);
+}
 
 const sourceRecord = schema.$defs?.sourceRecord;
 if (!sourceRecord || sourceRecord.type !== 'object' || sourceRecord.additionalProperties !== false) {
@@ -105,9 +120,19 @@ const invalidCases = [
     expected: '真实的 YYYY-MM-DD'
   },
   {
-    name: '额外未受控字段',
+    name: '额外未受控记录字段',
     document: { ...validDocument, records: [{ ...validRecord, verified: true }] },
     expected: '含未允许字段'
+  },
+  {
+    name: '额外未受控根字段',
+    document: { ...validDocument, operationalUseAllowed: true },
+    expected: '根节点含未允许字段'
+  },
+  {
+    name: '无效模板说明',
+    document: { ...validDocument, instructions: ['占位'] },
+    expected: '至少包含 5 条说明'
   },
   {
     name: '重复记录',
@@ -128,6 +153,8 @@ const report = {
   result: errors.length ? 'failure' : 'success',
   schemaVersion: schema.properties?.schemaVersion?.const,
   templateRecordCount: template.records?.length,
+  templateInstructionCount: template.instructions?.length,
+  templateAcceptedByValidator: templateValidationErrors.length === 0,
   requiredFieldCount: REQUIRED_FIELDS.length,
   datasetCount: DATASET_PATHS.size,
   sourceTypeCount: SOURCE_TYPES.size,
@@ -141,13 +168,15 @@ fs.writeFileSync(path.join(OUTPUT_DIR, 'report.json'), JSON.stringify(report, nu
 fs.writeFileSync(path.join(OUTPUT_DIR, 'findings.txt'), [
   `CNC 来源记录模板审计：${report.result}`,
   `模板预填来源记录：${report.templateRecordCount}`,
+  `模板填写说明：${report.templateInstructionCount}`,
+  `模板通过正式校验器：${report.templateAcceptedByValidator}`,
   `必填字段：${report.requiredFieldCount}`,
   `高风险数据集：${report.datasetCount}`,
   `来源类型：${report.sourceTypeCount}`,
   `复核结论：${report.decisionCount}`,
   `非法场景拦截：${invalidResults.filter((item) => item.passed).length}/${invalidResults.length}`,
   '',
-  ...(errors.length ? errors.map((item) => `ERROR: ${item}`) : ['PASS: 模板保持空白，来源字段、适用范围、复核结论和现场验证要求均已结构化约束。'])
+  ...(errors.length ? errors.map((item) => `ERROR: ${item}`) : ['PASS: 模板保持空白，模板说明受 Schema 约束，根节点和记录字段、适用范围、复核结论及现场验证要求均已结构化校验。'])
 ].join('\n') + '\n');
 
 if (errors.length) {
