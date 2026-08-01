@@ -41,6 +41,15 @@ jobs:
           if (schema.properties?.requiredNotice?.const !== notice || template.requiredNotice !== notice) {
             throw new Error('来源记录统一教学提示不一致');
           }
+          if (schema.type !== 'object' || schema.additionalProperties !== false) {
+            throw new Error('来源记录 Schema 根对象必须禁止未声明字段');
+          }
+          if (schema.properties?.instructions?.type !== 'array' || schema.properties.instructions.minItems < 5) {
+            throw new Error('Schema 必须受控定义至少 5 条模板填写说明');
+          }
+          if (!Array.isArray(template.instructions) || template.instructions.length < 5) {
+            throw new Error('空白模板必须提供至少 5 条填写说明');
+          }
           if (!Array.isArray(template.records) || template.records.length !== 0) {
             throw new Error('空白模板不得预填来源记录');
           }
@@ -58,7 +67,19 @@ jobs:
             if (!schema.$defs?.sourceRecord?.required?.includes(token)) throw new Error(`Schema 缺少必填字段：${token}`);
             if (!validator.includes(token)) throw new Error(`校验工具缺少字段约束：${token}`);
           }
-          for (const token of ['PLACEHOLDER_PATTERN', 'isRealDate', 'duplicateKeys', 'additionalProperties', 'invalidCases']) {
+          for (const token of [
+            'ROOT_REQUIRED_FIELDS',
+            'ROOT_OPTIONAL_FIELDS',
+            'validateInstructions',
+            '根节点含未允许字段',
+            'PLACEHOLDER_PATTERN',
+            'isRealDate',
+            'duplicateKeys',
+            'additionalProperties',
+            '额外未受控根字段',
+            '无效模板说明',
+            'invalidCases'
+          ]) {
             if (![validator, test, JSON.stringify(schema)].some((text) => text.includes(token))) {
               throw new Error(`来源记录门禁缺少契约：${token}`);
             }
