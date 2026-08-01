@@ -10,7 +10,9 @@ const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
 const defaultResourceByContract = {
   'mobile-trust-nav': 'cnc/mobile-trust-nav.js',
-  'knowledge-tree-lazy': 'cnc/ui-knowledge-tree.js'
+  'knowledge-tree-lazy': 'cnc/ui-knowledge-tree.js',
+  'content-trust-page': 'cnc/content-trust-status.html',
+  'content-trust-manifest': 'cnc/content-trust-manifest.json'
 };
 const resourceContract = String(process.env.CNC_EXACT_RESOURCE_CONTRACT || 'mobile-trust-nav');
 if (!Object.prototype.hasOwnProperty.call(defaultResourceByContract, resourceContract)) {
@@ -117,9 +119,72 @@ function assertKnowledgeTreeLazyContract(text, label) {
   };
 }
 
+function assertContentTrustPageContract(text, label) {
+  const required = [
+    '<html lang="zh-CN">',
+    'CONTENT TRUST STATUS',
+    'content-trust-manifest.json',
+    '教学参考，需按机床说明书、现场工艺和空运行验证',
+    'item.allowOperationalUse === true',
+    '不可直接上机使用',
+    '返回 CNC 新手训练平台'
+  ];
+  for (const token of required) {
+    if (!text.includes(token)) throw new Error(`${label}缺少内容可信度状态页契约：${token}`);
+  }
+  if (!text.includes("cache: 'no-store'")) {
+    throw new Error(`${label}未使用 no-store 读取可信度清单，可能显示旧状态`);
+  }
+  return {
+    publicStatusPagePresent: true,
+    manifestNoStoreFetchPresent: true,
+    operationalBoundaryPresent: true
+  };
+}
+
+function assertContentTrustManifestContract(text, label) {
+  let manifest;
+  try {
+    manifest = JSON.parse(text);
+  } catch (error) {
+    throw new Error(`${label}不是有效 JSON：${error.message}`);
+  }
+  const requiredNotice = '教学参考，需按机床说明书、现场工艺和空运行验证';
+  const requiredPaths = [
+    'cnc/learning-content-data.js',
+    'cnc/alarm-data.js',
+    'cnc/diagnosis-data.js',
+    'cnc/gm-code-complete.js',
+    'cnc/weak-category-data.js'
+  ];
+  const datasets = Array.isArray(manifest.datasets) ? manifest.datasets : [];
+  if (manifest.schemaVersion !== 1) throw new Error(`${label}schemaVersion 不是 1`);
+  if (manifest.requiredNotice !== requiredNotice) throw new Error(`${label}统一教学参考提示不一致`);
+  if (datasets.length < requiredPaths.length) throw new Error(`${label}登记数据集少于 ${requiredPaths.length} 个`);
+  for (const requiredPath of requiredPaths) {
+    const item = datasets.find(entry => entry && entry.path === requiredPath);
+    if (!item) throw new Error(`${label}缺少可信度登记：${requiredPath}`);
+    if (item.allowOperationalUse !== false) throw new Error(`${label}错误放开直接上机使用：${requiredPath}`);
+    if (item.notice !== requiredNotice) throw new Error(`${label}数据集提示不一致：${requiredPath}`);
+  }
+  const pendingCount = datasets.filter(item => String(item && item.status || '').startsWith('pending_')).length;
+  const operationalCount = datasets.filter(item => item && item.allowOperationalUse === true).length;
+  if (pendingCount < 4) throw new Error(`${label}待逐条复核数据集少于 4 个`);
+  if (operationalCount !== 0) throw new Error(`${label}存在被标记为可直接上机的数据集`);
+  return {
+    schemaVersion: manifest.schemaVersion,
+    datasetCount: datasets.length,
+    pendingCount,
+    operationalCount,
+    requiredNoticePresent: true
+  };
+}
+
 function assertResourceContract(text, label) {
   if (resourceContract === 'mobile-trust-nav') return assertMobileTrustNavContract(text, label);
-  return assertKnowledgeTreeLazyContract(text, label);
+  if (resourceContract === 'knowledge-tree-lazy') return assertKnowledgeTreeLazyContract(text, label);
+  if (resourceContract === 'content-trust-page') return assertContentTrustPageContract(text, label);
+  return assertContentTrustManifestContract(text, label);
 }
 
 async function waitForExactResource() {
