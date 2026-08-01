@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <title>CNC 内容可信度状态</title>
+  <style>
+    :root{font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;color:#17202a;background:#f6f8fb}
+    *{box-sizing:border-box}body{margin:0}.shell{width:min(960px,100%);margin:auto;padding:24px 16px 48px}
+    .hero,.card{background:#fff;border:1px solid #dfe5ec;border-radius:18px;box-shadow:0 10px 28px rgba(31,45,61,.07)}
+    .hero{padding:22px}.eyebrow{margin:0 0 8px;color:#1d5d4f;font-weight:800}.hero h1{margin:0;font-size:clamp(26px,7vw,40px)}
+    .notice{margin:18px 0 0;padding:14px 16px;border-left:5px solid #b45309;border-radius:12px;background:#fff7ed;line-height:1.7;font-weight:700}
+    .summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:16px 0}.metric{padding:16px;text-align:center}.metric strong{display:block;font-size:28px}.metric span{color:#52606d}
+    .card{padding:18px;margin-top:14px}.card h2{margin:0 0 12px;font-size:20px}.dataset{padding:14px 0;border-top:1px solid #e7ebf0}.dataset:first-of-type{border-top:0}
+    .dataset-head{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}.dataset code{overflow-wrap:anywhere;font-weight:800}.badge{display:inline-flex;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:800;white-space:nowrap}
+    .reviewed_scope{background:#e8f5ee;color:#17613f}.pending_manual_verification,.pending_system_scope_review{background:#fff1d6;color:#8a4b00}
+    .dataset p{margin:9px 0 0;line-height:1.65;color:#465463}.dataset ul{margin:8px 0 0;padding-left:20px;color:#52606d;line-height:1.65}
+    .footer{margin-top:18px;color:#52606d;line-height:1.7}.error{padding:16px;border-radius:12px;background:#fee2e2;color:#991b1b;font-weight:700}
+    a{color:#155e75;font-weight:700}.skip-link{position:absolute;left:-9999px}.skip-link:focus{left:12px;top:12px;z-index:10;background:#fff;padding:10px;border-radius:8px}
+    @media(max-width:640px){.summary{grid-template-columns:1fr}.dataset-head{display:grid}.shell{padding-top:16px}}
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <main class="shell" id="main">
+    <section class="hero">
+      <p class="eyebrow">CONTENT TRUST STATUS</p>
+      <h1>CNC 内容可信度状态</h1>
+      <p>这页公开说明哪些数据已经具备适用范围，哪些仍需逐条核对原厂资料。状态不是“内容越多越好”，而是避免把未核实经验当成确定结论。</p>
+      <div class="notice" id="required-notice">教学参考，需按机床说明书、现场工艺和空运行验证</div>
+    </section>
+
+    <section class="summary" aria-label="可信度统计">
+      <article class="card metric"><strong id="dataset-count">—</strong><span>登记数据集</span></article>
+      <article class="card metric"><strong id="pending-count">—</strong><span>待逐条复核</span></article>
+      <article class="card metric"><strong id="operational-count">—</strong><span>可直接上机使用</span></article>
+    </section>
+
+    <section class="card" aria-labelledby="dataset-title">
+      <h2 id="dataset-title">数据集状态</h2>
+      <div id="dataset-list" aria-live="polite">正在读取可信度清单……</div>
+    </section>
+
+    <section class="card footer">
+      <h2>状态怎么理解</h2>
+      <p><strong>reviewed_scope</strong> 只代表已写明主要教学系统、适用范围和核对要求，不代表适用于所有机床。</p>
+      <p><strong>pending</strong> 代表内容中含报警、参数、刀补、数值范围或现场动作，尚未完成逐条原厂资料复核，不能据此直接改参数或恢复生产。</p>
+      <p><a href="./">返回 CNC 新手训练平台</a></p>
+    </section>
+  </main>
+  <script>
+    (async function () {
+      const list = document.getElementById('dataset-list');
+      try {
+        const response = await fetch('./content-trust-manifest.json', { cache: 'no-store' });
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const manifest = await response.json();
+        const datasets = Array.isArray(manifest.datasets) ? manifest.datasets : [];
+        document.getElementById('required-notice').textContent = manifest.requiredNotice;
+        document.getElementById('dataset-count').textContent = datasets.length;
+        document.getElementById('pending-count').textContent = datasets.filter((item) => String(item.status).startsWith('pending_')).length;
+        document.getElementById('operational-count').textContent = datasets.filter((item) => item.allowOperationalUse === true).length;
+        list.innerHTML = datasets.map((item) => {
+          const basis = (item.reviewBasis || []).map((text) => '<li>' + escapeHtml(text) + '</li>').join('');
+          return '<article class="dataset">' +
+            '<div class="dataset-head"><code>' + escapeHtml(item.path) + '</code><span class="badge ' + escapeHtml(item.status) + '">' + escapeHtml(item.status) + '</span></div>' +
+            '<p><strong>适用范围：</strong>' + escapeHtml(item.applicability) + '</p>' +
+            '<p><strong>使用边界：</strong>' + (item.allowOperationalUse ? '可直接上机使用' : '不可直接上机使用') + '</p>' +
+            '<ul>' + basis + '</ul></article>';
+        }).join('');
+      } catch (error) {
+        list.innerHTML = '<div class="error" role="alert">可信度清单读取失败：' + escapeHtml(error.message) + '</div>';
+      }
+    })();
+    function escapeHtml(value) {
+      return String(value == null ? '' : value).replace(/[&<>"']/g, function (char) {
+        return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[char];
+      });
+    }
+  </script>
+</body>
+</html>
