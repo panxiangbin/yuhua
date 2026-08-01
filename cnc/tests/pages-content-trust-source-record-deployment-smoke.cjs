@@ -121,9 +121,10 @@ function sameMembers(actual, expected) {
     && expected.every(value => actual.includes(value));
 }
 
-function assertSchemaContract(text, label) {
+function assertSchemaContract(text, label, options = {}) {
   const schema = parseJson(text, label);
   const record = schema.$defs && schema.$defs.sourceRecord;
+  const instructions = schema.properties && schema.properties.instructions;
   if (schema.$schema !== 'https://json-schema.org/draft/2020-12/schema') {
     throw new Error(`${label}JSON Schema 版本不是 draft 2020-12`);
   }
@@ -135,6 +136,10 @@ function assertSchemaContract(text, label) {
   }
   if (schema.properties?.requiredNotice?.const !== REQUIRED_NOTICE) {
     throw new Error(`${label}统一教学参考提示不一致`);
+  }
+  if (options.requireInstructions === true
+    && (instructions?.type !== 'array' || instructions?.minItems < 5 || instructions?.items?.minLength < 4)) {
+    throw new Error(`${label}没有受控定义模板填写说明`);
   }
   if (schema.properties?.records?.items?.$ref !== '#/$defs/sourceRecord') {
     throw new Error(`${label}records 没有引用受控来源记录定义`);
@@ -166,6 +171,7 @@ function assertSchemaContract(text, label) {
     sourceTypeCount: EXPECTED_SOURCE_TYPES.length,
     decisionCount: EXPECTED_DECISIONS.length,
     requiredFieldCount: EXPECTED_REQUIRED_FIELDS.length,
+    instructionsSchemaPresent: instructions?.type === 'array' && instructions?.minItems >= 5,
     additionalPropertiesBlocked: true,
     onMachineValidationRequired: true,
     requiredNoticePresent: true
@@ -174,19 +180,28 @@ function assertSchemaContract(text, label) {
 
 function assertTemplateContract(text, label) {
   const template = parseJson(text, label);
-  const allowedKeys = ['schemaVersion', 'requiredNotice', 'records'];
+  const allowedKeys = ['schemaVersion', 'requiredNotice', 'instructions', 'records'];
   const keys = Object.keys(template);
   if (keys.length !== allowedKeys.length || !allowedKeys.every(key => keys.includes(key))) {
     throw new Error(`${label}包含未受控顶层字段`);
   }
   if (template.schemaVersion !== 1) throw new Error(`${label}schemaVersion 不是 1`);
   if (template.requiredNotice !== REQUIRED_NOTICE) throw new Error(`${label}统一教学参考提示不一致`);
+  if (!Array.isArray(template.instructions) || template.instructions.length < 5) {
+    throw new Error(`${label}没有至少 5 条受控填写说明`);
+  }
+  for (const [index, instruction] of template.instructions.entries()) {
+    if (typeof instruction !== 'string' || instruction.trim().length < 4) {
+      throw new Error(`${label}instructions[${index}] 不是有效填写说明`);
+    }
+  }
   if (!Array.isArray(template.records)) throw new Error(`${label}records 不是数组`);
   if (template.records.length !== 0) {
     throw new Error(`${label}空白模板预填了来源记录，可能被误认为真实证据`);
   }
   return {
     schemaVersion: 1,
+    instructionCount: template.instructions.length,
     recordCount: 0,
     blankTemplatePreserved: true,
     noUnverifiedSourceClaim: true,
@@ -234,10 +249,26 @@ async function waitForExactResource(resource) {
     for (const resource of RESOURCES) {
       const localPath = path.join(root, resource.path);
       const localBuffer = fs.readFileSync(localPath);
-      const localContract = resource.assertContract(localBuffer.toString('utf8'), `${resource.id} 当前分支资源`);
+      const localSha256 = sha256(localBuffer);
+      const isSchema = resource.id === 'source-record-schema';
+      const localContract = resource.assertContract(
+        localBuffer.toString('utf8'),
+        `${resource.id} 当前分支资源`,
+        { requireInstructions: isSchema }
+      );
       const published = await waitForExactResource(resource);
-      const mainContract = resource.assertContract(published.main.buffer.toString('utf8'), `${resource.id} main资源`);
-      const pagesContract = resource.assertContract(published.pages.buffer.toString('utf8'), `${resource.id} Pages公网资源`);
+      const localMatchesMain = localSha256 === published.main.sha256 && localBuffer.length === published.main.bytes;
+      const requirePublishedInstructions = isSchema && localMatchesMain;
+      const mainContract = resource.assertContract(
+        published.main.buffer.toString('utf8'),
+        `${resource.id} main资源`,
+        { requireInstructions: requirePublishedInstructions }
+      );
+      const pagesContract = resource.assertContract(
+        published.pages.buffer.toString('utf8'),
+        `${resource.id} Pages公网资源`,
+        { requireInstructions: requirePublishedInstructions }
+      );
 
       diagnostics.resources.push({
         id: resource.id,
@@ -246,7 +277,7 @@ async function waitForExactResource(resource) {
         pagesUrl: published.pagesUrl,
         local: {
           bytes: localBuffer.length,
-          sha256: sha256(localBuffer),
+          sha256: localSha256,
           contract: localContract
         },
         main: { ...published.main, buffer: undefined, contract: mainContract },
@@ -256,10 +287,12 @@ async function waitForExactResource(resource) {
           publicReachable: true,
           exactBytesMatch: true,
           exactSha256Match: true,
+          localMatchesMain,
+          branchDeploymentPending: !localMatchesMain,
           contractChecksPassed: true
         }
       });
-      console.log(`CNC Pages source record resource verified: ${resource.path} ${published.pages.sha256}`);
+      console.log(`CNC Pages source record resource verified: ${resource.path} ${published.pages.sha256}; localMatchesMain=${localMatchesMain}`);
     }
 
     diagnostics.result = 'success';
