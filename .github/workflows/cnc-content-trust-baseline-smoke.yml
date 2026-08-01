@@ -1,0 +1,88 @@
+name: CNC content trust baseline smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-content-trust-baseline-smoke.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-content-trust-baseline-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  content-trust-baseline:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Check trust audit syntax and contract
+        run: |
+          node --check cnc/tests/content-trust-baseline-smoke.cjs
+          node --check cnc/tests/mobile-content-trust-status-smoke.cjs
+          node - <<'NODE'
+          const fs = require('fs');
+          const manifest = JSON.parse(fs.readFileSync('cnc/content-trust-manifest.json', 'utf8'));
+          const required = [
+            'cnc/learning-content-data.js',
+            'cnc/alarm-data.js',
+            'cnc/diagnosis-data.js',
+            'cnc/gm-code-complete.js',
+            'cnc/weak-category-data.js'
+          ];
+          if (manifest.requiredNotice !== '教学参考，需按机床说明书、现场工艺和空运行验证') {
+            throw new Error('统一教学参考提示被修改');
+          }
+          for (const path of required) {
+            const item = manifest.datasets.find((entry) => entry.path === path);
+            if (!item) throw new Error(`缺少可信度登记：${path}`);
+            if (item.allowOperationalUse !== false) throw new Error(`禁止把未核实数据标记为可直接上机：${path}`);
+          }
+          const page = fs.readFileSync('cnc/content-trust-status.html', 'utf8');
+          for (const token of ['CONTENT TRUST STATUS', 'pending_manual_verification', '可直接上机使用', 'content-trust-manifest.json']) {
+            if (!page.includes(token)) throw new Error(`可信度状态页缺少契约：${token}`);
+          }
+          const test = fs.readFileSync('cnc/tests/content-trust-baseline-smoke.cjs', 'utf8');
+          for (const forbidden of ['process.exit(0)', 'test.skip(', 'allowOperationalUse !== true']) {
+            if (test.includes(forbidden)) throw new Error(`内容可信度门禁禁止绕过：${forbidden}`);
+          }
+          NODE
+
+      - name: Run structured content trust audit
+        run: node cnc/tests/content-trust-baseline-smoke.cjs
+
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save playwright@1.54.1
+          npx playwright install --with-deps chromium
+
+      - name: Start static server
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/cnc-content-trust-server.log 2>&1 &
+          echo $! > /tmp/cnc-content-trust-server.pid
+
+      - name: Run 390x844 mobile trust status smoke
+        run: node cnc/tests/mobile-content-trust-status-smoke.cjs
+
+      - name: Upload trust diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-content-trust-baseline-${{ github.run_id }}
+          path: |
+            artifacts/content-trust-baseline
+            artifacts/content-trust-status
+            /tmp/cnc-content-trust-server.log
+          if-no-files-found: warn
+          retention-days: 14
