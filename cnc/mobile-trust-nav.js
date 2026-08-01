@@ -394,3 +394,211 @@
     shareCurrentDetail: shareCurrentDetail
   };
 })();
+
+/* CNC 手机端无障碍基础层：补齐主内容跳转、隐藏区域焦点隔离与目录键盘交互。 */
+(function () {
+  'use strict';
+
+  var BUILD = '20260801-a11y1';
+  var observer = null;
+  var syncTimer = 0;
+  var FOCUSABLE = 'button,a[href],input,select,textarea,[contenteditable="true"],[tabindex]';
+
+  function installStyles() {
+    if (document.getElementById('cnc-accessibility-foundation-style')) return;
+    var style = document.createElement('style');
+    style.id = 'cnc-accessibility-foundation-style';
+    style.textContent = [
+      '.cnc-skip-link{position:fixed;z-index:100000;top:8px;left:8px;padding:12px 16px;border-radius:10px;background:#fff;color:#071a33;font-weight:900;text-decoration:none;box-shadow:0 0 0 3px #ffbf00,0 8px 24px rgba(0,0,0,.3);transform:translateY(-160%)}',
+      '.cnc-skip-link:focus,.cnc-skip-link:focus-visible{transform:translateY(0);outline:3px solid #0b76ff;outline-offset:3px}',
+      '@media(prefers-reduced-motion:reduce){.cnc-skip-link{transition:none!important}}'
+    ].join('');
+    document.head.appendChild(style);
+  }
+
+  function ensureMainAndSkipLink() {
+    var main = document.querySelector('main.main-shell') || document.querySelector('main');
+    if (!main) return false;
+    if (!main.id) main.id = 'main-content';
+    var skip = document.querySelector('.cnc-skip-link');
+    if (!skip) {
+      skip = document.createElement('a');
+      skip.className = 'cnc-skip-link';
+      skip.textContent = '跳到主内容';
+      document.body.insertBefore(skip, document.body.firstChild);
+    }
+    skip.href = '#' + main.id;
+    if (skip.dataset.cncSkipBound !== 'true') {
+      skip.dataset.cncSkipBound = 'true';
+      skip.addEventListener('click', function () {
+        main.setAttribute('tabindex', '-1');
+        window.requestAnimationFrame(function () {
+          main.focus({ preventScroll: true });
+          main.scrollIntoView({ block: 'start' });
+        });
+      });
+    }
+    return true;
+  }
+
+  function saveAndDisable(node) {
+    if (!node || node.disabled) return;
+    if (!node.hasAttribute('data-cnc-a11y-tabindex')) {
+      node.setAttribute('data-cnc-a11y-tabindex', node.hasAttribute('tabindex') ? node.getAttribute('tabindex') : '__missing__');
+    }
+    node.setAttribute('tabindex', '-1');
+  }
+
+  function restore(node) {
+    if (!node || !node.hasAttribute('data-cnc-a11y-tabindex')) return;
+    var previous = node.getAttribute('data-cnc-a11y-tabindex');
+    node.removeAttribute('data-cnc-a11y-tabindex');
+    if (previous === '__missing__') node.removeAttribute('tabindex');
+    else node.setAttribute('tabindex', previous);
+  }
+
+  function applyHiddenState(host, hidden) {
+    if (!host) return;
+    if (hidden) {
+      host.setAttribute('inert', '');
+      host.querySelectorAll(FOCUSABLE).forEach(saveAndDisable);
+    } else {
+      host.removeAttribute('inert');
+      host.querySelectorAll('[data-cnc-a11y-tabindex]').forEach(restore);
+    }
+  }
+
+  function syncHiddenRegions() {
+    document.querySelectorAll('[aria-hidden]').forEach(function (host) {
+      applyHiddenState(host, host.getAttribute('aria-hidden') === 'true');
+    });
+  }
+
+  function scheduleHiddenSync() {
+    window.clearTimeout(syncTimer);
+    syncTimer = window.setTimeout(syncHiddenRegions, 0);
+  }
+
+  function setSidebarState(open, returnFocus) {
+    var sidebar = document.getElementById('sidebar');
+    var trigger = document.getElementById('sidebar-open');
+    var mask = document.getElementById('sidebar-mask');
+    var close = document.getElementById('sidebar-close');
+    if (!sidebar || !trigger) return false;
+
+    trigger.setAttribute('aria-controls', 'sidebar');
+    trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    sidebar.setAttribute('aria-hidden', open ? 'false' : 'true');
+    applyHiddenState(sidebar, !open);
+
+    if (open) {
+      sidebar.classList.add('open');
+      if (mask) mask.hidden = false;
+      window.setTimeout(function () {
+        if (close && sidebar.classList.contains('open')) close.focus();
+      }, 0);
+    } else {
+      sidebar.classList.remove('open');
+      if (mask) mask.hidden = true;
+      if (returnFocus) window.setTimeout(function () { trigger.focus(); }, 0);
+    }
+    return true;
+  }
+
+  function ensureStatusSemantics() {
+    var accessMessage = document.getElementById('access-message');
+    if (accessMessage) {
+      accessMessage.setAttribute('role', 'status');
+      accessMessage.setAttribute('aria-live', 'polite');
+      accessMessage.setAttribute('aria-atomic', 'true');
+    }
+    var loading = document.getElementById('loading-screen');
+    if (loading) loading.setAttribute('aria-hidden', 'true');
+  }
+
+  function bindSidebarKeyboard() {
+    if (document.documentElement.dataset.cncA11ySidebarBound === 'true') return;
+    document.documentElement.dataset.cncA11ySidebarBound = 'true';
+
+    document.addEventListener('click', function (event) {
+      if (!event.target || !event.target.closest) return;
+      if (event.target.closest('#sidebar-open')) setSidebarState(true, false);
+      if (event.target.closest('#sidebar-close,#sidebar-mask')) setSidebarState(false, true);
+      scheduleHiddenSync();
+    });
+
+    document.addEventListener('keydown', function (event) {
+      var sidebar = document.getElementById('sidebar');
+      if (!sidebar || !sidebar.classList.contains('open')) return;
+
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        event.stopPropagation();
+        var close = document.getElementById('sidebar-close');
+        if (close) close.click();
+        setSidebarState(false, true);
+        return;
+      }
+
+      if (event.key !== 'Tab') return;
+      var focusable = Array.from(sidebar.querySelectorAll(FOCUSABLE)).filter(function (node) {
+        return !node.disabled && node.getAttribute('tabindex') !== '-1' && node.getClientRects().length > 0;
+      });
+      if (!focusable.length) return;
+      var first = focusable[0];
+      var last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    });
+  }
+
+  function observeDynamicLayers() {
+    if (observer || !document.body) return;
+    observer = new MutationObserver(function () {
+      ensureStatusSemantics();
+      scheduleHiddenSync();
+    });
+    observer.observe(document.body, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      attributeFilter: ['aria-hidden', 'hidden', 'class']
+    });
+  }
+
+  function initialSidebarState() {
+    var sidebar = document.getElementById('sidebar');
+    if (!sidebar) return;
+    var open = window.innerWidth > 760 || sidebar.classList.contains('open');
+    setSidebarState(open, false);
+  }
+
+  function boot() {
+    installStyles();
+    ensureMainAndSkipLink();
+    ensureStatusSemantics();
+    bindSidebarKeyboard();
+    initialSidebarState();
+    syncHiddenRegions();
+    observeDynamicLayers();
+    window.addEventListener('resize', initialSidebarState, { passive: true });
+    window.CNC_ACCESSIBILITY_FOUNDATION = {
+      build: BUILD,
+      sync: function () {
+        ensureMainAndSkipLink();
+        ensureStatusSemantics();
+        initialSidebarState();
+        syncHiddenRegions();
+        return true;
+      }
+    };
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true });
+  else boot();
+})();
