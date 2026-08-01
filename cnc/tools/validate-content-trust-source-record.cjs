@@ -24,6 +24,8 @@ const DECISIONS = new Set([
   'insufficient_evidence',
   'not_applicable'
 ]);
+const ROOT_REQUIRED_FIELDS = ['schemaVersion', 'requiredNotice', 'records'];
+const ROOT_OPTIONAL_FIELDS = new Set(['instructions']);
 const REQUIRED_FIELDS = [
   'datasetPath',
   'itemKey',
@@ -61,13 +63,42 @@ function validateText(record, field, minimum, errors, index) {
   }
 }
 
+function validateInstructions(instructions, errors) {
+  if (instructions === undefined) return;
+  if (!Array.isArray(instructions) || instructions.length < 5) {
+    errors.push('instructions 必须为至少包含 5 条说明的数组');
+    return;
+  }
+  instructions.forEach((instruction, index) => {
+    if (typeof instruction !== 'string' || instruction.trim().length < 4) {
+      errors.push(`instructions[${index}] 至少需要 4 个非空字符`);
+      return;
+    }
+    if (PLACEHOLDER_PATTERN.test(instruction.trim())) {
+      errors.push(`instructions[${index}] 仍是占位内容：${instruction.trim()}`);
+    }
+  });
+}
+
 function validateDocument(document) {
   const errors = [];
   if (!document || typeof document !== 'object' || Array.isArray(document)) {
     return ['根节点必须是 JSON 对象'];
   }
+
+  for (const field of ROOT_REQUIRED_FIELDS) {
+    if (!Object.prototype.hasOwnProperty.call(document, field)) {
+      errors.push(`根节点缺少必填字段：${field}`);
+    }
+  }
+  const allowedRootFields = new Set([...ROOT_REQUIRED_FIELDS, ...ROOT_OPTIONAL_FIELDS]);
+  for (const field of Object.keys(document)) {
+    if (!allowedRootFields.has(field)) errors.push(`根节点含未允许字段：${field}`);
+  }
+
   if (document.schemaVersion !== 1) errors.push('schemaVersion 必须为 1');
   if (document.requiredNotice !== REQUIRED_NOTICE) errors.push('requiredNotice 与统一教学参考提示不一致');
+  validateInstructions(document.instructions, errors);
   if (!Array.isArray(document.records)) {
     errors.push('records 必须为数组');
     return errors;
@@ -149,6 +180,8 @@ if (require.main === module) {
 
 module.exports = {
   REQUIRED_NOTICE,
+  ROOT_REQUIRED_FIELDS,
+  ROOT_OPTIONAL_FIELDS,
   REQUIRED_FIELDS,
   DATASET_PATHS,
   SOURCE_TYPES,
