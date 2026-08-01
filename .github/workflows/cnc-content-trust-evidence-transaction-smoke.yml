@@ -1,0 +1,130 @@
+name: CNC content trust evidence transaction smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-content-trust-evidence-transaction-smoke.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-content-trust-evidence-transaction-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  evidence-transaction:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Check evidence transaction syntax
+        run: |
+          node --check cnc/tools/validate-content-trust-source-record.cjs
+          node --check cnc/tools/validate-content-trust-evidence-ledger.cjs
+          node --check cnc/tools/validate-content-trust-evidence-transaction.cjs
+          node --check cnc/tests/content-trust-evidence-transaction-smoke.cjs
+          node -e "JSON.parse(require('fs').readFileSync('cnc/content-trust-evidence-ledger.json','utf8'))"
+          node -e "JSON.parse(require('fs').readFileSync('cnc/content-trust-manifest.json','utf8'))"
+
+      - name: Verify evidence transaction contract
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const validator = fs.readFileSync('cnc/tools/validate-content-trust-evidence-transaction.cjs', 'utf8');
+          const test = fs.readFileSync('cnc/tests/content-trust-evidence-transaction-smoke.cjs', 'utf8');
+          for (const token of [
+            'expectedBaseLedgerSha256',
+            'nextLedgerSha256',
+            'compareAppendOnly',
+            '不得删除既有记录',
+            '不得原地修改既有记录',
+            'sourceDocumentIdentity',
+            '缺少同一资料版本和适用范围的资料清单记录',
+            'operationSummary',
+            'datasetsChanged',
+            'sourceRecordsAdded',
+            'itemReviewRecordsAdded',
+            'reviewedItemsAdded',
+            'stateTransitions',
+            '禁止提交无意义事务记录'
+          ]) {
+            if (!validator.includes(token)) throw new Error(`证据事务校验器缺少契约：${token}`);
+          }
+          for (const token of [
+            '资料清单原子导入',
+            '资料清单与逐条记录同事务导入',
+            '过期基线摘要必须失败',
+            '目标摘要不一致必须失败',
+            '事务汇总数量漂移必须失败',
+            '无意义事务必须失败',
+            '新增逐条记录必须匹配资料清单版本',
+            '半写入未同步状态和计数必须失败',
+            '既有资料清单记录不得删除',
+            '既有逐条复核记录不得原地改写'
+          ]) {
+            if (!test.includes(token)) throw new Error(`证据事务测试缺少场景：${token}`);
+          }
+          for (const forbidden of ['test.skip(', 'process.exit(0)', 'force: true', 'allowOperationalUse = true']) {
+            if (validator.includes(forbidden) || test.includes(forbidden)) throw new Error(`证据事务门禁禁止绕过：${forbidden}`);
+          }
+          NODE
+
+      - name: Validate production evidence ledger
+        run: node cnc/tools/validate-content-trust-evidence-ledger.cjs
+
+      - name: Run evidence transaction scenarios
+        run: node cnc/tests/content-trust-evidence-transaction-smoke.cjs
+
+      - name: Enforce ledger transaction on changed evidence data
+        shell: bash
+        run: |
+          set -euo pipefail
+          LEDGER='cnc/content-trust-evidence-ledger.json'
+          MANIFEST='cnc/content-trust-manifest.json'
+          TRANSACTION='cnc/content-trust-evidence-transaction.json'
+          if [[ '${{ github.event_name }}' == 'pull_request' ]]; then
+            BASE_SHA='${{ github.event.pull_request.base.sha }}'
+          else
+            BASE_SHA="$(git rev-parse HEAD^)"
+          fi
+          git show "${BASE_SHA}:${LEDGER}" > /tmp/cnc-evidence-ledger-before.json
+          if cmp -s /tmp/cnc-evidence-ledger-before.json "$LEDGER"; then
+            if git cat-file -e "${BASE_SHA}:${TRANSACTION}" 2>/dev/null || [[ -f "$TRANSACTION" ]]; then
+              if ! git diff --quiet "$BASE_SHA" -- "$TRANSACTION"; then
+                echo '证据台账未变化时不得单独改写事务记录。' >&2
+                exit 1
+              fi
+            fi
+            echo '证据台账未变化，本轮无需事务记录。'
+          else
+            if [[ ! -f "$TRANSACTION" ]]; then
+              echo '证据台账发生变化，必须同时提交 cnc/content-trust-evidence-transaction.json。' >&2
+              exit 1
+            fi
+            node cnc/tools/validate-content-trust-evidence-transaction.cjs \
+              /tmp/cnc-evidence-ledger-before.json \
+              "$LEDGER" \
+              "$MANIFEST" \
+              "$TRANSACTION"
+          fi
+
+      - name: Upload evidence transaction diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-content-trust-evidence-transaction-${{ github.run_id }}
+          path: artifacts/content-trust-evidence-transaction
+          if-no-files-found: warn
+          retention-days: 14
