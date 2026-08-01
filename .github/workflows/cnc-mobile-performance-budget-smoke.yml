@@ -22,6 +22,7 @@ jobs:
       - name: Check performance audit syntax and contract
         run: |
           node --check cnc/tests/mobile-performance-budget-smoke.cjs
+          node --check cnc/ui-knowledge-tree.js
           node - <<'NODE'
           const fs = require('fs');
           const test = fs.readFileSync('cnc/tests/mobile-performance-budget-smoke.cjs', 'utf8');
@@ -44,6 +45,19 @@ jobs:
           }
           for (const forbidden of ['test.skip(', 'process.exit(0)']) {
             if (test.includes(forbidden)) throw new Error(`手机性能门禁禁止绕过：${forbidden}`);
+          }
+
+          const tree = fs.readFileSync('cnc/ui-knowledge-tree.js', 'utf8');
+          for (const marker of [
+            'materializeChildren(nodeEl, node, childLevel)',
+            'data-rendered="false"',
+            'if (open) this.materializeChildren(nodeEl, node, level + 1)',
+            'if (initiallyOpen && hasChildren) this.materializeChildren(nodeEl, node, level + 1)'
+          ]) {
+            if (!tree.includes(marker)) throw new Error(`知识树按需渲染契约缺失：${marker}`);
+          }
+          if (/if\s*\(hasChildren\)\s*node\.children\.forEach/.test(tree)) {
+            throw new Error('禁止恢复知识树全量递归首屏渲染');
           }
           NODE
       - name: Install Playwright Chromium
