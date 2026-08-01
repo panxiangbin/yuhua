@@ -460,10 +460,10 @@
   function applyHiddenState(host, hidden) {
     if (!host) return;
     if (hidden) {
-      host.setAttribute('inert', '');
+      if (!host.hasAttribute('inert')) host.setAttribute('inert', '');
       host.querySelectorAll(FOCUSABLE).forEach(saveAndDisable);
     } else {
-      host.removeAttribute('inert');
+      if (host.hasAttribute('inert')) host.removeAttribute('inert');
       host.querySelectorAll('[data-cnc-a11y-tabindex]').forEach(restore);
     }
   }
@@ -488,7 +488,9 @@
 
     trigger.setAttribute('aria-controls', 'sidebar');
     trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
-    sidebar.setAttribute('aria-hidden', open ? 'false' : 'true');
+    if (sidebar.getAttribute('aria-hidden') !== (open ? 'false' : 'true')) {
+      sidebar.setAttribute('aria-hidden', open ? 'false' : 'true');
+    }
     applyHiddenState(sidebar, !open);
 
     if (open) {
@@ -505,15 +507,19 @@
     return true;
   }
 
+  function setAttr(node, name, value) {
+    if (node && node.getAttribute(name) !== value) node.setAttribute(name, value);
+  }
+
   function ensureStatusSemantics() {
     var accessMessage = document.getElementById('access-message');
     if (accessMessage) {
-      accessMessage.setAttribute('role', 'status');
-      accessMessage.setAttribute('aria-live', 'polite');
-      accessMessage.setAttribute('aria-atomic', 'true');
+      setAttr(accessMessage, 'role', 'status');
+      setAttr(accessMessage, 'aria-live', 'polite');
+      setAttr(accessMessage, 'aria-atomic', 'true');
     }
     var loading = document.getElementById('loading-screen');
-    if (loading) loading.setAttribute('aria-hidden', 'true');
+    setAttr(loading, 'aria-hidden', 'true');
   }
 
   function bindSidebarKeyboard() {
