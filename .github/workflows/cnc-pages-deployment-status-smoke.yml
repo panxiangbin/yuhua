@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
       - name: Validate build marker and PWA version consistency
         run: >-
           node -e "const fs=require('fs');const info=JSON.parse(fs.readFileSync('cnc/build-info.json','utf8'));if(info.app!=='cnc-training-platform')throw new Error('invalid app marker');if(!/^\d{8}-[a-z0-9-]+$/.test(info.build))throw new Error('invalid site build format');if(!/^\d{8}-pwa\d+$/.test(info.pwaBuild))throw new Error('invalid PWA build format');const sw=fs.readFileSync('cnc/sw.js','utf8');const match=sw.match(/const BUILD = '([^']+)'/);if(!match||match[1]!==info.pwaBuild)throw new Error('Service Worker build mismatch');for(const file of ['cnc/pwa-status.html','cnc/pwa-self-test.html','cnc/tests/mobile-pwa-offline-cache-smoke.cjs','cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs']){const text=fs.readFileSync(file,'utf8');if(!text.includes(info.pwaBuild))throw new Error(file+' PWA build mismatch');}"
@@ -26,10 +26,32 @@ jobs:
         run: >-
           node --check cnc/tests/mobile-pages-deployment-status-smoke.cjs &&
           node --check cnc/tests/pages-exact-resource-deployment-smoke.cjs &&
+          node --check cnc/tests/pages-content-trust-evidence-deployment-smoke.cjs &&
           node --check cnc/ui-knowledge-tree.js
       - name: Verify exact-resource gate contract
-        run: >-
+        run: |
           node -e "const fs=require('fs');const text=fs.readFileSync('cnc/tests/pages-exact-resource-deployment-smoke.cjs','utf8');for(const token of ['mobile-trust-nav.js','ui-knowledge-tree.js','content-trust-status.html','content-trust-manifest.json','knowledge-tree-lazy','content-trust-page','content-trust-manifest','sha256','exactBytesMatch','globalMutationObserverAbsent','lazyMaterializationPresent','fullRecursiveFirstPaintAbsent','operationalCount']){if(!text.includes(token))throw new Error('missing exact-resource contract: '+token);}"
+          node - <<'NODE'
+          const fs = require('fs');
+          const text = fs.readFileSync('cnc/tests/pages-content-trust-evidence-deployment-smoke.cjs', 'utf8');
+          for (const token of [
+            'content-trust-evidence.html',
+            'content-trust-evidence-ledger.json',
+            'REQUIRED_SOURCE_FIELDS',
+            'awaiting_sources',
+            'readyForItemReview',
+            'sourceRecords',
+            'reviewedItemCount',
+            'exactBytesMatch',
+            'exactSha256Match',
+            'noUnverifiedContentClaim'
+          ]) {
+            if (!text.includes(token)) throw new Error(`missing evidence resource contract: ${token}`);
+          }
+          for (const forbidden of ['process.exit(0)', 'test.skip(', 'CNC_PAGES_VERIFY_ATTEMPTS || 0']) {
+            if (text.includes(forbidden)) throw new Error(`evidence deployment gate forbidden bypass: ${forbidden}`);
+          }
+          NODE
       - name: Install Playwright runtime
         run: npm install --no-save playwright@1.52.0
       - name: Install Chromium
@@ -56,6 +78,8 @@ jobs:
           CNC_EXACT_RESOURCE_PATH: cnc/content-trust-manifest.json
           CNC_EXACT_RESOURCE_CONTRACT: content-trust-manifest
         run: node cnc/tests/pages-exact-resource-deployment-smoke.cjs
+      - name: Verify Pages content trust evidence deployment
+        run: node cnc/tests/pages-content-trust-evidence-deployment-smoke.cjs
       - name: Upload diagnostics
         if: always()
         uses: actions/upload-artifact@v4
