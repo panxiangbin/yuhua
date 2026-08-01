@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "transactionId": "",
+  "expectedBaseLedgerSha256": "",
+  "nextLedgerSha256": "",
+  "committedAt": "",
+  "actor": "",
+  "changeReason": "",
+  "operationSummary": {
+    "datasetsChanged": 0,
+    "sourceRecordsAdded": 0,
+    "itemReviewRecordsAdded": 0,
+    "reviewedItemsAdded": 0,
+    "stateTransitions": 0
+  }
+}
