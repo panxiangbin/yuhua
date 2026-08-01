@@ -1,0 +1,96 @@
+name: CNC content trust evidence record boundary smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-content-trust-evidence-record-boundary-smoke.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-content-trust-evidence-record-boundary-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  evidence-record-boundary:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Check evidence record boundary syntax
+        run: |
+          node --check cnc/tools/validate-content-trust-source-record.cjs
+          node --check cnc/tools/validate-content-trust-evidence-ledger.cjs
+          node --check cnc/tests/content-trust-evidence-record-boundary-smoke.cjs
+          node -e "JSON.parse(require('fs').readFileSync('cnc/content-trust-evidence-ledger.json','utf8'))"
+          node -e "JSON.parse(require('fs').readFileSync('cnc/content-trust-manifest.json','utf8'))"
+
+      - name: Verify evidence record boundary contract
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const validator = fs.readFileSync('cnc/tools/validate-content-trust-evidence-ledger.cjs', 'utf8');
+          const test = fs.readFileSync('cnc/tests/content-trust-evidence-record-boundary-smoke.cjs', 'utf8');
+          const ledger = JSON.parse(fs.readFileSync('cnc/content-trust-evidence-ledger.json', 'utf8'));
+          for (const token of [
+            'itemReviewRecords',
+            'validateItemReviewDocument',
+            'SOURCE_INVENTORY_FIELDS',
+            'reviewedItemCount',
+            'uniqueItemKeys',
+            'insufficient_evidence',
+            'allowOperationalUse !== false',
+            '必须与所属数据集一致'
+          ]) {
+            if (!validator.includes(token)) throw new Error(`证据台账分层校验器缺少契约：${token}`);
+          }
+          for (const token of [
+            '当前空白证据台账保持诚实基线',
+            '资料清单完整但尚未逐条复核',
+            '完整逐条记录允许进入复核中',
+            '逐条记录缺少 decision',
+            '逐条记录数据集路径错位',
+            '已复核数量不得手工夸大',
+            '证据不足时不得标记复核完成',
+            '没有资料清单不得登记逐条记录',
+            '资料清单禁止未受控字段'
+          ]) {
+            if (!test.includes(token)) throw new Error(`证据记录边界测试缺少场景：${token}`);
+          }
+          if (!Array.isArray(ledger.datasets) || ledger.datasets.length !== 5) throw new Error('证据台账必须登记 5 个高风险数据集');
+          for (const item of ledger.datasets) {
+            if (!Array.isArray(item.sourceRecords)) throw new Error(`${item.path} 缺少资料清单记录数组`);
+            if (!Array.isArray(item.itemReviewRecords)) throw new Error(`${item.path} 缺少逐条复核记录数组`);
+            if (item.itemReviewRecords.length !== 0 || item.reviewedItemCount !== 0) {
+              throw new Error(`${item.path} 不得在没有真实来源资料时预填逐条复核结论`);
+            }
+          }
+          for (const forbidden of ['test.skip(', 'process.exit(0)', 'allowOperationalUse = true']) {
+            if (validator.includes(forbidden) || test.includes(forbidden)) throw new Error(`证据记录边界门禁禁止绕过：${forbidden}`);
+          }
+          NODE
+
+      - name: Validate production evidence ledger
+        run: node cnc/tools/validate-content-trust-evidence-ledger.cjs
+
+      - name: Run evidence record boundary scenarios
+        run: node cnc/tests/content-trust-evidence-record-boundary-smoke.cjs
+
+      - name: Upload evidence record diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-content-trust-evidence-record-boundary-${{ github.run_id }}
+          path: artifacts/content-trust-evidence-record-boundary
+          if-no-files-found: warn
+          retention-days: 14
