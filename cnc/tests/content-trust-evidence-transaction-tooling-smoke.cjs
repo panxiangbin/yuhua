@@ -161,7 +161,7 @@ runCase('命令行生成文件并再次通过正式校验器', () => {
     '--manifest', manifestPath,
     '--transaction-id', 'CNC-EVIDENCE-TOOLING-20260802-001',
     '--actor', '自动化测试',
-    '--reason', '验证命令行只按真实台账差异生成事务记录。',
+    '--reason', '验证工具只按真实台账差异生成哈希和受控汇总。',
     '--committed-at', '2026-08-02T03:21:00+08:00',
     '--output', outputPath
   ], { cwd: ROOT, encoding: 'utf8' });
