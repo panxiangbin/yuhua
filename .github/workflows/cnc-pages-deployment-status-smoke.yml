@@ -27,6 +27,7 @@ jobs:
           node --check cnc/tests/mobile-pages-deployment-status-smoke.cjs &&
           node --check cnc/tests/pages-exact-resource-deployment-smoke.cjs &&
           node --check cnc/tests/pages-content-trust-evidence-deployment-smoke.cjs &&
+          node --check cnc/tools/validate-content-trust-evidence-ledger.cjs &&
           node --check cnc/ui-knowledge-tree.js
       - name: Verify exact-resource gate contract
         run: |
@@ -37,19 +38,39 @@ jobs:
           for (const token of [
             'content-trust-evidence.html',
             'content-trust-evidence-ledger.json',
+            'content-trust-manifest.json',
+            'validateLedger',
             'REQUIRED_SOURCE_FIELDS',
+            'stateDefinitions',
             'awaiting_sources',
+            'sources_ready',
+            'in_review',
+            'review_complete',
             'readyForItemReview',
             'sourceRecords',
+            'itemReviewRecords',
+            'source-count',
+            'item-review-count',
             'reviewedItemCount',
+            'separateRecordCounts',
+            'reviewedItemCountMatchesUniqueItemKeys',
+            'stateTransitionConsistent',
             'exactBytesMatch',
             'exactSha256Match',
+            'semanticContractMatch',
             'noUnverifiedContentClaim'
           ]) {
             if (!text.includes(token)) throw new Error(`missing evidence resource contract: ${token}`);
           }
-          for (const forbidden of ['process.exit(0)', 'test.skip(', 'CNC_PAGES_VERIFY_ATTEMPTS || 0']) {
-            if (text.includes(forbidden)) throw new Error(`evidence deployment gate forbidden bypass: ${forbidden}`);
+          for (const forbidden of [
+            'process.exit(0)',
+            'test.skip(',
+            'CNC_PAGES_VERIFY_ATTEMPTS || 0',
+            "item.state !== 'awaiting_sources'",
+            'sourceRecordCount !== 0',
+            'reviewedItemCount !== 0'
+          ]) {
+            if (text.includes(forbidden)) throw new Error(`evidence deployment gate forbidden bypass or frozen baseline: ${forbidden}`);
           }
           NODE
       - name: Install Playwright runtime
@@ -78,7 +99,7 @@ jobs:
           CNC_EXACT_RESOURCE_PATH: cnc/content-trust-manifest.json
           CNC_EXACT_RESOURCE_CONTRACT: content-trust-manifest
         run: node cnc/tests/pages-exact-resource-deployment-smoke.cjs
-      - name: Verify Pages content trust evidence deployment
+      - name: Verify Pages content trust evidence deployment and semantics
         run: node cnc/tests/pages-content-trust-evidence-deployment-smoke.cjs
       - name: Upload diagnostics
         if: always()

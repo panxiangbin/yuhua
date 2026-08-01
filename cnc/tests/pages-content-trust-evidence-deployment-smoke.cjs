@@ -3,6 +3,7 @@
 const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
+const { validateLedger } = require('../tools/validate-content-trust-evidence-ledger.cjs');
 
 const ROOT = path.resolve(__dirname, '../..');
 const RESULTS_DIR = path.join(ROOT, 'cnc', 'test-results');
@@ -26,6 +27,8 @@ const EXPECTED_PATHS = [
   'cnc/weak-category-data.js',
   'cnc/learning-content-data.js'
 ];
+const ALLOWED_STATES = ['awaiting_sources', 'sources_ready', 'in_review', 'review_complete'];
+const MANIFEST_PATH = 'cnc/content-trust-manifest.json';
 const RESOURCES = [
   { path: 'cnc/content-trust-evidence.html', contract: 'content-trust-evidence-page' },
   { path: 'cnc/content-trust-evidence-ledger.json', contract: 'content-trust-evidence-ledger' }
@@ -74,15 +77,30 @@ async function fetchBytes(url, label) {
   };
 }
 
+function parseJson(text, label) {
+  try {
+    return JSON.parse(text);
+  } catch (error) {
+    throw new Error(`${label}不是有效 JSON：${error.message}`);
+  }
+}
+
 function assertEvidencePage(text, label) {
   const required = [
     '<html lang="zh-CN">',
     '<title>CNC 内容复核资料准备度</title>',
     'content-trust-evidence-ledger.json',
     "cache: 'no-store'",
-    '教学参考，需按机床说明书、现场工艺和空运行验证',
+    REQUIRED_NOTICE,
     'ready-count',
     'source-count',
+    'item-review-count',
+    'sourceRecords',
+    'itemReviewRecords',
+    'reviewedItemCount',
+    '资料清单记录',
+    '逐条复核记录',
+    '两者不能互相代替',
     'requested-sources',
     'blockedReason',
     '返回内容可信度状态',
@@ -95,17 +113,19 @@ function assertEvidencePage(text, label) {
     languageChinese: true,
     ledgerNoStoreFetchPresent: true,
     readinessBoundaryPresent: true,
+    separateRecordCounts: true,
+    itemReviewCountPresent: true,
     returnLinksPresent: true
   };
 }
 
-function assertEvidenceLedger(text, label) {
-  let ledger;
-  try {
-    ledger = JSON.parse(text);
-  } catch (error) {
-    throw new Error(`${label}不是有效 JSON：${error.message}`);
+function assertEvidenceLedger(text, manifest, label) {
+  const ledger = parseJson(text, label);
+  const validation = validateLedger(ledger, manifest);
+  if (validation.errors.length) {
+    throw new Error(`${label}未通过正式证据台账校验：\n- ${validation.errors.join('\n- ')}`);
   }
+
   const datasets = Array.isArray(ledger.datasets) ? ledger.datasets : [];
   if (ledger.schemaVersion !== 1) throw new Error(`${label}schemaVersion 不是 1`);
   if (ledger.requiredNotice !== REQUIRED_NOTICE) throw new Error(`${label}统一教学提示不一致`);
@@ -113,43 +133,84 @@ function assertEvidenceLedger(text, label) {
   for (const field of REQUIRED_SOURCE_FIELDS) {
     if (!ledger.requiredSourceFields.includes(field)) throw new Error(`${label}缺少来源必填字段：${field}`);
   }
-  if (datasets.length !== EXPECTED_PATHS.length) throw new Error(`${label}应登记 ${EXPECTED_PATHS.length} 个数据集，实际 ${datasets.length}`);
+  for (const state of ALLOWED_STATES) {
+    if (!ledger.stateDefinitions || typeof ledger.stateDefinitions[state] !== 'string' || ledger.stateDefinitions[state].trim().length < 18) {
+      throw new Error(`${label}缺少清楚的状态定义：${state}`);
+    }
+  }
+  if (datasets.length !== EXPECTED_PATHS.length) {
+    throw new Error(`${label}应登记 ${EXPECTED_PATHS.length} 个数据集，实际 ${datasets.length}`);
+  }
+
+  let reviewedItemCountMatchesUniqueItemKeys = true;
+  let stateTransitionConsistent = true;
+  let sourceRecordCount = 0;
+  let itemReviewRecordCount = 0;
+  let reviewedItemCount = 0;
+
   for (const requiredPath of EXPECTED_PATHS) {
     const item = datasets.find((entry) => entry && entry.path === requiredPath);
     if (!item) throw new Error(`${label}缺少数据集：${requiredPath}`);
     if (!['P0', 'P1', 'P2'].includes(item.reviewPriority)) throw new Error(`${label}${requiredPath} 复核优先级无效`);
-    if (item.state !== 'awaiting_sources') throw new Error(`${label}${requiredPath} 在没有来源记录时必须保持 awaiting_sources`);
-    if (item.readyForItemReview !== false) throw new Error(`${label}${requiredPath} 不得标记为可开始逐条复核`);
-    if (item.reviewedItemCount !== 0) throw new Error(`${label}${requiredPath} 不得伪造已复核条目`);
-    if (!Array.isArray(item.sourceRecords) || item.sourceRecords.length !== 0) throw new Error(`${label}${requiredPath} 当前来源记录必须为 0`);
+    if (!ALLOWED_STATES.includes(item.state)) throw new Error(`${label}${requiredPath} 状态无效：${item.state}`);
+    if (!Array.isArray(item.sourceRecords)) throw new Error(`${label}${requiredPath}.sourceRecords 必须为数组`);
+    if (!Array.isArray(item.itemReviewRecords)) throw new Error(`${label}${requiredPath}.itemReviewRecords 必须为数组`);
     if (!Array.isArray(item.requestedSources) || item.requestedSources.length < 2) throw new Error(`${label}${requiredPath} 资料请求不足`);
-    if (!item.blockedReason || item.blockedReason.length < 18) throw new Error(`${label}${requiredPath} 缺少阻断原因`);
+    if (!item.blockedReason || item.blockedReason.trim().length < 18) throw new Error(`${label}${requiredPath} 缺少阻断原因`);
+
+    const uniqueItemKeys = new Set(item.itemReviewRecords.map((record) => record && record.itemKey).filter(Boolean));
+    if (item.reviewedItemCount !== uniqueItemKeys.size) {
+      reviewedItemCountMatchesUniqueItemKeys = false;
+      throw new Error(`${label}${requiredPath}.reviewedItemCount 与唯一 itemKey 数量不一致`);
+    }
+
+    const hasSources = item.sourceRecords.length > 0;
+    const hasItemReviews = item.itemReviewRecords.length > 0;
+    const transitionValid =
+      (item.state === 'awaiting_sources' && item.readyForItemReview === false && !hasSources && !hasItemReviews) ||
+      (item.state === 'sources_ready' && item.readyForItemReview === true && hasSources && !hasItemReviews) ||
+      (item.state === 'in_review' && item.readyForItemReview === true && hasSources && hasItemReviews) ||
+      (item.state === 'review_complete' && item.readyForItemReview === true && hasSources && hasItemReviews);
+    if (!transitionValid) {
+      stateTransitionConsistent = false;
+      throw new Error(`${label}${requiredPath} 状态、资料清单和逐条复核记录不一致`);
+    }
+
+    sourceRecordCount += item.sourceRecords.length;
+    itemReviewRecordCount += item.itemReviewRecords.length;
+    reviewedItemCount += item.reviewedItemCount;
   }
+
   const p0 = datasets.filter((item) => item.reviewPriority === 'P0').map((item) => item.path).sort();
   const expectedP0 = ['cnc/alarm-data.js', 'cnc/gm-code-complete.js'].sort();
   if (JSON.stringify(p0) !== JSON.stringify(expectedP0)) throw new Error(`${label}P0 资料队列错误：${p0.join(', ')}`);
-  const readyCount = datasets.filter((item) => item.readyForItemReview === true).length;
-  const sourceRecordCount = datasets.reduce((sum, item) => sum + item.sourceRecords.length, 0);
-  const reviewedItemCount = datasets.reduce((sum, item) => sum + item.reviewedItemCount, 0);
-  if (readyCount !== 0 || sourceRecordCount !== 0 || reviewedItemCount !== 0) {
-    throw new Error(`${label}不得在缺少来源时宣称已准备或已复核`);
-  }
+
   return {
     schemaVersion: ledger.schemaVersion,
     datasetCount: datasets.length,
     p0Count: p0.length,
+    stateDefinitions: ALLOWED_STATES.length,
     awaitingSourcesCount: datasets.filter((item) => item.state === 'awaiting_sources').length,
-    readyCount,
+    sourcesReadyCount: datasets.filter((item) => item.state === 'sources_ready').length,
+    inReviewCount: datasets.filter((item) => item.state === 'in_review').length,
+    reviewCompleteCount: datasets.filter((item) => item.state === 'review_complete').length,
+    readyCount: datasets.filter((item) => item.readyForItemReview === true).length,
     sourceRecordCount,
+    itemReviewRecordCount,
     reviewedItemCount,
-    requiredSourceFieldCount: REQUIRED_SOURCE_FIELDS.length
+    requiredSourceFieldCount: REQUIRED_SOURCE_FIELDS.length,
+    separateRecordCounts: true,
+    reviewedItemCountMatchesUniqueItemKeys,
+    stateTransitionConsistent,
+    noUnverifiedContentClaim: true,
+    validatorCounts: validation.counts
   };
 }
 
-function assertContract(resource, text, label) {
+function assertContract(resource, text, label, manifest) {
   return resource.contract === 'content-trust-evidence-page'
     ? assertEvidencePage(text, label)
-    : assertEvidenceLedger(text, label);
+    : assertEvidenceLedger(text, manifest, label);
 }
 
 async function waitForExactResource(resource) {
@@ -187,15 +248,32 @@ async function waitForExactResource(resource) {
 
 (async () => {
   try {
+    const localManifestText = fs.readFileSync(path.join(ROOT, MANIFEST_PATH), 'utf8').replace(/^\uFEFF/, '');
+    const localManifest = parseJson(localManifestText, '当前分支可信度清单');
+    const publishedManifest = await waitForExactResource({ path: MANIFEST_PATH, contract: 'content-trust-manifest-reference' });
+    const mainManifest = parseJson(publishedManifest.main.buffer.toString('utf8').replace(/^\uFEFF/, ''), 'main可信度清单');
+    const pagesManifest = parseJson(publishedManifest.pages.buffer.toString('utf8').replace(/^\uFEFF/, ''), 'Pages公网可信度清单');
+
+    diagnostics.manifestReference = {
+      path: MANIFEST_PATH,
+      mainUrl: publishedManifest.mainUrl,
+      pagesUrl: publishedManifest.pagesUrl,
+      attempts: publishedManifest.attempts,
+      local: { bytes: Buffer.byteLength(localManifestText), sha256: sha256(Buffer.from(localManifestText)) },
+      main: { ...publishedManifest.main, buffer: undefined },
+      pages: { ...publishedManifest.pages, buffer: undefined },
+      verified: { publicReachable: true, exactBytesMatch: true, exactSha256Match: true }
+    };
+
     for (const resource of RESOURCES) {
       const localBuffer = fs.readFileSync(path.join(ROOT, resource.path));
       const localText = localBuffer.toString('utf8').replace(/^\uFEFF/, '');
-      const localContract = assertContract(resource, localText, '当前分支本地资源');
+      const localContract = assertContract(resource, localText, '当前分支本地资源', localManifest);
       const published = await waitForExactResource(resource);
       const mainText = published.main.buffer.toString('utf8').replace(/^\uFEFF/, '');
       const pagesText = published.pages.buffer.toString('utf8').replace(/^\uFEFF/, '');
-      const mainContract = assertContract(resource, mainText, 'main资源');
-      const pagesContract = assertContract(resource, pagesText, 'Pages公网资源');
+      const mainContract = assertContract(resource, mainText, 'main资源', mainManifest);
+      const pagesContract = assertContract(resource, pagesText, 'Pages公网资源', pagesManifest);
       diagnostics.resources.push({
         path: resource.path,
         contract: resource.contract,
@@ -205,15 +283,25 @@ async function waitForExactResource(resource) {
         local: { bytes: localBuffer.length, sha256: sha256(localBuffer), contract: localContract },
         main: { ...published.main, buffer: undefined, contract: mainContract },
         pages: { ...published.pages, buffer: undefined, contract: pagesContract },
-        verified: { publicReachable: true, exactBytesMatch: true, exactSha256Match: true }
+        verified: {
+          publicReachable: true,
+          exactBytesMatch: true,
+          exactSha256Match: true,
+          semanticContractMatch: true
+        }
       });
       console.log(`CNC Pages evidence resource verified: ${resource.path} ${published.pages.sha256}`);
     }
+
     diagnostics.verified = {
       resourceCount: RESOURCES.length,
       allPublicReachable: true,
       allExactBytesMatch: true,
       allExactSha256Match: true,
+      allSemanticContractsMatch: true,
+      separateRecordCounts: true,
+      reviewedItemCountMatchesUniqueItemKeys: true,
+      stateTransitionConsistent: true,
       noUnverifiedContentClaim: true
     };
     fs.writeFileSync(resultPath, JSON.stringify(diagnostics, null, 2) + '\n');
