@@ -1,0 +1,105 @@
+name: CNC training camp route handoff Pages smoke
+on:
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: cnc-training-camp-route-handoff-pages-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Initialize diagnostics
+        run: |
+          mkdir -p cnc/test-results/training-camp-route-handoff-pages
+          node - <<'NODE'
+          const fs = require('fs');
+          fs.writeFileSync('cnc/test-results/training-camp-route-handoff-pages/workflow-bootstrap.json', JSON.stringify({
+            stage: 'workflow-bootstrap',
+            runId: process.env.GITHUB_RUN_ID,
+            headSha: process.env.GITHUB_SHA,
+            eventName: process.env.GITHUB_EVENT_NAME,
+            initializedAt: new Date().toISOString()
+          }, null, 2));
+          NODE
+      - name: Validate exact deployment contract
+        run: |
+          node --check cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs
+          node --check cnc/sw.js
+          node - <<'NODE'
+          const fs = require('fs');
+          const test = fs.readFileSync('cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs', 'utf8');
+          const camp = fs.readFileSync('cnc/training-camp.html', 'utf8');
+          const sw = fs.readFileSync('cnc/sw.js', 'utf8');
+          const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
+          if (info.build !== '20260801-ai-handoff1') throw new Error(`unexpected site build: ${info.build}`);
+          if (info.pwaBuild !== '20260802-pwa8') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
+          if (!sw.includes("const BUILD = '20260802-pwa8'")) throw new Error('Service Worker build mismatch');
+          for (const token of [
+            "const expectedSiteBuild = '20260801-ai-handoff1'",
+            "const expectedPwaBuild = '20260802-pwa8'",
+            'CNC_PAGES_VERIFY_ATTEMPTS || 18',
+            "cache: 'no-store'",
+            "const resources = ['cnc/training-camp.html', 'cnc/sw.js', 'cnc/build-info.json']",
+            'mainPagesExactBytesMatch: true',
+            'mainPagesExactSha256Match: true',
+            'branchDeploymentPending',
+            'oneTimeRouteConsumerPresent: true',
+            'consumeBeforeParsePresent: true',
+            'canonicalRouteIntegrityPresent: true',
+            'plainTextRenderingPresent: true',
+            'bfcacheClearingPresent: true',
+            'sessionStorageOnlyHandoffPresent: true',
+            'trainingCampInCoreCache: true',
+            'coreResourceCount: expectedCore().length',
+            'process.exit(1)'
+          ]) {
+            if (!test.includes(token)) throw new Error(`deployment test missing: ${token}`);
+          }
+          for (const token of [
+            "const PLACEMENT_HANDOFF_KEY='cnc_beginner_placement_route_handoff_v1'",
+            'const PLACEMENT_ROUTE_CATALOG=Object.freeze({',
+            'function payloadMatchesCanonicalRoute(data,canonical)',
+            'sessionStorage.removeItem(PLACEMENT_HANDOFF_KEY)',
+            'document.createTextNode(step.title)',
+            "window.addEventListener('pagehide',clearConsumedHandoffView)",
+            'event.persisted&&placementHandoffConsumed',
+            '测评推荐不代表现场上机许可',
+            '不能替代机床原厂手册'
+          ]) {
+            if (!camp.includes(token)) throw new Error(`training camp contract missing: ${token}`);
+          }
+          if (!sw.includes("'./training-camp.html'")) throw new Error('training camp missing from PWA core');
+          for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)', 'CNC_PAGES_VERIFY_ATTEMPTS || 0']) {
+            if (test.includes(forbidden)) throw new Error(`deployment gate bypass found: ${forbidden}`);
+          }
+          NODE
+      - name: Verify main and Pages exact deployment
+        env:
+          CNC_PAGES_VERIFY_ATTEMPTS: 18
+          CNC_PAGES_VERIFY_INTERVAL_MS: 10000
+        run: node cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs
+      - name: Upload deployment diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-training-camp-route-handoff-pages-${{ github.run_id }}
+          path: cnc/test-results/training-camp-route-handoff-pages/**
+          if-no-files-found: error
+          retention-days: 14
