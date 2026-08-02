@@ -89,6 +89,14 @@ function readExplainabilityVersion(text) {
   return text.match(/const EXPLAINABILITY_VERSION = '([^']+)'/)?.[1] || '';
 }
 
+function assertElementAttributes(text, id, requiredAttributes, label) {
+  const tag = text.match(new RegExp(`<[^>]+\\bid=["']${id}["'][^>]*>`, 'i'))?.[0];
+  if (!tag) throw new Error(`${label}缺少元素：#${id}`);
+  for (const attribute of requiredAttributes) {
+    if (!attribute.test(tag)) throw new Error(`${label}元素 #${id} 缺少部署契约属性：${attribute}`);
+  }
+}
+
 function assertExplainabilityContract(text, label, options = {}) {
   const expectedVersion = options.expectedVersion || '';
   const requireHandoff = options.requireHandoff === true;
@@ -117,12 +125,17 @@ function assertExplainabilityContract(text, label, options = {}) {
       'sessionStorage.getItem(HANDOFF_KEY)',
       'sessionStorage.removeItem(HANDOFF_KEY)',
       'const initialHandoff=consumeHandoff()',
-      'id="handoff-note" role="status" hidden',
       'document.documentElement.dataset.handoffState=initialHandoff.state'
     );
   }
   for (const token of required) {
     if (!text.includes(token)) throw new Error(`${label}缺少判断说明部署契约：${token}`);
+  }
+  if (requireHandoff) {
+    assertElementAttributes(text, 'handoff-note', [
+      /\brole=["']status["']/i,
+      /(?:^|\s)hidden(?:\s|=|>)/i
+    ], label);
   }
 
   const visible = bodyText(text);

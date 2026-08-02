@@ -8,6 +8,7 @@ fs.mkdirSync(outDir, { recursive: true });
 
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
+const eventName = String(process.env.GITHUB_EVENT_NAME || 'local');
 const attempts = Number(process.env.CNC_PAGES_VERIFY_ATTEMPTS || 18);
 const intervalMs = Number(process.env.CNC_PAGES_VERIFY_INTERVAL_MS || 10000);
 const resourcePath = 'cnc/ai-teacher-explainability.html';
@@ -17,6 +18,7 @@ if (!Number.isFinite(intervalMs) || intervalMs < 0) throw new Error('CNC_PAGES_V
 
 const report = {
   checkedAt: new Date().toISOString(),
+  eventName,
   publicRoot,
   mainRoot,
   resourcePath,
@@ -84,13 +86,18 @@ function visibleBody(text) {
     .trim();
 }
 
+function assertListenerContract(text, label) {
+  const pagehide = /window\.addEventListener\(['"]pagehide['"],(?:clearConsumedHandoffView|\(\)=>clearConsumedHandoffView\(\{focusStatus:false\}\))\)/;
+  const pageshow = /window\.addEventListener\(['"]pageshow['"],event=>\{if\(event\.persisted\)clearConsumedHandoffView\((?:\{focusStatus:true\})?\)\}\)/;
+  if (!pagehide.test(text)) throw new Error(`${label}缺少受控 pagehide 清理监听器`);
+  if (!pageshow.test(text)) throw new Error(`${label}缺少 event.persisted 受控 BFCache 清理监听器`);
+}
+
 function assertRecoveryContract(text, label) {
   const required = [
     "const EXPLAINABILITY_VERSION = '20260802-v2'",
     "const HANDOFF_KEY = 'cnc_ai_teacher_explainability_handoff_v1'",
     "handoffOutcome('storage-unavailable')",
-    "window.addEventListener('pagehide',clearConsumedHandoffView)",
-    "window.addEventListener('pageshow',event=>{if(event.persisted)clearConsumedHandoffView()})",
     "document.documentElement.dataset.handoffState='consumed-cleared'",
     "displayedFromHandoff=true",
     "displayedFromHandoff=false",
@@ -103,6 +110,7 @@ function assertRecoveryContract(text, label) {
   for (const token of required) {
     if (!text.includes(token)) throw new Error(`${label}缺少交接恢复部署契约：${token}`);
   }
+  assertListenerContract(text, label);
 
   const visible = visibleBody(text);
   for (const token of [
@@ -185,9 +193,11 @@ async function waitForMainAndPages() {
     const pagesText = deployed.pages.buffer.toString('utf8').replace(/^\uFEFF/, '');
     const mainContract = assertRecoveryContract(mainText, 'main');
     const pagesContract = assertRecoveryContract(pagesText, 'Pages 公网');
+    const localMatchesMain = exact(local, deployed.main);
+    const branchDeploymentPending = !localMatchesMain;
 
-    if (!exact(local, deployed.main)) {
-      throw new Error('当前分支判断说明页与 main 不一致，不能用旧页面冒充正式验收');
+    if (eventName !== 'pull_request' && branchDeploymentPending) {
+      throw new Error(`非 PR 验收不允许当前分支判断说明页与 main 不一致：${eventName}`);
     }
 
     report.local = { resource: summary(local), contract: localContract };
@@ -197,7 +207,8 @@ async function waitForMainAndPages() {
       publicReachable: true,
       exactBytesMatch: true,
       exactSha256Match: true,
-      localMatchesMain: true,
+      localMatchesMain,
+      branchDeploymentPending,
       storageUnavailableRecoveryPresent: true,
       bfcacheScrubPresent: true,
       consumedClearedStatePresent: true,
@@ -210,7 +221,8 @@ async function waitForMainAndPages() {
     fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
     fs.writeFileSync(findingsPath, [
       'AI老师交接恢复页面公网可达：是',
-      '当前分支、main 与 Pages 逐字节一致：是',
+      'main 与 Pages 逐字节一致：是',
+      `当前分支与 main 一致：${localMatchesMain ? '是' : '否（生产页面分支待合并）'}`,
       `资源字节：${deployed.pages.bytes}`,
       `SHA-256：${deployed.pages.sha256}`,
       'SessionStorage 不可用恢复：已部署',
@@ -221,7 +233,7 @@ async function waitForMainAndPages() {
       '长期交接存储写入：0',
       '原厂手册与逐条复核边界：保留'
     ].join('\n') + '\n');
-    console.log(`CNC AI teacher handoff recovery Pages verified: ${deployed.pages.bytes} bytes / ${deployed.pages.sha256}`);
+    console.log(`CNC AI teacher handoff recovery Pages verified: public ${deployed.pages.bytes} bytes / ${deployed.pages.sha256}, pending=${branchDeploymentPending}`);
   } catch (error) {
     report.error = String(error && error.stack || error);
     fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
