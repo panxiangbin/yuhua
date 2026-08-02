@@ -21,7 +21,8 @@ const report = {
   noQuestionOrRouteInUrl: false,
   touchTargetsAtLeast44: false,
   externalRequests: [],
-  browserErrors: []
+  browserErrors: [],
+  bfcacheNotUsedReasons: []
 };
 
 function payload(overrides = {}) {
@@ -44,6 +45,43 @@ function payload(overrides = {}) {
   };
 }
 
+async function createMobileContext(browser, { blockSessionStorage = false } = {}) {
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    isMobile: true,
+    hasTouch: true,
+    deviceScaleFactor: 2
+  });
+  await context.route(`${new URL(BASE).origin}/favicon.ico`, route => route.fulfill({
+    status: 204,
+    contentType: 'image/x-icon',
+    body: ''
+  }));
+  await context.addInitScript(({ key, blockStorage }) => {
+    window.addEventListener('pageshow', event => {
+      document.documentElement.dataset.testPageshowPersisted = String(event.persisted);
+    });
+    if (!blockStorage) return;
+    const originals = {
+      getItem: Storage.prototype.getItem,
+      setItem: Storage.prototype.setItem,
+      removeItem: Storage.prototype.removeItem
+    };
+    for (const method of Object.keys(originals)) {
+      Object.defineProperty(Storage.prototype, method, {
+        configurable: true,
+        value: function (...args) {
+          if (this === window.sessionStorage && args[0] === key) {
+            throw new DOMException('SessionStorage disabled by route handoff smoke', 'SecurityError');
+          }
+          return originals[method].apply(this, args);
+        }
+      });
+    }
+  }, { key: HANDOFF_KEY, blockStorage: blockSessionStorage });
+  return context;
+}
+
 async function completeCriticalSafetyPlacement(page) {
   await page.goto(`${BASE}beginner-placement.html`, { waitUntil: 'domcontentloaded' });
   const answers = [0, 2, 1, 1, 1, 1];
@@ -55,9 +93,19 @@ async function completeCriticalSafetyPlacement(page) {
 }
 
 (async () => {
-  const browser = await chromium.launch({ headless: true });
-  const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  // Playwright默认headless shell会关闭BFCache；使用真实Chromium新无头模式，
+  // 只移除关闭BFCache的默认参数，不能用普通刷新冒充返回恢复。
+  const browser = await chromium.launch({
+    headless: true,
+    channel: 'chromium',
+    ignoreDefaultArgs: ['--disable-back-forward-cache']
+  });
+  const context = await createMobileContext(browser);
   const page = await context.newPage();
+  const bfcacheNotUsed = [];
+  const cdp = await context.newCDPSession(page);
+  await cdp.send('Page.enable');
+  cdp.on('Page.backForwardCacheNotUsed', event => bfcacheNotUsed.push(event));
 
   page.on('request', request => {
     const url = new URL(request.url());
@@ -97,23 +145,20 @@ async function completeCriticalSafetyPlacement(page) {
     report.touchTargetsAtLeast44 = true;
     await page.screenshot({ path: path.join(OUT, 'consumed-390x844.png'), fullPage: true });
 
-    await page.evaluate(() => {
-      window.__handoffPageshow = [];
-      window.addEventListener('pageshow', event => window.__handoffPageshow.push(event.persisted));
-    });
     await page.locator('#placement-handoff-cta').click();
     await page.waitForURL(/course-safety-foundation\.html$/);
-    await page.goBack({ waitUntil: 'domcontentloaded' });
-    await page.waitForURL(/training-camp\.html$/);
-    await page.waitForTimeout(200);
+    await page.evaluate(() => history.back());
+    await page.waitForFunction(() => location.pathname.endsWith('/cnc/training-camp.html'));
+    await page.waitForFunction(() => document.documentElement.dataset.testPageshowPersisted === 'true');
     const bfcache = await page.evaluate(key => ({
-      persisted: window.__handoffPageshow || [],
+      persisted: document.documentElement.dataset.testPageshowPersisted,
       state: document.querySelector('#placement-handoff')?.dataset.state,
       title: document.querySelector('#placement-handoff-title')?.textContent,
       stepCount: document.querySelectorAll('#placement-handoff-steps li').length,
       sessionValue: sessionStorage.getItem(key)
     }), HANDOFF_KEY);
-    if (!bfcache.persisted.includes(true)) throw new Error(`real BFCache was not observed: ${JSON.stringify(bfcache.persisted)}`);
+    report.bfcacheNotUsedReasons = bfcacheNotUsed;
+    if (bfcache.persisted !== 'true') throw new Error(`real BFCache was not observed; reasons: ${JSON.stringify(bfcacheNotUsed)}`);
     if (bfcache.state !== 'consumed-cleared' || bfcache.stepCount !== 0 || bfcache.sessionValue !== null) throw new Error(`BFCache restored consumed route: ${JSON.stringify(bfcache)}`);
     report.bfcachePersisted = true;
     report.bfcacheDoesNotRestore = true;
@@ -157,19 +202,7 @@ async function completeCriticalSafetyPlacement(page) {
     await isolatedTab.close();
     report.independentTabIsolation = true;
 
-    const blockedContext = await browser.newContext({ viewport: { width: 390, height: 844 } });
-    await blockedContext.addInitScript(key => {
-      const originalGet = Storage.prototype.getItem;
-      const originalRemove = Storage.prototype.removeItem;
-      Storage.prototype.getItem = function(name) {
-        if (name === key && this === window.sessionStorage) throw new DOMException('blocked', 'SecurityError');
-        return originalGet.call(this, name);
-      };
-      Storage.prototype.removeItem = function(name) {
-        if (name === key && this === window.sessionStorage) throw new DOMException('blocked', 'SecurityError');
-        return originalRemove.call(this, name);
-      };
-    }, HANDOFF_KEY);
+    const blockedContext = await createMobileContext(browser, { blockSessionStorage: true });
     const blockedPage = await blockedContext.newPage();
     const blockedErrors = [];
     blockedPage.on('pageerror', error => blockedErrors.push(error.message));
@@ -189,6 +222,7 @@ async function completeCriticalSafetyPlacement(page) {
     fs.writeFileSync(path.join(OUT, 'findings.txt'), '起点测评路线交接：一次性消费、刷新/BFCache清理、过期与非法数据拒绝、独立标签页隔离、存储不可用恢复、44px触控、零站外请求均通过。\n');
     console.log('CNC beginner placement route handoff smoke passed');
   } catch (error) {
+    report.bfcacheNotUsedReasons = bfcacheNotUsed;
     report.error = error.stack || String(error);
     fs.writeFileSync(path.join(OUT, 'report.json'), JSON.stringify(report, null, 2));
     fs.writeFileSync(path.join(OUT, 'error.txt'), `${error.stack || error}\n`);
