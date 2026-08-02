@@ -1,0 +1,63 @@
+name: CNC AI teacher explainability Pages smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/ai-teacher-explainability.html'
+      - 'cnc/tests/pages-ai-teacher-explainability-deployment-smoke.cjs'
+      - 'cnc/docs/ai-teacher-explainability-pages-contract.md'
+      - '.github/workflows/cnc-ai-teacher-explainability-pages-smoke.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'cnc/ai-teacher-explainability.html'
+      - 'cnc/tests/pages-ai-teacher-explainability-deployment-smoke.cjs'
+      - 'cnc/docs/ai-teacher-explainability-pages-contract.md'
+      - '.github/workflows/cnc-ai-teacher-explainability-pages-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cnc-ai-teacher-explainability-pages-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  verify-pages:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Validate deployment gate contract
+        run: |
+          set -euxo pipefail
+          test -f cnc/ai-teacher-explainability.html
+          test -f cnc/tests/pages-ai-teacher-explainability-deployment-smoke.cjs
+          test -f cnc/docs/ai-teacher-explainability-pages-contract.md
+          node --check cnc/tests/pages-ai-teacher-explainability-deployment-smoke.cjs
+          grep -q "ai-teacher-explainability.html" cnc/tests/pages-ai-teacher-explainability-deployment-smoke.cjs
+          grep -q "exactBytesMatch" cnc/tests/pages-ai-teacher-explainability-deployment-smoke.cjs
+          grep -q "exactSha256Match" cnc/tests/pages-ai-teacher-explainability-deployment-smoke.cjs
+          grep -q "本页不提供固定上机值" cnc/tests/pages-ai-teacher-explainability-deployment-smoke.cjs
+          grep -q "资料清单与逐条复核记录不能互相代替" cnc/tests/pages-ai-teacher-explainability-deployment-smoke.cjs
+          grep -q "未逐条复核内容不可直接上机" cnc/tests/pages-ai-teacher-explainability-deployment-smoke.cjs
+          ! grep -Eq "test\.skip\(|describe\.skip\(|it\.skip\(|process\.exit\(0\).*catch" cnc/tests/pages-ai-teacher-explainability-deployment-smoke.cjs
+          ! grep -q "CNC_PAGES_VERIFY_ATTEMPTS || 0" cnc/tests/pages-ai-teacher-explainability-deployment-smoke.cjs
+      - name: Verify Pages deployment and semantics
+        env:
+          CNC_PAGES_VERIFY_ATTEMPTS: '18'
+          CNC_PAGES_VERIFY_INTERVAL_MS: '10000'
+        run: node cnc/tests/pages-ai-teacher-explainability-deployment-smoke.cjs
+      - name: Upload deployment diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-ai-teacher-explainability-pages-${{ github.run_id }}
+          path: cnc/test-results/ai-teacher-explainability-pages/
+          if-no-files-found: warn
+          retention-days: 14
