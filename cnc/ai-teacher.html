@@ -70,24 +70,41 @@
 (() => {
   'use strict';
   const BUILD = '20260801-ai-handoff1';
+  const CLASSIFICATION_VERSION = '20260802-v2';
   const KEYS = {profile:'cnc_training_profile_v1',practice:'cnc_training_practice_v1',simulator:'cnc_training_simulator_v1',exam:'cnc_training_exam_v1'};
   const COURSE_LINKS = ['./course-safety-foundation.html','./course-machining-center-basics.html','./course-coordinate-axes.html','./course-drawing-basics.html','./course-machine-work-offset.html','./course-workholding-basics.html','./course-tool-basics.html','./course-tool-length-offset.html','./course-g00-g01-basics.html','./course-g02-g03-basics.html','./course-hole-cycles-basics.html','./course-complete-program-first-piece.html'];
   const ABILITY_DEFS = [
     {name:'安全基础',keys:['safety','安全']},{name:'坐标与对刀',keys:['coordinate','offset','坐标','对刀']},{name:'图纸与工艺',keys:['drawing','process','图纸','工艺']},{name:'程序验证',keys:['program','verification','程序','验证']},{name:'首件与测量',keys:['inspection','measurement','首件','测量']},{name:'故障排查',keys:['troubleshooting','alarm','故障','报警']}
   ];
   const SAFETY_SCOPE = '以下内容面向FANUC类立式加工中心的新手学习框架，不代表所有系统与机型一致。具体地址、编号、正负方向、单位、权限、联锁及操作顺序必须核对原厂手册、企业制度、受控工艺和现场条件。';
-  const INTAKE_CATEGORY = {alarm:'alarm','work-offset':'coordinate','tool-offset':'offset','program-check':'program','first-piece':'measurement',blocked:'other',unknown:'other'};
+  const INTAKE_CATEGORY = {alarm:'alarm','work-offset':'coordinate','tool-offset':'offset','program-check':'program','first-piece':'measurement','safety-boundary':'other',blocked:'other',unknown:'other'};
   const SOURCE_POLICY = Object.freeze({
     training:'平台内课程与模拟只作为教学训练依据，不替代原厂手册和现场授权。',
-    trust:'报警、参数、G/M代码和现场诊断仍按可信度台账状态使用，未逐条核实的内容不得宣称可直接上机。',
+    trust:'报警、参数、G/M代码和现场诊断仍按可信度台账状态使用，未逐条复核的内容不得宣称可直接上机。',
     evidence:'资料清单只证明已取得资料；逐条复核记录才对应具体技术条目。'
   });
+
+  const VALUE_TOPIC = '(?:转速|进给|安全高度|刀补(?:值)?|补偿值|参数值|g5[4-9]|h\\s*\\d{1,3}|d\\s*\\d{1,3})';
+  const VALUE_REQUEST = '(?:多少|具体(?:数)?值|给(?:我)?(?:个|一套|一个)?(?:参考)?(?:数|值)|直接(?:给|写|填|设|用)|设成|设置成|设为|填成|填为|写成|写为|改成|改为|推荐值|用几|应该(?:填|写|设|改)|可以(?:填|写|设|改)多少)';
+  const PARAMETER_TOPIC = '(?:(?:参数|parameter)\\s*[#p]?\\s*\\d{3,6}|[#p]?\\s*\\d{3,6}\\s*号?\\s*参数)';
+  const PARAMETER_WRITE = '(?:改|修改|设|设置|写|写入|填|填入|改成|改为|设成|设为|填成|填为|写成|写为|改多少|设多少|填多少|写多少|值是多少|应该多少|用多少)';
+  const SAFETY_ACTION = '(?:屏蔽|绕过|跳过|取消|关闭|关掉|短接|禁用|解除|强制越过|临时关闭)';
+  const SAFETY_TARGET = '(?:联锁|安全门|限位(?:开关)?|保护|急停|报警保护)';
+  const ALARM_TARGET = '(?:报警|故障|alarm|fault)';
+  const RISKY_RESET = '(?:(?:直接|连续|反复|一直|强制|一键).{0,6}(?:按|点|执行)?\\s*(?:复位|reset|清除|消警)|(?:复位|reset|清除|消警).{0,16}(?:继续跑|继续加工|反复启动|直到.{0,8}(?:消失|解除)))';
   const BLOCK_RULES = [
-    {id:'exact-value',pattern:/(转速|进给|安全高度|刀补|补偿值|参数值|g5[4-9]|h\s*\d+|d\s*\d+).*(多少|给我|直接|设成|填成|改成|具体值)/i},
-    {id:'parameter-write',pattern:/(\d{3,6}\s*号?\s*参数|参数\s*\d{3,6}).*(改|设|写|填|多少|值)/i},
-    {id:'bypass-safety',pattern:/(屏蔽|跳过|取消|关闭|短接).*(联锁|报警|安全门|限位|保护|急停)/i},
-    {id:'blind-reset',pattern:/(报警|故障).*(直接复位|连续复位|强制清除|怎么屏蔽)/i}
+    {id:'exact-value',pattern:new RegExp(`(?:${VALUE_TOPIC}.{0,28}${VALUE_REQUEST}|${VALUE_REQUEST}.{0,28}${VALUE_TOPIC})`,'i')},
+    {id:'parameter-write',pattern:new RegExp(`(?:${PARAMETER_TOPIC}.{0,24}${PARAMETER_WRITE}|${PARAMETER_WRITE}.{0,24}${PARAMETER_TOPIC})`,'i')},
+    {id:'bypass-safety',pattern:new RegExp(`(?:${SAFETY_ACTION}.{0,28}${SAFETY_TARGET}|${SAFETY_TARGET}.{0,28}${SAFETY_ACTION})`,'i')},
+    {id:'blind-reset',pattern:new RegExp(`(?:${ALARM_TARGET}.{0,30}${RISKY_RESET}|${RISKY_RESET}.{0,30}${ALARM_TARGET})`,'i')}
   ];
+  const SAFE_DISCUSSION_RULES = [
+    {id:'risk-explanation',pattern:/(?:为什么|原因|原理|风险|危害|后果|区别|作用|含义|是什么意思|怎么避免|如何避免|怎样避免|如何识别|怎么识别|如何判断|怎么判断).{0,36}(?:参数|转速|进给|安全高度|刀补|补偿|联锁|安全门|限位|急停|报警|复位|屏蔽|绕过|短接|关闭|修改|写入|具体值)/i},
+    {id:'risk-explanation-reversed',pattern:/(?:参数|转速|进给|安全高度|刀补|补偿|联锁|安全门|限位|急停|报警|复位|屏蔽|绕过|短接|关闭|修改|写入|具体值).{0,36}(?:为什么|原因|原理|风险|危害|后果|区别|作用|含义|是什么意思|怎么避免|如何避免|怎样避免|如何识别|怎么识别|如何判断|怎么判断)/i},
+    {id:'explicit-no-instructions',pattern:/(?:不要|不需要|无需|别).{0,2}(?:告诉|提供|给|讲).{0,12}(?:具体(?:数)?值|参数值|上机值|修改步骤|绕过步骤|复位步骤|怎么修改|怎么绕过)(?:.{0,24}(?:只|仅).{0,8}(?:讲|解释|说明|了解|学习))?/i},
+    {id:'non-operational-context',pattern:/(?:不修改|不写入|不操作|不执行|不复位|不绕过|不屏蔽).{0,24}(?:只想|想了解|讲讲|解释|为什么|是什么|作用|原理)/i}
+  ];
+  const OVERRIDE_EXECUTION_PATTERN = /(?:顺便|但|不过|同时|然后|还是|实际|现在|现场).{0,18}(?:告诉我|教我|给我|帮我|怎么|如何|步骤|方法).{0,20}(?:屏蔽|绕过|短接|关闭|关掉|复位|清除|修改|改成|设成|填成|写入|具体值)|(?:纯教学|只是学习|假设|研究).{0,18}(?:告诉我|教我|给我|怎么|如何).{0,20}(?:屏蔽|绕过|短接|关闭|复位|清除|修改|改成|设成|填成|写入)|(?:直接用|照着做|马上运行|现场就|现在就)/i;
 
   function read(key){try{const value=JSON.parse(localStorage.getItem(key)||'null');return value&&typeof value==='object'?value:{}}catch{return {}}}
   function asArray(value){return Array.isArray(value)?value:[]}
@@ -101,16 +118,20 @@
   function source(type,label,status,href){return {type,label,status,href}}
   function trustSources(primaryHref,primaryLabel){return [source('平台训练',primaryLabel,'教学参考，需结合课程说明与现场带教',primaryHref),source('可信度状态','查看高风险内容可信度状态','未逐条复核内容不可直接上机','./content-trust-status.html'),source('证据台账','查看资料与逐条复核边界','资料清单与逐条复核记录不能互相代替','./content-trust-evidence.html')]}
   function intakeRoute(intent){const category=INTAKE_CATEGORY[intent]||'other';return `./ai-teacher-intake.html?source=ai-teacher&category=${encodeURIComponent(category)}`}
-  function detectIntent(text){const value=String(text||'').toLowerCase();const rules=[['alarm',['报警','alarm','复位','故障码']],['first-piece',['首件','超差','尺寸不对','测量','偏大','偏小']],['tool-offset',['刀长','h号','h 号','g43','刀补','补偿']],['work-offset',['g54','工件坐标','找正','零点','坐标偏置']],['program-check',['陌生程序','新程序','上机','空运行','单段','程序验证','程序检查']],['next',['下一步','先学','怎么练','学习路线','推荐']]];return rules.find(([,keywords])=>keywords.some(keyword=>value.includes(keyword)))?.[0]||'unknown'}
-  function classifyQuestion(text){const value=String(text||'').trim();const matched=BLOCK_RULES.filter(rule=>rule.pattern.test(value)).map(rule=>rule.id);return {intent:matched.length?'blocked':detectIntent(value),blocked:matched.length>0,matchedSignals:matched,reason:matched.length?'请求包含固定上机数值、参数写入、联锁绕过或盲目复位风险。':''}}
+  function normalizeQuestion(text){return String(text||'').normalize('NFKC').toLowerCase().replace(/[“”"']/g,'').replace(/\s+/g,' ').trim()}
+  function matchedRuleIds(rules,value){return rules.filter(rule=>rule.pattern.test(value)).map(rule=>rule.id)}
+  function detectIntent(text){const value=normalizeQuestion(text);const rules=[['alarm',['报警','alarm','复位','故障码']],['first-piece',['首件','超差','尺寸不对','测量','偏大','偏小']],['tool-offset',['刀长','h号','h 号','g43','刀补','补偿']],['work-offset',['g54','工件坐标','找正','零点','坐标偏置']],['program-check',['陌生程序','新程序','上机','空运行','单段','程序验证','程序检查']],['next',['下一步','先学','怎么练','学习路线','推荐']]];return rules.find(([,keywords])=>keywords.some(keyword=>value.includes(keyword)))?.[0]||'unknown'}
+  function classifyQuestion(text){const value=normalizeQuestion(text);const matched=matchedRuleIds(BLOCK_RULES,value);const safeSignals=matchedRuleIds(SAFE_DISCUSSION_RULES,value);const overrideExecution=OVERRIDE_EXECUTION_PATTERN.test(value);const safeDiscussion=safeSignals.length>0&&!overrideExecution;const blocked=matched.length>0&&!safeDiscussion;return {intent:blocked?'blocked':safeDiscussion?'safety-boundary':detectIntent(value),blocked,matchedSignals:matched,safeSignals,overrideExecution,normalized:value,reason:blocked?'请求包含固定上机数值、参数写入、联锁绕过或盲目复位风险。':safeDiscussion?'问题属于安全原理、风险或禁止原因讨论，不提供可执行绕过步骤或固定上机值。':''}}
+
   function recommendation(intent,state){
     const personalized=`你的本机记录显示：主线完成 ${state.completed.size}/12，待复习错题 ${state.wrong.length} 道，模拟通过 ${state.simulationPass}/13；当前优先补强“${state.weakest.name}”。`;
-    if(intent==='blocked')return {status:'已阻断高风险请求',blocked:true,title:'无法给出可直接上机的固定值或绕过步骤',copy:'这个问题涉及具体参数值、坐标/刀补写入、报警复位或安全联锁。缺少准确系统、机型、版本、现场状态和受控资料时，给出固定答案可能造成撞机、工件报废或人员风险。',steps:['保留当前机床、报警和程序现场，不先修改参数或补偿。','记录系统系列、机床型号、软件版本、完整报警原文、当前程序段和轴位置。','打开对应原厂手册或机床厂受控资料，定位同版本条目。','由授权人员按企业制度确认后，再做单项、可回退、可记录的验证。'],donts:['不要照抄网上数值、别台机床参数或他人刀补。','不要屏蔽联锁、短接安全门、连续复位或同时修改多个变量。','不要把本页教学建议当成现场放行指令。'],reasons:['同一参数号、报警号和补偿规则可能因系统系列、版本、机床厂配置而不同。','当前内容可信度台账不允许把未逐条核实内容宣称为可直接上机。'],scope:SAFETY_SCOPE,routes:[route('生成现场问诊单',intakeRoute('blocked'),true),route('查看可信度状态','./content-trust-status.html'),route('查看证据台账','./content-trust-evidence.html')],sources:trustSources('./ai-teacher-intake.html','现场问诊单')};
+    if(intent==='blocked')return {status:'已阻断高风险请求',blocked:true,title:'无法给出可直接上机的固定值或绕过步骤',copy:'这个问题涉及具体参数值、坐标/刀补写入、报警复位或安全联锁。缺少准确系统、机型、版本、现场状态和受控资料时，给出固定答案可能造成撞机、工件报废或人员风险。',steps:['保留当前机床、报警和程序现场，不先修改参数或补偿。','记录系统系列、机床型号、软件版本、完整报警原文、当前程序段和轴位置。','打开对应原厂手册或机床厂受控资料，定位同版本条目。','由授权人员按企业制度确认后，再做单项、可回退、可记录的验证。'],donts:['不要照抄网上数值、别台机床参数或他人刀补。','不要屏蔽联锁、短接安全门、连续复位或同时修改多个变量。','不要把本页教学建议当成现场放行指令。'],reasons:['同一参数号、报警号和补偿规则可能因系统系列、版本、机床厂配置而不同。','当前内容可信度台账不允许把未逐条复核内容宣称为可直接上机。'],scope:SAFETY_SCOPE,routes:[route('生成现场问诊单',intakeRoute('blocked'),true),route('查看可信度状态','./content-trust-status.html'),route('查看证据台账','./content-trust-evidence.html')],sources:trustSources('./ai-teacher-intake.html','现场问诊单')};
+    if(intent==='safety-boundary')return {status:'安全原理说明',blocked:false,title:'可以学习原理和风险，但不提供可执行绕过步骤或固定上机值',copy:'这类问题适合讲清为什么不能盲目改值、绕过联锁或连续复位。回答会保留教学意义，同时把任何可直接执行的上机数值和绕过步骤挡在边界外。',steps:['先确认你要了解的是作用、风险、禁止原因还是正确核验流程。','阅读安全基础课程，理解联锁、参数权限、报警证据和单项验证。','涉及具体系统或机型时，只记录完整信息并查同版本原厂手册。','需要现场处理时，生成问诊单交给授权人员复核。'],donts:['不要把“纯教学”“临时使用”当成绕过安全边界的理由。','不要根据概念说明自行推导参数值或修改步骤。','不要在原因未确认时复位、改参数或继续加工。'],reasons:['安全原理可以公开学习，但具体写入值和恢复步骤依赖系统、版本、机床厂配置和现场状态。','把教学讨论与真实操作请求分开，既减少误拦截，也避免隐晦请求漏过门禁。'],scope:SAFETY_SCOPE,routes:[route('学习安全基础课程','./course-safety-foundation.html',true),route('查看可信度状态','./content-trust-status.html'),route('现场情况不完整？生成问诊单',intakeRoute('safety-boundary'))],sources:trustSources('./course-safety-foundation.html','第1关：安全基础')};
     if(intent==='next'){
-      if(state.wrong.length>0)return {status:'个性化训练建议',title:'先把高风险错题变成正确动作',copy:personalized,steps:['先进入跨专项错题，优先处理高风险和重复错误。','重新阅读对应解析，写出“错误动作—可能后果—正确核验”三句话。','错题清零后，再回到当前未完成主线或模拟训练。'],donts:['不要只记答案字母，不理解现场动作。','不要因为一次答对就直接把自己当成具备独立上机能力。'],reasons:[`当前仍有 ${state.wrong.length} 道错题，继续堆新内容容易重复同类错误。`,`薄弱能力为“${state.weakest.name}”，应优先闭环而不是平均用力。`],scope:SAFETY_SCOPE,routes:[route('复习跨专项错题','./practice-wrong-review.html',true),route('查看成长档案','./profile.html')],sources:trustSources('./practice-wrong-review.html','跨专项错题复习')};
-      if(state.completed.size<12)return {status:'个性化训练建议',title:`继续第 ${state.nextCourse} 关主线课程`,copy:personalized,steps:['先完成推荐课程正文与示例。','完成本关练习并达到80分。','再做对应现场模拟，确认自己会按顺序核对。'],donts:['不要跳过安全、坐标、装夹和刀补基础直接背程序。','不要把课程通关等同于获得独立操作授权。'],reasons:[`主线课程尚有 ${12-state.completed.size} 关未达标。`,'按课程—专项—模拟的顺序，更适合零基础建立完整动作链。'],scope:SAFETY_SCOPE,routes:[route(`进入第${state.nextCourse}关`,COURSE_LINKS[state.nextCourse-1],true),route('查看12关路线','./training-camp.html')],sources:trustSources(COURSE_LINKS[state.nextCourse-1],`第${state.nextCourse}关主线课程`)};
-      if(state.simulationPass<13)return {status:'个性化训练建议',title:'把会答题推进到会按流程检查',copy:personalized,steps:['进入模拟训练中心。','优先选择与薄弱能力相同的模拟。','必须完成错误路径复盘，再追求满分。'],donts:['不要只重复已经满分的模拟。','不要把网页模拟结果当作现场放行依据。'],reasons:[`12关已完成，但模拟仅通过 ${state.simulationPass}/13。`,'模拟训练能暴露步骤顺序、风险判断和异常停止能力。'],scope:SAFETY_SCOPE,routes:[route('进入模拟训练中心','./simulator-hub.html',true),route('查看能力画像','./profile.html')],sources:trustSources('./simulator-hub.html','现场模拟训练中心')};
-      return {status:'个性化训练建议',title:'进入综合复习与现场带教阶段',copy:personalized,steps:['按成长档案最低能力安排复习。','用受控图纸和指定练习件，在现场师傅监督下复述完整流程。','把现场发现的新问题记录为下一轮专项练习。'],donts:['不要因为平台全通关就自行改参数、刀补或启动陌生程序。','不要跳过企业上机授权和首件放行制度。'],reasons:['主线与模拟已完成，下一步价值最高的是跨模块复盘和受监督的现场迁移。'],scope:SAFETY_SCOPE,routes:[route('查看成长档案','./profile.html',true),route('基础阶段考试','./stage-exam-foundation.html')],sources:trustSources('./profile.html','成长档案与能力画像')};
+      if(state.wrong.length>0)return {status:'个性化训练建议',blocked:false,title:'先把高风险错题变成正确动作',copy:personalized,steps:['先进入跨专项错题，优先处理高风险和重复错误。','重新阅读对应解析，写出“错误动作—可能后果—正确核验”三句话。','错题清零后，再回到当前未完成主线或模拟训练。'],donts:['不要只记答案字母，不理解现场动作。','不要因为一次答对就直接把自己当成具备独立上机能力。'],reasons:[`当前仍有 ${state.wrong.length} 道错题，继续堆新内容容易重复同类错误。`,`薄弱能力为“${state.weakest.name}”，应优先闭环而不是平均用力。`],scope:SAFETY_SCOPE,routes:[route('复习跨专项错题','./practice-wrong-review.html',true),route('查看成长档案','./profile.html')],sources:trustSources('./practice-wrong-review.html','跨专项错题复习')};
+      if(state.completed.size<12)return {status:'个性化训练建议',blocked:false,title:`继续第 ${state.nextCourse} 关主线课程`,copy:personalized,steps:['先完成推荐课程正文与示例。','完成本关练习并达到80分。','再做对应现场模拟，确认自己会按顺序核对。'],donts:['不要跳过安全、坐标、装夹和刀补基础直接背程序。','不要把课程通关等同于获得独立操作授权。'],reasons:[`主线课程尚有 ${12-state.completed.size} 关未达标。`,'按课程—专项—模拟的顺序，更适合零基础建立完整动作链。'],scope:SAFETY_SCOPE,routes:[route(`进入第${state.nextCourse}关`,COURSE_LINKS[state.nextCourse-1],true),route('查看12关路线','./training-camp.html')],sources:trustSources(COURSE_LINKS[state.nextCourse-1],`第${state.nextCourse}关主线课程`)};
+      if(state.simulationPass<13)return {status:'个性化训练建议',blocked:false,title:'把会答题推进到会按流程检查',copy:personalized,steps:['进入模拟训练中心。','优先选择与薄弱能力相同的模拟。','必须完成错误路径复盘，再追求满分。'],donts:['不要只重复已经满分的模拟。','不要把网页模拟结果当作现场放行依据。'],reasons:[`12关已完成，但模拟仅通过 ${state.simulationPass}/13。`,'模拟训练能暴露步骤顺序、风险判断和异常停止能力。'],scope:SAFETY_SCOPE,routes:[route('进入模拟训练中心','./simulator-hub.html',true),route('查看能力画像','./profile.html')],sources:trustSources('./simulator-hub.html','现场模拟训练中心')};
+      return {status:'个性化训练建议',blocked:false,title:'进入综合复习与现场带教阶段',copy:personalized,steps:['按成长档案最低能力安排复习。','用受控图纸和指定练习件，在现场师傅监督下复述完整流程。','把现场发现的新问题记录为下一轮专项练习。'],donts:['不要因为平台全通关就自行改参数、刀补或启动陌生程序。','不要跳过企业上机授权和首件放行制度。'],reasons:['主线与模拟已完成，下一步价值最高的是跨模块复盘和受监督的现场迁移。'],scope:SAFETY_SCOPE,routes:[route('查看成长档案','./profile.html',true),route('基础阶段考试','./stage-exam-foundation.html')],sources:trustSources('./profile.html','成长档案与能力画像')};
     }
     const library={
       'work-offset':{title:'G54先找“零件的零”，再核对系统里的偏置',copy:'G54错误常见原因不是程序语法，而是图纸基准、装夹基准、测量方法和坐标写入没有形成同一条数据链。',steps:['确认受控图纸和工艺指定的工件零点。','确认工件实际装夹方向、定位面和测量基准。','按本机规定测得X/Y/Z基准并记录原始值。','核对写入的是正确坐标系、轴、单位和正负方向。','用图形检查、空运行、单段和低倍率做分层验证。'],donts:['不要把回参考点当成G54已经正确。','不要照抄别台机床的G54数值。','不要同时改G54和多把刀补来追尺寸。'],reasons:['程序即使语法正确，错误G54仍会让整条轨迹整体偏移。','测量、装夹和写入任一环节不一致，都会把正确程序带到错误位置。'],routes:[route('学习第5关坐标课程','./course-machine-work-offset.html',true),route('练工件坐标模拟','./simulator-work-offset-setting.html'),route('现场情况不完整？生成问诊单',intakeRoute('work-offset'))],sources:trustSources('./course-machine-work-offset.html','第5关：工件坐标与G54')},
@@ -123,6 +144,7 @@
     if(selected)return {status:'受控基础建议',blocked:false,scope:SAFETY_SCOPE,...selected};
     return {status:'需要补充信息',blocked:false,title:'先把问题归类，再进入对应训练',copy:`我没有把这句话匹配到安全受控的基础主题。${personalized}`,steps:['说明你遇到的是课程理解、程序验证、报警、坐标刀补、首件测量还是学习路线问题。','补充系统/机型和当前处于“学习、仿真、空运行、首件或生产”哪个阶段。','从上方快捷问题选择最接近的一项，先完成受控训练。'],donts:['不要仅凭一句模糊描述修改参数、坐标或刀补。','不要提供或执行未经核对的固定加工数值。'],reasons:['缺少系统、机型、现场状态和完整现象时，直接给操作步骤容易误导。'],scope:SAFETY_SCOPE,routes:[route('先生成现场问诊单',intakeRoute('unknown'),true),route('查看训练路线','./training-camp.html')],sources:trustSources('./ai-teacher-intake.html','现场问诊单')};
   }
+
   function fillList(id,rows,ordered=false){const root=document.getElementById(id);root.replaceChildren(...rows.map(text=>{const item=document.createElement('li');item.textContent=text;return item}));if(ordered)root.setAttribute('aria-label','建议步骤')}
   function renderSources(rows){const root=document.getElementById('answer-sources');root.replaceChildren(...rows.map(item=>{const card=document.createElement('article');card.className='source-item';const type=document.createElement('span');type.className='source-type';type.textContent=item.type;const status=document.createElement('span');status.className='source-status';status.textContent=item.status;const link=document.createElement('a');link.href=item.href;link.textContent=item.label;card.append(type,status,link);return card}))}
   function renderAnswer(intent){const state=learningState();const result=recommendation(intent,state);const status=document.getElementById('answer-status');status.textContent=result.status||'训练建议';status.classList.toggle('blocked',result.blocked===true);document.getElementById('answer-title').textContent=result.title;document.getElementById('answer-copy').textContent=result.copy;fillList('answer-steps',result.steps,true);fillList('answer-donts',result.donts);fillList('answer-reasons',result.reasons);document.getElementById('answer-scope').textContent=result.scope;const routeRoot=document.getElementById('answer-routes');routeRoot.replaceChildren(...result.routes.map(item=>{const link=document.createElement('a');link.className=`btn${item.primary?'':' alt'}`;link.href=item.href;link.textContent=item.text;return link}));renderSources(result.sources||[]);const answer=document.getElementById('answer');answer.classList.add('show');answer.scrollIntoView({behavior:'smooth',block:'start'})}
@@ -131,7 +153,7 @@
   document.getElementById('ask-form').addEventListener('submit',event=>{event.preventDefault();const classified=classifyQuestion(document.getElementById('question').value);renderAnswer(classified.intent)});
   window.addEventListener('pageshow',renderSummary);
   const initialState=renderSummary();
-  window.CNC_AI_TEACHER={build:BUILD,localOnly:true,externalModel:false,storageKeys:Object.values(KEYS),detectIntent,classifyQuestion,intakeRoute,sourcePolicy:SOURCE_POLICY,getSummary:()=>{const state=learningState();return {courses:state.completed.size,wrong:state.wrong.length,simulations:state.simulationPass,weakest:state.weakest.name}},initialSummary:{courses:initialState.completed.size,wrong:initialState.wrong.length,simulations:initialState.simulationPass,weakest:initialState.weakest.name}};
+  window.CNC_AI_TEACHER={build:BUILD,classificationVersion:CLASSIFICATION_VERSION,localOnly:true,externalModel:false,storageKeys:Object.values(KEYS),detectIntent,classifyQuestion,intakeRoute,sourcePolicy:SOURCE_POLICY,classificationSignals:{blocked:BLOCK_RULES.map(rule=>rule.id),safeDiscussion:SAFE_DISCUSSION_RULES.map(rule=>rule.id)},getSummary:()=>{const state=learningState();return {courses:state.completed.size,wrong:state.wrong.length,simulations:state.simulationPass,weakest:state.weakest.name}},initialSummary:{courses:initialState.completed.size,wrong:initialState.wrong.length,simulations:initialState.simulationPass,weakest:initialState.weakest.name}};
 })();
 </script>
 </body>
