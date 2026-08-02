@@ -29,20 +29,25 @@ jobs:
           const sw = fs.readFileSync('cnc/sw.js', 'utf8');
           const test = fs.readFileSync('cnc/tests/mobile-pwa-upgrade-data-smoke.cjs', 'utf8');
           const placement = fs.readFileSync('cnc/beginner-placement.html', 'utf8');
+          const camp = fs.readFileSync('cnc/training-camp.html', 'utf8');
           const swBuild = sw.match(/const BUILD = '([^']+)'/)?.[1];
           if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
-          if (info.pwaBuild !== '20260802-pwa7') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
+          if (info.pwaBuild !== '20260802-pwa8') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
           if (!test.includes(`const CURRENT_PWA_BUILD = '${info.pwaBuild}'`)) throw new Error('upgrade test current PWA build mismatch');
           for (const required of [
-            "const PREVIOUS_PWA_BUILD = '20260802-pwa6'",
+            "const PREVIOUS_PWA_BUILD = '20260802-pwa7'",
             'cnc_training_profile_v1',
             'cnc_training_practice_v1',
             'cnc_training_simulator_v1',
             'indexedDB.open',
             'other-app-cache-v1',
             'beginner-placement.html',
+            'training-camp.html',
             'beginnerPlacementColdOfflineAfterUpgrade: true',
             'beginnerPlacementCriticalSafetyGateAfterUpgrade: true',
+            'trainingCampColdOfflineAfterUpgrade: true',
+            'placementRouteHandoffColdOfflineAfterUpgrade: true',
+            'placementRouteHandoffImmediateCleanup: true',
             'ai-teacher.html',
             'ai-teacher-intake.html',
             'ai-teacher-explainability.html',
@@ -51,6 +56,8 @@ jobs:
             if (!test.includes(required)) throw new Error(`upgrade contract missing: ${required}`);
           }
           if (!placement.includes('criticalFailures') || !placement.includes("decision:'critical-safety'")) throw new Error('beginner placement critical safety gate missing');
+          if (!placement.includes('cnc_beginner_placement_route_handoff_v1') || !camp.includes('cnc_beginner_placement_route_handoff_v1')) throw new Error('placement route handoff producer or consumer missing');
+          if (!sw.includes("'./training-camp.html'")) throw new Error('training camp missing from PWA core');
           if (!sw.includes("name.startsWith('cnc-')") || !sw.includes('!name.endsWith(BUILD)')) {
             throw new Error('Service Worker old CNC cache cleanup contract missing');
           }
