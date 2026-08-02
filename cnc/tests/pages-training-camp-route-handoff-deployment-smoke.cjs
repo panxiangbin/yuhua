@@ -169,7 +169,8 @@ function expectedCore() {
 function assertServiceWorker(text, label) {
   requireTokens(text, label, [
     `const BUILD = '${expectedPwaBuild}'`,
-    "const CACHE = 'cnc-' + BUILD",
+    "const STATIC_CACHE = `cnc-static-${BUILD}`",
+    "const RUNTIME_CACHE = `cnc-runtime-${BUILD}`",
     'const REQUIRED_CORE_PATHS = [',
     "'./training-camp.html'",
     "name.startsWith('cnc-') && !name.endsWith(BUILD)"
