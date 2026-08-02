@@ -25,6 +25,18 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+      - name: Initialize diagnostics
+        run: |
+          mkdir -p cnc/test-results/ai-teacher-offline-core-pages
+          node - <<'NODE'
+          const fs = require('fs');
+          fs.writeFileSync('cnc/test-results/ai-teacher-offline-core-pages/workflow-bootstrap.json', JSON.stringify({
+            stage: 'workflow-bootstrap',
+            runId: process.env.GITHUB_RUN_ID,
+            headSha: process.env.GITHUB_SHA,
+            initializedAt: new Date().toISOString()
+          }, null, 2));
+          NODE
       - name: Validate exact deployment contract
         run: |
           node --check cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs
@@ -41,7 +53,7 @@ jobs:
           for (const token of [
             "const expectedPwaBuild = '20260802-pwa5'",
             "const expectedSiteBuild = '20260801-ai-handoff1'",
-            'attempts || 18',
+            'CNC_PAGES_VERIFY_ATTEMPTS || 18',
             "cache: 'no-store'",
             'exactBytesMatch: true',
             'exactSha256Match: true',
