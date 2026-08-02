@@ -65,7 +65,10 @@ jobs:
             'pagehide',
             'event.persisted',
             'consumed-cleared',
+            'PLACEMENT_ROUTE_CATALOG',
             'PLACEMENT_HREFS',
+            'payloadMatchesCanonicalRoute',
+            'title:canonical.title',
             '不会写入成绩、XP、成长档案或错题记录',
             'renderHandoffSteps',
             'document.createTextNode(step.title)',
@@ -77,9 +80,11 @@ jobs:
             'indexedDB.open(HANDOFF_KEY',
             'URLSearchParams',
             'location.hash=',
-            'steps.innerHTML=outcome.data.steps'
+            'steps.innerHTML=outcome.data.steps',
+            'title:data.title.trim()',
+            'route:data.route.trim()'
           ]) {
-            if (placement.includes(forbidden) || camp.includes(forbidden)) throw new Error(`handoff persistence, URL or HTML injection bypass found: ${forbidden}`);
+            if (placement.includes(forbidden) || camp.includes(forbidden)) throw new Error(`handoff persistence, URL, semantic or HTML injection bypass found: ${forbidden}`);
           }
           for (const token of [
             'bfcachePersisted: false',
@@ -93,13 +98,15 @@ jobs:
             'SecurityError'
           ]) if (!test.includes(token)) throw new Error(`browser test contract missing: ${token}`);
           for (const token of [
-            'untrustedTextRenderedLiterally: false',
+            'canonicalPayloadAccepted: false',
+            'tamperedTextRejected: false',
+            'crossRouteMismatchRejected: false',
             'noInjectedElements: false',
             'handoff-step-injected',
             'sessionStorageCleared: false',
             'noLongTermStorageLeak: false'
           ]) if (!contentSafetyTest.includes(token)) throw new Error(`content safety browser contract missing: ${token}`);
-          for (const token of ['390×844', 'SessionStorage', 'BFCache', '相同版本原厂手册', '授权人员']) {
+          for (const token of ['390×844', 'SessionStorage', 'BFCache', '分类与路线', '相同版本原厂手册', '授权人员']) {
             if (!contract.includes(token)) throw new Error(`Chinese contract missing: ${token}`);
           }
           for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)']) {
@@ -114,7 +121,7 @@ jobs:
         run: python3 -m http.server 4173 --directory . > /tmp/cnc-route-handoff-server.log 2>&1 &
       - name: Chromium 390x844 route handoff recovery and privacy
         run: node cnc/tests/mobile-beginner-placement-route-handoff-smoke.cjs
-      - name: Chromium 390x844 route handoff content safety
+      - name: Chromium 390x844 route handoff semantic integrity
         run: node cnc/tests/mobile-beginner-placement-route-handoff-content-safety-smoke.cjs
       - name: Preserve server log
         if: always()
