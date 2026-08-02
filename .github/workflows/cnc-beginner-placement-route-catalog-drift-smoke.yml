@@ -1,0 +1,84 @@
+name: CNC beginner placement route catalog drift smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/beginner-placement.html'
+      - 'cnc/training-camp.html'
+      - 'cnc/tests/beginner-placement-route-catalog-drift-smoke.cjs'
+      - 'cnc/docs/beginner-placement-route-catalog-drift-contract.md'
+      - '.github/workflows/cnc-beginner-placement-route-catalog-drift-smoke.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'cnc/beginner-placement.html'
+      - 'cnc/training-camp.html'
+      - 'cnc/tests/beginner-placement-route-catalog-drift-smoke.cjs'
+      - 'cnc/docs/beginner-placement-route-catalog-drift-contract.md'
+      - '.github/workflows/cnc-beginner-placement-route-catalog-drift-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Initialize diagnostics
+        run: |
+          mkdir -p cnc/test-results/beginner-placement-route-catalog-drift
+          cat > cnc/test-results/beginner-placement-route-catalog-drift/run-metadata.json <<JSON
+          {
+            "runId": "${{ github.run_id }}",
+            "attempt": "${{ github.run_attempt }}",
+            "event": "${{ github.event_name }}",
+            "headSha": "${{ github.sha }}"
+          }
+          JSON
+      - name: Validate test and Chinese contract
+        run: |
+          node --check cnc/tests/beginner-placement-route-catalog-drift-smoke.cjs
+          node - <<'NODE'
+          const fs = require('fs');
+          const test = fs.readFileSync('cnc/tests/beginner-placement-route-catalog-drift-smoke.cjs', 'utf8');
+          const contract = fs.readFileSync('cnc/docs/beginner-placement-route-catalog-drift-contract.md', 'utf8');
+          for (const token of [
+            'extractProducerRoutes',
+            'extractConsumerCatalog',
+            'validateIntentionalAliases',
+            'exactFieldMatch',
+            'routeTargetsExist',
+            'safeRelativeLinksOnly',
+            'handoffKeyMatch',
+            'ttlMatch'
+          ]) if (!test.includes(token)) throw new Error(`drift test contract missing: ${token}`);
+          for (const token of [
+            'critical-safety',
+            'low-score',
+            'foundation-gap',
+            'advanced-ready',
+            'SessionStorage',
+            '相同版本原厂手册',
+            '授权人员'
+          ]) if (!contract.includes(token)) throw new Error(`Chinese contract missing: ${token}`);
+          for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)']) {
+            if (test.includes(forbidden)) throw new Error(`test bypass found: ${forbidden}`);
+          }
+          NODE
+      - name: Verify producer and consumer route catalogs
+        run: node cnc/tests/beginner-placement-route-catalog-drift-smoke.cjs
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-beginner-placement-route-catalog-drift-${{ github.run_id }}
+          path: cnc/test-results/beginner-placement-route-catalog-drift/**
+          if-no-files-found: error
+          retention-days: 14
