@@ -104,13 +104,18 @@ function assertRouteHandoffStorageBoundary(text, label) {
     'HANDOFF_TTL_MS=5*60*1000',
     'sessionStorage.setItem(HANDOFF_KEY',
     'sessionStorage.removeItem(HANDOFF_KEY)',
-    '把本次路线带到训练营',
-    '不包含六道题答案'
+    '把本次路线带到训练营'
   ]);
   const setCalls = [...text.matchAll(/sessionStorage\.setItem\(([^,]+),/g)].map(match => match[1].trim());
   const removeCalls = [...text.matchAll(/sessionStorage\.removeItem\(([^)]+)\)/g)].map(match => match[1].trim());
   if (setCalls.length !== 1 || setCalls[0] !== 'HANDOFF_KEY') throw new Error(`${label}路线交接必须只写固定SessionStorage键：${JSON.stringify(setCalls)}`);
   if (removeCalls.length !== 1 || removeCalls[0] !== 'HANDOFF_KEY') throw new Error(`${label}路线交接必须只清理固定SessionStorage键：${JSON.stringify(removeCalls)}`);
+  const payloadBody = text.match(/function handoffPayload\(data\)\{([\s\S]*?)\}\nfunction storeRouteHandoff/)?.[1];
+  if (!payloadBody) throw new Error(`${label}缺少受控路线交接载荷生成函数`);
+  for (const token of ['decision:data.decision', 'title:data.title', 'route:data.route', 'href:data.href', 'steps:data.steps']) {
+    if (!payloadBody.includes(token)) throw new Error(`${label}路线交接载荷缺少受控字段：${token}`);
+  }
+  if (/\banswers\b|questions\s*:|answerScore/.test(payloadBody)) throw new Error(`${label}路线交接载荷不得包含六道题答案或评分明细`);
   for (const forbidden of [/URLSearchParams/, /location\.hash\s*=/, /history\.(?:pushState|replaceState)/]) {
     if (forbidden.test(text)) throw new Error(`${label}路线交接不得写入URL：${forbidden}`);
   }
@@ -217,6 +222,7 @@ function assertPlacementContract(text, label, requireSafetyGate, requireRouteHan
     explainableRecommendation: requireSafetyGate,
     oneTimeRouteHandoff: requireRouteHandoff,
     fixedSessionStorageKeyOnly: requireRouteHandoff,
+    noQuestionAnswersInHandoff: requireRouteHandoff,
     noLongTermStorage: true,
     noExternalNetworking: true,
     originalManualBoundary: true
@@ -288,6 +294,7 @@ async function waitForMainAndPages() {
       criticalSafetyGatePresent: true,
       explainableRecommendationPresent: true,
       fixedSessionStorageKeyOnly: localHasRouteHandoff,
+      noQuestionAnswersInHandoff: localHasRouteHandoff,
       noLongTermStorage: true,
       noExternalNetworking: true,
       originalManualBoundaryPresent: true
@@ -308,6 +315,7 @@ async function waitForMainAndPages() {
       '当前分支10/12高分不能抵消危险答案：已核验',
       '当前分支中文判断依据：已核验',
       '路线交接仅允许固定SessionStorage键：已核验',
+      '路线交接不包含六道题答案：已核验',
       '长期存储写入：0',
       '站外联网调用：0',
       '原厂手册与授权人员边界：保留'
