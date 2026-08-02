@@ -103,33 +103,43 @@ function forbidTokens(text, label, patterns) {
   }
 }
 
-function expectedCorePaths(build) {
-  const commonBefore = [
-    './index.html',
-    './offline.html',
-    './pwa-status.html',
-    './pwa-self-test.html',
-    './pages-status.html'
-  ];
-  const aiCore = [
-    './ai-teacher.html',
-    './ai-teacher-intake.html',
-    './ai-teacher-explainability.html',
-    './build-info.json'
-  ];
-  if (build === branchTargetPwaBuild) return [...commonBefore, './beginner-placement.html', ...aiCore];
-  if (build === previousPublicPwaBuild) return [...commonBefore, ...aiCore];
-  throw new Error(`出现未受控PWA构建：${build}`);
-}
-
 function assertAllowedBuild(build, label) {
   if (![previousPublicPwaBuild, branchTargetPwaBuild].includes(build)) {
     throw new Error(`${label}出现未受控PWA构建：${build}`);
   }
 }
 
+function serviceWorkerCorePaths(build) {
+  assertAllowedBuild(build, 'Service Worker');
+  const prefix = ['./index.html', './offline.html', './pwa-status.html', './pwa-self-test.html', './pages-status.html'];
+  const suffix = ['./ai-teacher.html', './ai-teacher-intake.html', './ai-teacher-explainability.html', './build-info.json'];
+  return build === branchTargetPwaBuild ? [...prefix, './beginner-placement.html', ...suffix] : [...prefix, ...suffix];
+}
+
+function selfTestCorePaths(build) {
+  assertAllowedBuild(build, 'PWA自检');
+  const prefix = build === branchTargetPwaBuild
+    ? ['./index.html', './offline.html', './pwa-status.html', './pwa-self-test.html', './pages-status.html']
+    : ['./index.html', './offline.html', './pwa-status.html', './pages-status.html', './pwa-self-test.html'];
+  const suffix = ['./ai-teacher.html', './ai-teacher-intake.html', './ai-teacher-explainability.html', './build-info.json'];
+  return build === branchTargetPwaBuild ? [...prefix, './beginner-placement.html', ...suffix] : [...prefix, ...suffix];
+}
+
+function parseQuotedArray(text, pattern, label) {
+  const block = text.match(pattern)?.[1] || '';
+  const values = [...block.matchAll(/'([^']+)'/g)].map(match => match[1]);
+  if (!values.length) throw new Error(`${label}未读取到资源清单`);
+  if (new Set(values).size !== values.length) throw new Error(`${label}资源清单存在重复项`);
+  return values;
+}
+
+function assertExactArray(actual, expected, label) {
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+    throw new Error(`${label}资源清单不一致：${JSON.stringify(actual)}，期望${JSON.stringify(expected)}`);
+  }
+}
+
 function assertServiceWorker(text, label, expectedBuild) {
-  assertAllowedBuild(expectedBuild, label);
   requireTokens(text, label, [
     `const BUILD = '${expectedBuild}'`,
     "const STATIC_CACHE = `cnc-static-${BUILD}`",
@@ -145,24 +155,20 @@ function assertServiceWorker(text, label, expectedBuild) {
     "event.data.type === 'ENSURE_CACHES'"
   ]);
   if (expectedBuild === branchTargetPwaBuild) requireTokens(text, label, ["'./beginner-placement.html'"]);
-  forbidTokens(text, label, [
-    /test\.skip\(/,
-    /describe\.skip\(/,
-    /it\.skip\(/,
-    /allowOperationalUse\s*:\s*true/
-  ]);
-  const requiredBlock = text.match(/const REQUIRED_CORE_PATHS = \[([\s\S]*?)\];/)?.[1] || '';
-  const corePaths = [...requiredBlock.matchAll(/'([^']+)'/g)].map(match => match[1]);
-  const expected = expectedCorePaths(expectedBuild);
-  if (JSON.stringify(corePaths) !== JSON.stringify(expected)) {
-    throw new Error(`${label}核心缓存清单不一致：${JSON.stringify(corePaths)}`);
-  }
-  return { build: expectedBuild, corePaths };
+  forbidTokens(text, label, [/test\.skip\(/, /describe\.skip\(/, /it\.skip\(/, /allowOperationalUse\s*:\s*true/]);
+  const actual = parseQuotedArray(text, /const REQUIRED_CORE_PATHS = \[([\s\S]*?)\];/, `${label}核心缓存`);
+  const expected = serviceWorkerCorePaths(expectedBuild);
+  assertExactArray(actual, expected, `${label}核心缓存`);
+  return { build: expectedBuild, corePaths: actual };
 }
 
 function parseBuildInfo(text, label) {
   let data;
-  try { data = JSON.parse(text.replace(/^\uFEFF/, '')); } catch (error) { throw new Error(`${label}不是合法JSON：${error.message}`); }
+  try {
+    data = JSON.parse(text.replace(/^\uFEFF/, ''));
+  } catch (error) {
+    throw new Error(`${label}不是合法JSON：${error.message}`);
+  }
   if (data.app !== 'cnc-training-platform') throw new Error(`${label}应用标识错误：${data.app}`);
   if (data.build !== expectedSiteBuild) throw new Error(`${label}站点构建错误：${data.build}`);
   assertAllowedBuild(data.pwaBuild, label);
@@ -180,7 +186,12 @@ function assertBuildInfo(text, label, expectedBuild) {
 
 function visibleBody(text) {
   const body = text.match(/<body\b[^>]*>([\s\S]*?)<\/body>/i)?.[1] || '';
-  return body.replace(/<script\b[\s\S]*?<\/script>/gi, ' ').replace(/<style\b[\s\S]*?<\/style>/gi, ' ').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  return body
+    .replace(/<script\b[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style\b[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 function assertStatusPage(text, label, expectedBuild) {
@@ -196,11 +207,7 @@ function assertStatusPage(text, label, expectedBuild) {
     requireTokens(text, label, ['AI CNC老师、现场问诊单和“为什么被阻断”判断说明页', 'AI老师判断说明页可冷离线打开']);
   }
   const visible = visibleBody(text);
-  requireTokens(visible, label, [
-    '离线、缓存与更新状态',
-    '离线内容可能不是最新版本',
-    '原厂手册、企业制度和现场条件'
-  ]);
+  requireTokens(visible, label, ['离线、缓存与更新状态', '离线内容可能不是最新版本', '原厂手册、企业制度和现场条件']);
   if (expectedBuild === branchTargetPwaBuild) requireTokens(visible, label, ['测评只用于推荐学习路线']);
   return { build: expectedBuild, visibleSafetyBoundary: true };
 }
@@ -220,17 +227,13 @@ function assertSelfTest(text, label, expectedBuild) {
   } else {
     requireTokens(text, label, ['含AI老师、问诊单与判断说明页']);
   }
-  const requiredBlock = text.match(/const REQUIRED=\[([^\]]+)\]/)?.[1] || '';
-  const required = [...requiredBlock.matchAll(/'([^']+)'/g)].map(match => match[1]);
-  const expected = expectedCorePaths(expectedBuild);
-  if (JSON.stringify(required) !== JSON.stringify(expected)) {
-    throw new Error(`${label}自检核心资源清单不一致：${JSON.stringify(required)}`);
-  }
-  if (new Set(required).size !== required.length) throw new Error(`${label}核心资源存在重复项`);
+  const actual = parseQuotedArray(text, /const REQUIRED=\[([^\]]+)\]/, `${label}自检核心资源`);
+  const expected = selfTestCorePaths(expectedBuild);
+  assertExactArray(actual, expected, `${label}自检核心资源`);
   const visible = visibleBody(text);
   requireTokens(visible, label, ['只读检查', '不修改学习记录', '不清空缓存', '不发放XP', '高风险操作须现场师傅或授权人员指导']);
   if (expectedBuild === branchTargetPwaBuild) requireTokens(visible, label, ['起点测评只推荐学习路线']);
-  return { build: expectedBuild, requiredCount: required.length, readOnly: true };
+  return { build: expectedBuild, requiredCount: actual.length, readOnly: true };
 }
 
 function assertContract(kind, text, label, expectedBuild) {
@@ -244,7 +247,7 @@ function assertContract(kind, text, label, expectedBuild) {
 async function waitForMainPagesMatch() {
   let latest = null;
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
-    const attemptRecord = { attempt, at: new Date().toISOString(), resources: {} };
+    const record = { attempt, at: new Date().toISOString(), resources: {} };
     try {
       let allMatched = true;
       const current = {};
@@ -253,15 +256,15 @@ async function waitForMainPagesMatch() {
         const pages = await fetchBytes(`${publicRoot}/${resource.path}`, `Pages ${resource.path}`);
         const matched = exactMatch(main, pages);
         current[resource.path] = { main, pages, matched };
-        attemptRecord.resources[resource.path] = { matched, main: summarize(main), pages: summarize(pages) };
+        record.resources[resource.path] = { matched, main: summarize(main), pages: summarize(pages) };
         if (!matched) allMatched = false;
       }
-      diagnostics.attempts.push(attemptRecord);
+      diagnostics.attempts.push(record);
       latest = current;
       if (allMatched) return current;
     } catch (error) {
-      attemptRecord.error = error.message;
-      diagnostics.attempts.push(attemptRecord);
+      record.error = error.message;
+      diagnostics.attempts.push(record);
     }
     if (attempt < attempts) await new Promise(resolve => setTimeout(resolve, intervalMs));
   }
@@ -280,14 +283,10 @@ async function waitForMainPagesMatch() {
     const deployed = await waitForMainPagesMatch();
     const localBuffers = Object.fromEntries(resources.map(resource => [resource.path, fs.readFileSync(path.join(root, resource.path))]));
     const localBuildData = parseBuildInfo(localBuffers['cnc/build-info.json'].toString('utf8'), '当前分支 cnc/build-info.json');
-    if (localBuildData.pwaBuild !== branchTargetPwaBuild) {
-      throw new Error(`当前分支目标PWA构建错误：${localBuildData.pwaBuild}`);
-    }
+    if (localBuildData.pwaBuild !== branchTargetPwaBuild) throw new Error(`当前分支目标PWA构建错误：${localBuildData.pwaBuild}`);
 
-    const mainBuildText = deployed['cnc/build-info.json'].main.buffer.toString('utf8').replace(/^\uFEFF/, '');
-    const pagesBuildText = deployed['cnc/build-info.json'].pages.buffer.toString('utf8').replace(/^\uFEFF/, '');
-    const mainBuildData = parseBuildInfo(mainBuildText, 'main cnc/build-info.json');
-    const pagesBuildData = parseBuildInfo(pagesBuildText, 'Pages cnc/build-info.json');
+    const mainBuildData = parseBuildInfo(deployed['cnc/build-info.json'].main.buffer.toString('utf8'), 'main cnc/build-info.json');
+    const pagesBuildData = parseBuildInfo(deployed['cnc/build-info.json'].pages.buffer.toString('utf8'), 'Pages cnc/build-info.json');
     if (mainBuildData.pwaBuild !== pagesBuildData.pwaBuild) throw new Error('main与Pages PWA构建标记不一致');
     const publicPwaBuild = mainBuildData.pwaBuild;
 
@@ -295,14 +294,17 @@ async function waitForMainPagesMatch() {
     let localMatchesMain = true;
     for (const resource of resources) {
       const localBuffer = localBuffers[resource.path];
-      const local = { buffer: localBuffer, bytes: localBuffer.length, sha256: sha256(localBuffer), status: 200, finalUrl: `file://${path.join(root, resource.path)}` };
+      const local = {
+        buffer: localBuffer,
+        bytes: localBuffer.length,
+        sha256: sha256(localBuffer),
+        status: 200,
+        finalUrl: `file://${path.join(root, resource.path)}`
+      };
       const pair = deployed[resource.path];
-      const localText = localBuffer.toString('utf8').replace(/^\uFEFF/, '');
-      const mainText = pair.main.buffer.toString('utf8').replace(/^\uFEFF/, '');
-      const pagesText = pair.pages.buffer.toString('utf8').replace(/^\uFEFF/, '');
-      const localContract = assertContract(resource.kind, localText, `当前分支 ${resource.path}`, branchTargetPwaBuild);
-      const mainContract = assertContract(resource.kind, mainText, `main ${resource.path}`, publicPwaBuild);
-      const pagesContract = assertContract(resource.kind, pagesText, `Pages ${resource.path}`, publicPwaBuild);
+      const localContract = assertContract(resource.kind, localBuffer.toString('utf8'), `当前分支 ${resource.path}`, branchTargetPwaBuild);
+      const mainContract = assertContract(resource.kind, pair.main.buffer.toString('utf8'), `main ${resource.path}`, publicPwaBuild);
+      const pagesContract = assertContract(resource.kind, pair.pages.buffer.toString('utf8'), `Pages ${resource.path}`, publicPwaBuild);
       const localMatch = exactMatch(local, pair.main);
       if (!localMatch) localMatchesMain = false;
       diagnostics.resources[resource.path] = {
@@ -320,12 +322,8 @@ async function waitForMainPagesMatch() {
     }
 
     const branchDeploymentPending = !localMatchesMain;
-    if (eventName !== 'pull_request' && branchDeploymentPending) {
-      throw new Error('main正式验收不允许当前分支与main/Pages仍不一致');
-    }
-    if (!branchDeploymentPending && publicPwaBuild !== branchTargetPwaBuild) {
-      throw new Error('分支与main一致时公网必须已经是目标PWA构建');
-    }
+    if (eventName !== 'pull_request' && branchDeploymentPending) throw new Error('main正式验收不允许当前分支与main/Pages仍不一致');
+    if (!branchDeploymentPending && publicPwaBuild !== branchTargetPwaBuild) throw new Error('分支与main一致时公网必须已经是目标PWA构建');
 
     diagnostics.verified = {
       publicReachable: true,
@@ -357,7 +355,7 @@ async function waitForMainPagesMatch() {
       `main与Pages公网PWA构建：${publicPwaBuild}`,
       `分支待合并或待部署：${branchDeploymentPending ? '是' : '否'}`,
       '当前分支起点测评、AI老师、现场问诊单、判断说明页核心预缓存：完整',
-      '当前分支PWA自检核心资源：10项',
+      '当前分支PWA自检核心资源：10项且无重复',
       `Pages公网起点测评离线核心：${publicPwaBuild === branchTargetPwaBuild ? '已部署' : '尚未部署，保持上一正式版本'}`,
       '测评推荐、固定值、原厂手册与授权人员边界：可见',
       ...findings
