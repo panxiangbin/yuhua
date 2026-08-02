@@ -28,10 +28,12 @@ jobs:
           const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
           const html = fs.readFileSync('cnc/pwa-self-test.html', 'utf8');
           const sw = fs.readFileSync('cnc/sw.js', 'utf8');
+          const placement = fs.readFileSync('cnc/beginner-placement.html', 'utf8');
           const swBuild = sw.match(/const BUILD = '([^']+)'/)?.[1];
           if (swBuild !== info.pwaBuild || !html.includes(`const EXPECTED='${info.pwaBuild}'`)) {
             throw new Error('PWA self-test/build-info/Service Worker version mismatch');
           }
+          if (info.pwaBuild !== '20260802-pwa7') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
           for (const token of [
             'Service Worker已注册',
             '当前页面已被接管',
@@ -44,10 +46,12 @@ jobs:
             './ai-teacher.html',
             './ai-teacher-intake.html',
             './ai-teacher-explainability.html',
-            '起点测评'
+            '关键安全门禁'
           ]) {
             if (!html.includes(token)) throw new Error(`self-test contract missing: ${token}`);
           }
+          if (!placement.includes('criticalFailures') || !placement.includes("decision:'critical-safety'")) throw new Error('beginner placement critical safety gate missing');
+          if (!String(info.contentStage || '').includes('起点测评关键安全门禁')) throw new Error('build marker missing critical safety gate');
           NODE
       - name: Install Playwright runtime
         run: npm install --no-save playwright@1.52.0
