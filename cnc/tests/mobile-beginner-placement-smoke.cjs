@@ -42,6 +42,7 @@ async function verifyTouchTargets(page) {
   const browser = await chromium.launch({ headless: true });
   const report = { checkedAt: new Date().toISOString(), viewport: '390x844', scenarios: {} };
   try {
+    assert.ok(fs.existsSync('cnc/course-g00-g01-basics.html'), '进阶路线目标课程文件必须真实存在');
     const page = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
     const errors = [];
     const externalRequests = [];
@@ -122,7 +123,7 @@ async function verifyTouchTargets(page) {
     assert.match(await page.locator('#result-title').textContent(), /程序验证与首件检查/);
     assert.match(await page.locator('#result-diagnostics').textContent(), /关键安全项全部通过/);
     assert.match(await page.locator('#result-diagnostics').textContent(), /不是现场上机许可/);
-    assert.match(await page.locator('#result-link').getAttribute('href'), /course-g00-g01\.html/);
+    assert.match(await page.locator('#result-link').getAttribute('href'), /course-g00-g01-basics\.html/);
     await page.screenshot({ path: `${OUT}/beginner-placement-high-390x844.png`, fullPage: true });
 
     const storage = await page.evaluate(() => ({ local: Object.keys(localStorage), session: Object.keys(sessionStorage) }));
@@ -149,6 +150,7 @@ async function verifyTouchTargets(page) {
       criticalSafetyGate: true,
       foundationGapGate: true,
       highScoreRoute: true,
+      advancedRouteTargetExists: true,
       explainableDecisionReason: true,
       restartFocus: true,
       reducedMotion: true,
@@ -169,6 +171,7 @@ async function verifyTouchTargets(page) {
       '高总分不能抵消危险答案：通过',
       '坐标与刀补基础缺口分流：通过',
       '低分与高分学习入口：通过',
+      '进阶路线目标课程文件：真实存在',
       '推荐理由可见且可读：通过',
       '重新测评焦点恢复：通过',
       '减少动态效果：通过',
