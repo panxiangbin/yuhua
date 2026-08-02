@@ -11,7 +11,8 @@ const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubuserconten
 const eventName = String(process.env.GITHUB_EVENT_NAME || 'local');
 const attempts = Number(process.env.CNC_PAGES_VERIFY_ATTEMPTS || 18);
 const intervalMs = Number(process.env.CNC_PAGES_VERIFY_INTERVAL_MS || 10000);
-const expectedExplainabilityVersion = '20260802-v1';
+const expectedLocalExplainabilityVersion = '20260802-v2';
+const previousExplainabilityVersion = '20260802-v1';
 const expectedClassificationVersion = '20260802-v2';
 
 if (!Number.isInteger(attempts) || attempts < 1) throw new Error('CNC_PAGES_VERIFY_ATTEMPTS 必须是大于 0 的整数');
@@ -22,7 +23,8 @@ const diagnostics = {
   eventName,
   publicRoot,
   mainRoot,
-  expectedExplainabilityVersion,
+  expectedLocalExplainabilityVersion,
+  previousExplainabilityVersion,
   expectedClassificationVersion,
   attempts: []
 };
@@ -83,10 +85,15 @@ function bodyText(text) {
   return body.replace(/<script\b[\s\S]*?<\/script>/gi, ' ').replace(/<style\b[\s\S]*?<\/style>/gi, ' ').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
-function assertExplainabilityContract(text, label) {
+function readExplainabilityVersion(text) {
+  return text.match(/const EXPLAINABILITY_VERSION = '([^']+)'/)?.[1] || '';
+}
+
+function assertExplainabilityContract(text, label, options = {}) {
+  const expectedVersion = options.expectedVersion || '';
+  const requireHandoff = options.requireHandoff === true;
   const required = [
     '<title>AI老师判断说明｜数控小潘</title>',
-    "const EXPLAINABILITY_VERSION = '20260802-v1'",
     "const EXPECTED_CLASSIFICATION_VERSION = '20260802-v2'",
     'CNC_AI_TEACHER_EXPLAINABILITY',
     'teacherApi.classifyQuestion',
@@ -102,6 +109,18 @@ function assertExplainabilityContract(text, label) {
     'localOnly:true',
     'externalModel:false'
   ];
+  if (requireHandoff) {
+    required.push(
+      "const HANDOFF_KEY = 'cnc_ai_teacher_explainability_handoff_v1'",
+      'const HANDOFF_SCHEMA_VERSION = 1',
+      'const HANDOFF_MAX_AGE_MS = 5 * 60 * 1000',
+      'sessionStorage.getItem(HANDOFF_KEY)',
+      'sessionStorage.removeItem(HANDOFF_KEY)',
+      'const initialHandoff=consumeHandoff()',
+      'id="handoff-note" role="status" hidden',
+      'document.documentElement.dataset.handoffState=initialHandoff.state'
+    );
+  }
   for (const token of required) {
     if (!text.includes(token)) throw new Error(`${label}缺少判断说明部署契约：${token}`);
   }
@@ -123,17 +142,19 @@ function assertExplainabilityContract(text, label) {
     /WebSocket/,
     /EventSource/,
     /allowOperationalUse\s*:\s*true/,
+    /localStorage\.(?:setItem|removeItem)\(HANDOFF_KEY/,
     /test\.skip\(/,
     /describe\.skip\(/,
     /it\.skip\(/
   ]) {
-    if (forbidden.test(text)) throw new Error(`${label}出现不允许的联网、直接上机或门禁绕过声明：${forbidden}`);
+    if (forbidden.test(text)) throw new Error(`${label}出现不允许的联网、长期写入、直接上机或门禁绕过声明：${forbidden}`);
   }
 
-  const explainabilityVersion = text.match(/const EXPLAINABILITY_VERSION = '([^']+)'/)?.[1];
+  const explainabilityVersion = readExplainabilityVersion(text);
   const classificationVersion = text.match(/const EXPECTED_CLASSIFICATION_VERSION = '([^']+)'/)?.[1];
-  if (explainabilityVersion !== expectedExplainabilityVersion) {
-    throw new Error(`${label}判断说明版本不一致：${explainabilityVersion || 'missing'} / ${expectedExplainabilityVersion}`);
+  if (!explainabilityVersion) throw new Error(`${label}缺少判断说明版本`);
+  if (expectedVersion && explainabilityVersion !== expectedVersion) {
+    throw new Error(`${label}判断说明版本不一致：${explainabilityVersion} / ${expectedVersion}`);
   }
   if (classificationVersion !== expectedClassificationVersion) {
     throw new Error(`${label}分类版本不一致：${classificationVersion || 'missing'} / ${expectedClassificationVersion}`);
@@ -146,7 +167,8 @@ function assertExplainabilityContract(text, label) {
     visibleFixedValueBoundary: true,
     originalManualBoundary: true,
     localOnly: true,
-    externalModel: false
+    externalModel: false,
+    handoffConsumer: requireHandoff
   };
 }
 
@@ -191,11 +213,36 @@ async function waitForDeployment() {
       sha256: sha256(localBuffer),
       contentType: 'text/html'
     };
-    const localContract = assertExplainabilityContract(local.buffer.toString('utf8').replace(/^\uFEFF/, ''), '当前分支');
+    const localText = local.buffer.toString('utf8').replace(/^\uFEFF/, '');
+    const localContract = assertExplainabilityContract(localText, '当前分支', {
+      expectedVersion: expectedLocalExplainabilityVersion,
+      requireHandoff: true
+    });
+
     const deployed = await waitForDeployment();
-    const mainContract = assertExplainabilityContract(deployed.main.buffer.toString('utf8').replace(/^\uFEFF/, ''), 'main');
-    const pagesContract = assertExplainabilityContract(deployed.pages.buffer.toString('utf8').replace(/^\uFEFF/, ''), 'Pages公网');
+    const mainText = deployed.main.buffer.toString('utf8').replace(/^\uFEFF/, '');
+    const pagesText = deployed.pages.buffer.toString('utf8').replace(/^\uFEFF/, '');
+    const deployedVersion = readExplainabilityVersion(mainText);
+    const deployedVersionSupported = deployedVersion === previousExplainabilityVersion || deployedVersion === expectedLocalExplainabilityVersion;
+    if (!deployedVersionSupported) throw new Error(`main 出现未受控判断说明版本：${deployedVersion || 'missing'}`);
+    const deployedRequiresHandoff = deployedVersion === expectedLocalExplainabilityVersion;
+    const mainContract = assertExplainabilityContract(mainText, 'main', {
+      expectedVersion: deployedVersion,
+      requireHandoff: deployedRequiresHandoff
+    });
+    const pagesContract = assertExplainabilityContract(pagesText, 'Pages公网', {
+      expectedVersion: deployedVersion,
+      requireHandoff: deployedRequiresHandoff
+    });
     const localMatchesMain = exactMatch(local, deployed.main);
+    const branchDeploymentPending = !localMatchesMain;
+
+    if (eventName !== 'pull_request' && branchDeploymentPending) {
+      throw new Error(`非 PR 验收不允许当前分支与 main 不一致：${eventName}`);
+    }
+    if (localMatchesMain && deployedVersion !== expectedLocalExplainabilityVersion) {
+      throw new Error(`当前分支已与 main 一致，但部署版本不是目标版本：${deployedVersion}`);
+    }
 
     diagnostics.local = { resource: summarize(local), contract: localContract };
     diagnostics.main = { resource: summarize(deployed.main), contract: mainContract };
@@ -205,30 +252,37 @@ async function waitForDeployment() {
       exactBytesMatch: true,
       exactSha256Match: true,
       localMatchesMain,
-      branchDeploymentPending: !localMatchesMain,
-      explainabilityVersionMatch: true,
+      branchDeploymentPending,
+      localExplainabilityVersionMatch: true,
+      deployedExplainabilityVersion: deployedVersion,
       classificationVersionMatch: true,
       fourRiskLabelsPresent: true,
       visibleFixedValueBoundaryPresent: true,
       originalManualBoundaryPresent: true,
       sameOriginTeacherReusePresent: true,
-      noExternalNetworking: true
+      handoffConsumerInBranch: true,
+      handoffConsumerPublic: pagesContract.handoffConsumer,
+      noExternalNetworking: true,
+      noLongTermHandoffStorage: true
     };
 
     fs.writeFileSync(reportPath, JSON.stringify(diagnostics, null, 2));
     fs.writeFileSync(findingsPath, [
       'AI老师判断说明页公网可达：是',
       'main 与 Pages 逐字节一致：是',
-      `当前分支与 main 一致：${localMatchesMain ? '是' : '否（仅测试或后续分支改动）'}`,
-      `判断说明版本：${pagesContract.explainabilityVersion}`,
+      `当前分支与 main 一致：${localMatchesMain ? '是' : '否（生产页面分支待合并）'}`,
+      `当前分支判断说明版本：${localContract.explainabilityVersion}`,
+      `公网判断说明版本：${pagesContract.explainabilityVersion}`,
       `分类版本：${pagesContract.classificationVersion}`,
+      `一次性交接消费端已在公网：${pagesContract.handoffConsumer ? '是' : '否（分支待合并）'}`,
       '四类风险标签：完整',
       '可见固定值边界：通过',
       '原厂手册与逐条复核边界：通过',
       '同源正式分类器复用：通过',
-      '站外联网调用：0'
+      '站外联网调用：0',
+      '长期交接存储写入：0'
     ].join('\n') + '\n');
-    console.log(`CNC AI teacher explainability Pages verified: ${pagesContract.explainabilityVersion} / ${pagesContract.classificationVersion}`);
+    console.log(`CNC AI teacher explainability Pages verified: branch ${localContract.explainabilityVersion}, public ${pagesContract.explainabilityVersion}, pending=${branchDeploymentPending}`);
   } catch (error) {
     diagnostics.error = String(error && error.stack || error);
     fs.writeFileSync(reportPath, JSON.stringify(diagnostics, null, 2));
