@@ -7,8 +7,13 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const PWA_BUILD = '20260802-pwa5';
-const AI_CORE_PATHS = ['./ai-teacher.html', './ai-teacher-intake.html', './ai-teacher-explainability.html'];
+const PWA_BUILD = '20260802-pwa6';
+const CORE_OFFLINE_PATHS = [
+  './beginner-placement.html',
+  './ai-teacher.html',
+  './ai-teacher-intake.html',
+  './ai-teacher-explainability.html'
+];
 fs.mkdirSync(out, { recursive: true });
 
 const types = {
@@ -118,19 +123,29 @@ async function captureDiagnostics(page, context, stage, errors) {
     if (!cachesBefore.includes(`cnc-static-${PWA_BUILD}`)) throw new Error(`静态缓存版本缺失: ${JSON.stringify(cachesBefore)}`);
     if (!cachesBefore.includes(`cnc-runtime-${PWA_BUILD}`)) throw new Error(`运行时缓存版本缺失: ${JSON.stringify(cachesBefore)}`);
 
-    stage = 'ai-core-precache';
-    const missingAiCore = await page.evaluate(async ({ build, paths }) => {
+    stage = 'core-precache';
+    const missingCore = await page.evaluate(async ({ build, paths }) => {
       const cache = await caches.open(`cnc-static-${build}`);
       const missing = [];
       for (const item of paths) {
         if (!await cache.match(new URL(item, location.href))) missing.push(item);
       }
       return missing;
-    }, { build: PWA_BUILD, paths: AI_CORE_PATHS });
-    if (missingAiCore.length) throw new Error(`AI老师核心预缓存缺失: ${missingAiCore.join('、')}`);
+    }, { build: PWA_BUILD, paths: CORE_OFFLINE_PATHS });
+    if (missingCore.length) throw new Error(`核心预缓存缺失: ${missingCore.join('、')}`);
+
+    stage = 'cold-offline-beginner-placement';
+    await context.setOffline(true);
+    await page.goto('http://127.0.0.1:4173/cnc/beginner-placement.html', { waitUntil: 'domcontentloaded' });
+    if (!(await page.title()).includes('CNC新手起点测评')) throw new Error('起点测评首次安装后离线打开失败');
+    const placementBody = await page.locator('body').innerText();
+    if (!placementBody.includes('测评只做推荐') || !placementBody.includes('相同版本原厂手册') || !placementBody.includes('授权人员确认')) {
+      throw new Error('起点测评离线页丢失推荐或原厂手册安全边界');
+    }
+    if (await page.locator('#progress[role="progressbar"]').count() !== 1) throw new Error('起点测评离线页丢失进度条语义');
+    if (await page.locator('#options[role="radiogroup"]').count() !== 1) throw new Error('起点测评离线页丢失单选组语义');
 
     stage = 'cold-offline-ai-teacher';
-    await context.setOffline(true);
     await page.goto('http://127.0.0.1:4173/cnc/ai-teacher.html', { waitUntil: 'domcontentloaded' });
     if (!(await page.title()).includes('AI CNC老师')) throw new Error('AI CNC老师首次安装后离线打开失败');
     const teacherBody = await page.locator('body').innerText();
@@ -190,10 +205,11 @@ async function captureDiagnostics(page, context, stage, errors) {
       caches: cachesBefore,
       offlineFallback: true,
       runtimeWarmup: true,
+      beginnerPlacementColdOffline: true,
       aiTeacherColdOffline: true,
       intakeColdOffline: true,
       explainabilityColdOffline: true,
-      aiCorePaths: AI_CORE_PATHS,
+      coreOfflinePaths: CORE_OFFLINE_PATHS,
       touchTargets: true
     }, null, 2));
     console.log('CNC PWA offline cache smoke passed');

@@ -8,8 +8,8 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const CURRENT_PWA_BUILD = '20260802-pwa5';
-const PREVIOUS_PWA_BUILD = '20260801-pwa4';
+const CURRENT_PWA_BUILD = '20260802-pwa6';
+const PREVIOUS_PWA_BUILD = '20260802-pwa5';
 const CURRENT_STATIC_CACHE = `cnc-static-${CURRENT_PWA_BUILD}`;
 const CURRENT_RUNTIME_CACHE = `cnc-runtime-${CURRENT_PWA_BUILD}`;
 const PREVIOUS_STATIC_CACHE = `cnc-static-${PREVIOUS_PWA_BUILD}`;
@@ -176,7 +176,7 @@ async function captureDiagnostics(page, context, stage, errors) {
         request.onsuccess = () => {
           const db = request.result;
           const transaction = db.transaction('records', 'readwrite');
-          transaction.objectStore('records').put({ xp: 680, streak: 12, source: 'pwa4' }, 'growth');
+          transaction.objectStore('records').put({ xp: 680, streak: 12, source: 'pwa5' }, 'growth');
           transaction.onerror = () => reject(transaction.error);
           transaction.oncomplete = () => {
             db.close();
@@ -268,6 +268,15 @@ async function captureDiagnostics(page, context, stage, errors) {
 
     stage = 'cold-offline-after-upgrade';
     await context.setOffline(true);
+    await page.goto('http://127.0.0.1:4173/cnc/beginner-placement.html', { waitUntil: 'domcontentloaded' });
+    assert((await page.title()).includes('CNC新手起点测评'), '升级后起点测评冷离线打开失败');
+    const placementBody = await page.locator('body').innerText();
+    assert(placementBody.includes('测评只做推荐'), '升级后起点测评丢失推荐边界');
+    assert(placementBody.includes('相同版本原厂手册'), '升级后起点测评丢失原厂手册边界');
+    assert(placementBody.includes('授权人员确认'), '升级后起点测评丢失授权人员边界');
+    assert.equal(await page.locator('#progress[role="progressbar"]').count(), 1, '升级后起点测评丢失进度条语义');
+    assert.equal(await page.locator('#options[role="radiogroup"]').count(), 1, '升级后起点测评丢失单选组语义');
+
     await page.goto('http://127.0.0.1:4173/cnc/ai-teacher.html', { waitUntil: 'domcontentloaded' });
     assert((await page.title()).includes('AI CNC老师'), '升级后AI CNC老师冷离线打开失败');
     await page.goto('http://127.0.0.1:4173/cnc/ai-teacher-intake.html', { waitUntil: 'domcontentloaded' });
@@ -295,6 +304,7 @@ async function captureDiagnostics(page, context, stage, errors) {
       localStoragePreserved: true,
       sessionStoragePreserved: true,
       indexedDbPreserved: true,
+      beginnerPlacementColdOfflineAfterUpgrade: true,
       aiTeacherColdOfflineAfterUpgrade: true,
       intakeColdOfflineAfterUpgrade: true,
       explainabilityColdOfflineAfterUpgrade: true,
