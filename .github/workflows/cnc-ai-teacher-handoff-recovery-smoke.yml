@@ -1,0 +1,84 @@
+name: CNC AI teacher handoff recovery smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/ai-teacher.html'
+      - 'cnc/ai-teacher-explainability.html'
+      - 'cnc/tests/mobile-ai-teacher-handoff-recovery-smoke.cjs'
+      - 'cnc/tests/mobile-ai-teacher-explainability-smoke.cjs'
+      - 'cnc/tests/mobile-ai-teacher-smoke.cjs'
+      - 'cnc/tests/ai-teacher-classification-smoke.cjs'
+      - 'cnc/docs/ai-teacher-handoff-recovery-contract.md'
+      - '.github/workflows/cnc-ai-teacher-handoff-recovery-smoke.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'cnc/ai-teacher.html'
+      - 'cnc/ai-teacher-explainability.html'
+      - 'cnc/tests/mobile-ai-teacher-handoff-recovery-smoke.cjs'
+      - 'cnc/docs/ai-teacher-handoff-recovery-contract.md'
+      - '.github/workflows/cnc-ai-teacher-handoff-recovery-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cnc-ai-teacher-handoff-recovery-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  handoff-recovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Validate recovery test and anti-bypass contract
+        run: |
+          set -euxo pipefail
+          test -f cnc/tests/mobile-ai-teacher-handoff-recovery-smoke.cjs
+          test -f cnc/docs/ai-teacher-handoff-recovery-contract.md
+          node --check cnc/tests/mobile-ai-teacher-handoff-recovery-smoke.cjs
+          grep -q "pageshow.persisted === true" cnc/docs/ai-teacher-handoff-recovery-contract.md
+          grep -q "storage-unavailable" cnc/docs/ai-teacher-handoff-recovery-contract.md
+          grep -q "SessionStorage" cnc/docs/ai-teacher-handoff-recovery-contract.md
+          grep -q "独立标签页" cnc/docs/ai-teacher-handoff-recovery-contract.md
+          grep -q "相同版本原厂手册" cnc/docs/ai-teacher-handoff-recovery-contract.md
+          ! grep -Eq "test\.skip\(|describe\.skip\(|it\.skip\(|process\.exit\(0\)" cnc/tests/mobile-ai-teacher-handoff-recovery-smoke.cjs
+          ! grep -Eqi "allowOperationalUse: true|跳过原厂手册|关闭联锁" cnc/docs/ai-teacher-handoff-recovery-contract.md
+      - name: Check existing AI teacher test syntax
+        run: |
+          node --check cnc/tests/mobile-ai-teacher-smoke.cjs
+          node --check cnc/tests/ai-teacher-classification-smoke.cjs
+          node --check cnc/tests/mobile-ai-teacher-explainability-smoke.cjs
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save playwright@1.54.1
+          npx playwright install --with-deps chromium
+      - name: Start static server
+        run: python3 -m http.server 4173 --directory . > /tmp/cnc-ai-teacher-handoff-recovery-server.log 2>&1 &
+      - name: Regress AI teacher mobile trust boundary
+        run: node cnc/tests/mobile-ai-teacher-smoke.cjs
+      - name: Regress classification samples
+        run: node cnc/tests/ai-teacher-classification-smoke.cjs
+      - name: Regress one-time handoff consumer
+        run: node cnc/tests/mobile-ai-teacher-explainability-smoke.cjs
+      - name: Validate BFCache, storage failure and tab isolation on 390x844 mobile
+        run: node cnc/tests/mobile-ai-teacher-handoff-recovery-smoke.cjs
+      - name: Upload handoff recovery diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-ai-teacher-handoff-recovery-${{ github.run_id }}
+          path: |
+            artifacts/ai-teacher/
+            artifacts/ai-teacher-explainability/
+            artifacts/ai-teacher-handoff-recovery/
+            /tmp/cnc-ai-teacher-handoff-recovery-server.log
+          if-no-files-found: warn
+          retention-days: 14
