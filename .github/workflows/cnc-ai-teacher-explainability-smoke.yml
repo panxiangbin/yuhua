@@ -1,0 +1,98 @@
+name: CNC AI teacher explainability smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/ai-teacher.html'
+      - 'cnc/ai-teacher-explainability.html'
+      - 'cnc/tests/mobile-ai-teacher-smoke.cjs'
+      - 'cnc/tests/ai-teacher-classification-smoke.cjs'
+      - 'cnc/tests/mobile-ai-teacher-explainability-smoke.cjs'
+      - 'cnc/tests/fixtures/ai-teacher-classification-cases.json'
+      - 'cnc/docs/ai-teacher-explainability-contract.md'
+      - '.github/workflows/cnc-ai-teacher-explainability-smoke.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'cnc/ai-teacher.html'
+      - 'cnc/ai-teacher-explainability.html'
+      - 'cnc/tests/mobile-ai-teacher-explainability-smoke.cjs'
+      - 'cnc/docs/ai-teacher-explainability-contract.md'
+      - '.github/workflows/cnc-ai-teacher-explainability-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cnc-ai-teacher-explainability-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  ai-teacher-explainability:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Validate explainability contract and anti-bypass rules
+        run: |
+          set -euxo pipefail
+          test -f cnc/ai-teacher-explainability.html
+          test -f cnc/tests/mobile-ai-teacher-explainability-smoke.cjs
+          test -f cnc/docs/ai-teacher-explainability-contract.md
+          grep -q "20260802-v1" cnc/ai-teacher-explainability.html
+          grep -q "20260802-v2" cnc/ai-teacher-explainability.html
+          grep -q "固定上机值" cnc/ai-teacher-explainability.html
+          grep -q "参数写入" cnc/ai-teacher-explainability.html
+          grep -q "安全绕过" cnc/ai-teacher-explainability.html
+          grep -q "盲目复位" cnc/ai-teacher-explainability.html
+          grep -q "强执行意图" cnc/ai-teacher-explainability.html
+          grep -q "不调用外部模型" cnc/ai-teacher-explainability.html
+          grep -q "资料清单与逐条复核记录不能互相代替" cnc/ai-teacher-explainability.html
+          grep -q "未逐条复核内容不可直接上机" cnc/ai-teacher-explainability.html
+          grep -q "CNC_AI_TEACHER_EXPLAINABILITY" cnc/ai-teacher-explainability.html
+          ! grep -Eqi "https?://|XMLHttpRequest|WebSocket|EventSource" cnc/ai-teacher-explainability.html
+          ! grep -Eq "test\.skip\(|describe\.skip\(|it\.skip\(|process\.exit\(0\)" cnc/tests/mobile-ai-teacher-explainability-smoke.cjs
+      - name: Check JavaScript syntax
+        run: |
+          node --check cnc/tests/mobile-ai-teacher-explainability-smoke.cjs
+          node --check cnc/tests/mobile-ai-teacher-smoke.cjs
+          node --check cnc/tests/ai-teacher-classification-smoke.cjs
+          python3 - <<'PY'
+          from pathlib import Path
+          for name in ('ai-teacher.html', 'ai-teacher-explainability.html'):
+              text = Path('cnc', name).read_text(encoding='utf-8')
+              script = text.split('<script>', 1)[1].split('</script>', 1)[0]
+              target = Path('/tmp') / f'{name}.js'
+              target.write_text(script, encoding='utf-8')
+              print(target)
+          PY
+          node --check /tmp/ai-teacher.html.js
+          node --check /tmp/ai-teacher-explainability.html.js
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save playwright@1.54.1
+          npx playwright install --with-deps chromium
+      - name: Start static server
+        run: python3 -m http.server 4173 --directory . > /tmp/cnc-ai-teacher-explainability-server.log 2>&1 &
+      - name: Regress AI teacher mobile trust boundary
+        run: node cnc/tests/mobile-ai-teacher-smoke.cjs
+      - name: Regress high-risk and educational classification cases
+        run: node cnc/tests/ai-teacher-classification-smoke.cjs
+      - name: Validate explainability page on 390x844 mobile
+        run: node cnc/tests/mobile-ai-teacher-explainability-smoke.cjs
+      - name: Upload explainability diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-ai-teacher-explainability-${{ github.run_id }}
+          path: |
+            artifacts/ai-teacher/
+            artifacts/ai-teacher-explainability/
+            /tmp/cnc-ai-teacher-explainability-server.log
+          if-no-files-found: warn
+          retention-days: 14
