@@ -8,13 +8,14 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const CURRENT_PWA_BUILD = '20260802-pwa7';
-const PREVIOUS_PWA_BUILD = '20260802-pwa6';
+const CURRENT_PWA_BUILD = '20260802-pwa8';
+const PREVIOUS_PWA_BUILD = '20260802-pwa7';
 const CURRENT_STATIC_CACHE = `cnc-static-${CURRENT_PWA_BUILD}`;
 const CURRENT_RUNTIME_CACHE = `cnc-runtime-${CURRENT_PWA_BUILD}`;
 const PREVIOUS_STATIC_CACHE = `cnc-static-${PREVIOUS_PWA_BUILD}`;
 const PREVIOUS_RUNTIME_CACHE = `cnc-runtime-${PREVIOUS_PWA_BUILD}`;
 const UNRELATED_CACHE = 'other-app-cache-v1';
+const PLACEMENT_HANDOFF_KEY = 'cnc_beginner_placement_route_handoff_v1';
 const DATA_KEYS = [
   'cnc_training_profile_v1',
   'cnc_training_practice_v1',
@@ -114,6 +115,15 @@ async function captureDiagnostics(page, context, stage, errors) {
   try { await page.screenshot({ path: path.join(out, 'pwa-upgrade-data-failure.png'), fullPage: true }); } catch {}
 }
 
+async function completeCriticalSafetyPlacement(page) {
+  const answers = [0, 2, 1, 1, 1, 1];
+  for (let index = 0; index < answers.length; index += 1) {
+    await page.locator(`#option-${index}-${answers[index]}`).click();
+    await page.locator('#next').click();
+  }
+  await page.locator('#result[data-decision="critical-safety"]').waitFor({ state: 'visible' });
+}
+
 (async () => {
   let context;
   let userDataDir;
@@ -176,7 +186,7 @@ async function captureDiagnostics(page, context, stage, errors) {
         request.onsuccess = () => {
           const db = request.result;
           const transaction = db.transaction('records', 'readwrite');
-          transaction.objectStore('records').put({ xp: 680, streak: 12, source: 'pwa6' }, 'growth');
+          transaction.objectStore('records').put({ xp: 680, streak: 12, source: 'pwa7' }, 'growth');
           transaction.onerror = () => reject(transaction.error);
           transaction.oncomplete = () => {
             db.close();
@@ -279,6 +289,24 @@ async function captureDiagnostics(page, context, stage, errors) {
     assert.equal(await page.locator('#options[role="radiogroup"]').count(), 1, '升级后起点测评丢失单选组语义');
     assert.equal(await page.locator('#result-diagnostics').count(), 1, '升级后起点测评丢失可解释判断区域');
 
+    stage = 'cold-offline-route-handoff-after-upgrade';
+    await completeCriticalSafetyPlacement(page);
+    await page.locator('#handoff-link').click();
+    await page.waitForURL(/\/cnc\/training-camp\.html$/);
+    await page.locator('#placement-handoff[data-state="consumed"]').waitFor({ state: 'visible' });
+    const routeHandoff = await page.evaluate(key => ({
+      title: document.querySelector('#placement-handoff-title')?.textContent || '',
+      stepCount: document.querySelectorAll('#placement-handoff-steps li').length,
+      sessionValue: sessionStorage.getItem(key),
+      localValue: localStorage.getItem(key),
+      sessionProbe: sessionStorage.getItem('cnc_upgrade_session_probe')
+    }), PLACEMENT_HANDOFF_KEY);
+    assert(routeHandoff.title.includes('安全基础'), `升级后离线路线标题错误: ${JSON.stringify(routeHandoff)}`);
+    assert.equal(routeHandoff.stepCount, 3, `升级后离线路线步骤错误: ${JSON.stringify(routeHandoff)}`);
+    assert.equal(routeHandoff.sessionValue, null, '升级后离线路线未立即清除');
+    assert.equal(routeHandoff.localValue, null, '升级后离线路线泄露到LocalStorage');
+    assert.equal(routeHandoff.sessionProbe, before.session, '路线交接错误清除其他SessionStorage数据');
+
     await page.goto('http://127.0.0.1:4173/cnc/ai-teacher.html', { waitUntil: 'domcontentloaded' });
     assert((await page.title()).includes('AI CNC老师'), '升级后AI CNC老师冷离线打开失败');
     await page.goto('http://127.0.0.1:4173/cnc/ai-teacher-intake.html', { waitUntil: 'domcontentloaded' });
@@ -291,6 +319,7 @@ async function captureDiagnostics(page, context, stage, errors) {
 
     const afterOfflineNavigation = await readOriginState(page);
     assert.deepStrictEqual(afterOfflineNavigation.local, before.local, '离线导航后LocalStorage发生变化');
+    assert.equal(afterOfflineNavigation.session, before.session, '离线导航后SessionStorage探针发生变化');
     assert.deepStrictEqual(afterOfflineNavigation.indexedDb, before.indexedDb, '离线导航后IndexedDB发生变化');
 
     await page.screenshot({ path: path.join(out, 'pwa-upgrade-data-390x844.png'), fullPage: true });
@@ -308,6 +337,9 @@ async function captureDiagnostics(page, context, stage, errors) {
       indexedDbPreserved: true,
       beginnerPlacementColdOfflineAfterUpgrade: true,
       beginnerPlacementCriticalSafetyGateAfterUpgrade: true,
+      trainingCampColdOfflineAfterUpgrade: true,
+      placementRouteHandoffColdOfflineAfterUpgrade: true,
+      placementRouteHandoffImmediateCleanup: true,
       aiTeacherColdOfflineAfterUpgrade: true,
       intakeColdOfflineAfterUpgrade: true,
       explainabilityColdOfflineAfterUpgrade: true,

@@ -50,11 +50,12 @@ jobs:
           const status = fs.readFileSync('cnc/pwa-status.html', 'utf8');
           const selfTest = fs.readFileSync('cnc/pwa-self-test.html', 'utf8');
           const placement = fs.readFileSync('cnc/beginner-placement.html', 'utf8');
+          const camp = fs.readFileSync('cnc/training-camp.html', 'utf8');
           const swBuild = sw.match(/const BUILD = '([^']+)'/)?.[1];
           if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
           for (const token of [
-            "const branchTargetPwaBuild = '20260802-pwa7'",
-            "const previousPublicPwaBuild = '20260802-pwa6'",
+            "const branchTargetPwaBuild = '20260802-pwa8'",
+            "const previousPublicPwaBuild = '20260802-pwa7'",
             "const expectedSiteBuild = '20260801-ai-handoff1'",
             'CNC_PAGES_VERIFY_ATTEMPTS || 18',
             "cache: 'no-store'",
@@ -62,21 +63,24 @@ jobs:
             'mainPagesExactSha256Match: true',
             'branchDeploymentPending',
             'beginnerPlacementInCoreCache: true',
+            'placementRouteHandoffInBranch: true',
             'criticalSafetyGateInBranch: true',
-            'tenCoreResourcesVerified: true',
+            'elevenCoreResourcesVerified: true',
             'process.exit(1)'
           ]) {
             if (!test.includes(token)) throw new Error(`deployment test missing: ${token}`);
           }
-          for (const file of ['./beginner-placement.html', './ai-teacher.html', './ai-teacher-intake.html', './ai-teacher-explainability.html']) {
+          for (const file of ['./beginner-placement.html', './training-camp.html', './ai-teacher.html', './ai-teacher-intake.html', './ai-teacher-explainability.html']) {
             if (!sw.includes(`'${file}'`)) throw new Error(`Service Worker core missing: ${file}`);
             if (!selfTest.includes(`'${file}'`)) throw new Error(`self-test core missing: ${file}`);
           }
           if (!placement.includes('criticalFailures') || !placement.includes("decision:'critical-safety'")) throw new Error('beginner placement critical safety gate missing');
+          if (!placement.includes('cnc_beginner_placement_route_handoff_v1') || !camp.includes('cnc_beginner_placement_route_handoff_v1')) throw new Error('placement route handoff producer or consumer missing');
           if (!status.includes(`const EXPECTED='${info.pwaBuild}'`)) throw new Error('PWA status build mismatch');
           if (!selfTest.includes(`const EXPECTED='${info.pwaBuild}'`)) throw new Error('PWA self-test build mismatch');
           if (!String(info.contentStage || '').includes('起点测评关键安全门禁')) throw new Error('build marker missing beginner placement critical safety gate');
-          if (!String(info.contentStage || '').includes('起点测评离线核心')) throw new Error('build marker missing beginner placement offline core');
+          if (!String(info.contentStage || '').includes('测评路线一次性交接')) throw new Error('build marker missing placement route handoff');
+          if (!String(info.contentStage || '').includes('训练营路线离线核心')) throw new Error('build marker missing training camp offline core');
           for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)', 'CNC_PAGES_VERIFY_ATTEMPTS || 0']) {
             if (test.includes(forbidden)) throw new Error(`deployment gate bypass found: ${forbidden}`);
           }

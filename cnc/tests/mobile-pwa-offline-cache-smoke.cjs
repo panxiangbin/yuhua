@@ -7,13 +7,15 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const PWA_BUILD = '20260802-pwa7';
+const PWA_BUILD = '20260802-pwa8';
 const CORE_OFFLINE_PATHS = [
   './beginner-placement.html',
+  './training-camp.html',
   './ai-teacher.html',
   './ai-teacher-intake.html',
   './ai-teacher-explainability.html'
 ];
+const PLACEMENT_HANDOFF_KEY = 'cnc_beginner_placement_route_handoff_v1';
 fs.mkdirSync(out, { recursive: true });
 
 const types = {
@@ -90,6 +92,15 @@ async function captureDiagnostics(page, context, stage, errors) {
   try { await page.screenshot({ path: path.join(out, 'pwa-offline-failure.png'), fullPage: true }); } catch {}
 }
 
+async function completeCriticalSafetyPlacement(page) {
+  const answers = [0, 2, 1, 1, 1, 1];
+  for (let index = 0; index < answers.length; index += 1) {
+    await page.locator(`#option-${index}-${answers[index]}`).click();
+    await page.locator('#next').click();
+  }
+  await page.locator('#result[data-decision="critical-safety"]').waitFor({ state: 'visible' });
+}
+
 (async () => {
   let context;
   let userDataDir;
@@ -146,6 +157,20 @@ async function captureDiagnostics(page, context, stage, errors) {
     if (await page.locator('#options[role="radiogroup"]').count() !== 1) throw new Error('起点测评离线页丢失单选组语义');
     if (await page.locator('#result-diagnostics').count() !== 1) throw new Error('起点测评离线页丢失可解释判断区域');
 
+    stage = 'cold-offline-placement-route-handoff';
+    await completeCriticalSafetyPlacement(page);
+    await page.locator('#handoff-link').click();
+    await page.waitForURL(/\/cnc\/training-camp\.html$/);
+    await page.locator('#placement-handoff[data-state="consumed"]').waitFor({ state: 'visible' });
+    const routeHandoff = await page.evaluate(key => ({
+      title: document.querySelector('#placement-handoff-title')?.textContent || '',
+      steps: [...document.querySelectorAll('#placement-handoff-steps li')].map(item => item.textContent),
+      sessionValue: sessionStorage.getItem(key),
+      localValue: localStorage.getItem(key)
+    }), PLACEMENT_HANDOFF_KEY);
+    if (!routeHandoff.title.includes('安全基础') || routeHandoff.steps.length !== 3) throw new Error(`离线路线交接内容不完整: ${JSON.stringify(routeHandoff)}`);
+    if (routeHandoff.sessionValue !== null || routeHandoff.localValue !== null) throw new Error('离线路线交接未立即清除或泄露到长期存储');
+
     stage = 'cold-offline-ai-teacher';
     await page.goto('http://127.0.0.1:4173/cnc/ai-teacher.html', { waitUntil: 'domcontentloaded' });
     if (!(await page.title()).includes('AI CNC老师')) throw new Error('AI CNC老师首次安装后离线打开失败');
@@ -185,17 +210,8 @@ async function captureDiagnostics(page, context, stage, errors) {
     }));
     if (small.length) throw new Error(`触控区不足44px ${JSON.stringify(small)}`);
 
-    stage = 'warm-runtime-route';
-    await page.goto('http://127.0.0.1:4173/cnc/training-camp.html', { waitUntil: 'domcontentloaded' });
-    if (!(await page.title()).includes('训练')) throw new Error('训练营在线预热失败');
-    await page.goto('http://127.0.0.1:4173/cnc/pwa-status.html', { waitUntil: 'domcontentloaded' });
-
-    stage = 'cached-offline-route';
-    await context.setOffline(true);
-    await page.goto('http://127.0.0.1:4173/cnc/training-camp.html', { waitUntil: 'domcontentloaded' });
-    if (!(await page.title()).includes('训练')) throw new Error('离线训练营未打开');
-
     stage = 'offline-fallback';
+    await context.setOffline(true);
     await page.goto(`http://127.0.0.1:4173/cnc/not-cached-${Date.now()}.html`, { waitUntil: 'domcontentloaded' });
     if (!(await page.locator('body').innerText()).includes('网络暂时不可用')) throw new Error('离线回退页未生效');
 
@@ -205,9 +221,11 @@ async function captureDiagnostics(page, context, stage, errors) {
       build,
       caches: cachesBefore,
       offlineFallback: true,
-      runtimeWarmup: true,
       beginnerPlacementColdOffline: true,
       beginnerPlacementCriticalSafetyGateColdOffline: true,
+      trainingCampColdOffline: true,
+      placementRouteHandoffColdOffline: true,
+      placementRouteHandoffImmediateCleanup: true,
       aiTeacherColdOffline: true,
       intakeColdOffline: true,
       explainabilityColdOffline: true,

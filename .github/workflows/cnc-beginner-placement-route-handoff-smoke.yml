@@ -1,0 +1,136 @@
+name: CNC beginner placement route handoff smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/beginner-placement.html'
+      - 'cnc/training-camp.html'
+      - 'cnc/tests/mobile-beginner-placement-route-handoff-smoke.cjs'
+      - 'cnc/tests/mobile-beginner-placement-route-handoff-content-safety-smoke.cjs'
+      - 'cnc/docs/beginner-placement-route-handoff-contract.md'
+      - '.github/workflows/cnc-beginner-placement-route-handoff-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Initialize diagnostics
+        run: mkdir -p cnc/test-results/beginner-placement-route-handoff
+      - name: Validate one-time handoff contract
+        run: |
+          node --check cnc/tests/mobile-beginner-placement-route-handoff-smoke.cjs
+          node --check cnc/tests/mobile-beginner-placement-route-handoff-content-safety-smoke.cjs
+          node - <<'NODE'
+          const fs = require('fs');
+          const os = require('os');
+          const path = require('path');
+          const { execFileSync } = require('child_process');
+          const placement = fs.readFileSync('cnc/beginner-placement.html', 'utf8');
+          const camp = fs.readFileSync('cnc/training-camp.html', 'utf8');
+          const test = fs.readFileSync('cnc/tests/mobile-beginner-placement-route-handoff-smoke.cjs', 'utf8');
+          const contentSafetyTest = fs.readFileSync('cnc/tests/mobile-beginner-placement-route-handoff-content-safety-smoke.cjs', 'utf8');
+          const contract = fs.readFileSync('cnc/docs/beginner-placement-route-handoff-contract.md', 'utf8');
+          function checkInlineScripts(file, html) {
+            const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)].map(match => match[1]).filter(text => text.trim());
+            if (!scripts.length) throw new Error(`${file} has no inline script`);
+            scripts.forEach((script, index) => {
+              const temp = path.join(os.tmpdir(), `${path.basename(file)}-${index}.js`);
+              fs.writeFileSync(temp, script);
+              execFileSync(process.execPath, ['--check', temp], { stdio: 'inherit' });
+            });
+          }
+          checkInlineScripts('cnc/beginner-placement.html', placement);
+          checkInlineScripts('cnc/training-camp.html', camp);
+          for (const token of [
+            'cnc_beginner_placement_route_handoff_v1',
+            'sessionStorage.setItem',
+            'HANDOFF_TTL_MS',
+            '把本次路线带到训练营',
+            'steps:'
+          ]) if (!placement.includes(token)) throw new Error(`placement contract missing: ${token}`);
+          for (const token of [
+            'cnc_beginner_placement_route_handoff_v1',
+            'sessionStorage.getItem',
+            'sessionStorage.removeItem',
+            'consumePlacementHandoff',
+            'pagehide',
+            'event.persisted',
+            'consumed-cleared',
+            'PLACEMENT_ROUTE_CATALOG',
+            'PLACEMENT_HREFS',
+            'payloadMatchesCanonicalRoute',
+            'title:canonical.title',
+            '不会写入成绩、XP、成长档案或错题记录',
+            'renderHandoffSteps',
+            'document.createTextNode(step.title)',
+            'steps.replaceChildren()'
+          ]) if (!camp.includes(token)) throw new Error(`training camp contract missing: ${token}`);
+          for (const forbidden of [
+            'localStorage.setItem(HANDOFF_KEY',
+            'localStorage.setItem(PLACEMENT_HANDOFF_KEY',
+            'indexedDB.open(HANDOFF_KEY',
+            'URLSearchParams',
+            'location.hash=',
+            'steps.innerHTML=outcome.data.steps',
+            'title:data.title.trim()',
+            'route:data.route.trim()'
+          ]) {
+            if (placement.includes(forbidden) || camp.includes(forbidden)) throw new Error(`handoff persistence, URL, semantic or HTML injection bypass found: ${forbidden}`);
+          }
+          for (const token of [
+            'bfcachePersisted: false',
+            'bfcacheDoesNotRestore: false',
+            'independentTabIsolation: false',
+            'storageUnavailableRecovery: false',
+            'sessionStorageOnly: false',
+            'noQuestionOrRouteInUrl: false',
+            'touchTargetsAtLeast44: false',
+            'pageshow',
+            'SecurityError'
+          ]) if (!test.includes(token)) throw new Error(`browser test contract missing: ${token}`);
+          for (const token of [
+            'canonicalPayloadAccepted: false',
+            'tamperedTextRejected: false',
+            'crossRouteMismatchRejected: false',
+            'noInjectedElements: false',
+            'handoff-step-injected',
+            'sessionStorageCleared: false',
+            'noLongTermStorageLeak: false'
+          ]) if (!contentSafetyTest.includes(token)) throw new Error(`content safety browser contract missing: ${token}`);
+          for (const token of ['390×844', 'SessionStorage', 'BFCache', '分类与路线', '相同版本原厂手册', '授权人员']) {
+            if (!contract.includes(token)) throw new Error(`Chinese contract missing: ${token}`);
+          }
+          for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)']) {
+            if (test.includes(forbidden) || contentSafetyTest.includes(forbidden)) throw new Error(`test bypass found: ${forbidden}`);
+          }
+          NODE
+      - name: Install Playwright runtime
+        run: npm install --no-save playwright@1.52.0
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Start static server
+        run: python3 -m http.server 4173 --directory . > /tmp/cnc-route-handoff-server.log 2>&1 &
+      - name: Chromium 390x844 route handoff recovery and privacy
+        run: node cnc/tests/mobile-beginner-placement-route-handoff-smoke.cjs
+      - name: Chromium 390x844 route handoff semantic integrity
+        run: node cnc/tests/mobile-beginner-placement-route-handoff-content-safety-smoke.cjs
+      - name: Preserve server log
+        if: always()
+        run: cp /tmp/cnc-route-handoff-server.log cnc/test-results/beginner-placement-route-handoff/server.log || true
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-beginner-placement-route-handoff-${{ github.run_id }}
+          path: cnc/test-results/beginner-placement-route-handoff/**
+          if-no-files-found: error
+          retention-days: 14

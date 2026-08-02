@@ -8,8 +8,8 @@ fs.mkdirSync(resultsDir, { recursive: true });
 
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
-const branchTargetPwaBuild = '20260802-pwa7';
-const previousPublicPwaBuild = '20260802-pwa6';
+const branchTargetPwaBuild = '20260802-pwa8';
+const previousPublicPwaBuild = '20260802-pwa7';
 const expectedSiteBuild = '20260801-ai-handoff1';
 const attempts = Number(process.env.CNC_PAGES_VERIFY_ATTEMPTS || 18);
 const intervalMs = Number(process.env.CNC_PAGES_VERIFY_INTERVAL_MS || 10000);
@@ -111,6 +111,7 @@ function expectedCorePaths() {
     './pwa-self-test.html',
     './pages-status.html',
     './beginner-placement.html',
+    './training-camp.html',
     './ai-teacher.html',
     './ai-teacher-intake.html',
     './ai-teacher-explainability.html',
@@ -146,9 +147,11 @@ function assertServiceWorker(text, label, expectedBuild) {
     "event.data.type === 'GET_BUILD'",
     "event.data.type === 'ENSURE_CACHES'"
   ]);
+  if (expectedBuild === branchTargetPwaBuild) requireTokens(text, label, ["'./training-camp.html'"]);
   forbidTokens(text, label, [/test\.skip\(/, /describe\.skip\(/, /it\.skip\(/, /allowOperationalUse\s*:\s*true/]);
   const actual = parseQuotedArray(text, /const REQUIRED_CORE_PATHS = \[([\s\S]*?)\];/, `${label}核心缓存`);
-  assertExactArray(actual, expectedCorePaths(), `${label}核心缓存`);
+  const expected = expectedBuild === branchTargetPwaBuild ? expectedCorePaths() : expectedCorePaths().filter(item => item !== './training-camp.html');
+  assertExactArray(actual, expected, `${label}核心缓存`);
   return { build: expectedBuild, corePaths: actual };
 }
 
@@ -166,7 +169,7 @@ function assertBuildInfo(text, label, expectedBuild) {
   const data = parseBuildInfo(text, label);
   if (data.pwaBuild !== expectedBuild) throw new Error(`${label}PWA构建错误：${data.pwaBuild}，期望${expectedBuild}`);
   requireTokens(String(data.contentStage || ''), label, ['起点测评离线核心', 'AI CNC老师基础版', 'AI老师现场问诊单', 'AI老师判断说明', 'AI老师离线核心', 'PWA可靠性']);
-  if (expectedBuild === branchTargetPwaBuild) requireTokens(String(data.contentStage || ''), label, ['起点测评关键安全门禁']);
+  if (expectedBuild === branchTargetPwaBuild) requireTokens(String(data.contentStage || ''), label, ['起点测评关键安全门禁', '测评路线一次性交接', '训练营路线离线核心']);
   return { build: data.build, pwaBuild: data.pwaBuild, scope: data.scope };
 }
 
@@ -186,7 +189,7 @@ function assertStatusPage(text, label, expectedBuild) {
     'pageshow',
     'visibilitychange'
   ]);
-  if (expectedBuild === branchTargetPwaBuild) requireTokens(text, label, ['关键安全项硬门禁', '关键安全门禁的起点测评']);
+  if (expectedBuild === branchTargetPwaBuild) requireTokens(text, label, ['关键安全项硬门禁', '训练营', '临时路线']);
   const visible = visibleBody(text);
   requireTokens(visible, label, ['离线、缓存与更新状态', '离线内容可能不是最新版本', '测评只用于推荐学习路线', '原厂手册、企业制度和现场条件']);
   return { build: expectedBuild, visibleSafetyBoundary: true };
@@ -203,9 +206,10 @@ function assertSelfTest(text, label, expectedBuild) {
     '公网构建标记与PWA一致',
     'MAX_AUTO_RETRIES=20'
   ]);
-  if (expectedBuild === branchTargetPwaBuild) requireTokens(text, label, ['关键安全项硬门禁', '关键安全门禁起点测评']);
+  if (expectedBuild === branchTargetPwaBuild) requireTokens(text, label, ["'./training-camp.html'", '关键安全项硬门禁', '训练营临时路线']);
   const actual = parseQuotedArray(text, /const REQUIRED=\[([^\]]+)\]/, `${label}自检核心资源`);
-  assertExactArray(actual, expectedCorePaths(), `${label}自检核心资源`);
+  const expected = expectedBuild === branchTargetPwaBuild ? expectedCorePaths() : expectedCorePaths().filter(item => item !== './training-camp.html');
+  assertExactArray(actual, expected, `${label}自检核心资源`);
   const visible = visibleBody(text);
   requireTokens(visible, label, ['只读检查', '不修改学习记录', '不清空缓存', '不发放XP', '起点测评只推荐学习路线', '高风险操作须现场师傅或授权人员指导']);
   return { build: expectedBuild, requiredCount: actual.length, readOnly: true };
@@ -303,12 +307,14 @@ async function waitForMainPagesMatch() {
       publicPwaBuild,
       siteBuild: expectedSiteBuild,
       beginnerPlacementInCoreCache: true,
+      trainingCampInCoreCache: true,
+      placementRouteHandoffInBranch: true,
       criticalSafetyGateInBranch: true,
       explainabilityInCoreCache: true,
       aiTeacherInCoreCache: true,
       intakeInCoreCache: true,
-      tenCoreResourcesVerified: true,
-      publicTenCoreResourcesVerified: true,
+      elevenCoreResourcesVerified: true,
+      publicCoreResourcesVerified: true,
       upgradeBoundaryVisible: true,
       safetyBoundaryVisible: true
     };
@@ -320,10 +326,10 @@ async function waitForMainPagesMatch() {
       `当前分支PWA构建：${branchTargetPwaBuild}`,
       `main与Pages公网PWA构建：${publicPwaBuild}`,
       `分支待合并或待部署：${branchDeploymentPending ? '是' : '否'}`,
-      '当前分支起点测评、AI老师、现场问诊单、判断说明页核心预缓存：完整',
-      '当前分支PWA自检核心资源：10项且无重复',
-      `Pages公网关键安全门禁：${publicPwaBuild === branchTargetPwaBuild ? '已部署' : '尚未部署，保持pwa6正式版本'}`,
-      '测评安全硬门禁、固定值、原厂手册与授权人员边界：可见',
+      '当前分支起点测评、训练营路线、AI老师、现场问诊单、判断说明页核心预缓存：完整',
+      '当前分支PWA自检核心资源：11项且无重复',
+      `Pages公网训练营路线核心：${publicPwaBuild === branchTargetPwaBuild ? '已部署' : '尚未部署，保持pwa7正式版本'}`,
+      '测评安全硬门禁、路线隐私、固定值、原厂手册与授权人员边界：可见',
       ...findings
     ].join('\n') + '\n');
     console.log(`CNC PWA offline core Pages verified: branch ${branchTargetPwaBuild} / public ${publicPwaBuild} / pending=${branchDeploymentPending}`);

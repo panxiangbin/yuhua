@@ -27,18 +27,18 @@
       <h2>版本一致性</h2>
       <p id="status" class="warn" role="status" aria-live="polite">正在检查版本。</p>
       <ul class="details">
-        <li>页面期望构建：<strong id="expected">20260802-pwa7</strong></li>
+        <li>页面期望构建：<strong id="expected">20260802-pwa8</strong></li>
         <li>静态缓存：<span id="static-cache">检测中</span></li>
         <li>运行时缓存：<span id="runtime-cache">检测中</span></li>
         <li>最近检查：<span id="checked-at">尚未完成</span></li>
       </ul>
       <div class="actions"><button class="btn" id="check" type="button">检查更新</button><button class="btn alt" id="refresh" type="button">重新核对状态</button><button class="btn alt" id="apply" type="button" disabled>应用新版本</button></div>
-      <p class="notice">当前核心离线资源包含带关键安全项硬门禁的新手起点测评、AI CNC老师、现场问诊单和“为什么被阻断”判断说明页。若页面期望构建、Service Worker构建和缓存版本不一致，请先联网检查更新，再由你明确点击应用。离线内容可能不是最新版本；测评只用于推荐学习路线，报警、参数、刀补和现场操作仍须核对原厂手册、企业制度和现场条件。</p>
+      <p class="notice">当前核心离线资源包含带关键安全项硬门禁的新手起点测评、可一次性显示推荐路线的训练营、AI CNC老师、现场问诊单和“为什么被阻断”判断说明页。若页面期望构建、Service Worker构建和缓存版本不一致，请先联网检查更新，再由你明确点击应用。离线内容可能不是最新版本；测评只用于推荐学习路线，报警、参数、刀补和现场操作仍须核对原厂手册、企业制度和现场条件。</p>
     </section>
   </main>
   <nav class="bottom" aria-label="平台主导航"><a href="./index.html">首页</a><a href="./training-camp.html">训练营</a><a href="./practice.html">练习</a><a href="./index.html#workspace">查代码</a><a href="./profile.html">我的</a></nav>
   <script>
-    const EXPECTED='20260802-pwa7';
+    const EXPECTED='20260802-pwa8';
     const network=document.querySelector('#network');
     const worker=document.querySelector('#worker');
     const buildElement=document.querySelector('#build');
@@ -113,7 +113,7 @@
         statusElement.textContent='发现新版本，点击“应用新版本”后刷新。';
       }else if(workerOk&&cacheBuildOk){
         statusElement.className='warn ok';
-        statusElement.textContent='页面、Service Worker与两类缓存版本一致，带关键安全门禁的起点测评和AI老师判断说明页可冷离线打开。';
+        statusElement.textContent='页面、Service Worker与两类缓存版本一致，起点测评、训练营临时路线和AI老师判断说明页可冷离线打开。';
       }else{
         statusElement.className='warn';
         statusElement.textContent='版本尚未完全一致。请保持联网，检查更新并重新核对状态。';
