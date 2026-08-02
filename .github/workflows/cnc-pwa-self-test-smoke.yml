@@ -18,11 +18,35 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
       - name: Check JavaScript syntax
         run: node --check cnc/tests/mobile-pwa-self-test-smoke.cjs
       - name: Validate self-test contract
-        run: node -e "const fs=require('fs');const h=fs.readFileSync('cnc/pwa-self-test.html','utf8');for(const x of ['Service Worker已注册','当前页面已被接管','运行构建号一致','静态缓存版本存在','运行时缓存版本存在','核心离线资源完整','公网构建标记与PWA一致'])if(!h.includes(x))throw new Error('missing '+x);"
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
+          const html = fs.readFileSync('cnc/pwa-self-test.html', 'utf8');
+          const sw = fs.readFileSync('cnc/sw.js', 'utf8');
+          const swBuild = sw.match(/const BUILD = '([^']+)'/)?.[1];
+          if (swBuild !== info.pwaBuild || !html.includes(`const EXPECTED='${info.pwaBuild}'`)) {
+            throw new Error('PWA self-test/build-info/Service Worker version mismatch');
+          }
+          for (const token of [
+            'Service Worker已注册',
+            '当前页面已被接管',
+            '运行构建号一致',
+            '静态缓存版本存在',
+            '运行时缓存版本存在',
+            '核心离线资源完整',
+            '公网构建标记与PWA一致',
+            './ai-teacher.html',
+            './ai-teacher-intake.html',
+            './ai-teacher-explainability.html'
+          ]) {
+            if (!html.includes(token)) throw new Error(`self-test contract missing: ${token}`);
+          }
+          NODE
       - name: Install Playwright runtime
         run: npm install --no-save playwright@1.52.0
       - name: Install Chromium
