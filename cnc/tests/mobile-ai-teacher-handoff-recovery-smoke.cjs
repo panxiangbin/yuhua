@@ -26,6 +26,14 @@ async function createMobileContext(browser, { blockSessionStorage = false } = {}
     hasTouch: true,
     deviceScaleFactor: 2
   });
+  // 本专项只允许修改 CNC 范围。Chromium 会自动请求站点根目录 /favicon.ico，
+  // 该资源属于非 CNC 根站点，不应让它污染 CNC 页面运行时错误审计；仅精确提供空图标响应，
+  // 其余请求、控制台错误和页面异常仍保持零容忍。
+  await context.route(`${new URL(BASE).origin}/favicon.ico`, route => route.fulfill({
+    status: 204,
+    contentType: 'image/x-icon',
+    body: ''
+  }));
   await context.addInitScript(({ blockStorage }) => {
     window.addEventListener('pageshow', event => {
       document.documentElement.dataset.testPageshowPersisted = String(event.persisted);
@@ -63,6 +71,7 @@ async function createMobileContext(browser, { blockSessionStorage = false } = {}
     checkedAt: new Date().toISOString(),
     browserVersion: browser.version(),
     browserChannel: 'chromium-new-headless',
+    faviconIsolation: `${new URL(BASE).origin}/favicon.ico -> 204 (non-CNC root resource)`,
     scenarios: {},
     errors: []
   };
@@ -184,7 +193,8 @@ async function createMobileContext(browser, { blockSessionStorage = false } = {}
       'BFCache 返回不会恢复已经消费的问题文本或判断结果。',
       'SessionStorage 不可用时页面显示中文恢复提示，且普通手动解释仍可使用。',
       '独立标签页不会读取其他标签页的一次性交接数据。',
-      '临时问题不写入 URL、长期学习记录或站外接口。'
+      '临时问题不写入 URL、长期学习记录或站外接口。',
+      '本地门禁仅对非 CNC 根目录 favicon 请求提供空响应，其余资源和运行时错误保持零容忍。'
     ].join('\n'));
     console.log('CNC AI teacher handoff recovery smoke passed');
   } catch (error) {
