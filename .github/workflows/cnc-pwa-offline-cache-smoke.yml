@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
       - name: Validate AI teacher offline core contract
         run: |
           node --check cnc/tests/mobile-pwa-offline-cache-smoke.cjs
@@ -28,12 +28,16 @@ jobs:
           const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
           const sw = fs.readFileSync('cnc/sw.js', 'utf8');
           const test = fs.readFileSync('cnc/tests/mobile-pwa-offline-cache-smoke.cjs', 'utf8');
+          const selfTest = fs.readFileSync('cnc/pwa-self-test.html', 'utf8');
           const swBuild = sw.match(/const BUILD = '([^']+)'/)?.[1];
           if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
-          for (const file of ['./ai-teacher.html', './ai-teacher-intake.html']) {
+          for (const file of ['./ai-teacher.html', './ai-teacher-intake.html', './ai-teacher-explainability.html']) {
             if (!sw.includes(`'${file}'`)) throw new Error(`${file} missing from Service Worker core cache`);
             if (!test.includes(file)) throw new Error(`${file} missing from offline browser verification`);
+            if (!selfTest.includes(file)) throw new Error(`${file} missing from PWA self-test required resources`);
           }
+          if (!test.includes('explainabilityColdOffline: true')) throw new Error('offline diagnostics missing explainability result');
+          if (!String(info.contentStage || '').includes('AI老师判断说明')) throw new Error('build marker missing explainability capability');
           if (!String(info.contentStage || '').includes('AI老师离线核心')) throw new Error('build marker missing AI offline capability');
           NODE
       - name: Install Playwright test runtime
