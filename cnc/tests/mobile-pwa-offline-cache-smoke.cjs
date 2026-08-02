@@ -7,8 +7,8 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const PWA_BUILD = '20260801-pwa4';
-const AI_CORE_PATHS = ['./ai-teacher.html', './ai-teacher-intake.html'];
+const PWA_BUILD = '20260802-pwa5';
+const AI_CORE_PATHS = ['./ai-teacher.html', './ai-teacher-intake.html', './ai-teacher-explainability.html'];
 fs.mkdirSync(out, { recursive: true });
 
 const types = {
@@ -146,6 +146,14 @@ async function captureDiagnostics(page, context, stage, errors) {
       throw new Error('现场问诊单离线页丢失安全边界');
     }
 
+    stage = 'cold-offline-explainability';
+    await page.goto('http://127.0.0.1:4173/cnc/ai-teacher-explainability.html', { waitUntil: 'domcontentloaded' });
+    if (!(await page.title()).includes('AI老师判断说明')) throw new Error('AI老师判断说明页首次安装后离线打开失败');
+    const explainabilityBody = await page.locator('body').innerText();
+    if (!explainabilityBody.includes('本页不提供固定上机值') || !explainabilityBody.includes('未逐条复核内容不可直接上机')) {
+      throw new Error('判断说明离线页丢失固定值或可信度边界');
+    }
+
     stage = 'status-page';
     await context.setOffline(false);
     await page.goto('http://127.0.0.1:4173/cnc/pwa-status.html', { waitUntil: 'domcontentloaded' });
@@ -184,6 +192,7 @@ async function captureDiagnostics(page, context, stage, errors) {
       runtimeWarmup: true,
       aiTeacherColdOffline: true,
       intakeColdOffline: true,
+      explainabilityColdOffline: true,
       aiCorePaths: AI_CORE_PATHS,
       touchTargets: true
     }, null, 2));

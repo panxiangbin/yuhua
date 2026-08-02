@@ -18,7 +18,22 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
+      - name: Validate BFCache build contract
+        run: |
+          node --check cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs
+          node - <<'NODE'
+          const fs = require('fs');
+          const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
+          const sw = fs.readFileSync('cnc/sw.js', 'utf8');
+          const test = fs.readFileSync('cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs', 'utf8');
+          const swBuild = sw.match(/const BUILD = '([^']+)'/)?.[1];
+          if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
+          if (!test.includes(`const PWA_BUILD = '${info.pwaBuild}'`)) throw new Error('BFCache test PWA build mismatch');
+          for (const required of ['history-return', 'cache-mismatch', 'cache-recovery', 'bfcacheRestore: true']) {
+            if (!test.includes(required)) throw new Error(`BFCache contract missing: ${required}`);
+          }
+          NODE
       - name: Install Playwright test runtime
         run: npm install --no-save playwright@1.52.0
       - name: Install Chromium
