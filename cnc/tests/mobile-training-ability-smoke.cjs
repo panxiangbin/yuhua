@@ -48,13 +48,30 @@ const assert = require('node:assert/strict');
   assert.match(text, /对刀装夹/);
   assert.match(text, /当前最需要加强/);
 
-  // 字体与学习档案渲染可能让能力卡片经历短暂重排。这里继续严格要求六张卡片
-  // 在手机端单列排列且按钮不少于44px，并要求相同布局签名连续稳定5帧后再验收。
+  // 成长档案样式表由运行时插入。先确认样式表、390px媒体查询和字体全部就绪，
+  // 再执行连续帧测量，避免把“样式表尚未应用”的过渡状态误判为生产布局失败。
+  await page.waitForFunction(() => {
+    const link = document.querySelector('link[data-cnc-training-profile]');
+    const list = document.querySelector('.xp-ability-list');
+    if (!link?.sheet || !list || !window.matchMedia('(max-width:760px)').matches) return false;
+    const style = getComputedStyle(list);
+    return style.display === 'grid' && style.gridTemplateColumns.split(/\s+/).filter(Boolean).length === 1;
+  }, null, { timeout: 15000 });
+  await page.evaluate(async () => { if (document.fonts?.ready) await document.fonts.ready; });
+
+  // 继续严格要求六张卡片在手机端单列排列且按钮不少于44px，并要求相同布局
+  // 签名连续稳定5帧后再验收。
   const layout = await page.locator('.xp-ability-section').evaluate(async panel => {
     const measure = () => {
       const rects = [...panel.querySelectorAll('.xp-ability-card')].map(node => node.getBoundingClientRect());
       const buttons = [...panel.querySelectorAll('button')].map(node => node.getBoundingClientRect().height);
+      const list = panel.querySelector('.xp-ability-list');
+      const gridStyle = list ? getComputedStyle(list) : null;
       return {
+        viewportWidth: window.innerWidth,
+        mobileQuery: window.matchMedia('(max-width:760px)').matches,
+        stylesheetReady: Boolean(document.querySelector('link[data-cnc-training-profile]')?.sheet),
+        gridTemplateColumns: gridStyle?.gridTemplateColumns || '',
         cardCount: rects.length,
         buttonCount: buttons.length,
         singleColumn: rects.length === 6 && rects.slice(1).every((rect, i) =>
@@ -71,7 +88,7 @@ const assert = require('node:assert/strict');
     for (let frame = 0; frame < 120; frame += 1) {
       await new Promise(resolve => requestAnimationFrame(resolve));
       latest = measure();
-      const valid = latest.singleColumn && latest.minButtonHeight >= 44;
+      const valid = latest.viewportWidth === 390 && latest.mobileQuery && latest.stylesheetReady && latest.gridTemplateColumns.split(/\s+/).filter(Boolean).length === 1 && latest.singleColumn && latest.minButtonHeight >= 44;
       if (valid && latest.signature === previousSignature) stableFrames += 1;
       else stableFrames = 0;
       previousSignature = latest.signature;
@@ -79,10 +96,14 @@ const assert = require('node:assert/strict');
     }
     return { ...latest, stableFrames };
   });
-  assert.equal(layout.cardCount, 6);
-  assert.ok(layout.buttonCount > 0);
-  assert.equal(layout.singleColumn, true);
-  assert.ok(layout.minButtonHeight >= 44);
+  assert.equal(layout.viewportWidth, 390, `阶段能力视口不是390px：${JSON.stringify(layout)}`);
+  assert.equal(layout.mobileQuery, true, `阶段能力手机媒体查询未生效：${JSON.stringify(layout)}`);
+  assert.equal(layout.stylesheetReady, true, `阶段能力样式表未就绪：${JSON.stringify(layout)}`);
+  assert.equal(layout.gridTemplateColumns.split(/\s+/).filter(Boolean).length, 1, `阶段能力网格不是单列：${JSON.stringify(layout)}`);
+  assert.equal(layout.cardCount, 6, `阶段能力卡片数量错误：${JSON.stringify(layout)}`);
+  assert.ok(layout.buttonCount > 0, `阶段能力按钮缺失：${JSON.stringify(layout)}`);
+  assert.equal(layout.singleColumn, true, `阶段能力卡片未单列：${JSON.stringify(layout)}`);
+  assert.ok(layout.minButtonHeight >= 44, `阶段能力按钮小于44px：${JSON.stringify(layout)}`);
   assert.ok(layout.stableFrames >= 5, `阶段能力布局未连续稳定5帧：${JSON.stringify(layout)}`);
 
   await page.locator('[data-ability-train="11"]').first().click();
