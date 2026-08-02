@@ -8,8 +8,8 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const CURRENT_PWA_BUILD = '20260801-pwa4';
-const PREVIOUS_PWA_BUILD = '20260728-pwa3';
+const CURRENT_PWA_BUILD = '20260802-pwa5';
+const PREVIOUS_PWA_BUILD = '20260801-pwa4';
 const CURRENT_STATIC_CACHE = `cnc-static-${CURRENT_PWA_BUILD}`;
 const CURRENT_RUNTIME_CACHE = `cnc-runtime-${CURRENT_PWA_BUILD}`;
 const PREVIOUS_STATIC_CACHE = `cnc-static-${PREVIOUS_PWA_BUILD}`;
@@ -176,7 +176,7 @@ async function captureDiagnostics(page, context, stage, errors) {
         request.onsuccess = () => {
           const db = request.result;
           const transaction = db.transaction('records', 'readwrite');
-          transaction.objectStore('records').put({ xp: 680, streak: 12, source: 'pwa3' }, 'growth');
+          transaction.objectStore('records').put({ xp: 680, streak: 12, source: 'pwa4' }, 'growth');
           transaction.onerror = () => reject(transaction.error);
           transaction.oncomplete = () => {
             db.close();
@@ -272,6 +272,11 @@ async function captureDiagnostics(page, context, stage, errors) {
     assert((await page.title()).includes('AI CNC老师'), '升级后AI CNC老师冷离线打开失败');
     await page.goto('http://127.0.0.1:4173/cnc/ai-teacher-intake.html', { waitUntil: 'domcontentloaded' });
     assert((await page.title()).includes('现场问诊单'), '升级后现场问诊单冷离线打开失败');
+    await page.goto('http://127.0.0.1:4173/cnc/ai-teacher-explainability.html', { waitUntil: 'domcontentloaded' });
+    assert((await page.title()).includes('AI老师判断说明'), '升级后AI老师判断说明页冷离线打开失败');
+    const explainabilityBody = await page.locator('body').innerText();
+    assert(explainabilityBody.includes('本页不提供固定上机值'), '升级后判断说明页丢失固定值边界');
+    assert(explainabilityBody.includes('未逐条复核内容不可直接上机'), '升级后判断说明页丢失可信度边界');
 
     const afterOfflineNavigation = await readOriginState(page);
     assert.deepStrictEqual(afterOfflineNavigation.local, before.local, '离线导航后LocalStorage发生变化');
@@ -292,6 +297,7 @@ async function captureDiagnostics(page, context, stage, errors) {
       indexedDbPreserved: true,
       aiTeacherColdOfflineAfterUpgrade: true,
       intakeColdOfflineAfterUpgrade: true,
+      explainabilityColdOfflineAfterUpgrade: true,
       preservedKeys: DATA_KEYS,
       cachesBefore,
       cachesAfter,
