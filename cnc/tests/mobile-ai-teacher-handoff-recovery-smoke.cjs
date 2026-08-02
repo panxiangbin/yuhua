@@ -110,7 +110,6 @@ async function createMobileContext(browser, { blockSessionStorage = false } = {}
 
       await page.goto(`${BASE}/cnc/ai-teacher-explainability.html`, { waitUntil: 'domcontentloaded', timeout: 30000 });
       await page.waitForFunction(() => document.documentElement.dataset.engineReady === 'true');
-      assert.equal(document !== null, true);
       const storageState = await page.evaluate(() => ({
         state: document.documentElement.dataset.handoffState || '',
         noteHidden: document.getElementById('handoff-note').hidden,
