@@ -28,8 +28,14 @@
 <script>
 const PLACEMENT_HANDOFF_KEY='cnc_beginner_placement_route_handoff_v1';
 const PLACEMENT_HANDOFF_TTL_MS=5*60*1000;
-const PLACEMENT_DECISIONS=new Set(['critical-safety','low-score','foundation-gap','advanced-ready']);
-const PLACEMENT_HREFS=new Set(['./course-safety-foundation.html','./course-machining-center-basics.html','./course-coordinate-axes.html','./course-machine-work-offset.html','./course-tool-length-offset.html','./course-g00-g01-basics.html','./simulator-program-dry-run.html','./simulator-first-piece-inspection.html']);
+const PLACEMENT_ROUTE_CATALOG=Object.freeze({
+  'critical-safety':Object.freeze({title:'从第1关：安全基础开始',route:'建议路线：安全基础 → 加工中心基础 → 坐标轴与回零',href:'./course-safety-foundation.html',steps:Object.freeze([Object.freeze({title:'安全基础',href:'./course-safety-foundation.html'}),Object.freeze({title:'认识加工中心',href:'./course-machining-center-basics.html'}),Object.freeze({title:'坐标轴与回零',href:'./course-coordinate-axes.html'})])}),
+  'low-score':Object.freeze({title:'从第1关：安全基础开始',route:'建议路线：安全基础 → 加工中心基础 → 坐标轴与回零',href:'./course-safety-foundation.html',steps:Object.freeze([Object.freeze({title:'安全基础',href:'./course-safety-foundation.html'}),Object.freeze({title:'认识加工中心',href:'./course-machining-center-basics.html'}),Object.freeze({title:'坐标轴与回零',href:'./course-coordinate-axes.html'})])}),
+  'foundation-gap':Object.freeze({title:'从坐标、对刀与刀补开始',route:'建议路线：坐标轴 → 工件坐标系 → 刀长补偿 → 对刀检查模拟',href:'./course-coordinate-axes.html',steps:Object.freeze([Object.freeze({title:'坐标轴与运动方向',href:'./course-coordinate-axes.html'}),Object.freeze({title:'机床坐标与工件坐标',href:'./course-machine-work-offset.html'}),Object.freeze({title:'对刀与刀长补偿',href:'./course-tool-length-offset.html'})])}),
+  'advanced-ready':Object.freeze({title:'进入程序验证与首件检查',route:'建议路线：G00/G01 → 程序空运行模拟 → 首件检查 → 故障排查专项',href:'./course-g00-g01-basics.html',steps:Object.freeze([Object.freeze({title:'G00与G01',href:'./course-g00-g01-basics.html'}),Object.freeze({title:'程序检查与空运行',href:'./simulator-program-dry-run.html'}),Object.freeze({title:'首件测量与超差排查',href:'./simulator-first-piece-inspection.html'})])})
+});
+const PLACEMENT_DECISIONS=new Set(Object.keys(PLACEMENT_ROUTE_CATALOG));
+const PLACEMENT_HREFS=new Set(Object.values(PLACEMENT_ROUTE_CATALOG).flatMap(route=>[route.href,...route.steps.map(step=>step.href)]));
 const COURSES=[
 {id:'stage-1',title:'安全基础：先学会停，再学会动',file:'course-safety-foundation.html',reason:'先建立急停、进给保持、单段、倍率和上机前检查意识。'},
 {id:'stage-2',title:'认识加工中心：先知道谁在动',file:'course-machining-center-basics.html',reason:'认识主轴、工作台、刀库、防护门和三条直线轴。'},
@@ -52,6 +58,11 @@ function countWrong(practice){const wrong=practice.wrongQuestions||practice.wron
 function countSimulatorPassed(simulator){const source=simulator.simulators&&typeof simulator.simulators==='object'?simulator.simulators:simulator;return Object.values(source||{}).filter(item=>item&&typeof item==='object'&&(item.passed===true||Number(item.bestScore||item.score||0)>=80)).length}
 function setRecommended(id){document.querySelectorAll('.route-card').forEach(card=>card.classList.toggle('recommended',card.id===id))}
 function handoffOutcome(state,data=null){return {state,data}}
+function payloadMatchesCanonicalRoute(data,canonical){
+  if(!canonical||data.title.trim()!==canonical.title||data.route.trim()!==canonical.route||data.href!==canonical.href)return false;
+  if(data.steps.length!==canonical.steps.length)return false;
+  return data.steps.every((step,index)=>step.title.trim()===canonical.steps[index].title&&step.href===canonical.steps[index].href);
+}
 function consumePlacementHandoff(){
   let raw;
   try{raw=sessionStorage.getItem(PLACEMENT_HANDOFF_KEY);if(raw!==null)sessionStorage.removeItem(PLACEMENT_HANDOFF_KEY)}catch{return handoffOutcome('storage-unavailable')}
@@ -63,7 +74,9 @@ function consumePlacementHandoff(){
   if(!Number.isFinite(createdAt)||!Number.isFinite(expiresAt)||createdAt>now+30000||expiresAt<=now||expiresAt-createdAt>PLACEMENT_HANDOFF_TTL_MS)return handoffOutcome('expired');
   if(typeof data.title!=='string'||!data.title.trim()||data.title.length>80||typeof data.route!=='string'||!data.route.trim()||data.route.length>220||!PLACEMENT_HREFS.has(data.href))return handoffOutcome('invalid');
   if(!Array.isArray(data.steps)||data.steps.length<1||data.steps.length>3||data.steps.some(step=>typeof step?.title!=='string'||!step.title.trim()||step.title.length>60||!PLACEMENT_HREFS.has(step.href)))return handoffOutcome('invalid');
-  return handoffOutcome('consumed',{decision:data.decision,title:data.title.trim(),route:data.route.trim(),href:data.href,steps:data.steps.map(step=>({title:step.title.trim(),href:step.href}))});
+  const canonical=PLACEMENT_ROUTE_CATALOG[data.decision];
+  if(!payloadMatchesCanonicalRoute(data,canonical))return handoffOutcome('invalid');
+  return handoffOutcome('consumed',{decision:data.decision,title:canonical.title,route:canonical.route,href:canonical.href,steps:canonical.steps.map(step=>({title:step.title,href:step.href}))});
 }
 function focusHandoff(){requestAnimationFrame(()=>document.getElementById('placement-handoff-title')?.focus({preventScroll:false}))}
 function renderHandoffSteps(container,items){
@@ -87,7 +100,7 @@ function renderHandoffState(outcome){
   placementHandoffConsumed=false;kicker.textContent='起点测评路线 · 恢复提示';
   if(outcome.state==='storage-unavailable'){title.textContent='当前浏览器无法读取临时路线';copy.textContent='未读取、复制或转存测评路线；下面仍按正式学习记录显示系统推荐。';}
   else if(outcome.state==='consumed-cleared'){title.textContent='本次临时路线已经消费并清除';copy.textContent='返回或刷新不会再次显示测评结果；下面仍按正式学习记录显示系统推荐。';}
-  else{title.textContent='本次测评路线已失效或已清除';copy.textContent='为保护临时结果，过期、损坏或来源不匹配的数据不会显示；可以重新完成起点测评。';}
+  else{title.textContent='本次测评路线已失效或已清除';copy.textContent='为保护临时结果，过期、损坏、来源不匹配或路线内容不一致的数据不会显示；可以重新完成起点测评。';}
   note.textContent='系统没有把本次测评结果写入成绩、XP、成长档案、错题记录或网址。';focusHandoff();
 }
 function clearConsumedHandoffView(){if(!placementHandoffConsumed)return;renderHandoffState(handoffOutcome('consumed-cleared'))}
