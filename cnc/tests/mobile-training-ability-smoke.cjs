@@ -48,17 +48,42 @@ const assert = require('node:assert/strict');
   assert.match(text, /对刀装夹/);
   assert.match(text, /当前最需要加强/);
 
-  const layout = await page.locator('.xp-ability-section').evaluate(panel => {
-    const nodes = [...panel.querySelectorAll('.xp-ability-card')];
-    const rects = nodes.map(node => node.getBoundingClientRect());
-    const buttons = [...panel.querySelectorAll('button')].map(node => node.getBoundingClientRect().height);
-    return {
-      singleColumn: rects.slice(1).every((rect, i) => Math.abs(rect.left - rects[i].left) < 2 && rect.top > rects[i].top),
-      minButtonHeight: Math.min(...buttons)
+  // 字体与学习档案渲染可能让能力卡片经历短暂重排。这里继续严格要求六张卡片
+  // 在手机端单列排列且按钮不少于44px，并要求相同布局签名连续稳定5帧后再验收。
+  const layout = await page.locator('.xp-ability-section').evaluate(async panel => {
+    const measure = () => {
+      const rects = [...panel.querySelectorAll('.xp-ability-card')].map(node => node.getBoundingClientRect());
+      const buttons = [...panel.querySelectorAll('button')].map(node => node.getBoundingClientRect().height);
+      return {
+        cardCount: rects.length,
+        buttonCount: buttons.length,
+        singleColumn: rects.length === 6 && rects.slice(1).every((rect, i) =>
+          Math.abs(rect.left - rects[i].left) < 2 && rect.top > rects[i].top
+        ),
+        minButtonHeight: buttons.length ? Math.min(...buttons) : 0,
+        signature: rects.map(rect => [rect.left, rect.top, rect.width, rect.height].map(value => Math.round(value * 10) / 10).join(',')).join('|')
+      };
     };
+
+    let previousSignature = '';
+    let stableFrames = 0;
+    let latest = measure();
+    for (let frame = 0; frame < 120; frame += 1) {
+      await new Promise(resolve => requestAnimationFrame(resolve));
+      latest = measure();
+      const valid = latest.singleColumn && latest.minButtonHeight >= 44;
+      if (valid && latest.signature === previousSignature) stableFrames += 1;
+      else stableFrames = 0;
+      previousSignature = latest.signature;
+      if (stableFrames >= 5) return { ...latest, stableFrames };
+    }
+    return { ...latest, stableFrames };
   });
+  assert.equal(layout.cardCount, 6);
+  assert.ok(layout.buttonCount > 0);
   assert.equal(layout.singleColumn, true);
   assert.ok(layout.minButtonHeight >= 44);
+  assert.ok(layout.stableFrames >= 5, `阶段能力布局未连续稳定5帧：${JSON.stringify(layout)}`);
 
   await page.locator('[data-ability-train="11"]').first().click();
   await page.waitForSelector('#view-study.active #study-detail-content .lesson-detail-v2[data-level="11"]', { state: 'visible', timeout: 15000 });
