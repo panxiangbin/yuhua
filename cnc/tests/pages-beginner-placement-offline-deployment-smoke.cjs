@@ -86,9 +86,10 @@ function assertPlacement(text, label) {
     'id="options"',
     'role="radiogroup"',
     '测评只做推荐',
+    '测评结果仅保存在本次页面内',
+    '不改动你的成绩、XP或通关记录',
     '相同版本原厂手册',
-    '授权人员确认',
-    '不写入长期学习记录'
+    '授权人员确认'
   ]);
   for (const forbidden of ['localStorage.setItem', 'indexedDB.open', '固定上机值', '绕过安全门联锁']) {
     if (text.includes(forbidden)) throw new Error(`${label}出现禁止内容：${forbidden}`);
@@ -198,7 +199,7 @@ async function waitForExactDeployment() {
       '当前分支、main、Pages逐字节一致：是',
       `PWA构建：${expectedPwaBuild}`,
       '起点测评进入10项核心预缓存：是',
-      '测评推荐、原厂手册、授权人员与不写长期记录边界：可见',
+      '测评推荐、页面内临时结果、原厂手册与授权人员边界：可见',
       ...findings
     ].join('\n') + '\n');
     console.log(`CNC beginner placement offline Pages verified: ${expectedPwaBuild}`);
