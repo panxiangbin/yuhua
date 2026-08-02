@@ -1,0 +1,52 @@
+name: CNC PWA build reference audit smoke
+on:
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-*.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-*.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: cnc-pwa-build-reference-audit-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Check audit script syntax
+        run: node --check cnc/tests/pwa-build-reference-audit-smoke.cjs
+      - name: Audit current and previous PWA build references
+        run: node cnc/tests/pwa-build-reference-audit-smoke.cjs
+      - name: Reject bypasses and missing diagnostics
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const script = fs.readFileSync('cnc/tests/pwa-build-reference-audit-smoke.cjs', 'utf8');
+          for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)']) {
+            if (script.includes(forbidden)) throw new Error(`PWA引用审计发现绕过：${forbidden}`);
+          }
+          const report = JSON.parse(fs.readFileSync('cnc/test-results/pwa-build-reference-audit/report.json', 'utf8'));
+          if (!report.passed) throw new Error('PWA引用审计报告未通过');
+          if (!report.currentPwaBuild || report.referenceCount < 6 || report.activePinCount < 6) {
+            throw new Error(`PWA引用审计覆盖不足：${JSON.stringify(report)}`);
+          }
+          NODE
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-pwa-build-reference-audit-${{ github.run_id }}
+          path: cnc/test-results/pwa-build-reference-audit/**
+          if-no-files-found: error
+          retention-days: 14
