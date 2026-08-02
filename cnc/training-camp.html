@@ -66,13 +66,23 @@ function consumePlacementHandoff(){
   return handoffOutcome('consumed',{decision:data.decision,title:data.title.trim(),route:data.route.trim(),href:data.href,steps:data.steps.map(step=>({title:step.title.trim(),href:step.href}))});
 }
 function focusHandoff(){requestAnimationFrame(()=>document.getElementById('placement-handoff-title')?.focus({preventScroll:false}))}
+function renderHandoffSteps(container,items){
+  container.replaceChildren();
+  items.forEach((step,index)=>{
+    const item=document.createElement('li');
+    const label=document.createElement('strong');
+    label.textContent=`第${index+1}步：`;
+    item.append(label,document.createTextNode(step.title));
+    container.appendChild(item);
+  });
+}
 function renderHandoffState(outcome){
   const card=document.getElementById('placement-handoff'),title=document.getElementById('placement-handoff-title'),copy=document.getElementById('placement-handoff-copy'),steps=document.getElementById('placement-handoff-steps'),cta=document.getElementById('placement-handoff-cta'),note=document.getElementById('placement-handoff-note'),kicker=document.getElementById('placement-handoff-kicker');
-  card.dataset.state=outcome.state;steps.innerHTML='';cta.hidden=true;cta.removeAttribute('data-decision');
+  card.dataset.state=outcome.state;steps.replaceChildren();cta.hidden=true;cta.removeAttribute('data-decision');
   if(outcome.state==='none'){card.hidden=true;placementHandoffConsumed=false;return}
   card.hidden=false;
   if(outcome.state==='consumed'){
-    placementHandoffConsumed=true;kicker.textContent='本次起点测评 · 临时路线';title.textContent=outcome.data.title;copy.textContent=outcome.data.route;steps.innerHTML=outcome.data.steps.map((step,index)=>`<li><strong>第${index+1}步：</strong>${step.title}</li>`).join('');cta.href=outcome.data.href;cta.textContent='开始第1步';cta.dataset.decision=outcome.data.decision;cta.hidden=false;note.textContent='该路线只在当前标签页显示一次，已从临时存储中清除，不会写入成绩、XP、成长档案或错题记录。测评推荐不代表现场上机许可。';focusHandoff();return;
+    placementHandoffConsumed=true;kicker.textContent='本次起点测评 · 临时路线';title.textContent=outcome.data.title;copy.textContent=outcome.data.route;renderHandoffSteps(steps,outcome.data.steps);cta.href=outcome.data.href;cta.textContent='开始第1步';cta.dataset.decision=outcome.data.decision;cta.hidden=false;note.textContent='该路线只在当前标签页显示一次，已从临时存储中清除，不会写入成绩、XP、成长档案或错题记录。测评推荐不代表现场上机许可。';focusHandoff();return;
   }
   placementHandoffConsumed=false;kicker.textContent='起点测评路线 · 恢复提示';
   if(outcome.state==='storage-unavailable'){title.textContent='当前浏览器无法读取临时路线';copy.textContent='未读取、复制或转存测评路线；下面仍按正式学习记录显示系统推荐。';}
