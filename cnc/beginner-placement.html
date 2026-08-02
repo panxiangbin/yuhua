@@ -57,7 +57,7 @@ function evaluatePlacement(){
   const criticalPartials=questions.filter((question,questionIndex)=>question.critical&&answerScore(questionIndex)===1).map(question=>question.label);
   const foundationFailures=questions.filter((question,questionIndex)=>question.domain==='foundation'&&answerScore(questionIndex)===0).map(question=>question.label);
   if(criticalFailures.length){
-    return {decision:'critical-safety',title:'从第1关：安全基础开始',copy:'你的总分不能覆盖关键安全项。先把危险动作改成“先确认、再操作”，再进入坐标、对刀和程序训练。',diagnostics:`总分 ${score}/12。关键安全项未通过：${criticalFailures.join('、')}。关键安全项采用硬门禁，不会被其他题的高分抵消。`,route:'建议路线：安全基础 → 加工中心基础 → 坐标轴与回零',href:'./course-safety-foundation.html'};
+    return {decision:'critical-safety',title:'从第1关：安全基础开始',copy:'你的总分不能覆盖关键安全项。先把危险动作改成“先确认、再操作”，再进入坐标、对刀和程序训练。',diagnostics:`总分 ${score}/12。关键安全项未通过：${criticalFailures.join('、')}。关键安全项采用硬门禁，不能被其他题的高分抵消。`,route:'建议路线：安全基础 → 加工中心基础 → 坐标轴与回零',href:'./course-safety-foundation.html'};
   }
   if(score<=5){
     return {decision:'low-score',title:'从第1关：安全基础开始',copy:'你的首要任务不是记更多G代码，而是先建立“先确认、再操作”的安全习惯。',diagnostics:`总分 ${score}/12。基础判断仍不稳定，先按完整新手路线打地基。`,route:'建议路线：安全基础 → 加工中心基础 → 坐标轴与回零',href:'./course-safety-foundation.html'};
