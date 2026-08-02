@@ -47,22 +47,27 @@ jobs:
           const test = fs.readFileSync('cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs', 'utf8');
           const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
           const sw = fs.readFileSync('cnc/sw.js', 'utf8');
-          if (info.pwaBuild !== '20260802-pwa6') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
-          if (!sw.includes("const BUILD = '20260802-pwa6'")) throw new Error('Service Worker build mismatch');
+          const placement = fs.readFileSync('cnc/beginner-placement.html', 'utf8');
+          if (info.pwaBuild !== '20260802-pwa7') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
+          if (!sw.includes("const BUILD = '20260802-pwa7'")) throw new Error('Service Worker build mismatch');
           for (const token of [
-            "const expectedPwaBuild = '20260802-pwa6'",
+            "const branchTargetPwaBuild = '20260802-pwa7'",
+            "const previousPublicPwaBuild = '20260802-pwa6'",
             'CNC_PAGES_VERIFY_ATTEMPTS || 18',
             "cache: 'no-store'",
             'cnc/beginner-placement.html',
             'beginnerPlacementPublic: true',
             'beginnerPlacementInCoreCache: true',
             'tenCoreResourcesVerified: true',
-            'exactBytesMatch: true',
-            'exactSha256Match: true',
+            'criticalSafetyGatePresent: true',
+            'mainPagesExactBytesMatch: true',
+            'mainPagesExactSha256Match: true',
+            'branchDeploymentPending',
             'process.exit(1)'
           ]) {
             if (!test.includes(token)) throw new Error(`deployment test missing: ${token}`);
           }
+          if (!placement.includes('criticalFailures') || !placement.includes("decision:'critical-safety'")) throw new Error('beginner placement critical safety gate missing');
           for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)', 'CNC_PAGES_VERIFY_ATTEMPTS || 0']) {
             if (test.includes(forbidden)) throw new Error(`deployment gate bypass found: ${forbidden}`);
           }
