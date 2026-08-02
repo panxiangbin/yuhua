@@ -1,0 +1,77 @@
+name: CNC AI teacher offline core Pages smoke
+on:
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: cnc-ai-teacher-offline-core-pages-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Validate exact deployment contract
+        run: |
+          node --check cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs
+          node --check cnc/sw.js
+          node - <<'NODE'
+          const fs = require('fs');
+          const test = fs.readFileSync('cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs', 'utf8');
+          const sw = fs.readFileSync('cnc/sw.js', 'utf8');
+          const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
+          const status = fs.readFileSync('cnc/pwa-status.html', 'utf8');
+          const selfTest = fs.readFileSync('cnc/pwa-self-test.html', 'utf8');
+          const swBuild = sw.match(/const BUILD = '([^']+)'/)?.[1];
+          if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
+          for (const token of [
+            "const expectedPwaBuild = '20260802-pwa5'",
+            "const expectedSiteBuild = '20260801-ai-handoff1'",
+            'attempts || 18',
+            "cache: 'no-store'",
+            'exactBytesMatch: true',
+            'exactSha256Match: true',
+            'localMatchesMain: true',
+            'explainabilityInCoreCache: true',
+            'nineCoreResourcesVerified: true',
+            'process.exit(1)'
+          ]) {
+            if (!test.includes(token)) throw new Error(`deployment test missing: ${token}`);
+          }
+          for (const file of ['./ai-teacher.html', './ai-teacher-intake.html', './ai-teacher-explainability.html']) {
+            if (!sw.includes(`'${file}'`)) throw new Error(`Service Worker core missing: ${file}`);
+            if (!selfTest.includes(`'${file}'`)) throw new Error(`self-test core missing: ${file}`);
+          }
+          if (!status.includes(`const EXPECTED='${info.pwaBuild}'`)) throw new Error('PWA status build mismatch');
+          if (!selfTest.includes(`const EXPECTED='${info.pwaBuild}'`)) throw new Error('PWA self-test build mismatch');
+          for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)', 'CNC_PAGES_VERIFY_ATTEMPTS || 0']) {
+            if (test.includes(forbidden)) throw new Error(`deployment gate bypass found: ${forbidden}`);
+          }
+          NODE
+      - name: Verify main and Pages exact deployment
+        env:
+          CNC_PAGES_VERIFY_ATTEMPTS: 18
+          CNC_PAGES_VERIFY_INTERVAL_MS: 10000
+        run: node cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs
+      - name: Upload deployment diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-ai-teacher-offline-core-pages-${{ github.run_id }}
+          path: cnc/test-results/ai-teacher-offline-core-pages/**
+          if-no-files-found: error
+          retention-days: 14
