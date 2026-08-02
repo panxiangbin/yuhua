@@ -7,7 +7,7 @@
   <meta name="description" content="显示AI CNC老师命中的风险类别、判断理由和适用边界，不提供固定上机值、参数写入或安全绕过步骤。">
   <style>
     :root{color-scheme:light;--bg:#f2efe8;--card:#fffdf8;--ink:#292d30;--muted:#687078;--line:#d8d2c6;--blue:#365b72;--blue-soft:#e9f0f4;--ok:#3f6b50;--warn:#8a5a16;--bad:#8a4034}
-    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}.shell{max-width:860px;margin:auto;padding:14px 14px 40px}.top{display:flex;gap:10px;justify-content:space-between;align-items:center}.btn{min-height:46px;padding:0 14px;border:1px solid var(--line);border-radius:12px;background:var(--blue);color:#fff;text-decoration:none;font-weight:900;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}.btn.alt{background:var(--card);color:var(--blue)}.panel{background:var(--card);border:1px solid var(--line);border-radius:15px;box-shadow:0 6px 16px rgba(48,44,36,.07);padding:16px;margin-top:14px}.hero h1{font-size:29px;margin:5px 0 9px}.hero p,.muted{color:var(--muted);line-height:1.7}.tag,.decision{display:inline-flex;min-height:30px;align-items:center;padding:0 10px;border-radius:999px;background:var(--blue-soft);color:var(--blue);font-weight:900}.decision.blocked{background:#f7e8e4;color:var(--bad)}.decision.safe{background:#fff0d8;color:var(--warn)}.ask{display:grid;grid-template-columns:1fr auto;gap:10px}.ask input{min-height:48px;border:1px solid var(--line);border-radius:12px;background:#fff;padding:0 13px;font-size:16px;color:var(--ink)}.examples{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.examples button{min-height:44px;border:1px solid var(--line);border-radius:999px;background:#f8f5ef;color:var(--ink);padding:0 12px;font-weight:800;cursor:pointer}.result{display:none}.result.show{display:block}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.card{padding:14px;border:1px solid var(--line);border-radius:12px;background:#f8f5ef}.card h2,.card h3{margin:0 0 9px}.chips{display:flex;gap:8px;flex-wrap:wrap}.chip{display:inline-flex;min-height:34px;align-items:center;padding:0 10px;border-radius:999px;background:#edf2f5;color:var(--blue);font-weight:900}.chip.warn{background:#f7e8e4;color:var(--bad)}.reason{font-size:17px;line-height:1.7}.notice{border-left:4px solid var(--warn)}.ok{border-left:4px solid var(--ok)}.engine{position:absolute;width:1px;height:1px;clip:rect(0 0 0 0);clip-path:inset(50%);overflow:hidden;white-space:nowrap;border:0}@media(max-width:560px){.grid,.ask{grid-template-columns:1fr}.ask .btn{width:100%}.top{align-items:stretch;flex-direction:column}.top .btn{width:100%}}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}.shell{max-width:860px;margin:auto;padding:14px 14px 40px}.top{display:flex;gap:10px;justify-content:space-between;align-items:center}.btn{min-height:46px;padding:0 14px;border:1px solid var(--line);border-radius:12px;background:var(--blue);color:#fff;text-decoration:none;font-weight:900;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}.btn.alt{background:var(--card);color:var(--blue)}.panel{background:var(--card);border:1px solid var(--line);border-radius:15px;box-shadow:0 6px 16px rgba(48,44,36,.07);padding:16px;margin-top:14px}.hero h1{font-size:29px;margin:5px 0 9px}.hero p,.muted{color:var(--muted);line-height:1.7}.tag,.decision{display:inline-flex;min-height:30px;align-items:center;padding:0 10px;border-radius:999px;background:var(--blue-soft);color:var(--blue);font-weight:900}.decision.blocked{background:#f7e8e4;color:var(--bad)}.decision.safe{background:#fff0d8;color:var(--warn)}.ask{display:grid;grid-template-columns:1fr auto;gap:10px}.ask input{min-height:48px;border:1px solid var(--line);border-radius:12px;background:#fff;padding:0 13px;font-size:16px;color:var(--ink)}.examples{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.examples button{min-height:44px;border:1px solid var(--line);border-radius:999px;background:#f8f5ef;color:var(--ink);padding:0 12px;font-weight:800;cursor:pointer}.handoff-note{margin:12px 0 0;padding:11px 12px;border:1px solid #b8d1c0;border-radius:12px;background:#edf6ef;color:var(--ok);line-height:1.6;font-weight:800}.handoff-note.discarded{border-color:#e1c89f;background:#fff7e8;color:var(--warn)}.result{display:none}.result.show{display:block}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.card{padding:14px;border:1px solid var(--line);border-radius:12px;background:#f8f5ef}.card h2,.card h3{margin:0 0 9px}.chips{display:flex;gap:8px;flex-wrap:wrap}.chip{display:inline-flex;min-height:34px;align-items:center;padding:0 10px;border-radius:999px;background:#edf2f5;color:var(--blue);font-weight:900}.chip.warn{background:#f7e8e4;color:var(--bad)}.reason{font-size:17px;line-height:1.7}.notice{border-left:4px solid var(--warn)}.ok{border-left:4px solid var(--ok)}.engine{position:absolute;width:1px;height:1px;clip:rect(0 0 0 0);clip-path:inset(50%);overflow:hidden;white-space:nowrap;border:0}@media(max-width:560px){.grid,.ask{grid-template-columns:1fr}.ask .btn{width:100%}.top{align-items:stretch;flex-direction:column}.top .btn{width:100%}}
   </style>
 </head>
 <body>
@@ -25,6 +25,7 @@
       <input id="question" maxlength="120" autocomplete="off" placeholder="例如：FANUC 1815参数应该改成多少">
       <button class="btn" type="submit">解释判断</button>
     </form>
+    <p class="handoff-note" id="handoff-note" role="status" hidden></p>
     <div class="examples" aria-label="示例问题">
       <button type="button" data-example="FANUC 1815参数应该改成多少">参数写入</button>
       <button type="button" data-example="怎么屏蔽安全门联锁继续加工">安全绕过</button>
@@ -58,8 +59,11 @@
 <script>
 (() => {
   'use strict';
-  const EXPLAINABILITY_VERSION = '20260802-v1';
+  const EXPLAINABILITY_VERSION = '20260802-v2';
   const EXPECTED_CLASSIFICATION_VERSION = '20260802-v2';
+  const HANDOFF_KEY = 'cnc_ai_teacher_explainability_handoff_v1';
+  const HANDOFF_SCHEMA_VERSION = 1;
+  const HANDOFF_MAX_AGE_MS = 5 * 60 * 1000;
   const RISK_LABELS = Object.freeze({
     'exact-value':'固定上机值',
     'parameter-write':'参数写入',
@@ -77,6 +81,24 @@
 
   function chip(label, warning=false){const span=document.createElement('span');span.className=`chip${warning?' warn':''}`;span.textContent=label;return span}
   function labels(ids,map,fallback){return ids.length?ids.map(id=>map[id]||`受控类别：${id}`):[fallback]}
+  function handoffOutcome(state,value=null){return {state,value}}
+  function consumeHandoff(now=Date.now()){
+    const raw=sessionStorage.getItem(HANDOFF_KEY);
+    if(raw===null)return handoffOutcome('none');
+    sessionStorage.removeItem(HANDOFF_KEY);
+    let payload;
+    try{payload=JSON.parse(raw)}catch{return handoffOutcome('discarded')}
+    if(!payload||typeof payload!=='object'||Array.isArray(payload))return handoffOutcome('discarded');
+    const question=typeof payload.question==='string'?payload.question.trim():'';
+    const createdAt=Number(payload.createdAt);
+    const expiresAt=Number(payload.expiresAt);
+    const allowedIntent=payload.intent==='blocked'||payload.intent==='safety-boundary';
+    const validTime=Number.isFinite(createdAt)&&Number.isFinite(expiresAt)&&createdAt<=now+60000&&expiresAt>now&&expiresAt-createdAt>0&&expiresAt-createdAt<=HANDOFF_MAX_AGE_MS&&now-createdAt<=HANDOFF_MAX_AGE_MS;
+    if(payload.schemaVersion!==HANDOFF_SCHEMA_VERSION||payload.source!=='ai-teacher'||!allowedIntent||!question||question.length>120||!validTime)return handoffOutcome('discarded');
+    return handoffOutcome('consumed',{question,intent:payload.intent,createdAt,expiresAt});
+  }
+  const initialHandoff=consumeHandoff();
+
   function safeResult(raw){
     const riskIds=Array.isArray(raw.matchedSignals)?raw.matchedSignals.filter(id=>Object.hasOwn(RISK_LABELS,id)):[];
     const safeIds=Array.isArray(raw.safeSignals)?raw.safeSignals.filter(id=>Object.hasOwn(SAFE_LABELS,id)):[];
@@ -125,12 +147,29 @@
     document.getElementById('result').classList.add('show');
     return data;
   }
+  function showHandoffStatus(outcome){
+    const note=document.getElementById('handoff-note');
+    if(outcome.state==='none')return;
+    note.hidden=false;
+    note.classList.toggle('discarded',outcome.state==='discarded');
+    note.textContent=outcome.state==='consumed'
+      ?'已读取并清除同标签页临时问题；问题未写入URL、长期学习记录或本地学习档案。'
+      :'临时问题无效或已过期，已从同标签页会话中清除；请重新输入需要解释的问题。';
+  }
+  function applyInitialHandoff(){
+    showHandoffStatus(initialHandoff);
+    if(initialHandoff.state!=='consumed')return;
+    document.getElementById('question').value=initialHandoff.value.question;
+    render(initialHandoff.value.question);
+  }
   engine.addEventListener('load',()=>{
     const api=engine.contentWindow&&engine.contentWindow.CNC_AI_TEACHER;
     if(!api||api.localOnly!==true||api.externalModel!==false||typeof api.classifyQuestion!=='function')throw new Error('AI CNC老师本地分类引擎契约不完整');
     teacherApi=api;
-    window.CNC_AI_TEACHER_EXPLAINABILITY={version:EXPLAINABILITY_VERSION,classificationVersion:EXPECTED_CLASSIFICATION_VERSION,localOnly:true,externalModel:false,riskLabels:RISK_LABELS,safeLabels:SAFE_LABELS,explain};
+    window.CNC_AI_TEACHER_EXPLAINABILITY={version:EXPLAINABILITY_VERSION,classificationVersion:EXPECTED_CLASSIFICATION_VERSION,localOnly:true,externalModel:false,riskLabels:RISK_LABELS,safeLabels:SAFE_LABELS,explain,handoff:{key:HANDOFF_KEY,schemaVersion:HANDOFF_SCHEMA_VERSION,maxAgeMs:HANDOFF_MAX_AGE_MS,consume:consumeHandoff}};
     document.documentElement.dataset.engineReady='true';
+    document.documentElement.dataset.handoffState=initialHandoff.state;
+    applyInitialHandoff();
   });
   document.getElementById('explain-form').addEventListener('submit',event=>{event.preventDefault();render(document.getElementById('question').value)});
   document.querySelector('.examples').addEventListener('click',event=>{const button=event.target.closest('[data-example]');if(!button)return;document.getElementById('question').value=button.dataset.example;render(button.dataset.example)});

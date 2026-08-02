@@ -44,7 +44,6 @@ jobs:
           test -f cnc/ai-teacher-explainability.html
           test -f cnc/tests/mobile-ai-teacher-explainability-smoke.cjs
           test -f cnc/docs/ai-teacher-explainability-contract.md
-          grep -q "20260802-v1" cnc/ai-teacher-explainability.html
           grep -q "20260802-v2" cnc/ai-teacher-explainability.html
           grep -q "固定上机值" cnc/ai-teacher-explainability.html
           grep -q "参数写入" cnc/ai-teacher-explainability.html
@@ -55,6 +54,11 @@ jobs:
           grep -q "资料清单与逐条复核记录不能互相代替" cnc/ai-teacher-explainability.html
           grep -q "未逐条复核内容不可直接上机" cnc/ai-teacher-explainability.html
           grep -q "CNC_AI_TEACHER_EXPLAINABILITY" cnc/ai-teacher-explainability.html
+          grep -q "cnc_ai_teacher_explainability_handoff_v1" cnc/ai-teacher-explainability.html
+          grep -q "sessionStorage.getItem(HANDOFF_KEY)" cnc/ai-teacher-explainability.html
+          grep -q "sessionStorage.removeItem(HANDOFF_KEY)" cnc/ai-teacher-explainability.html
+          grep -q "HANDOFF_MAX_AGE_MS = 5 \* 60 \* 1000" cnc/ai-teacher-explainability.html
+          ! grep -Eq "localStorage\.(setItem|removeItem)\(HANDOFF_KEY" cnc/ai-teacher-explainability.html
           ! grep -Eqi "https?://|XMLHttpRequest|WebSocket|EventSource" cnc/ai-teacher-explainability.html
           ! grep -Eq "test\.skip\(|describe\.skip\(|it\.skip\(|process\.exit\(0\)" cnc/tests/mobile-ai-teacher-explainability-smoke.cjs
       - name: Check JavaScript syntax
@@ -83,7 +87,7 @@ jobs:
         run: node cnc/tests/mobile-ai-teacher-smoke.cjs
       - name: Regress high-risk and educational classification cases
         run: node cnc/tests/ai-teacher-classification-smoke.cjs
-      - name: Validate explainability page on 390x844 mobile
+      - name: Validate explainability page and one-time session handoff on 390x844 mobile
         run: node cnc/tests/mobile-ai-teacher-explainability-smoke.cjs
       - name: Upload explainability diagnostics
         if: always()
