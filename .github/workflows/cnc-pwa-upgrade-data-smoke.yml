@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
       - name: Validate PWA upgrade data contract
         run: |
           node --check cnc/tests/mobile-pwa-upgrade-data-smoke.cjs
@@ -32,14 +32,16 @@ jobs:
           if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
           if (!test.includes(`const CURRENT_PWA_BUILD = '${info.pwaBuild}'`)) throw new Error('upgrade test current PWA build mismatch');
           for (const required of [
-            "const PREVIOUS_PWA_BUILD = '20260728-pwa3'",
+            "const PREVIOUS_PWA_BUILD = '20260801-pwa4'",
             'cnc_training_profile_v1',
             'cnc_training_practice_v1',
             'cnc_training_simulator_v1',
             'indexedDB.open',
             'other-app-cache-v1',
             'ai-teacher.html',
-            'ai-teacher-intake.html'
+            'ai-teacher-intake.html',
+            'ai-teacher-explainability.html',
+            'explainabilityColdOfflineAfterUpgrade: true'
           ]) {
             if (!test.includes(required)) throw new Error(`upgrade contract missing: ${required}`);
           }
