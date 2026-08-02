@@ -40,9 +40,11 @@ jobs:
             '运行时缓存版本存在',
             '核心离线资源完整',
             '公网构建标记与PWA一致',
+            './beginner-placement.html',
             './ai-teacher.html',
             './ai-teacher-intake.html',
-            './ai-teacher-explainability.html'
+            './ai-teacher-explainability.html',
+            '起点测评'
           ]) {
             if (!html.includes(token)) throw new Error(`self-test contract missing: ${token}`);
           }
