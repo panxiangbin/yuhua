@@ -6,6 +6,7 @@ on:
       - 'cnc/beginner-placement.html'
       - 'cnc/training-camp.html'
       - 'cnc/tests/mobile-beginner-placement-route-handoff-smoke.cjs'
+      - 'cnc/tests/mobile-beginner-placement-route-handoff-content-safety-smoke.cjs'
       - 'cnc/docs/beginner-placement-route-handoff-contract.md'
       - '.github/workflows/cnc-beginner-placement-route-handoff-smoke.yml'
   workflow_dispatch:
@@ -27,6 +28,7 @@ jobs:
       - name: Validate one-time handoff contract
         run: |
           node --check cnc/tests/mobile-beginner-placement-route-handoff-smoke.cjs
+          node --check cnc/tests/mobile-beginner-placement-route-handoff-content-safety-smoke.cjs
           node - <<'NODE'
           const fs = require('fs');
           const os = require('os');
@@ -35,6 +37,7 @@ jobs:
           const placement = fs.readFileSync('cnc/beginner-placement.html', 'utf8');
           const camp = fs.readFileSync('cnc/training-camp.html', 'utf8');
           const test = fs.readFileSync('cnc/tests/mobile-beginner-placement-route-handoff-smoke.cjs', 'utf8');
+          const contentSafetyTest = fs.readFileSync('cnc/tests/mobile-beginner-placement-route-handoff-content-safety-smoke.cjs', 'utf8');
           const contract = fs.readFileSync('cnc/docs/beginner-placement-route-handoff-contract.md', 'utf8');
           function checkInlineScripts(file, html) {
             const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)].map(match => match[1]).filter(text => text.trim());
@@ -63,16 +66,20 @@ jobs:
             'event.persisted',
             'consumed-cleared',
             'PLACEMENT_HREFS',
-            '不会写入成绩、XP、成长档案或错题记录'
+            '不会写入成绩、XP、成长档案或错题记录',
+            'renderHandoffSteps',
+            'document.createTextNode(step.title)',
+            'steps.replaceChildren()'
           ]) if (!camp.includes(token)) throw new Error(`training camp contract missing: ${token}`);
           for (const forbidden of [
             'localStorage.setItem(HANDOFF_KEY',
             'localStorage.setItem(PLACEMENT_HANDOFF_KEY',
             'indexedDB.open(HANDOFF_KEY',
             'URLSearchParams',
-            'location.hash='
+            'location.hash=',
+            'steps.innerHTML=outcome.data.steps'
           ]) {
-            if (placement.includes(forbidden) || camp.includes(forbidden)) throw new Error(`handoff persistence or URL bypass found: ${forbidden}`);
+            if (placement.includes(forbidden) || camp.includes(forbidden)) throw new Error(`handoff persistence, URL or HTML injection bypass found: ${forbidden}`);
           }
           for (const token of [
             'bfcachePersisted: false',
@@ -85,11 +92,18 @@ jobs:
             'pageshow',
             'SecurityError'
           ]) if (!test.includes(token)) throw new Error(`browser test contract missing: ${token}`);
+          for (const token of [
+            'untrustedTextRenderedLiterally: false',
+            'noInjectedElements: false',
+            'handoff-step-injected',
+            'sessionStorageCleared: false',
+            'noLongTermStorageLeak: false'
+          ]) if (!contentSafetyTest.includes(token)) throw new Error(`content safety browser contract missing: ${token}`);
           for (const token of ['390×844', 'SessionStorage', 'BFCache', '相同版本原厂手册', '授权人员']) {
             if (!contract.includes(token)) throw new Error(`Chinese contract missing: ${token}`);
           }
           for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)']) {
-            if (test.includes(forbidden)) throw new Error(`test bypass found: ${forbidden}`);
+            if (test.includes(forbidden) || contentSafetyTest.includes(forbidden)) throw new Error(`test bypass found: ${forbidden}`);
           }
           NODE
       - name: Install Playwright runtime
@@ -100,6 +114,8 @@ jobs:
         run: python3 -m http.server 4173 --directory . > /tmp/cnc-route-handoff-server.log 2>&1 &
       - name: Chromium 390x844 route handoff recovery and privacy
         run: node cnc/tests/mobile-beginner-placement-route-handoff-smoke.cjs
+      - name: Chromium 390x844 route handoff content safety
+        run: node cnc/tests/mobile-beginner-placement-route-handoff-content-safety-smoke.cjs
       - name: Preserve server log
         if: always()
         run: cp /tmp/cnc-route-handoff-server.log cnc/test-results/beginner-placement-route-handoff/server.log || true
