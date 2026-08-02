@@ -1,0 +1,83 @@
+name: CNC AI teacher classification Pages smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/ai-teacher.html'
+      - 'cnc/tests/fixtures/ai-teacher-classification-cases.json'
+      - 'cnc/tests/pages-ai-teacher-classification-deployment-smoke.cjs'
+      - 'cnc/docs/ai-teacher-classification-pages-contract.md'
+      - '.github/workflows/cnc-ai-teacher-classification-pages-smoke.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'cnc/ai-teacher.html'
+      - 'cnc/tests/fixtures/ai-teacher-classification-cases.json'
+      - 'cnc/tests/pages-ai-teacher-classification-deployment-smoke.cjs'
+      - 'cnc/docs/ai-teacher-classification-pages-contract.md'
+      - '.github/workflows/cnc-ai-teacher-classification-pages-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cnc-ai-teacher-classification-pages-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  ai-teacher-classification-pages:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Validate classification deployment syntax and anti-bypass contract
+        run: |
+          node --check cnc/tests/pages-ai-teacher-classification-deployment-smoke.cjs
+          node - <<'NODE'
+          const fs = require('fs');
+          const text = fs.readFileSync('cnc/tests/pages-ai-teacher-classification-deployment-smoke.cjs', 'utf8');
+          for (const token of [
+            'cnc/ai-teacher.html',
+            'ai-teacher-classification-cases.json',
+            '20260802-v2',
+            'exactBytesMatch',
+            'exactSha256Match',
+            'branchDeploymentPending',
+            'classificationVersionMatch',
+            'fourHighRiskSignalsPresent',
+            'safeDiscussionBoundaryPresent',
+            'executionOverridePresent',
+            'BLOCK_RULES',
+            'SAFE_DISCUSSION_RULES',
+            'OVERRIDE_EXECUTION_PATTERN',
+            '安全原理说明',
+            'noExternalNetworking'
+          ]) {
+            if (!text.includes(token)) throw new Error(`缺少 AI 老师分类公网契约：${token}`);
+          }
+          for (const forbidden of [
+            'test.skip(',
+            'describe.skip(',
+            'it.skip(',
+            'process.exit(0)',
+            'CNC_PAGES_VERIFY_ATTEMPTS || 0',
+            'allowOperationalUse: true'
+          ]) {
+            if (text.includes(forbidden)) throw new Error(`检测到门禁绕过或危险声明：${forbidden}`);
+          }
+          NODE
+      - name: Verify AI teacher classification version on Pages
+        run: node cnc/tests/pages-ai-teacher-classification-deployment-smoke.cjs
+      - name: Upload AI teacher classification Pages diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-ai-teacher-classification-pages-${{ github.run_id }}
+          path: cnc/test-results/ai-teacher-classification-pages/
+          if-no-files-found: warn
+          retention-days: 14
