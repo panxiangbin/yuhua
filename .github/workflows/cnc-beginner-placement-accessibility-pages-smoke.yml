@@ -42,6 +42,10 @@ jobs:
           grep -q '逐字节一致' cnc/docs/beginner-placement-accessibility-pages-contract.md
           grep -q 'SHA-256' cnc/docs/beginner-placement-accessibility-pages-contract.md
           grep -q '相同版本原厂手册' cnc/docs/beginner-placement-accessibility-pages-contract.md
+          grep -q '关键安全项' cnc/beginner-placement.html
+          grep -q 'criticalSafetyGatePresent: true' cnc/tests/pages-beginner-placement-accessibility-deployment-smoke.cjs
+          grep -q 'branchDeploymentPending' cnc/tests/pages-beginner-placement-accessibility-deployment-smoke.cjs
+          grep -q "eventName !== 'pull_request'" cnc/tests/pages-beginner-placement-accessibility-deployment-smoke.cjs
           ! grep -Eq "test\.skip\(|describe\.skip\(|it\.skip\(|process\.exit\(0\)" cnc/tests/pages-beginner-placement-accessibility-deployment-smoke.cjs
       - name: Verify exact main and Pages deployment
         env:
