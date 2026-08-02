@@ -59,7 +59,7 @@
 <script>
 (() => {
   'use strict';
-  const EXPLAINABILITY_VERSION = '20260802-v2';
+  const EXPLAINABILITY_VERSION = '20260802-v3';
   const EXPECTED_CLASSIFICATION_VERSION = '20260802-v2';
   const HANDOFF_KEY = 'cnc_ai_teacher_explainability_handoff_v1';
   const HANDOFF_SCHEMA_VERSION = 1;
@@ -78,14 +78,16 @@
   });
   const engine = document.getElementById('teacher-engine');
   let teacherApi = null;
+  let displayedFromHandoff = false;
 
   function chip(label, warning=false){const span=document.createElement('span');span.className=`chip${warning?' warn':''}`;span.textContent=label;return span}
   function labels(ids,map,fallback){return ids.length?ids.map(id=>map[id]||`受控类别：${id}`):[fallback]}
   function handoffOutcome(state,value=null){return {state,value}}
   function consumeHandoff(now=Date.now()){
-    const raw=sessionStorage.getItem(HANDOFF_KEY);
+    let raw;
+    try{raw=sessionStorage.getItem(HANDOFF_KEY)}catch{return handoffOutcome('storage-unavailable')}
     if(raw===null)return handoffOutcome('none');
-    sessionStorage.removeItem(HANDOFF_KEY);
+    try{sessionStorage.removeItem(HANDOFF_KEY)}catch{return handoffOutcome('storage-unavailable')}
     let payload;
     try{payload=JSON.parse(raw)}catch{return handoffOutcome('discarded')}
     if(!payload||typeof payload!=='object'||Array.isArray(payload))return handoffOutcome('discarded');
@@ -151,16 +153,40 @@
     const note=document.getElementById('handoff-note');
     if(outcome.state==='none')return;
     note.hidden=false;
-    note.classList.toggle('discarded',outcome.state==='discarded');
-    note.textContent=outcome.state==='consumed'
-      ?'已读取并清除同标签页临时问题；问题未写入URL、长期学习记录或本地学习档案。'
-      :'临时问题无效或已过期，已从同标签页会话中清除；请重新输入需要解释的问题。';
+    note.classList.toggle('discarded',outcome.state!=='consumed');
+    if(outcome.state==='consumed'){
+      note.textContent='已读取并清除同标签页临时问题；问题未写入URL、长期学习记录或本地学习档案。';
+    }else if(outcome.state==='storage-unavailable'){
+      note.textContent='当前浏览器无法使用会话临时存储，未读取或保存临时问题；请手动输入需要解释的问题。';
+    }else{
+      note.textContent='临时问题无效或已过期，已从同标签页会话中清除；请重新输入需要解释的问题。';
+    }
+  }
+  function clearConsumedHandoffView(){
+    if(!displayedFromHandoff)return;
+    displayedFromHandoff=false;
+    document.getElementById('question').value='';
+    document.getElementById('decision').className='decision';
+    document.getElementById('decision').textContent='等待判断';
+    document.getElementById('result-title').textContent='判断说明';
+    document.getElementById('result-reason').textContent='';
+    document.getElementById('risk-chips').replaceChildren();
+    document.getElementById('safe-chips').replaceChildren();
+    document.getElementById('override-text').textContent='';
+    document.getElementById('version-text').textContent='';
+    document.getElementById('result').classList.remove('show');
+    const note=document.getElementById('handoff-note');
+    note.hidden=false;
+    note.classList.add('discarded');
+    note.textContent='本次临时问题已经消费并清除，返回页面不会再次显示；如需继续，请重新输入。';
+    document.documentElement.dataset.handoffState='consumed-cleared';
   }
   function applyInitialHandoff(){
     showHandoffStatus(initialHandoff);
     if(initialHandoff.state!=='consumed')return;
     document.getElementById('question').value=initialHandoff.value.question;
     render(initialHandoff.value.question);
+    displayedFromHandoff=true;
   }
   engine.addEventListener('load',()=>{
     const api=engine.contentWindow&&engine.contentWindow.CNC_AI_TEACHER;
@@ -171,8 +197,10 @@
     document.documentElement.dataset.handoffState=initialHandoff.state;
     applyInitialHandoff();
   });
-  document.getElementById('explain-form').addEventListener('submit',event=>{event.preventDefault();render(document.getElementById('question').value)});
-  document.querySelector('.examples').addEventListener('click',event=>{const button=event.target.closest('[data-example]');if(!button)return;document.getElementById('question').value=button.dataset.example;render(button.dataset.example)});
+  window.addEventListener('pagehide',clearConsumedHandoffView);
+  window.addEventListener('pageshow',event=>{if(event.persisted)clearConsumedHandoffView()});
+  document.getElementById('explain-form').addEventListener('submit',event=>{event.preventDefault();displayedFromHandoff=false;render(document.getElementById('question').value)});
+  document.querySelector('.examples').addEventListener('click',event=>{const button=event.target.closest('[data-example]');if(!button)return;displayedFromHandoff=false;document.getElementById('question').value=button.dataset.example;render(button.dataset.example)});
 })();
 </script>
 </body>
