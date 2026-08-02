@@ -49,6 +49,14 @@ jobs:
           grep -q "setAttribute('aria-checked'" cnc/beginner-placement.html
           grep -q "focusNode('result-title')" cnc/beginner-placement.html
           grep -q 'prefers-reduced-motion:reduce' cnc/beginner-placement.html
+          grep -q 'result-diagnostics' cnc/beginner-placement.html
+          grep -q 'critical:true' cnc/beginner-placement.html
+          grep -q 'criticalFailures' cnc/beginner-placement.html
+          grep -q "decision:'critical-safety'" cnc/beginner-placement.html
+          grep -q '关键安全项采用硬门禁' cnc/docs/beginner-placement-accessibility-contract.md
+          grep -q '10/12' cnc/docs/beginner-placement-accessibility-contract.md
+          grep -q 'criticalSafetyGate: true' cnc/tests/mobile-beginner-placement-smoke.cjs
+          grep -q 'foundationGapGate: true' cnc/tests/mobile-beginner-placement-smoke.cjs
           grep -q '相同版本原厂手册' cnc/beginner-placement.html
           grep -q '390×844' cnc/docs/beginner-placement-accessibility-contract.md
           grep -q 'LocalStorage' cnc/docs/beginner-placement-accessibility-contract.md
@@ -56,7 +64,7 @@ jobs:
           ! grep -Eqi "固定上机值|跳过原厂手册|关闭联锁" cnc/beginner-placement.html
       - name: Start static server
         run: python3 -m http.server 4173 --directory . > /tmp/cnc-server.log 2>&1 &
-      - name: Chromium 390x844 beginner placement accessibility
+      - name: Chromium 390x844 beginner placement accessibility and safety gate
         run: node cnc/tests/mobile-beginner-placement-smoke.cjs
       - name: Preserve server log
         if: always()

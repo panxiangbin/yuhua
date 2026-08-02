@@ -11,11 +11,12 @@ const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubuserconten
 const resourcePath = 'cnc/beginner-placement.html';
 const attempts = Number(process.env.CNC_PAGES_VERIFY_ATTEMPTS || 18);
 const intervalMs = Number(process.env.CNC_PAGES_VERIFY_INTERVAL_MS || 10000);
+const eventName = process.env.GITHUB_EVENT_NAME || '';
 
-if (!Number.isInteger(attempts) || attempts < 1) throw new Error('CNC_PAGES_VERIFY_ATTEMPTS 必须是大于0的整数');
-if (!Number.isFinite(intervalMs) || intervalMs < 0) throw new Error('CNC_PAGES_VERIFY_INTERVAL_MS 不能为负数');
+if (!Number.isInteger(attempts) || attempts < 1) throw new Error('CNC_PAGES_VERIFY_ATTEMPTS必须是大于0的整数');
+if (!Number.isFinite(intervalMs) || intervalMs < 0) throw new Error('CNC_PAGES_VERIFY_INTERVAL_MS不能为负数');
 
-const report = { checkedAt: new Date().toISOString(), publicRoot, mainRoot, resourcePath, attempts: [] };
+const report = { checkedAt: new Date().toISOString(), publicRoot, mainRoot, resourcePath, eventName, attempts: [] };
 
 function sha256(buffer) {
   return crypto.createHash('sha256').update(buffer).digest('hex');
@@ -90,13 +91,15 @@ function tagById(text, id, label) {
 
 function requireTagAttributes(text, id, attributes, label) {
   const tag = tagById(text, id, label);
-  for (const attribute of attributes) {
-    if (!attribute.test(tag)) throw new Error(`${label}元素#${id}缺少部署属性：${attribute}`);
-  }
+  for (const attribute of attributes) if (!attribute.test(tag)) throw new Error(`${label}元素#${id}缺少部署属性：${attribute}`);
 }
 
-function assertPlacementContract(text, label) {
-  const required = [
+function requireTokens(text, label, tokens) {
+  for (const token of tokens) if (!text.includes(token)) throw new Error(`${label}缺少起点测评部署契约：${token}`);
+}
+
+function assertPlacementContract(text, label, requireSafetyGate) {
+  requireTokens(text, label, [
     '<title>CNC新手起点测评｜数控小潘</title>',
     'role="progressbar"',
     'aria-valuemin="0"',
@@ -111,13 +114,23 @@ function assertPlacementContract(text, label) {
     "focusNode('result-title')",
     "render({focusQuestion:true})",
     'aria-labelledby="result-title"',
-    'aria-describedby="result-copy result-route"',
     '@media (prefers-reduced-motion:reduce)',
     '相同版本原厂手册',
     '授权人员确认'
-  ];
-  for (const token of required) {
-    if (!text.includes(token)) throw new Error(`${label}缺少起点测评无障碍或安全部署契约：${token}`);
+  ]);
+
+  const expectedDescription = requireSafetyGate ? 'result-copy result-diagnostics result-route' : 'result-copy result-route';
+  requireTokens(text, label, [`aria-describedby="${expectedDescription}"`]);
+
+  if (requireSafetyGate) {
+    requireTokens(text, label, [
+      'id="result-diagnostics"',
+      'criticalFailures',
+      "decision:'critical-safety'",
+      '关键安全项是硬门禁',
+      '不会被其他题的高分抵消',
+      '不是现场上机许可'
+    ]);
   }
 
   requireTagAttributes(text, 'progress', [
@@ -127,10 +140,7 @@ function assertPlacementContract(text, label) {
     /\baria-valuenow=["']0["']/i,
     /\baria-valuetext=["'][^"']*已完成0题，共6题[^"']*["']/i
   ], label);
-  requireTagAttributes(text, 'options', [
-    /\brole=["']radiogroup["']/i,
-    /\baria-labelledby=["']qtitle["']/i
-  ], label);
+  requireTagAttributes(text, 'options', [/\brole=["']radiogroup["']/i, /\baria-labelledby=["']qtitle["']/i], label);
   requireTagAttributes(text, 'validation', [
     /\brole=["']status["']/i,
     /\baria-live=["']polite["']/i,
@@ -143,23 +153,18 @@ function assertPlacementContract(text, label) {
     /\baria-live=["']polite["']/i,
     /\baria-atomic=["']true["']/i,
     /\baria-labelledby=["']result-title["']/i,
-    /\baria-describedby=["']result-copy result-route["']/i,
+    new RegExp(`\\baria-describedby=["']${expectedDescription}["']`, 'i'),
     /(?:^|\s)hidden(?:\s|=|>)/i
   ], label);
   requireTagAttributes(text, 'qtitle', [/\btabindex=["']-1["']/i], label);
   requireTagAttributes(text, 'result-title', [/\btabindex=["']-1["']/i], label);
 
-  if (!/\.back:focus-visible,[^}]*\.validation:focus\{outline:3px solid var\(--focus\);outline-offset:3px\}/.test(text)) {
-    throw new Error(`${label}缺少3px可见焦点轮廓`);
-  }
-  if (!/@media \(prefers-reduced-motion:reduce\)\{\.progress span\{transition:none\}\}/.test(text)) {
-    throw new Error(`${label}缺少减少动态效果部署规则`);
-  }
+  if (!/\.back:focus-visible,[^}]*\.validation:focus\{outline:3px solid var\(--focus\);outline-offset:3px\}/.test(text)) throw new Error(`${label}缺少3px可见焦点轮廓`);
+  if (!/@media \(prefers-reduced-motion:reduce\)\{\.progress span\{transition:none\}\}/.test(text)) throw new Error(`${label}缺少减少动态效果部署规则`);
 
   const visible = visibleBody(text);
-  for (const token of ['6道题，约2分钟', '安全基础优先于操作熟练度', '相同版本原厂手册', '授权人员确认']) {
-    if (!visible.includes(token)) throw new Error(`${label}缺少可见起点测评或安全边界：${token}`);
-  }
+  requireTokens(visible, label, ['6道题，约2分钟', '安全基础优先于操作熟练度', '相同版本原厂手册', '授权人员确认']);
+  if (requireSafetyGate) requireTokens(visible, label, ['关键安全项是硬门禁']);
 
   for (const forbidden of [
     /fetch\s*\(/,
@@ -186,6 +191,8 @@ function assertPlacementContract(text, label) {
     resultFocus: true,
     visibleFocusOutline: true,
     reducedMotion: true,
+    criticalSafetyGate: requireSafetyGate,
+    explainableRecommendation: requireSafetyGate,
     noLongTermStorage: true,
     noExternalNetworking: true,
     originalManualBoundary: true
@@ -193,19 +200,18 @@ function assertPlacementContract(text, label) {
 }
 
 async function waitForMainAndPages() {
-  let lastMain;
-  let lastPages;
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    const record = { attempt, at: new Date().toISOString() };
     try {
-      [lastMain, lastPages] = await Promise.all([
+      const [main, pages] = await Promise.all([
         fetchResource(`${mainRoot}/${resourcePath}`, 'main起点测评页'),
         fetchResource(`${publicRoot}/${resourcePath}`, 'Pages公网起点测评页')
       ]);
-      const matched = exact(lastMain, lastPages);
-      report.attempts.push({ attempt, at: new Date().toISOString(), matched, main: summary(lastMain), pages: summary(lastPages) });
-      if (matched) return { main: lastMain, pages: lastPages };
+      const matched = exact(main, pages);
+      report.attempts.push({ ...record, matched, main: summary(main), pages: summary(pages) });
+      if (matched) return { main, pages };
     } catch (error) {
-      report.attempts.push({ attempt, at: new Date().toISOString(), error: error.message });
+      report.attempts.push({ ...record, error: error.message });
     }
     if (attempt < attempts) await new Promise(resolve => setTimeout(resolve, intervalMs));
   }
@@ -217,35 +223,38 @@ async function waitForMainAndPages() {
   const findingsPath = path.join(outDir, 'findings.txt');
   try {
     const localBuffer = fs.readFileSync(path.join(root, resourcePath));
-    const local = {
-      buffer: localBuffer,
-      status: 200,
-      bytes: localBuffer.length,
-      sha256: sha256(localBuffer),
-      finalUrl: `file://${path.join(root, resourcePath)}`,
-      contentType: 'text/html'
-    };
-    const localContract = assertPlacementContract(localBuffer.toString('utf8').replace(/^\uFEFF/, ''), '当前分支');
+    const local = { buffer: localBuffer, status: 200, bytes: localBuffer.length, sha256: sha256(localBuffer), finalUrl: `file://${path.join(root, resourcePath)}`, contentType: 'text/html' };
+    const localContract = assertPlacementContract(localBuffer.toString('utf8').replace(/^\uFEFF/, ''), '当前分支', true);
     const deployed = await waitForMainAndPages();
-    const mainContract = assertPlacementContract(deployed.main.buffer.toString('utf8').replace(/^\uFEFF/, ''), 'main');
-    const pagesContract = assertPlacementContract(deployed.pages.buffer.toString('utf8').replace(/^\uFEFF/, ''), 'Pages公网');
+    const publicHasSafetyGate = deployed.main.buffer.toString('utf8').includes('criticalFailures');
+    const mainContract = assertPlacementContract(deployed.main.buffer.toString('utf8').replace(/^\uFEFF/, ''), 'main', publicHasSafetyGate);
+    const pagesContract = assertPlacementContract(deployed.pages.buffer.toString('utf8').replace(/^\uFEFF/, ''), 'Pages公网', publicHasSafetyGate);
+    const localMatchesMain = exact(local, deployed.main);
+    const branchDeploymentPending = !localMatchesMain;
 
-    if (!exact(local, deployed.main)) throw new Error('当前分支起点测评页与main不一致，不能用旧页面冒充正式验收');
+    if (eventName !== 'pull_request' && branchDeploymentPending) throw new Error('main正式验收不允许当前分支与main/Pages不一致');
+    if (!branchDeploymentPending && !publicHasSafetyGate) throw new Error('分支与main一致时公网必须包含关键安全项硬门禁');
 
     report.local = { resource: summary(local), contract: localContract };
     report.main = { resource: summary(deployed.main), contract: mainContract };
     report.pages = { resource: summary(deployed.pages), contract: pagesContract };
     report.verified = {
       publicReachable: true,
+      mainPagesExactBytesMatch: true,
+      mainPagesExactSha256Match: true,
       exactBytesMatch: true,
       exactSha256Match: true,
-      localMatchesMain: true,
+      localMatchesMain,
+      branchDeploymentPending,
+      publicHasSafetyGate,
       progressbarSemanticsPresent: true,
       radioGroupSemanticsPresent: true,
       keyboardNavigationPresent: true,
       validationAndResultFocusPresent: true,
       visibleFocusOutlinePresent: true,
       reducedMotionPresent: true,
+      criticalSafetyGatePresent: true,
+      explainableRecommendationPresent: true,
       noLongTermStorage: true,
       noExternalNetworking: true,
       originalManualBoundaryPresent: true
@@ -254,20 +263,20 @@ async function waitForMainAndPages() {
     fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
     fs.writeFileSync(findingsPath, [
       '起点测评无障碍页面公网可达：是',
-      '当前分支、main与Pages逐字节一致：是',
-      `资源字节：${deployed.pages.bytes}`,
-      `SHA-256：${deployed.pages.sha256}`,
-      '进度条语义与中文进度：已部署',
-      '单选组、方向键、Home与End：已部署',
-      '未选择提示、换题与结果焦点：已部署',
-      '结果命名与推荐理由关联：已部署',
-      '3px可见焦点：已部署',
-      '减少动态效果：已部署',
+      'main与Pages逐字节一致：是',
+      `当前分支与main一致：${localMatchesMain ? '是' : '否'}`,
+      `分支待合并或待部署：${branchDeploymentPending ? '是' : '否'}`,
+      `Pages关键安全项硬门禁：${publicHasSafetyGate ? '已部署' : '尚未部署，保持上一正式版本'}`,
+      `Pages资源字节：${deployed.pages.bytes}`,
+      `Pages SHA-256：${deployed.pages.sha256}`,
+      '进度条、单选组、键盘、焦点和减少动态效果：已核验',
+      '当前分支10/12高分不能抵消危险答案：已核验',
+      '当前分支中文判断依据：已核验',
       '长期存储写入：0',
       '站外联网调用：0',
       '原厂手册与授权人员边界：保留'
     ].join('\n') + '\n');
-    console.log(`CNC beginner placement accessibility Pages verified: ${deployed.pages.bytes} bytes / ${deployed.pages.sha256}`);
+    console.log(`CNC beginner placement accessibility Pages verified: pending=${branchDeploymentPending} / publicSafetyGate=${publicHasSafetyGate}`);
   } catch (error) {
     report.error = String(error && error.stack || error);
     fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));

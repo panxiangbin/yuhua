@@ -29,15 +29,20 @@ jobs:
           const sw = fs.readFileSync('cnc/sw.js', 'utf8');
           const test = fs.readFileSync('cnc/tests/mobile-pwa-offline-cache-smoke.cjs', 'utf8');
           const selfTest = fs.readFileSync('cnc/pwa-self-test.html', 'utf8');
+          const placement = fs.readFileSync('cnc/beginner-placement.html', 'utf8');
           const swBuild = sw.match(/const BUILD = '([^']+)'/)?.[1];
           if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
+          if (info.pwaBuild !== '20260802-pwa7') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
           for (const file of ['./beginner-placement.html', './ai-teacher.html', './ai-teacher-intake.html', './ai-teacher-explainability.html']) {
             if (!sw.includes(`'${file}'`)) throw new Error(`${file} missing from Service Worker core cache`);
             if (!test.includes(file)) throw new Error(`${file} missing from offline browser verification`);
             if (!selfTest.includes(file)) throw new Error(`${file} missing from PWA self-test required resources`);
           }
+          if (!placement.includes('criticalFailures') || !placement.includes("decision:'critical-safety'")) throw new Error('beginner placement critical safety gate missing');
           if (!test.includes('beginnerPlacementColdOffline: true')) throw new Error('offline diagnostics missing beginner placement result');
+          if (!test.includes('beginnerPlacementCriticalSafetyGateColdOffline: true')) throw new Error('offline diagnostics missing critical safety gate result');
           if (!test.includes('explainabilityColdOffline: true')) throw new Error('offline diagnostics missing explainability result');
+          if (!String(info.contentStage || '').includes('起点测评关键安全门禁')) throw new Error('build marker missing beginner placement critical safety gate');
           if (!String(info.contentStage || '').includes('起点测评离线核心')) throw new Error('build marker missing beginner placement offline capability');
           if (!String(info.contentStage || '').includes('AI老师离线核心')) throw new Error('build marker missing AI offline capability');
           NODE
