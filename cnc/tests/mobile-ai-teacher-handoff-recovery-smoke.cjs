@@ -52,19 +52,30 @@ async function createMobileContext(browser, { blockSessionStorage = false } = {}
 }
 
 (async () => {
-  // Playwright 默认会给 Chromium 加上 --disable-back-forward-cache。
-  // 本专项必须真实命中 pageshow.persisted，因此只移除这一条默认参数，不能用普通刷新模拟。
+  // Playwright 默认无通道时使用功能较少的 chromium headless shell，且默认关闭 BFCache。
+  // 本专项改用真实 Chromium 的新无头模式并只移除关闭 BFCache 的参数，不能用普通刷新模拟。
   const browser = await chromium.launch({
     headless: true,
+    channel: 'chromium',
     ignoreDefaultArgs: ['--disable-back-forward-cache']
   });
-  const report = { checkedAt: new Date().toISOString(), scenarios: {}, errors: [] };
+  const report = {
+    checkedAt: new Date().toISOString(),
+    browserVersion: browser.version(),
+    browserChannel: 'chromium-new-headless',
+    scenarios: {},
+    errors: []
+  };
   try {
     // 1) 已消费问题在 BFCache 返回时不得重新出现。
     {
       const context = await createMobileContext(browser);
       const page = await context.newPage();
       const browserErrors = [];
+      const bfcacheNotUsed = [];
+      const cdp = await context.newCDPSession(page);
+      await cdp.send('Page.enable');
+      cdp.on('Page.backForwardCacheNotUsed', event => bfcacheNotUsed.push(event));
       page.on('pageerror', error => browserErrors.push(error.message));
       page.on('console', message => { if (message.type() === 'error') browserErrors.push(message.text()); });
 
@@ -93,12 +104,17 @@ async function createMobileContext(browser, { blockSessionStorage = false } = {}
         handoffState: document.documentElement.dataset.handoffState || '',
         note: document.getElementById('handoff-note').textContent || ''
       }));
-      assert.equal(restored.persisted, 'true', '必须真实覆盖 BFCache 恢复路径');
+      restored.notUsedReasons = bfcacheNotUsed;
+      report.scenarios.bfcache = restored;
+      assert.equal(
+        restored.persisted,
+        'true',
+        `必须真实覆盖 BFCache 恢复路径；未使用原因：${JSON.stringify(bfcacheNotUsed)}`
+      );
       assert.equal(restored.question, '', 'BFCache 返回不得恢复已消费的问题文本');
       assert.equal(restored.resultVisible, false, 'BFCache 返回不得恢复已消费的判断结果');
       assert.match(restored.note, /不会再次显示|已清除/, 'BFCache 返回应给出清晰恢复提示');
       assert.equal(browserErrors.length, 0, browserErrors.join(' | '));
-      report.scenarios.bfcache = restored;
       await page.screenshot({ path: `${OUT}/bfcache-return-390x844.png`, fullPage: true });
       await context.close();
     }
