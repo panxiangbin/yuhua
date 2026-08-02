@@ -48,18 +48,21 @@ jobs:
           const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
           const sw = fs.readFileSync('cnc/sw.js', 'utf8');
           const placement = fs.readFileSync('cnc/beginner-placement.html', 'utf8');
-          if (info.pwaBuild !== '20260802-pwa7') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
-          if (!sw.includes("const BUILD = '20260802-pwa7'")) throw new Error('Service Worker build mismatch');
+          const camp = fs.readFileSync('cnc/training-camp.html', 'utf8');
+          if (info.pwaBuild !== '20260802-pwa8') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
+          if (!sw.includes("const BUILD = '20260802-pwa8'")) throw new Error('Service Worker build mismatch');
           for (const token of [
-            "const branchTargetPwaBuild = '20260802-pwa7'",
-            "const previousPublicPwaBuild = '20260802-pwa6'",
+            "const branchTargetPwaBuild = '20260802-pwa8'",
+            "const previousPublicPwaBuild = '20260802-pwa7'",
             'CNC_PAGES_VERIFY_ATTEMPTS || 18',
             "cache: 'no-store'",
             'cnc/beginner-placement.html',
             'beginnerPlacementPublic: true',
             'beginnerPlacementInCoreCache: true',
-            'tenCoreResourcesVerified: true',
+            'trainingCampInCoreCache: true',
+            'coreResourceCount:',
             'criticalSafetyGatePresent: true',
+            'oneTimeRouteHandoffPresent: true',
             'mainPagesExactBytesMatch: true',
             'mainPagesExactSha256Match: true',
             'branchDeploymentPending',
@@ -68,6 +71,8 @@ jobs:
             if (!test.includes(token)) throw new Error(`deployment test missing: ${token}`);
           }
           if (!placement.includes('criticalFailures') || !placement.includes("decision:'critical-safety'")) throw new Error('beginner placement critical safety gate missing');
+          if (!placement.includes('cnc_beginner_placement_route_handoff_v1') || !camp.includes('cnc_beginner_placement_route_handoff_v1')) throw new Error('placement route handoff producer or consumer missing');
+          if (!sw.includes("'./training-camp.html'")) throw new Error('training camp missing from PWA core');
           for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)', 'CNC_PAGES_VERIFY_ATTEMPTS || 0']) {
             if (test.includes(forbidden)) throw new Error(`deployment gate bypass found: ${forbidden}`);
           }
