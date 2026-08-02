@@ -60,8 +60,32 @@ jobs:
         run: |
           npm install --no-save playwright@1.54.1
           npx playwright install --with-deps chromium
-      - name: Start static server
-        run: python3 -m http.server 4173 --directory . > /tmp/cnc-ai-teacher-handoff-recovery-server.log 2>&1 &
+      - name: Start isolated CNC static server
+        run: |
+          cat > /tmp/cnc-ai-teacher-handoff-recovery-server.py <<'PY'
+          from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+
+          class CncHandler(SimpleHTTPRequestHandler):
+              def do_GET(self):
+                  # Chromium 会自动请求根目录 favicon；它属于非 CNC 根站点，
+                  # 本门禁只对这一条请求返回空响应，其余资源仍按真实文件严格提供。
+                  if self.path.split('?', 1)[0] == '/favicon.ico':
+                      self.send_response(204)
+                      self.end_headers()
+                      return
+                  super().do_GET()
+
+          ThreadingHTTPServer(('127.0.0.1', 4173), CncHandler).serve_forever()
+          PY
+          python3 /tmp/cnc-ai-teacher-handoff-recovery-server.py > /tmp/cnc-ai-teacher-handoff-recovery-server.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:4173/cnc/ai-teacher-explainability.html >/dev/null; then
+              exit 0
+            fi
+            sleep 0.2
+          done
+          cat /tmp/cnc-ai-teacher-handoff-recovery-server.log
+          exit 1
       - name: Regress AI teacher mobile trust boundary
         run: node cnc/tests/mobile-ai-teacher-smoke.cjs
       - name: Regress classification samples
