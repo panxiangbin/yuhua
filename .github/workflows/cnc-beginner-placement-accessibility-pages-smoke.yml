@@ -1,0 +1,58 @@
+name: CNC beginner placement accessibility Pages smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/beginner-placement.html'
+      - 'cnc/tests/pages-beginner-placement-accessibility-deployment-smoke.cjs'
+      - 'cnc/docs/beginner-placement-accessibility-pages-contract.md'
+      - '.github/workflows/cnc-beginner-placement-accessibility-pages-smoke.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'cnc/beginner-placement.html'
+      - 'cnc/tests/pages-beginner-placement-accessibility-deployment-smoke.cjs'
+      - 'cnc/docs/beginner-placement-accessibility-pages-contract.md'
+      - '.github/workflows/cnc-beginner-placement-accessibility-pages-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cnc-beginner-placement-accessibility-pages-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  verify-pages:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Validate syntax and deployment contract
+        run: |
+          set -euxo pipefail
+          test -f cnc/tests/pages-beginner-placement-accessibility-deployment-smoke.cjs
+          test -f cnc/docs/beginner-placement-accessibility-pages-contract.md
+          node --check cnc/tests/pages-beginner-placement-accessibility-deployment-smoke.cjs
+          grep -q '逐字节一致' cnc/docs/beginner-placement-accessibility-pages-contract.md
+          grep -q 'SHA-256' cnc/docs/beginner-placement-accessibility-pages-contract.md
+          grep -q '相同版本原厂手册' cnc/docs/beginner-placement-accessibility-pages-contract.md
+          ! grep -Eq "test\.skip\(|describe\.skip\(|it\.skip\(|process\.exit\(0\)" cnc/tests/pages-beginner-placement-accessibility-deployment-smoke.cjs
+      - name: Verify exact main and Pages deployment
+        env:
+          CNC_PAGES_VERIFY_ATTEMPTS: '18'
+          CNC_PAGES_VERIFY_INTERVAL_MS: '10000'
+        run: node cnc/tests/pages-beginner-placement-accessibility-deployment-smoke.cjs
+      - name: Upload Pages deployment diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-beginner-placement-accessibility-pages-${{ github.run_id }}
+          path: cnc/test-results/beginner-placement-accessibility-pages/
+          if-no-files-found: error
+          retention-days: 14
