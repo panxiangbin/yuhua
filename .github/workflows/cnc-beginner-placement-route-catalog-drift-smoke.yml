@@ -5,7 +5,16 @@ on:
     paths:
       - 'cnc/beginner-placement.html'
       - 'cnc/training-camp.html'
+      - 'cnc/course-safety-foundation.html'
+      - 'cnc/course-machining-center-basics.html'
+      - 'cnc/course-coordinate-axes.html'
+      - 'cnc/course-machine-work-offset.html'
+      - 'cnc/course-tool-length-offset.html'
+      - 'cnc/course-g00-g01-basics.html'
+      - 'cnc/simulator-program-dry-run.html'
+      - 'cnc/simulator-first-piece-inspection.html'
       - 'cnc/tests/beginner-placement-route-catalog-drift-smoke.cjs'
+      - 'cnc/tests/beginner-placement-route-trigger-coverage-smoke.cjs'
       - 'cnc/docs/beginner-placement-route-catalog-drift-contract.md'
       - '.github/workflows/cnc-beginner-placement-route-catalog-drift-smoke.yml'
   push:
@@ -14,7 +23,16 @@ on:
     paths:
       - 'cnc/beginner-placement.html'
       - 'cnc/training-camp.html'
+      - 'cnc/course-safety-foundation.html'
+      - 'cnc/course-machining-center-basics.html'
+      - 'cnc/course-coordinate-axes.html'
+      - 'cnc/course-machine-work-offset.html'
+      - 'cnc/course-tool-length-offset.html'
+      - 'cnc/course-g00-g01-basics.html'
+      - 'cnc/simulator-program-dry-run.html'
+      - 'cnc/simulator-first-piece-inspection.html'
       - 'cnc/tests/beginner-placement-route-catalog-drift-smoke.cjs'
+      - 'cnc/tests/beginner-placement-route-trigger-coverage-smoke.cjs'
       - 'cnc/docs/beginner-placement-route-catalog-drift-contract.md'
       - '.github/workflows/cnc-beginner-placement-route-catalog-drift-smoke.yml'
   workflow_dispatch:
@@ -42,12 +60,14 @@ jobs:
             "headSha": "${{ github.sha }}"
           }
           JSON
-      - name: Validate test and Chinese contract
+      - name: Validate tests and Chinese contract
         run: |
           node --check cnc/tests/beginner-placement-route-catalog-drift-smoke.cjs
+          node --check cnc/tests/beginner-placement-route-trigger-coverage-smoke.cjs
           node - <<'NODE'
           const fs = require('fs');
           const test = fs.readFileSync('cnc/tests/beginner-placement-route-catalog-drift-smoke.cjs', 'utf8');
+          const triggerTest = fs.readFileSync('cnc/tests/beginner-placement-route-trigger-coverage-smoke.cjs', 'utf8');
           const contract = fs.readFileSync('cnc/docs/beginner-placement-route-catalog-drift-contract.md', 'utf8');
           for (const token of [
             'extractProducerRoutes',
@@ -60,20 +80,33 @@ jobs:
             'ttlMatch'
           ]) if (!test.includes(token)) throw new Error(`drift test contract missing: ${token}`);
           for (const token of [
+            'extractEventPaths',
+            'targetPathsCoveredByPullRequest',
+            'targetPathsCoveredByPush',
+            'selfMaintenancePathsCovered'
+          ]) if (!triggerTest.includes(token)) throw new Error(`trigger coverage contract missing: ${token}`);
+          for (const token of [
             'critical-safety',
             'low-score',
             'foundation-gap',
             'advanced-ready',
             'SessionStorage',
+            '目标课程入口',
+            'pull_request',
+            'main push',
             '相同版本原厂手册',
             '授权人员'
           ]) if (!contract.includes(token)) throw new Error(`Chinese contract missing: ${token}`);
-          for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)']) {
-            if (test.includes(forbidden)) throw new Error(`test bypass found: ${forbidden}`);
+          for (const source of [test, triggerTest]) {
+            for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)']) {
+              if (source.includes(forbidden)) throw new Error(`test bypass found: ${forbidden}`);
+            }
           }
           NODE
       - name: Verify producer and consumer route catalogs
         run: node cnc/tests/beginner-placement-route-catalog-drift-smoke.cjs
+      - name: Verify route target trigger coverage
+        run: node cnc/tests/beginner-placement-route-trigger-coverage-smoke.cjs
       - name: Upload diagnostics
         if: always()
         uses: actions/upload-artifact@v4
