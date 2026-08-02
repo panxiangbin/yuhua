@@ -8,7 +8,10 @@ on:
       - 'cnc/profile.html'
       - 'cnc/build-info.json'
       - 'cnc/docs/ai-teacher-trust-boundary-contract.md'
+      - 'cnc/docs/ai-teacher-classification-contract.md'
       - 'cnc/tests/mobile-ai-teacher-smoke.cjs'
+      - 'cnc/tests/ai-teacher-classification-smoke.cjs'
+      - 'cnc/tests/fixtures/ai-teacher-classification-cases.json'
       - '.github/workflows/cnc-ai-teacher-smoke.yml'
   workflow_dispatch:
 
@@ -28,6 +31,7 @@ jobs:
         run: |
           set -euxo pipefail
           grep -q "20260801-ai-handoff1" cnc/ai-teacher.html
+          grep -q "20260802-v2" cnc/ai-teacher.html
           grep -q "localOnly:true\|localOnly: true" cnc/ai-teacher.html
           grep -q "externalModel:false\|externalModel: false" cnc/ai-teacher.html
           grep -q "不调用外部模型" cnc/ai-teacher.html
@@ -37,7 +41,10 @@ jobs:
           grep -q "先生成现场问诊单\|生成现场问诊单" cnc/ai-teacher.html
           grep -q "classifyQuestion" cnc/ai-teacher.html
           grep -q "BLOCK_RULES" cnc/ai-teacher.html
+          grep -q "SAFE_DISCUSSION_RULES" cnc/ai-teacher.html
+          grep -q "OVERRIDE_EXECUTION_PATTERN" cnc/ai-teacher.html
           grep -q "已阻断高风险请求" cnc/ai-teacher.html
+          grep -q "安全原理说明" cnc/ai-teacher.html
           grep -q "无法给出可直接上机" cnc/ai-teacher.html
           grep -q "content-trust-status.html" cnc/ai-teacher.html
           grep -q "content-trust-evidence.html" cnc/ai-teacher.html
@@ -47,8 +54,23 @@ jobs:
           test -f cnc/content-trust-status.html
           test -f cnc/content-trust-evidence.html
           test -f cnc/docs/ai-teacher-trust-boundary-contract.md
+          test -f cnc/docs/ai-teacher-classification-contract.md
+          test -f cnc/tests/fixtures/ai-teacher-classification-cases.json
           ! grep -Eqi "https?://|fetch\(|XMLHttpRequest|WebSocket|EventSource" cnc/ai-teacher.html
-          ! grep -Eq "test\.skip\(|describe\.skip\(|it\.skip\(" cnc/tests/mobile-ai-teacher-smoke.cjs
+          ! grep -Eq "test\.skip\(|describe\.skip\(|it\.skip\(" cnc/tests/mobile-ai-teacher-smoke.cjs cnc/tests/ai-teacher-classification-smoke.cjs
+      - name: Validate classification fixture contract
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const fixture = JSON.parse(fs.readFileSync('cnc/tests/fixtures/ai-teacher-classification-cases.json', 'utf8'));
+          if (fixture.schemaVersion !== 1) throw new Error('classification fixture schemaVersion must be 1');
+          if (fixture.classificationVersion !== '20260802-v2') throw new Error('classification fixture version mismatch');
+          if (!Array.isArray(fixture.blocked) || fixture.blocked.length < 15) throw new Error('blocked cases must be at least 15');
+          if (!Array.isArray(fixture.allowed) || fixture.allowed.length < 15) throw new Error('allowed cases must be at least 15');
+          const rows = [...fixture.blocked, ...fixture.allowed];
+          if (new Set(rows.map(row => row.id)).size !== rows.length) throw new Error('classification case id duplicated');
+          if (new Set(rows.map(row => row.question)).size !== rows.length) throw new Error('classification question duplicated');
+          NODE
       - name: Validate site and AI teacher build consistency
         run: |
           node - <<'NODE'
@@ -67,6 +89,7 @@ jobs:
       - name: Check JavaScript syntax
         run: |
           node --check cnc/tests/mobile-ai-teacher-smoke.cjs
+          node --check cnc/tests/ai-teacher-classification-smoke.cjs
           python3 - <<'PY'
           from pathlib import Path
           text=Path('cnc/ai-teacher.html').read_text(encoding='utf-8')
@@ -82,6 +105,8 @@ jobs:
         run: python3 -m http.server 4173 --directory . > /tmp/cnc-ai-teacher-server.log 2>&1 &
       - name: Chromium 390x844 local AI teacher
         run: node cnc/tests/mobile-ai-teacher-smoke.cjs
+      - name: Validate high-risk and educational classification cases
+        run: node cnc/tests/ai-teacher-classification-smoke.cjs
       - name: Upload AI teacher diagnostics
         if: always()
         uses: actions/upload-artifact@v4
