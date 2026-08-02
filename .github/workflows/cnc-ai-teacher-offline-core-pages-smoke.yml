@@ -34,6 +34,7 @@ jobs:
             stage: 'workflow-bootstrap',
             runId: process.env.GITHUB_RUN_ID,
             headSha: process.env.GITHUB_SHA,
+            eventName: process.env.GITHUB_EVENT_NAME,
             initializedAt: new Date().toISOString()
           }, null, 2));
           NODE
@@ -51,25 +52,27 @@ jobs:
           const swBuild = sw.match(/const BUILD = '([^']+)'/)?.[1];
           if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
           for (const token of [
-            "const expectedPwaBuild = '20260802-pwa5'",
+            "const branchTargetPwaBuild = '20260802-pwa6'",
+            "const previousPublicPwaBuild = '20260802-pwa5'",
             "const expectedSiteBuild = '20260801-ai-handoff1'",
             'CNC_PAGES_VERIFY_ATTEMPTS || 18',
             "cache: 'no-store'",
-            'exactBytesMatch: true',
-            'exactSha256Match: true',
-            'localMatchesMain: true',
-            'explainabilityInCoreCache: true',
-            'nineCoreResourcesVerified: true',
+            'mainPagesExactBytesMatch: true',
+            'mainPagesExactSha256Match: true',
+            'branchDeploymentPending',
+            'beginnerPlacementInCoreCache: true',
+            'tenCoreResourcesVerified: true',
             'process.exit(1)'
           ]) {
             if (!test.includes(token)) throw new Error(`deployment test missing: ${token}`);
           }
-          for (const file of ['./ai-teacher.html', './ai-teacher-intake.html', './ai-teacher-explainability.html']) {
+          for (const file of ['./beginner-placement.html', './ai-teacher.html', './ai-teacher-intake.html', './ai-teacher-explainability.html']) {
             if (!sw.includes(`'${file}'`)) throw new Error(`Service Worker core missing: ${file}`);
             if (!selfTest.includes(`'${file}'`)) throw new Error(`self-test core missing: ${file}`);
           }
           if (!status.includes(`const EXPECTED='${info.pwaBuild}'`)) throw new Error('PWA status build mismatch');
           if (!selfTest.includes(`const EXPECTED='${info.pwaBuild}'`)) throw new Error('PWA self-test build mismatch');
+          if (!String(info.contentStage || '').includes('起点测评离线核心')) throw new Error('build marker missing beginner placement offline core');
           for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)', 'CNC_PAGES_VERIFY_ATTEMPTS || 0']) {
             if (test.includes(forbidden)) throw new Error(`deployment gate bypass found: ${forbidden}`);
           }
