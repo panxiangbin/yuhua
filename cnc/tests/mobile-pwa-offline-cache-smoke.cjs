@@ -7,7 +7,7 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const PWA_BUILD = '20260802-pwa6';
+const PWA_BUILD = '20260802-pwa7';
 const CORE_OFFLINE_PATHS = [
   './beginner-placement.html',
   './ai-teacher.html',
@@ -139,11 +139,12 @@ async function captureDiagnostics(page, context, stage, errors) {
     await page.goto('http://127.0.0.1:4173/cnc/beginner-placement.html', { waitUntil: 'domcontentloaded' });
     if (!(await page.title()).includes('CNC新手起点测评')) throw new Error('起点测评首次安装后离线打开失败');
     const placementBody = await page.locator('body').innerText();
-    if (!placementBody.includes('测评只做推荐') || !placementBody.includes('相同版本原厂手册') || !placementBody.includes('授权人员确认')) {
-      throw new Error('起点测评离线页丢失推荐或原厂手册安全边界');
+    if (!placementBody.includes('测评只做推荐') || !placementBody.includes('关键安全项是硬门禁') || !placementBody.includes('相同版本原厂手册') || !placementBody.includes('授权人员确认')) {
+      throw new Error('起点测评离线页丢失安全硬门禁、推荐或原厂手册边界');
     }
     if (await page.locator('#progress[role="progressbar"]').count() !== 1) throw new Error('起点测评离线页丢失进度条语义');
     if (await page.locator('#options[role="radiogroup"]').count() !== 1) throw new Error('起点测评离线页丢失单选组语义');
+    if (await page.locator('#result-diagnostics').count() !== 1) throw new Error('起点测评离线页丢失可解释判断区域');
 
     stage = 'cold-offline-ai-teacher';
     await page.goto('http://127.0.0.1:4173/cnc/ai-teacher.html', { waitUntil: 'domcontentloaded' });
@@ -206,6 +207,7 @@ async function captureDiagnostics(page, context, stage, errors) {
       offlineFallback: true,
       runtimeWarmup: true,
       beginnerPlacementColdOffline: true,
+      beginnerPlacementCriticalSafetyGateColdOffline: true,
       aiTeacherColdOffline: true,
       intakeColdOffline: true,
       explainabilityColdOffline: true,
