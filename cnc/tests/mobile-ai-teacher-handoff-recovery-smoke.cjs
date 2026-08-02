@@ -93,9 +93,9 @@ async function createMobileContext(browser, { blockSessionStorage = false } = {}
 
       await page.locator('a[href="./ai-teacher.html"]').click();
       await page.waitForURL(/\/cnc\/ai-teacher\.html$/);
-      // BFCache 恢复不会重新触发 DOMContentLoaded；直接调用 history.back，随后等待 URL 和 pageshow 状态。
+      // BFCache 恢复不会重新触发 load / DOMContentLoaded；直接调用 history.back，只等待路径和 pageshow 状态。
       await page.evaluate(() => history.back());
-      await page.waitForURL(/\/cnc\/ai-teacher-explainability\.html$/);
+      await page.waitForFunction(() => location.pathname.endsWith('/cnc/ai-teacher-explainability.html'));
       await page.waitForFunction(() => document.documentElement.dataset.testPageshowPersisted === 'true');
       await page.waitForFunction(() => document.documentElement.dataset.engineReady === 'true');
 
