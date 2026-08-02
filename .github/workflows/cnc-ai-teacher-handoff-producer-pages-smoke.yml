@@ -1,0 +1,77 @@
+name: CNC AI teacher handoff producer Pages smoke
+on:
+  pull_request:
+    paths:
+      - 'cnc/ai-teacher.html'
+      - 'cnc/tests/pages-ai-teacher-handoff-producer-deployment-smoke.cjs'
+      - 'cnc/docs/ai-teacher-handoff-producer-pages-contract.md'
+      - '.github/workflows/cnc-ai-teacher-handoff-producer-pages-smoke.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'cnc/ai-teacher.html'
+      - 'cnc/tests/pages-ai-teacher-handoff-producer-deployment-smoke.cjs'
+      - 'cnc/docs/ai-teacher-handoff-producer-pages-contract.md'
+      - '.github/workflows/cnc-ai-teacher-handoff-producer-pages-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: cnc-ai-teacher-handoff-producer-pages-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+jobs:
+  handoff-producer-pages:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Validate handoff producer Pages test and anti-bypass contract
+        run: |
+          node --check cnc/tests/pages-ai-teacher-handoff-producer-deployment-smoke.cjs
+          node - <<'NODE'
+          const fs = require('fs');
+          const text = fs.readFileSync('cnc/tests/pages-ai-teacher-handoff-producer-deployment-smoke.cjs', 'utf8');
+          for (const token of [
+            'cnc/ai-teacher.html',
+            'cnc_ai_teacher_explainability_handoff_v1',
+            'HANDOFF_SCHEMA_VERSION = 1',
+            'HANDOFF_MAX_AGE_MS = 5 * 60 * 1000',
+            "intent==='blocked'||intent==='safety-boundary'",
+            'sessionStorage.setItem(HANDOFF_KEY,JSON.stringify(payload))',
+            'sessionStorage.removeItem(HANDOFF_KEY)',
+            '查看本次判断说明',
+            'ai-teacher-explainability.html',
+            'requireLocalMainMatch',
+            'branchDeploymentPending',
+            'exactBytesMatch',
+            'exactSha256Match',
+            'producerContractPresent',
+            'noExternalNetworking'
+          ]) {
+            if (!text.includes(token)) throw new Error(`缺少交接生产端公网契约：${token}`);
+          }
+          for (const forbidden of [
+            'test.skip(',
+            'describe.skip(',
+            'it.skip(',
+            'process.exit(0)',
+            'CNC_PAGES_VERIFY_ATTEMPTS || 0',
+            'allowOperationalUse: true'
+          ]) {
+            if (text.includes(forbidden)) throw new Error(`检测到门禁绕过或危险声明：${forbidden}`);
+          }
+          NODE
+      - name: Verify AI teacher handoff producer on main and Pages
+        run: node cnc/tests/pages-ai-teacher-handoff-producer-deployment-smoke.cjs
+      - name: Upload handoff producer Pages diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-ai-teacher-handoff-producer-pages-${{ github.run_id }}
+          path: cnc/test-results/ai-teacher-handoff-producer-pages/
+          if-no-files-found: warn
+          retention-days: 14
