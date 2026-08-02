@@ -137,7 +137,6 @@ function assertServiceWorker(text, label, expectedBuild) {
     "const STATIC_CACHE = `cnc-static-${BUILD}`",
     "const RUNTIME_CACHE = `cnc-runtime-${BUILD}`",
     "'./beginner-placement.html'",
-    "'./training-camp.html'",
     "'./ai-teacher.html'",
     "'./ai-teacher-intake.html'",
     "'./ai-teacher-explainability.html'",
@@ -148,6 +147,7 @@ function assertServiceWorker(text, label, expectedBuild) {
     "event.data.type === 'GET_BUILD'",
     "event.data.type === 'ENSURE_CACHES'"
   ]);
+  if (expectedBuild === branchTargetPwaBuild) requireTokens(text, label, ["'./training-camp.html'"]);
   forbidTokens(text, label, [/test\.skip\(/, /describe\.skip\(/, /it\.skip\(/, /allowOperationalUse\s*:\s*true/]);
   const actual = parseQuotedArray(text, /const REQUIRED_CORE_PATHS = \[([\s\S]*?)\];/, `${label}核心缓存`);
   const expected = expectedBuild === branchTargetPwaBuild ? expectedCorePaths() : expectedCorePaths().filter(item => item !== './training-camp.html');
