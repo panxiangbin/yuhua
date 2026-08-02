@@ -52,7 +52,12 @@ async function createMobileContext(browser, { blockSessionStorage = false } = {}
 }
 
 (async () => {
-  const browser = await chromium.launch({ headless: true });
+  // Playwright 默认会给 Chromium 加上 --disable-back-forward-cache。
+  // 本专项必须真实命中 pageshow.persisted，因此只移除这一条默认参数，不能用普通刷新模拟。
+  const browser = await chromium.launch({
+    headless: true,
+    ignoreDefaultArgs: ['--disable-back-forward-cache']
+  });
   const report = { checkedAt: new Date().toISOString(), scenarios: {}, errors: [] };
   try {
     // 1) 已消费问题在 BFCache 返回时不得重新出现。
