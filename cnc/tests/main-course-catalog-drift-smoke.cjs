@@ -7,6 +7,7 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..', '..');
 const HOME_PATH = path.join(ROOT, 'cnc', 'personal-home.js');
 const CAMP_PATH = path.join(ROOT, 'cnc', 'training-camp.html');
+const AI_TEACHER_PATH = path.join(ROOT, 'cnc', 'ai-teacher.html');
 const WORKFLOW_PATH = path.join(ROOT, '.github', 'workflows', 'cnc-main-course-catalog-drift-smoke.yml');
 const OUTPUT_DIR = path.join(ROOT, 'cnc', 'test-results', 'main-course-catalog-drift');
 const OUTPUT_PATH = path.join(OUTPUT_DIR, 'report.json');
@@ -18,6 +19,7 @@ const report = {
   sources: {},
   homeCatalog: [],
   trainingCampCatalog: [],
+  aiTeacherCourseLinks: [],
   canonicalCourses: [],
   redirectAliases: [],
   triggerCoverage: {},
@@ -56,6 +58,17 @@ function parseCourseCatalog(block, label) {
   }
   expect(entries.length === 12, `${label}课程数量必须为12，实际${entries.length}`);
   return entries;
+}
+
+function extractAiTeacherCourseLinks(source) {
+  const match = source.match(/\bconst\s+COURSE_LINKS\s*=\s*\[([\s\S]*?)\];/);
+  expect(match, 'AI CNC老师缺少可审计的COURSE_LINKS目录');
+  const links = [];
+  const pattern = /'\.\/(course-[a-z0-9-]+\.html)'/g;
+  for (const item of match[1].matchAll(pattern)) links.push(item[1]);
+  expect(links.length === 12, `AI CNC老师课程链接数量必须为12，实际${links.length}`);
+  expect(new Set(links).size === 12, 'AI CNC老师课程链接存在重复');
+  return links;
 }
 
 function normalizeTitle(value) {
@@ -137,10 +150,12 @@ function main() {
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
   const homeSource = fs.readFileSync(HOME_PATH, 'utf8');
   const campSource = fs.readFileSync(CAMP_PATH, 'utf8');
+  const aiTeacherSource = fs.readFileSync(AI_TEACHER_PATH, 'utf8');
   const workflowSource = fs.readFileSync(WORKFLOW_PATH, 'utf8');
 
   const homeCatalog = parseCourseCatalog(extractCourseBlock(homeSource, 'var', '手机闯关首页'), '手机闯关首页');
   const campCatalog = parseCourseCatalog(extractCourseBlock(campSource, 'const', '训练营'), '训练营');
+  const aiTeacherCourseLinks = extractAiTeacherCourseLinks(aiTeacherSource);
   const expectedIds = Array.from({ length: 12 }, (_, index) => `stage-${index + 1}`);
 
   expect(new Set(homeCatalog.map(item => item.id)).size === 12, '手机闯关首页课程ID存在重复');
@@ -153,8 +168,10 @@ function main() {
   for (let index = 0; index < 12; index += 1) {
     const home = homeCatalog[index];
     const camp = campCatalog[index];
+    const aiTeacherFile = aiTeacherCourseLinks[index];
     expect(home.id === camp.id, `第${index + 1}关ID不一致：${home.id} / ${camp.id}`);
     expect(home.file === camp.file, `第${index + 1}关入口不一致：${home.file} / ${camp.file}`);
+    expect(home.file === aiTeacherFile, `第${index + 1}关AI老师入口漂移：${home.file} / ${aiTeacherFile}`);
     expect(titlesCompatible(home.title, camp.title), `第${index + 1}关标题语义不一致：${home.title} / ${camp.title}`);
     expect(home.reason.trim().length >= 8 && camp.reason.trim().length >= 8, `第${index + 1}关学习理由过短`);
 
@@ -165,18 +182,23 @@ function main() {
       requestedFile: target.requested,
       canonicalFile: target.canonical,
       homeTitle: home.title,
-      trainingCampTitle: camp.title
+      trainingCampTitle: camp.title,
+      aiTeacherFile
     });
     if (target.redirect) redirectAliases.push({ alias: target.requested, target: target.canonical });
   }
 
   expect(new Set(canonicalCourses.map(item => item.canonicalFile)).size === 12, '12关课程解析后存在重复正式目标');
+  expect(aiTeacherSource.includes('COURSE_LINKS[state.nextCourse-1]'), 'AI CNC老师下一关推荐未使用受控COURSE_LINKS目录');
+  expect(/nextCourse\s*:\s*Array\.from\(\{\s*length\s*:\s*12\s*\}/.test(aiTeacherSource), 'AI CNC老师下一关计算未覆盖固定12关');
+  expect(/state\.completed\.size\s*<\s*12/.test(aiTeacherSource), 'AI CNC老师缺少主线未完成分支');
 
   const pullRequestPaths = extractEventPaths(workflowSource, 'pull_request');
   const pushPaths = extractEventPaths(workflowSource, 'push');
   const requiredTriggerPaths = [
     'cnc/personal-home.js',
     'cnc/training-camp.html',
+    'cnc/ai-teacher.html',
     'cnc/course-*.html',
     'cnc/tests/main-course-catalog-drift-smoke.cjs',
     'cnc/docs/main-course-catalog-drift-contract.md',
@@ -196,10 +218,12 @@ function main() {
   report.sources = {
     [rel(HOME_PATH)]: sha256(homeSource),
     [rel(CAMP_PATH)]: sha256(campSource),
+    [rel(AI_TEACHER_PATH)]: sha256(aiTeacherSource),
     [rel(WORKFLOW_PATH)]: sha256(workflowSource)
   };
   report.homeCatalog = homeCatalog;
   report.trainingCampCatalog = campCatalog;
+  report.aiTeacherCourseLinks = aiTeacherCourseLinks;
   report.canonicalCourses = canonicalCourses;
   report.redirectAliases = redirectAliases;
   report.triggerCoverage = { pullRequestPaths, pushPaths, requiredTriggerPaths };
@@ -207,6 +231,8 @@ function main() {
     courseCount: 12,
     stageIdsAndOrderMatch: true,
     entryFilesMatch: true,
+    aiTeacherCourseLinksMatch: true,
+    aiTeacherRecommendationUsesCatalog: true,
     titlesCompatible: true,
     reasonsPresent: true,
     allTargetsExist: true,
@@ -218,7 +244,7 @@ function main() {
     noCancellation: true
   };
   report.passed = true;
-  console.log(`CNC 12关主线目录防漂移通过：12关顺序与入口一致，${redirectAliases.length}个受控兼容入口，正式目标全部存在。`);
+  console.log(`CNC 12关主线目录防漂移通过：手机首页、训练营与AI老师三端顺序一致，${redirectAliases.length}个受控兼容入口，正式目标全部存在。`);
 }
 
 try {
