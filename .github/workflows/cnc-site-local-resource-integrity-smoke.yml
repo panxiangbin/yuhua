@@ -46,11 +46,15 @@ jobs:
             'extractCssReferences',
             'extractJsReferences',
             'extractManifestReferences',
+            'stripJsComments',
+            'NON_PRODUCTION_SOURCE_PATHS',
+            'BOM_AWARE_JSON_SOURCES',
             'GENERATED_RUNTIME_TARGETS',
             'cnc/pwa-install-diagnostics.json',
             'invalid-html-shell',
-            'invalid-json-target',
+            'utf8-bom-without-aware-loader',
             'outsideCncReferences',
+            'bomNormalizedReferences',
             'passed:'
           ]) {
             if (!test.includes(token)) throw new Error(`audit contract missing: ${token}`);
@@ -68,7 +72,7 @@ jobs:
           ]) {
             if (!workflow.includes(token)) throw new Error(`workflow contract missing: ${token}`);
           }
-          for (const token of ['原厂手册', '授权人员', '不得', '予华仪器官网根目录']) {
+          for (const token of ['原厂手册', '授权人员', '不得', '予华仪器官网根目录', 'UTF-8 BOM', '非生产']) {
             if (!contract.includes(token)) throw new Error(`Chinese safety contract missing: ${token}`);
           }
           const forbiddenTokens = [
@@ -100,9 +104,11 @@ jobs:
           const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
           for (const key of [
             'sourceFilesScanned',
+            'nonProductionSourcesExcluded',
             'localReferencesDiscovered',
             'validReferences',
             'generatedRuntimeReferences',
+            'bomNormalizedReferences',
             'outsideCncReferences',
             'missing',
             'invalid',
@@ -114,6 +120,8 @@ jobs:
           }
           if (report.sourceFilesScanned < 20) throw new Error(`unexpectedly small production source scan: ${report.sourceFilesScanned}`);
           if (report.localReferencesDiscovered < 20) throw new Error(`unexpectedly small local reference graph: ${report.localReferencesDiscovered}`);
+          if (!Array.isArray(report.nonProductionSourcesExcluded) || report.nonProductionSourcesExcluded.length !== 2) throw new Error('explicit non-production source contract changed');
+          if (!Array.isArray(report.bomNormalizedReferences)) throw new Error('BOM-aware diagnostic missing');
           if (!Array.isArray(report.missing) || !Array.isArray(report.invalid) || !Array.isArray(report.errors)) throw new Error('diagnostic arrays invalid');
           if (report.passed !== true) throw new Error(`resource integrity audit failed: missing=${report.missing.length}, invalid=${report.invalid.length}, errors=${report.errors.length}`);
           NODE
