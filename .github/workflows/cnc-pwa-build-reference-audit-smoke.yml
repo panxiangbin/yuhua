@@ -28,7 +28,7 @@ jobs:
         run: node --check cnc/tests/pwa-build-reference-audit-smoke.cjs
       - name: Audit current and previous PWA build references
         run: node cnc/tests/pwa-build-reference-audit-smoke.cjs
-      - name: Reject bypasses and missing diagnostics
+      - name: Reject bypasses and incomplete diagnostics
         run: |
           node - <<'NODE'
           const fs = require('fs');
@@ -36,10 +36,72 @@ jobs:
           for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)']) {
             if (script.includes(forbidden)) throw new Error(`PWA引用审计发现绕过：${forbidden}`);
           }
+
+          const requiredScriptTokens = [
+            'CURRENT_PIN_SPECS',
+            'PREVIOUS_PIN_SPEC',
+            'DECLARED_LEGACY_REFERENCES',
+            'documentation-history',
+            'audit-governance',
+            'cnc/runtime-env-detector.js',
+            'cnc/import-test.js',
+            'unusedLegacyAllowances'
+          ];
+          for (const token of requiredScriptTokens) {
+            if (!script.includes(token)) throw new Error(`PWA引用审计缺少结构契约：${token}`);
+          }
+
           const report = JSON.parse(fs.readFileSync('cnc/test-results/pwa-build-reference-audit/report.json', 'utf8'));
           if (!report.passed) throw new Error('PWA引用审计报告未通过');
-          if (!report.currentPwaBuild || report.referenceCount < 6 || report.activePinCount < 6) {
-            throw new Error(`PWA引用审计覆盖不足：${JSON.stringify(report)}`);
+
+          const requiredPinFiles = [
+            'cnc/sw.js',
+            'cnc/pwa-status.html',
+            'cnc/pwa-self-test.html',
+            'cnc/tests/mobile-pwa-offline-cache-smoke.cjs',
+            'cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs',
+            'cnc/tests/mobile-pwa-upgrade-data-smoke.cjs',
+            'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs',
+            'cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs',
+            'cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs'
+          ];
+
+          if (!report.currentPwaBuild || !report.previousPwaBuild) {
+            throw new Error(`PWA引用审计缺少当前或上一构建：${JSON.stringify(report)}`);
+          }
+          if (report.currentPwaBuild === report.previousPwaBuild) {
+            throw new Error(`当前与上一PWA构建不得相同：${report.currentPwaBuild}`);
+          }
+          if (report.activePinCount < requiredPinFiles.length) {
+            throw new Error(`PWA当前构建针覆盖不足：${report.activePinCount}/${requiredPinFiles.length}`);
+          }
+          if (report.operationalReferenceCount < 10) {
+            throw new Error(`PWA运行引用覆盖不足：${report.operationalReferenceCount}`);
+          }
+          if (report.legacyReferenceCount !== 2) {
+            throw new Error(`PWA受控历史诊断引用必须恰好为2：${report.legacyReferenceCount}`);
+          }
+          for (const key of ['staleActivePins', 'unexpectedReferences', 'unusedLegacyAllowances']) {
+            if (!Array.isArray(report[key]) || report[key].length !== 0) {
+              throw new Error(`PWA引用审计异常字段${key}未清空：${JSON.stringify(report[key])}`);
+            }
+          }
+          for (const file of requiredPinFiles) {
+            const pin = report.currentPins.find(item => item.file === file);
+            if (!pin) throw new Error(`PWA引用审计缺少当前构建针：${file}`);
+            if (pin.version !== report.currentPwaBuild) {
+              throw new Error(`PWA当前构建针漂移：${file}=${pin.version}，期望${report.currentPwaBuild}`);
+            }
+          }
+          if (!report.previousPin || report.previousPin.file !== 'cnc/tests/mobile-pwa-upgrade-data-smoke.cjs') {
+            throw new Error(`PWA上一构建针来源无效：${JSON.stringify(report.previousPin)}`);
+          }
+          if (report.previousPin.version !== report.previousPwaBuild) {
+            throw new Error(`PWA上一构建针漂移：${JSON.stringify(report.previousPin)}`);
+          }
+          const legacyFiles = new Set((report.legacyReferences || []).map(item => item.file));
+          for (const file of ['cnc/runtime-env-detector.js', 'cnc/import-test.js']) {
+            if (!legacyFiles.has(file)) throw new Error(`PWA受控历史诊断引用缺失：${file}`);
           }
           NODE
       - name: Upload diagnostics
