@@ -7,10 +7,28 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const PWA_BUILD = '20260802-pwa8';
+const PWA_BUILD = '20260803-pwa9';
+const PLACEMENT_FIRST_STEP_COURSES = [
+  {
+    path: './course-safety-foundation.html',
+    title: '第1关 安全基础',
+    required: ['先学会停，再学会动', '原厂手册', '授权人员']
+  },
+  {
+    path: './course-coordinate-axes.html',
+    title: '第3关 坐标轴与运动方向',
+    required: ['坐标轴与运动方向', '原厂手册', '现场条件']
+  },
+  {
+    path: './course-g00-g01-basics.html',
+    title: '第9关 G00与G01',
+    required: ['G00与G01', '不能直接用于真实加工', '原厂手册']
+  }
+];
 const CORE_OFFLINE_PATHS = [
   './beginner-placement.html',
   './training-camp.html',
+  ...PLACEMENT_FIRST_STEP_COURSES.map(item => item.path),
   './ai-teacher.html',
   './ai-teacher-intake.html',
   './ai-teacher-explainability.html'
@@ -101,6 +119,24 @@ async function completeCriticalSafetyPlacement(page) {
   await page.locator('#result[data-decision="critical-safety"]').waitFor({ state: 'visible' });
 }
 
+async function verifyColdOfflineCourse(page, course) {
+  await page.goto(`http://127.0.0.1:4173/cnc/${course.path.slice(2)}`, { waitUntil: 'domcontentloaded' });
+  const title = await page.title();
+  if (!title.includes(course.title)) throw new Error(`${course.path}首次安装后离线打开失败：${title}`);
+  const body = await page.locator('body').innerText();
+  for (const token of course.required) {
+    if (!body.includes(token)) throw new Error(`${course.path}离线页缺少可信或安全边界：${token}`);
+  }
+  const small = await page.locator('a,button').evaluateAll(elements => elements.filter(element => {
+    const rect = element.getBoundingClientRect();
+    return rect.width > 0 && rect.height > 0 && Math.min(rect.width, rect.height) < 44;
+  }).map(element => {
+    const rect = element.getBoundingClientRect();
+    return { text: element.textContent.trim(), width: rect.width, height: rect.height };
+  }));
+  if (small.length) throw new Error(`${course.path}触控区不足44px：${JSON.stringify(small)}`);
+}
+
 (async () => {
   let context;
   let userDataDir;
@@ -165,11 +201,23 @@ async function completeCriticalSafetyPlacement(page) {
     const routeHandoff = await page.evaluate(key => ({
       title: document.querySelector('#placement-handoff-title')?.textContent || '',
       steps: [...document.querySelectorAll('#placement-handoff-steps li')].map(item => item.textContent),
+      ctaHref: document.querySelector('#placement-handoff-cta')?.getAttribute('href') || '',
       sessionValue: sessionStorage.getItem(key),
       localValue: localStorage.getItem(key)
     }), PLACEMENT_HANDOFF_KEY);
     if (!routeHandoff.title.includes('安全基础') || routeHandoff.steps.length !== 3) throw new Error(`离线路线交接内容不完整: ${JSON.stringify(routeHandoff)}`);
+    if (routeHandoff.ctaHref !== './course-safety-foundation.html') throw new Error(`离线路线第1步链接错误: ${JSON.stringify(routeHandoff)}`);
     if (routeHandoff.sessionValue !== null || routeHandoff.localValue !== null) throw new Error('离线路线交接未立即清除或泄露到长期存储');
+
+    stage = 'cold-offline-placement-first-step-click';
+    await page.locator('#placement-handoff-cta').click();
+    await page.waitForURL(/\/cnc\/course-safety-foundation\.html$/);
+    await verifyColdOfflineCourse(page, PLACEMENT_FIRST_STEP_COURSES[0]);
+
+    stage = 'cold-offline-placement-first-step-courses';
+    for (const course of PLACEMENT_FIRST_STEP_COURSES.slice(1)) {
+      await verifyColdOfflineCourse(page, course);
+    }
 
     stage = 'cold-offline-ai-teacher';
     await page.goto('http://127.0.0.1:4173/cnc/ai-teacher.html', { waitUntil: 'domcontentloaded' });
@@ -226,6 +274,9 @@ async function completeCriticalSafetyPlacement(page) {
       trainingCampColdOffline: true,
       placementRouteHandoffColdOffline: true,
       placementRouteHandoffImmediateCleanup: true,
+      placementFirstStepClickColdOffline: true,
+      placementFirstStepCoursesColdOffline: true,
+      placementFirstStepCoursePaths: PLACEMENT_FIRST_STEP_COURSES.map(item => item.path),
       aiTeacherColdOffline: true,
       intakeColdOffline: true,
       explainabilityColdOffline: true,
