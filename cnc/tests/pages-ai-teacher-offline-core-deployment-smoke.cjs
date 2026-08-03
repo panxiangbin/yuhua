@@ -103,6 +103,10 @@ function assertAllowedBuild(build, label) {
   if (![previousPublicPwaBuild, branchTargetPwaBuild].includes(build)) throw new Error(`${label}出现未受控PWA构建：${build}`);
 }
 
+function hasCourseCore(build) {
+  return [previousPublicPwaBuild, branchTargetPwaBuild].includes(build);
+}
+
 function expectedCorePaths(build) {
   const core = [
     './index.html',
@@ -117,7 +121,7 @@ function expectedCorePaths(build) {
     './ai-teacher-explainability.html',
     './build-info.json'
   ];
-  if (build === branchTargetPwaBuild) {
+  if (hasCourseCore(build)) {
     core.splice(7, 0,
       './course-safety-foundation.html',
       './course-coordinate-axes.html',
@@ -156,7 +160,7 @@ function assertServiceWorker(text, label, expectedBuild) {
     "event.data.type === 'GET_BUILD'",
     "event.data.type === 'ENSURE_CACHES'"
   ]);
-  if (expectedBuild === branchTargetPwaBuild) requireTokens(text, label, [
+  if (hasCourseCore(expectedBuild)) requireTokens(text, label, [
     "'./course-safety-foundation.html'",
     "'./course-coordinate-axes.html'",
     "'./course-g00-g01-basics.html'"
@@ -202,7 +206,8 @@ function assertStatusPage(text, label, expectedBuild) {
     'pageshow',
     'visibilitychange'
   ]);
-  if (expectedBuild === branchTargetPwaBuild) requireTokens(text, label, ['关键安全项硬门禁', '训练营', '临时路线', '三类测评首步课程', 'PWA10会刷新已清理开发占位后的核心课程正文']);
+  if (hasCourseCore(expectedBuild)) requireTokens(text, label, ['关键安全项硬门禁', '训练营', '临时路线', '三类测评首步课程']);
+  if (expectedBuild === branchTargetPwaBuild) requireTokens(text, label, ['PWA10会刷新已清理开发占位后的核心课程正文']);
   const visible = visibleBody(text);
   requireTokens(visible, label, ['离线、缓存与更新状态', '离线内容可能不是最新版本', '测评只用于推荐学习路线', '原厂手册、企业制度和现场条件']);
   return { build: expectedBuild, visibleSafetyBoundary: true };
@@ -220,15 +225,15 @@ function assertSelfTest(text, label, expectedBuild) {
     '公网构建标记与PWA一致',
     'MAX_AUTO_RETRIES=20'
   ]);
-  if (expectedBuild === branchTargetPwaBuild) requireTokens(text, label, [
+  if (hasCourseCore(expectedBuild)) requireTokens(text, label, [
     "'./course-safety-foundation.html'",
     "'./course-coordinate-axes.html'",
     "'./course-g00-g01-basics.html'",
     '关键安全项硬门禁',
     '训练营临时路线',
-    '三类测评首步课程',
-    'PWA10用于刷新已清理开发占位后的核心课程正文'
+    '三类测评首步课程'
   ]);
+  if (expectedBuild === branchTargetPwaBuild) requireTokens(text, label, ['PWA10用于刷新已清理开发占位后的核心课程正文']);
   const actual = parseQuotedArray(text, /const REQUIRED=\[([^\]]+)\]/, `${label}自检核心资源`);
   const expected = expectedCorePaths(expectedBuild);
   assertExactArray(actual, expected, `${label}自检核心资源`);
@@ -351,7 +356,7 @@ async function waitForMainPagesMatch() {
       `分支待合并或待部署：${branchDeploymentPending ? '是' : '否'}`,
       '当前分支起点测评、训练营路线、三类测评首步课程、AI老师、现场问诊单、判断说明页核心预缓存：完整',
       '当前分支PWA自检核心资源：14项且无重复',
-      `Pages公网测评首步课程核心：${publicPwaBuild === branchTargetPwaBuild ? '已部署' : '尚未部署，保持pwa9正式版本'}`,
+      `Pages公网测评首步课程核心：${hasCourseCore(publicPwaBuild) ? '已部署' : '尚未部署'}`,
       '测评安全硬门禁、路线隐私、固定值、原厂手册与授权人员边界：可见',
       ...findings
     ].join('\n') + '\n');
