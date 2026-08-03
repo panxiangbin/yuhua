@@ -44,14 +44,22 @@ function readUtf8(file) {
   return fs.readFileSync(file, 'utf8');
 }
 
-function normalizeCoursePath(value) {
+function normalizeRelativePath(value, label, extensionPattern) {
   const normalized = `./${String(value || '').trim().replace(/^\.?\//, '')}`;
-  expect(/^\.\/[a-z0-9-]+\.html$/.test(normalized), `首步课程路径不受控：${value}`);
+  expect(new RegExp(`^\\./[a-z0-9-]+\\.${extensionPattern}$`).test(normalized), `${label}路径不受控：${value}`);
   return normalized;
 }
 
-function sortedUnique(values, label) {
-  const normalized = values.map(normalizeCoursePath);
+function normalizeCoursePath(value) {
+  return normalizeRelativePath(value, '首步课程', 'html');
+}
+
+function normalizeCoreResourcePath(value) {
+  return normalizeRelativePath(value, 'PWA核心资源', '(?:html|json)');
+}
+
+function sortedUnique(values, label, normalize) {
+  const normalized = values.map(normalize);
   expect(normalized.length > 0, `${label} 为空`);
   expect(new Set(normalized).size === normalized.length, `${label} 存在重复：${JSON.stringify(normalized)}`);
   return [...normalized].sort();
@@ -155,10 +163,10 @@ function main() {
 
   const expectedFirstSteps = [...new Set(firstSteps)].sort();
   expect(expectedFirstSteps.length >= 1, '没有可用的首步课程');
-  const serviceWorkerCore = sortedUnique(extractStringArray(sw, 'REQUIRED_CORE_PATHS'), 'Service Worker 核心资源');
-  const selfTestCore = sortedUnique(extractStringArray(selfTest, 'REQUIRED'), 'PWA 自检核心资源');
-  const offlineBrowserCourses = sortedUnique(extractCourseObjectPaths(offlineTest, 'PLACEMENT_FIRST_STEP_COURSES'), '冷离线浏览器首步课程');
-  const upgradeCourses = sortedUnique(extractCourseObjectPaths(upgradeTest, 'PLACEMENT_FIRST_STEP_COURSES'), '升级保护首步课程');
+  const serviceWorkerCore = sortedUnique(extractStringArray(sw, 'REQUIRED_CORE_PATHS'), 'Service Worker 核心资源', normalizeCoreResourcePath);
+  const selfTestCore = sortedUnique(extractStringArray(selfTest, 'REQUIRED'), 'PWA 自检核心资源', normalizeCoreResourcePath);
+  const offlineBrowserCourses = sortedUnique(extractCourseObjectPaths(offlineTest, 'PLACEMENT_FIRST_STEP_COURSES'), '冷离线浏览器首步课程', normalizeCoursePath);
+  const upgradeCourses = sortedUnique(extractCourseObjectPaths(upgradeTest, 'PLACEMENT_FIRST_STEP_COURSES'), '升级保护首步课程', normalizeCoursePath);
 
   const missingFromServiceWorker = expectedFirstSteps.filter(item => !serviceWorkerCore.includes(item));
   const missingFromSelfTest = expectedFirstSteps.filter(item => !selfTestCore.includes(item));
