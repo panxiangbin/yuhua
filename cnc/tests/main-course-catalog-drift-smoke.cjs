@@ -164,31 +164,41 @@ function main() {
   expect(JSON.stringify(campCatalog.map(item => item.id)) === JSON.stringify(expectedIds), '训练营课程ID或顺序漂移');
 
   const canonicalCourses = [];
-  const redirectAliases = [];
+  const redirectAliasMap = new Map();
   for (let index = 0; index < 12; index += 1) {
     const home = homeCatalog[index];
     const camp = campCatalog[index];
     const aiTeacherFile = aiTeacherCourseLinks[index];
     expect(home.id === camp.id, `第${index + 1}关ID不一致：${home.id} / ${camp.id}`);
     expect(home.file === camp.file, `第${index + 1}关入口不一致：${home.file} / ${camp.file}`);
-    expect(home.file === aiTeacherFile, `第${index + 1}关AI老师入口漂移：${home.file} / ${aiTeacherFile}`);
     expect(titlesCompatible(home.title, camp.title), `第${index + 1}关标题语义不一致：${home.title} / ${camp.title}`);
     expect(home.reason.trim().length >= 8 && camp.reason.trim().length >= 8, `第${index + 1}关学习理由过短`);
 
-    const target = inspectCourseTarget(home.file);
+    const homeTarget = inspectCourseTarget(home.file);
+    const aiTeacherTarget = inspectCourseTarget(aiTeacherFile);
+    expect(
+      homeTarget.canonical === aiTeacherTarget.canonical,
+      `第${index + 1}关AI老师正式目标漂移：${home.file} -> ${homeTarget.canonical} / ${aiTeacherFile} -> ${aiTeacherTarget.canonical}`
+    );
+
     canonicalCourses.push({
       id: home.id,
       level: index + 1,
-      requestedFile: target.requested,
-      canonicalFile: target.canonical,
+      requestedFile: homeTarget.requested,
+      canonicalFile: homeTarget.canonical,
       homeTitle: home.title,
       trainingCampTitle: camp.title,
-      aiTeacherFile
+      aiTeacherFile: aiTeacherTarget.requested,
+      aiTeacherCanonicalFile: aiTeacherTarget.canonical
     });
-    if (target.redirect) redirectAliases.push({ alias: target.requested, target: target.canonical });
+    for (const target of [homeTarget, aiTeacherTarget]) {
+      if (target.redirect) redirectAliasMap.set(target.requested, target.canonical);
+    }
   }
 
+  const redirectAliases = [...redirectAliasMap.entries()].map(([alias, target]) => ({ alias, target }));
   expect(new Set(canonicalCourses.map(item => item.canonicalFile)).size === 12, '12关课程解析后存在重复正式目标');
+  expect(new Set(canonicalCourses.map(item => item.aiTeacherCanonicalFile)).size === 12, 'AI CNC老师课程解析后存在重复正式目标');
   expect(aiTeacherSource.includes('COURSE_LINKS[state.nextCourse-1]'), 'AI CNC老师下一关推荐未使用受控COURSE_LINKS目录');
   expect(/nextCourse\s*:\s*Array\.from\(\{\s*length\s*:\s*12\s*\}/.test(aiTeacherSource), 'AI CNC老师下一关计算未覆盖固定12关');
   expect(/state\.completed\.size\s*<\s*12/.test(aiTeacherSource), 'AI CNC老师缺少主线未完成分支');
@@ -244,7 +254,7 @@ function main() {
     noCancellation: true
   };
   report.passed = true;
-  console.log(`CNC 12关主线目录防漂移通过：手机首页、训练营与AI老师三端顺序一致，${redirectAliases.length}个受控兼容入口，正式目标全部存在。`);
+  console.log(`CNC 12关主线目录防漂移通过：手机首页、训练营与AI老师三端正式目标顺序一致，${redirectAliases.length}个受控兼容入口，正式目标全部存在。`);
 }
 
 try {
