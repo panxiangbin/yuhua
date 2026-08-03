@@ -1,48 +1,20 @@
 /* CNC PWA：版本化缓存、离线回退与安全更新。 */
-const BUILD = '20260731-pwa7';
+const BUILD = '20260802-pwa8';
 const STATIC_CACHE = `cnc-static-${BUILD}`;
 const RUNTIME_CACHE = `cnc-runtime-${BUILD}`;
 const INSTALL_DIAGNOSTIC_PATH = './pwa-install-diagnostics.json';
-const OFFLINE_FALLBACK_PATH = './offline.html';
-const EMERGENCY_OFFLINE_HTML = `<!doctype html>
-<html lang="zh-CN">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#365b72">
-  <meta name="robots" content="noindex,nofollow">
-  <title>网络暂时不可用｜数控小潘 CNC随身助手</title>
-  <style>
-    *{box-sizing:border-box}
-    body{margin:0;background:#f2efe8;color:#292d30;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
-    main{min-height:100vh;display:grid;place-items:center;padding:22px}
-    section{max-width:560px;background:#fffdf8;border:1px solid #d8d2c6;border-radius:16px;box-shadow:0 8px 24px rgba(48,44,36,.09);padding:24px}
-    strong{color:#365b72}
-    h1{font-size:30px;margin:10px 0}
-    p{line-height:1.7;color:#687078}
-    .notice{border-left:4px solid #8a5a16;background:#f8f5ef;padding:12px;border-radius:8px}
-    button{width:100%;min-height:48px;margin-top:18px;border:0;border-radius:12px;background:#365b72;color:#fff;font-weight:900;font-size:16px;cursor:pointer}
-  </style>
-</head>
-<body>
-  <main>
-    <section>
-      <strong>CNC离线模式</strong>
-      <h1>网络暂时不可用</h1>
-      <p>离线回退页尚未写入缓存，但已经缓存过的页面仍可能继续打开。恢复网络后请重新加载。</p>
-      <p class="notice"><b>安全提醒：</b>离线内容可能不是最新版本。报警、参数、刀补和现场操作必须再次核对机床原厂手册、企业安全制度和现场条件。</p>
-      <button type="button" onclick="location.reload()">重新连接</button>
-    </section>
-  </main>
-</body>
-</html>`;
 
 const REQUIRED_CORE_PATHS = [
   './index.html',
-  OFFLINE_FALLBACK_PATH,
+  './offline.html',
   './pwa-status.html',
   './pwa-self-test.html',
   './pages-status.html',
+  './beginner-placement.html',
+  './training-camp.html',
+  './ai-teacher.html',
+  './ai-teacher-intake.html',
+  './ai-teacher-explainability.html',
   './build-info.json'
 ];
 
@@ -50,16 +22,11 @@ function scopeUrl(path) {
   return new URL(path, self.registration.scope).href;
 }
 
-function createEmergencyOfflineResponse() {
-  return new Response(EMERGENCY_OFFLINE_HTML, {
-    status: 503,
-    statusText: 'Service Unavailable',
-    headers: {
-      'Content-Type': 'text/html; charset=utf-8',
-      'Cache-Control': 'no-store',
-      'Retry-After': '60',
-      'X-Robots-Tag': 'noindex, nofollow'
-    }
+function createOfflineResponse(status = 503) {
+  return new Response(`<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>网络暂时不可用</title></head><body><main><h1>网络暂时不可用</h1><p>离线页面缓存暂未就绪，请恢复网络后重试。</p><p>报警、参数、刀补和现场操作请以机床原厂手册、企业安全制度和现场条件为准。</p></main></body></html>`, {
+    status,
+    statusText: status === 200 ? 'OK' : 'Offline',
+    headers: { 'Content-Type': 'text/html; charset=utf-8' }
   });
 }
 
@@ -83,109 +50,120 @@ async function writeInstallDiagnostic(payload) {
     await runtimeCache.put(scopeUrl(INSTALL_DIAGNOSTIC_PATH), new Response(JSON.stringify(payload), {
       headers: { 'Content-Type': 'application/json; charset=utf-8' }
     }));
-  } catch (error) {
-    console.warn('[CNC PWA] install diagnostic unavailable', error);
+  } catch {
+    // 诊断本身属于辅助能力，任何缓存配额或浏览器存储异常都不能让Worker安装失败。
   }
 }
 
-async function cacheOfflineFallbackBestEffort() {
-  const url = scopeUrl(OFFLINE_FALLBACK_PATH);
-  try {
-    const staticCache = await caches.open(STATIC_CACHE);
-    const existing = await staticCache.match(url);
-    if (existing) return { cached: true, source: 'existing' };
-
-    const response = await fetchWithTimeout(url, 5000);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    await staticCache.put(url, response.clone());
-    return { cached: true, source: 'network' };
-  } catch (error) {
-    console.warn('[CNC PWA] offline fallback cache unavailable', error);
-    return {
-      cached: false,
-      error: String(error && error.message ? error.message : error)
-    };
+async function ensureStaticCacheShell() {
+  const staticCache = await caches.open(STATIC_CACHE);
+  const offlineUrl = scopeUrl('./offline.html');
+  if (!await staticCache.match(offlineUrl)) {
+    // CacheStorage在部分Chromium时序下不会保留503兜底响应；使用200响应建立静态缓存壳，
+    // 正式offline.html成功获取后会覆盖它，实际未缓存导航仍由网络分支返回503兜底。
+    await staticCache.put(offlineUrl, createOfflineResponse(200));
   }
+  const names = await caches.keys();
+  if (!names.includes(STATIC_CACHE)) throw new Error('static cache shell missing after put');
+  return staticCache;
 }
 
 async function cacheCoreBestEffort() {
   const failures = [];
-  let cached = 0;
+  let staticCache;
 
   try {
-    const staticCache = await caches.open(STATIC_CACHE);
-    await Promise.all(REQUIRED_CORE_PATHS.map(async (path) => {
+    staticCache = await ensureStaticCacheShell();
+  } catch (error) {
+    failures.push({ path: '__static_cache__', error: String(error && error.message ? error.message : error) });
+  }
+
+  if (staticCache) {
+    for (const path of REQUIRED_CORE_PATHS) {
       try {
         const url = scopeUrl(path);
         const response = await fetchWithTimeout(url);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         await staticCache.put(url, response.clone());
-        cached += 1;
       } catch (error) {
         failures.push({ path, error: String(error && error.message ? error.message : error) });
       }
-    }));
-  } catch (error) {
-    failures.push({ path: 'cache-open', error: String(error && error.message ? error.message : error) });
+    }
   }
 
   await writeInstallDiagnostic({
     build: BUILD,
     checkedAt: new Date().toISOString(),
-    cached,
+    cached: staticCache ? REQUIRED_CORE_PATHS.length - failures.filter(item => item.path !== '__static_cache__').length : 0,
     total: REQUIRED_CORE_PATHS.length,
     failures
   });
+
+  return failures;
 }
 
-async function cleanupOldCachesBestEffort() {
-  try {
+async function ensureCurrentCaches() {
+  await ensureStaticCacheShell();
+  await caches.open(RUNTIME_CACHE);
+  await cacheCoreBestEffort();
+  const names = await caches.keys();
+  return names.includes(STATIC_CACHE) && names.includes(RUNTIME_CACHE);
+}
+
+async function offlineFallbackResponse() {
+  const cached = await caches.match(scopeUrl('./offline.html'));
+  return cached || createOfflineResponse();
+}
+
+self.addEventListener('install', (event) => {
+  event.waitUntil((async () => {
+    // 预缓存和诊断都是增强能力：无论缓存API、配额或单个资源发生什么异常，
+    // Worker都必须完成安装，确保在线导航和后续离线自检仍可继续。
+    try {
+      await cacheCoreBestEffort();
+    } catch (error) {
+      await writeInstallDiagnostic({
+        build: BUILD,
+        checkedAt: new Date().toISOString(),
+        cached: 0,
+        total: REQUIRED_CORE_PATHS.length,
+        failures: [{ path: '__install__', error: String(error && error.message ? error.message : error) }]
+      });
+    }
+    await self.skipWaiting();
+  })());
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil((async () => {
     const names = await caches.keys();
     await Promise.all(
       names
         .filter((name) => name.startsWith('cnc-') && !name.endsWith(BUILD))
-        .map((name) => caches.delete(name).catch(() => false))
+        .map((name) => caches.delete(name))
     );
-  } catch (error) {
-    console.warn('[CNC PWA] old cache cleanup unavailable', error);
-  }
-}
 
-function startBackgroundMaintenance() {
-  Promise.allSettled([
-    cleanupOldCachesBestEffort(),
-    cacheCoreBestEffort()
-  ]).catch(() => {});
-}
-
-self.addEventListener('install', (event) => {
-  // The normal offline page is attempted before activation. If that best-effort
-  // cache write still fails, navigation handling has an inline emergency page,
-  // so users never fall through to an unhelpful plain-text "Offline" response.
-  event.waitUntil(
-    Promise.allSettled([
-      cacheOfflineFallbackBestEffort(),
-      self.skipWaiting()
-    ])
-  );
-});
-
-self.addEventListener('activate', (event) => {
-  // 激活门禁只依赖 clients.claim()：网络、Cache API 或预缓存异常不得再阻止注册生效。
-  event.waitUntil(
-    self.clients.claim()
-      .catch((error) => {
-        console.warn('[CNC PWA] clients.claim unavailable', error);
-      })
-      .then(() => {
-        startBackgroundMaintenance();
-      })
-  );
+    // 安装阶段可能因瞬时网络、缓存配额或浏览器时序只留下运行时诊断缓存。
+    // 激活时再次修复核心静态缓存，并在修复完成后才接管页面，避免页面看到“已接管但静态缓存尚未就绪”的半初始化状态。
+    try {
+      await ensureCurrentCaches();
+    } catch (error) {
+      await writeInstallDiagnostic({
+        build: BUILD,
+        checkedAt: new Date().toISOString(),
+        cached: 0,
+        total: REQUIRED_CORE_PATHS.length,
+        failures: [{ path: '__activate__', error: String(error && error.message ? error.message : error) }]
+      });
+      throw error;
+    }
+    await self.clients.claim();
+  })());
 });
 
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting().catch(() => {});
+    self.skipWaiting();
   }
   if (event.data && event.data.type === 'GET_BUILD') {
     const target = event.ports && event.ports[0] ? event.ports[0] : event.source;
@@ -193,51 +171,67 @@ self.addEventListener('message', (event) => {
       target.postMessage({ type: 'CNC_SW_BUILD', build: BUILD });
     }
   }
+  if (event.data && event.data.type === 'ENSURE_CACHES') {
+    const target = event.ports && event.ports[0] ? event.ports[0] : event.source;
+    event.waitUntil((async () => {
+      let ready = false;
+      try {
+        ready = await ensureCurrentCaches();
+      } catch (error) {
+        await writeInstallDiagnostic({
+          build: BUILD,
+          checkedAt: new Date().toISOString(),
+          cached: 0,
+          total: REQUIRED_CORE_PATHS.length,
+          failures: [{ path: '__message_repair__', error: String(error && error.message ? error.message : error) }]
+        });
+      }
+      if (target) target.postMessage({ type: 'CNC_CACHES_READY', build: BUILD, ready });
+    })());
+  }
 });
 
 self.addEventListener('fetch', (event) => {
   const request = event.request;
-  if (request.method !== 'GET') return;
+  if(request.method!=='GET') return;
 
   const url = new URL(request.url);
-  if (url.origin !== self.location.origin) return;
+  if(url.origin!==location.origin) return;
 
   if (request.mode === 'navigate') {
     event.respondWith((async () => {
       try {
         const fresh = await fetch(request);
         if (fresh && fresh.ok) {
-          try {
-            const cache = await caches.open(RUNTIME_CACHE);
-            await cache.put(request, fresh.clone());
-          } catch (error) {
-            console.warn('[CNC PWA] navigation cache write unavailable', error);
-          }
+          const cache = await caches.open(RUNTIME_CACHE);
+          await cache.put(request, fresh.clone());
+          return fresh;
+        }
+
+        const cached = await caches.match(request);
+        if (cached) return cached;
+
+        // Chromium在离线模拟时，Service Worker中的fetch有时仍会收到本地静态服务器404。
+        // 离线状态下必须返回中文回退页，而不是把404正文交给用户。
+        if (self.navigator && self.navigator.onLine === false) {
+          return offlineFallbackResponse();
         }
         return fresh;
       } catch {
-        const cached = await caches.match(request).catch(() => null);
-        const staticCache = await caches.open(STATIC_CACHE).catch(() => null);
-        const fallback = staticCache
-          ? await staticCache.match(scopeUrl(OFFLINE_FALLBACK_PATH), { ignoreSearch: true }).catch(() => null)
-          : null;
-        return cached || fallback || createEmergencyOfflineResponse();
+        const cached = await caches.match(request);
+        return cached || offlineFallbackResponse();
       }
     })());
     return;
   }
 
   event.respondWith((async () => {
-    const cached = await caches.match(request).catch(() => null);
+    const cached = await caches.match(request);
     const refresh = fetch(request)
       .then(async (response) => {
         if (response && response.ok) {
-          try {
-            const cache = await caches.open(RUNTIME_CACHE);
-            await cache.put(request, response.clone());
-          } catch (error) {
-            console.warn('[CNC PWA] runtime cache write unavailable', error);
-          }
+          const cache = await caches.open(RUNTIME_CACHE);
+          await cache.put(request, response.clone());
         }
         return response;
       })
