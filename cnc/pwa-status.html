@@ -11,10 +11,7 @@
 </head>
 <body>
   <main class="shell">
-    <div class="top">
-      <a class="btn alt" href="./profile.html">← 返回成长档案</a>
-      <a class="btn alt" href="./offline.html">查看离线页</a>
-    </div>
+    <div class="top"><a class="btn alt" href="./profile.html">← 返回成长档案</a><a class="btn alt" href="./offline.html">查看离线页</a></div>
     <section class="card">
       <small>PWA · 缓存与部署可靠性</small>
       <h1>离线、缓存与更新状态</h1>
@@ -30,97 +27,109 @@
       <h2>版本一致性</h2>
       <p id="status" class="warn" role="status" aria-live="polite">正在检查版本。</p>
       <ul class="details">
-        <li>页面期望构建：<strong id="expected">读取中</strong></li>
+        <li>页面期望构建：<strong id="expected">20260802-pwa8</strong></li>
         <li>静态缓存：<span id="static-cache">检测中</span></li>
         <li>运行时缓存：<span id="runtime-cache">检测中</span></li>
         <li>最近检查：<span id="checked-at">尚未完成</span></li>
       </ul>
-      <div class="actions">
-        <button class="btn" id="check" type="button">检查更新</button>
-        <button class="btn alt" id="refresh" type="button">重新核对状态</button>
-        <button class="btn alt" id="apply" type="button" disabled>应用新版本</button>
-      </div>
-      <p class="notice">若页面期望构建、Service Worker构建和缓存版本不一致，请先联网检查更新，再由你明确点击应用。离线内容可能不是最新版本；报警、参数、刀补和现场操作仍须核对原厂手册、企业制度和现场条件。</p>
+      <div class="actions"><button class="btn" id="check" type="button">检查更新</button><button class="btn alt" id="refresh" type="button">重新核对状态</button><button class="btn alt" id="apply" type="button" disabled>应用新版本</button></div>
+      <p class="notice">当前核心离线资源包含带关键安全项硬门禁的新手起点测评、可一次性显示推荐路线的训练营、AI CNC老师、现场问诊单和“为什么被阻断”判断说明页。若页面期望构建、Service Worker构建和缓存版本不一致，请先联网检查更新，再由你明确点击应用。离线内容可能不是最新版本；测评只用于推荐学习路线，报警、参数、刀补和现场操作仍须核对原厂手册、企业制度和现场条件。</p>
     </section>
   </main>
-  <nav class="bottom" aria-label="平台主导航">
-    <a href="./index.html">首页</a><a href="./training-camp.html">训练营</a><a href="./practice.html">练习</a><a href="./index.html#workspace">查代码</a><a href="./profile.html">我的</a>
-  </nav>
+  <nav class="bottom" aria-label="平台主导航"><a href="./index.html">首页</a><a href="./training-camp.html">训练营</a><a href="./practice.html">练习</a><a href="./index.html#workspace">查代码</a><a href="./profile.html">我的</a></nav>
   <script>
-    const n=document.querySelector('#network'),w=document.querySelector('#worker'),b=document.querySelector('#build'),cc=document.querySelector('#cache-count'),s=document.querySelector('#status'),apply=document.querySelector('#apply'),staticEl=document.querySelector('#static-cache'),runtimeEl=document.querySelector('#runtime-cache'),checked=document.querySelector('#checked-at'),expectedEl=document.querySelector('#expected');
-    let expectedBuild='',waiting=null,inspectToken=0,buildInfoPromise=null;
+    const EXPECTED='20260802-pwa8';
+    const network=document.querySelector('#network');
+    const worker=document.querySelector('#worker');
+    const buildElement=document.querySelector('#build');
+    const cacheCount=document.querySelector('#cache-count');
+    const statusElement=document.querySelector('#status');
+    const applyButton=document.querySelector('#apply');
+    const staticElement=document.querySelector('#static-cache');
+    const runtimeElement=document.querySelector('#runtime-cache');
+    const checkedElement=document.querySelector('#checked-at');
+    let waiting=null;
+    let inspectToken=0;
 
-    function net(){n.textContent=navigator.onLine?'在线':'离线'}
+    function renderNetwork(){network.textContent=navigator.onLine?'在线':'离线'}
+    addEventListener('online',()=>{renderNetwork();inspect()});
+    addEventListener('offline',()=>{renderNetwork();inspect()});
+    renderNetwork();
 
-    async function loadExpectedBuild(){
-      if(expectedBuild)return expectedBuild;
-      if(!buildInfoPromise){
-        buildInfoPromise=fetch('./build-info.json',{cache:'no-store'})
-          .then(response=>{if(!response.ok)throw new Error(`HTTP ${response.status}`);return response.json()})
-          .then(info=>{
-            const value=String(info&&info.pwaBuild||'').trim();
-            if(!value)throw new Error('缺少 pwaBuild');
-            expectedBuild=value;
-            expectedEl.textContent=value;
-            return value;
-          })
-          .catch(error=>{
-            buildInfoPromise=null;
-            expectedEl.textContent='读取失败';
-            throw error;
-          });
-      }
-      return buildInfoPromise;
-    }
-
-    async function workerBuild(worker){
-      if(!worker)return '';
+    async function workerBuild(activeWorker){
+      if(!activeWorker)return '';
       return new Promise(resolve=>{
-        const ch=new MessageChannel(),timer=setTimeout(()=>resolve(''),1500);
-        ch.port1.onmessage=e=>{clearTimeout(timer);resolve(e.data&&e.data.type==='CNC_SW_BUILD'?String(e.data.build||''):'')};
-        worker.postMessage({type:'GET_BUILD'},[ch.port2]);
+        const channel=new MessageChannel();
+        const timer=setTimeout(()=>resolve(''),1500);
+        channel.port1.onmessage=event=>{
+          clearTimeout(timer);
+          resolve(event.data&&event.data.type==='CNC_SW_BUILD'?String(event.data.build||''):'');
+        };
+        activeWorker.postMessage({type:'GET_BUILD'},[channel.port2]);
       });
     }
 
     async function inspect(){
       const token=++inspectToken;
-      net();
-      let expected;
-      try{expected=await loadExpectedBuild()}catch(error){
-        if(token!==inspectToken)return;
-        w.textContent='待检查';b.textContent='待检查';cc.textContent='待检查';
-        s.className='warn';s.textContent='版本读取失败，请保持联网后重新核对状态。';
-        return;
-      }
+      renderNetwork();
       const keys=await caches.keys().catch(()=>[]);
       if(token!==inspectToken)return;
-      const cnc=keys.filter(x=>x.startsWith('cnc-')),staticName=cnc.find(x=>x.startsWith('cnc-static-'))||'',runtimeName=cnc.find(x=>x.startsWith('cnc-runtime-'))||'';
-      cc.textContent=String(cnc.length);staticEl.textContent=staticName||'未发现';runtimeEl.textContent=runtimeName||'未发现';checked.textContent=new Date().toLocaleString('zh-CN',{hour12:false});
-      if(!('serviceWorker'in navigator)){w.textContent='不支持';b.textContent='不可用';s.className='warn';s.textContent='当前浏览器不支持Service Worker。';return}
-      const reg=await navigator.serviceWorker.getRegistration('./');
+      const cncCaches=keys.filter(name=>name.startsWith('cnc-'));
+      const staticName=cncCaches.find(name=>name.startsWith('cnc-static-'))||'';
+      const runtimeName=cncCaches.find(name=>name.startsWith('cnc-runtime-'))||'';
+      cacheCount.textContent=String(cncCaches.length);
+      staticElement.textContent=staticName||'未发现';
+      runtimeElement.textContent=runtimeName||'未发现';
+      checkedElement.textContent=new Date().toLocaleString('zh-CN',{hour12:false});
+
+      if(!('serviceWorker' in navigator)){
+        worker.textContent='不支持';
+        buildElement.textContent='不可用';
+        statusElement.className='warn';
+        statusElement.textContent='当前浏览器不支持Service Worker。';
+        return;
+      }
+
+      const registration=await navigator.serviceWorker.getRegistration('./');
       if(token!==inspectToken)return;
-      if(!reg){w.textContent='未注册';b.textContent='未注册';s.className='warn';s.textContent='请先打开首页完成Service Worker注册。';return}
-      w.textContent=reg.active?'已启用':'安装中';waiting=reg.waiting||null;apply.disabled=!waiting;
-      const build=await workerBuild(reg.active);
+      if(!registration){
+        worker.textContent='未注册';
+        buildElement.textContent='未注册';
+        statusElement.className='warn';
+        statusElement.textContent='请先打开首页完成Service Worker注册。';
+        return;
+      }
+
+      worker.textContent=registration.active?'已启用':'安装中';
+      waiting=registration.waiting||null;
+      applyButton.disabled=!waiting;
+      const currentBuild=await workerBuild(registration.active);
       if(token!==inspectToken)return;
-      b.textContent=build||'读取失败';
-      const cacheBuildOk=staticName.includes(expected)&&runtimeName.includes(expected),workerOk=build===expected;
-      if(waiting){s.className='warn';s.textContent='发现新版本，点击“应用新版本”后刷新。'}
-      else if(workerOk&&cacheBuildOk){s.className='warn ok';s.textContent='页面、Service Worker与两类缓存版本一致，离线基础可用。'}
-      else{s.className='warn';s.textContent='版本尚未完全一致。请保持联网，检查更新并重新核对状态。'}
-      reg.addEventListener('updatefound',()=>{const nw=reg.installing;nw&&nw.addEventListener('statechange',()=>{if(nw.state==='installed'&&navigator.serviceWorker.controller){waiting=nw;apply.disabled=false;s.className='warn';s.textContent='新版本已下载，等待用户应用。'}})},{once:true});
+      buildElement.textContent=currentBuild||'读取失败';
+      const cacheBuildOk=staticName.includes(EXPECTED)&&runtimeName.includes(EXPECTED);
+      const workerOk=currentBuild===EXPECTED;
+      if(waiting){
+        statusElement.className='warn';
+        statusElement.textContent='发现新版本，点击“应用新版本”后刷新。';
+      }else if(workerOk&&cacheBuildOk){
+        statusElement.className='warn ok';
+        statusElement.textContent='页面、Service Worker与两类缓存版本一致，起点测评、训练营临时路线和AI老师判断说明页可冷离线打开。';
+      }else{
+        statusElement.className='warn';
+        statusElement.textContent='版本尚未完全一致。请保持联网，检查更新并重新核对状态。';
+      }
     }
 
-    addEventListener('online',()=>{net();inspect()});
-    addEventListener('offline',()=>{net();inspect()});
-    net();
-    document.querySelector('#check').onclick=async()=>{const reg=await navigator.serviceWorker.getRegistration('./');if(reg){s.className='warn';s.textContent='正在检查更新…';await reg.update();await inspect()}};
+    document.querySelector('#check').onclick=async()=>{
+      const registration=await navigator.serviceWorker.getRegistration('./');
+      if(registration){statusElement.className='warn';statusElement.textContent='正在检查更新…';await registration.update();await inspect()}
+    };
     document.querySelector('#refresh').onclick=inspect;
-    apply.onclick=()=>{if(waiting){waiting.postMessage({type:'SKIP_WAITING'});s.className='warn';s.textContent='正在应用新版本…'}};
+    applyButton.onclick=()=>{if(waiting){waiting.postMessage({type:'SKIP_WAITING'});statusElement.className='warn';statusElement.textContent='正在应用新版本…'}};
     navigator.serviceWorker&&navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload());
     window.addEventListener('pageshow',inspect);
     document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')inspect()});
-    inspect().catch(()=>{w.textContent='检查失败';s.className='warn';s.textContent='状态读取失败，请保持联网后重试。'});
+    inspect().catch(()=>{worker.textContent='检查失败';statusElement.className='warn';statusElement.textContent='状态读取失败，请保持联网后重试。'});
   </script>
 </body>
 </html>
