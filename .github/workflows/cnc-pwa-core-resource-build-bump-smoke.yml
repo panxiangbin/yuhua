@@ -26,6 +26,19 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+      - name: Initialize diagnostics
+        run: |
+          mkdir -p cnc/test-results/pwa-core-resource-build-bump
+          node - <<'NODE'
+          const fs = require('fs');
+          fs.writeFileSync('cnc/test-results/pwa-core-resource-build-bump/workflow-bootstrap.json', JSON.stringify({
+            stage: 'workflow-bootstrap',
+            runId: process.env.GITHUB_RUN_ID,
+            headSha: process.env.GITHUB_SHA,
+            eventName: process.env.GITHUB_EVENT_NAME,
+            initializedAt: new Date().toISOString()
+          }, null, 2));
+          NODE
       - name: Resolve comparison commits
         shell: bash
         run: |
@@ -40,9 +53,12 @@ jobs:
             echo "CNC_HEAD_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
           fi
       - name: Check audit implementation and anti-bypass contract
+        shell: bash
         run: |
-          node --check cnc/tests/pwa-core-resource-build-bump-smoke.cjs
-          node - <<'NODE'
+          set +e
+          {
+            node --check cnc/tests/pwa-core-resource-build-bump-smoke.cjs
+            node - <<'NODE'
           const fs = require('fs');
           const script = fs.readFileSync('cnc/tests/pwa-core-resource-build-bump-smoke.cjs', 'utf8');
           const workflow = fs.readFileSync('.github/workflows/cnc-pwa-core-resource-build-bump-smoke.yml', 'utf8');
@@ -53,12 +69,19 @@ jobs:
           }
           if (!/fetch-depth:\s*0/.test(workflow)) throw new Error('核心资源构建审计必须获取完整Git历史');
           if (/continue\s*-\s*on\s*-\s*error\s*:/.test(workflow)) throw new Error('核心资源构建审计不得吞掉失败');
-          if (/\|\|\s*true/.test(workflow)) throw new Error('核心资源构建审计不得使用|| true绕过失败');
+          const shellBypass = new RegExp('\\|\\|' + '\\s*true');
+          if (shellBypass.test(workflow)) throw new Error('核心资源构建审计不得使用' + '||' + ' true绕过失败');
           NODE
+          } 2>&1 | tee cnc/test-results/pwa-core-resource-build-bump/contract.log
+          status=${PIPESTATUS[0]}
+          if [[ "$status" -ne 0 ]]; then
+            cp cnc/test-results/pwa-core-resource-build-bump/contract.log cnc/test-results/pwa-core-resource-build-bump/contract-error.txt
+          fi
+          exit "$status"
       - name: Audit core resource changes and PWA build bump
+        if: always()
         shell: bash
         run: |
-          mkdir -p cnc/test-results/pwa-core-resource-build-bump
           set +e
           node cnc/tests/pwa-core-resource-build-bump-smoke.cjs 2>&1 | tee cnc/test-results/pwa-core-resource-build-bump/runtime.log
           status=${PIPESTATUS[0]}
@@ -70,6 +93,8 @@ jobs:
           const fs = require('fs');
           const dir = 'cnc/test-results/pwa-core-resource-build-bump';
           const runtime = `${dir}/runtime.log`;
+          const contract = `${dir}/contract.log`;
+          if (!fs.existsSync(contract) || fs.statSync(contract).size === 0) throw new Error('核心资源构建审计缺少静态契约日志');
           if (!fs.existsSync(runtime) || fs.statSync(runtime).size === 0) throw new Error('核心资源构建审计缺少完整运行日志');
           const reportPath = `${dir}/report.json`;
           const errorPath = `${dir}/error.txt`;
