@@ -34,7 +34,7 @@ jobs:
           if (swBuild !== info.pwaBuild || !html.includes(`const EXPECTED='${info.pwaBuild}'`)) {
             throw new Error('PWA self-test/build-info/Service Worker version mismatch');
           }
-          if (info.pwaBuild !== '20260802-pwa8') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
+          if (info.pwaBuild !== '20260803-pwa9') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
           for (const token of [
             'Service Worker已注册',
             '当前页面已被接管',
@@ -45,18 +45,23 @@ jobs:
             '公网构建标记与PWA一致',
             './beginner-placement.html',
             './training-camp.html',
+            './course-safety-foundation.html',
+            './course-coordinate-axes.html',
+            './course-g00-g01-basics.html',
             './ai-teacher.html',
             './ai-teacher-intake.html',
             './ai-teacher-explainability.html',
             '关键安全门禁',
-            '训练营临时路线'
+            '训练营临时路线',
+            '三类测评首步课程'
           ]) {
             if (!html.includes(token)) throw new Error(`self-test contract missing: ${token}`);
           }
           if (!placement.includes('criticalFailures') || !placement.includes("decision:'critical-safety'")) throw new Error('beginner placement critical safety gate missing');
           if (!placement.includes('cnc_beginner_placement_route_handoff_v1') || !camp.includes('cnc_beginner_placement_route_handoff_v1')) throw new Error('placement route handoff producer or consumer missing');
-          if (!String(info.contentStage || '').includes('起点测评关键安全门禁')) throw new Error('build marker missing critical safety gate');
-          if (!String(info.contentStage || '').includes('训练营路线离线核心')) throw new Error('build marker missing training camp route offline core');
+          for (const stage of ['起点测评关键安全门禁','训练营路线离线核心','测评首步课程离线核心']) {
+            if (!String(info.contentStage || '').includes(stage)) throw new Error(`build marker missing: ${stage}`);
+          }
           NODE
       - name: Install Playwright runtime
         run: npm install --no-save playwright@1.52.0
