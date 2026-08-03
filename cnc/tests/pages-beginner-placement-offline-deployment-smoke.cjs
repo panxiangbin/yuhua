@@ -87,6 +87,10 @@ function assertAllowedBuild(build, label) {
   if (![previousPublicPwaBuild, branchTargetPwaBuild].includes(build)) throw new Error(`${label}出现未受控PWA构建：${build}`);
 }
 
+function hasCourseCore(build) {
+  return [previousPublicPwaBuild, branchTargetPwaBuild].includes(build);
+}
+
 function parseBuildInfo(text, label) {
   let data;
   try { data = JSON.parse(text.replace(/^\uFEFF/, '')); } catch (error) { throw new Error(`${label}不是合法JSON：${error.message}`); }
@@ -136,7 +140,7 @@ function expectedCore(expectedBuild) {
     './ai-teacher-explainability.html',
     './build-info.json'
   ];
-  if (expectedBuild === branchTargetPwaBuild) {
+  if (hasCourseCore(expectedBuild)) {
     core.splice(7, 0,
       './course-safety-foundation.html',
       './course-coordinate-axes.html',
@@ -156,7 +160,7 @@ function assertServiceWorker(text, label, expectedBuild) {
     "'./ai-teacher-explainability.html'",
     "name.startsWith('cnc-') && !name.endsWith(BUILD)"
   ]);
-  if (expectedBuild === branchTargetPwaBuild) {
+  if (hasCourseCore(expectedBuild)) {
     requireTokens(text, label, [
       "'./course-safety-foundation.html'",
       "'./course-coordinate-axes.html'",
