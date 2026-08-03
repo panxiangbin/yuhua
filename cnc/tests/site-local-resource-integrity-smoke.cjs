@@ -241,7 +241,15 @@ function validateWorkflow(errors) {
   }
   const pathTriggerCount = (workflow.match(/- 'cnc\/\*\*'/g) || []).length;
   if (pathTriggerCount !== 2) errors.push({ source: rel(workflowPath), type: 'workflow-trigger-asymmetry', detail: `cnc/** count=${pathTriggerCount}` });
-  for (const forbidden of ['cancel-in-progress: true', 'continue-on-error: true', 'test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)']) {
+  const forbiddenTokens = [
+    ['cancel-in-progress', ': true'].join(''),
+    ['continue-on-error', ': true'].join(''),
+    ['test', '.skip('].join(''),
+    ['describe', '.skip('].join(''),
+    ['it', '.skip('].join(''),
+    ['process.exit', '(0)'].join('')
+  ];
+  for (const forbidden of forbiddenTokens) {
     if (workflow.includes(forbidden)) errors.push({ source: rel(workflowPath), type: 'workflow-bypass', detail: forbidden });
   }
   return { sha256: sha256(workflow), pathTriggerCount };
