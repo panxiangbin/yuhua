@@ -64,19 +64,28 @@ jobs:
             'cancel-in-progress: false',
             'if: always()',
             'actions/upload-artifact@v4',
-            'cnc-site-local-resource-integrity-${{ github.run_id }}'
+            'cnc-site-local-resource-integrity-'
           ]) {
             if (!workflow.includes(token)) throw new Error(`workflow contract missing: ${token}`);
           }
           for (const token of ['原厂手册', '授权人员', '不得', '予华仪器官网根目录']) {
             if (!contract.includes(token)) throw new Error(`Chinese safety contract missing: ${token}`);
           }
-          for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)', 'continue-on-error: true', 'cancel-in-progress: true']) {
+          const forbiddenTokens = [
+            ['test', '.skip('].join(''),
+            ['describe', '.skip('].join(''),
+            ['it', '.skip('].join(''),
+            ['process.exit', '(0)'].join(''),
+            ['continue-on-error', ': true'].join(''),
+            ['cancel-in-progress', ': true'].join('')
+          ];
+          for (const forbidden of forbiddenTokens) {
             if (test.includes(forbidden) || workflow.includes(forbidden)) throw new Error(`bypass found: ${forbidden}`);
           }
           NODE
 
       - name: Audit CNC local resource graph
+        if: always()
         run: node cnc/tests/site-local-resource-integrity-smoke.cjs
 
       - name: Verify structured diagnostic
