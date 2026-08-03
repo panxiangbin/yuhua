@@ -8,8 +8,8 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const CURRENT_PWA_BUILD = '20260803-pwa9';
-const PREVIOUS_PWA_BUILD = '20260802-pwa8';
+const CURRENT_PWA_BUILD = '20260804-pwa10';
+const PREVIOUS_PWA_BUILD = '20260803-pwa9';
 const CURRENT_STATIC_CACHE = `cnc-static-${CURRENT_PWA_BUILD}`;
 const CURRENT_RUNTIME_CACHE = `cnc-runtime-${CURRENT_PWA_BUILD}`;
 const PREVIOUS_STATIC_CACHE = `cnc-static-${PREVIOUS_PWA_BUILD}`;
@@ -200,7 +200,7 @@ async function verifyColdOfflineCourse(page, course) {
         request.onsuccess = () => {
           const db = request.result;
           const transaction = db.transaction('records', 'readwrite');
-          transaction.objectStore('records').put({ xp: 680, streak: 12, source: 'pwa8' }, 'growth');
+          transaction.objectStore('records').put({ xp: 680, streak: 12, source: 'pwa9' }, 'growth');
           transaction.onerror = () => reject(transaction.error);
           transaction.oncomplete = () => {
             db.close();

@@ -19,6 +19,19 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+      - name: Initialize diagnostics
+        run: |
+          mkdir -p cnc/test-results/pwa-offline-workflow
+          node - <<'NODE'
+          const fs = require('fs');
+          fs.writeFileSync('cnc/test-results/pwa-offline-workflow/workflow-bootstrap.json', JSON.stringify({
+            stage: 'workflow-bootstrap',
+            runId: process.env.GITHUB_RUN_ID,
+            headSha: process.env.GITHUB_SHA,
+            eventName: process.env.GITHUB_EVENT_NAME,
+            initializedAt: new Date().toISOString()
+          }, null, 2));
+          NODE
       - name: Validate starting assessment route handoff and first-step offline core contract
         run: |
           node --check cnc/tests/mobile-pwa-offline-cache-smoke.cjs
@@ -33,7 +46,7 @@ jobs:
           const camp = fs.readFileSync('cnc/training-camp.html', 'utf8');
           const swBuild = sw.match(/const BUILD = '([^']+)'/)?.[1];
           if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
-          if (info.pwaBuild !== '20260803-pwa9') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
+          if (info.pwaBuild !== '20260804-pwa10') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
           for (const file of [
             './beginner-placement.html',
             './training-camp.html',
@@ -60,7 +73,7 @@ jobs:
             'placementFirstStepCoursesColdOffline: true',
             'explainabilityColdOffline: true'
           ]) if (!test.includes(token)) throw new Error(`offline diagnostics missing: ${token}`);
-          for (const stage of ['起点测评关键安全门禁','起点测评离线核心','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','AI老师离线核心']) {
+          for (const stage of ['起点测评关键安全门禁','起点测评离线核心','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','AI老师离线核心','正式课程开发占位清零']) {
             if (!String(info.contentStage || '').includes(stage)) throw new Error(`build marker missing: ${stage}`);
           }
           NODE
@@ -78,5 +91,5 @@ jobs:
         with:
           name: cnc-pwa-offline-${{ github.run_id }}
           path: cnc/test-results/pwa-offline-*
-          if-no-files-found: warn
+          if-no-files-found: error
           retention-days: 14

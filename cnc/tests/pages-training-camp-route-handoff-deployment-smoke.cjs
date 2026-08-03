@@ -9,8 +9,8 @@ fs.mkdirSync(out, { recursive: true });
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
 const expectedSiteBuild = '20260801-ai-handoff1';
-const expectedPwaBuild = '20260803-pwa9';
-const previousPublicPwaBuild = '20260802-pwa8';
+const expectedPwaBuild = '20260804-pwa10';
+const previousPublicPwaBuild = '20260803-pwa9';
 const attempts = Number(process.env.CNC_PAGES_VERIFY_ATTEMPTS || 18);
 const intervalMs = Number(process.env.CNC_PAGES_VERIFY_INTERVAL_MS || 10000);
 const eventName = process.env.GITHUB_EVENT_NAME || '';
@@ -152,6 +152,10 @@ function assertTrainingCamp(text, label) {
   }
 }
 
+function hasCourseCore(build) {
+  return [previousPublicPwaBuild, expectedPwaBuild].includes(build);
+}
+
 function expectedCore(build) {
   const core = [
     './index.html',
@@ -166,7 +170,7 @@ function expectedCore(build) {
     './ai-teacher-explainability.html',
     './build-info.json'
   ];
-  if (build === expectedPwaBuild) {
+  if (hasCourseCore(build)) {
     core.splice(7, 0,
       './course-safety-foundation.html',
       './course-coordinate-axes.html',
@@ -185,7 +189,7 @@ function assertServiceWorker(text, label, build) {
     "'./training-camp.html'",
     "name.startsWith('cnc-') && !name.endsWith(BUILD)"
   ]);
-  if (build === expectedPwaBuild) {
+  if (hasCourseCore(build)) {
     requireTokens(text, label, [
       "'./course-safety-foundation.html'",
       "'./course-coordinate-axes.html'",
@@ -212,7 +216,7 @@ function parseBuildInfo(text, label) {
   if (data.build !== expectedSiteBuild) throw new Error(`${label}站点构建错误：${data.build}`);
   if (![previousPublicPwaBuild, expectedPwaBuild].includes(data.pwaBuild)) throw new Error(`${label}PWA构建未受控：${data.pwaBuild}`);
   requireTokens(String(data.contentStage || ''), label, ['测评路线一次性交接', '训练营路线离线核心', 'PWA可靠性']);
-  if (data.pwaBuild === expectedPwaBuild) requireTokens(String(data.contentStage || ''), label, ['测评首步课程离线核心']);
+  if (data.pwaBuild === expectedPwaBuild) requireTokens(String(data.contentStage || ''), label, ['测评首步课程离线核心', '正式课程开发占位清零']);
   return data;
 }
 
@@ -305,7 +309,7 @@ async function waitForMainPagesMatch() {
     if (eventName !== 'pull_request' && branchDeploymentPending) {
       throw new Error('main正式验收不允许当前分支与main/Pages仍不一致');
     }
-    if (!branchDeploymentPending && publicPwaBuild !== expectedPwaBuild) throw new Error('分支与main一致时公网必须已经是PWA9');
+    if (!branchDeploymentPending && publicPwaBuild !== expectedPwaBuild) throw new Error('分支与main一致时公网必须已经是PWA10');
 
     report.verified = {
       publicReachable: true,

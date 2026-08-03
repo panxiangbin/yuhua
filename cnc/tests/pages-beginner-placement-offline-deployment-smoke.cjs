@@ -8,8 +8,8 @@ fs.mkdirSync(out, { recursive: true });
 
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
-const branchTargetPwaBuild = '20260803-pwa9';
-const previousPublicPwaBuild = '20260802-pwa8';
+const branchTargetPwaBuild = '20260804-pwa10';
+const previousPublicPwaBuild = '20260803-pwa9';
 const attempts = Number(process.env.CNC_PAGES_VERIFY_ATTEMPTS || 18);
 const intervalMs = Number(process.env.CNC_PAGES_VERIFY_INTERVAL_MS || 10000);
 const eventName = process.env.GITHUB_EVENT_NAME || '';
@@ -87,6 +87,10 @@ function assertAllowedBuild(build, label) {
   if (![previousPublicPwaBuild, branchTargetPwaBuild].includes(build)) throw new Error(`${label}出现未受控PWA构建：${build}`);
 }
 
+function hasCourseCore(build) {
+  return [previousPublicPwaBuild, branchTargetPwaBuild].includes(build);
+}
+
 function parseBuildInfo(text, label) {
   let data;
   try { data = JSON.parse(text.replace(/^\uFEFF/, '')); } catch (error) { throw new Error(`${label}不是合法JSON：${error.message}`); }
@@ -136,7 +140,7 @@ function expectedCore(expectedBuild) {
     './ai-teacher-explainability.html',
     './build-info.json'
   ];
-  if (expectedBuild === branchTargetPwaBuild) {
+  if (hasCourseCore(expectedBuild)) {
     core.splice(7, 0,
       './course-safety-foundation.html',
       './course-coordinate-axes.html',
@@ -156,7 +160,7 @@ function assertServiceWorker(text, label, expectedBuild) {
     "'./ai-teacher-explainability.html'",
     "name.startsWith('cnc-') && !name.endsWith(BUILD)"
   ]);
-  if (expectedBuild === branchTargetPwaBuild) {
+  if (hasCourseCore(expectedBuild)) {
     requireTokens(text, label, [
       "'./course-safety-foundation.html'",
       "'./course-coordinate-axes.html'",
@@ -176,7 +180,7 @@ function assertBuildInfo(text, label, expectedBuild) {
   if (data.pwaBuild !== expectedBuild) throw new Error(`${label}PWA构建错误：${data.pwaBuild}，期望${expectedBuild}`);
   requireTokens(String(data.contentStage || ''), label, ['起点测评离线核心', 'AI老师离线核心', 'PWA可靠性']);
   if (expectedBuild === branchTargetPwaBuild) {
-    requireTokens(String(data.contentStage || ''), label, ['起点测评关键安全门禁', '测评路线一次性交接', '训练营路线离线核心', '测评首步课程离线核心']);
+    requireTokens(String(data.contentStage || ''), label, ['起点测评关键安全门禁', '测评路线一次性交接', '训练营路线离线核心', '测评首步课程离线核心', '正式课程开发占位清零']);
   }
 }
 
