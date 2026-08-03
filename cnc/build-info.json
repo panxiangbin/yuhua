@@ -2,9 +2,9 @@
   "app": "cnc-training-platform",
   "name": "数控小潘 CNC随身助手",
   "build": "20260801-ai-handoff1",
-  "pwaBuild": "20260802-pwa8",
-  "contentStage": "课程12关 · 专项75题 · 模拟13项 · 起点测评 · 起点测评关键安全门禁 · 起点测评离线核心 · 测评路线一次性交接 · 训练营路线离线核心 · 手机闯关首页 · AI CNC老师基础版 · AI老师现场问诊单 · AI老师问诊闭环 · AI老师判断说明 · AI老师离线核心 · PWA可靠性",
-  "generatedAt": "2026-08-02T22:28:43+08:00",
+  "pwaBuild": "20260803-pwa9",
+  "contentStage": "课程12关 · 专项75题 · 模拟13项 · 起点测评 · 起点测评关键安全门禁 · 起点测评离线核心 · 测评路线一次性交接 · 训练营路线离线核心 · 测评首步课程离线核心 · 手机闯关首页 · AI CNC老师基础版 · AI老师现场问诊单 · AI老师问诊闭环 · AI老师判断说明 · AI老师离线核心 · PWA可靠性",
+  "generatedAt": "2026-08-03T10:31:31+08:00",
   "source": "GitHub Pages static build marker",
   "scope": "/cnc/"
 }

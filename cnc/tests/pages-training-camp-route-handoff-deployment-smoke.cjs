@@ -9,7 +9,8 @@ fs.mkdirSync(out, { recursive: true });
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
 const expectedSiteBuild = '20260801-ai-handoff1';
-const expectedPwaBuild = '20260802-pwa8';
+const expectedPwaBuild = '20260803-pwa9';
+const previousPublicPwaBuild = '20260802-pwa8';
 const attempts = Number(process.env.CNC_PAGES_VERIFY_ATTEMPTS || 18);
 const intervalMs = Number(process.env.CNC_PAGES_VERIFY_INTERVAL_MS || 10000);
 const eventName = process.env.GITHUB_EVENT_NAME || '';
@@ -24,6 +25,7 @@ const report = {
   mainRoot,
   expectedSiteBuild,
   expectedPwaBuild,
+  previousPublicPwaBuild,
   eventName,
   attempts: [],
   resources: {}
@@ -150,8 +152,8 @@ function assertTrainingCamp(text, label) {
   }
 }
 
-function expectedCore() {
-  return [
+function expectedCore(build) {
+  const core = [
     './index.html',
     './offline.html',
     './pwa-status.html',
@@ -164,20 +166,35 @@ function expectedCore() {
     './ai-teacher-explainability.html',
     './build-info.json'
   ];
+  if (build === expectedPwaBuild) {
+    core.splice(7, 0,
+      './course-safety-foundation.html',
+      './course-coordinate-axes.html',
+      './course-g00-g01-basics.html'
+    );
+  }
+  return core;
 }
 
-function assertServiceWorker(text, label) {
+function assertServiceWorker(text, label, build) {
   requireTokens(text, label, [
-    `const BUILD = '${expectedPwaBuild}'`,
+    `const BUILD = '${build}'`,
     "const STATIC_CACHE = `cnc-static-${BUILD}`",
     "const RUNTIME_CACHE = `cnc-runtime-${BUILD}`",
     'const REQUIRED_CORE_PATHS = [',
     "'./training-camp.html'",
     "name.startsWith('cnc-') && !name.endsWith(BUILD)"
   ]);
+  if (build === expectedPwaBuild) {
+    requireTokens(text, label, [
+      "'./course-safety-foundation.html'",
+      "'./course-coordinate-axes.html'",
+      "'./course-g00-g01-basics.html'"
+    ]);
+  }
   const block = text.match(/const REQUIRED_CORE_PATHS = \[([\s\S]*?)\];/)?.[1] || '';
   const core = [...block.matchAll(/'([^']+)'/g)].map(match => match[1]);
-  const expected = expectedCore();
+  const expected = expectedCore(build);
   if (JSON.stringify(core) !== JSON.stringify(expected) || new Set(core).size !== expected.length) {
     throw new Error(`${label}核心资源不一致：${JSON.stringify(core)}，期望${JSON.stringify(expected)}`);
   }
@@ -193,15 +210,20 @@ function parseBuildInfo(text, label) {
   if (data.app !== 'cnc-training-platform') throw new Error(`${label}应用标识错误`);
   if (data.scope !== '/cnc/') throw new Error(`${label}作用域错误：${data.scope}`);
   if (data.build !== expectedSiteBuild) throw new Error(`${label}站点构建错误：${data.build}`);
-  if (data.pwaBuild !== expectedPwaBuild) throw new Error(`${label}PWA构建错误：${data.pwaBuild}`);
+  if (![previousPublicPwaBuild, expectedPwaBuild].includes(data.pwaBuild)) throw new Error(`${label}PWA构建未受控：${data.pwaBuild}`);
   requireTokens(String(data.contentStage || ''), label, ['测评路线一次性交接', '训练营路线离线核心', 'PWA可靠性']);
+  if (data.pwaBuild === expectedPwaBuild) requireTokens(String(data.contentStage || ''), label, ['测评首步课程离线核心']);
   return data;
 }
 
-function assertContract(resource, text, label) {
+function assertContract(resource, text, label, build) {
   if (resource.endsWith('training-camp.html')) return assertTrainingCamp(text, label);
-  if (resource.endsWith('sw.js')) return assertServiceWorker(text, label);
-  if (resource.endsWith('build-info.json')) return parseBuildInfo(text, label);
+  if (resource.endsWith('sw.js')) return assertServiceWorker(text, label, build);
+  if (resource.endsWith('build-info.json')) {
+    const data = parseBuildInfo(text, label);
+    if (data.pwaBuild !== build) throw new Error(`${label}PWA构建错误：${data.pwaBuild}，期望${build}`);
+    return data;
+  }
   throw new Error(`未知资源：${resource}`);
 }
 
@@ -247,6 +269,11 @@ async function waitForMainPagesMatch() {
     const findings = [];
     let localMatchesMain = true;
 
+    const mainBuildData = parseBuildInfo(deployed['cnc/build-info.json'].main.buffer.toString('utf8'), 'main cnc/build-info.json');
+    const pagesBuildData = parseBuildInfo(deployed['cnc/build-info.json'].pages.buffer.toString('utf8'), 'Pages cnc/build-info.json');
+    if (mainBuildData.pwaBuild !== pagesBuildData.pwaBuild) throw new Error('main与Pages PWA构建标记不一致');
+    const publicPwaBuild = mainBuildData.pwaBuild;
+
     for (const resource of resources) {
       const localBuffer = fs.readFileSync(path.join(root, resource));
       const local = {
@@ -257,9 +284,9 @@ async function waitForMainPagesMatch() {
         finalUrl: `file://${path.join(root, resource)}`
       };
       const pair = deployed[resource];
-      assertContract(resource, localBuffer.toString('utf8'), `当前分支 ${resource}`);
-      assertContract(resource, pair.main.buffer.toString('utf8'), `main ${resource}`);
-      assertContract(resource, pair.pages.buffer.toString('utf8'), `Pages ${resource}`);
+      assertContract(resource, localBuffer.toString('utf8'), `当前分支 ${resource}`, expectedPwaBuild);
+      assertContract(resource, pair.main.buffer.toString('utf8'), `main ${resource}`, publicPwaBuild);
+      assertContract(resource, pair.pages.buffer.toString('utf8'), `Pages ${resource}`, publicPwaBuild);
 
       const localMatch = exact(local, pair.main);
       if (!localMatch) localMatchesMain = false;
@@ -278,6 +305,7 @@ async function waitForMainPagesMatch() {
     if (eventName !== 'pull_request' && branchDeploymentPending) {
       throw new Error('main正式验收不允许当前分支与main/Pages仍不一致');
     }
+    if (!branchDeploymentPending && publicPwaBuild !== expectedPwaBuild) throw new Error('分支与main一致时公网必须已经是PWA9');
 
     report.verified = {
       publicReachable: true,
@@ -287,6 +315,7 @@ async function waitForMainPagesMatch() {
       branchDeploymentPending,
       siteBuild: expectedSiteBuild,
       pwaBuild: expectedPwaBuild,
+      publicPwaBuild,
       trainingCampPublic: true,
       oneTimeRouteConsumerPresent: true,
       consumeBeforeParsePresent: true,
@@ -296,7 +325,8 @@ async function waitForMainPagesMatch() {
       sessionStorageOnlyHandoffPresent: true,
       noLongTermHandoffWrite: true,
       trainingCampInCoreCache: true,
-      coreResourceCount: expectedCore().length,
+      placementFirstStepCoursesInCoreCache: true,
+      coreResourceCount: expectedCore(expectedPwaBuild).length,
       recommendationBoundaryVisible: true,
       manualBoundaryVisible: true,
       authorizationBoundaryVisible: true
@@ -307,18 +337,19 @@ async function waitForMainPagesMatch() {
       '训练营Pages公网可达：是',
       'main与Pages三项资源逐字节一致：是',
       `站点构建：${expectedSiteBuild}`,
-      `PWA构建：${expectedPwaBuild}`,
+      `分支PWA构建：${expectedPwaBuild}`,
+      `公网PWA构建：${publicPwaBuild}`,
       `分支待合并或待部署：${branchDeploymentPending ? '是' : '否'}`,
       '一次性交接键先删除后解析：已验证',
       '四种分类与唯一受控路线完整匹配：已验证',
       '临时路线纯文本渲染、无innerHTML：已验证',
       'BFCache返回清理与SessionStorage-only：已验证',
-      '训练营进入11项核心预缓存：已验证',
+      '训练营与三类测评首步课程进入14项核心预缓存：已验证',
       '原厂手册、上机授权与现场监护边界：可见',
       ...findings
     ].join('\n') + '\n');
 
-    console.log(`CNC training camp route handoff Pages verified: ${expectedSiteBuild} / ${expectedPwaBuild} / pending=${branchDeploymentPending}`);
+    console.log(`CNC training camp route handoff Pages verified: ${expectedSiteBuild} / branch ${expectedPwaBuild} / public ${publicPwaBuild} / pending=${branchDeploymentPending}`);
   } catch (error) {
     report.error = String(error && error.stack || error);
     fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));

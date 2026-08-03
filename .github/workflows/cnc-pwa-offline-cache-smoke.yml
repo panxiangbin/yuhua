@@ -19,7 +19,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-      - name: Validate starting assessment route handoff and AI teacher offline core contract
+      - name: Validate starting assessment route handoff and first-step offline core contract
         run: |
           node --check cnc/tests/mobile-pwa-offline-cache-smoke.cjs
           node --check cnc/sw.js
@@ -33,8 +33,17 @@ jobs:
           const camp = fs.readFileSync('cnc/training-camp.html', 'utf8');
           const swBuild = sw.match(/const BUILD = '([^']+)'/)?.[1];
           if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
-          if (info.pwaBuild !== '20260802-pwa8') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
-          for (const file of ['./beginner-placement.html', './training-camp.html', './ai-teacher.html', './ai-teacher-intake.html', './ai-teacher-explainability.html']) {
+          if (info.pwaBuild !== '20260803-pwa9') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
+          for (const file of [
+            './beginner-placement.html',
+            './training-camp.html',
+            './course-safety-foundation.html',
+            './course-coordinate-axes.html',
+            './course-g00-g01-basics.html',
+            './ai-teacher.html',
+            './ai-teacher-intake.html',
+            './ai-teacher-explainability.html'
+          ]) {
             if (!sw.includes(`'${file}'`)) throw new Error(`${file} missing from Service Worker core cache`);
             if (!test.includes(file)) throw new Error(`${file} missing from offline browser verification`);
             if (!selfTest.includes(file)) throw new Error(`${file} missing from PWA self-test required resources`);
@@ -47,13 +56,13 @@ jobs:
             'trainingCampColdOffline: true',
             'placementRouteHandoffColdOffline: true',
             'placementRouteHandoffImmediateCleanup: true',
+            'placementFirstStepClickColdOffline: true',
+            'placementFirstStepCoursesColdOffline: true',
             'explainabilityColdOffline: true'
           ]) if (!test.includes(token)) throw new Error(`offline diagnostics missing: ${token}`);
-          if (!String(info.contentStage || '').includes('起点测评关键安全门禁')) throw new Error('build marker missing beginner placement critical safety gate');
-          if (!String(info.contentStage || '').includes('起点测评离线核心')) throw new Error('build marker missing beginner placement offline capability');
-          if (!String(info.contentStage || '').includes('测评路线一次性交接')) throw new Error('build marker missing placement route handoff capability');
-          if (!String(info.contentStage || '').includes('训练营路线离线核心')) throw new Error('build marker missing training camp route offline capability');
-          if (!String(info.contentStage || '').includes('AI老师离线核心')) throw new Error('build marker missing AI offline capability');
+          for (const stage of ['起点测评关键安全门禁','起点测评离线核心','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','AI老师离线核心']) {
+            if (!String(info.contentStage || '').includes(stage)) throw new Error(`build marker missing: ${stage}`);
+          }
           NODE
       - name: Install Playwright test runtime
         run: npm install --no-save playwright@1.52.0

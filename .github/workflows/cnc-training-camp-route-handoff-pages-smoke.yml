@@ -49,11 +49,12 @@ jobs:
           const sw = fs.readFileSync('cnc/sw.js', 'utf8');
           const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
           if (info.build !== '20260801-ai-handoff1') throw new Error(`unexpected site build: ${info.build}`);
-          if (info.pwaBuild !== '20260802-pwa8') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
-          if (!sw.includes("const BUILD = '20260802-pwa8'")) throw new Error('Service Worker build mismatch');
+          if (info.pwaBuild !== '20260803-pwa9') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
+          if (!sw.includes("const BUILD = '20260803-pwa9'")) throw new Error('Service Worker build mismatch');
           for (const token of [
             "const expectedSiteBuild = '20260801-ai-handoff1'",
-            "const expectedPwaBuild = '20260802-pwa8'",
+            "const expectedPwaBuild = '20260803-pwa9'",
+            "const previousPublicPwaBuild = '20260802-pwa8'",
             'CNC_PAGES_VERIFY_ATTEMPTS || 18',
             "cache: 'no-store'",
             "const resources = ['cnc/training-camp.html', 'cnc/sw.js', 'cnc/build-info.json']",
@@ -67,7 +68,9 @@ jobs:
             'bfcacheClearingPresent: true',
             'sessionStorageOnlyHandoffPresent: true',
             'trainingCampInCoreCache: true',
-            'coreResourceCount: expectedCore().length',
+            'placementFirstStepCoursesInCoreCache: true',
+            'function expectedCore(build)',
+            'coreResourceCount: expectedCore(expectedPwaBuild).length',
             'process.exit(1)'
           ]) {
             if (!test.includes(token)) throw new Error(`deployment test missing: ${token}`);
@@ -85,7 +88,10 @@ jobs:
           ]) {
             if (!camp.includes(token)) throw new Error(`training camp contract missing: ${token}`);
           }
-          if (!sw.includes("'./training-camp.html'")) throw new Error('training camp missing from PWA core');
+          for (const file of ['./training-camp.html','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html']) {
+            if (!sw.includes(`'${file}'`)) throw new Error(`PWA core missing: ${file}`);
+          }
+          if (!String(info.contentStage || '').includes('测评首步课程离线核心')) throw new Error('build marker missing placement first-step offline core');
           for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)', 'CNC_PAGES_VERIFY_ATTEMPTS || 0']) {
             if (test.includes(forbidden)) throw new Error(`deployment gate bypass found: ${forbidden}`);
           }
