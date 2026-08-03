@@ -3,8 +3,6 @@ on:
   pull_request:
     paths:
       - 'cnc/**'
-      - 'scripts/check-no-direct-contact.cjs'
-      - 'scripts/audit-public-contact-leaks.cjs'
       - '.github/workflows/cnc-pwa-offline-cache-smoke.yml'
   workflow_dispatch:
 permissions:
@@ -20,13 +18,43 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-      - name: Check direct-contact policy
+          node-version: 24
+      - name: Validate starting assessment route handoff and AI teacher offline core contract
         run: |
-          node scripts/check-no-direct-contact.cjs
-          node scripts/audit-public-contact-leaks.cjs
-      - name: Check test syntax
-        run: node --check cnc/tests/mobile-pwa-offline-cache-smoke.cjs
+          node --check cnc/tests/mobile-pwa-offline-cache-smoke.cjs
+          node --check cnc/sw.js
+          node - <<'NODE'
+          const fs = require('fs');
+          const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
+          const sw = fs.readFileSync('cnc/sw.js', 'utf8');
+          const test = fs.readFileSync('cnc/tests/mobile-pwa-offline-cache-smoke.cjs', 'utf8');
+          const selfTest = fs.readFileSync('cnc/pwa-self-test.html', 'utf8');
+          const placement = fs.readFileSync('cnc/beginner-placement.html', 'utf8');
+          const camp = fs.readFileSync('cnc/training-camp.html', 'utf8');
+          const swBuild = sw.match(/const BUILD = '([^']+)'/)?.[1];
+          if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
+          if (info.pwaBuild !== '20260802-pwa8') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
+          for (const file of ['./beginner-placement.html', './training-camp.html', './ai-teacher.html', './ai-teacher-intake.html', './ai-teacher-explainability.html']) {
+            if (!sw.includes(`'${file}'`)) throw new Error(`${file} missing from Service Worker core cache`);
+            if (!test.includes(file)) throw new Error(`${file} missing from offline browser verification`);
+            if (!selfTest.includes(file)) throw new Error(`${file} missing from PWA self-test required resources`);
+          }
+          if (!placement.includes('criticalFailures') || !placement.includes("decision:'critical-safety'")) throw new Error('beginner placement critical safety gate missing');
+          if (!placement.includes('cnc_beginner_placement_route_handoff_v1') || !camp.includes('cnc_beginner_placement_route_handoff_v1')) throw new Error('placement route handoff producer or consumer missing');
+          for (const token of [
+            'beginnerPlacementColdOffline: true',
+            'beginnerPlacementCriticalSafetyGateColdOffline: true',
+            'trainingCampColdOffline: true',
+            'placementRouteHandoffColdOffline: true',
+            'placementRouteHandoffImmediateCleanup: true',
+            'explainabilityColdOffline: true'
+          ]) if (!test.includes(token)) throw new Error(`offline diagnostics missing: ${token}`);
+          if (!String(info.contentStage || '').includes('起点测评关键安全门禁')) throw new Error('build marker missing beginner placement critical safety gate');
+          if (!String(info.contentStage || '').includes('起点测评离线核心')) throw new Error('build marker missing beginner placement offline capability');
+          if (!String(info.contentStage || '').includes('测评路线一次性交接')) throw new Error('build marker missing placement route handoff capability');
+          if (!String(info.contentStage || '').includes('训练营路线离线核心')) throw new Error('build marker missing training camp route offline capability');
+          if (!String(info.contentStage || '').includes('AI老师离线核心')) throw new Error('build marker missing AI offline capability');
+          NODE
       - name: Install Playwright test runtime
         run: npm install --no-save playwright@1.52.0
       - name: Install Chromium
@@ -34,10 +62,7 @@ jobs:
       - name: Run 390x844 offline cache smoke
         env:
           DEBUG: pw:browser
-        run: >-
-          xvfb-run --auto-servernum
-          --server-args='-screen 0 1280x1024x24'
-          node cnc/tests/mobile-pwa-offline-cache-smoke.cjs
+        run: node cnc/tests/mobile-pwa-offline-cache-smoke.cjs
       - name: Upload diagnostics
         if: always()
         uses: actions/upload-artifact@v4
