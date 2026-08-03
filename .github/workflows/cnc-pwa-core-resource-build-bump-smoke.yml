@@ -72,6 +72,7 @@ jobs:
           const shellBypass = new RegExp('\\|\\|' + '\\s*true');
           if (shellBypass.test(workflow)) throw new Error('核心资源构建审计不得使用' + '||' + ' true绕过失败');
           NODE
+            echo "核心资源构建审计静态契约检查通过"
           } 2>&1 | tee cnc/test-results/pwa-core-resource-build-bump/contract.log
           status=${PIPESTATUS[0]}
           if [[ "$status" -ne 0 ]]; then
