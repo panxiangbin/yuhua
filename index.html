@@ -2,110 +2,191 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>予华仪器 · 实验室仪器产品中心</title>
-<meta name="description" content="巩义予华仪器 — 旋转蒸发仪、玻璃反应釜、高压反应釜、分子蒸馏、高低温循环装置、磁力搅拌器等实验室仪器整体解决方案，厂家直供。">
-<link rel="stylesheet" href="styles.css?v=20260614b">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>予华仪器｜实验室仪器选型、型号参数与规格书</title>
+<meta name="description" content="巩义市予华仪器有限责任公司实验室仪器产品中心，提供旋转蒸发仪、玻璃反应釜、高压反应釜、高低温循环装置、真空泵、搅拌器等产品的型号查询、参数筛选、规格书下载与初步选型。">
+<meta name="theme-color" content="#0a1e36">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://panxiangbin.github.io/yuhua/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:title" content="予华仪器｜实验室仪器产品中心">
+<meta property="og:description" content="型号查询、参数筛选、规格书下载与初步选型。">
+<meta property="og:url" content="https://panxiangbin.github.io/yuhua/">
+<link rel="stylesheet" href="styles.css?v=20260728a">
 </head>
 <body>
+<a class="skip-link" href="#main">跳到主要内容</a>
 
-<!-- 顶部导航 -->
 <header class="nav" id="top">
   <div class="nav-inner">
-    <a class="brand" href="#top">
-      <span class="brand-logo">予华</span>
-      <span class="brand-text"><b>予华仪器</b><i>YUHUA INSTRUMENT</i></span>
+    <a class="brand" href="#home" aria-label="返回首页">
+      <span class="brand-logo" aria-hidden="true">予华</span>
+      <span class="brand-text"><b>予华仪器</b><i>YUHUA INSTRUMENTS</i></span>
     </a>
-    <nav class="nav-links">
-      <a href="#home">首页</a>
+    <nav class="nav-links" aria-label="主导航">
       <a href="#products">产品中心</a>
-      <a href="#videos">产品视频</a>
       <a href="#catalog">型号查询</a>
+      <a href="#selector">智能选型</a>
       <a href="#specs">规格书</a>
-      <a href="#about">关于我们</a>
+      <a href="#videos">产品视频</a>
+      <a class="nav-contact" href="#selector">选型工具</a>
     </nav>
-    <button class="nav-toggle" id="navToggle" aria-label="菜单">
+    <button class="nav-toggle" id="navToggle" aria-label="打开菜单" aria-controls="navMobile" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
   </div>
 </header>
 
-<!-- 移动端导航抽屉 -->
-<nav class="nav-mobile" id="navMobile">
-  <a href="#home">首页</a>
+<nav class="nav-mobile" id="navMobile" aria-label="移动端导航">
   <a href="#products">产品中心</a>
-  <a href="#videos">产品视频</a>
   <a href="#catalog">型号查询</a>
+  <a href="#selector">智能选型</a>
   <a href="#specs">规格书</a>
-  <a href="#about">关于我们</a>
+  <a href="#videos">产品视频</a>
+  <a href="#selector">选型工具</a>
 </nav>
 
-<!-- 首屏 -->
+<main id="main">
 <section class="hero" id="home">
   <div class="hero-bg"></div>
   <div class="hero-inner">
-    <p class="hero-kicker">实验室仪器整体解决方案 · 厂家直供</p>
-    <h1>专业实验仪器<br><em>为科研与生产赋能</em></h1>
-    <p class="hero-sub">旋转蒸发 · 反应釜 · 分子蒸馏 · 控温循环 · 搅拌真空<br>覆盖实验室浓缩、合成、提纯、控温全流程</p>
+    <p class="hero-kicker">巩义市予华仪器有限责任公司</p>
+    <h1>查型号、看参数、做选型<br><em>实验室仪器资料一站式查询</em></h1>
+    <p class="hero-sub">覆盖旋转蒸发、反应合成、真空抽滤、低温与高温循环、搅拌分散、蒸馏提纯等实验与中试环节。</p>
     <div class="hero-actions">
-      <a class="btn btn-primary" href="#products">浏览产品系列</a>
+      <a class="btn btn-primary" href="#selector">开始智能选型</a>
       <a class="btn btn-ghost" href="#catalog">查询具体型号</a>
     </div>
-    <div class="hero-stats">
-      <div><b id="stat-cats">12</b><span>大产品系列</span></div>
-      <div><b id="stat-models">450+</b><span>在册型号</span></div>
-      <div><b>厂家直供</b><span>实体工厂 · 可定制</span></div>
+    <div class="hero-stats" aria-label="网站资料概览">
+      <div><b id="stat-cats">—</b><span>产品系列</span></div>
+      <div><b id="stat-models">—</b><span>可查询型号</span></div>
+      <div><b id="stat-specs">—</b><span>可下载规格书</span></div>
     </div>
   </div>
 </section>
 
-<!-- 产品中心 -->
-<section class="section" id="products">
-  <div class="section-head">
-    <h2>产品中心</h2>
-    <p>按应用场景精选分类，点击任一系列可查看该系列下全部型号参数</p>
-  </div>
-  <div class="cat-grid" id="catGrid"><!-- JS 注入 --></div>
+<section class="trust-strip" aria-label="服务能力">
+  <div><b>厂家产品资料</b><span>型号、参数与资料集中查询</span></div>
+  <div><b>按工况初步选型</b><span>容量、温度、材质与用途筛选</span></div>
+  <div><b>主机配套建议</b><span>真空、制冷与控温设备组合</span></div>
+  <div><b>正式参数需复核</b><span>采购前由销售或技术人员确认</span></div>
 </section>
 
-<!-- 产品视频 -->
-<section class="section section-alt" id="videos">
+<section class="section" id="applications">
   <div class="section-head">
-    <h2>产品视频</h2>
-    <p>工厂实拍与产品运行演示，直观了解予华仪器</p>
+    <span class="section-eyebrow">按实验需求查找</span>
+    <h2>不知道型号，也能从用途开始</h2>
+    <p>点击应用场景，系统会带你进入相关产品筛选结果。</p>
   </div>
-  <div class="video-grid" id="videoGrid"><!-- JS 注入 --></div>
+  <div class="application-grid">
+    <button class="application-card" data-query="浓缩 溶剂回收"><b>浓缩与溶剂回收</b><span>旋转蒸发、冷凝、真空配套</span></button>
+    <button class="application-card" data-query="反应 合成 玻璃反应釜"><b>常压反应与合成</b><span>玻璃反应釜、搅拌与控温</span></button>
+    <button class="application-card" data-query="高压 高温 合成"><b>高温高压合成</b><span>高压反应釜与循环控温</span></button>
+    <button class="application-card" data-query="低温 冷却 循环"><b>低温反应与冷却</b><span>低温泵、反应浴与一体机</span></button>
+    <button class="application-card" data-query="真空 抽滤 泵"><b>抽真空与过滤</b><span>循环水泵、隔膜泵与抽滤</span></button>
+    <button class="application-card" data-query="蒸馏 提纯 分子蒸馏"><b>蒸馏与精制提纯</b><span>分子蒸馏与配套温控系统</span></button>
+    <button class="application-card" data-query="搅拌 分散 乳化"><b>搅拌、分散与乳化</b><span>磁力、电动与高剪切设备</span></button>
+    <button class="application-card" data-query="干燥 烘干"><b>干燥与样品处理</b><span>干燥箱、电热套与辅助设备</span></button>
+  </div>
 </section>
 
-<!-- 型号查询 -->
-<section class="section section-alt" id="catalog">
+<section class="section section-alt" id="products">
   <div class="section-head">
-    <h2>型号查询</h2>
-    <p>输入型号 / 名称关键词，或点选下方分类筛选。共收录 <b id="totalCount">0</b> 个型号</p>
+    <span class="section-eyebrow">产品中心</span>
+    <h2>按产品系列浏览</h2>
+    <p>分类数量只统计前台可用记录；空型号、空名称等待审核数据不会干扰查询。</p>
   </div>
-  <div class="catalog-tools">
-    <input type="search" id="searchInput" placeholder="🔍 搜索型号或名称，如 YRE-2020Z、反应釜、DLSB…" autocomplete="off">
-    <div class="chips" id="chips"></div>
+  <div class="cat-grid" id="catGrid" aria-live="polite"></div>
+</section>
+
+<section class="section" id="catalog">
+  <div class="section-head">
+    <span class="section-eyebrow">型号与参数查询</span>
+    <h2>搜索产品数据库</h2>
+    <p>支持型号、名称、容量、材质、温度、真空度、压力、功率、用途和产品特点。共 <b id="totalCount">0</b> 条可查询记录。</p>
   </div>
-  <p class="result-info"><span id="resultCount">0</span> 个结果</p>
-  <div class="table-wrap">
+
+  <div class="data-alert" id="dataAlert" hidden role="alert"></div>
+
+  <div class="catalog-panel">
+    <label class="search-box" for="searchInput">
+      <span aria-hidden="true">⌕</span>
+      <input type="search" id="searchInput" placeholder="例如：YRE-201D、20L反应釜、316L高压釜、-40℃循环泵" autocomplete="off">
+      <button type="button" id="clearSearch" class="clear-search" aria-label="清空搜索" hidden>×</button>
+    </label>
+
+    <div class="advanced-filters" aria-label="高级筛选">
+      <label>容量
+        <select id="capacityFilter">
+          <option value="all">全部容量</option>
+          <option value="lt1">1L以下</option>
+          <option value="1to5">1～5L</option>
+          <option value="5to20">5～20L</option>
+          <option value="gte20">20L及以上</option>
+        </select>
+      </label>
+      <label>材质
+        <select id="materialFilter">
+          <option value="all">全部材质</option>
+          <option value="glass">玻璃</option>
+          <option value="304">304不锈钢</option>
+          <option value="316">316L不锈钢</option>
+          <option value="titanium">钛材</option>
+          <option value="hastelloy">哈氏合金</option>
+          <option value="ptfe">聚四氟乙烯</option>
+        </select>
+      </label>
+      <label>温度能力
+        <select id="temperatureFilter">
+          <option value="all">全部温度</option>
+          <option value="low">含0℃以下低温</option>
+          <option value="room">常温～100℃</option>
+          <option value="mid">100～250℃</option>
+          <option value="high">250℃以上</option>
+        </select>
+      </label>
+      <button type="button" class="reset-filters" id="resetFilters">清除筛选</button>
+    </div>
+
+    <div class="chips" id="chips" aria-label="产品分类筛选"></div>
+  </div>
+
+  <div class="result-bar">
+    <p><b id="resultCount">0</b> 个结果</p>
+    <p id="activeFilterSummary">当前：全部产品</p>
+  </div>
+
+  <div class="table-wrap desktop-catalog">
     <table class="ptable">
       <thead>
         <tr>
-          <th>型号</th><th>产品名称 / 类别</th><th class="hide-sm">材质</th><th class="hide-sm">容量</th>
-          <th class="hide-sm">控温范围</th><th>详细参数</th>
+          <th>型号</th>
+          <th>产品名称 / 类别</th>
+          <th>材质</th>
+          <th>容量</th>
+          <th>控温范围</th>
+          <th>详细参数</th>
         </tr>
       </thead>
       <tbody id="tableBody"></tbody>
     </table>
-    <p class="empty-tip" id="emptyTip" hidden>没有匹配的型号，换个关键词试试～</p>
   </div>
+
+  <div class="mobile-product-list" id="mobileProductList"></div>
+
+  <div class="empty-state" id="emptyTip" hidden>
+    <b>没有找到完全匹配的产品</b>
+    <p>检查型号拼写，或尝试搜索“容量＋设备名称”“材质＋设备名称”“温度＋设备名称”。</p>
+    <a class="btn btn-primary compact" href="#selector">提交工况进行初步选型</a>
+  </div>
+
+  <div class="result-limit" id="resultLimit" hidden></div>
 </section>
 
-<!-- 详细参数弹窗 -->
 <div class="modal-mask" id="modalMask" hidden>
-  <div class="modal" role="dialog" aria-modal="true">
-    <button class="modal-close" id="modalClose" title="关闭">×</button>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+    <button class="modal-close" id="modalClose" title="关闭" aria-label="关闭产品参数">×</button>
     <div class="modal-head">
       <img id="mImg" src="" alt="">
       <div>
@@ -122,54 +203,193 @@
         <h4>产品特点</h4>
         <ul class="selling-list" id="mSelling"></ul>
       </div>
-      <p class="modal-note">📋 以上为产品资料整理参数，具体配置与报价请联系予华仪器销售。</p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary compact" id="consultModel">按此型号提交工况</button>
+        <button type="button" class="btn btn-light compact" id="copyModel">复制型号</button>
+      </div>
+      <p class="modal-note">参数来自现有产品资料整理。正式采购、压力工况、材质兼容性与非标配置必须由予华仪器销售或技术人员复核。</p>
     </div>
   </div>
 </div>
 
-<!-- 规格书查询 -->
-<section class="section" id="specs">
+<section class="section section-alt" id="selector">
   <div class="section-head">
-    <h2>规格书查询</h2>
-    <p>输入型号关键词搜索，直接在线查看或下载原始 Word 规格书。共收录 <b id="specCount">0</b> 份</p>
+    <span class="section-eyebrow">智能选型 V1</span>
+    <h2>把工况说清楚，先得到设备组合方向</h2>
+    <p>该工具只做初步推荐，不替代正式工艺设计、压力容器计算和安全评估。</p>
   </div>
-  <div class="catalog-tools">
-    <input type="search" id="specSearch" placeholder="🔍 搜索型号，如 GDSZ-100-40、YSF-50L、YRE-2020Z…" autocomplete="off">
-    <div class="chips" id="specChips"></div>
-  </div>
-  <p class="result-info"><span id="specResultCount">0</span> 个结果</p>
-  <div class="table-wrap">
-    <table class="ptable">
-      <thead><tr><th>型号/文件名</th><th class="hide-sm">产品系列</th><th>在线查看</th><th>下载</th></tr></thead>
-      <tbody id="specBody"></tbody>
-    </table>
-    <p class="empty-tip" id="specEmptyTip" hidden>没有匹配的规格书，换个关键词试试～</p>
-  </div>
-</section>
+  <div class="selector-layout">
+    <form class="selector-form" id="selectorForm">
+      <label>主要用途
+        <select id="useCase" required>
+          <option value="">请选择</option>
+          <option value="concentration">浓缩 / 溶剂回收</option>
+          <option value="reaction">常压反应 / 合成</option>
+          <option value="pressure">高温高压反应</option>
+          <option value="cooling">低温反应 / 冷却</option>
+          <option value="vacuum">抽真空 / 抽滤</option>
+          <option value="distillation">蒸馏 / 提纯</option>
+          <option value="mixing">搅拌 / 分散 / 乳化</option>
+          <option value="drying">干燥 / 烘干</option>
+        </select>
+      </label>
+      <label>处理物料
+        <input id="materialName" type="text" placeholder="例如：乙醇溶液、树脂、反应液">
+      </label>
+      <div class="form-row">
+        <label>处理容量
+          <input id="processCapacity" type="text" placeholder="例如：2L、20L">
+        </label>
+        <label>温度范围
+          <input id="processTemperature" type="text" placeholder="例如：-20～180℃">
+        </label>
+      </div>
+      <div class="form-row">
+        <label>真空要求
+          <select id="vacuumNeed">
+            <option value="unknown">不确定</option>
+            <option value="yes">需要真空</option>
+            <option value="no">不需要真空</option>
+          </select>
+        </label>
+        <label>正压力
+          <select id="pressureNeed">
+            <option value="unknown">不确定</option>
+            <option value="no">无正压力</option>
+            <option value="yes">存在正压力</option>
+          </select>
+        </label>
+      </div>
+      <div class="form-row">
+        <label>接触材质
+          <select id="contactMaterial">
+            <option value="unknown">不确定</option>
+            <option value="glass">高硼硅玻璃</option>
+            <option value="304">304不锈钢</option>
+            <option value="316">316L不锈钢</option>
+            <option value="titanium">钛材</option>
+            <option value="hastelloy">哈氏合金</option>
+            <option value="ptfe">聚四氟乙烯</option>
+          </select>
+        </label>
+        <label>防爆要求
+          <select id="explosionProof">
+            <option value="unknown">不确定</option>
+            <option value="yes">需要防爆</option>
+            <option value="no">不需要防爆</option>
+          </select>
+        </label>
+      </div>
+      <button class="btn btn-primary selector-submit" type="submit">生成初步选型建议</button>
+    </form>
 
-<!-- 关于 -->
-<section class="section" id="about">
-  <div class="section-head"><h2>关于予华仪器</h2></div>
-  <div class="about-body">
-    <p>巩义予华仪器长期专注于实验室仪器的研发与制造，产品涵盖<b>旋转蒸发仪、双层玻璃反应釜、高压反应釜、分子蒸馏装置、高低温循环装置、恒温槽、磁力/电动搅拌器、真空泵</b>等多个系列，广泛应用于化工、制药、科研院所、高校实验室等领域。</p>
-    <p>工厂支持<b>非标定制与防爆机型</b>，欢迎来图来样洽谈。</p>
-    <div class="about-note">
-      💡 本站为产品资料展示，<b>不含价格信息</b>。如需报价、选型建议或技术参数详表，请联系予华仪器销售人员。
+    <div class="selector-result" id="selectorResult" aria-live="polite">
+      <div class="selector-placeholder">
+        <b>推荐结果会显示在这里</b>
+        <p>包含主设备、建议配套、选型依据、候选型号和需人工确认的风险点。</p>
+      </div>
     </div>
   </div>
 </section>
 
+<section class="section" id="specs">
+  <div class="section-head">
+    <span class="section-eyebrow">文档中心</span>
+    <h2>规格书查询与下载</h2>
+    <p>输入型号、系列或文件名称。共收录 <b id="specCount">0</b> 份资料。</p>
+  </div>
+  <div class="catalog-panel">
+    <label class="search-box" for="specSearch">
+      <span aria-hidden="true">⌕</span>
+      <input type="search" id="specSearch" placeholder="例如：GDSZ-100-40、YSF-50L、YRE-2020Z" autocomplete="off">
+    </label>
+    <div class="chips" id="specChips"></div>
+  </div>
+  <div class="result-bar"><p><b id="specResultCount">0</b> 个结果</p></div>
+  <div class="table-wrap">
+    <table class="ptable spec-list-table">
+      <thead><tr><th>型号 / 文件名</th><th>产品系列</th><th>在线查看</th><th>下载</th></tr></thead>
+      <tbody id="specBody"></tbody>
+    </table>
+  </div>
+  <div class="empty-state" id="specEmptyTip" hidden>
+    <b>没有找到匹配的规格书</b>
+    <p>可尝试输入系列前缀或缩短型号关键词。</p>
+  </div>
+</section>
+
+<section class="section section-alt" id="videos">
+  <div class="section-head">
+    <span class="section-eyebrow">运行演示</span>
+    <h2>产品视频</h2>
+    <p>工厂实拍、结构展示与运行演示。</p>
+  </div>
+  <div class="video-grid" id="videoGrid"></div>
+</section>
+
+<section class="section" id="about">
+  <div class="section-head">
+    <span class="section-eyebrow">关于我们</span>
+    <h2>巩义市予华仪器有限责任公司</h2>
+  </div>
+  <div class="about-grid">
+    <div class="about-body">
+      <p>公司长期从事实验室仪器的研发、制造与服务，产品覆盖旋转蒸发仪、玻璃反应釜、高压反应釜、分子蒸馏装置、高低温循环装置、低温冷却设备、恒温槽、搅拌器和真空泵等系列。</p>
+      <p>网站用于集中展示现有产品资料，并帮助客户按型号或工况完成初步筛选。非标定制、防爆配置、压力工况、腐蚀性物料及放大生产方案，需要结合正式工艺条件单独确认。</p>
+    </div>
+    <div class="service-grid">
+      <div><b>售前选型</b><span>根据物料、容量和温度范围初步配置</span></div>
+      <div><b>方案配套</b><span>主机、真空、制冷和控温组合建议</span></div>
+      <div><b>非标定制</b><span>防爆、材质、容量与结构按需求评估</span></div>
+      <div><b>技术支持</b><span>安装、操作、维护与资料支持</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="contact-section" id="service">
+  <div class="contact-inner">
+    <div>
+      <span class="section-eyebrow light">选型服务</span>
+      <h2>先把型号和工况整理清楚</h2>
+      <p>网站不公开直接联系方式。可先使用智能选型生成需求摘要，再通过现有业务渠道提交给销售或技术人员复核。</p>
+    </div>
+    <div class="contact-card service-card">
+      <b class="service-card-title">推荐操作顺序</b>
+      <ol class="service-steps">
+        <li>查询产品型号与现有参数</li>
+        <li>填写物料、容量、温度、压力和材质要求</li>
+        <li>复制系统生成的完整工况摘要</li>
+        <li>通过现有业务渠道提交人工确认</li>
+      </ol>
+      <div class="contact-actions">
+        <a class="btn btn-primary compact" href="#selector">填写选型需求</a>
+        <a class="btn btn-ghost compact" href="#catalog">查询产品型号</a>
+        <a class="btn btn-ghost compact" href="#specs">查找规格书</a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
 <footer class="footer">
-  <div>予华仪器 YUHUA INSTRUMENT · 实验室仪器产品中心</div>
-  <div class="footer-sub">本页面由产品资料整理生成 · 仅供参考，具体以实物及正式技术文件为准</div>
+  <div><b>巩义市予华仪器有限责任公司</b> · YUHUA INSTRUMENTS</div>
+  <div class="footer-sub">产品资料仅供初步查询，正式参数、配置、价格和安全边界以双方确认的技术文件为准。</div>
 </footer>
 
-<button class="to-top" id="toTop" title="返回顶部">↑</button>
+<div class="mobile-action-bar" aria-label="快捷操作">
+  <a href="#products"><span>▦</span>产品中心</a>
+  <a href="#catalog"><span>⌕</span>型号查询</a>
+  <a href="#selector"><span>✓</span>智能选型</a>
+</div>
 
+<button class="to-top" id="toTop" title="返回顶部" aria-label="返回顶部">↑</button>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="assets/site-config.js?v=20260728a"></script>
 <script src="assets/data.js?v=20260614b"></script>
 <script src="assets/videos.js?v=20260614b"></script>
 <script src="assets/pages.js?v=20260614b"></script>
 <script src="assets/specs.js?v=20260614b"></script>
-<script src="app.js?v=20260614b"></script>
+<script src="app.js?v=20260728a"></script>
 </body>
 </html>

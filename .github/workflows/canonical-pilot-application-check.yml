@@ -1,0 +1,50 @@
+name: Canonical Pilot Application Check
+
+on:
+  push:
+    branches: [upgrade-84h]
+    paths:
+      - "cnc/cnc_program_checker_optimizer.html"
+      - "cnc/cnc-calculator-suite.html"
+      - "scripts/apply-canonical-pilot.cjs"
+      - "scripts/check-no-direct-contact.cjs"
+      - "scripts/audit-public-contact-leaks.cjs"
+      - ".github/workflows/canonical-pilot-application-check.yml"
+  pull_request:
+    paths:
+      - "cnc/cnc_program_checker_optimizer.html"
+      - "cnc/cnc-calculator-suite.html"
+      - "scripts/apply-canonical-pilot.cjs"
+      - "scripts/check-no-direct-contact.cjs"
+      - "scripts/audit-public-contact-leaks.cjs"
+      - ".github/workflows/canonical-pilot-application-check.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check applicator syntax
+        run: node --check scripts/apply-canonical-pilot.cjs
+      - name: Enforce no direct contact policy
+        run: node scripts/check-no-direct-contact.cjs
+      - name: Audit public text for contact leaks
+        run: node scripts/audit-public-contact-leaks.cjs
+      - name: Validate canonical pilot without writing files
+        run: node scripts/apply-canonical-pilot.cjs
+      - name: Confirm dry run leaves repository unchanged
+        run: git diff --exit-code -- cnc/cnc_program_checker_optimizer.html cnc/cnc-calculator-suite.html
+      - name: Upload application readiness report
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-pilot-application-readiness
+          path: test-artifacts/canonical-pilot-application.json
+          if-no-files-found: error
+          retention-days: 14

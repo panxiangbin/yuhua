@@ -1,0 +1,51 @@
+name: HTML Fragment Audit
+
+on:
+  push:
+    branches: [upgrade-84h]
+    paths:
+      - "**/*.html"
+      - "scripts/audit-html-fragments.cjs"
+      - "scripts/check-no-direct-contact.cjs"
+      - "scripts/audit-public-contact-leaks.cjs"
+      - ".github/workflows/html-fragment-audit.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "**/*.html"
+      - "scripts/audit-html-fragments.cjs"
+      - "scripts/check-no-direct-contact.cjs"
+      - "scripts/audit-public-contact-leaks.cjs"
+      - ".github/workflows/html-fragment-audit.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check audit script syntax
+        run: node --check scripts/audit-html-fragments.cjs
+      - name: Enforce no direct contact policy
+        run: node scripts/check-no-direct-contact.cjs
+      - name: Audit public text for contact leaks
+        run: node scripts/audit-public-contact-leaks.cjs
+      - name: Audit duplicate IDs and local fragment links
+        run: node scripts/audit-html-fragments.cjs
+      - name: Upload fragment audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-fragment-audit
+          path: |
+            test-artifacts/html-fragment-audit-summary.json
+            test-artifacts/html-fragment-audit-items.csv
+          if-no-files-found: error
+          retention-days: 14

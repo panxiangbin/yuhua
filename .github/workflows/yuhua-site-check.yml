@@ -1,0 +1,212 @@
+name: Yuhua Website Check
+
+on:
+  push:
+    branches: [main, upgrade-84h]
+    paths:
+      - "index.html"
+      - "app.js"
+      - "styles.css"
+      - "404.html"
+      - "robots.txt"
+      - "sitemap.xml"
+      - "assets/data.js"
+      - "assets/specs.js"
+      - "assets/videos.js"
+      - "assets/pages.js"
+      - "assets/site-config.js"
+      - "assets/detail-resolver.js"
+      - "scripts/audit-yuhua-site.cjs"
+      - "scripts/test-site-config.cjs"
+      - "scripts/test-detail-resolver.cjs"
+      - "scripts/export-data-audit.cjs"
+      - "scripts/check-no-direct-contact.cjs"
+      - "scripts/audit-public-contact-leaks.cjs"
+      - "scripts/audit-static-assets.cjs"
+      - "scripts/audit-video-data.cjs"
+      - "scripts/classify-cross-category-videos.cjs"
+      - "scripts/map-cross-category-video-sources.cjs"
+      - "scripts/triage-cross-category-video-records.cjs"
+      - "scripts/reconcile-video-model-categories.cjs"
+      - "scripts/audit-unmatched-model-evidence.cjs"
+      - "scripts/audit-detail-page-coverage.cjs"
+      - "scripts/classify-unresolved-detail-pages.cjs"
+      - "scripts/audit-cross-category-detail-evidence.cjs"
+      - "scripts/triage-medium-cross-category-details.cjs"
+      - "scripts/audit-glass-separator-taxonomy.cjs"
+      - ".github/workflows/yuhua-site-check.yml"
+  pull_request:
+    paths:
+      - "index.html"
+      - "app.js"
+      - "styles.css"
+      - "404.html"
+      - "robots.txt"
+      - "sitemap.xml"
+      - "assets/data.js"
+      - "assets/specs.js"
+      - "assets/videos.js"
+      - "assets/pages.js"
+      - "assets/site-config.js"
+      - "assets/detail-resolver.js"
+      - "scripts/audit-yuhua-site.cjs"
+      - "scripts/test-site-config.cjs"
+      - "scripts/test-detail-resolver.cjs"
+      - "scripts/export-data-audit.cjs"
+      - "scripts/check-no-direct-contact.cjs"
+      - "scripts/audit-public-contact-leaks.cjs"
+      - "scripts/audit-static-assets.cjs"
+      - "scripts/audit-video-data.cjs"
+      - "scripts/classify-cross-category-videos.cjs"
+      - "scripts/map-cross-category-video-sources.cjs"
+      - "scripts/triage-cross-category-video-records.cjs"
+      - "scripts/reconcile-video-model-categories.cjs"
+      - "scripts/audit-unmatched-model-evidence.cjs"
+      - "scripts/audit-detail-page-coverage.cjs"
+      - "scripts/classify-unresolved-detail-pages.cjs"
+      - "scripts/audit-cross-category-detail-evidence.cjs"
+      - "scripts/triage-medium-cross-category-details.cjs"
+      - "scripts/audit-glass-separator-taxonomy.cjs"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check JavaScript syntax
+        run: |
+          node --check app.js
+          node --check assets/site-config.js
+          node --check assets/detail-resolver.js
+          node --check scripts/audit-yuhua-site.cjs
+          node --check scripts/test-site-config.cjs
+          node --check scripts/test-detail-resolver.cjs
+          node --check scripts/export-data-audit.cjs
+          node --check scripts/check-no-direct-contact.cjs
+          node --check scripts/audit-public-contact-leaks.cjs
+          node --check scripts/audit-static-assets.cjs
+          node --check scripts/audit-video-data.cjs
+          node --check scripts/classify-cross-category-videos.cjs
+          node --check scripts/map-cross-category-video-sources.cjs
+          node --check scripts/triage-cross-category-video-records.cjs
+          node --check scripts/reconcile-video-model-categories.cjs
+          node --check scripts/audit-unmatched-model-evidence.cjs
+          node --check scripts/audit-detail-page-coverage.cjs
+          node --check scripts/classify-unresolved-detail-pages.cjs
+          node --check scripts/audit-cross-category-detail-evidence.cjs
+          node --check scripts/triage-medium-cross-category-details.cjs
+          node --check scripts/audit-glass-separator-taxonomy.cjs
+      - name: Enforce no direct contact policy
+        run: node scripts/check-no-direct-contact.cjs
+      - name: Audit all public text files for contact leaks
+        run: node scripts/audit-public-contact-leaks.cjs
+      - name: Audit website structure and product data
+        run: node scripts/audit-yuhua-site.cjs
+      - name: Test runtime data guard and compound search
+        run: node scripts/test-site-config.cjs
+      - name: Test exact-model detail resolver
+        run: node scripts/test-detail-resolver.cjs
+      - name: Export data review reports
+        run: node scripts/export-data-audit.cjs
+      - name: Audit static assets and document links
+        run: node scripts/audit-static-assets.cjs
+      - name: Audit video data and duplicate media
+        run: node scripts/audit-video-data.cjs
+      - name: Classify cross-category duplicate videos
+        run: node scripts/classify-cross-category-videos.cjs
+      - name: Map cross-category videos to source records
+        run: node scripts/map-cross-category-video-sources.cjs
+      - name: Triage cross-category records by model evidence
+        run: node scripts/triage-cross-category-video-records.cjs
+      - name: Reconcile video categories with exact product models
+        run: node scripts/reconcile-video-model-categories.cjs
+      - name: Search specs and pages for unmatched model evidence
+        run: node scripts/audit-unmatched-model-evidence.cjs
+      - name: Audit exact-model detail page coverage
+        run: node scripts/audit-detail-page-coverage.cjs
+      - name: Classify unresolved detail page records
+        run: node scripts/classify-unresolved-detail-pages.cjs
+      - name: Audit cross-category detail evidence
+        run: node scripts/audit-cross-category-detail-evidence.cjs
+      - name: Triage medium-confidence cross-category details
+        run: node scripts/triage-medium-cross-category-details.cjs
+      - name: Audit glass separator taxonomy evidence
+        run: node scripts/audit-glass-separator-taxonomy.cjs
+      - name: Upload audit reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-audit-reports
+          path: |
+            test-artifacts/data-audit-summary.json
+            test-artifacts/data-audit-items.csv
+            test-artifacts/public-contact-audit-summary.json
+            test-artifacts/public-contact-audit-items.csv
+            test-artifacts/static-asset-audit-summary.json
+            test-artifacts/static-asset-audit-items.csv
+            test-artifacts/video-audit-summary.json
+            test-artifacts/video-audit-items.csv
+            test-artifacts/video-duplicate-groups.json
+            test-artifacts/video-duplicate-groups.csv
+            test-artifacts/video-cross-category-review.json
+            test-artifacts/video-cross-category-review.csv
+            test-artifacts/video-cross-category-classification.json
+            test-artifacts/video-cross-category-classification.csv
+            test-artifacts/video-cross-category-source-map.json
+            test-artifacts/video-cross-category-source-map.csv
+            test-artifacts/video-cross-category-record-triage.json
+            test-artifacts/video-cross-category-record-triage.csv
+            test-artifacts/video-model-category-reconciliation.json
+            test-artifacts/video-model-category-reconciliation.csv
+            test-artifacts/unmatched-model-evidence.json
+            test-artifacts/unmatched-model-evidence.csv
+            test-artifacts/detail-page-coverage.json
+            test-artifacts/detail-page-coverage.csv
+            test-artifacts/unresolved-detail-classification.json
+            test-artifacts/unresolved-detail-classification.csv
+            test-artifacts/cross-category-detail-evidence.json
+            test-artifacts/cross-category-detail-evidence.csv
+            test-artifacts/medium-cross-category-detail-triage.json
+            test-artifacts/medium-cross-category-detail-triage.csv
+            test-artifacts/glass-separator-taxonomy-audit.json
+            test-artifacts/glass-separator-taxonomy-audit.csv
+          if-no-files-found: error
+          retention-days: 14
+      - name: Install Chinese font for visual checks
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+          fc-cache -f
+      - name: Render desktop and mobile smoke screenshots
+        run: |
+          mkdir -p test-artifacts
+          python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/yuhua-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID 2>/dev/null || true' EXIT
+          for i in {1..20}; do
+            if curl -fsS http://127.0.0.1:8765/ >/dev/null; then break; fi
+            sleep 1
+          done
+          google-chrome --version
+          timeout 60s google-chrome --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --hide-scrollbars --virtual-time-budget=5000 --dump-dom http://127.0.0.1:8765/ > test-artifacts/home-dom.html
+          grep -q 'data-safe-detail-resolved="5"' test-artifacts/home-dom.html
+          timeout 60s google-chrome --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --hide-scrollbars --virtual-time-budget=5000 --window-size=1440,1200 --screenshot=test-artifacts/home-desktop.png http://127.0.0.1:8765/
+          timeout 60s google-chrome --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --hide-scrollbars --virtual-time-budget=5000 --window-size=390,844 --screenshot=test-artifacts/home-mobile.png http://127.0.0.1:8765/
+          test -s test-artifacts/home-desktop.png
+          test -s test-artifacts/home-mobile.png
+      - name: Upload smoke screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-smoke-screenshots
+          path: |
+            test-artifacts/home-desktop.png
+            test-artifacts/home-mobile.png
+            test-artifacts/home-dom.html
+          if-no-files-found: error
+          retention-days: 7

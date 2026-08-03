@@ -1,0 +1,53 @@
+name: PWA Browser Capability Probe
+
+on:
+  push:
+    branches: [upgrade-84h]
+    paths:
+      - "cnc/tests/pwa-browser-capability-probe.cjs"
+      - "scripts/check-no-direct-contact.cjs"
+      - "scripts/audit-public-contact-leaks.cjs"
+      - ".github/workflows/pwa-browser-capability-probe.yml"
+  pull_request:
+    paths:
+      - "cnc/tests/pwa-browser-capability-probe.cjs"
+      - "scripts/check-no-direct-contact.cjs"
+      - "scripts/audit-public-contact-leaks.cjs"
+      - ".github/workflows/pwa-browser-capability-probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save playwright@1.52.0
+          npx playwright install --with-deps chromium
+      - name: Check probe syntax
+        run: node --check cnc/tests/pwa-browser-capability-probe.cjs
+      - name: Enforce no direct contact policy
+        run: |
+          node scripts/check-no-direct-contact.cjs
+          node scripts/audit-public-contact-leaks.cjs
+      - name: Probe isolated Service Worker support
+        run: |
+          xvfb-run --auto-servernum \
+            --server-args='-screen 0 1280x1024x24' \
+            node cnc/tests/pwa-browser-capability-probe.cjs
+      - name: Upload probe report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pwa-browser-capability-probe-${{ github.run_id }}
+          path: cnc/test-results/pwa-browser-capability-probe.json
+          if-no-files-found: error
+          retention-days: 14

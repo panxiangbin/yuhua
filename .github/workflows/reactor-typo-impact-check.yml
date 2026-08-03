@@ -1,0 +1,84 @@
+name: Reactor Typo Rename Impact Check
+
+on:
+  push:
+    branches: [upgrade-84h]
+    paths:
+      - "assets/specs.js"
+      - "specs/**"
+      - "downloads/specs/**"
+      - "scripts/audit-reactor-typo-rename-impact.cjs"
+      - "scripts/build-reactor-typo-atomic-rename-plan.cjs"
+      - "scripts/audit-reactor-typo-url-compatibility.cjs"
+      - "scripts/audit-hosting-redirect-capability.cjs"
+      - "scripts/build-reactor-typo-compatibility-plan.cjs"
+      - "scripts/test-reactor-typo-compatibility-plan.cjs"
+      - ".github/workflows/reactor-typo-impact-check.yml"
+  pull_request:
+    paths:
+      - "assets/specs.js"
+      - "specs/**"
+      - "downloads/specs/**"
+      - "scripts/audit-reactor-typo-rename-impact.cjs"
+      - "scripts/build-reactor-typo-atomic-rename-plan.cjs"
+      - "scripts/audit-reactor-typo-url-compatibility.cjs"
+      - "scripts/audit-hosting-redirect-capability.cjs"
+      - "scripts/build-reactor-typo-compatibility-plan.cjs"
+      - "scripts/test-reactor-typo-compatibility-plan.cjs"
+      - ".github/workflows/reactor-typo-impact-check.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check audit script syntax
+        run: |
+          node --check scripts/audit-reactor-typo-rename-impact.cjs
+          node --check scripts/build-reactor-typo-atomic-rename-plan.cjs
+          node --check scripts/audit-reactor-typo-url-compatibility.cjs
+          node --check scripts/audit-hosting-redirect-capability.cjs
+          node --check scripts/build-reactor-typo-compatibility-plan.cjs
+          node --check scripts/test-reactor-typo-compatibility-plan.cjs
+      - name: Enforce no direct contact policy
+        run: node scripts/check-no-direct-contact.cjs
+      - name: Audit all public text files for contact leaks
+        run: node scripts/audit-public-contact-leaks.cjs
+      - name: Build safe rename impact report
+        run: node scripts/audit-reactor-typo-rename-impact.cjs
+      - name: Build non-executing atomic rename plan
+        run: node scripts/build-reactor-typo-atomic-rename-plan.cjs
+      - name: Audit legacy URL compatibility risk
+        run: node scripts/audit-reactor-typo-url-compatibility.cjs
+      - name: Audit hosting redirect capability evidence
+        run: node scripts/audit-hosting-redirect-capability.cjs
+      - name: Build non-executing compatibility implementation plan
+        run: node scripts/build-reactor-typo-compatibility-plan.cjs
+      - name: Test compatibility plan invariants
+        run: node scripts/test-reactor-typo-compatibility-plan.cjs
+      - name: Recheck static resources and document links
+        run: node scripts/audit-static-assets.cjs
+      - name: Upload rename audit reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: reactor-typo-rename-impact
+          path: |
+            test-artifacts/reactor-typo-rename-impact.json
+            test-artifacts/reactor-typo-rename-impact.csv
+            test-artifacts/reactor-typo-atomic-rename-plan.json
+            test-artifacts/reactor-typo-atomic-rename-plan.csv
+            test-artifacts/reactor-typo-url-compatibility.json
+            test-artifacts/reactor-typo-url-compatibility.csv
+            test-artifacts/hosting-redirect-capability-audit.json
+            test-artifacts/hosting-redirect-capability-audit.csv
+            test-artifacts/reactor-typo-compatibility-plan.json
+            test-artifacts/reactor-typo-compatibility-plan.csv
+          if-no-files-found: error
+          retention-days: 14
