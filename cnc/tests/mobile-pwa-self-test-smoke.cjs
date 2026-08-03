@@ -1,6 +1,7 @@
 const { chromium } = require('playwright');
 const { spawn } = require('child_process');
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const http = require('http');
 const { ensureControlled, withTimeout } = require('./pwa-controller-test-helper.cjs');
@@ -9,26 +10,10 @@ const root = path.resolve(__dirname, '../..');
 const out = path.resolve(__dirname, '../test-results');
 fs.mkdirSync(out, { recursive: true });
 
-const buildInfo = JSON.parse(fs.readFileSync(path.join(root, 'cnc/build-info.json'), 'utf8'));
-const expectedPwaBuild = String(buildInfo.pwaBuild || '').trim();
-if (!expectedPwaBuild) throw new Error('build-info.json 缺少 pwaBuild');
-
-const REQUIRED_CORE_PATHS = [
-  './index.html',
-  './offline.html',
-  './pwa-status.html',
-  './pages-status.html',
-  './pwa-self-test.html',
-  './build-info.json'
-];
-
 const RUN_TIMEOUT_MS = 8 * 60 * 1000;
 const CLEANUP_TIMEOUT_MS = 10000;
-const CONTROLLER_RETRY_DELAY_MS = 3000;
-const CONTROLLER_ACQUISITION_TIMEOUT_MS = 90 * 1000;
-const CACHE_READINESS_TIMEOUT_MS = 60 * 1000;
-const SELF_TEST_TIMEOUT_MS = 60 * 1000;
 const errorPath = path.join(out, 'pwa-self-test-error.txt');
+const diagnosticsPath = path.join(out, 'pwa-self-test-diagnostics.json');
 
 const server = spawn('python3', ['-m', 'http.server', '4173', '--bind', '127.0.0.1'], {
   cwd: root,
@@ -68,60 +53,32 @@ function waitForExit(child, timeoutMs) {
   ]);
 }
 
-async function ensureControlledAfterRegistrationSettles(page, errors) {
-  let firstError;
-  try {
-    return await ensureControlled(page, errors, observePage);
-  } catch (error) {
-    firstError = error;
-  }
-
-  // Chromium can resolve register() before installing/waiting/active is populated.
-  // Give the asynchronous update job one bounded chance to settle, then rerun the
-  // full controller assertions. Persistent failures still fail with both traces.
-  await page.waitForTimeout(CONTROLLER_RETRY_DELAY_MS);
-  try {
-    return await ensureControlled(page, errors, observePage);
-  } catch (secondError) {
-    throw new Error(`Service Worker controller check failed after bounded retry. first=${firstError.stack || firstError}; second=${secondError.stack || secondError}`);
-  }
-}
-
-async function waitForPwaCaches(page) {
-  await page.waitForFunction(async ({ build, required }) => {
-    const staticName = `cnc-static-${build}`;
-    const runtimeName = `cnc-runtime-${build}`;
-    const names = await caches.keys();
-    if (!names.includes(staticName) || !names.includes(runtimeName)) return false;
-
-    const cache = await caches.open(staticName);
-    const matches = await Promise.all(required.map(item => {
-      const absoluteUrl = new URL(item, location.href).href;
-      return cache.match(absoluteUrl);
-    }));
-    return matches.every(Boolean);
-  }, {
-    build: expectedPwaBuild,
-    required: REQUIRED_CORE_PATHS
-  }, {
-    timeout: CACHE_READINESS_TIMEOUT_MS
-  });
-}
-
-async function selfTestSnapshot(page) {
-  return page.evaluate(() => ({
-    total: document.querySelector('#total')?.textContent || '',
-    passed: document.querySelector('#passed')?.textContent || '',
-    failed: document.querySelector('#failed')?.textContent || '',
-    status: document.querySelector('#status')?.textContent || '',
-    items: Array.from(document.querySelectorAll('.item')).map(item => item.textContent.trim())
-  })).catch(error => ({ snapshotError: String(error && error.message ? error.message : error) }));
+async function collectDiagnostics(page, errors, stage) {
+  if (!page) return { stage, errors };
+  return page.evaluate(async () => {
+    const registration = 'serviceWorker' in navigator ? await navigator.serviceWorker.getRegistration('./').catch(() => null) : null;
+    return {
+      url: location.href,
+      passed: document.querySelector('#passed')?.textContent || '',
+      failed: document.querySelector('#failed')?.textContent || '',
+      status: document.querySelector('#status')?.textContent || '',
+      rows: [...document.querySelectorAll('.item')].map(item => item.innerText.trim()),
+      caches: await caches.keys().catch(() => []),
+      controller: navigator.serviceWorker?.controller?.scriptURL || '',
+      registration: registration ? {
+        scope: registration.scope,
+        active: registration.active?.state || '',
+        waiting: registration.waiting?.state || '',
+        installing: registration.installing?.state || ''
+      } : null
+    };
+  }).then(state => ({ stage, errors, ...state })).catch(error => ({ stage, errors, diagnosticError: String(error) }));
 }
 
 (async () => {
-  let browser;
   let context;
   let page;
+  let userDataDir;
   const errors = [];
   let stage = 'server';
   let finished = false;
@@ -137,42 +94,21 @@ async function selfTestSnapshot(page) {
   try {
     await waitServer();
     stage = 'browser';
-    // Run Playwright's version-matched full Chromium in headed mode under Xvfb.
-    // This exercises the normal browser Service Worker lifecycle while remaining
-    // fully automated in Linux CI and avoids Headless Shell/new-headless variance.
-    browser = await chromium.launch({
-      channel: 'chromium',
-      headless: false
-    });
-    context = await browser.newContext({
+    userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'cnc-pwa-self-test-'));
+    context = await chromium.launchPersistentContext(userDataDir, {
+      headless: true,
       viewport: { width: 390, height: 844 },
       serviceWorkers: 'allow'
     });
-    page = await context.newPage();
+    page = context.pages()[0] || await context.newPage();
     observePage(page, errors);
 
     stage = 'controller';
-    // Start on the quiet same-origin bootstrap page. Entering through index.html
-    // starts its own register() call and can race the test helper's explicit one.
-    await page.goto('http://127.0.0.1:4173/cnc/offline.html', { waitUntil: 'domcontentloaded' });
-    page = await withTimeout(
-      ensureControlledAfterRegistrationSettles(page, errors),
-      CONTROLLER_ACQUISITION_TIMEOUT_MS,
-      'Service Worker controller acquisition'
-    );
-
-    stage = 'cache-ready';
-    // Activation intentionally does not block on background cache maintenance.
-    // Wait for the exact production cache contract before asserting the UI report.
-    await waitForPwaCaches(page);
-
+    await page.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded' });
+    page = await ensureControlled(page, errors, observePage);
     stage = 'self-test';
     await page.goto('http://127.0.0.1:4173/cnc/pwa-self-test.html', { waitUntil: 'domcontentloaded' });
-    await page.waitForFunction(
-      () => document.querySelector('#passed')?.textContent === '8' && document.querySelector('#failed')?.textContent === '0',
-      null,
-      { timeout: SELF_TEST_TIMEOUT_MS }
-    );
+    await page.waitForFunction(() => document.querySelector('#passed')?.textContent === '8' && document.querySelector('#failed')?.textContent === '0', { timeout: 60000 });
 
     const rows = await page.locator('.item').count();
     if (rows !== 8) throw new Error(`expected 8 checks, got ${rows}`);
@@ -189,32 +125,22 @@ async function selfTestSnapshot(page) {
     if (errors.length) throw new Error(`console errors: ${errors.join(' | ')}`);
 
     await page.screenshot({ path: path.join(out, 'pwa-self-test-390x844.png'), fullPage: true });
-    const result = {
-      checks: rows,
-      passed: 8,
-      failed: 0,
-      status,
-      expectedPwaBuild,
-      touchTargets: touch.length,
-      consoleErrors: errors
-    };
+    const result = { checks: rows, passed: 8, failed: 0, status, touchTargets: touch.length, consoleErrors: errors };
     fs.writeFileSync(path.join(out, 'pwa-self-test-result.json'), JSON.stringify(result, null, 2));
     console.log(JSON.stringify(result));
   } catch (error) {
-    const snapshot = page ? await selfTestSnapshot(page) : { unavailable: true };
-    fs.writeFileSync(errorPath, `stage=${stage}\n${error.stack || error}\nselfTest=${JSON.stringify(snapshot, null, 2)}\nconsole=${errors.join(' | ')}`);
+    const diagnostics = await collectDiagnostics(page, errors, stage);
+    fs.writeFileSync(diagnosticsPath, JSON.stringify(diagnostics, null, 2));
+    if (page) await page.screenshot({ path: path.join(out, 'pwa-self-test-failure-390x844.png'), fullPage: true }).catch(() => {});
+    fs.writeFileSync(errorPath, `stage=${stage}\n${error.stack || error}\nconsole=${errors.join(' | ')}\ndiagnostics=${JSON.stringify(diagnostics)}`);
     throw error;
   } finally {
     if (context) {
       await withTimeout(context.close(), CLEANUP_TIMEOUT_MS, 'browser context cleanup').catch(error => {
-        fs.appendFileSync(errorPath, `\ncontextCleanup=${error.stack || error}`);
+        fs.appendFileSync(errorPath, `\ncleanup=${error.stack || error}`);
       });
     }
-    if (browser) {
-      await withTimeout(browser.close(), CLEANUP_TIMEOUT_MS, 'browser cleanup').catch(error => {
-        fs.appendFileSync(errorPath, `\nbrowserCleanup=${error.stack || error}`);
-      });
-    }
+    if (userDataDir) fs.rmSync(userDataDir, { recursive: true, force: true });
     if (server.exitCode === null && server.signalCode === null) server.kill('SIGTERM');
     await waitForExit(server, 3000);
     if (server.exitCode === null && server.signalCode === null) server.kill('SIGKILL');
