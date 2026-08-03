@@ -1,1 +1,193 @@
 name: CNC mobile quality check
+
+on:
+  pull_request:
+    paths:
+      - "cnc/**"
+      - ".github/workflows/cnc-mobile-quality.yml"
+      - ".github/workflows/cnc-mobile-smoke.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: JavaScript syntax
+        run: |
+          node --check cnc/runtime-env-detector.js
+          node --check cnc/mobile-gcode-pro.js
+          node --check cnc/clean-ui.js
+          node --check cnc/query-modes.js
+          node --check cnc/mobile-trust-nav.js
+          node --check cnc/industrial-card-sample.js
+          node --check cnc/industrial-workspace.js
+          node --check cnc/industrial-tools.js
+          node --check cnc/industrial-diagnosis.js
+          node --check cnc/personal-home.js
+          node --check cnc/import-test.js
+          node --check cnc/sw.js
+          for file in cnc/tests/mobile-*.cjs; do node --check "$file"; done
+      - name: Stability performance accessibility split query and industrial interface assertions
+        run: |
+          set -euxo pipefail
+          grep -q "20260721q" cnc/import-test.js
+          grep -q "20260721u" cnc/import-test.js
+          grep -q "20260721s" cnc/import-test.js
+          grep -q "20260721t" cnc/import-test.js
+          grep -q "20260721v" cnc/import-test.js
+          grep -Eq "STARTUP_HOME_BUILD[[:space:]]*=[[:space:]]*'20260722a'" cnc/import-test.js
+          grep -Eq "PERSONAL_BUILD[[:space:]]*=[[:space:]]*'20260722b'" cnc/import-test.js
+          grep -q "installStartupHomeGuard" cnc/import-test.js
+          grep -q "CNC_STARTUP_HOME_GUARD" cnc/import-test.js
+          grep -q "personalHomeFollowsTools" cnc/import-test.js
+          grep -q "BUILD = '20260728-game1'" cnc/personal-home.js
+          grep -q "TRAINING_BUILD = '20260728a'" cnc/personal-home.js
+          grep -q "GAME_STYLE_BUILD = '20260728a'" cnc/personal-home.js
+          grep -q "RECORDS_BUILD = '20260722e'" cnc/personal-home.js
+          grep -q "industrial-personal-records.css" cnc/personal-home.js
+          grep -q "mobile-home-game.css" cnc/personal-home.js
+          grep -q "renderGameHome" cnc/personal-home.js
+          grep -q "keepLegacyPanelAfterLaunch" cnc/personal-home.js
+          grep -q "launch.insertAdjacentElement('afterend', panel)" cnc/personal-home.js
+          grep -q "followsTools" cnc/personal-home.js
+          grep -q "xp-game-xp-track" cnc/personal-home.js
+          grep -q "body.cnc-industrial-records #view-favorites" cnc/industrial-personal-records.css
+          grep -q "grid-template-columns: 1fr" cnc/industrial-personal-records.css
+          grep -q "min-height: 56px" cnc/industrial-personal-records.css
+          grep -q "mobile-industrial-records-smoke" .github/workflows/cnc-mobile-smoke.yml
+          grep -q "appendStyle('./industrial-tools.css?v=20260722d'" cnc/personal-home.js
+          grep -q "BUILD='20260722d'" cnc/industrial-tools.js
+          grep -q "DIAG_BUILD='20260722f'" cnc/industrial-tools.js
+          grep -q "industrial-diagnosis.css" cnc/industrial-tools.js
+          grep -q "industrial-diagnosis.js" cnc/industrial-tools.js
+          grep -q "BUILD='20260722f'" cnc/industrial-diagnosis.js
+          grep -q "CNC_INDUSTRIAL_DIAGNOSIS" cnc/industrial-diagnosis.js
+          grep -q "aria-expanded" cnc/industrial-diagnosis.js
+          grep -q "polling:false" cnc/industrial-diagnosis.js
+          grep -q "observer:false" cnc/industrial-diagnosis.js
+          grep -q "body.cnc-industrial-diagnosis #tool-tab3" cnc/industrial-diagnosis.css
+          grep -q "grid-template-columns: 1fr" cnc/industrial-diagnosis.css
+          grep -q "min-height: 58px" cnc/industrial-diagnosis.css
+          grep -q "mobile-industrial-diagnosis-smoke" .github/workflows/cnc-mobile-smoke.yml
+          grep -q "CNC_INDUSTRIAL_TOOLS" cnc/industrial-tools.js
+          grep -q "aria-live" cnc/industrial-tools.js
+          grep -q "polling:false" cnc/industrial-tools.js
+          grep -q "observer:false" cnc/industrial-tools.js
+          grep -q "body.cnc-industrial-tools #view-calculator" cnc/industrial-tools.css
+          grep -q "grid-template-columns:1fr!important" cnc/industrial-tools.css
+          grep -q "font-size:25px" cnc/industrial-tools.css
+          grep -q "mobile-industrial-tools-smoke" .github/workflows/cnc-mobile-smoke.yml
+          grep -q "BUILD = '20260721q'" cnc/clean-ui.js
+          grep -q "QUERY_BUILD = '20260721r'" cnc/clean-ui.js
+          grep -q "BUILD='20260721r'" cnc/query-modes.js
+          grep -q "BUILD = '20260721s'" cnc/mobile-trust-nav.js
+          grep -q "BUILD = '20260722e'" cnc/industrial-card-sample.js
+          grep -q "decorateDashboardRecent" cnc/industrial-card-sample.js
+          grep -q "__CNC_INDUSTRIAL_DASHBOARD_RECENT_PATCHED__" cnc/industrial-card-sample.js
+          grep -q "dashboard-recent-section" cnc/industrial-card-sample.js
+          grep -q "mobile-industrial-dashboard-recents-smoke" .github/workflows/cnc-mobile-smoke.yml
+          grep -q "BUILD = '20260721v'" cnc/industrial-workspace.js
+          grep -q "industrial-card-sample.css" cnc/import-test.js
+          grep -q "industrial-card-sample.js" cnc/import-test.js
+          grep -q "industrial-workspace.css" cnc/import-test.js
+          grep -q "industrial-workspace.js" cnc/import-test.js
+          grep -q -- "--cnc-ic-canvas: #f1efe9" cnc/industrial-card-sample.css
+          grep -q -- "--cnc-ic-surface: #fffdf9" cnc/industrial-card-sample.css
+          grep -q -- "--cnc-ic-ink: #292c2f" cnc/industrial-card-sample.css
+          grep -q -- "--cnc-ic-radius-card: 14px" cnc/industrial-card-sample.css
+          grep -q "data-cnc-industrial-surface=\"home\"" cnc/industrial-card-sample.css
+          grep -q "data-cnc-industrial-surface=\"g01\"" cnc/industrial-card-sample.css
+          grep -q "background: var(--cnc-ic-surface) !important" cnc/industrial-card-sample.css
+          grep -q "#detail-code" cnc/industrial-card-sample.css
+          grep -q "data-industrial-role=\"example\"" cnc/industrial-card-sample.css
+          grep -q "decorateHomeCards" cnc/industrial-card-sample.js
+          grep -q "tagDetailCards" cnc/industrial-card-sample.js
+          grep -q "polling: false" cnc/industrial-card-sample.js
+          grep -q "observer: false" cnc/industrial-card-sample.js
+          grep -q "data-cnc-industrial-workspace" cnc/industrial-workspace.css
+          grep -q "#view-workspace .search-toolbar" cnc/industrial-workspace.css
+          grep -q ".result-card" cnc/industrial-workspace.css
+          grep -q "font-weight: 950" cnc/industrial-workspace.css
+          grep -q "syncWorkspaceSurface" cnc/industrial-workspace.js
+          grep -q "decorateResults" cnc/industrial-workspace.js
+          grep -q "polling: false" cnc/industrial-workspace.js
+          grep -q "observer: false" cnc/industrial-workspace.js
+          grep -q "mobile-startup-home-smoke" .github/workflows/cnc-mobile-smoke.yml
+          grep -q "mobile-industrial-sample-smoke" .github/workflows/cnc-mobile-smoke.yml
+          grep -q "mobile-industrial-workspace-smoke" .github/workflows/cnc-mobile-smoke.yml
+          grep -q "mobile-industrial-visual" .github/workflows/cnc-mobile-smoke.yml
+          grep -q "upload-artifact" .github/workflows/cnc-mobile-smoke.yml
+          grep -q "polling: false" cnc/clean-ui.js
+          grep -q "polling:false" cnc/query-modes.js
+          grep -q "polling: false" cnc/mobile-trust-nav.js
+          grep -q "observer: false" cnc/mobile-trust-nav.js
+          grep -q "syncNavState" cnc/mobile-trust-nav.js
+          grep -q "aria-current" cnc/mobile-trust-nav.js
+          grep -q "min-height:48px" cnc/mobile-trust-nav.css
+          grep -q "safe-area-inset-bottom" cnc/mobile-trust-nav.css
+          grep -q "prefers-reduced-motion" cnc/mobile-trust-nav.css
+          grep -q "RETRY_DELAYS" cnc/query-modes.js
+          grep -q "maxReadinessAttempts" cnc/query-modes.js
+          grep -q "mobile-performance-smoke" .github/workflows/cnc-mobile-smoke.yml
+          grep -q "mobile-nav-accessibility-smoke" .github/workflows/cnc-mobile-smoke.yml
+          grep -q "FILTER_META.alarm" cnc/query-modes.js
+          grep -q "FILTER_META.parameter" cnc/query-modes.js
+          grep -q "FILTER_META.fault" cnc/query-modes.js
+          grep -q "delete FILTER_META.params" cnc/query-modes.js
+          grep -q "isAlarmEntry" cnc/query-modes.js
+          grep -q "isParameterEntry" cnc/query-modes.js
+          grep -q "isFaultEntry" cnc/query-modes.js
+          grep -q "queryPolling" cnc/tests/mobile-performance-smoke.cjs
+          grep -q "手机端旧工具首页必须隐藏" cnc/tests/mobile-home-smoke.cjs
+          grep -q "手机端闯关首页必须显示" cnc/tests/mobile-home-smoke.cjs
+          grep -q "手机首页可见按钮和链接高度不得小于44px" cnc/tests/mobile-home-smoke.cjs
+          grep -q "clean-ui.css" cnc/import-test.js
+          grep -q "vivid-ui.css" cnc/import-test.js
+          grep -q "数控小潘 CNC速查与学习助手" cnc/import-test.js
+          grep -q "不保证直线" cnc/import-test.js
+          grep -q "最小输入单位" cnc/import-test.js
+          grep -q "ensureServiceWorkerRegistration" cnc/import-test.js
+          grep -q "__CNC_PWA_BOOTSTRAP__" cnc/runtime-env-detector.js cnc/import-test.js
+          grep -q "updateViaCache: 'none'" cnc/runtime-env-detector.js cnc/import-test.js
+          grep -q "loadGcodePro" cnc/import-test.js
+          grep -q "正在恢复数控网站" cnc-recover.html
+          if grep -Eq "fakeRegistration|registration\.unregister|clearLegacyCaches|caches\.delete" cnc/import-test.js; then
+            echo "Homepage startup must not block PWA registration, unregister workers, or clear managed caches"
+            exit 1
+          fi
+          if grep -q "setInterval" cnc/clean-ui.js cnc/query-modes.js cnc/mobile-trust-nav.js cnc/industrial-card-sample.js cnc/industrial-workspace.js cnc/industrial-tools.js cnc/industrial-diagnosis.js cnc/personal-home.js cnc/import-test.js; then
+            echo "CNC startup layers must not keep polling intervals"
+            exit 1
+          fi
+          if grep -q "new MutationObserver" cnc/mobile-trust-nav.js cnc/industrial-card-sample.js cnc/industrial-workspace.js cnc/industrial-tools.js cnc/industrial-diagnosis.js cnc/personal-home.js; then
+            echo "Mobile visual and trust layers must not install global observers"
+            exit 1
+          fi
+          if grep -q "setTimeout(function(){ensureCleanStyle" cnc/import-test.js; then
+            echo "Homepage bootstrap must not repeat every enhancement after startup"
+            exit 1
+          fi
+          if grep -q "learning-images-04-12" cnc/import-test.js; then
+            echo "Homepage bootstrap must not auto-load the large lesson image bundle"
+            exit 1
+          fi
+          grep -q "const STATIC_CACHE" cnc/sw.js
+          grep -q "const RUNTIME_CACHE" cnc/sw.js
+          grep -q "addEventListener('fetch'" cnc/sw.js
+          grep -q "request.method!=='GET'" cnc/sw.js
+          grep -q "url.origin!==location.origin" cnc/sw.js
+          grep -q "offline.html" cnc/sw.js
+          grep -q "caches.keys()" cnc/sw.js
+          grep -q "skipWaiting" cnc/sw.js
+          if grep -q "registration.unregister" cnc/sw.js; then
+            echo "Active PWA Service Worker must not unregister itself"
+            exit 1
+          fi
+          if grep -q "new MutationObserver" cnc/mobile-gcode-pro.js; then
+            echo "mobile-gcode-pro.js must not install a global MutationObserver"
+            exit 1
+          fi
