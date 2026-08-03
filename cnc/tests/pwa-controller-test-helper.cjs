@@ -11,13 +11,25 @@ function withTimeout(promise, ms, label) {
 async function controllerSnapshot(page) {
   return page.evaluate(async () => {
     const expectedScope = new URL('/cnc/', location.origin).href;
-    const registrations = navigator.serviceWorker ? await navigator.serviceWorker.getRegistrations() : [];
+    const pageContainer = navigator.serviceWorker;
+    const nativeContainer = window.__CNC_NATIVE_SERVICE_WORKER__ || pageContainer;
+    const registrations = nativeContainer ? await nativeContainer.getRegistrations() : [];
     const registration = registrations.find(item => item.scope === expectedScope);
+    const prototype = nativeContainer ? Object.getPrototypeOf(nativeContainer) : null;
+    const descriptor = pageContainer ? Object.getOwnPropertyDescriptor(pageContainer, 'register') : null;
     return {
       url: location.href,
       readyState: document.readyState,
-      controller: navigator.serviceWorker?.controller?.scriptURL || '',
+      controller: pageContainer?.controller?.scriptURL || '',
       expectedScope,
+      preservedNativeContainer: Boolean(nativeContainer && nativeContainer !== pageContainer),
+      declaredPageBlock: window.__CNC_SW_REGISTRATION_BLOCKED__ === true,
+      registerOwnProperty: Boolean(descriptor),
+      registerWritable: descriptor?.writable ?? null,
+      registerConfigurable: descriptor?.configurable ?? null,
+      registerSource: pageContainer ? String(pageContainer.register).slice(0, 240) : '',
+      nativeRegisterSource: prototype?.register ? String(prototype.register).slice(0, 240) : '',
+      scripts: Array.from(document.scripts).map(script => script.src || '[inline]').filter(Boolean),
       registrations: registrations.map(item => ({
         scope: item.scope,
         active: item.active?.state || '',
@@ -57,138 +69,63 @@ async function waitForController(page, expectedScript, timeoutMs) {
   }), { expected: expectedScript, ms: timeoutMs });
 }
 
-async function inspectWorkerResponse(page, expectedScript) {
-  return page.evaluate(async scriptUrl => {
-    try {
-      const response = await fetch(scriptUrl, { cache: 'no-store', credentials: 'same-origin' });
-      const source = await response.text();
-      return {
-        ok: response.ok,
-        status: response.status,
-        contentType: response.headers.get('content-type') || '',
-        contentLength: source.length,
-        sourcePrefix: source.slice(0, 120)
-      };
-    } catch (error) {
-      return { fetchError: String(error && error.message ? error.message : error) };
-    }
-  }, expectedScript);
-}
-
-async function registrationSnapshot(page, expectedScope) {
-  return page.evaluate(async scopeUrl => {
-    const registrations = await navigator.serviceWorker.getRegistrations();
-    const registration = registrations.find(item => item.scope === scopeUrl);
-    return {
-      registrations: registrations.map(item => ({
-        scope: item.scope,
-        installing: item.installing?.state || '',
-        waiting: item.waiting?.state || '',
-        active: item.active?.state || '',
-        installingScript: item.installing?.scriptURL || '',
-        waitingScript: item.waiting?.scriptURL || '',
-        activeScript: item.active?.scriptURL || ''
-      })),
-      matched: registration ? {
-        scope: registration.scope,
-        installing: registration.installing?.state || '',
-        waiting: registration.waiting?.state || '',
-        active: registration.active?.state || ''
-      } : null
-    };
-  }, expectedScope).catch(error => ({ snapshotError: String(error && error.message ? error.message : error) }));
-}
-
-async function startChromiumServiceWorkerDiagnostics(page) {
-  const events = [];
-  let session = null;
-  try {
-    session = await page.context().newCDPSession(page);
-    session.on('ServiceWorker.workerRegistrationUpdated', payload => {
-      events.push({ type: 'registration', registrations: payload.registrations || [] });
-    });
-    session.on('ServiceWorker.workerVersionUpdated', payload => {
-      events.push({ type: 'version', versions: payload.versions || [] });
-    });
-    session.on('ServiceWorker.workerErrorReported', payload => {
-      events.push({ type: 'error', errorMessage: payload.errorMessage || {} });
-    });
-    await session.send('ServiceWorker.enable');
-  } catch (error) {
-    events.push({ type: 'diagnostic-unavailable', error: String(error && error.message ? error.message : error) });
-  }
-  return {
-    events,
-    async stop() {
-      if (!session) return;
-      try { await session.send('ServiceWorker.disable'); } catch {}
-      try { await session.detach(); } catch {}
-    }
-  };
-}
-
 async function registerExpectedWorker(page, expectedScope, expectedScript) {
-  const response = await inspectWorkerResponse(page, expectedScript);
-  if (!response.ok) {
-    throw new Error(`Service Worker script response invalid: ${JSON.stringify(response)}`);
-  }
-  if (!/javascript|ecmascript/i.test(response.contentType)) {
-    throw new Error(`Service Worker script MIME type invalid: ${JSON.stringify(response)}`);
-  }
-
-  const result = await withTimeout(page.evaluate(async ({ scopeUrl, registrationTimeoutMs }) => {
+  return withTimeout(page.evaluate(async ({ scopeUrl, scriptUrl }) => {
     if (!('serviceWorker' in navigator)) throw new Error('Service Worker unsupported');
+    const pageContainer = navigator.serviceWorker;
+    const container = window.__CNC_NATIVE_SERVICE_WORKER__ || pageContainer;
+    const prototype = Object.getPrototypeOf(container);
+    const descriptor = Object.getOwnPropertyDescriptor(pageContainer, 'register');
+    const ownRegister = Boolean(descriptor);
+    const pageRegisterSource = String(pageContainer.register).slice(0, 240);
+    const nativeRegister = prototype?.register;
+    const scripts = Array.from(document.scripts).map(script => script.src || '[inline]').filter(Boolean);
+    const declaredPageBlock = window.__CNC_SW_REGISTRATION_BLOCKED__ === true;
+    const nativeContainerPreserved = window.__CNC_NATIVE_SERVICE_WORKER__ === container;
 
-    // Keep the timeout inside the page execution. An outer Promise.race alone can
-    // reject in Node while leaving a hung Runtime.evaluate command attached to the
-    // page, which blocks every later diagnostic call until the global watchdog fires.
-    const registration = await Promise.race([
-      navigator.serviceWorker.register('/cnc/sw.js', {
-        scope: '/cnc/',
-        updateViaCache: 'none'
-      }),
-      new Promise((_, reject) => {
-        setTimeout(() => reject(new Error(`navigator.serviceWorker.register timeout after ${registrationTimeoutMs}ms`)), registrationTimeoutMs);
-      })
-    ]);
+    if (typeof nativeRegister !== 'function') {
+      throw new Error(`Native Service Worker register API unavailable; pageRegister=${pageRegisterSource}; scripts=${JSON.stringify(scripts)}`);
+    }
 
+    if (ownRegister && pageContainer.register !== nativeRegister) {
+      const isLockedNativeProxy =
+        descriptor?.writable === false &&
+        descriptor?.configurable === false &&
+        /nativeRegister\.call\(container,\s*scriptURL,\s*options\)/.test(pageRegisterSource);
+      const isDeclaredPageIsolation = declaredPageBlock && nativeContainerPreserved;
+
+      if (!isLockedNativeProxy && !isDeclaredPageIsolation) {
+        throw new Error(`Service Worker register API overridden without preserved native container; register=${pageRegisterSource}; scripts=${JSON.stringify(scripts)}`);
+      }
+    }
+
+    const registration = await nativeRegister.call(container, '/cnc/sw.js', {
+      scope: '/cnc/',
+      updateViaCache: 'none'
+    });
     if (registration.scope !== scopeUrl) {
       throw new Error(`Service Worker scope mismatch: expected ${scopeUrl}, got ${registration.scope}`);
     }
-    const worker = registration.installing || registration.waiting || registration.active;
-    const states = [];
-    if (worker) {
-      states.push(worker.state);
-      await new Promise(resolve => {
-        if (worker.state === 'activated' || worker.state === 'redundant') return resolve();
-        const timer = setTimeout(resolve, 12000);
-        const onStateChange = () => {
-          states.push(worker.state);
-          if (worker.state === 'activated' || worker.state === 'redundant') {
-            clearTimeout(timer);
-            worker.removeEventListener('statechange', onStateChange);
-            resolve();
-          }
-        };
-        worker.addEventListener('statechange', onStateChange);
-      });
+    const installingScript = registration.installing?.scriptURL || '';
+    const waitingScript = registration.waiting?.scriptURL || '';
+    const activeScript = registration.active?.scriptURL || '';
+    for (const actual of [installingScript, waitingScript, activeScript]) {
+      if (actual && actual !== scriptUrl) {
+        throw new Error(`Service Worker script mismatch: expected ${scriptUrl}, got ${actual}`);
+      }
     }
     return {
       scope: registration.scope,
-      states,
-      installingScript: registration.installing?.scriptURL || '',
-      waitingScript: registration.waiting?.scriptURL || '',
-      activeScript: registration.active?.scriptURL || '',
-      activeState: registration.active?.state || '',
-      workerState: worker?.state || ''
+      installingScript,
+      waitingScript,
+      activeScript,
+      ownRegister,
+      declaredPageBlock,
+      nativeContainerPreserved,
+      lockedNativeProxy: ownRegister && descriptor?.writable === false && descriptor?.configurable === false,
+      scripts
     };
-  }, { scopeUrl: expectedScope, registrationTimeoutMs: 12000 }), 15000, 'Service Worker registration');
-
-  if (result.workerState === 'redundant' || result.states.includes('redundant')) {
-    const snapshot = await registrationSnapshot(page, expectedScope);
-    throw new Error(`Service Worker became redundant during installation: result=${JSON.stringify(result)} response=${JSON.stringify(response)} snapshot=${JSON.stringify(snapshot)}`);
-  }
-  return { ...result, response };
+  }, { scopeUrl: expectedScope, scriptUrl: expectedScript }), 15000, 'Service Worker registration');
 }
 
 async function openControlledNavigation(page, controlledUrl, expectedScript) {
@@ -206,53 +143,29 @@ async function openControlledNavigation(page, controlledUrl, expectedScript) {
     }
 
     if (await waitForController(page, expectedScript, 10000)) return page;
-    diagnostics.push({
-      attempt,
-      navigationError,
-      snapshot: await controllerSnapshot(page)
-    });
+    diagnostics.push({ attempt, navigationError, snapshot: await controllerSnapshot(page) });
   }
   throw new Error(`Navigations were not controlled by ${expectedScript}: ${JSON.stringify(diagnostics)}`);
 }
 
 async function ensureControlled(page, errors, observePage, options = {}) {
   const { controlledUrl = page.url() } = options;
-  const bootstrapEntry = new URL('/cnc/offline.html', page.url()).href;
   const expectedScope = new URL('/cnc/', page.url()).href;
   const expectedScript = new URL('/cnc/sw.js', page.url()).href;
-  const chromiumDiagnostics = await startChromiumServiceWorkerDiagnostics(page);
+
+  if (!controlledUrl.startsWith(expectedScope)) {
+    throw new Error(`Controlled URL outside Service Worker scope: ${controlledUrl}`);
+  }
+
+  await registerExpectedWorker(page, expectedScope, expectedScript);
+
+  if (await waitForController(page, expectedScript, 10000)) return page;
 
   try {
-    if (!controlledUrl.startsWith(expectedScope)) {
-      throw new Error(`Controlled URL outside Service Worker scope: ${controlledUrl}`);
-    }
-
-    // Register from a quiet same-origin page. The main index registers the same
-    // worker inline; entering through it here creates two concurrent register()
-    // calls and can leave Chromium with a transient empty registration object.
-    if (page.url() !== bootstrapEntry) {
-      await page.goto(bootstrapEntry, { waitUntil: 'domcontentloaded', timeout: 30000 });
-    }
-
-    const registration = await registerExpectedWorker(page, expectedScope, expectedScript);
-    console.log(`[PWA controller] registration=${JSON.stringify(registration)}`);
-
-    if (await waitForController(page, expectedScript, 10000)) {
-      if (page.url() !== controlledUrl) {
-        return await openControlledNavigation(page, controlledUrl, expectedScript);
-      }
-      return page;
-    }
-
-    try {
-      return await openControlledNavigation(page, controlledUrl, expectedScript);
-    } catch (error) {
-      const snapshot = await controllerSnapshot(page);
-      const response = await inspectWorkerResponse(page, expectedScript);
-      throw new Error(`${error.message}; final=${JSON.stringify(snapshot)}; workerResponse=${JSON.stringify(response)}; chromiumServiceWorkerEvents=${JSON.stringify(chromiumDiagnostics.events)}`);
-    }
-  } finally {
-    await chromiumDiagnostics.stop();
+    return await openControlledNavigation(page, controlledUrl, expectedScript);
+  } catch (error) {
+    const snapshot = await controllerSnapshot(page);
+    throw new Error(`${error.message}; final=${JSON.stringify(snapshot)}`);
   }
 }
 
