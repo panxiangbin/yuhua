@@ -81,6 +81,9 @@ jobs:
             if (!contract.includes(token)) throw new Error(`首步离线中文契约缺失：${token}`);
           }
 
+          const pathLines = workflow.split(/\r?\n/)
+            .filter(line => line.startsWith('      - '))
+            .map(line => line.trim().slice(2).trim());
           for (const token of [
             "'cnc/course-*.html'",
             "'cnc/beginner-placement.html'",
@@ -91,7 +94,7 @@ jobs:
             "'cnc/tests/mobile-pwa-upgrade-data-smoke.cjs'",
             "'cnc/tests/placement-first-step-offline-core-drift-smoke.cjs'"
           ]) {
-            const count = workflow.split(token).length - 1;
+            const count = pathLines.filter(item => item === token).length;
             if (count !== 2) throw new Error(`pull_request 与 main push 触发覆盖异常：${token}=${count}`);
           }
 
