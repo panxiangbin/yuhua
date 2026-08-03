@@ -69,7 +69,8 @@ jobs:
             'sessionStorageOnlyHandoffPresent: true',
             'trainingCampInCoreCache: true',
             'placementFirstStepCoursesInCoreCache: true',
-            'coreResourceCount: expectedCore().length',
+            'function expectedCore(build)',
+            'coreResourceCount: expectedCore(expectedPwaBuild).length',
             'process.exit(1)'
           ]) {
             if (!test.includes(token)) throw new Error(`deployment test missing: ${token}`);
