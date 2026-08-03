@@ -18,6 +18,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: JavaScript syntax
         run: |
+          node --check cnc/runtime-env-detector.js
           node --check cnc/mobile-gcode-pro.js
           node --check cnc/clean-ui.js
           node --check cnc/query-modes.js
@@ -32,6 +33,7 @@ jobs:
           for file in cnc/tests/mobile-*.cjs; do node --check "$file"; done
       - name: Stability performance accessibility split query and industrial interface assertions
         run: |
+          set -euxo pipefail
           grep -q "20260721q" cnc/import-test.js
           grep -q "20260721u" cnc/import-test.js
           grep -q "20260721s" cnc/import-test.js
@@ -42,17 +44,22 @@ jobs:
           grep -q "installStartupHomeGuard" cnc/import-test.js
           grep -q "CNC_STARTUP_HOME_GUARD" cnc/import-test.js
           grep -q "personalHomeFollowsTools" cnc/import-test.js
-          grep -q "BUILD = '20260722b'" cnc/personal-home.js
-          grep -q "RECORDS_BUILD='20260722e'" cnc/personal-home.js
+          grep -q "BUILD = '20260728-game1'" cnc/personal-home.js
+          grep -q "TRAINING_BUILD = '20260728a'" cnc/personal-home.js
+          grep -q "GAME_STYLE_BUILD = '20260728a'" cnc/personal-home.js
+          grep -q "RECORDS_BUILD = '20260722e'" cnc/personal-home.js
           grep -q "industrial-personal-records.css" cnc/personal-home.js
-          grep -q "decorateRecords" cnc/personal-home.js
-          grep -q "xp-record-count" cnc/personal-home.js
+          grep -q "mobile-home-game.css" cnc/personal-home.js
+          grep -q "renderGameHome" cnc/personal-home.js
+          grep -q "keepLegacyPanelAfterLaunch" cnc/personal-home.js
+          grep -q "launch.insertAdjacentElement('afterend', panel)" cnc/personal-home.js
+          grep -q "followsTools" cnc/personal-home.js
+          grep -q "xp-game-xp-track" cnc/personal-home.js
           grep -q "body.cnc-industrial-records #view-favorites" cnc/industrial-personal-records.css
           grep -q "grid-template-columns: 1fr" cnc/industrial-personal-records.css
           grep -q "min-height: 56px" cnc/industrial-personal-records.css
           grep -q "mobile-industrial-records-smoke" .github/workflows/cnc-mobile-smoke.yml
-          grep -q "industrial-tools.css?v=20260722d" cnc/personal-home.js
-          grep -q "industrial-tools.js?v=20260722d" cnc/personal-home.js
+          grep -q "appendStyle('./industrial-tools.css?v=20260722d'" cnc/personal-home.js
           grep -q "BUILD='20260722d'" cnc/industrial-tools.js
           grep -q "DIAG_BUILD='20260722f'" cnc/industrial-tools.js
           grep -q "industrial-diagnosis.css" cnc/industrial-tools.js
@@ -74,9 +81,14 @@ jobs:
           grep -q "grid-template-columns:1fr!important" cnc/industrial-tools.css
           grep -q "font-size:25px" cnc/industrial-tools.css
           grep -q "mobile-industrial-tools-smoke" .github/workflows/cnc-mobile-smoke.yml
-          grep -q "keepPanelAfterTools" cnc/personal-home.js
-          grep -q "launch.insertAdjacentElement('afterend',panel)" cnc/personal-home.js
-          grep -q "followsTools" cnc/personal-home.js
+          grep -q "CNC_INDUSTRIAL_TOOLS" cnc/industrial-tools.js
+          grep -q "aria-live" cnc/industrial-tools.js
+          grep -q "polling:false" cnc/industrial-tools.js
+          grep -q "observer:false" cnc/industrial-tools.js
+          grep -q "body.cnc-industrial-tools #view-calculator" cnc/industrial-tools.css
+          grep -q "grid-template-columns:1fr!important" cnc/industrial-tools.css
+          grep -q "font-size:25px" cnc/industrial-tools.css
+          grep -q "mobile-industrial-tools-smoke" .github/workflows/cnc-mobile-smoke.yml
           grep -q "BUILD = '20260721q'" cnc/clean-ui.js
           grep -q "QUERY_BUILD = '20260721r'" cnc/clean-ui.js
           grep -q "BUILD='20260721r'" cnc/query-modes.js
@@ -138,15 +150,23 @@ jobs:
           grep -q "isParameterEntry" cnc/query-modes.js
           grep -q "isFaultEntry" cnc/query-modes.js
           grep -q "queryPolling" cnc/tests/mobile-performance-smoke.cjs
-          grep -q "工具卡必须先于学习进度出现" cnc/tests/mobile-home-smoke.cjs
+          grep -q "手机端旧工具首页必须隐藏" cnc/tests/mobile-home-smoke.cjs
+          grep -q "手机端闯关首页必须显示" cnc/tests/mobile-home-smoke.cjs
+          grep -q "手机首页可见按钮和链接高度不得小于44px" cnc/tests/mobile-home-smoke.cjs
           grep -q "clean-ui.css" cnc/import-test.js
           grep -q "vivid-ui.css" cnc/import-test.js
           grep -q "数控小潘 CNC速查与学习助手" cnc/import-test.js
           grep -q "不保证直线" cnc/import-test.js
           grep -q "最小输入单位" cnc/import-test.js
-          grep -q "disableServiceWorkerRegistration" cnc/import-test.js
+          grep -q "ensureServiceWorkerRegistration" cnc/import-test.js
+          grep -q "__CNC_PWA_BOOTSTRAP__" cnc/runtime-env-detector.js cnc/import-test.js
+          grep -q "updateViaCache: 'none'" cnc/runtime-env-detector.js cnc/import-test.js
           grep -q "loadGcodePro" cnc/import-test.js
           grep -q "正在恢复数控网站" cnc-recover.html
+          if grep -Eq "fakeRegistration|registration\.unregister|clearLegacyCaches|caches\.delete" cnc/import-test.js; then
+            echo "Homepage startup must not block PWA registration, unregister workers, or clear managed caches"
+            exit 1
+          fi
           if grep -q "setInterval" cnc/clean-ui.js cnc/query-modes.js cnc/mobile-trust-nav.js cnc/industrial-card-sample.js cnc/industrial-workspace.js cnc/industrial-tools.js cnc/industrial-diagnosis.js cnc/personal-home.js cnc/import-test.js; then
             echo "CNC startup layers must not keep polling intervals"
             exit 1
@@ -166,8 +186,8 @@ jobs:
           grep -q "const STATIC_CACHE" cnc/sw.js
           grep -q "const RUNTIME_CACHE" cnc/sw.js
           grep -q "addEventListener('fetch'" cnc/sw.js
-          grep -Eq "request\.method[[:space:]]*!==?[[:space:]]*'GET'" cnc/sw.js
-          grep -Eq "url\.origin[[:space:]]*!==?[[:space:]]*self\.location\.origin" cnc/sw.js
+          grep -q "request.method!=='GET'" cnc/sw.js
+          grep -q "url.origin!==location.origin" cnc/sw.js
           grep -q "offline.html" cnc/sw.js
           grep -q "caches.keys()" cnc/sw.js
           grep -q "skipWaiting" cnc/sw.js
