@@ -1,1 +1,157 @@
-const{chromium}=require('playwright');const{spawn}=require('child_process');const assert=require('assert');const fs=require('fs');const path=require('path');(async()=>{const root=path.resolve(__dirname,'../..');const server=spawn('python3',['-m','http.server','4173'],{cwd:root,stdio:'ignore'});let browser;try{browser=await chromium.launch({headless:true});const page=await browser.newPage({viewport:{width:390,height:844}});const errors=[];page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});await page.goto('http://127.0.0.1:4173/cnc/data-health.html');await page.evaluate(()=>{localStorage.clear();localStorage.setItem('cnc_training_profile_v1',JSON.stringify({xp:420,lastTrainingDate:'bad-date'}));localStorage.setItem('cnc_training_practice_v1',JSON.stringify({version:1,wrongQuestions:{a:{id:'w1'},b:{id:'w2'}}}));localStorage.setItem('cnc_training_simulator_v1',JSON.stringify({homing:{passed:true,bestScore:100},workholding:{passed:false,bestScore:50}}));localStorage.setItem('unrelated_keep_me','保留')});await page.reload();await page.waitForFunction(()=>document.querySelectorAll('#checks .check').length===8);assert.equal(await page.locator('#data-count').textContent(),'3');assert(Number(await page.locator('#warn-count').textContent())>=3);assert.equal(await page.locator('[data-repair]').count(),5);await page.locator('#confirm').check();await page.locator('#repair-btn').click();await page.waitForFunction(()=>document.querySelector('#status')?.textContent.includes('已安全修复5项'));const fixed=await page.evaluate(()=>({profile:JSON.parse(localStorage.getItem('cnc_training_profile_v1')),practice:JSON.parse(localStorage.getItem('cnc_training_practice_v1')),sim:JSON.parse(localStorage.getItem('cnc_training_simulator_v1')),recovery:JSON.parse(localStorage.getItem('cnc_training_data_recovery_v1')),other:localStorage.getItem('unrelated_keep_me')}));assert.equal(fixed.profile.version,1);assert(!('lastTrainingDate'in fixed.profile));assert(Array.isArray(fixed.practice.wrongQuestions));assert.equal(fixed.practice.wrongQuestions.length,2);assert.equal(fixed.sim.version,1);assert(fixed.sim.simulators.homing);assert(fixed.recovery.data.cnc_training_profile_v1);assert.equal(fixed.other,'保留');await page.locator('#rollback-btn').click();await page.waitForFunction(()=>document.querySelector('#status')?.textContent.includes('已回滚'));const rolled=await page.evaluate(()=>({profile:JSON.parse(localStorage.getItem('cnc_training_profile_v1')),practice:JSON.parse(localStorage.getItem('cnc_training_practice_v1')),sim:JSON.parse(localStorage.getItem('cnc_training_simulator_v1')),other:localStorage.getItem('unrelated_keep_me')}));assert(!('version'in rolled.profile));assert.equal(rolled.profile.lastTrainingDate,'bad-date');assert(!Array.isArray(rolled.practice.wrongQuestions));assert(!('version'in rolled.sim));assert(rolled.sim.homing);assert.equal(rolled.other,'保留');const min=await page.locator('a:visible,button:visible,input[type="checkbox"]:visible').evaluateAll(nodes=>Math.min(...nodes.map(n=>Math.max(n.getBoundingClientRect().height,n.getBoundingClientRect().width))));assert(min>=44,`touch target ${min}`);assert.equal(errors.length,0,errors.join('\n'));fs.mkdirSync(path.join(root,'cnc/test-results'),{recursive:true});await page.screenshot({path:path.join(root,'cnc/test-results/data-health-390x844.png'),fullPage:true});fs.writeFileSync(path.join(root,'cnc/test-results/data-health.json'),JSON.stringify({checks:8,repairs:5,snapshot:true,rollback:true,preservedUnrelated:true,minTouch:min},null,2));console.log('data health smoke passed')}finally{if(browser)await browser.close();server.kill('SIGTERM')}})().catch(e=>{console.error(e);process.exit(1)});
+const { chromium } = require('playwright');
+const { spawn } = require('child_process');
+const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
+
+const SERVER_URL = 'http://127.0.0.1:4173/cnc/data-health.html';
+
+const delay = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
+
+async function waitForServer(server, timeoutMs = 10_000) {
+  const startedAt = Date.now();
+  let spawnError = null;
+  server.once('error', (error) => {
+    spawnError = error;
+  });
+
+  while (Date.now() - startedAt < timeoutMs) {
+    if (spawnError) throw spawnError;
+    if (server.exitCode !== null) {
+      throw new Error(`Static server exited before becoming ready (exit code ${server.exitCode})`);
+    }
+
+    try {
+      const response = await fetch(SERVER_URL, { method: 'HEAD' });
+      if (response.ok) return;
+    } catch {
+      // The listener may not be bound yet. Retry until the bounded deadline.
+    }
+
+    await delay(100);
+  }
+
+  throw new Error(`Static server did not become ready within ${timeoutMs} ms`);
+}
+
+(async () => {
+  const root = path.resolve(__dirname, '../..');
+  const server = spawn('python3', ['-m', 'http.server', '4173'], {
+    cwd: root,
+    stdio: 'ignore',
+  });
+  let browser;
+
+  try {
+    await waitForServer(server);
+    browser = await chromium.launch({ headless: true });
+    const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+    const errors = [];
+    page.on('console', (message) => {
+      if (message.type() === 'error') errors.push(message.text());
+    });
+
+    await page.goto(SERVER_URL);
+    await page.evaluate(() => {
+      localStorage.clear();
+      localStorage.setItem(
+        'cnc_training_profile_v1',
+        JSON.stringify({ xp: 420, lastTrainingDate: 'bad-date' }),
+      );
+      localStorage.setItem(
+        'cnc_training_practice_v1',
+        JSON.stringify({ version: 1, wrongQuestions: { a: { id: 'w1' }, b: { id: 'w2' } } }),
+      );
+      localStorage.setItem(
+        'cnc_training_simulator_v1',
+        JSON.stringify({
+          homing: { passed: true, bestScore: 100 },
+          workholding: { passed: false, bestScore: 50 },
+        }),
+      );
+      localStorage.setItem('unrelated_keep_me', '保留');
+    });
+
+    await page.reload();
+    await page.waitForFunction(() => document.querySelectorAll('#checks .check').length === 8);
+    assert.equal(await page.locator('#data-count').textContent(), '3');
+    assert(Number(await page.locator('#warn-count').textContent()) >= 3);
+    assert.equal(await page.locator('[data-repair]').count(), 5);
+
+    await page.locator('#confirm').check();
+    await page.locator('#repair-btn').click();
+    await page.waitForFunction(() => document.querySelector('#status')?.textContent.includes('已安全修复5项'));
+
+    const fixed = await page.evaluate(() => ({
+      profile: JSON.parse(localStorage.getItem('cnc_training_profile_v1')),
+      practice: JSON.parse(localStorage.getItem('cnc_training_practice_v1')),
+      sim: JSON.parse(localStorage.getItem('cnc_training_simulator_v1')),
+      recovery: JSON.parse(localStorage.getItem('cnc_training_data_recovery_v1')),
+      other: localStorage.getItem('unrelated_keep_me'),
+    }));
+    assert.equal(fixed.profile.version, 1);
+    assert(!('lastTrainingDate' in fixed.profile));
+    assert(Array.isArray(fixed.practice.wrongQuestions));
+    assert.equal(fixed.practice.wrongQuestions.length, 2);
+    assert.equal(fixed.sim.version, 1);
+    assert(fixed.sim.simulators.homing);
+    assert(fixed.recovery.data.cnc_training_profile_v1);
+    assert.equal(fixed.other, '保留');
+
+    await page.locator('#rollback-btn').click();
+    await page.waitForFunction(() => document.querySelector('#status')?.textContent.includes('已回滚'));
+
+    const rolled = await page.evaluate(() => ({
+      profile: JSON.parse(localStorage.getItem('cnc_training_profile_v1')),
+      practice: JSON.parse(localStorage.getItem('cnc_training_practice_v1')),
+      sim: JSON.parse(localStorage.getItem('cnc_training_simulator_v1')),
+      other: localStorage.getItem('unrelated_keep_me'),
+    }));
+    assert(!('version' in rolled.profile));
+    assert.equal(rolled.profile.lastTrainingDate, 'bad-date');
+    assert(!Array.isArray(rolled.practice.wrongQuestions));
+    assert(!('version' in rolled.sim));
+    assert(rolled.sim.homing);
+    assert.equal(rolled.other, '保留');
+
+    const min = await page
+      .locator('a:visible,button:visible,input[type="checkbox"]:visible')
+      .evaluateAll((nodes) =>
+        Math.min(
+          ...nodes.map((node) =>
+            Math.max(node.getBoundingClientRect().height, node.getBoundingClientRect().width),
+          ),
+        ),
+      );
+    assert(min >= 44, `touch target ${min}`);
+    assert.equal(errors.length, 0, errors.join('\n'));
+
+    fs.mkdirSync(path.join(root, 'cnc/test-results'), { recursive: true });
+    await page.screenshot({
+      path: path.join(root, 'cnc/test-results/data-health-390x844.png'),
+      fullPage: true,
+    });
+    fs.writeFileSync(
+      path.join(root, 'cnc/test-results/data-health.json'),
+      JSON.stringify(
+        {
+          checks: 8,
+          repairs: 5,
+          snapshot: true,
+          rollback: true,
+          preservedUnrelated: true,
+          minTouch: min,
+        },
+        null,
+        2,
+      ),
+    );
+    console.log('data health smoke passed');
+  } finally {
+    if (browser) await browser.close();
+    if (server.exitCode === null) server.kill('SIGTERM');
+  }
+})().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});
