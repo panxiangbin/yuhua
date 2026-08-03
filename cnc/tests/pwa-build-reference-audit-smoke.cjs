@@ -6,14 +6,39 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..', '..');
 const OUTPUT_DIR = path.join(ROOT, 'cnc', 'test-results', 'pwa-build-reference-audit');
 const OUTPUT_PATH = path.join(OUTPUT_DIR, 'report.json');
-const VERSION_RE = /2026\d{4}-pwa\d+/g;
-const ACTIVE_PIN_PATTERNS = [
-  /const\s+BUILD\s*=\s*['"]([^'"]+)['"]/,
-  /const\s+EXPECTED\s*=\s*['"]([^'"]+)['"]/,
-  /const\s+PWA_BUILD\s*=\s*['"]([^'"]+)['"]/,
-  /const\s+CURRENT_PWA_BUILD\s*=\s*['"]([^'"]+)['"]/,
-  /branchTargetPwaBuild\s*=\s*['"]([^'"]+)['"]/
+const PWA_VERSION_RE = /\b2026\d{4}-pwa\d+\b/g;
+const PWA_VERSION_FORMAT = /^2026\d{4}-pwa\d+$/;
+
+const CURRENT_PIN_SPECS = [
+  { file: 'cnc/sw.js', label: 'Service Worker缓存构建', pattern: /\bconst\s+BUILD\s*=\s*['"](2026\d{4}-pwa\d+)['"]/ },
+  { file: 'cnc/pwa-status.html', label: 'PWA状态页期望构建', pattern: /\bconst\s+EXPECTED\s*=\s*['"](2026\d{4}-pwa\d+)['"]/ },
+  { file: 'cnc/pwa-self-test.html', label: 'PWA自检页期望构建', pattern: /\bconst\s+EXPECTED\s*=\s*['"](2026\d{4}-pwa\d+)['"]/ },
+  { file: 'cnc/tests/mobile-pwa-offline-cache-smoke.cjs', label: '冷离线浏览器门禁', pattern: /\bconst\s+PWA_BUILD\s*=\s*['"](2026\d{4}-pwa\d+)['"]/ },
+  { file: 'cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs', label: 'BFCache浏览器门禁', pattern: /\bconst\s+PWA_BUILD\s*=\s*['"](2026\d{4}-pwa\d+)['"]/ },
+  { file: 'cnc/tests/mobile-pwa-upgrade-data-smoke.cjs', label: '升级数据保护当前构建', pattern: /\bconst\s+CURRENT_PWA_BUILD\s*=\s*['"](2026\d{4}-pwa\d+)['"]/ },
+  { file: 'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs', label: 'AI老师离线核心Pages目标', pattern: /\bconst\s+branchTargetPwaBuild\s*=\s*['"](2026\d{4}-pwa\d+)['"]/ },
+  { file: 'cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs', label: '起点测评离线Pages目标', pattern: /\bconst\s+branchTargetPwaBuild\s*=\s*['"](2026\d{4}-pwa\d+)['"]/ },
+  { file: 'cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs', label: '训练营路线Pages目标', pattern: /\bconst\s+expectedPwaBuild\s*=\s*['"](2026\d{4}-pwa\d+)['"]/ }
 ];
+
+const DECLARED_LEGACY_REFERENCES = [
+  {
+    file: 'cnc/runtime-env-detector.js',
+    version: '20260728-pwa3',
+    reason: '早期原生注册启动诊断标记，不参与Service Worker缓存命名或构建判定'
+  },
+  {
+    file: 'cnc/import-test.js',
+    version: '20260728-pwa3',
+    reason: '兼容层备用注册诊断标记，不参与Service Worker缓存命名或构建判定'
+  }
+];
+
+const PREVIOUS_PIN_SPEC = {
+  file: 'cnc/tests/mobile-pwa-upgrade-data-smoke.cjs',
+  label: '升级数据保护上一构建',
+  pattern: /\bconst\s+PREVIOUS_PWA_BUILD\s*=\s*['"](2026\d{4}-pwa\d+)['"]/ 
+};
 
 fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
@@ -44,72 +69,111 @@ function fail(message) {
   throw new Error(message);
 }
 
+function readText(relativePath) {
+  const absolutePath = path.join(ROOT, relativePath);
+  if (!fs.existsSync(absolutePath)) fail(`缺少PWA构建审计文件：${relativePath}`);
+  return fs.readFileSync(absolutePath, 'utf8');
+}
+
+function readPin(spec) {
+  const source = readText(spec.file);
+  const match = source.match(spec.pattern);
+  if (!match) fail(`缺少PWA构建针：${spec.file}（${spec.label}）`);
+  return { file: spec.file, label: spec.label, version: match[1] };
+}
+
+function referenceScope(file) {
+  if (file === 'cnc/tests/pwa-build-reference-audit-smoke.cjs') return 'audit-governance';
+  if (file.startsWith('cnc/docs/')) return 'documentation-history';
+  if (file.startsWith('.github/workflows/')) return 'workflow';
+  if (file.startsWith('cnc/tests/')) return 'test';
+  return 'runtime';
+}
+
 function main() {
-  const infoPath = path.join(ROOT, 'cnc', 'build-info.json');
-  const info = JSON.parse(fs.readFileSync(infoPath, 'utf8'));
+  const info = JSON.parse(readText('cnc/build-info.json'));
   const current = String(info.pwaBuild || '');
-  if (!/^2026\d{4}-pwa\d+$/.test(current)) fail(`build-info PWA构建格式无效：${current}`);
+  if (!PWA_VERSION_FORMAT.test(current)) fail(`build-info PWA构建格式无效：${current}`);
+
+  const previousPin = readPin(PREVIOUS_PIN_SPEC);
+  const previous = previousPin.version;
+  if (!PWA_VERSION_FORMAT.test(previous)) fail(`上一PWA构建格式无效：${previous}`);
+  if (previous === current) fail(`上一PWA构建不能等于当前构建：${previous}`);
+
+  const currentPins = CURRENT_PIN_SPECS.map(readPin);
+  const staleActivePins = currentPins.filter(item => item.version !== current);
 
   const scanFiles = [
     ...walk(path.join(ROOT, 'cnc')),
     ...walk(path.join(ROOT, '.github', 'workflows')).filter(file => path.basename(file).startsWith('cnc-'))
   ];
   const references = [];
-  const activePins = [];
 
   for (const file of scanFiles) {
     const source = fs.readFileSync(file, 'utf8');
-    for (const match of source.matchAll(VERSION_RE)) {
-      references.push({ file: rel(file), line: lineNumber(source, match.index), version: match[0] });
-    }
-    for (const pattern of ACTIVE_PIN_PATTERNS) {
-      const match = source.match(pattern);
-      if (match) activePins.push({ file: rel(file), version: match[1], pattern: String(pattern) });
+    const relativePath = rel(file);
+    for (const match of source.matchAll(PWA_VERSION_RE)) {
+      references.push({
+        file: relativePath,
+        line: lineNumber(source, match.index),
+        version: match[0],
+        scope: referenceScope(relativePath)
+      });
     }
   }
 
-  const previousPins = references.filter(item => {
-    const source = fs.readFileSync(path.join(ROOT, item.file), 'utf8');
-    const line = source.split(/\r?\n/)[item.line - 1] || '';
-    return /PREVIOUS_PWA_BUILD|previousPwaBuild|publicPwaBuild|previousBuild/.test(line);
+  const allowedVersions = new Set([current, previous]);
+  const operationalReferences = references.filter(item => !['documentation-history', 'audit-governance'].includes(item.scope));
+  const historicalReferences = references.filter(item => item.scope === 'documentation-history');
+  const governanceReferences = references.filter(item => item.scope === 'audit-governance');
+  const legacyReferences = operationalReferences.filter(item => DECLARED_LEGACY_REFERENCES.some(legacy => legacy.file === item.file && legacy.version === item.version));
+  const unusedLegacyAllowances = DECLARED_LEGACY_REFERENCES.filter(legacy => !legacyReferences.some(item => item.file === legacy.file && item.version === legacy.version));
+  const unexpectedReferences = operationalReferences.filter(item => {
+    if (allowedVersions.has(item.version)) return false;
+    return !DECLARED_LEGACY_REFERENCES.some(legacy => legacy.file === item.file && legacy.version === item.version);
   });
-  const allowedVersions = new Set([current, ...previousPins.map(item => item.version)]);
-  const unexpectedReferences = references.filter(item => !allowedVersions.has(item.version));
-  const staleActivePins = activePins.filter(item => item.version !== current);
-
-  const requiredActiveFiles = [
-    'cnc/sw.js',
-    'cnc/pwa-status.html',
-    'cnc/pwa-self-test.html',
-    'cnc/tests/mobile-pwa-offline-cache-smoke.cjs',
-    'cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs',
-    'cnc/tests/mobile-pwa-upgrade-data-smoke.cjs'
-  ];
-  const missingActivePins = requiredActiveFiles.filter(file => !activePins.some(item => item.file === file));
+  const currentReferenceCount = operationalReferences.filter(item => item.version === current).length;
+  const previousReferenceCount = operationalReferences.filter(item => item.version === previous).length;
 
   const report = {
     generatedAt: new Date().toISOString(),
     commitSha: process.env.GITHUB_SHA || null,
     currentPwaBuild: current,
-    allowedVersions: [...allowedVersions].sort(),
+    previousPwaBuild: previous,
+    allowedVersions: [...allowedVersions],
     scannedFileCount: scanFiles.length,
     referenceCount: references.length,
-    activePinCount: activePins.length,
+    operationalReferenceCount: operationalReferences.length,
+    historicalReferenceCount: historicalReferences.length,
+    governanceReferenceCount: governanceReferences.length,
+    legacyReferenceCount: legacyReferences.length,
+    currentReferenceCount,
+    previousReferenceCount,
+    activePinCount: currentPins.length,
+    currentPins,
+    previousPin,
     references: references.sort((a, b) => a.file.localeCompare(b.file) || a.line - b.line),
-    activePins: activePins.sort((a, b) => a.file.localeCompare(b.file)),
-    previousPins,
+    historicalReferences,
+    governanceReferences,
+    legacyReferences: legacyReferences.map(item => Object.assign({}, item, { reason: DECLARED_LEGACY_REFERENCES.find(legacy => legacy.file === item.file && legacy.version === item.version).reason })),
+    unusedLegacyAllowances,
     staleActivePins,
     unexpectedReferences,
-    missingActivePins,
-    passed: staleActivePins.length === 0 && unexpectedReferences.length === 0 && missingActivePins.length === 0
+    passed: staleActivePins.length === 0 && unexpectedReferences.length === 0 && unusedLegacyAllowances.length === 0
   };
   fs.writeFileSync(OUTPUT_PATH, JSON.stringify(report, null, 2));
 
-  if (missingActivePins.length) fail(`缺少PWA主动构建引用：${missingActivePins.join('、')}`);
-  if (staleActivePins.length) fail(`发现过期主动构建引用：${staleActivePins.map(item => `${item.file}=${item.version}`).join('、')}`);
-  if (unexpectedReferences.length) fail(`发现未声明PWA构建引用：${unexpectedReferences.map(item => `${item.file}:${item.line}=${item.version}`).join('、')}`);
+  if (staleActivePins.length) {
+    fail(`发现过期PWA主动构建针：${staleActivePins.map(item => `${item.file}=${item.version}`).join('、')}`);
+  }
+  if (unusedLegacyAllowances.length) {
+    fail(`发现未使用的PWA历史引用豁免：${unusedLegacyAllowances.map(item => `${item.file}=${item.version}`).join('、')}`);
+  }
+  if (unexpectedReferences.length) {
+    fail(`发现未声明的运行中PWA构建引用：${unexpectedReferences.map(item => `${item.file}:${item.line}=${item.version}`).join('、')}`);
+  }
 
-  console.log(`CNC PWA构建引用审计通过：${references.length}处引用、${activePins.length}处主动构建针均与${current}一致。`);
+  console.log(`CNC PWA构建引用审计通过：${currentPins.length}处当前构建针=${current}，上一版本=${previous}，运行引用${operationalReferences.length}处，受控历史诊断引用${legacyReferences.length}处。`);
 }
 
 try {
