@@ -32,6 +32,7 @@ jobs:
         run: >-
           node --check cnc/tests/mobile-pages-deployment-status-smoke.cjs &&
           node --check cnc/tests/pages-exact-resource-deployment-smoke.cjs &&
+          node --check cnc/tests/pages-resource-fix-deployment-smoke.cjs &&
           node --check cnc/tests/pages-content-trust-evidence-deployment-smoke.cjs &&
           node --check cnc/tests/pages-content-trust-evidence-transaction-deployment-smoke.cjs &&
           node --check cnc/tools/validate-content-trust-evidence-ledger.cjs &&
@@ -39,6 +40,46 @@ jobs:
       - name: Verify exact-resource gate contract
         run: |
           node -e "const fs=require('fs');const text=fs.readFileSync('cnc/tests/pages-exact-resource-deployment-smoke.cjs','utf8');for(const token of ['mobile-trust-nav.js','ui-knowledge-tree.js','content-trust-status.html','content-trust-manifest.json','knowledge-tree-lazy','content-trust-page','content-trust-manifest','sha256','exactBytesMatch','globalMutationObserverAbsent','lazyMaterializationPresent','fullRecursiveFirstPaintAbsent','operationalCount']){if(!text.includes(token))throw new Error('missing exact-resource contract: '+token);}"
+          node - <<'NODE'
+          const fs = require('fs');
+          const test = fs.readFileSync('cnc/tests/pages-resource-fix-deployment-smoke.cjs', 'utf8');
+          const contract = fs.readFileSync('cnc/docs/pages-resource-fix-propagation-contract.md', 'utf8');
+          for (const token of [
+            'cnc/training-profile.html',
+            'cnc/assets/images/batch01_core/placeholder.svg',
+            'window.location.search + window.location.hash',
+            'learningDataMutationAbsent',
+            'aria-labelledby="title desc"',
+            'activeContentAbsent',
+            'exactBytesMatch',
+            'exactSha256Match',
+            'semanticContractMatch',
+            'CNC_PAGES_VERIFY_ATTEMPTS || 18',
+            'pages-deployment-status-resource-fix-propagation'
+          ]) {
+            if (!test.includes(token)) throw new Error(`missing resource-fix deployment contract: ${token}`);
+          }
+          for (const token of [
+            '成长档案兼容入口',
+            '教学图片回退',
+            '逐字节',
+            'SHA-256',
+            '原厂手册',
+            '授权人员',
+            '不得修改予华仪器官网根目录'
+          ]) {
+            if (!contract.includes(token)) throw new Error(`missing Chinese resource-fix contract: ${token}`);
+          }
+          for (const forbidden of [
+            'test.skip(',
+            'process.exit(0)',
+            'CNC_PAGES_VERIFY_ATTEMPTS || 0',
+            'continue-on-error: true',
+            'cancel-in-progress: true'
+          ]) {
+            if (test.includes(forbidden)) throw new Error(`resource-fix deployment bypass found: ${forbidden}`);
+          }
+          NODE
           node - <<'NODE'
           const fs = require('fs');
           const text = fs.readFileSync('cnc/tests/pages-content-trust-evidence-deployment-smoke.cjs', 'utf8');
@@ -138,6 +179,8 @@ jobs:
           CNC_EXACT_RESOURCE_PATH: cnc/content-trust-manifest.json
           CNC_EXACT_RESOURCE_CONTRACT: content-trust-manifest
         run: node cnc/tests/pages-exact-resource-deployment-smoke.cjs
+      - name: Verify Pages resource-fix propagation
+        run: node cnc/tests/pages-resource-fix-deployment-smoke.cjs
       - name: Verify Pages content trust evidence deployment and semantics
         run: node cnc/tests/pages-content-trust-evidence-deployment-smoke.cjs
       - name: Verify Pages evidence transaction Schema and template deployment
