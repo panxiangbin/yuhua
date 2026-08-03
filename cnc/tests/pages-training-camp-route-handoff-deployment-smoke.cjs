@@ -152,6 +152,10 @@ function assertTrainingCamp(text, label) {
   }
 }
 
+function hasCourseCore(build) {
+  return [previousPublicPwaBuild, expectedPwaBuild].includes(build);
+}
+
 function expectedCore(build) {
   const core = [
     './index.html',
@@ -166,7 +170,7 @@ function expectedCore(build) {
     './ai-teacher-explainability.html',
     './build-info.json'
   ];
-  if (build === expectedPwaBuild) {
+  if (hasCourseCore(build)) {
     core.splice(7, 0,
       './course-safety-foundation.html',
       './course-coordinate-axes.html',
@@ -185,7 +189,7 @@ function assertServiceWorker(text, label, build) {
     "'./training-camp.html'",
     "name.startsWith('cnc-') && !name.endsWith(BUILD)"
   ]);
-  if (build === expectedPwaBuild) {
+  if (hasCourseCore(build)) {
     requireTokens(text, label, [
       "'./course-safety-foundation.html'",
       "'./course-coordinate-axes.html'",
