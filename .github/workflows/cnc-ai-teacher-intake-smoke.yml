@@ -1,0 +1,83 @@
+name: CNC AI teacher intake smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/ai-teacher-intake.html'
+      - 'cnc/manifest.webmanifest'
+      - 'cnc/build-info.json'
+      - 'cnc/tests/mobile-ai-teacher-intake-smoke.cjs'
+      - '.github/workflows/cnc-ai-teacher-intake-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ai-teacher-intake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Validate local-only intake safety contract
+        run: |
+          set -euxo pipefail
+          grep -q "20260801-ai-intake1" cnc/ai-teacher-intake.html
+          grep -q "localOnly: true" cnc/ai-teacher-intake.html
+          grep -q "externalModel: false" cnc/ai-teacher-intake.html
+          grep -q "persistsData: false" cnc/ai-teacher-intake.html
+          grep -q "不需要API Key" cnc/ai-teacher-intake.html
+          grep -q "不会替你修改参数、刀补、坐标或复位报警" cnc/ai-teacher-intake.html
+          grep -q "核对机床原厂手册" cnc/ai-teacher-intake.html
+          grep -q "不要连续按复位" cnc/ai-teacher-intake.html
+          ! grep -Eqi "https?://|fetch\(|XMLHttpRequest|WebSocket|EventSource" cnc/ai-teacher-intake.html
+      - name: Validate manifest and build marker
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const manifest = JSON.parse(fs.readFileSync('cnc/manifest.webmanifest', 'utf8'));
+          if (!manifest.shortcuts.some(item => item.url === './ai-teacher-intake.html')) {
+            throw new Error('AI intake shortcut missing');
+          }
+          const intake = fs.readFileSync('cnc/ai-teacher-intake.html', 'utf8');
+          const componentBuild = intake.match(/const BUILD = '([^']+)'/)?.[1];
+          if (componentBuild !== '20260801-ai-intake1') {
+            throw new Error(`AI intake component build mismatch: ${componentBuild || 'missing'}`);
+          }
+          const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
+          if (!/^\d{8}-[a-z0-9-]+$/.test(info.build || '')) {
+            throw new Error(`invalid site build marker: ${info.build || 'missing'}`);
+          }
+          if (!String(info.contentStage || '').includes('AI老师现场问诊单')) {
+            throw new Error('site build marker lost AI intake capability');
+          }
+          NODE
+      - name: Check JavaScript syntax
+        run: |
+          node --check cnc/tests/mobile-ai-teacher-intake-smoke.cjs
+          python3 - <<'PY'
+          from pathlib import Path
+          text=Path('cnc/ai-teacher-intake.html').read_text(encoding='utf-8')
+          script=text.split('<script>',1)[1].split('</script>',1)[0]
+          Path('/tmp/cnc-ai-teacher-intake.js').write_text(script,encoding='utf-8')
+          PY
+          node --check /tmp/cnc-ai-teacher-intake.js
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save playwright@1.54.1
+          npx playwright install --with-deps chromium
+      - name: Start static server
+        run: python3 -m http.server 4173 --directory . > /tmp/cnc-ai-teacher-intake-server.log 2>&1 &
+      - name: Chromium 390x844 local AI intake
+        run: node cnc/tests/mobile-ai-teacher-intake-smoke.cjs
+      - name: Upload AI intake diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-ai-teacher-intake-diagnostics
+          path: artifacts/ai-teacher-intake/
+          if-no-files-found: warn
+          retention-days: 14

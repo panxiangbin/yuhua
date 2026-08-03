@@ -1,0 +1,80 @@
+name: CNC mobile performance budget smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-mobile-performance-budget-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mobile-performance-budget:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Check performance audit syntax and contract
+        run: |
+          node --check cnc/tests/mobile-performance-budget-smoke.cjs
+          node --check cnc/ui-knowledge-tree.js
+          node - <<'NODE'
+          const fs = require('fs');
+          const test = fs.readFileSync('cnc/tests/mobile-performance-budget-smoke.cjs', 'utf8');
+          for (const marker of [
+            'domContentLoadedMs',
+            'firstContentfulPaintMs',
+            'largestContentfulPaintMs',
+            'trustReadyMs',
+            'totalTransferBytes',
+            'scriptTransferBytes',
+            'styleTransferBytes',
+            'maxLongTaskMs',
+            'totalLongTaskMs',
+            'cumulativeLayoutShift',
+            'domNodeCount',
+            '390, height: 844',
+            'visibleBottomNavCount !== 5'
+          ]) {
+            if (!test.includes(marker)) throw new Error(`手机性能审计缺少契约：${marker}`);
+          }
+          for (const forbidden of ['test.skip(', 'process.exit(0)']) {
+            if (test.includes(forbidden)) throw new Error(`手机性能门禁禁止绕过：${forbidden}`);
+          }
+
+          const tree = fs.readFileSync('cnc/ui-knowledge-tree.js', 'utf8');
+          for (const marker of [
+            'materializeChildren(nodeEl, node, childLevel)',
+            'data-rendered="false"',
+            'if (open) this.materializeChildren(nodeEl, node, level + 1)',
+            'if (initiallyOpen && hasChildren) this.materializeChildren(nodeEl, node, level + 1)'
+          ]) {
+            if (!tree.includes(marker)) throw new Error(`知识树按需渲染契约缺失：${marker}`);
+          }
+          if (/if\s*\(hasChildren\)\s*node\.children\.forEach/.test(tree)) {
+            throw new Error('禁止恢复知识树全量递归首屏渲染');
+          }
+          NODE
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save playwright@1.54.1
+          npx playwright install --with-deps chromium
+      - name: Start static server
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/cnc-performance-server.log 2>&1 &
+          echo $! > /tmp/cnc-performance-server.pid
+      - name: Run 390x844 mobile performance budget audit
+        run: node cnc/tests/mobile-performance-budget-smoke.cjs
+      - name: Upload performance diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-mobile-performance-budget-${{ github.run_id }}
+          path: artifacts/mobile-performance-budget
+          if-no-files-found: warn
+          retention-days: 14

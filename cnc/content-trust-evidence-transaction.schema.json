@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cnc/content-trust-evidence-transaction.schema.json",
+  "title": "CNC 内容复核证据台账事务记录",
+  "description": "锁定证据台账更新前后原始 UTF-8 文件摘要，并记录受控差异汇总。该记录只证明更新过程一致，不代表任何 CNC 技术内容已经核实。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "transactionId",
+    "expectedBaseLedgerSha256",
+    "nextLedgerSha256",
+    "committedAt",
+    "actor",
+    "changeReason",
+    "operationSummary"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "transactionId": {
+      "type": "string",
+      "pattern": "^CNC-EVIDENCE-[A-Z0-9][A-Z0-9._-]{7,63}$"
+    },
+    "expectedBaseLedgerSha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "nextLedgerSha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "committedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "actor": {
+      "type": "string",
+      "minLength": 2
+    },
+    "changeReason": {
+      "type": "string",
+      "minLength": 12
+    },
+    "operationSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "datasetsChanged",
+        "sourceRecordsAdded",
+        "itemReviewRecordsAdded",
+        "reviewedItemsAdded",
+        "stateTransitions"
+      ],
+      "properties": {
+        "datasetsChanged": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sourceRecordsAdded": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "itemReviewRecordsAdded": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reviewedItemsAdded": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "stateTransitions": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

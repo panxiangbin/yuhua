@@ -1,0 +1,107 @@
+name: CNC content trust source record template smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-content-trust-source-record-template-smoke.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-content-trust-source-record-template-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-record-template:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Check source record tools and contract
+        run: |
+          node --check cnc/tools/validate-content-trust-source-record.cjs
+          node --check cnc/tests/content-trust-source-record-template-smoke.cjs
+          node - <<'NODE'
+          const fs = require('fs');
+          const schema = JSON.parse(fs.readFileSync('cnc/content-trust-source-record.schema.json', 'utf8'));
+          const template = JSON.parse(fs.readFileSync('cnc/content-trust-source-record-template.json', 'utf8'));
+          const validator = fs.readFileSync('cnc/tools/validate-content-trust-source-record.cjs', 'utf8');
+          const test = fs.readFileSync('cnc/tests/content-trust-source-record-template-smoke.cjs', 'utf8');
+          const notice = '教学参考，需按机床说明书、现场工艺和空运行验证';
+          if (schema.properties?.requiredNotice?.const !== notice || template.requiredNotice !== notice) {
+            throw new Error('来源记录统一教学提示不一致');
+          }
+          if (schema.type !== 'object' || schema.additionalProperties !== false) {
+            throw new Error('来源记录 Schema 根对象必须禁止未声明字段');
+          }
+          if (schema.properties?.instructions?.type !== 'array' || schema.properties.instructions.minItems < 5) {
+            throw new Error('Schema 必须受控定义至少 5 条模板填写说明');
+          }
+          if (!Array.isArray(template.instructions) || template.instructions.length < 5) {
+            throw new Error('空白模板必须提供至少 5 条填写说明');
+          }
+          if (!Array.isArray(template.records) || template.records.length !== 0) {
+            throw new Error('空白模板不得预填来源记录');
+          }
+          for (const token of [
+            'datasetPath',
+            'itemKey',
+            'documentCodeOrRevision',
+            'applicableSystemOrMachine',
+            'pageOrSection',
+            'evidenceLocation',
+            'verificationNotes',
+            'applicabilityNotes',
+            'onMachineValidationRequired'
+          ]) {
+            if (!schema.$defs?.sourceRecord?.required?.includes(token)) throw new Error(`Schema 缺少必填字段：${token}`);
+            if (!validator.includes(token)) throw new Error(`校验工具缺少字段约束：${token}`);
+          }
+          for (const token of [
+            'ROOT_REQUIRED_FIELDS',
+            'ROOT_OPTIONAL_FIELDS',
+            'validateInstructions',
+            '根节点含未允许字段',
+            'PLACEHOLDER_PATTERN',
+            'isRealDate',
+            'duplicateKeys',
+            'additionalProperties',
+            '额外未受控根字段',
+            '无效模板说明',
+            'invalidCases'
+          ]) {
+            if (![validator, test, JSON.stringify(schema)].some((text) => text.includes(token))) {
+              throw new Error(`来源记录门禁缺少契约：${token}`);
+            }
+          }
+          for (const forbidden of ['process.exit(0)', 'test.skip(', 'onMachineValidationRequired !== false']) {
+            if ([validator, test].some((text) => text.includes(forbidden))) {
+              throw new Error(`来源记录门禁禁止绕过：${forbidden}`);
+            }
+          }
+          NODE
+
+      - name: Validate blank source record template
+        run: node cnc/tools/validate-content-trust-source-record.cjs cnc/content-trust-source-record-template.json
+
+      - name: Run source record template audit
+        run: node cnc/tests/content-trust-source-record-template-smoke.cjs
+
+      - name: Upload source record diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-content-trust-source-record-template-${{ github.run_id }}
+          path: artifacts/content-trust-source-record-template
+          if-no-files-found: warn
+          retention-days: 14

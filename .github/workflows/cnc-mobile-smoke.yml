@@ -27,7 +27,7 @@ jobs:
 
       - name: Install browser test runtime
         run: |
-          npm install --no-save playwright@1.52.0
+          npm install --no-save playwright@1.54.1
           npx playwright install --with-deps chromium
 
       - name: Start current and baseline sites
@@ -104,7 +104,7 @@ jobs:
         run: node cnc/tests/mobile-gcode-detail-panel-smoke.cjs
       - name: Mobile parameter clean journey
         run: node cnc/tests/mobile-other-search-smoke.cjs
-      - name: Service Worker remains disabled
+      - name: Service Worker registration and build consistency
         run: node cnc/tests/mobile-sw-smoke.cjs
 
       - name: Generate 390x844 before and after screenshots

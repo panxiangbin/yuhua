@@ -120,6 +120,41 @@
     });
   }
 
+  function navigateFromBottomButton(button, routeEvent) {
+    var route = button.dataset.xpRoute || '';
+    var filter = button.dataset.xpFilter || '';
+
+    // “查代码”必须复用已经被完整回归验证的侧栏工作区路由。
+    // 原底栏直接调用 navigate，在启动保护、动态增强层同时就绪时可能只改了底栏状态，
+    // 工作区却未真正激活。先把本次可信点击明确交给启动保护，再走既有路由按钮；
+    // 只有路由按钮不存在时才退回直接调用，并同步触发 G 代码增强层加载。
+    if (filter === 'gcode') {
+      if (routeEvent && window.CNC_STARTUP_HOME_GUARD &&
+          typeof window.CNC_STARTUP_HOME_GUARD.acceptTrustedRouteEvent === 'function') {
+        window.CNC_STARTUP_HOME_GUARD.acceptTrustedRouteEvent(routeEvent);
+      }
+      var gcodeTarget = document.querySelector('#sidebar [data-route="workspace"][data-filter="gcode"]');
+      if (gcodeTarget) {
+        gcodeTarget.click();
+        return true;
+      }
+      if (typeof window.navigate === 'function') {
+        window.navigate('workspace', { filter: 'gcode' });
+        if (typeof window.CNC_LOAD_GCODE_PRO === 'function') window.CNC_LOAD_GCODE_PRO();
+        return true;
+      }
+    }
+
+    var target = route
+      ? document.querySelector('[data-route="' + route + '"]')
+      : document.querySelector('[data-route="workspace"][data-filter="' + filter + '"],[data-filter="' + filter + '"]');
+    if (target) {
+      target.click();
+      return true;
+    }
+    return false;
+  }
+
   function nav() {
     if (document.querySelector('.xp-bottom-nav')) return;
     var node = document.createElement('nav');
@@ -134,10 +169,7 @@
     node.addEventListener('click', function (event) {
       var button = event.target.closest('button');
       if (!button) return;
-      var target = button.dataset.xpRoute
-        ? document.querySelector('[data-route="' + button.dataset.xpRoute + '"]')
-        : document.querySelector('[data-route="workspace"][data-filter="' + button.dataset.xpFilter + '"],[data-filter="' + button.dataset.xpFilter + '"]');
-      if (target) target.click();
+      navigateFromBottomButton(button, event);
       syncNavState(button.dataset.xpRoute || button.dataset.xpFilter);
       scheduleTrust();
     });
@@ -361,4 +393,237 @@
     sharePayload: sharePayload,
     shareCurrentDetail: shareCurrentDetail
   };
+})();
+
+/* CNC 手机端无障碍基础层：补齐主内容跳转、隐藏区域焦点隔离与目录键盘交互。 */
+(function () {
+  'use strict';
+
+  var BUILD = '20260801-a11y2';
+  var syncTimers = [];
+  var FOCUSABLE = 'button,a[href],input,select,textarea,[contenteditable="true"],[tabindex]';
+  var SYNC_DELAYS = [0, 80, 240, 600];
+
+  function installStyles() {
+    if (document.getElementById('cnc-accessibility-foundation-style')) return;
+    var style = document.createElement('style');
+    style.id = 'cnc-accessibility-foundation-style';
+    style.textContent = [
+      '.cnc-skip-link{position:fixed;z-index:100000;top:8px;left:8px;padding:12px 16px;border-radius:10px;background:#fff;color:#071a33;font-weight:900;text-decoration:none;box-shadow:0 0 0 3px #ffbf00,0 8px 24px rgba(0,0,0,.3);transform:translateY(-160%)}',
+      '.cnc-skip-link:focus,.cnc-skip-link:focus-visible{transform:translateY(0);outline:3px solid #0b76ff;outline-offset:3px}',
+      '@media(prefers-reduced-motion:reduce){.cnc-skip-link{transition:none!important}}'
+    ].join('');
+    document.head.appendChild(style);
+  }
+
+  function ensureMainAndSkipLink() {
+    var main = document.querySelector('main.main-shell') || document.querySelector('main');
+    if (!main) return false;
+    if (!main.id) main.id = 'main-content';
+    var skip = document.querySelector('.cnc-skip-link');
+    if (!skip) {
+      skip = document.createElement('a');
+      skip.className = 'cnc-skip-link';
+      skip.textContent = '跳到主内容';
+      document.body.insertBefore(skip, document.body.firstChild);
+    }
+    skip.href = '#' + main.id;
+    if (skip.dataset.cncSkipBound !== 'true') {
+      skip.dataset.cncSkipBound = 'true';
+      skip.addEventListener('click', function () {
+        main.setAttribute('tabindex', '-1');
+        window.requestAnimationFrame(function () {
+          main.focus({ preventScroll: true });
+          main.scrollIntoView({ block: 'start' });
+        });
+      });
+    }
+    return true;
+  }
+
+  function saveAndDisable(node) {
+    if (!node || node.disabled) return;
+    if (!node.hasAttribute('data-cnc-a11y-tabindex')) {
+      node.setAttribute('data-cnc-a11y-tabindex', node.hasAttribute('tabindex') ? node.getAttribute('tabindex') : '__missing__');
+    }
+    node.setAttribute('tabindex', '-1');
+  }
+
+  function restore(node) {
+    if (!node || !node.hasAttribute('data-cnc-a11y-tabindex')) return;
+    var previous = node.getAttribute('data-cnc-a11y-tabindex');
+    node.removeAttribute('data-cnc-a11y-tabindex');
+    if (previous === '__missing__') node.removeAttribute('tabindex');
+    else node.setAttribute('tabindex', previous);
+  }
+
+  function applyHiddenState(host, hidden) {
+    if (!host) return;
+    if (hidden) {
+      if (!host.hasAttribute('inert')) host.setAttribute('inert', '');
+      host.querySelectorAll(FOCUSABLE).forEach(saveAndDisable);
+    } else {
+      if (host.hasAttribute('inert')) host.removeAttribute('inert');
+      host.querySelectorAll('[data-cnc-a11y-tabindex]').forEach(restore);
+    }
+  }
+
+  function syncHiddenRegions() {
+    document.querySelectorAll('[aria-hidden]').forEach(function (host) {
+      applyHiddenState(host, host.getAttribute('aria-hidden') === 'true');
+    });
+  }
+
+  function setAttr(node, name, value) {
+    if (node && node.getAttribute(name) !== value) node.setAttribute(name, value);
+  }
+
+  function ensureStatusSemantics() {
+    var accessMessage = document.getElementById('access-message');
+    if (accessMessage) {
+      setAttr(accessMessage, 'role', 'status');
+      setAttr(accessMessage, 'aria-live', 'polite');
+      setAttr(accessMessage, 'aria-atomic', 'true');
+    }
+    var loading = document.getElementById('loading-screen');
+    setAttr(loading, 'aria-hidden', 'true');
+  }
+
+  function syncAccessibilityState() {
+    ensureMainAndSkipLink();
+    ensureStatusSemantics();
+    syncHiddenRegions();
+  }
+
+  function scheduleAccessibilitySync() {
+    syncTimers.forEach(function (timer) { window.clearTimeout(timer); });
+    syncTimers = SYNC_DELAYS.map(function (delay) {
+      return window.setTimeout(syncAccessibilityState, delay);
+    });
+  }
+
+  function setSidebarState(open, returnFocus) {
+    var sidebar = document.getElementById('sidebar');
+    var trigger = document.getElementById('sidebar-open');
+    var mask = document.getElementById('sidebar-mask');
+    var close = document.getElementById('sidebar-close');
+    if (!sidebar || !trigger) return false;
+
+    trigger.setAttribute('aria-controls', 'sidebar');
+    trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (sidebar.getAttribute('aria-hidden') !== (open ? 'false' : 'true')) {
+      sidebar.setAttribute('aria-hidden', open ? 'false' : 'true');
+    }
+
+    if (open) {
+      sidebar.hidden = false;
+      applyHiddenState(sidebar, false);
+      sidebar.classList.add('open');
+      if (mask) mask.hidden = false;
+      window.setTimeout(function () {
+        if (close && sidebar.classList.contains('open')) close.focus();
+      }, 0);
+    } else {
+      sidebar.classList.remove('open');
+      applyHiddenState(sidebar, true);
+      sidebar.hidden = window.innerWidth <= 760;
+      if (mask) mask.hidden = true;
+      if (returnFocus) window.setTimeout(function () { trigger.focus(); }, 0);
+    }
+    return true;
+  }
+
+  function initialSidebarState() {
+    var sidebar = document.getElementById('sidebar');
+    if (!sidebar) return;
+    var open = window.innerWidth > 760 || sidebar.classList.contains('open');
+    setSidebarState(open, false);
+  }
+
+  function handleSidebarKeydown(event) {
+    var sidebar = document.getElementById('sidebar');
+    if (!sidebar || !sidebar.classList.contains('open')) return;
+
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      setSidebarState(false, true);
+      scheduleAccessibilitySync();
+      return;
+    }
+
+    if (event.key !== 'Tab') return;
+    var focusable = Array.from(sidebar.querySelectorAll(FOCUSABLE)).filter(function (node) {
+      return !node.disabled && node.getAttribute('tabindex') !== '-1' && node.getClientRects().length > 0;
+    });
+    if (!focusable.length) return;
+    var first = focusable[0];
+    var last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  }
+
+  function bindSidebarKeyboard() {
+    if (document.documentElement.dataset.cncA11ySidebarBound === 'true') return;
+    document.documentElement.dataset.cncA11ySidebarBound = 'true';
+
+    document.addEventListener('click', function (event) {
+      if (!event.target || !event.target.closest) return;
+      if (event.target.closest('#sidebar-open')) setSidebarState(true, false);
+      if (event.target.closest('#sidebar-close,#sidebar-mask')) setSidebarState(false, true);
+      scheduleAccessibilitySync();
+    }, true);
+
+    window.addEventListener('keydown', handleSidebarKeydown, true);
+  }
+
+  function bindBoundedSyncEvents() {
+    if (document.documentElement.dataset.cncA11ySyncBound === 'true') return;
+    document.documentElement.dataset.cncA11ySyncBound = 'true';
+
+    document.addEventListener('click', function (event) {
+      if (!event.target || !event.target.closest) return;
+      if (event.target.closest(
+        '[data-route],[data-filter],[data-entry-id],[data-open-entry],[data-close],button,a[href],input,select,textarea'
+      )) scheduleAccessibilitySync();
+    }, true);
+    document.addEventListener('submit', scheduleAccessibilitySync, true);
+    window.addEventListener('hashchange', scheduleAccessibilitySync);
+    window.addEventListener('pageshow', scheduleAccessibilitySync);
+    window.addEventListener('resize', function () {
+      initialSidebarState();
+      scheduleAccessibilitySync();
+    }, { passive: true });
+  }
+
+  function boot() {
+    installStyles();
+    ensureMainAndSkipLink();
+    ensureStatusSemantics();
+    bindSidebarKeyboard();
+    bindBoundedSyncEvents();
+    initialSidebarState();
+    syncHiddenRegions();
+    scheduleAccessibilitySync();
+    window.CNC_ACCESSIBILITY_FOUNDATION = {
+      build: BUILD,
+      polling: false,
+      observer: false,
+      sync: function () {
+        ensureMainAndSkipLink();
+        ensureStatusSemantics();
+        initialSidebarState();
+        syncHiddenRegions();
+        return true;
+      }
+    };
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true });
+  else boot();
 })();

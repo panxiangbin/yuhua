@@ -103,35 +103,47 @@
       canvas.appendChild(tree);
     }
 
+    materializeChildren(nodeEl, node, childLevel) {
+      const group = nodeEl.querySelector(':scope > .tree-node-children');
+      if (!group || group.dataset.rendered === 'true') return;
+      const children = Array.isArray(node.children) ? node.children : [];
+      const fragment = document.createDocumentFragment();
+      children.forEach((child) => this.renderNode(fragment, child, childLevel));
+      group.appendChild(fragment);
+      group.dataset.rendered = 'true';
+    }
+
     renderNode(parentEl, node, level) {
       const hasChildren = Array.isArray(node.children) && node.children.length > 0;
+      const initiallyOpen = level === 0;
       const nodeEl = document.createElement('div');
-      nodeEl.className = 'tree-node' + (level === 0 ? ' open' : '');
+      nodeEl.className = 'tree-node' + (initiallyOpen ? ' open' : '');
       nodeEl.dataset.nodeId = node.id;
       nodeEl.dataset.level = String(level);
       nodeEl.setAttribute('role', 'treeitem');
       nodeEl.setAttribute('aria-level', String(level + 1));
-      if (hasChildren) nodeEl.setAttribute('aria-expanded', level === 0 ? 'true' : 'false');
+      if (hasChildren) nodeEl.setAttribute('aria-expanded', initiallyOpen ? 'true' : 'false');
       nodeEl.innerHTML = '<button type="button" class="tree-node-header' + (hasChildren ? ' expandable' : '') + '">' +
-        '<span class="tree-node-toggle" aria-hidden="true">' + (hasChildren ? (level === 0 ? '−' : '+') : '·') + '</span>' +
+        '<span class="tree-node-toggle" aria-hidden="true">' + (hasChildren ? (initiallyOpen ? '−' : '+') : '·') + '</span>' +
         '<span class="tree-node-icon" aria-hidden="true">' + this.escapeHtml(node.icon || (level === 0 ? 'CNC' : '•')) + '</span>' +
         '<span class="tree-node-copy"><strong class="tree-node-title">' + this.escapeHtml(node.title) + '</strong>' +
         (node.description ? '<small class="tree-node-desc">' + this.escapeHtml(node.description) + '</small>' : '') + '</span>' +
         '<span class="tree-node-count">' + Number(node.count || 0) + '</span></button>' +
-        (hasChildren ? '<div class="tree-node-children" role="group"></div>' : '');
+        (hasChildren ? '<div class="tree-node-children" role="group" data-rendered="false"></div>' : '');
       parentEl.appendChild(nodeEl);
       const header = nodeEl.querySelector('.tree-node-header');
       header.setAttribute('aria-label', node.title + (node.count ? '，' + node.count + '条' : ''));
       header.addEventListener('click', () => {
         if (hasChildren) {
           const open = !nodeEl.classList.contains('open');
+          if (open) this.materializeChildren(nodeEl, node, level + 1);
           nodeEl.classList.toggle('open', open);
           nodeEl.setAttribute('aria-expanded', open ? 'true' : 'false');
           nodeEl.querySelector('.tree-node-toggle').textContent = open ? '−' : '+';
         }
         if (node.id !== 'root' && this.onNodeClick) this.onNodeClick(node);
       });
-      if (hasChildren) node.children.forEach((child) => this.renderNode(nodeEl.querySelector('.tree-node-children'), child, level + 1));
+      if (initiallyOpen && hasChildren) this.materializeChildren(nodeEl, node, level + 1);
     }
 
     renderCategoriesView() {

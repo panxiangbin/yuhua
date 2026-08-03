@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>AI老师判断说明｜数控小潘</title>
+  <meta name="description" content="显示AI CNC老师命中的风险类别、判断理由和适用边界，不提供固定上机值、参数写入或安全绕过步骤。">
+  <style>
+    :root{color-scheme:light;--bg:#f2efe8;--card:#fffdf8;--ink:#292d30;--muted:#687078;--line:#d8d2c6;--blue:#365b72;--blue-soft:#e9f0f4;--ok:#3f6b50;--warn:#8a5a16;--bad:#8a4034}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}.shell{max-width:860px;margin:auto;padding:14px 14px 40px}.top{display:flex;gap:10px;justify-content:space-between;align-items:center}.btn{min-height:46px;padding:0 14px;border:1px solid var(--line);border-radius:12px;background:var(--blue);color:#fff;text-decoration:none;font-weight:900;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}.btn.alt{background:var(--card);color:var(--blue)}.panel{background:var(--card);border:1px solid var(--line);border-radius:15px;box-shadow:0 6px 16px rgba(48,44,36,.07);padding:16px;margin-top:14px}.hero h1{font-size:29px;margin:5px 0 9px}.hero p,.muted{color:var(--muted);line-height:1.7}.tag,.decision{display:inline-flex;min-height:30px;align-items:center;padding:0 10px;border-radius:999px;background:var(--blue-soft);color:var(--blue);font-weight:900}.decision.blocked{background:#f7e8e4;color:var(--bad)}.decision.safe{background:#fff0d8;color:var(--warn)}.ask{display:grid;grid-template-columns:1fr auto;gap:10px}.ask input{min-height:48px;border:1px solid var(--line);border-radius:12px;background:#fff;padding:0 13px;font-size:16px;color:var(--ink)}.examples{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.examples button{min-height:44px;border:1px solid var(--line);border-radius:999px;background:#f8f5ef;color:var(--ink);padding:0 12px;font-weight:800;cursor:pointer}.handoff-note{margin:12px 0 0;padding:11px 12px;border:1px solid #b8d1c0;border-radius:12px;background:#edf6ef;color:var(--ok);line-height:1.6;font-weight:800}.handoff-note.discarded{border-color:#e1c89f;background:#fff7e8;color:var(--warn)}.result{display:none}.result.show{display:block}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.card{padding:14px;border:1px solid var(--line);border-radius:12px;background:#f8f5ef}.card h2,.card h3{margin:0 0 9px}.chips{display:flex;gap:8px;flex-wrap:wrap}.chip{display:inline-flex;min-height:34px;align-items:center;padding:0 10px;border-radius:999px;background:#edf2f5;color:var(--blue);font-weight:900}.chip.warn{background:#f7e8e4;color:var(--bad)}.reason{font-size:17px;line-height:1.7}.notice{border-left:4px solid var(--warn)}.ok{border-left:4px solid var(--ok)}.engine,.sr-only{position:absolute;width:1px;height:1px;clip:rect(0 0 0 0);clip-path:inset(50%);overflow:hidden;white-space:nowrap;border:0}.handoff-note:focus,#result-title:focus{outline:3px solid #245a78;outline-offset:4px;border-radius:6px}@media(max-width:560px){.grid,.ask{grid-template-columns:1fr}.ask .btn{width:100%}.top{align-items:stretch;flex-direction:column}.top .btn{width:100%}}
+  </style>
+</head>
+<body>
+<main class="shell">
+  <div class="top"><a class="btn alt" href="./ai-teacher.html">← 返回AI CNC老师</a><a class="btn" href="./course-safety-foundation.html">学习安全基础</a></div>
+  <section class="panel hero">
+    <span class="tag">本地规则解释器 · 不调用外部模型</span>
+    <h1>这次判断为什么被阻断？</h1>
+    <p>输入一句问题，本页只显示AI CNC老师命中的风险类别、判断理由和适用边界。它不会显示可直接执行的参数值、写入步骤、联锁绕过方法或盲目复位方法。</p>
+  </section>
+
+  <section class="panel">
+    <form class="ask" id="explain-form">
+      <label class="sr-only" for="question">输入需要解释的CNC问题</label>
+      <input id="question" maxlength="120" autocomplete="off" aria-describedby="question-help" placeholder="例如：FANUC 1815参数应该改成多少">
+      <span class="sr-only" id="question-help">问题只在本页由本地规则解释，不上传，也不写入长期学习记录。</span>
+      <button class="btn" type="submit">解释判断</button>
+    </form>
+    <p class="handoff-note" id="handoff-note" role="status" aria-live="polite" aria-atomic="true" tabindex="-1" hidden></p>
+    <div class="examples" aria-label="示例问题">
+      <button type="button" data-example="FANUC 1815参数应该改成多少">参数写入</button>
+      <button type="button" data-example="怎么屏蔽安全门联锁继续加工">安全绕过</button>
+      <button type="button" data-example="连续复位报警有什么风险">安全原理</button>
+      <button type="button" data-example="G54怎么找正">正常学习</button>
+    </div>
+  </section>
+
+  <section class="panel result" id="result" role="region" aria-live="polite" aria-atomic="true" aria-labelledby="result-title" aria-describedby="result-reason">
+    <span class="decision" id="decision">等待判断</span>
+    <h2 id="result-title" tabindex="-1">判断说明</h2>
+    <p class="reason" id="result-reason"></p>
+    <div class="grid">
+      <article class="card"><h3>命中的风险类别</h3><div class="chips" id="risk-chips"></div></article>
+      <article class="card"><h3>安全讨论信号</h3><div class="chips" id="safe-chips"></div></article>
+      <article class="card"><h3>强执行意图</h3><p id="override-text" class="muted"></p></article>
+      <article class="card"><h3>分类版本</h3><p id="version-text" class="muted"></p></article>
+    </div>
+  </section>
+
+  <section class="panel notice">
+    <strong>适用范围</strong>
+    <p class="muted">分类结果只用于教学分流，不代表具体机床、系统版本或现场状态已经确认。涉及参数、报警、刀补、联锁和恢复操作，必须核对相同版本原厂手册、企业制度、受控工艺和现场条件，并由授权人员确认。</p>
+  </section>
+  <section class="panel ok">
+    <strong>解释边界</strong>
+    <p class="muted">本页不提供固定上机值，只公布风险类别与判断理由；不公布规则命中的具体文字位置，也不把用户问题转换成可直接上机的操作步骤。资料清单与逐条复核记录不能互相代替，未逐条复核内容不可直接上机。</p>
+  </section>
+</main>
+<iframe class="engine" id="teacher-engine" title="AI CNC老师本地分类引擎" src="./ai-teacher.html" tabindex="-1" aria-hidden="true"></iframe>
+<script>
+(() => {
+  'use strict';
+  const EXPLAINABILITY_VERSION = '20260802-v2';
+  const EXPECTED_CLASSIFICATION_VERSION = '20260802-v2';
+  const HANDOFF_KEY = 'cnc_ai_teacher_explainability_handoff_v1';
+  const HANDOFF_SCHEMA_VERSION = 1;
+  const HANDOFF_MAX_AGE_MS = 5 * 60 * 1000;
+  const RISK_LABELS = Object.freeze({
+    'exact-value':'固定上机值',
+    'parameter-write':'参数写入',
+    'bypass-safety':'安全绕过',
+    'blind-reset':'盲目复位'
+  });
+  const SAFE_LABELS = Object.freeze({
+    'risk-explanation':'风险或原理说明',
+    'risk-explanation-reversed':'风险主题反向提问',
+    'explicit-no-instructions':'明确不要操作步骤',
+    'non-operational-context':'明确不执行真实操作'
+  });
+  const engine = document.getElementById('teacher-engine');
+  let teacherApi = null;
+  let displayedFromHandoff = false;
+
+  function chip(label, warning=false){const span=document.createElement('span');span.className=`chip${warning?' warn':''}`;span.textContent=label;return span}
+  function labels(ids,map,fallback){return ids.length?ids.map(id=>map[id]||`受控类别：${id}`):[fallback]}
+  function handoffOutcome(state,value=null){return {state,value}}
+  function focusNode(id){
+    requestAnimationFrame(()=>{
+      const node=document.getElementById(id);
+      if(!node||node.hidden||!node.isConnected)return;
+      try{node.focus({preventScroll:false})}catch{node.focus()}
+      document.documentElement.dataset.accessibilityFocus=id;
+    });
+  }
+  function consumeHandoff(now=Date.now()){
+    let raw;
+    try{raw=sessionStorage.getItem(HANDOFF_KEY)}catch{return handoffOutcome('storage-unavailable')}
+    if(raw===null)return handoffOutcome('none');
+    try{sessionStorage.removeItem(HANDOFF_KEY)}catch{return handoffOutcome('storage-unavailable')}
+    let payload;
+    try{payload=JSON.parse(raw)}catch{return handoffOutcome('discarded')}
+    if(!payload||typeof payload!=='object'||Array.isArray(payload))return handoffOutcome('discarded');
+    const question=typeof payload.question==='string'?payload.question.trim():'';
+    const createdAt=Number(payload.createdAt);
+    const expiresAt=Number(payload.expiresAt);
+    const allowedIntent=payload.intent==='blocked'||payload.intent==='safety-boundary';
+    const validTime=Number.isFinite(createdAt)&&Number.isFinite(expiresAt)&&createdAt<=now+60000&&expiresAt>now&&expiresAt-createdAt>0&&expiresAt-createdAt<=HANDOFF_MAX_AGE_MS&&now-createdAt<=HANDOFF_MAX_AGE_MS;
+    if(payload.schemaVersion!==HANDOFF_SCHEMA_VERSION||payload.source!=='ai-teacher'||!allowedIntent||!question||question.length>120||!validTime)return handoffOutcome('discarded');
+    return handoffOutcome('consumed',{question,intent:payload.intent,createdAt,expiresAt});
+  }
+  const initialHandoff=consumeHandoff();
+
+  function safeResult(raw){
+    const riskIds=Array.isArray(raw.matchedSignals)?raw.matchedSignals.filter(id=>Object.hasOwn(RISK_LABELS,id)):[];
+    const safeIds=Array.isArray(raw.safeSignals)?raw.safeSignals.filter(id=>Object.hasOwn(SAFE_LABELS,id)):[];
+    const decision=raw.blocked?'blocked':raw.intent==='safety-boundary'?'safety-boundary':'allowed';
+    const reason=raw.reason||(
+      decision==='allowed'
+        ?'未命中固定上机值、参数写入、安全绕过或盲目复位请求，进入普通学习主题分流。'
+        :'分类器已应用受控安全边界。'
+    );
+    return {
+      decision,
+      intent:String(raw.intent||'unknown'),
+      blocked:raw.blocked===true,
+      riskIds,
+      riskLabels:labels(riskIds,RISK_LABELS,'未命中高风险执行请求'),
+      safeIds,
+      safeLabels:labels(safeIds,SAFE_LABELS,'未命中安全讨论语境'),
+      overrideExecution:raw.overrideExecution===true,
+      reason,
+      classificationVersion:teacherApi.classificationVersion,
+      explainabilityVersion:EXPLAINABILITY_VERSION
+    };
+  }
+  function explain(question){
+    if(!teacherApi)throw new Error('AI CNC老师分类引擎尚未就绪');
+    if(teacherApi.classificationVersion!==EXPECTED_CLASSIFICATION_VERSION)throw new Error(`分类版本不一致：${teacherApi.classificationVersion||'missing'}`);
+    return safeResult(teacherApi.classifyQuestion(String(question||'')));
+  }
+  function render(question,{focus=true}={}){
+    const data=explain(question);
+    const decision=document.getElementById('decision');
+    const title=document.getElementById('result-title');
+    decision.className='decision';
+    if(data.decision==='blocked'){
+      decision.classList.add('blocked');decision.textContent='已阻断高风险请求';title.textContent='问题包含真实执行风险';
+    }else if(data.decision==='safety-boundary'){
+      decision.classList.add('safe');decision.textContent='安全原理说明';title.textContent='可以讲原理，但不提供执行步骤';
+    }else{
+      decision.textContent='正常学习分流';title.textContent='未命中高风险执行请求';
+    }
+    document.getElementById('result-reason').textContent=data.reason;
+    document.getElementById('risk-chips').replaceChildren(...data.riskLabels.map(label=>chip(label,data.riskIds.length>0)));
+    document.getElementById('safe-chips').replaceChildren(...data.safeLabels.map(label=>chip(label)));
+    document.getElementById('override-text').textContent=data.overrideExecution?'检测到强执行意图，安全讨论语境不能解除阻断。':'未检测到强执行意图。';
+    document.getElementById('version-text').textContent=`分类 ${data.classificationVersion}｜解释 ${data.explainabilityVersion}`;
+    document.getElementById('result').classList.add('show');
+    if(focus)focusNode('result-title');
+    return data;
+  }
+  function showHandoffStatus(outcome){
+    const note=document.getElementById('handoff-note');
+    if(outcome.state==='none')return;
+    note.hidden=false;
+    note.classList.toggle('discarded',outcome.state!=='consumed');
+    if(outcome.state==='consumed'){
+      note.textContent='已读取并清除同标签页临时问题；问题未写入URL、长期学习记录或本地学习档案。';
+    }else if(outcome.state==='storage-unavailable'){
+      note.textContent='当前浏览器无法使用会话临时存储，未读取或保存临时问题；请手动输入需要解释的问题。';
+      focusNode('handoff-note');
+    }else{
+      note.textContent='临时问题无效或已过期，已从同标签页会话中清除；请重新输入需要解释的问题。';
+      focusNode('handoff-note');
+    }
+  }
+  function clearConsumedHandoffView({focusStatus=false}={}){
+    if(displayedFromHandoff){
+      displayedFromHandoff=false;
+      document.getElementById('question').value='';
+      document.getElementById('decision').className='decision';
+      document.getElementById('decision').textContent='等待判断';
+      document.getElementById('result-title').textContent='判断说明';
+      document.getElementById('result-reason').textContent='';
+      document.getElementById('risk-chips').replaceChildren();
+      document.getElementById('safe-chips').replaceChildren();
+      document.getElementById('override-text').textContent='';
+      document.getElementById('version-text').textContent='';
+      document.getElementById('result').classList.remove('show');
+      const note=document.getElementById('handoff-note');
+      note.hidden=false;
+      note.classList.add('discarded');
+      note.textContent='本次临时问题已经消费并清除，返回页面不会再次显示；如需继续，请重新输入。';
+      document.documentElement.dataset.handoffState='consumed-cleared';
+    }
+    if(focusStatus&&document.documentElement.dataset.handoffState==='consumed-cleared')focusNode('handoff-note');
+  }
+  function applyInitialHandoff(){
+    showHandoffStatus(initialHandoff);
+    if(initialHandoff.state!=='consumed')return;
+    document.getElementById('question').value=initialHandoff.value.question;
+    render(initialHandoff.value.question,{focus:true});
+    displayedFromHandoff=true;
+  }
+  engine.addEventListener('load',()=>{
+    const api=engine.contentWindow&&engine.contentWindow.CNC_AI_TEACHER;
+    if(!api||api.localOnly!==true||api.externalModel!==false||typeof api.classifyQuestion!=='function')throw new Error('AI CNC老师本地分类引擎契约不完整');
+    teacherApi=api;
+    window.CNC_AI_TEACHER_EXPLAINABILITY={version:EXPLAINABILITY_VERSION,classificationVersion:EXPECTED_CLASSIFICATION_VERSION,localOnly:true,externalModel:false,riskLabels:RISK_LABELS,safeLabels:SAFE_LABELS,explain,handoff:{key:HANDOFF_KEY,schemaVersion:HANDOFF_SCHEMA_VERSION,maxAgeMs:HANDOFF_MAX_AGE_MS,consume:consumeHandoff}};
+    document.documentElement.dataset.engineReady='true';
+    document.documentElement.dataset.handoffState=initialHandoff.state;
+    applyInitialHandoff();
+  });
+  window.addEventListener('pagehide',()=>clearConsumedHandoffView({focusStatus:false}));
+  window.addEventListener('pageshow',event=>{if(event.persisted)clearConsumedHandoffView({focusStatus:true})});
+  document.getElementById('explain-form').addEventListener('submit',event=>{event.preventDefault();displayedFromHandoff=false;render(document.getElementById('question').value,{focus:true})});
+  document.querySelector('.examples').addEventListener('click',event=>{const button=event.target.closest('[data-example]');if(!button)return;displayedFromHandoff=false;document.getElementById('question').value=button.dataset.example;render(button.dataset.example,{focus:true})});
+})();
+</script>
+</body>
+</html>

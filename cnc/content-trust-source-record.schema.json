@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://panxiangbin.github.io/yuhua/cnc/content-trust-source-record.schema.json",
+  "title": "CNC 高风险内容复核来源记录",
+  "description": "用于登记原厂、机床厂、正式标准或可追溯现场资料。通过结构校验不代表技术结论已经核实，也不代表可直接上机使用。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "requiredNotice",
+    "records"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "requiredNotice": {
+      "const": "教学参考，需按机床说明书、现场工艺和空运行验证"
+    },
+    "instructions": {
+      "type": "array",
+      "minItems": 5,
+      "items": {
+        "type": "string",
+        "minLength": 4
+      },
+      "description": "可选的模板填写说明；只用于指导登记，不属于技术复核证据。"
+    },
+    "records": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/sourceRecord"
+      }
+    }
+  },
+  "$defs": {
+    "sourceRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "datasetPath",
+        "itemKey",
+        "sourceType",
+        "publisher",
+        "documentTitle",
+        "documentCodeOrRevision",
+        "applicableSystemOrMachine",
+        "pageOrSection",
+        "evidenceLocation",
+        "reviewedAt",
+        "reviewer",
+        "verificationNotes",
+        "applicabilityNotes",
+        "decision",
+        "onMachineValidationRequired"
+      ],
+      "properties": {
+        "datasetPath": {
+          "type": "string",
+          "enum": [
+            "cnc/alarm-data.js",
+            "cnc/gm-code-complete.js",
+            "cnc/diagnosis-data.js",
+            "cnc/weak-category-data.js",
+            "cnc/learning-content-data.js"
+          ]
+        },
+        "itemKey": {
+          "type": "string",
+          "minLength": 1,
+          "description": "数据集内可稳定定位到具体条目的编号、代码或唯一键。"
+        },
+        "sourceType": {
+          "type": "string",
+          "enum": [
+            "oem_manual",
+            "machine_builder_manual",
+            "official_standard",
+            "supplier_technical_data",
+            "controlled_site_record"
+          ]
+        },
+        "publisher": {
+          "type": "string",
+          "minLength": 2
+        },
+        "documentTitle": {
+          "type": "string",
+          "minLength": 2
+        },
+        "documentCodeOrRevision": {
+          "type": "string",
+          "minLength": 2
+        },
+        "applicableSystemOrMachine": {
+          "type": "string",
+          "minLength": 2
+        },
+        "pageOrSection": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidenceLocation": {
+          "type": "string",
+          "minLength": 2,
+          "description": "仓库外部受控资料位置、文件编号或可追溯链接；不得提交受版权保护的完整手册。"
+        },
+        "fileSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "资料文件可用时记录 SHA-256；没有文件时可省略。"
+        },
+        "reviewedAt": {
+          "type": "string",
+          "format": "date"
+        },
+        "reviewer": {
+          "type": "string",
+          "minLength": 2
+        },
+        "verificationNotes": {
+          "type": "string",
+          "minLength": 12
+        },
+        "applicabilityNotes": {
+          "type": "string",
+          "minLength": 12
+        },
+        "decision": {
+          "type": "string",
+          "enum": [
+            "supported_for_stated_scope",
+            "conflicts_with_source",
+            "insufficient_evidence",
+            "not_applicable"
+          ]
+        },
+        "onMachineValidationRequired": {
+          "const": true
+        }
+      }
+    }
+  }
+}

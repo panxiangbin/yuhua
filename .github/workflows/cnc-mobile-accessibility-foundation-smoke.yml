@@ -1,0 +1,75 @@
+name: CNC mobile accessibility foundation smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-mobile-accessibility-foundation-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mobile-accessibility-foundation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Check audit syntax and contract
+        run: |
+          node --check cnc/tests/mobile-accessibility-foundation-smoke.cjs
+          node --check cnc/mobile-trust-nav.js
+          node - <<'NODE'
+          const fs = require('fs');
+          const test = fs.readFileSync('cnc/tests/mobile-accessibility-foundation-smoke.cjs', 'utf8');
+          for (const marker of [
+            '跳到主内容',
+            'aria-controls',
+            'aria-expanded',
+            'aria-live',
+            'reducedMotion',
+            'positiveTabindex',
+            'hiddenFocusable',
+            'Escape',
+            '390, height: 844'
+          ]) {
+            if (!test.includes(marker)) throw new Error(`无障碍审计缺少契约：${marker}`);
+          }
+
+          const implementation = fs.readFileSync('cnc/mobile-trust-nav.js', 'utf8');
+          for (const marker of [
+            "var SYNC_DELAYS = [0, 80, 240, 600]",
+            'window.CNC_ACCESSIBILITY_FOUNDATION',
+            'polling: false',
+            'observer: false',
+            "window.addEventListener('keydown', handleSidebarKeydown, true)",
+            'scheduleAccessibilitySync()'
+          ]) {
+            if (!implementation.includes(marker)) throw new Error(`无障碍实现缺少稳定性契约：${marker}`);
+          }
+          if (implementation.includes('new MutationObserver')) {
+            throw new Error('无障碍基础层不得恢复全局 MutationObserver，避免同值属性写入造成微任务循环');
+          }
+          NODE
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save playwright@1.54.1
+          npx playwright install --with-deps chromium
+      - name: Start static server
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/cnc-accessibility-server.log 2>&1 &
+          echo $! > /tmp/cnc-accessibility-server.pid
+      - name: Run 390x844 accessibility audit
+        run: node cnc/tests/mobile-accessibility-foundation-smoke.cjs
+      - name: Upload accessibility diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-mobile-accessibility-foundation-${{ github.run_id }}
+          path: artifacts/mobile-accessibility-foundation
+          if-no-files-found: warn
+          retention-days: 14

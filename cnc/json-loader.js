@@ -85,6 +85,117 @@ window.JSONLoader = {
 
 console.log('[JSON加载器] 已就绪，支持BOM处理');
 
+(function restoreNativePwaRegistration(){
+  if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
+  let restoring = null;
+  const container = navigator.serviceWorker;
+  const prototype = Object.getPrototypeOf(container);
+  const nativeRegister = prototype && prototype.register;
+  const cacheStorage = 'caches' in window ? window.caches : null;
+  const cachePrototype = cacheStorage && Object.getPrototypeOf(cacheStorage);
+  const nativeCacheDelete = cachePrototype && cachePrototype.delete;
+
+  if (typeof nativeRegister !== 'function') return;
+
+  function safeRegister(scriptURL, options) {
+    return nativeRegister.call(container, scriptURL, options);
+  }
+
+  // 旧启动层会在本脚本之后尝试把 register 改成“假成功”函数。
+  // 将同名自有属性锁定为原生代理，既保留浏览器真实行为，也阻止后续覆盖。
+  try {
+    Object.defineProperty(container, 'register', {
+      configurable: false,
+      enumerable: false,
+      writable: false,
+      value: safeRegister
+    });
+  } catch (error) {
+    try { container.register = safeRegister; } catch (ignored) {}
+  }
+
+  // 旧启动层还会在 DOMContentLoaded 中清空同源全部缓存。
+  // 启动窗口内拒绝页面脚本删除缓存，版本淘汰统一交给 sw.js 的 activate 流程。
+  if (cacheStorage && typeof nativeCacheDelete === 'function') {
+    try {
+      Object.defineProperty(cacheStorage, 'delete', {
+        configurable: true,
+        enumerable: false,
+        writable: false,
+        value: function protectedCacheDelete() { return Promise.resolve(false); }
+      });
+      window.setTimeout(() => {
+        try {
+          Object.defineProperty(cacheStorage, 'delete', {
+            configurable: true,
+            enumerable: false,
+            writable: true,
+            value: function deleteCache(name) {
+              return nativeCacheDelete.call(cacheStorage, name);
+            }
+          });
+        } catch (error) {}
+      }, 2500);
+    } catch (error) {}
+  }
+
+  function ensureWorkerCaches(registration) {
+    const worker = registration && (registration.active || registration.waiting || registration.installing);
+    if (!worker) return Promise.resolve(false);
+    return new Promise(resolve => {
+      const channel = new MessageChannel();
+      const timer = window.setTimeout(() => resolve(false), 5000);
+      channel.port1.onmessage = event => {
+        window.clearTimeout(timer);
+        resolve(Boolean(event.data && event.data.type === 'CNC_CACHES_READY' && event.data.ready));
+      };
+      worker.postMessage({ type: 'ENSURE_CACHES' }, [channel.port2]);
+    });
+  }
+
+  function restoreAndRegister() {
+    if (restoring) return restoring;
+    restoring = safeRegister('./sw.js', {
+      scope: './',
+      updateViaCache: 'none'
+    }).then(async registration => {
+      window.__CNC_PWA_REGISTRATION__ = registration;
+      await navigator.serviceWorker.ready.catch(() => registration);
+      const cachesReady = await ensureWorkerCaches(registration);
+      document.documentElement.dataset.cncPwaRegistration = cachesReady ? 'ready' : 'registered';
+      return cachesReady;
+    }).catch(error => {
+      window.__CNC_PWA_REGISTRATION_ERROR__ = String(error && error.message ? error.message : error);
+      document.documentElement.dataset.cncPwaRegistration = 'failed';
+      return false;
+    }).finally(() => {
+      restoring = null;
+    });
+    return restoring;
+  }
+
+  function restoreAfterLateStartupLayers() {
+    window.setTimeout(restoreAndRegister, 0);
+    window.setTimeout(restoreAndRegister, 160);
+    window.setTimeout(restoreAndRegister, 650);
+  }
+
+  restoreAndRegister();
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', restoreAfterLateStartupLayers, { once: true });
+  } else {
+    restoreAfterLateStartupLayers();
+  }
+  window.addEventListener('load', restoreAfterLateStartupLayers, { once: true });
+  window.addEventListener('pageshow', event => {
+    if (event.persisted) restoreAfterLateStartupLayers();
+  });
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    window.setTimeout(restoreAndRegister, 0);
+  });
+  window.CNC_RESTORE_PWA_REGISTRATION = restoreAndRegister;
+})();
+
 (function loadTrainingPractice(){
   if (document.querySelector('script[data-cnc-training-practice-script]')) return;
   var script = document.createElement('script');

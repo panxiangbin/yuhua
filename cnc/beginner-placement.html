@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>CNC新手起点测评｜数控小潘</title>
+  <style>
+    :root{color-scheme:light;--bg:#f4f7fb;--card:#fff;--text:#182230;--muted:#65758b;--line:#dce4ee;--accent:#1463ff;--soft:#eaf1ff;--focus:#082f8a}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif}.wrap{max-width:720px;margin:auto;padding:20px 16px 40px}.back{display:inline-flex;min-height:44px;align-items:center;color:var(--accent);text-decoration:none;font-weight:700}h1{font-size:26px;margin:14px 0 8px}.lead{color:var(--muted);line-height:1.7;margin:0 0 18px}.progress{height:10px;background:#dfe6ef;border-radius:999px;overflow:hidden;margin:14px 0 24px}.progress span{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:14px}.qtitle{font-size:18px;font-weight:800;line-height:1.5;margin-bottom:14px}.option{display:flex;gap:10px;align-items:flex-start;width:100%;min-height:52px;margin:10px 0;padding:13px;border:1px solid var(--line);border-radius:14px;background:#fff;color:var(--text);font-size:16px;text-align:left}.option.selected{border-color:var(--accent);background:var(--soft)}.actions{display:flex;gap:10px;flex-wrap:wrap}.btn{display:flex;align-items:center;justify-content:center;min-height:48px;padding:0 18px;border-radius:14px;border:0;font-size:16px;font-weight:800;text-decoration:none;flex:1 1 170px}.primary{background:var(--accent);color:#fff}.ghost{background:#fff;color:var(--text);border:1px solid var(--line)}.result{display:none}.result.show{display:block}.tag{display:inline-block;padding:6px 10px;border-radius:999px;background:var(--soft);color:var(--accent);font-weight:800}.result h2{font-size:24px;margin:14px 0 8px}.result p{line-height:1.7;color:var(--muted)}.route{margin:16px 0;padding:14px;border-left:4px solid var(--accent);background:#f8faff;border-radius:10px;line-height:1.65}.reasoning strong{display:block;margin-bottom:5px}.note{font-size:14px;color:var(--muted);line-height:1.6}.validation,.handoff-status{margin:12px 0 0;padding:10px 12px;border-radius:10px;background:#fff5e8;color:#7a3f00;font-weight:700;line-height:1.5}.handoff-status.ok{background:#edf8f1;color:#245c38}.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}.back:focus-visible,.option:focus-visible,.btn:focus-visible,.qtitle:focus,#result-title:focus,.validation:focus,.handoff-status:focus{outline:3px solid var(--focus);outline-offset:3px}
+    @media (prefers-reduced-motion:reduce){.progress span{transition:none}}
+  </style>
+</head>
+<body>
+<main class="wrap">
+  <a class="back" href="./training-camp.html">← 返回训练营</a>
+  <h1>CNC新手起点测评</h1>
+  <p class="lead">6道题，约2分钟。根据安全意识、坐标对刀和程序验证基础，推荐最合适的起点。测评只做推荐，不改动你的成绩、XP或通关记录。</p>
+  <div class="progress" id="progress" role="progressbar" aria-label="测评进度" aria-valuemin="0" aria-valuemax="6" aria-valuenow="0" aria-valuetext="已完成0题，共6题"><span id="bar"></span></div>
+  <section id="quiz" class="card" role="region" aria-labelledby="qtitle">
+    <div id="qtitle" class="qtitle" tabindex="-1"></div>
+    <div id="options" role="radiogroup" aria-labelledby="qtitle"></div>
+    <p id="validation" class="validation" role="status" aria-live="polite" aria-atomic="true" tabindex="-1" hidden></p>
+    <div class="actions"><button id="prev" class="btn ghost" type="button">上一题</button><button id="next" class="btn primary" type="button">下一题</button></div>
+  </section>
+  <section id="result" class="card result" role="region" aria-live="polite" aria-atomic="true" aria-labelledby="result-title" aria-describedby="result-copy result-diagnostics result-route" hidden>
+    <span class="tag">推荐起点</span>
+    <h2 id="result-title" tabindex="-1"></h2>
+    <p id="result-copy"></p>
+    <div id="result-diagnostics" class="route reasoning" aria-label="测评判断依据"></div>
+    <div id="result-route" class="route"></div>
+    <div class="actions"><a id="handoff-link" class="btn primary" href="./training-camp.html">把本次路线带到训练营</a><a id="result-link" class="btn ghost" href="./course-safety-foundation.html">直接开始第1步</a><button id="restart" class="btn ghost" type="button">重新测评</button></div>
+    <p id="handoff-status" class="handoff-status" role="status" aria-live="polite" aria-atomic="true" tabindex="-1" hidden></p>
+  </section>
+  <p class="note" id="assessment-note">判断原则：关键安全项是硬门禁，不能被其他题的高分抵消；安全基础优先于操作熟练度；坐标与对刀不稳时，不建议直接跳到程序运行。测评结果仅保存在本次页面内；只有点击“把本次路线带到训练营”时，才会在当前标签页临时保存推荐路线，训练营读取后立即清除。具体机床参数、报警、刀补和恢复操作必须核对相同版本原厂手册、企业制度、受控工艺与现场条件，并由授权人员确认。</p>
+</main>
+<script>
+const HANDOFF_KEY='cnc_beginner_placement_route_handoff_v1';
+const HANDOFF_TTL_MS=5*60*1000;
+const questions=[
+ {t:'看到一段陌生程序准备上机，你会先做什么？',label:'陌生程序验证',domain:'safety',critical:true,a:[['直接按循环启动',0],['单段、空运行并检查刀补和坐标',2],['只看程序有没有报警',1]]},
+ {t:'你能否说清楚机床坐标系与工件坐标系的区别？',label:'坐标系基础',domain:'foundation',critical:false,a:[['完全说不清',0],['大概知道，但容易混',1],['能结合G54和回零说明',2]]},
+ {t:'换刀后，加工深度突然偏差5毫米，你最先怀疑什么？',label:'对刀与刀补基础',domain:'foundation',critical:false,a:[['进给速度',0],['刀长补偿或对刀数据',2],['冷却液',1]]},
+ {t:'程序中的G00快速移动最需要先确认什么？',label:'G00碰撞路径',domain:'safety',critical:true,a:[['主轴声音',0],['路径是否会撞刀、撞夹具',2],['工件颜色',1]]},
+ {t:'首件加工完成后，你通常怎么处理？',label:'首件检查',domain:'safety',critical:true,a:[['直接批量加工',0],['测量关键尺寸并与图纸、公差核对',2],['看表面亮不亮',1]]},
+ {t:'出现报警时，你会怎样排查？',label:'报警排查',domain:'safety',critical:true,a:[['反复复位再启动',0],['记录报警号，确认当前状态后按原因排查',2],['先改参数试试',1]]}
+];
+let index=0;const answers=Array(questions.length).fill(null);
+const qtitle=document.querySelector('#qtitle'),options=document.querySelector('#options'),progress=document.querySelector('#progress'),bar=document.querySelector('#bar'),prev=document.querySelector('#prev'),next=document.querySelector('#next'),quiz=document.querySelector('#quiz'),result=document.querySelector('#result'),validation=document.querySelector('#validation'),handoffStatus=document.querySelector('#handoff-status');
+function focusNode(id){requestAnimationFrame(()=>document.getElementById(id)?.focus({preventScroll:false}))}
+function setValidation(message=''){validation.textContent=message;validation.hidden=!message;if(message)focusNode('validation')}
+function setHandoffStatus(message='',ok=false){handoffStatus.textContent=message;handoffStatus.hidden=!message;handoffStatus.classList.toggle('ok',Boolean(ok));if(message)focusNode('handoff-status')}
+function clearHandoff(){try{sessionStorage.removeItem(HANDOFF_KEY)}catch{}}
+function completedCount(){return answers.reduce((sum,value)=>sum+(value===null?0:1),0)}
+function updateProgress(){const completed=completedCount();bar.style.width=`${completed/questions.length*100}%`;progress.setAttribute('aria-valuenow',String(completed));progress.setAttribute('aria-valuetext',`已完成${completed}题，共${questions.length}题；当前第${index+1}题`)}
+function selectOption(optionIndex,{focus=true}={}){answers[index]=optionIndex;setValidation();render();if(focus)document.getElementById(`option-${index}-${optionIndex}`)?.focus({preventScroll:true})}
+function moveOption(currentIndex,delta){const count=questions[index].a.length;const target=(currentIndex+delta+count)%count;selectOption(target)}
+function render({focusQuestion=false}={}){const q=questions[index];qtitle.textContent=`第${index+1}题｜${q.t}`;options.innerHTML='';q.a.forEach((item,i)=>{const b=document.createElement('button');b.type='button';b.id=`option-${index}-${i}`;b.className='option'+(answers[index]===i?' selected':'');b.setAttribute('role','radio');b.setAttribute('aria-checked',answers[index]===i?'true':'false');b.tabIndex=answers[index]===i||answers[index]===null&&i===0?0:-1;b.textContent=item[0];b.addEventListener('click',()=>selectOption(i));b.addEventListener('keydown',event=>{if(['ArrowDown','ArrowRight'].includes(event.key)){event.preventDefault();moveOption(i,1)}else if(['ArrowUp','ArrowLeft'].includes(event.key)){event.preventDefault();moveOption(i,-1)}else if(event.key==='Home'){event.preventDefault();selectOption(0)}else if(event.key==='End'){event.preventDefault();selectOption(q.a.length-1)}});options.appendChild(b)});updateProgress();prev.disabled=index===0;next.textContent=index===questions.length-1?'查看结果':'下一题';if(focusQuestion)focusNode('qtitle')}
+function answerScore(questionIndex){const selected=answers[questionIndex];return selected===null?0:questions[questionIndex].a[selected][1]}
+function evaluatePlacement(){
+  const score=questions.reduce((sum,question,questionIndex)=>sum+answerScore(questionIndex),0);
+  const criticalFailures=questions.filter((question,questionIndex)=>question.critical&&answerScore(questionIndex)===0).map(question=>question.label);
+  const criticalPartials=questions.filter((question,questionIndex)=>question.critical&&answerScore(questionIndex)===1).map(question=>question.label);
+  const foundationFailures=questions.filter((question,questionIndex)=>question.domain==='foundation'&&answerScore(questionIndex)===0).map(question=>question.label);
+  if(criticalFailures.length){
+    return {decision:'critical-safety',title:'从第1关：安全基础开始',copy:'你的总分不能覆盖关键安全项。先把危险动作改成“先确认、再操作”，再进入坐标、对刀和程序训练。',diagnostics:`总分 ${score}/12。关键安全项未通过：${criticalFailures.join('、')}。关键安全项采用硬门禁，不能被其他题的高分抵消；危险答案不会被其他题的高分抵消，也不会因总分高而放行。`,route:'建议路线：安全基础 → 加工中心基础 → 坐标轴与回零',href:'./course-safety-foundation.html',steps:[['安全基础','./course-safety-foundation.html'],['认识加工中心','./course-machining-center-basics.html'],['坐标轴与回零','./course-coordinate-axes.html']]};
+  }
+  if(score<=5){
+    return {decision:'low-score',title:'从第1关：安全基础开始',copy:'你的首要任务不是记更多G代码，而是先建立“先确认、再操作”的安全习惯。',diagnostics:`总分 ${score}/12。基础判断仍不稳定，先按完整新手路线打地基。`,route:'建议路线：安全基础 → 加工中心基础 → 坐标轴与回零',href:'./course-safety-foundation.html',steps:[['安全基础','./course-safety-foundation.html'],['认识加工中心','./course-machining-center-basics.html'],['坐标轴与回零','./course-coordinate-axes.html']]};
+  }
+  if(score<=9||criticalPartials.length||foundationFailures.length){
+    const gaps=[...criticalPartials,...foundationFailures];
+    return {decision:'foundation-gap',title:'从坐标、对刀与刀补开始',copy:'你已避开最危险的答案，但安全确认、坐标系、对刀或补偿仍有需要练稳的环节。',diagnostics:`总分 ${score}/12。${gaps.length?`需要补强：${gaps.join('、')}。`:'总分尚未达到程序验证起点。'}先补基础，再进入程序运行训练。`,route:'建议路线：坐标轴 → 工件坐标系 → 刀长补偿 → 对刀检查模拟',href:'./course-coordinate-axes.html',steps:[['坐标轴与运动方向','./course-coordinate-axes.html'],['机床坐标与工件坐标','./course-machine-work-offset.html'],['对刀与刀长补偿','./course-tool-length-offset.html']]};
+  }
+  return {decision:'advanced-ready',title:'进入程序验证与首件检查',copy:'基础判断较稳，可以重点训练程序验证、空运行、首件测量和异常排查。',diagnostics:`总分 ${score}/12，关键安全项全部通过，坐标与刀补题未出现基础性错误。该结果仍不是现场上机许可。`,route:'建议路线：G00/G01 → 程序空运行模拟 → 首件检查 → 故障排查专项',href:'./course-g00-g01-basics.html',steps:[['G00与G01','./course-g00-g01-basics.html'],['程序检查与空运行','./simulator-program-dry-run.html'],['首件测量与超差排查','./simulator-first-piece-inspection.html']]};
+}
+function handoffPayload(data){const createdAt=Date.now();return {version:1,source:'beginner-placement',decision:data.decision,title:data.title,route:data.route,href:data.href,steps:data.steps.map(([title,href])=>({title,href})),createdAt,expiresAt:createdAt+HANDOFF_TTL_MS}}
+function storeRouteHandoff(data){clearHandoff();try{sessionStorage.setItem(HANDOFF_KEY,JSON.stringify(handoffPayload(data)));setHandoffStatus('本次推荐路线已临时写入当前标签页，训练营读取后会立即清除。',true);return true}catch{setHandoffStatus('当前浏览器不允许使用会话临时存储，将直接进入训练营；训练营会按正式学习记录显示默认推荐。');return false}}
+window.CNC_BEGINNER_PLACEMENT=Object.freeze({evaluate:evaluatePlacement,handoffKey:HANDOFF_KEY});
+function finish(){clearHandoff();setHandoffStatus();const data=evaluatePlacement();document.querySelector('#result-title').textContent=data.title;document.querySelector('#result-copy').textContent=data.copy;document.querySelector('#result-diagnostics').innerHTML=`<strong>为什么这样推荐</strong>${data.diagnostics}`;document.querySelector('#result-route').textContent=data.route;document.querySelector('#result-link').href=data.href;result.dataset.decision=data.decision;quiz.hidden=true;result.hidden=false;result.classList.add('show');bar.style.width='100%';progress.setAttribute('aria-valuenow',String(questions.length));progress.setAttribute('aria-valuetext',`已完成${questions.length}题，共${questions.length}题`);focusNode('result-title')}
+next.addEventListener('click',()=>{if(answers[index]===null){setValidation(`第${index+1}题尚未选择，请先选择一个答案。`);return}setValidation();if(index<questions.length-1){index++;render({focusQuestion:true})}else finish()});
+prev.addEventListener('click',()=>{if(index>0){index--;setValidation();render({focusQuestion:true})}});
+document.querySelector('#handoff-link').addEventListener('click',event=>{event.preventDefault();const data=evaluatePlacement();storeRouteHandoff(data);location.href='./training-camp.html'});
+document.querySelector('#restart').addEventListener('click',()=>{clearHandoff();setHandoffStatus();answers.fill(null);index=0;result.classList.remove('show');result.hidden=true;delete result.dataset.decision;quiz.hidden=false;setValidation();render({focusQuestion:true})});
+render();
+</script>
+</body>
+</html>

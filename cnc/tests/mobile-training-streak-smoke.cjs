@@ -10,6 +10,7 @@ const assert = require('node:assert/strict');
   await page.goto('http://127.0.0.1:4173/cnc/?smoke=training-streak', { waitUntil: 'domcontentloaded', timeout: 60000 });
   await page.waitForFunction(() => window.CNC_TRAINING_PROFILE?.build === '20260724a', null, { timeout: 20000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-startup-home') === 'stable', null, { timeout: 15000 });
+  await page.waitForFunction(() => window.CNC_GAME_QUERY_NAV?.build === '20260731d', null, { timeout: 15000 });
   assert.equal(await page.locator('.view.active').getAttribute('id'), 'view-dashboard');
 
   await page.evaluate(() => {
@@ -23,7 +24,15 @@ const assert = require('node:assert/strict');
     localStorage.setItem('cnc_training_practice_v1', JSON.stringify({ version:1, attempts:{}, wrong:[], correct:['first-piece-check'], lessonScores }));
   });
 
-  await page.locator('.xp-bottom-nav [data-xp-route="favorites"]').click();
+  // 手机闯关首页只显示一层主导航；先从可见“现场速查”进入工作区，
+  // 再使用恢复后的工具导航进入“我的”，验证真实用户路径而不是操作隐藏元素。
+  await page.locator('#xp-game-home [data-xp-query-filter="gcode"]').click();
+  await page.waitForSelector('#view-workspace.active', { state: 'visible', timeout: 15000 });
+  await page.waitForFunction(() => {
+    const node = document.querySelector('body > .xp-bottom-nav');
+    return node && node.getClientRects().length > 0 && node.getAttribute('aria-hidden') === 'false' && !node.hasAttribute('inert');
+  }, null, { timeout: 15000 });
+  await page.locator('body > .xp-bottom-nav [data-xp-route="favorites"]').click();
   await page.waitForSelector('#view-favorites.active #xp-training-profile', { state: 'visible', timeout: 10000 });
   await page.evaluate(() => window.CNC_TRAINING_PROFILE.render());
 
@@ -34,7 +43,12 @@ const assert = require('node:assert/strict');
 
   const button = page.locator('[data-complete-today]');
   assert.ok(await button.isEnabled());
-  assert.ok((await button.evaluate(node => node.getBoundingClientRect().height)) >= 44);
+  await page.waitForFunction(() => {
+    const node = document.querySelector('[data-complete-today]');
+    return Boolean(node && node.getBoundingClientRect().height >= 44);
+  }, null, { timeout: 10000 });
+  const buttonHeight = await button.evaluate(node => node.getBoundingClientRect().height);
+  assert.ok(buttonHeight >= 44, `完成今日训练按钮高度应不少于44px，实际为 ${buttonHeight}px`);
   await button.click();
 
   const after = await page.evaluate(() => window.CNC_TRAINING_PROFILE.snapshot());
@@ -52,6 +66,6 @@ const assert = require('node:assert/strict');
   assert.equal(stored.xp, 420);
   assert.equal(stored.trainingDays.length, 3);
   assert.deepEqual(errors, []);
-  console.log('每日训练记录、连续天数、20XP、防重复与3天徽章通过', { before: before.streak, after: after.streak, badges: after.badges });
+  console.log('单层首页真实导航、每日训练记录、连续天数、20XP、防重复与3天徽章通过', { before: before.streak, after: after.streak, badges: after.badges, buttonHeight });
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });

@@ -26,7 +26,25 @@ const { chromium } = require('playwright');
   await page.reload({ waitUntil: 'networkidle' });
   await page.waitForFunction(() => window.CNC_PERSONAL_HOME && window.CNC_PERSONAL_HOME.recordsBuild === '20260722e');
 
-  const nav = page.locator('.xp-bottom-nav [data-xp-route="favorites"]:visible');
+  // 手机闯关首页只保留一层主导航；工具导航在首页必须隐藏且不可访问。
+  const homeUtilityState = await page.locator('body > .xp-bottom-nav').evaluate(node => ({
+    visible: node.getClientRects().length > 0,
+    ariaHidden: node.getAttribute('aria-hidden'),
+    inert: node.hasAttribute('inert')
+  }));
+  if (homeUtilityState.visible || homeUtilityState.ariaHidden !== 'true' || !homeUtilityState.inert) {
+    throw new Error('手机首页工具导航隐藏语义异常: ' + JSON.stringify(homeUtilityState));
+  }
+
+  // 从真实可见的“现场速查”进入查询工作区，再使用恢复后的工具导航进入“我的”。
+  await page.locator('#xp-game-home [data-xp-query-filter="gcode"]').click();
+  await page.waitForSelector('#view-workspace.active', { state: 'visible', timeout: 15000 });
+  await page.waitForFunction(() => {
+    const node = document.querySelector('body > .xp-bottom-nav');
+    return node && node.getClientRects().length > 0 && node.getAttribute('aria-hidden') === 'false' && !node.hasAttribute('inert');
+  }, null, { timeout: 15000 });
+
+  const nav = page.locator('body > .xp-bottom-nav [data-xp-route="favorites"]');
   await nav.click();
   await page.waitForFunction(() => document.querySelector('#view-favorites.view.active') && document.querySelector('#view-favorites[data-industrial-records="ready"]'));
 
@@ -58,6 +76,6 @@ const { chromium } = require('playwright');
   await page.locator('#recent-links [data-link-entry]').first().click();
   await page.waitForFunction(() => document.querySelector('#view-workspace.view.active'));
   if (errors.length) throw new Error('控制台错误: ' + errors.join(' | '));
-  console.log(JSON.stringify({ passed: true, metrics, ids }));
+  console.log(JSON.stringify({ passed: true, homeUtilityState, metrics, ids }));
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });

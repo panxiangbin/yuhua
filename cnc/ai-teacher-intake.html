@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>AI CNC老师现场问诊单｜数控小潘</title>
+  <meta name="description" content="把CNC现场问题整理成可交给师傅、维修或工艺人员核验的结构化问诊单；全程本地生成，不上传数据，不猜参数与复位步骤。">
+  <style>
+    :root{color-scheme:light;--bg:#f2efe8;--card:#fffdf8;--ink:#292d30;--muted:#687078;--line:#d8d2c6;--blue:#365b72;--blue-soft:#e9f0f4;--ok:#3f6b50;--warn:#8a5a16;--bad:#8a4034}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}.shell{max-width:900px;margin:auto;padding:14px 14px 108px}.top{display:flex;gap:10px;justify-content:space-between;align-items:center}.btn{min-height:46px;padding:0 14px;border:1px solid var(--line);border-radius:12px;background:var(--blue);color:#fff;text-decoration:none;font-weight:900;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}.btn.alt{background:var(--card);color:var(--blue)}.hero,.panel{background:var(--card);border:1px solid var(--line);border-radius:15px;box-shadow:0 6px 16px rgba(48,44,36,.07);padding:16px;margin-top:14px}.hero h1{font-size:30px;margin:7px 0 10px}.hero p,.panel p{color:var(--muted);line-height:1.72}.tag{display:inline-flex;min-height:30px;align-items:center;padding:0 10px;border-radius:999px;background:var(--blue-soft);color:var(--blue);font-weight:900}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:grid;gap:7px}.field.full{grid-column:1/-1}.field label,.section-title{font-weight:900}.field small{color:var(--muted);line-height:1.5}.field select,.field textarea{width:100%;min-height:48px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);font:inherit;padding:11px 12px}.field textarea{min-height:94px;resize:vertical;line-height:1.55}.risk-options{display:grid;grid-template-columns:1fr 1fr;gap:9px}.risk-option{min-height:48px;display:flex;gap:9px;align-items:center;padding:9px 11px;border:1px solid var(--line);border-radius:12px;background:#f8f5ef;font-weight:800}.risk-option input{width:22px;height:22px;flex:0 0 auto}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.output{display:none}.output.show{display:block}.urgent{border-left:5px solid var(--bad);background:#fff8f5}.safe{border-left:5px solid var(--ok)}.report{white-space:pre-wrap;overflow-wrap:anywhere;background:#f8f5ef;border:1px solid var(--line);border-radius:12px;padding:14px;line-height:1.68;font-size:15px}.status{min-height:24px;color:var(--ok);font-weight:900;margin-top:9px}.notice{border-left:5px solid var(--warn)}.bottom{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,900px);display:grid;grid-template-columns:repeat(5,1fr);background:#fffdf8;border-top:1px solid var(--line);padding:7px 8px calc(7px + env(safe-area-inset-bottom))}.bottom a{min-height:48px;display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--muted);font-weight:900;font-size:13px}.bottom a.active{color:var(--blue)}@media(max-width:620px){.grid,.risk-options{grid-template-columns:1fr}.hero h1{font-size:27px}.top{align-items:stretch}.top .btn{flex:1;text-align:center}}
+  </style>
+</head>
+<body>
+<main class="shell">
+  <div class="top"><a class="btn alt" href="./ai-teacher.html">← 返回AI老师</a><a class="btn" href="./simulator-hub.html">进入模拟训练</a></div>
+  <section class="hero">
+    <span class="tag">本地问诊单 · 不需要API Key</span>
+    <h1>先把现场问题说完整，再决定怎么查</h1>
+    <p>这张表不会替你修改参数、刀补、坐标或复位报警。它只把系统、阶段、风险、报警原文、程序段和现场现象整理成一份可核验记录，便于交给现场师傅、工艺、维修或设备厂家继续判断。</p>
+  </section>
+
+  <form class="panel" id="intake-form">
+    <h2>一、基本条件</h2>
+    <div class="grid">
+      <div class="field">
+        <label for="system">数控系统或机型</label>
+        <select id="system" required>
+          <option value="">请选择</option>
+          <option>暂时不确定，待核对铭牌或系统画面</option>
+          <option>FANUC类加工中心</option>
+          <option>西门子类加工中心</option>
+          <option>三菱类加工中心</option>
+          <option>其他系统或专机</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="phase">问题发生阶段</label>
+        <select id="phase" required>
+          <option value="">请选择</option>
+          <option>课堂学习或离线仿真</option>
+          <option>程序图形检查</option>
+          <option>安全空运行</option>
+          <option>单段首次接近工件</option>
+          <option>首件加工与测量</option>
+          <option>批量生产</option>
+          <option>设备维护或恢复</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="category">问题类别</label>
+        <select id="category" required>
+          <option value="">请选择</option>
+          <option value="alarm">报警或无法继续运行</option>
+          <option value="coordinate">坐标、找正或G54偏置</option>
+          <option value="offset">刀具、H/D号或刀补</option>
+          <option value="program">陌生程序或路径验证</option>
+          <option value="measurement">首件尺寸、测量或超差</option>
+          <option value="workholding">装夹、工艺或干涉风险</option>
+          <option value="other">其他问题</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="machine-state">当前机床状态</label>
+        <select id="machine-state" required>
+          <option value="">请选择</option>
+          <option>已停止，现场状态已保留</option>
+          <option>已按企业制度受控停机</option>
+          <option>仍在待机，尚未继续启动</option>
+          <option>不清楚当前状态，需要现场人员确认</option>
+        </select>
+      </div>
+    </div>
+
+    <h2>二、有没有立即风险</h2>
+    <div class="risk-options" id="risk-options">
+      <label class="risk-option"><input type="radio" name="risk" value="person" required>存在人员受伤或意外运动风险</label>
+      <label class="risk-option"><input type="radio" name="risk" value="collision">存在碰撞、夹具或工件松动风险</label>
+      <label class="risk-option"><input type="radio" name="risk" value="damage">已经出现异常声音、刀具或工件损伤</label>
+      <label class="risk-option"><input type="radio" name="risk" value="none">暂未发现立即危险，机床已停止</label>
+    </div>
+
+    <h2>三、保留真实证据</h2>
+    <div class="grid">
+      <div class="field full">
+        <label for="alarm-text">完整报警号与报警原文</label>
+        <textarea id="alarm-text" maxlength="500" placeholder="按画面逐字记录；没有报警就写“无报警”。"></textarea>
+      </div>
+      <div class="field full">
+        <label for="program-block">发生前后的程序段</label>
+        <textarea id="program-block" maxlength="700" placeholder="记录发生段及前后相关段；不要只写一个G代码。"></textarea>
+      </div>
+      <div class="field full">
+        <label for="symptom">现场现象与轴位置</label>
+        <textarea id="symptom" maxlength="700" placeholder="例如：哪一轴、哪个方向、刀具/主轴/冷却状态、工件和夹具状态、尺寸偏差模式。"></textarea>
+      </div>
+      <div class="field full">
+        <label for="actions-taken">已经做过什么</label>
+        <textarea id="actions-taken" maxlength="500" placeholder="例如：已停止、已记录报警、已复测；如按过复位或改过数据，也要如实写明。"></textarea>
+        <small>记录真实动作是为了避免重复试错，不用于追责。不要删除已经发生的关键信息。</small>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn" type="submit">生成现场问诊单</button>
+      <button class="btn alt" type="reset">清空重填</button>
+    </div>
+  </form>
+
+  <section class="panel output" id="output" aria-live="polite" aria-atomic="true">
+    <h2>结构化问诊单</h2>
+    <div id="risk-banner" class="panel urgent"></div>
+    <div class="report" id="report" tabindex="0"></div>
+    <div class="actions"><button class="btn" id="copy-report" type="button">复制问诊单</button><a class="btn alt" id="training-link" href="./training-camp.html">进入对应训练</a></div>
+    <div class="status" id="copy-status"></div>
+  </section>
+
+  <section class="panel notice">
+    <strong>适用范围与安全边界</strong>
+    <p>本工具适合零基础学习者整理信息，不替代机床原厂手册、报警手册、企业制度、受控工艺和现场授权。报警编号、参数权限、G/M代码、坐标写入、H/D号、刀补正负、联锁、急停和恢复流程会因系统、版本、机型及厂家配置而不同。任何参数、刀补、坐标、程序或复位操作，都必须由有权限人员按原厂资料和现场条件核验。</p>
+  </section>
+</main>
+<nav class="bottom" aria-label="平台主导航"><a href="./index.html">首页</a><a href="./training-camp.html">训练营</a><a href="./practice.html">练习</a><a href="./index.html#workspace">查代码</a><a class="active" aria-current="page" href="./profile.html">我的</a></nav>
+<script>
+(() => {
+  'use strict';
+  const BUILD = '20260801-ai-intake1';
+  const ROUTES = {
+    alarm: './simulator-alarm-troubleshooting.html',
+    coordinate: './simulator-work-offset-setting.html',
+    offset: './simulator-tool-length-offset-check.html',
+    program: './simulator-program-dry-run.html',
+    measurement: './simulator-first-piece-inspection.html',
+    workholding: './simulator-workholding-check.html',
+    other: './training-camp.html'
+  };
+  const EVIDENCE = {
+    alarm: ['完整报警号、报警原文、系统与机型', '发生程序段、轴位置和当时动作', '报警前是否换刀、回零、调用坐标/刀补或进入固定循环', '人员、刀具、工件、夹具和周边是否存在继续运动风险'],
+    coordinate: ['受控图纸指定的工件零点与测量基准', '工件实际装夹方向、定位面和测量方法', '当前调用的坐标系、轴、单位与正负方向', '图形检查、空运行、单段低倍率的核验结果'],
+    offset: ['实物刀具、刀位号、程序T号和H/D号对应关系', '刀具重新装夹、换刀或伸出变化后的测量记录', '补偿页地址、单位、正负、当前值与修改权限', '首次接近时的单段、倍率和安全距离核验'],
+    program: ['程序版本、受控图纸与工艺文件', '坐标系、刀具、H/D号、模态、主轴、冷却和固定循环', '夹具、毛坯、刀具通道和安全位置', '图形检查、空运行、单段首次接近与首件测量记录'],
+    measurement: ['量具状态、清洁、温度、测量方法和第二人复核', '偏差属于整体同向、单刀相关、渐进漂移还是随机波动', 'G54、装夹基准、H/D号、刀具磨损与测量链', '每次只修改一个已确认因素后的复验结果'],
+    workholding: ['工件定位面、夹紧点、伸出量与受力方向', '夹具、刀具、主轴和机床行程的干涉检查', '毛坯余量、工序顺序和刀具通道', '空运行、单段、低倍率及首件停机检查记录'],
+    other: ['系统/机型、问题发生阶段与当前状态', '完整现象、报警原文、程序段和轴位置', '已经做过的动作以及动作后的变化', '原厂手册、企业制度或受控工艺中的对应条款']
+  };
+  const DONT = ['不要连续按复位并反复启动。', '不要照抄别台机床的参数、坐标或刀补值。', '不要在原因不明时同时修改多个数据。', '不要屏蔽联锁、跳过空运行、单段首次接近或首件放行。'];
+  function value(id) { return document.getElementById(id).value.trim(); }
+  function selectedText(id) { const el = document.getElementById(id); return el.options[el.selectedIndex]?.text || ''; }
+  function categoryText() { return selectedText('category'); }
+  function riskText(value) {
+    return ({person:'存在人员受伤或意外运动风险',collision:'存在碰撞、夹具或工件松动风险',damage:'已经出现异常声音、刀具或工件损伤',none:'暂未发现立即危险，机床已停止'})[value] || '未填写';
+  }
+  function clean(value, fallback) { return value || fallback; }
+  function buildReport(data) {
+    const evidence = EVIDENCE[data.category] || EVIDENCE.other;
+    const urgent = data.risk !== 'none';
+    const first = urgent
+      ? '立即停止继续加工；按现场风险和企业制度，由有权限人员选择进给保持、急停或其他受控停机方式，并先确认人员与设备安全。'
+      : '保持机床停止，不要再次启动；先保留现场、记录证据，再按受控流程排查。';
+    return [
+      '【AI CNC老师现场问诊单】',
+      `生成时间：${new Date().toLocaleString('zh-CN',{hour12:false})}`,
+      '',
+      '一、当前条件',
+      `系统/机型：${data.system}`,
+      `发生阶段：${data.phase}`,
+      `问题类别：${data.categoryLabel}`,
+      `机床状态：${data.machineState}`,
+      `风险判断：${riskText(data.risk)}`,
+      '',
+      '二、第一安全动作',
+      `1. ${first}`,
+      '2. 不清除报警、程序段、轴位置和现场状态等关键线索。',
+      '3. 由现场师傅、工艺、维修或厂家按职责继续核验。',
+      '',
+      '三、已记录证据',
+      `报警号与原文：${clean(data.alarm,'未记录；若无报警请明确写“无报警”')}`,
+      `相关程序段：${clean(data.program,'未记录')}`,
+      `现场现象与轴位置：${clean(data.symptom,'未记录')}`,
+      `已做动作：${clean(data.actions,'未记录')}`,
+      '',
+      '四、还需要核对',
+      ...evidence.map((item,index)=>`${index+1}. ${item}`),
+      '',
+      '五、禁止猜测',
+      ...DONT.map((item,index)=>`${index+1}. ${item}`),
+      '',
+      '六、适用范围',
+      '本单只用于整理信息，不给出固定转速、进给、安全高度、参数值、坐标值、刀补值或报警复位步骤。实际操作必须核对机床原厂手册、报警手册、企业制度、受控工艺和现场条件，并由有权限人员确认。'
+    ].join('\n');
+  }
+  function collect() {
+    return {
+      system: selectedText('system'),
+      phase: selectedText('phase'),
+      category: value('category'),
+      categoryLabel: categoryText(),
+      machineState: selectedText('machine-state'),
+      risk: document.querySelector('input[name="risk"]:checked')?.value || '',
+      alarm: value('alarm-text'),
+      program: value('program-block'),
+      symptom: value('symptom'),
+      actions: value('actions-taken')
+    };
+  }
+  async function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+    const area = document.createElement('textarea');
+    area.value = text;
+    area.setAttribute('readonly','');
+    area.style.position = 'fixed';
+    area.style.opacity = '0';
+    document.body.appendChild(area);
+    area.select();
+    const ok = document.execCommand('copy');
+    area.remove();
+    return ok;
+  }
+  let latestReport = '';
+  document.getElementById('intake-form').addEventListener('submit', event => {
+    event.preventDefault();
+    if (!event.currentTarget.reportValidity()) return;
+    const data = collect();
+    latestReport = buildReport(data);
+    const urgent = data.risk !== 'none';
+    const banner = document.getElementById('risk-banner');
+    banner.className = `panel ${urgent ? 'urgent' : 'safe'}`;
+    banner.textContent = urgent
+      ? '当前选择包含立即风险：不要继续试运行，先按现场制度受控停机并确保人员安全。'
+      : '当前未发现立即风险：仍应保持机床停止，先核对证据，不要直接再次启动。';
+    document.getElementById('report').textContent = latestReport;
+    document.getElementById('training-link').href = ROUTES[data.category] || ROUTES.other;
+    const output = document.getElementById('output');
+    output.classList.add('show');
+    output.scrollIntoView({behavior:'smooth',block:'start'});
+    document.getElementById('copy-status').textContent = '';
+  });
+  document.getElementById('intake-form').addEventListener('reset', () => {
+    latestReport = '';
+    document.getElementById('output').classList.remove('show');
+    document.getElementById('copy-status').textContent = '';
+  });
+  document.getElementById('copy-report').addEventListener('click', async () => {
+    const status = document.getElementById('copy-status');
+    try {
+      const ok = latestReport && await copyText(latestReport);
+      status.textContent = ok ? '问诊单已复制。' : '复制失败，请长按报告手动复制。';
+    } catch {
+      status.textContent = '复制失败，请长按报告手动复制。';
+    }
+  });
+  window.CNC_AI_TEACHER_INTAKE = {
+    build: BUILD,
+    localOnly: true,
+    externalModel: false,
+    persistsData: false,
+    routes: {...ROUTES},
+    generate: values => buildReport(values)
+  };
+})();
+</script>
+</body>
+</html>

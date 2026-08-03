@@ -10,6 +10,7 @@ const assert = require('node:assert/strict');
   await page.goto('http://127.0.0.1:4173/cnc/?smoke=training-profile', { waitUntil: 'domcontentloaded', timeout: 60000 });
   await page.waitForFunction(() => window.CNC_TRAINING_PROFILE?.build === '20260724a', null, { timeout: 20000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-startup-home') === 'stable', null, { timeout: 15000 });
+  await page.waitForFunction(() => window.CNC_GAME_QUERY_NAV?.build === '20260731d', null, { timeout: 15000 });
   assert.equal(await page.locator('.view.active').getAttribute('id'), 'view-dashboard');
 
   await page.evaluate(() => {
@@ -25,7 +26,14 @@ const assert = require('node:assert/strict');
     }));
   });
 
-  await page.locator('.xp-bottom-nav [data-xp-route="favorites"]').click();
+  // 从手机首页可见的“现场速查”进入工作区，再使用恢复后的工具导航进入“我的”。
+  await page.locator('#xp-game-home [data-xp-query-filter="gcode"]').click();
+  await page.waitForSelector('#view-workspace.active', { state: 'visible', timeout: 15000 });
+  await page.waitForFunction(() => {
+    const node = document.querySelector('body > .xp-bottom-nav');
+    return node && node.getClientRects().length > 0 && node.getAttribute('aria-hidden') === 'false' && !node.hasAttribute('inert');
+  }, null, { timeout: 15000 });
+  await page.locator('body > .xp-bottom-nav [data-xp-route="favorites"]').click();
   await page.waitForSelector('#view-favorites.active', { state: 'visible', timeout: 10000 });
   await page.evaluate(() => window.CNC_TRAINING_PROFILE.render());
   await page.waitForSelector('#view-favorites.active #xp-training-profile', { state: 'visible', timeout: 10000 });
@@ -72,6 +80,6 @@ const assert = require('node:assert/strict');
   await page.waitForSelector('h1', { state: 'visible' });
   assert.match(await page.locator('h1').textContent(), /成长成果/);
   assert.deepEqual(errors, []);
-  console.log('成长档案、课程成绩、阶段能力、连续训练与成长成果入口通过', { data, layout });
+  console.log('单层首页真实导航、成长档案、课程成绩、阶段能力、连续训练与成长成果入口通过', { data, layout });
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });

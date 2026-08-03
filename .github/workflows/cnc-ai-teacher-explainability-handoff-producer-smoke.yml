@@ -1,0 +1,90 @@
+name: CNC AI teacher explainability handoff producer smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/ai-teacher.html'
+      - 'cnc/ai-teacher-explainability.html'
+      - 'cnc/tests/mobile-ai-teacher-explainability-handoff-producer-smoke.cjs'
+      - 'cnc/docs/ai-teacher-explainability-handoff-producer-contract.md'
+      - '.github/workflows/cnc-ai-teacher-explainability-handoff-producer-smoke.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'cnc/ai-teacher.html'
+      - 'cnc/ai-teacher-explainability.html'
+      - 'cnc/tests/mobile-ai-teacher-explainability-handoff-producer-smoke.cjs'
+      - 'cnc/docs/ai-teacher-explainability-handoff-producer-contract.md'
+      - '.github/workflows/cnc-ai-teacher-explainability-handoff-producer-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cnc-ai-teacher-explainability-handoff-producer-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  ai-teacher-explainability-handoff-producer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Validate one-time handoff producer contract and anti-bypass rules
+        run: |
+          set -euxo pipefail
+          test -f cnc/ai-teacher.html
+          test -f cnc/ai-teacher-explainability.html
+          test -f cnc/tests/mobile-ai-teacher-explainability-handoff-producer-smoke.cjs
+          test -f cnc/docs/ai-teacher-explainability-handoff-producer-contract.md
+          grep -q "cnc_ai_teacher_explainability_handoff_v1" cnc/ai-teacher.html
+          grep -q "sessionStorage.setItem(HANDOFF_KEY" cnc/ai-teacher.html
+          grep -q "sessionStorage.removeItem(HANDOFF_KEY" cnc/ai-teacher.html
+          grep -q "查看本次判断说明" cnc/ai-teacher.html
+          grep -q "HANDOFF_MAX_AGE_MS = 5 \* 60 \* 1000" cnc/ai-teacher.html
+          grep -q "source:'ai-teacher'" cnc/ai-teacher.html
+          grep -q "intent==='blocked'||intent==='safety-boundary'" cnc/ai-teacher.html
+          ! grep -Eq "localStorage\.(setItem|removeItem)\(HANDOFF_KEY" cnc/ai-teacher.html
+          ! grep -Eq "[?&](question|q)=|location\.(search|hash).*question" cnc/ai-teacher.html
+          ! grep -Eqi "XMLHttpRequest|WebSocket|EventSource" cnc/ai-teacher.html
+          ! grep -Eq "test\.skip\(|describe\.skip\(|it\.skip\(|process\.exit\(0\)" cnc/tests/mobile-ai-teacher-explainability-handoff-producer-smoke.cjs
+      - name: Check JavaScript syntax
+        run: |
+          node --check cnc/tests/mobile-ai-teacher-explainability-handoff-producer-smoke.cjs
+          python3 - <<'PY'
+          from pathlib import Path
+          for name in ('ai-teacher.html', 'ai-teacher-explainability.html'):
+              text = Path('cnc', name).read_text(encoding='utf-8')
+              script = text.split('<script>', 1)[1].split('</script>', 1)[0]
+              target = Path('/tmp') / f'{name}.js'
+              target.write_text(script, encoding='utf-8')
+              print(target)
+          PY
+          node --check /tmp/ai-teacher.html.js
+          node --check /tmp/ai-teacher-explainability.html.js
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save playwright@1.54.1
+          npx playwright install --with-deps chromium
+      - name: Start static server
+        run: python3 -m http.server 4173 --directory . > /tmp/cnc-ai-teacher-handoff-producer-server.log 2>&1 &
+      - name: Validate producer to consumer handoff on 390x844 mobile
+        run: node cnc/tests/mobile-ai-teacher-explainability-handoff-producer-smoke.cjs
+      - name: Regress existing explainability consumer
+        run: node cnc/tests/mobile-ai-teacher-explainability-smoke.cjs
+      - name: Upload handoff producer diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-ai-teacher-explainability-handoff-producer-${{ github.run_id }}
+          path: |
+            artifacts/ai-teacher-explainability-handoff-producer/
+            artifacts/ai-teacher-explainability/
+            /tmp/cnc-ai-teacher-handoff-producer-server.log
+          if-no-files-found: warn
+          retention-days: 14

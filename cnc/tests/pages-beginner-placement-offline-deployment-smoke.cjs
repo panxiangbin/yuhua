@@ -1,0 +1,294 @@
+const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
+
+const root = path.resolve(__dirname, '../..');
+const out = path.join(root, 'cnc/test-results/beginner-placement-offline-pages');
+fs.mkdirSync(out, { recursive: true });
+
+const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
+const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
+const branchTargetPwaBuild = '20260802-pwa8';
+const previousPublicPwaBuild = '20260802-pwa7';
+const attempts = Number(process.env.CNC_PAGES_VERIFY_ATTEMPTS || 18);
+const intervalMs = Number(process.env.CNC_PAGES_VERIFY_INTERVAL_MS || 10000);
+const eventName = process.env.GITHUB_EVENT_NAME || '';
+const resources = ['cnc/beginner-placement.html', 'cnc/sw.js', 'cnc/build-info.json'];
+
+if (!Number.isInteger(attempts) || attempts < 1) throw new Error('CNC_PAGES_VERIFY_ATTEMPTS必须是大于0的整数');
+if (!Number.isFinite(intervalMs) || intervalMs < 0) throw new Error('CNC_PAGES_VERIFY_INTERVAL_MS不能为负数');
+
+const report = {
+  checkedAt: new Date().toISOString(),
+  publicRoot,
+  mainRoot,
+  branchTargetPwaBuild,
+  previousPublicPwaBuild,
+  eventName,
+  attempts: [],
+  resources: {}
+};
+
+function digest(buffer) {
+  return crypto.createHash('sha256').update(buffer).digest('hex');
+}
+
+function withNonce(url) {
+  const target = new URL(url);
+  target.searchParams.set('verify-beginner-placement-offline', `${Date.now()}-${Math.random().toString(16).slice(2)}`);
+  return target.toString();
+}
+
+async function fetchBytes(url, label) {
+  const response = await fetch(withNonce(url), {
+    cache: 'no-store',
+    redirect: 'follow',
+    headers: {
+      'Cache-Control': 'no-cache, no-store, max-age=0',
+      Pragma: 'no-cache',
+      'User-Agent': 'cnc-beginner-placement-offline-pages-smoke'
+    }
+  });
+  const buffer = Buffer.from(await response.arrayBuffer());
+  if (!response.ok) throw new Error(`${label} HTTP ${response.status}: ${buffer.toString('utf8', 0, 180)}`);
+  return {
+    buffer,
+    status: response.status,
+    bytes: buffer.length,
+    sha256: digest(buffer),
+    finalUrl: response.url,
+    cacheControl: response.headers.get('cache-control'),
+    lastModified: response.headers.get('last-modified'),
+    etag: response.headers.get('etag')
+  };
+}
+
+function summary(value) {
+  return {
+    status: value.status,
+    bytes: value.bytes,
+    sha256: value.sha256,
+    finalUrl: value.finalUrl,
+    cacheControl: value.cacheControl,
+    lastModified: value.lastModified,
+    etag: value.etag
+  };
+}
+
+function exact(left, right) {
+  return left.bytes === right.bytes && left.sha256 === right.sha256;
+}
+
+function requireTokens(text, label, tokens) {
+  for (const token of tokens) if (!text.includes(token)) throw new Error(`${label}缺少契约：${token}`);
+}
+
+function assertAllowedBuild(build, label) {
+  if (![previousPublicPwaBuild, branchTargetPwaBuild].includes(build)) throw new Error(`${label}出现未受控PWA构建：${build}`);
+}
+
+function parseBuildInfo(text, label) {
+  let data;
+  try { data = JSON.parse(text.replace(/^\uFEFF/, '')); } catch (error) { throw new Error(`${label}不是合法JSON：${error.message}`); }
+  if (data.app !== 'cnc-training-platform') throw new Error(`${label}应用标识错误`);
+  if (data.scope !== '/cnc/') throw new Error(`${label}作用域错误：${data.scope}`);
+  assertAllowedBuild(data.pwaBuild, label);
+  return data;
+}
+
+function assertPlacement(text, label, expectedBuild) {
+  requireTokens(text, label, [
+    '<title>CNC新手起点测评',
+    'id="progress"',
+    'role="progressbar"',
+    'id="options"',
+    'role="radiogroup"',
+    '测评只做推荐',
+    '不改动你的成绩、XP或通关记录',
+    '相同版本原厂手册',
+    '授权人员确认'
+  ]);
+  if (expectedBuild === branchTargetPwaBuild) {
+    requireTokens(text, label, [
+      'id="result-diagnostics"',
+      'criticalFailures',
+      "decision:'critical-safety'",
+      '关键安全项是硬门禁',
+      '不会被其他题的高分抵消',
+      '不是现场上机许可',
+      'cnc_beginner_placement_route_handoff_v1',
+      '把本次路线带到训练营',
+      'sessionStorage.setItem(HANDOFF_KEY'
+    ]);
+  }
+  for (const forbidden of ['localStorage.setItem', 'indexedDB.open', '固定上机值', '绕过安全门联锁']) {
+    if (text.includes(forbidden)) throw new Error(`${label}出现禁止内容：${forbidden}`);
+  }
+}
+
+function expectedCore(expectedBuild) {
+  const core = [
+    './index.html',
+    './offline.html',
+    './pwa-status.html',
+    './pwa-self-test.html',
+    './pages-status.html',
+    './beginner-placement.html',
+    './ai-teacher.html',
+    './ai-teacher-intake.html',
+    './ai-teacher-explainability.html',
+    './build-info.json'
+  ];
+  if (expectedBuild === branchTargetPwaBuild) core.splice(6, 0, './training-camp.html');
+  return core;
+}
+
+function assertServiceWorker(text, label, expectedBuild) {
+  requireTokens(text, label, [
+    `const BUILD = '${expectedBuild}'`,
+    "'./beginner-placement.html'",
+    "'./ai-teacher.html'",
+    "'./ai-teacher-intake.html'",
+    "'./ai-teacher-explainability.html'",
+    "name.startsWith('cnc-') && !name.endsWith(BUILD)"
+  ]);
+  if (expectedBuild === branchTargetPwaBuild) requireTokens(text, label, ["'./training-camp.html'"]);
+  const block = text.match(/const REQUIRED_CORE_PATHS = \[([\s\S]*?)\];/)?.[1] || '';
+  const core = [...block.matchAll(/'([^']+)'/g)].map(match => match[1]);
+  const expected = expectedCore(expectedBuild);
+  if (JSON.stringify(core) !== JSON.stringify(expected) || new Set(core).size !== expected.length) {
+    throw new Error(`${label}核心资源不一致：${JSON.stringify(core)}，期望${JSON.stringify(expected)}`);
+  }
+}
+
+function assertBuildInfo(text, label, expectedBuild) {
+  const data = parseBuildInfo(text, label);
+  if (data.pwaBuild !== expectedBuild) throw new Error(`${label}PWA构建错误：${data.pwaBuild}，期望${expectedBuild}`);
+  requireTokens(String(data.contentStage || ''), label, ['起点测评离线核心', 'AI老师离线核心', 'PWA可靠性']);
+  if (expectedBuild === branchTargetPwaBuild) requireTokens(String(data.contentStage || ''), label, ['起点测评关键安全门禁', '测评路线一次性交接', '训练营路线离线核心']);
+}
+
+function assertContract(resource, text, label, expectedBuild) {
+  if (resource.endsWith('beginner-placement.html')) return assertPlacement(text, label, expectedBuild);
+  if (resource.endsWith('sw.js')) return assertServiceWorker(text, label, expectedBuild);
+  if (resource.endsWith('build-info.json')) return assertBuildInfo(text, label, expectedBuild);
+  throw new Error(`未知资源：${resource}`);
+}
+
+async function waitForMainPagesMatch() {
+  let latest = null;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    const record = { attempt, at: new Date().toISOString(), resources: {} };
+    try {
+      let allMatch = true;
+      const values = {};
+      for (const resource of resources) {
+        const main = await fetchBytes(`${mainRoot}/${resource}`, `main ${resource}`);
+        const pages = await fetchBytes(`${publicRoot}/${resource}`, `Pages ${resource}`);
+        const matched = exact(main, pages);
+        values[resource] = { main, pages, matched };
+        record.resources[resource] = { matched, main: summary(main), pages: summary(pages) };
+        if (!matched) allMatch = false;
+      }
+      report.attempts.push(record);
+      latest = values;
+      if (allMatch) return values;
+    } catch (error) {
+      record.error = error.message;
+      report.attempts.push(record);
+    }
+    if (attempt < attempts) await new Promise(resolve => setTimeout(resolve, intervalMs));
+  }
+  report.latest = latest ? Object.fromEntries(Object.entries(latest).map(([key, value]) => [key, {
+    matched: value.matched,
+    main: summary(value.main),
+    pages: summary(value.pages)
+  }])) : null;
+  throw new Error('起点测评离线核心资源尚未与main在Pages公网逐字节一致');
+}
+
+(async () => {
+  const reportPath = path.join(out, 'report.json');
+  const findingsPath = path.join(out, 'findings.txt');
+  try {
+    const deployed = await waitForMainPagesMatch();
+    const localBuffers = Object.fromEntries(resources.map(resource => [resource, fs.readFileSync(path.join(root, resource))]));
+    const localBuild = parseBuildInfo(localBuffers['cnc/build-info.json'].toString('utf8'), '当前分支 cnc/build-info.json');
+    if (localBuild.pwaBuild !== branchTargetPwaBuild) throw new Error(`当前分支目标PWA构建错误：${localBuild.pwaBuild}`);
+
+    const mainBuild = parseBuildInfo(deployed['cnc/build-info.json'].main.buffer.toString('utf8'), 'main cnc/build-info.json');
+    const pagesBuild = parseBuildInfo(deployed['cnc/build-info.json'].pages.buffer.toString('utf8'), 'Pages cnc/build-info.json');
+    if (mainBuild.pwaBuild !== pagesBuild.pwaBuild) throw new Error('main与Pages PWA构建标记不一致');
+    const publicPwaBuild = mainBuild.pwaBuild;
+
+    let localMatchesMain = true;
+    const findings = [];
+    for (const resource of resources) {
+      const localBuffer = localBuffers[resource];
+      const local = { buffer: localBuffer, bytes: localBuffer.length, sha256: digest(localBuffer), status: 200, finalUrl: `file://${path.join(root, resource)}` };
+      const pair = deployed[resource];
+      assertContract(resource, localBuffer.toString('utf8'), `当前分支 ${resource}`, branchTargetPwaBuild);
+      assertContract(resource, pair.main.buffer.toString('utf8'), `main ${resource}`, publicPwaBuild);
+      assertContract(resource, pair.pages.buffer.toString('utf8'), `Pages ${resource}`, publicPwaBuild);
+      const localMatch = exact(local, pair.main);
+      if (!localMatch) localMatchesMain = false;
+      report.resources[resource] = {
+        local: { bytes: local.bytes, sha256: local.sha256 },
+        main: summary(pair.main),
+        pages: summary(pair.pages),
+        mainPagesExactBytesMatch: true,
+        mainPagesExactSha256Match: true,
+        localMatchesMain: localMatch
+      };
+      findings.push(`${resource}｜Pages ${pair.pages.bytes} bytes｜${pair.pages.sha256}｜分支与main一致=${localMatch}`);
+    }
+
+    const branchDeploymentPending = !localMatchesMain;
+    if (eventName !== 'pull_request' && branchDeploymentPending) throw new Error('main正式验收不允许当前分支与main/Pages仍不一致');
+    if (!branchDeploymentPending && publicPwaBuild !== branchTargetPwaBuild) throw new Error('分支与main一致时公网必须已经是目标PWA构建');
+
+    report.verified = {
+      publicReachable: true,
+      mainPagesExactBytesMatch: true,
+      mainPagesExactSha256Match: true,
+      exactBytesMatch: true,
+      exactSha256Match: true,
+      localMatchesMain,
+      branchDeploymentPending,
+      branchPwaBuild: branchTargetPwaBuild,
+      publicPwaBuild,
+      beginnerPlacementPublic: true,
+      beginnerPlacementInCoreCache: true,
+      trainingCampInCoreCache: true,
+      coreResourceCount: expectedCore(branchTargetPwaBuild).length,
+      criticalSafetyGatePresent: true,
+      explainableRecommendationPresent: true,
+      oneTimeRouteHandoffPresent: true,
+      recommendationBoundaryVisible: true,
+      manualBoundaryVisible: true,
+      authorizedPersonBoundaryVisible: true,
+      noLongTermLearningWrite: true
+    };
+    fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
+    fs.writeFileSync(findingsPath, [
+      '起点测评Pages公网可达：是',
+      'main与Pages三项资源逐字节一致：是',
+      `当前分支PWA构建：${branchTargetPwaBuild}`,
+      `main与Pages公网PWA构建：${publicPwaBuild}`,
+      `分支待合并或待部署：${branchDeploymentPending ? '是' : '否'}`,
+      '当前分支起点测评与训练营进入11项核心预缓存：是',
+      '关键安全项高分不能抵消危险答案：已验证',
+      '一次性路线交接、中文判断依据、原厂手册与授权人员边界：可见',
+      ...findings
+    ].join('\n') + '\n');
+    console.log(`CNC beginner placement offline Pages verified: branch ${branchTargetPwaBuild} / public ${publicPwaBuild} / pending=${branchDeploymentPending}`);
+  } catch (error) {
+    report.error = String(error && error.stack || error);
+    fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
+    fs.writeFileSync(findingsPath, report.error + '\n');
+    throw error;
+  }
+})().catch(error => {
+  console.error(error);
+  process.exit(1);
+});

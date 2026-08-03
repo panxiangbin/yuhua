@@ -1,0 +1,79 @@
+name: CNC beginner placement smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/beginner-placement.html'
+      - 'cnc/tests/mobile-beginner-placement-smoke.cjs'
+      - 'cnc/docs/beginner-placement-accessibility-contract.md'
+      - '.github/workflows/cnc-beginner-placement-smoke.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'cnc/beginner-placement.html'
+      - 'cnc/tests/mobile-beginner-placement-smoke.cjs'
+      - 'cnc/docs/beginner-placement-accessibility-contract.md'
+      - '.github/workflows/cnc-beginner-placement-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cnc-beginner-placement-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  beginner-placement:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install browser test runtime
+        run: npm install --no-save playwright@1.52.0
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Validate syntax and anti-bypass contract
+        run: |
+          set -euxo pipefail
+          test -f cnc/beginner-placement.html
+          test -f cnc/tests/mobile-beginner-placement-smoke.cjs
+          test -f cnc/docs/beginner-placement-accessibility-contract.md
+          node --check cnc/tests/mobile-beginner-placement-smoke.cjs
+          grep -q 'role="progressbar"' cnc/beginner-placement.html
+          grep -q 'role="radiogroup"' cnc/beginner-placement.html
+          grep -q "setAttribute('aria-checked'" cnc/beginner-placement.html
+          grep -q "focusNode('result-title')" cnc/beginner-placement.html
+          grep -q 'prefers-reduced-motion:reduce' cnc/beginner-placement.html
+          grep -q 'result-diagnostics' cnc/beginner-placement.html
+          grep -q 'critical:true' cnc/beginner-placement.html
+          grep -q 'criticalFailures' cnc/beginner-placement.html
+          grep -q "decision:'critical-safety'" cnc/beginner-placement.html
+          grep -q '关键安全项采用硬门禁' cnc/docs/beginner-placement-accessibility-contract.md
+          grep -q '10/12' cnc/docs/beginner-placement-accessibility-contract.md
+          grep -q 'criticalSafetyGate: true' cnc/tests/mobile-beginner-placement-smoke.cjs
+          grep -q 'foundationGapGate: true' cnc/tests/mobile-beginner-placement-smoke.cjs
+          grep -q '相同版本原厂手册' cnc/beginner-placement.html
+          grep -q '390×844' cnc/docs/beginner-placement-accessibility-contract.md
+          grep -q 'LocalStorage' cnc/docs/beginner-placement-accessibility-contract.md
+          ! grep -Eq "test\.skip\(|describe\.skip\(|it\.skip\(|process\.exit\(0\)" cnc/tests/mobile-beginner-placement-smoke.cjs
+          ! grep -Eqi "固定上机值|跳过原厂手册|关闭联锁" cnc/beginner-placement.html
+      - name: Start static server
+        run: python3 -m http.server 4173 --directory . > /tmp/cnc-server.log 2>&1 &
+      - name: Chromium 390x844 beginner placement accessibility and safety gate
+        run: node cnc/tests/mobile-beginner-placement-smoke.cjs
+      - name: Preserve server log
+        if: always()
+        run: cp /tmp/cnc-server.log artifacts/beginner-placement/server.log || true
+      - name: Upload beginner placement diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: beginner-placement-diagnostics-${{ github.run_id }}
+          path: artifacts/beginner-placement/
+          if-no-files-found: error
+          retention-days: 14

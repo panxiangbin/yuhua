@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-01T22:40:00+08:00",
+  "scope": "CNC 新手训练平台中的课程、报警、故障诊断、参数和 G/M 代码数据",
+  "requiredNotice": "教学参考，需按机床说明书、现场工艺和空运行验证",
+  "statusDefinitions": {
+    "reviewed_scope": "已具备明确适用范围与原厂手册核对要求，但不代表适用于所有机床。",
+    "pending_manual_verification": "包含系统相关、参数相关或现场动作建议，尚未完成逐条原厂资料复核。",
+    "pending_system_scope_review": "内容可能因数控系统、机床厂配置或选配功能不同而变化，尚待逐条标注适用系统。"
+  },
+  "priorityDefinitions": {
+    "P0": "直接影响报警处置、程序解释或机床动作，优先核对原厂与机床厂资料。",
+    "P1": "包含经验性范围、工艺诊断或跨类别建议，需结合正式资料和现场验证。",
+    "P2": "已具备文件级适用范围，继续补充逐课来源、版本和复核记录。"
+  },
+  "datasets": [
+    {
+      "path": "cnc/learning-content-data.js",
+      "status": "reviewed_scope",
+      "reviewPriority": "P2",
+      "allowOperationalUse": false,
+      "applicability": "以 FANUC 立式加工中心为主要教学示例",
+      "notice": "教学参考，需按机床说明书、现场工艺和空运行验证",
+      "reviewBasis": ["文件级适用范围", "机床说明书核对要求", "现场规范差异提示"],
+      "requiredEvidence": [
+        "对应课程引用的数控系统编程或操作手册",
+        "机床厂操作与安全说明",
+        "现场工艺文件或企业培训规范"
+      ],
+      "nextAction": "按 12 关逐课补充系统系列、手册名称、版本或章节和复核日期。"
+    },
+    {
+      "path": "cnc/alarm-data.js",
+      "status": "pending_manual_verification",
+      "reviewPriority": "P0",
+      "allowOperationalUse": false,
+      "applicability": "报警号、报警含义和处置步骤与系统系列、软件版本、机床厂梯形图及选配功能有关",
+      "notice": "教学参考，需按机床说明书、现场工艺和空运行验证",
+      "reviewBasis": ["当前为知识库整理数据", "需逐条核对原厂报警手册", "禁止直接据此修改参数或恢复运行"],
+      "requiredEvidence": [
+        "对应数控系统系列的原厂报警手册",
+        "机床厂报警、M 代码或梯形图说明",
+        "控制器软件版本与机床配置记录"
+      ],
+      "nextAction": "以报警号为单位核对含义、触发条件、禁止动作和安全恢复边界；未完成前保持待复核。"
+    },
+    {
+      "path": "cnc/diagnosis-data.js",
+      "status": "pending_manual_verification",
+      "reviewPriority": "P1",
+      "allowOperationalUse": false,
+      "applicability": "诊断顺序和数值建议受材料、刀具、机床刚性、装夹、冷却及工艺目标影响",
+      "notice": "教学参考，需按机床说明书、现场工艺和空运行验证",
+      "reviewBasis": ["含经验性范围值", "需结合现场测量与工艺验证", "不得替代风险评估和首件确认"],
+      "requiredEvidence": [
+        "机床原厂维护或操作手册",
+        "刀具或材料供应商正式切削数据",
+        "现场测量、首件和工艺变更记录"
+      ],
+      "nextAction": "逐条区分观察现象、检查顺序和经验范围；数值建议必须补充条件、来源和验证记录。"
+    },
+    {
+      "path": "cnc/gm-code-complete.js",
+      "status": "pending_system_scope_review",
+      "reviewPriority": "P0",
+      "allowOperationalUse": false,
+      "applicability": "G/M 代码含义与格式可能因 FANUC 系列、参数设定、机床厂宏程序及选配功能不同而变化",
+      "notice": "教学参考，需按机床说明书、现场工艺和空运行验证",
+      "reviewBasis": ["需逐条标注适用系统", "需核对机床厂 M 代码表", "程序必须经过图形检查、单段和空运行"],
+      "requiredEvidence": [
+        "对应系统系列的原厂编程手册",
+        "机床厂 M 代码表与选配说明",
+        "相关参数、宏程序或 PLC 梯形图配置记录"
+      ],
+      "nextAction": "逐代码标注系统系列、模态、格式、选配条件和机床厂差异；程序继续执行图形检查、单段和空运行。"
+    },
+    {
+      "path": "cnc/weak-category-data.js",
+      "status": "pending_manual_verification",
+      "reviewPriority": "P1",
+      "allowOperationalUse": false,
+      "applicability": "补充知识条目可能包含工艺、刀具、参数、报警和现场操作建议",
+      "notice": "教学参考，需按机床说明书、现场工艺和空运行验证",
+      "reviewBasis": ["需按类别逐条复核", "数值和安全步骤不得脱离适用条件", "未核实内容不得标记为已验证"],
+      "requiredEvidence": [
+        "条目所属类别的原厂或标准资料",
+        "企业工艺卡、检验规范或安全制度",
+        "现场验证记录或可追溯培训资料"
+      ],
+      "nextAction": "先按报警、参数、刀补、工艺和安全动作分组，再逐条补充适用条件、来源和复核状态。"
+    }
+  ]
+}
