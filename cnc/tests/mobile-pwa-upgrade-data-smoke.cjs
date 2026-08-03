@@ -8,14 +8,19 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const CURRENT_PWA_BUILD = '20260802-pwa8';
-const PREVIOUS_PWA_BUILD = '20260802-pwa7';
+const CURRENT_PWA_BUILD = '20260803-pwa9';
+const PREVIOUS_PWA_BUILD = '20260802-pwa8';
 const CURRENT_STATIC_CACHE = `cnc-static-${CURRENT_PWA_BUILD}`;
 const CURRENT_RUNTIME_CACHE = `cnc-runtime-${CURRENT_PWA_BUILD}`;
 const PREVIOUS_STATIC_CACHE = `cnc-static-${PREVIOUS_PWA_BUILD}`;
 const PREVIOUS_RUNTIME_CACHE = `cnc-runtime-${PREVIOUS_PWA_BUILD}`;
 const UNRELATED_CACHE = 'other-app-cache-v1';
 const PLACEMENT_HANDOFF_KEY = 'cnc_beginner_placement_route_handoff_v1';
+const PLACEMENT_FIRST_STEP_COURSES = [
+  { path: 'course-safety-foundation.html', title: '第1关 安全基础', required: ['先学会停，再学会动', '原厂手册', '授权人员'] },
+  { path: 'course-coordinate-axes.html', title: '第3关 坐标轴与运动方向', required: ['坐标轴与运动方向', '原厂手册', '现场条件'] },
+  { path: 'course-g00-g01-basics.html', title: '第9关 G00与G01', required: ['G00与G01', '不能直接用于真实加工', '原厂手册'] }
+];
 const DATA_KEYS = [
   'cnc_training_profile_v1',
   'cnc_training_practice_v1',
@@ -124,6 +129,15 @@ async function completeCriticalSafetyPlacement(page) {
   await page.locator('#result[data-decision="critical-safety"]').waitFor({ state: 'visible' });
 }
 
+async function verifyColdOfflineCourse(page, course) {
+  await page.goto(`http://127.0.0.1:4173/cnc/${course.path}`, { waitUntil: 'domcontentloaded' });
+  assert((await page.title()).includes(course.title), `升级后${course.path}冷离线打开失败`);
+  const body = await page.locator('body').innerText();
+  for (const token of course.required) {
+    assert(body.includes(token), `升级后${course.path}丢失可信或安全边界：${token}`);
+  }
+}
+
 (async () => {
   let context;
   let userDataDir;
@@ -186,7 +200,7 @@ async function completeCriticalSafetyPlacement(page) {
         request.onsuccess = () => {
           const db = request.result;
           const transaction = db.transaction('records', 'readwrite');
-          transaction.objectStore('records').put({ xp: 680, streak: 12, source: 'pwa7' }, 'growth');
+          transaction.objectStore('records').put({ xp: 680, streak: 12, source: 'pwa8' }, 'growth');
           transaction.onerror = () => reject(transaction.error);
           transaction.oncomplete = () => {
             db.close();
@@ -297,15 +311,27 @@ async function completeCriticalSafetyPlacement(page) {
     const routeHandoff = await page.evaluate(key => ({
       title: document.querySelector('#placement-handoff-title')?.textContent || '',
       stepCount: document.querySelectorAll('#placement-handoff-steps li').length,
+      ctaHref: document.querySelector('#placement-handoff-cta')?.getAttribute('href') || '',
       sessionValue: sessionStorage.getItem(key),
       localValue: localStorage.getItem(key),
       sessionProbe: sessionStorage.getItem('cnc_upgrade_session_probe')
     }), PLACEMENT_HANDOFF_KEY);
     assert(routeHandoff.title.includes('安全基础'), `升级后离线路线标题错误: ${JSON.stringify(routeHandoff)}`);
     assert.equal(routeHandoff.stepCount, 3, `升级后离线路线步骤错误: ${JSON.stringify(routeHandoff)}`);
+    assert.equal(routeHandoff.ctaHref, './course-safety-foundation.html', `升级后离线路线首步链接错误: ${JSON.stringify(routeHandoff)}`);
     assert.equal(routeHandoff.sessionValue, null, '升级后离线路线未立即清除');
     assert.equal(routeHandoff.localValue, null, '升级后离线路线泄露到LocalStorage');
     assert.equal(routeHandoff.sessionProbe, before.session, '路线交接错误清除其他SessionStorage数据');
+
+    stage = 'cold-offline-first-step-click-after-upgrade';
+    await page.locator('#placement-handoff-cta').click();
+    await page.waitForURL(/\/cnc\/course-safety-foundation\.html$/);
+    await verifyColdOfflineCourse(page, PLACEMENT_FIRST_STEP_COURSES[0]);
+
+    stage = 'cold-offline-first-step-courses-after-upgrade';
+    for (const course of PLACEMENT_FIRST_STEP_COURSES.slice(1)) {
+      await verifyColdOfflineCourse(page, course);
+    }
 
     await page.goto('http://127.0.0.1:4173/cnc/ai-teacher.html', { waitUntil: 'domcontentloaded' });
     assert((await page.title()).includes('AI CNC老师'), '升级后AI CNC老师冷离线打开失败');
@@ -340,6 +366,9 @@ async function completeCriticalSafetyPlacement(page) {
       trainingCampColdOfflineAfterUpgrade: true,
       placementRouteHandoffColdOfflineAfterUpgrade: true,
       placementRouteHandoffImmediateCleanup: true,
+      placementFirstStepClickColdOfflineAfterUpgrade: true,
+      placementFirstStepCoursesColdOfflineAfterUpgrade: true,
+      placementFirstStepCoursePaths: PLACEMENT_FIRST_STEP_COURSES.map(item => item.path),
       aiTeacherColdOfflineAfterUpgrade: true,
       intakeColdOfflineAfterUpgrade: true,
       explainabilityColdOfflineAfterUpgrade: true,
