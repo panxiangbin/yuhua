@@ -89,14 +89,18 @@ function assertKnowledgeImagePlaceholderContract(text, label) {
   for (const token of required) {
     if (!text.includes(token)) throw new Error(`${label}缺少教学图片回退契约：${token}`);
   }
-  for (const forbidden of ['<script', '<foreignObject', 'javascript:', 'data:text/html', 'http://']) {
+  for (const forbidden of ['<script', '<foreignObject', 'javascript:', 'data:text/html']) {
     if (text.includes(forbidden)) throw new Error(`${label}教学图片回退包含不安全内容：${forbidden}`);
+  }
+  if (/\b(?:href|xlink:href)\s*=\s*["']https?:\/\//i.test(text)) {
+    throw new Error(`${label}教学图片回退包含站外资源引用`);
   }
   return {
     accessibleNamePresent: true,
     accessibleDescriptionPresent: true,
     fixedViewBoxPresent: true,
     activeContentAbsent: true,
+    externalResourceAbsent: true,
     technicalBoundaryPresent: true
   };
 }
