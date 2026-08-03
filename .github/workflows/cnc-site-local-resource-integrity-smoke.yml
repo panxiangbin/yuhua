@@ -1,0 +1,119 @@
+name: CNC site local resource integrity smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-site-local-resource-integrity-smoke.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-site-local-resource-integrity-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cnc-site-local-resource-integrity-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Validate audit and anti-bypass contract
+        run: |
+          node --check cnc/tests/site-local-resource-integrity-smoke.cjs
+          node <<'NODE'
+          const fs = require('fs');
+          const test = fs.readFileSync('cnc/tests/site-local-resource-integrity-smoke.cjs', 'utf8');
+          const workflow = fs.readFileSync('.github/workflows/cnc-site-local-resource-integrity-smoke.yml', 'utf8');
+          const contract = fs.readFileSync('cnc/docs/site-local-resource-integrity-contract.md', 'utf8');
+          for (const token of [
+            'extractHtmlReferences',
+            'extractCssReferences',
+            'extractJsReferences',
+            'extractManifestReferences',
+            'GENERATED_RUNTIME_TARGETS',
+            'cnc/pwa-install-diagnostics.json',
+            'invalid-html-shell',
+            'invalid-json-target',
+            'outsideCncReferences',
+            'passed:'
+          ]) {
+            if (!test.includes(token)) throw new Error(`audit contract missing: ${token}`);
+          }
+          for (const token of [
+            'pull_request:',
+            'push:',
+            '- main',
+            "node-version: 24",
+            'contents: read',
+            'cancel-in-progress: false',
+            'if: always()',
+            'actions/upload-artifact@v4',
+            'cnc-site-local-resource-integrity-${{ github.run_id }}'
+          ]) {
+            if (!workflow.includes(token)) throw new Error(`workflow contract missing: ${token}`);
+          }
+          for (const token of ['原厂手册', '授权人员', '不得', '予华仪器官网根目录']) {
+            if (!contract.includes(token)) throw new Error(`Chinese safety contract missing: ${token}`);
+          }
+          for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)', 'continue-on-error: true', 'cancel-in-progress: true']) {
+            if (test.includes(forbidden) || workflow.includes(forbidden)) throw new Error(`bypass found: ${forbidden}`);
+          }
+          NODE
+
+      - name: Audit CNC local resource graph
+        run: node cnc/tests/site-local-resource-integrity-smoke.cjs
+
+      - name: Verify structured diagnostic
+        if: always()
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const reportPath = 'artifacts/site-local-resource-integrity/report.json';
+          const diagnosticPath = 'artifacts/site-local-resource-integrity/diagnostics.txt';
+          if (!fs.existsSync(reportPath)) throw new Error('structured report missing');
+          if (!fs.existsSync(diagnosticPath)) throw new Error('readable diagnostics missing');
+          const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
+          for (const key of [
+            'sourceFilesScanned',
+            'localReferencesDiscovered',
+            'validReferences',
+            'generatedRuntimeReferences',
+            'outsideCncReferences',
+            'missing',
+            'invalid',
+            'errors',
+            'workflow',
+            'passed'
+          ]) {
+            if (!(key in report)) throw new Error(`report field missing: ${key}`);
+          }
+          if (report.sourceFilesScanned < 20) throw new Error(`unexpectedly small production source scan: ${report.sourceFilesScanned}`);
+          if (report.localReferencesDiscovered < 20) throw new Error(`unexpectedly small local reference graph: ${report.localReferencesDiscovered}`);
+          if (!Array.isArray(report.missing) || !Array.isArray(report.invalid) || !Array.isArray(report.errors)) throw new Error('diagnostic arrays invalid');
+          if (report.passed !== true) throw new Error(`resource integrity audit failed: missing=${report.missing.length}, invalid=${report.invalid.length}, errors=${report.errors.length}`);
+          NODE
+
+      - name: Upload CNC local resource diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-site-local-resource-integrity-${{ github.run_id }}
+          path: artifacts/site-local-resource-integrity/
+          if-no-files-found: error
+          retention-days: 14
