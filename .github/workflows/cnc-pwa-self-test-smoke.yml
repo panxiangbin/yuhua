@@ -19,6 +19,19 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+      - name: Initialize diagnostics
+        run: |
+          mkdir -p cnc/test-results/pwa-self-test-workflow
+          node - <<'NODE'
+          const fs = require('fs');
+          fs.writeFileSync('cnc/test-results/pwa-self-test-workflow/workflow-bootstrap.json', JSON.stringify({
+            stage: 'workflow-bootstrap',
+            runId: process.env.GITHUB_RUN_ID,
+            headSha: process.env.GITHUB_SHA,
+            eventName: process.env.GITHUB_EVENT_NAME,
+            initializedAt: new Date().toISOString()
+          }, null, 2));
+          NODE
       - name: Check JavaScript syntax
         run: node --check cnc/tests/mobile-pwa-self-test-smoke.cjs
       - name: Validate self-test contract
@@ -34,7 +47,7 @@ jobs:
           if (swBuild !== info.pwaBuild || !html.includes(`const EXPECTED='${info.pwaBuild}'`)) {
             throw new Error('PWA self-test/build-info/Service Worker version mismatch');
           }
-          if (info.pwaBuild !== '20260803-pwa9') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
+          if (info.pwaBuild !== '20260804-pwa10') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
           for (const token of [
             'Service Worker已注册',
             '当前页面已被接管',
@@ -53,13 +66,14 @@ jobs:
             './ai-teacher-explainability.html',
             '关键安全门禁',
             '训练营临时路线',
-            '三类测评首步课程'
+            '三类测评首步课程',
+            '正式课程正文刷新'
           ]) {
             if (!html.includes(token)) throw new Error(`self-test contract missing: ${token}`);
           }
           if (!placement.includes('criticalFailures') || !placement.includes("decision:'critical-safety'")) throw new Error('beginner placement critical safety gate missing');
           if (!placement.includes('cnc_beginner_placement_route_handoff_v1') || !camp.includes('cnc_beginner_placement_route_handoff_v1')) throw new Error('placement route handoff producer or consumer missing');
-          for (const stage of ['起点测评关键安全门禁','训练营路线离线核心','测评首步课程离线核心']) {
+          for (const stage of ['起点测评关键安全门禁','训练营路线离线核心','测评首步课程离线核心','正式课程开发占位清零']) {
             if (!String(info.contentStage || '').includes(stage)) throw new Error(`build marker missing: ${stage}`);
           }
           NODE
@@ -77,5 +91,5 @@ jobs:
         with:
           name: cnc-pwa-self-test-${{ github.run_id }}
           path: cnc/test-results/pwa-self-test-*
-          if-no-files-found: warn
+          if-no-files-found: error
           retention-days: 14
