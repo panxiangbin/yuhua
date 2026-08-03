@@ -8,8 +8,8 @@ fs.mkdirSync(out, { recursive: true });
 
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
-const branchTargetPwaBuild = '20260802-pwa8';
-const previousPublicPwaBuild = '20260802-pwa7';
+const branchTargetPwaBuild = '20260803-pwa9';
+const previousPublicPwaBuild = '20260802-pwa8';
 const attempts = Number(process.env.CNC_PAGES_VERIFY_ATTEMPTS || 18);
 const intervalMs = Number(process.env.CNC_PAGES_VERIFY_INTERVAL_MS || 10000);
 const eventName = process.env.GITHUB_EVENT_NAME || '';
@@ -106,21 +106,17 @@ function assertPlacement(text, label, expectedBuild) {
     '测评只做推荐',
     '不改动你的成绩、XP或通关记录',
     '相同版本原厂手册',
-    '授权人员确认'
+    '授权人员确认',
+    'id="result-diagnostics"',
+    'criticalFailures',
+    "decision:'critical-safety'",
+    '关键安全项是硬门禁',
+    '不会被其他题的高分抵消',
+    '不是现场上机许可',
+    'cnc_beginner_placement_route_handoff_v1',
+    '把本次路线带到训练营',
+    'sessionStorage.setItem(HANDOFF_KEY'
   ]);
-  if (expectedBuild === branchTargetPwaBuild) {
-    requireTokens(text, label, [
-      'id="result-diagnostics"',
-      'criticalFailures',
-      "decision:'critical-safety'",
-      '关键安全项是硬门禁',
-      '不会被其他题的高分抵消',
-      '不是现场上机许可',
-      'cnc_beginner_placement_route_handoff_v1',
-      '把本次路线带到训练营',
-      'sessionStorage.setItem(HANDOFF_KEY'
-    ]);
-  }
   for (const forbidden of ['localStorage.setItem', 'indexedDB.open', '固定上机值', '绕过安全门联锁']) {
     if (text.includes(forbidden)) throw new Error(`${label}出现禁止内容：${forbidden}`);
   }
@@ -134,12 +130,19 @@ function expectedCore(expectedBuild) {
     './pwa-self-test.html',
     './pages-status.html',
     './beginner-placement.html',
+    './training-camp.html',
     './ai-teacher.html',
     './ai-teacher-intake.html',
     './ai-teacher-explainability.html',
     './build-info.json'
   ];
-  if (expectedBuild === branchTargetPwaBuild) core.splice(6, 0, './training-camp.html');
+  if (expectedBuild === branchTargetPwaBuild) {
+    core.splice(7, 0,
+      './course-safety-foundation.html',
+      './course-coordinate-axes.html',
+      './course-g00-g01-basics.html'
+    );
+  }
   return core;
 }
 
@@ -147,12 +150,19 @@ function assertServiceWorker(text, label, expectedBuild) {
   requireTokens(text, label, [
     `const BUILD = '${expectedBuild}'`,
     "'./beginner-placement.html'",
+    "'./training-camp.html'",
     "'./ai-teacher.html'",
     "'./ai-teacher-intake.html'",
     "'./ai-teacher-explainability.html'",
     "name.startsWith('cnc-') && !name.endsWith(BUILD)"
   ]);
-  if (expectedBuild === branchTargetPwaBuild) requireTokens(text, label, ["'./training-camp.html'"]);
+  if (expectedBuild === branchTargetPwaBuild) {
+    requireTokens(text, label, [
+      "'./course-safety-foundation.html'",
+      "'./course-coordinate-axes.html'",
+      "'./course-g00-g01-basics.html'"
+    ]);
+  }
   const block = text.match(/const REQUIRED_CORE_PATHS = \[([\s\S]*?)\];/)?.[1] || '';
   const core = [...block.matchAll(/'([^']+)'/g)].map(match => match[1]);
   const expected = expectedCore(expectedBuild);
@@ -165,7 +175,9 @@ function assertBuildInfo(text, label, expectedBuild) {
   const data = parseBuildInfo(text, label);
   if (data.pwaBuild !== expectedBuild) throw new Error(`${label}PWA构建错误：${data.pwaBuild}，期望${expectedBuild}`);
   requireTokens(String(data.contentStage || ''), label, ['起点测评离线核心', 'AI老师离线核心', 'PWA可靠性']);
-  if (expectedBuild === branchTargetPwaBuild) requireTokens(String(data.contentStage || ''), label, ['起点测评关键安全门禁', '测评路线一次性交接', '训练营路线离线核心']);
+  if (expectedBuild === branchTargetPwaBuild) {
+    requireTokens(String(data.contentStage || ''), label, ['起点测评关键安全门禁', '测评路线一次性交接', '训练营路线离线核心', '测评首步课程离线核心']);
+  }
 }
 
 function assertContract(resource, text, label, expectedBuild) {
@@ -260,6 +272,7 @@ async function waitForMainPagesMatch() {
       beginnerPlacementPublic: true,
       beginnerPlacementInCoreCache: true,
       trainingCampInCoreCache: true,
+      placementFirstStepCoursesInCoreCache: true,
       coreResourceCount: expectedCore(branchTargetPwaBuild).length,
       criticalSafetyGatePresent: true,
       explainableRecommendationPresent: true,
@@ -276,7 +289,7 @@ async function waitForMainPagesMatch() {
       `当前分支PWA构建：${branchTargetPwaBuild}`,
       `main与Pages公网PWA构建：${publicPwaBuild}`,
       `分支待合并或待部署：${branchDeploymentPending ? '是' : '否'}`,
-      '当前分支起点测评与训练营进入11项核心预缓存：是',
+      '当前分支起点测评、训练营与三类首步课程进入14项核心预缓存：是',
       '关键安全项高分不能抵消危险答案：已验证',
       '一次性路线交接、中文判断依据、原厂手册与授权人员边界：可见',
       ...findings
