@@ -1,0 +1,70 @@
+name: CNC main course catalog drift smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/personal-home.js'
+      - 'cnc/training-camp.html'
+      - 'cnc/course-*.html'
+      - 'cnc/tests/main-course-catalog-drift-smoke.cjs'
+      - 'cnc/docs/main-course-catalog-drift-contract.md'
+      - '.github/workflows/cnc-main-course-catalog-drift-smoke.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'cnc/personal-home.js'
+      - 'cnc/training-camp.html'
+      - 'cnc/course-*.html'
+      - 'cnc/tests/main-course-catalog-drift-smoke.cjs'
+      - 'cnc/docs/main-course-catalog-drift-contract.md'
+      - '.github/workflows/cnc-main-course-catalog-drift-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cnc-main-course-catalog-drift-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Validate syntax, Chinese contract and anti-bypass rules
+        run: |
+          set -euxo pipefail
+          node --check cnc/tests/main-course-catalog-drift-smoke.cjs
+          grep -q '12关' cnc/docs/main-course-catalog-drift-contract.md
+          grep -q '双端' cnc/docs/main-course-catalog-drift-contract.md
+          grep -q '原厂手册' cnc/docs/main-course-catalog-drift-contract.md
+          grep -q '授权人员确认' cnc/docs/main-course-catalog-drift-contract.md
+          ! grep -Eq "test\.skip\(|describe\.skip\(|it\.skip\(|process\.exit\(0\)" cnc/tests/main-course-catalog-drift-smoke.cjs
+      - name: Verify mobile home and training camp course catalogs
+        run: node cnc/tests/main-course-catalog-drift-smoke.cjs
+      - name: Reject incomplete diagnostics
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const report = JSON.parse(fs.readFileSync('cnc/test-results/main-course-catalog-drift/report.json', 'utf8'));
+          if (!report.passed) throw new Error(`12关目录报告未通过：${JSON.stringify(report.errors)}`);
+          if (report.homeCatalog.length !== 12 || report.trainingCampCatalog.length !== 12 || report.canonicalCourses.length !== 12) {
+            throw new Error(`12关目录覆盖不足：${JSON.stringify({home: report.homeCatalog.length, camp: report.trainingCampCatalog.length, canonical: report.canonicalCourses.length})}`);
+          }
+          for (const key of ['stageIdsAndOrderMatch', 'entryFilesMatch', 'titlesCompatible', 'allTargetsExist', 'redirectAliasesControlled', 'canonicalTargetsUnique', 'pullRequestAndMainPushPathsSymmetric', 'requiredTriggerPathsCovered', 'readOnlyPermissions', 'noCancellation']) {
+            if (report.checks[key] !== true) throw new Error(`12关目录检查缺失或失败：${key}`);
+          }
+          NODE
+      - name: Upload catalog diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-main-course-catalog-drift-${{ github.run_id }}
+          path: cnc/test-results/main-course-catalog-drift/**
+          if-no-files-found: error
+          retention-days: 14
