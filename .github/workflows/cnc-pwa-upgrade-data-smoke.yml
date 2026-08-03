@@ -45,10 +45,10 @@ jobs:
           const camp = fs.readFileSync('cnc/training-camp.html', 'utf8');
           const swBuild = sw.match(/const BUILD = '([^']+)'/)?.[1];
           if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
-          if (info.pwaBuild !== '20260802-pwa8') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
+          if (info.pwaBuild !== '20260803-pwa9') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
           if (!test.includes(`const CURRENT_PWA_BUILD = '${info.pwaBuild}'`)) throw new Error('upgrade test current PWA build mismatch');
           for (const required of [
-            "const PREVIOUS_PWA_BUILD = '20260802-pwa7'",
+            "const PREVIOUS_PWA_BUILD = '20260802-pwa8'",
             'cnc_training_profile_v1',
             'cnc_training_practice_v1',
             'cnc_training_simulator_v1',
@@ -61,6 +61,11 @@ jobs:
             'trainingCampColdOfflineAfterUpgrade: true',
             'placementRouteHandoffColdOfflineAfterUpgrade: true',
             'placementRouteHandoffImmediateCleanup: true',
+            'placementFirstStepClickColdOfflineAfterUpgrade: true',
+            'placementFirstStepCoursesColdOfflineAfterUpgrade: true',
+            'course-safety-foundation.html',
+            'course-coordinate-axes.html',
+            'course-g00-g01-basics.html',
             'ai-teacher.html',
             'ai-teacher-intake.html',
             'ai-teacher-explainability.html',
@@ -70,10 +75,13 @@ jobs:
           }
           if (!placement.includes('criticalFailures') || !placement.includes("decision:'critical-safety'")) throw new Error('beginner placement critical safety gate missing');
           if (!placement.includes('cnc_beginner_placement_route_handoff_v1') || !camp.includes('cnc_beginner_placement_route_handoff_v1')) throw new Error('placement route handoff producer or consumer missing');
-          if (!sw.includes("'./training-camp.html'")) throw new Error('training camp missing from PWA core');
+          for (const file of ['./training-camp.html','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html']) {
+            if (!sw.includes(`'${file}'`)) throw new Error(`PWA core missing: ${file}`);
+          }
           if (!sw.includes("name.startsWith('cnc-')") || !sw.includes('!name.endsWith(BUILD)')) {
             throw new Error('Service Worker old CNC cache cleanup contract missing');
           }
+          if (!String(info.contentStage || '').includes('测评首步课程离线核心')) throw new Error('build marker missing placement first-step offline core');
           for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)']) {
             if (test.includes(forbidden)) throw new Error(`upgrade test bypass found: ${forbidden}`);
           }
