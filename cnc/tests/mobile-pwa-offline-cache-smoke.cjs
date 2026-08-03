@@ -1,14 +1,21 @@
 const { chromium } = require('playwright');
 const http = require('http');
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const buildInfo = JSON.parse(fs.readFileSync(path.join(root, 'cnc/build-info.json'), 'utf8'));
-const expectedPwaBuild = String(buildInfo.pwaBuild || '').trim();
-if (!expectedPwaBuild) throw new Error('build-info.json 缺少 pwaBuild');
+const PWA_BUILD = '20260802-pwa8';
+const CORE_OFFLINE_PATHS = [
+  './beginner-placement.html',
+  './training-camp.html',
+  './ai-teacher.html',
+  './ai-teacher-intake.html',
+  './ai-teacher-explainability.html'
+];
+const PLACEMENT_HANDOFF_KEY = 'cnc_beginner_placement_route_handoff_v1';
 fs.mkdirSync(out, { recursive: true });
 
 const types = {
@@ -23,26 +30,6 @@ const types = {
 const server = http.createServer((req, res) => {
   let requestPath = decodeURIComponent(req.url.split('?')[0]);
   if (requestPath === '/' || requestPath === '/cnc/') requestPath = '/cnc/index.html';
-
-  // Chromium can implicitly request the origin-level favicon even though the
-  // PWA pages and assets under /cnc/ are the only resources this smoke test owns.
-  // Return an empty success for that browser-generated request only; every
-  // explicit /cnc/ resource still uses the normal 404 path and remains audited.
-  if (requestPath === '/favicon.ico') {
-    res.writeHead(204, { 'Cache-Control': 'no-store' });
-    res.end();
-    return;
-  }
-
-  // A normal missing file returns HTTP 404, which is still a successful fetch
-  // from the Service Worker's perspective. This dedicated probe deliberately
-  // drops the connection so the navigation fetch rejects and the offline
-  // fallback branch is exercised deterministically in Chromium.
-  if (requestPath.startsWith('/cnc/__offline_probe__')) {
-    req.socket.destroy();
-    return;
-  }
-
   const file = path.normalize(path.join(root, requestPath));
   if (!file.startsWith(root) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) {
     res.writeHead(404);
@@ -60,101 +47,159 @@ function observePage(page, errors) {
   page.on('pageerror', error => errors.push(error.message));
 }
 
-async function waitForProductionCaches(page) {
-  await page.waitForFunction(expectedBuild => {
-    return caches.keys().then(names => (
-      names.includes(`cnc-static-${expectedBuild}`) &&
-      names.includes(`cnc-runtime-${expectedBuild}`)
-    ));
-  }, expectedPwaBuild, { timeout: 60000 });
+async function captureDiagnostics(page, context, stage, errors) {
+  const diagnostic = {
+    stage,
+    url: page ? page.url() : '',
+    title: '',
+    body: '',
+    controller: null,
+    registration: null,
+    caches: [],
+    staticEntries: [],
+    offline: null,
+    consoleErrors: errors
+  };
+  try { diagnostic.title = await page.title(); } catch {}
+  try { diagnostic.body = (await page.locator('body').innerText()).slice(0, 4000); } catch {}
+  try {
+    diagnostic.controller = await page.evaluate(() => navigator.serviceWorker.controller ? {
+      scriptURL: navigator.serviceWorker.controller.scriptURL,
+      state: navigator.serviceWorker.controller.state
+    } : null);
+  } catch {}
+  try {
+    diagnostic.registration = await page.evaluate(async () => {
+      const reg = await navigator.serviceWorker.getRegistration('./');
+      if (!reg) return null;
+      return {
+        scope: reg.scope,
+        active: reg.active ? { scriptURL: reg.active.scriptURL, state: reg.active.state } : null,
+        waiting: reg.waiting ? { scriptURL: reg.waiting.scriptURL, state: reg.waiting.state } : null,
+        installing: reg.installing ? { scriptURL: reg.installing.scriptURL, state: reg.installing.state } : null
+      };
+    });
+  } catch {}
+  try {
+    diagnostic.caches = await page.evaluate(() => caches.keys());
+    diagnostic.staticEntries = await page.evaluate(async expected => {
+      const cache = await caches.open(`cnc-static-${expected}`);
+      return (await cache.keys()).map(request => request.url);
+    }, PWA_BUILD);
+  } catch {}
+  try { diagnostic.offline = await context.isOffline(); } catch {}
+  fs.writeFileSync(path.join(out, 'pwa-offline-diagnostic.json'), JSON.stringify(diagnostic, null, 2));
+  try { await page.screenshot({ path: path.join(out, 'pwa-offline-failure.png'), fullPage: true }); } catch {}
 }
 
-async function readExpectedRegistration(page) {
-  return page.evaluate(async () => {
-    const expectedScope = new URL('/cnc/', location.origin).href;
-    const registrations = await navigator.serviceWorker.getRegistrations();
-    const registration = registrations.find(item => item.scope === expectedScope);
-    if (!registration) return null;
-    return {
-      scope: registration.scope,
-      activeScript: registration.active?.scriptURL || '',
-      activeState: registration.active?.state || ''
-    };
-  });
+async function completeCriticalSafetyPlacement(page) {
+  const answers = [0, 2, 1, 1, 1, 1];
+  for (let index = 0; index < answers.length; index += 1) {
+    await page.locator(`#option-${index}-${answers[index]}`).click();
+    await page.locator('#next').click();
+  }
+  await page.locator('#result[data-decision="critical-safety"]').waitFor({ state: 'visible' });
 }
 
 (async () => {
-  let browser;
   let context;
+  let userDataDir;
+  let page;
   const errors = [];
-  const runtimeDiagnostics = {
-    node: process.version,
-    platform: process.platform,
-    arch: process.arch,
-    chromiumExecutable: chromium.executablePath(),
-    browserVersion: '',
-    serviceWorkerEvents: []
-  };
   let stage = 'server-start';
-  let fallbackState = null;
   try {
     await new Promise((resolve, reject) => {
       server.once('error', reject);
       server.listen(4173, '127.0.0.1', resolve);
     });
+
     stage = 'browser-launch';
-    // Use full headed Chromium under Xvfb in CI so offline-cache assertions
-    // exercise the same Service Worker lifecycle as a normal browser session.
-    browser = await chromium.launch({ channel: 'chromium', headless: false });
-    runtimeDiagnostics.browserVersion = browser.version();
-    context = await browser.newContext({
+    userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'cnc-pwa-offline-'));
+    context = await chromium.launchPersistentContext(userDataDir, {
+      headless: true,
       viewport: { width: 390, height: 844 },
       serviceWorkers: 'allow'
     });
-    context.on('serviceworker', worker => {
-      runtimeDiagnostics.serviceWorkerEvents.push({
-        type: 'created',
-        url: worker.url(),
-        at: new Date().toISOString()
-      });
-      worker.on('close', () => {
-        runtimeDiagnostics.serviceWorkerEvents.push({
-          type: 'closed',
-          url: worker.url(),
-          at: new Date().toISOString()
-        });
-      });
-    });
-    let page = await context.newPage();
+    page = context.pages()[0] || await context.newPage();
     observePage(page, errors);
 
-    stage = 'bootstrap';
-    // Register from the quiet offline page. Entering through index.html starts a
-    // second inline register() call and can transiently remove the registration
-    // that the shared helper has just installed.
-    await page.goto('http://127.0.0.1:4173/cnc/offline.html', { waitUntil: 'domcontentloaded' });
+    stage = 'home';
+    await page.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded' });
     stage = 'controller';
     page = await ensureControlled(page, errors, observePage);
 
-    stage = 'registration-ready';
-    const registration = await readExpectedRegistration(page);
-    if (!registration) throw new Error('未找到 /cnc/ 作用域的 Service Worker 注册');
-    if (registration.activeScript !== 'http://127.0.0.1:4173/cnc/sw.js' || registration.activeState !== 'activated') {
-      throw new Error(`Service Worker 注册未激活：${JSON.stringify(registration)}`);
+    const registration = await page.evaluate(() => navigator.serviceWorker.getRegistration('./'));
+    if (!registration) throw new Error('Service Worker未注册');
+    const cachesBefore = await page.evaluate(() => caches.keys());
+    if (!cachesBefore.includes(`cnc-static-${PWA_BUILD}`)) throw new Error(`静态缓存版本缺失: ${JSON.stringify(cachesBefore)}`);
+    if (!cachesBefore.includes(`cnc-runtime-${PWA_BUILD}`)) throw new Error(`运行时缓存版本缺失: ${JSON.stringify(cachesBefore)}`);
+
+    stage = 'core-precache';
+    const missingCore = await page.evaluate(async ({ build, paths }) => {
+      const cache = await caches.open(`cnc-static-${build}`);
+      const missing = [];
+      for (const item of paths) {
+        if (!await cache.match(new URL(item, location.href))) missing.push(item);
+      }
+      return missing;
+    }, { build: PWA_BUILD, paths: CORE_OFFLINE_PATHS });
+    if (missingCore.length) throw new Error(`核心预缓存缺失: ${missingCore.join('、')}`);
+
+    stage = 'cold-offline-beginner-placement';
+    await context.setOffline(true);
+    await page.goto('http://127.0.0.1:4173/cnc/beginner-placement.html', { waitUntil: 'domcontentloaded' });
+    if (!(await page.title()).includes('CNC新手起点测评')) throw new Error('起点测评首次安装后离线打开失败');
+    const placementBody = await page.locator('body').innerText();
+    if (!placementBody.includes('测评只做推荐') || !placementBody.includes('关键安全项是硬门禁') || !placementBody.includes('相同版本原厂手册') || !placementBody.includes('授权人员确认')) {
+      throw new Error('起点测评离线页丢失安全硬门禁、推荐或原厂手册边界');
+    }
+    if (await page.locator('#progress[role="progressbar"]').count() !== 1) throw new Error('起点测评离线页丢失进度条语义');
+    if (await page.locator('#options[role="radiogroup"]').count() !== 1) throw new Error('起点测评离线页丢失单选组语义');
+    if (await page.locator('#result-diagnostics').count() !== 1) throw new Error('起点测评离线页丢失可解释判断区域');
+
+    stage = 'cold-offline-placement-route-handoff';
+    await completeCriticalSafetyPlacement(page);
+    await page.locator('#handoff-link').click();
+    await page.waitForURL(/\/cnc\/training-camp\.html$/);
+    await page.locator('#placement-handoff[data-state="consumed"]').waitFor({ state: 'visible' });
+    const routeHandoff = await page.evaluate(key => ({
+      title: document.querySelector('#placement-handoff-title')?.textContent || '',
+      steps: [...document.querySelectorAll('#placement-handoff-steps li')].map(item => item.textContent),
+      sessionValue: sessionStorage.getItem(key),
+      localValue: localStorage.getItem(key)
+    }), PLACEMENT_HANDOFF_KEY);
+    if (!routeHandoff.title.includes('安全基础') || routeHandoff.steps.length !== 3) throw new Error(`离线路线交接内容不完整: ${JSON.stringify(routeHandoff)}`);
+    if (routeHandoff.sessionValue !== null || routeHandoff.localValue !== null) throw new Error('离线路线交接未立即清除或泄露到长期存储');
+
+    stage = 'cold-offline-ai-teacher';
+    await page.goto('http://127.0.0.1:4173/cnc/ai-teacher.html', { waitUntil: 'domcontentloaded' });
+    if (!(await page.title()).includes('AI CNC老师')) throw new Error('AI CNC老师首次安装后离线打开失败');
+    const teacherBody = await page.locator('body').innerText();
+    if (!teacherBody.includes('不需要API Key') || !teacherBody.includes('不上传学习数据')) {
+      throw new Error('AI CNC老师离线页丢失本地安全说明');
     }
 
-    stage = 'cache-ready';
-    // Activation intentionally performs cache maintenance asynchronously. Wait
-    // for both production cache versions before testing offline navigation.
-    await waitForProductionCaches(page);
-    const cachesBefore = await page.evaluate(() => caches.keys());
-    if (!cachesBefore.includes(`cnc-static-${expectedPwaBuild}`)) throw new Error(`静态缓存版本缺失：${expectedPwaBuild}`);
-    if (!cachesBefore.includes(`cnc-runtime-${expectedPwaBuild}`)) throw new Error(`运行时缓存版本缺失：${expectedPwaBuild}`);
+    stage = 'cold-offline-intake';
+    await page.goto('http://127.0.0.1:4173/cnc/ai-teacher-intake.html', { waitUntil: 'domcontentloaded' });
+    if (!(await page.title()).includes('现场问诊单')) throw new Error('现场问诊单首次安装后离线打开失败');
+    const intakeBody = await page.locator('body').innerText();
+    if (!intakeBody.includes('不需要API Key') || !intakeBody.includes('不会替你修改参数')) {
+      throw new Error('现场问诊单离线页丢失安全边界');
+    }
+
+    stage = 'cold-offline-explainability';
+    await page.goto('http://127.0.0.1:4173/cnc/ai-teacher-explainability.html', { waitUntil: 'domcontentloaded' });
+    if (!(await page.title()).includes('AI老师判断说明')) throw new Error('AI老师判断说明页首次安装后离线打开失败');
+    const explainabilityBody = await page.locator('body').innerText();
+    if (!explainabilityBody.includes('本页不提供固定上机值') || !explainabilityBody.includes('未逐条复核内容不可直接上机')) {
+      throw new Error('判断说明离线页丢失固定值或可信度边界');
+    }
 
     stage = 'status-page';
+    await context.setOffline(false);
     await page.goto('http://127.0.0.1:4173/cnc/pwa-status.html', { waitUntil: 'domcontentloaded' });
     await page.waitForFunction(() => document.querySelector('#worker')?.textContent.includes('已启用'));
-    await page.waitForFunction(expected => document.querySelector('#build')?.textContent.includes(expected), expectedPwaBuild);
+    await page.waitForFunction(expected => document.querySelector('#build')?.textContent.includes(expected), PWA_BUILD);
     const build = await page.locator('#build').textContent();
     const small = await page.locator('a,button').evaluateAll(elements => elements.filter(element => {
       const rect = element.getBoundingClientRect();
@@ -165,55 +210,36 @@ async function readExpectedRegistration(page) {
     }));
     if (small.length) throw new Error(`触控区不足44px ${JSON.stringify(small)}`);
 
-    stage = 'warm-runtime-route';
-    await page.goto('http://127.0.0.1:4173/cnc/training-camp.html', { waitUntil: 'domcontentloaded' });
-    if (!(await page.title()).includes('训练')) throw new Error('训练营在线预热失败');
-    await page.goto('http://127.0.0.1:4173/cnc/pwa-status.html', { waitUntil: 'domcontentloaded' });
-
-    stage = 'cached-offline-route';
-    await context.setOffline(true);
-    await page.goto('http://127.0.0.1:4173/cnc/training-camp.html', { waitUntil: 'domcontentloaded' });
-    if (!(await page.title()).includes('训练')) throw new Error('离线训练营未打开');
-
     stage = 'offline-fallback';
-    // Playwright's offline emulation can behave differently for localhost
-    // navigation requests. Restore network and use a server-side connection
-    // drop so the Service Worker receives a real rejected fetch every time.
-    await context.setOffline(false);
-    const fallbackUrl = `http://127.0.0.1:4173/cnc/__offline_probe__${Date.now()}.html`;
-    const fallbackResponse = await page.goto(fallbackUrl, { waitUntil: 'domcontentloaded' });
-    fallbackState = {
-      requestUrl: fallbackUrl,
-      finalUrl: page.url(),
-      status: fallbackResponse ? fallbackResponse.status() : null,
-      title: await page.title(),
-      body: (await page.locator('body').innerText()).slice(0, 1000),
-      controller: await page.evaluate(() => navigator.serviceWorker.controller?.scriptURL || '')
-    };
-    if (!fallbackState.body.includes('网络暂时不可用')) {
-      throw new Error(`离线回退页未生效：${JSON.stringify(fallbackState)}`);
-    }
+    await context.setOffline(true);
+    await page.goto(`http://127.0.0.1:4173/cnc/not-cached-${Date.now()}.html`, { waitUntil: 'domcontentloaded' });
+    if (!(await page.locator('body').innerText()).includes('网络暂时不可用')) throw new Error('离线回退页未生效');
 
     await page.screenshot({ path: path.join(out, 'pwa-offline-390x844.png'), fullPage: true });
     if (errors.length) throw new Error(`控制台错误 ${errors.join(' | ')}`);
     fs.writeFileSync(path.join(out, 'pwa-offline-result.json'), JSON.stringify({
       build,
-      expectedPwaBuild,
-      registration,
       caches: cachesBefore,
       offlineFallback: true,
-      fallbackState,
-      runtimeWarmup: true,
-      touchTargets: true,
-      runtimeDiagnostics
+      beginnerPlacementColdOffline: true,
+      beginnerPlacementCriticalSafetyGateColdOffline: true,
+      trainingCampColdOffline: true,
+      placementRouteHandoffColdOffline: true,
+      placementRouteHandoffImmediateCleanup: true,
+      aiTeacherColdOffline: true,
+      intakeColdOffline: true,
+      explainabilityColdOffline: true,
+      coreOfflinePaths: CORE_OFFLINE_PATHS,
+      touchTargets: true
     }, null, 2));
     console.log('CNC PWA offline cache smoke passed');
   } catch (error) {
-    fs.writeFileSync(path.join(out, 'pwa-offline-error.txt'), `stage=${stage}\nruntime=${JSON.stringify(runtimeDiagnostics, null, 2)}\nfallback=${JSON.stringify(fallbackState, null, 2)}\n${error.stack || error}`);
+    if (page && context) await captureDiagnostics(page, context, stage, errors);
+    fs.writeFileSync(path.join(out, 'pwa-offline-error.txt'), `stage=${stage}\n${error.stack || error}`);
     throw error;
   } finally {
     if (context) await context.close().catch(() => {});
-    if (browser) await browser.close().catch(() => {});
+    if (userDataDir) fs.rmSync(userDataDir, { recursive: true, force: true });
     await new Promise(resolve => server.close(resolve)).catch(() => {});
   }
 })().catch(error => {
