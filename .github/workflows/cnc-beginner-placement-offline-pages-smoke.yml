@@ -49,11 +49,11 @@ jobs:
           const sw = fs.readFileSync('cnc/sw.js', 'utf8');
           const placement = fs.readFileSync('cnc/beginner-placement.html', 'utf8');
           const camp = fs.readFileSync('cnc/training-camp.html', 'utf8');
-          if (info.pwaBuild !== '20260803-pwa9') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
-          if (!sw.includes("const BUILD = '20260803-pwa9'")) throw new Error('Service Worker build mismatch');
+          if (info.pwaBuild !== '20260804-pwa10') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
+          if (!sw.includes("const BUILD = '20260804-pwa10'")) throw new Error('Service Worker build mismatch');
           for (const token of [
-            "const branchTargetPwaBuild = '20260803-pwa9'",
-            "const previousPublicPwaBuild = '20260802-pwa8'",
+            "const branchTargetPwaBuild = '20260804-pwa10'",
+            "const previousPublicPwaBuild = '20260803-pwa9'",
             'CNC_PAGES_VERIFY_ATTEMPTS || 18',
             "cache: 'no-store'",
             'cnc/beginner-placement.html',
@@ -77,6 +77,7 @@ jobs:
             if (!sw.includes(`'${file}'`)) throw new Error(`PWA core missing: ${file}`);
           }
           if (!String(info.contentStage || '').includes('测评首步课程离线核心')) throw new Error('build marker missing placement first-step offline core');
+          if (!String(info.contentStage || '').includes('正式课程开发占位清零')) throw new Error('build marker missing formal course content refresh');
           for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)', 'CNC_PAGES_VERIFY_ATTEMPTS || 0']) {
             if (test.includes(forbidden)) throw new Error(`deployment gate bypass found: ${forbidden}`);
           }
