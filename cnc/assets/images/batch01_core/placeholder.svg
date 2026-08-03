@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-labelledby="title desc">
+  <title id="title">CNC教学图片暂缺</title>
+  <desc id="desc">浅色工业风占位图，提示当前知识点的教学图片正在补充。</desc>
+  <rect width="800" height="450" rx="28" fill="#f2efe8"/>
+  <rect x="28" y="28" width="744" height="394" rx="22" fill="#fffdf8" stroke="#d8d2c6" stroke-width="4"/>
+  <g fill="none" stroke="#365b72" stroke-width="14" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M278 280h244"/>
+    <path d="M330 280v-96h140v96"/>
+    <path d="M365 184v-36h70v36"/>
+    <path d="M400 148v-34"/>
+    <path d="M304 320h192"/>
+  </g>
+  <circle cx="400" cy="114" r="12" fill="#365b72"/>
+  <text x="400" y="366" text-anchor="middle" fill="#292d30" font-family="Arial,'Microsoft YaHei',sans-serif" font-size="34" font-weight="700">教学图片正在补充</text>
+  <text x="400" y="401" text-anchor="middle" fill="#687078" font-family="Arial,'Microsoft YaHei',sans-serif" font-size="20">请以课程文字、原厂手册和现场条件为准</text>
+</svg>
