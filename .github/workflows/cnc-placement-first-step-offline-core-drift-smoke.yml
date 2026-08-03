@@ -1,0 +1,144 @@
+name: CNC placement first-step offline core drift smoke
+on:
+  pull_request:
+    paths:
+      - 'cnc/beginner-placement.html'
+      - 'cnc/training-camp.html'
+      - 'cnc/sw.js'
+      - 'cnc/pwa-self-test.html'
+      - 'cnc/course-*.html'
+      - 'cnc/tests/beginner-placement-route-catalog-drift-smoke.cjs'
+      - 'cnc/tests/mobile-pwa-offline-cache-smoke.cjs'
+      - 'cnc/tests/mobile-pwa-upgrade-data-smoke.cjs'
+      - 'cnc/tests/placement-first-step-offline-core-drift-smoke.cjs'
+      - 'cnc/docs/placement-first-step-offline-core-drift-contract.md'
+      - '.github/workflows/cnc-placement-first-step-offline-core-drift-smoke.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'cnc/beginner-placement.html'
+      - 'cnc/training-camp.html'
+      - 'cnc/sw.js'
+      - 'cnc/pwa-self-test.html'
+      - 'cnc/course-*.html'
+      - 'cnc/tests/beginner-placement-route-catalog-drift-smoke.cjs'
+      - 'cnc/tests/mobile-pwa-offline-cache-smoke.cjs'
+      - 'cnc/tests/mobile-pwa-upgrade-data-smoke.cjs'
+      - 'cnc/tests/placement-first-step-offline-core-drift-smoke.cjs'
+      - 'cnc/docs/placement-first-step-offline-core-drift-contract.md'
+      - '.github/workflows/cnc-placement-first-step-offline-core-drift-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: cnc-placement-first-step-offline-core-drift-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Validate tests and Chinese contract
+        run: |
+          node --check cnc/tests/beginner-placement-route-catalog-drift-smoke.cjs
+          node --check cnc/tests/placement-first-step-offline-core-drift-smoke.cjs
+          node - <<'NODE'
+          const fs = require('fs');
+          const test = fs.readFileSync('cnc/tests/placement-first-step-offline-core-drift-smoke.cjs', 'utf8');
+          const contract = fs.readFileSync('cnc/docs/placement-first-step-offline-core-drift-contract.md', 'utf8');
+          const workflow = fs.readFileSync('.github/workflows/cnc-placement-first-step-offline-core-drift-smoke.yml', 'utf8');
+
+          for (const token of [
+            'ROUTE_REPORT_PATH',
+            'PLACEMENT_FIRST_STEP_COURSES',
+            'routeHrefMatchesFirstStep',
+            'firstStepsInServiceWorker',
+            'firstStepsInSelfTest',
+            'offlineBrowserCourseSetExact',
+            'upgradeCourseSetExact',
+            'serviceWorkerAndSelfTestCoreExact',
+            'missingFromServiceWorker',
+            'missingFromSelfTest'
+          ]) {
+            if (!test.includes(token)) throw new Error(`首步离线防漂移测试缺少结构契约：${token}`);
+          }
+
+          for (const token of [
+            '唯一路线来源',
+            'route.href',
+            'steps[0].href',
+            'Service Worker',
+            'PWA 自检',
+            '首次安装冷离线',
+            '升级保护',
+            '相同系统和机型的原厂手册',
+            '授权人员确认'
+          ]) {
+            if (!contract.includes(token)) throw new Error(`首步离线中文契约缺失：${token}`);
+          }
+
+          for (const token of [
+            "'cnc/course-*.html'",
+            "'cnc/beginner-placement.html'",
+            "'cnc/training-camp.html'",
+            "'cnc/sw.js'",
+            "'cnc/pwa-self-test.html'",
+            "'cnc/tests/mobile-pwa-offline-cache-smoke.cjs'",
+            "'cnc/tests/mobile-pwa-upgrade-data-smoke.cjs'",
+            "'cnc/tests/placement-first-step-offline-core-drift-smoke.cjs'"
+          ]) {
+            const count = workflow.split(token).length - 1;
+            if (count !== 2) throw new Error(`pull_request 与 main push 触发覆盖异常：${token}=${count}`);
+          }
+
+          for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)']) {
+            if (test.includes(forbidden)) throw new Error(`首步离线防漂移测试发现绕过：${forbidden}`);
+          }
+          NODE
+      - name: Verify placement route catalog
+        run: node cnc/tests/beginner-placement-route-catalog-drift-smoke.cjs
+      - name: Verify placement first-step offline core drift
+        run: node cnc/tests/placement-first-step-offline-core-drift-smoke.cjs
+      - name: Reject incomplete diagnostics
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const report = JSON.parse(fs.readFileSync('cnc/test-results/placement-first-step-offline-core-drift/report.json', 'utf8'));
+          if (!report.passed) throw new Error('测评首步离线核心报告未通过');
+          if (!report.checks || report.checks.decisionCount !== 4 || report.checks.uniqueFirstStepCount < 1) {
+            throw new Error(`测评首步离线核心覆盖不足：${JSON.stringify(report.checks)}`);
+          }
+          for (const key of [
+            'routeHrefMatchesFirstStep',
+            'firstStepTargetsExist',
+            'firstStepsInServiceWorker',
+            'firstStepsInSelfTest',
+            'offlineBrowserCourseSetExact',
+            'upgradeCourseSetExact',
+            'serviceWorkerAndSelfTestCoreExact'
+          ]) {
+            if (report.checks[key] !== true) throw new Error(`测评首步离线核心检查未通过：${key}`);
+          }
+          for (const key of ['missingFromServiceWorker', 'missingFromSelfTest']) {
+            if (!Array.isArray(report.checks[key]) || report.checks[key].length !== 0) {
+              throw new Error(`测评首步离线核心仍有缺失项：${key}=${JSON.stringify(report.checks[key])}`);
+            }
+          }
+          if (!Array.isArray(report.expectedFirstSteps) || report.expectedFirstSteps.length !== report.checks.uniqueFirstStepCount) {
+            throw new Error('测评首步离线核心诊断集合不完整');
+          }
+          NODE
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-placement-first-step-offline-core-drift-${{ github.run_id }}
+          path: |
+            cnc/test-results/beginner-placement-route-catalog-drift/**
+            cnc/test-results/placement-first-step-offline-core-drift/**
+          if-no-files-found: error
+          retention-days: 14
