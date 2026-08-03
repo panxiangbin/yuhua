@@ -11,6 +11,9 @@ const assert = require('node:assert/strict');
   await page.waitForFunction(() => window.CNC_TRAINING_PROFILE?.build === '20260724a', null, { timeout: 20000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-startup-home') === 'stable', null, { timeout: 15000 });
   await page.waitForFunction(() => window.CNC_GAME_QUERY_NAV?.build === '20260731d', null, { timeout: 15000 });
+  // 成长档案启动时有一次 900ms 的受控补渲染。先等它真正结束，再写入测试数据，
+  // 避免补渲染恰好覆盖点击后的 aria-live 成功反馈；不放宽连续天数、XP 或徽章断言。
+  await page.waitForFunction(() => performance.now() >= 1200, null, { timeout: 5000 });
   assert.equal(await page.locator('.view.active').getAttribute('id'), 'view-dashboard');
 
   await page.evaluate(() => {
@@ -50,6 +53,11 @@ const assert = require('node:assert/strict');
   const buttonHeight = await button.evaluate(node => node.getBoundingClientRect().height);
   assert.ok(buttonHeight >= 44, `完成今日训练按钮高度应不少于44px，实际为 ${buttonHeight}px`);
   await button.click();
+  await page.waitForFunction(() => {
+    const snapshot = window.CNC_TRAINING_PROFILE?.snapshot();
+    const feedback = document.querySelector('.xp-streak-feedback')?.textContent || '';
+    return snapshot?.streak.current === 3 && snapshot?.streak.trainedToday === true && /连续训练 3 天/.test(feedback);
+  }, null, { timeout: 10000 });
 
   const after = await page.evaluate(() => window.CNC_TRAINING_PROFILE.snapshot());
   assert.equal(after.streak.current, 3);
