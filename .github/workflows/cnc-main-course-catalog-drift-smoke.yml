@@ -5,6 +5,7 @@ on:
     paths:
       - 'cnc/personal-home.js'
       - 'cnc/training-camp.html'
+      - 'cnc/ai-teacher.html'
       - 'cnc/course-*.html'
       - 'cnc/tests/main-course-catalog-drift-smoke.cjs'
       - 'cnc/docs/main-course-catalog-drift-contract.md'
@@ -14,6 +15,7 @@ on:
     paths:
       - 'cnc/personal-home.js'
       - 'cnc/training-camp.html'
+      - 'cnc/ai-teacher.html'
       - 'cnc/course-*.html'
       - 'cnc/tests/main-course-catalog-drift-smoke.cjs'
       - 'cnc/docs/main-course-catalog-drift-contract.md'
@@ -41,11 +43,12 @@ jobs:
           set -euxo pipefail
           node --check cnc/tests/main-course-catalog-drift-smoke.cjs
           grep -q '12关' cnc/docs/main-course-catalog-drift-contract.md
-          grep -q '双端' cnc/docs/main-course-catalog-drift-contract.md
+          grep -q '三端' cnc/docs/main-course-catalog-drift-contract.md
+          grep -q 'AI CNC 老师' cnc/docs/main-course-catalog-drift-contract.md
           grep -q '原厂手册' cnc/docs/main-course-catalog-drift-contract.md
           grep -q '授权人员确认' cnc/docs/main-course-catalog-drift-contract.md
           ! grep -Eq "test\.skip\(|describe\.skip\(|it\.skip\(|process\.exit\(0\)" cnc/tests/main-course-catalog-drift-smoke.cjs
-      - name: Verify mobile home and training camp course catalogs
+      - name: Verify mobile home, training camp and AI teacher course catalogs
         run: node cnc/tests/main-course-catalog-drift-smoke.cjs
       - name: Reject incomplete diagnostics
         run: |
@@ -53,10 +56,10 @@ jobs:
           const fs = require('fs');
           const report = JSON.parse(fs.readFileSync('cnc/test-results/main-course-catalog-drift/report.json', 'utf8'));
           if (!report.passed) throw new Error(`12关目录报告未通过：${JSON.stringify(report.errors)}`);
-          if (report.homeCatalog.length !== 12 || report.trainingCampCatalog.length !== 12 || report.canonicalCourses.length !== 12) {
-            throw new Error(`12关目录覆盖不足：${JSON.stringify({home: report.homeCatalog.length, camp: report.trainingCampCatalog.length, canonical: report.canonicalCourses.length})}`);
+          if (report.homeCatalog.length !== 12 || report.trainingCampCatalog.length !== 12 || report.aiTeacherCourseLinks.length !== 12 || report.canonicalCourses.length !== 12) {
+            throw new Error(`12关目录覆盖不足：${JSON.stringify({home: report.homeCatalog.length, camp: report.trainingCampCatalog.length, aiTeacher: report.aiTeacherCourseLinks.length, canonical: report.canonicalCourses.length})}`);
           }
-          for (const key of ['stageIdsAndOrderMatch', 'entryFilesMatch', 'titlesCompatible', 'allTargetsExist', 'redirectAliasesControlled', 'canonicalTargetsUnique', 'pullRequestAndMainPushPathsSymmetric', 'requiredTriggerPathsCovered', 'readOnlyPermissions', 'noCancellation']) {
+          for (const key of ['stageIdsAndOrderMatch', 'entryFilesMatch', 'aiTeacherCourseLinksMatch', 'aiTeacherRecommendationUsesCatalog', 'titlesCompatible', 'allTargetsExist', 'redirectAliasesControlled', 'canonicalTargetsUnique', 'pullRequestAndMainPushPathsSymmetric', 'requiredTriggerPathsCovered', 'readOnlyPermissions', 'noCancellation']) {
             if (report.checks[key] !== true) throw new Error(`12关目录检查缺失或失败：${key}`);
           }
           NODE
