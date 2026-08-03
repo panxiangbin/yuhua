@@ -22,9 +22,20 @@ const SKIP_DIRECTORIES = new Set([
   'coverage'
 ]);
 
+// 仅排除明确不是网站生产入口的历史维护/诊断源文件；若被生产页面引用，目标存在性仍会被检查。
+const NON_PRODUCTION_SOURCE_PATHS = new Map([
+  ['cnc/fix-json-encoding.js', '一次性JSON编码维护脚本，不由生产页面加载'],
+  ['cnc/tmp_dom_dump.html', '历史DOM诊断快照，不是产品页面']
+]);
+
 // Service Worker 在运行时写入该诊断响应，它不是仓库静态文件。
 const GENERATED_RUNTIME_TARGETS = new Set([
   'cnc/pwa-install-diagnostics.json'
+]);
+
+// 这些生产加载器明确先移除UTF-8 BOM，再执行JSON.parse。
+const BOM_AWARE_JSON_SOURCES = new Set([
+  'cnc/json-loader.js'
 ]);
 
 const SOURCE_EXTENSIONS = new Set(['.html', '.css', '.js', '.webmanifest']);
@@ -117,12 +128,96 @@ function addReference(bucket, source, raw, kind) {
   bucket.local.push({ source, raw: normalized.raw || raw, target: normalized.target, kind });
 }
 
+function extractCssReferences(text, source, bucket, kindPrefix = 'css') {
+  let match;
+  const urlPattern = /url\(\s*(["']?)([^)'"\s]+)\1\s*\)/gi;
+  while ((match = urlPattern.exec(text))) addReference(bucket, source, match[2], `${kindPrefix}:url`);
+
+  const importPattern = /@import\s+(?:url\(\s*)?(["'])([^"']+)\1/gi;
+  while ((match = importPattern.exec(text))) addReference(bucket, source, match[2], `${kindPrefix}:import`);
+}
+
+function stripJsComments(text) {
+  let output = '';
+  let state = 'code';
+  let escaped = false;
+
+  for (let index = 0; index < text.length; index += 1) {
+    const char = text[index];
+    const next = text[index + 1];
+
+    if (state === 'line-comment') {
+      if (char === '\n' || char === '\r') {
+        state = 'code';
+        output += char;
+      } else {
+        output += ' ';
+      }
+      continue;
+    }
+
+    if (state === 'block-comment') {
+      if (char === '*' && next === '/') {
+        output += '  ';
+        index += 1;
+        state = 'code';
+      } else {
+        output += char === '\n' || char === '\r' ? char : ' ';
+      }
+      continue;
+    }
+
+    if (state === 'single' || state === 'double' || state === 'template') {
+      output += char;
+      if (escaped) {
+        escaped = false;
+        continue;
+      }
+      if (char === '\\') {
+        escaped = true;
+        continue;
+      }
+      if ((state === 'single' && char === "'") || (state === 'double' && char === '"') || (state === 'template' && char === '`')) {
+        state = 'code';
+      }
+      continue;
+    }
+
+    if (char === '/' && next === '/') {
+      output += '  ';
+      index += 1;
+      state = 'line-comment';
+      continue;
+    }
+    if (char === '/' && next === '*') {
+      output += '  ';
+      index += 1;
+      state = 'block-comment';
+      continue;
+    }
+    if (char === "'") state = 'single';
+    else if (char === '"') state = 'double';
+    else if (char === '`') state = 'template';
+    output += char;
+  }
+
+  return output;
+}
+
+function extractJsReferences(text, source, bucket, kindPrefix = 'js') {
+  const code = stripJsComments(text);
+  const quotedResource = /(["'`])((?:(?:\.\.?\/)|(?:\/(?:yuhua\/)?cnc\/))[^"'`\r\n]*?\.(?:html?|css|js|json|webmanifest|svg|png|jpe?g|webp|gif|mp4|webm|pdf|txt)(?:[?#][^"'`\r\n]*)?)\1/gi;
+  let match;
+  while ((match = quotedResource.exec(code))) addReference(bucket, source, match[2], `${kindPrefix}:quoted-resource`);
+}
+
 function extractHtmlReferences(text, source, bucket) {
-  const attributePattern = /\b(href|src|action|poster)\s*=\s*(["'])([\s\S]*?)\2/gi;
+  // 属性名前必须是空白或标签起点，避免把 data-action 误判为表单 action。
+  const attributePattern = /(?:^|[\s<])(href|src|action|poster)\s*=\s*(["'])([\s\S]*?)\2/gi;
   let match;
   while ((match = attributePattern.exec(text))) addReference(bucket, source, match[3], `html:${match[1].toLowerCase()}`);
 
-  const srcsetPattern = /\bsrcset\s*=\s*(["'])([\s\S]*?)\1/gi;
+  const srcsetPattern = /(?:^|[\s<])srcset\s*=\s*(["'])([\s\S]*?)\1/gi;
   while ((match = srcsetPattern.exec(text))) {
     for (const candidate of match[2].split(',')) {
       const url = candidate.trim().split(/\s+/)[0];
@@ -130,23 +225,14 @@ function extractHtmlReferences(text, source, bucket) {
     }
   }
 
-  const cssUrlPattern = /url\(\s*(["']?)([^)'"\s]+)\1\s*\)/gi;
-  while ((match = cssUrlPattern.exec(text))) addReference(bucket, source, match[2], 'html:inline-css-url');
-}
+  const styleAttributePattern = /(?:^|[\s<])style\s*=\s*(["'])([\s\S]*?)\1/gi;
+  while ((match = styleAttributePattern.exec(text))) extractCssReferences(match[2], source, bucket, 'html:style');
 
-function extractCssReferences(text, source, bucket) {
-  let match;
-  const urlPattern = /url\(\s*(["']?)([^)'"\s]+)\1\s*\)/gi;
-  while ((match = urlPattern.exec(text))) addReference(bucket, source, match[2], 'css:url');
+  const styleBlockPattern = /<style\b[^>]*>([\s\S]*?)<\/style>/gi;
+  while ((match = styleBlockPattern.exec(text))) extractCssReferences(match[1], source, bucket, 'html:style-block');
 
-  const importPattern = /@import\s+(?:url\(\s*)?(["'])([^"']+)\1/gi;
-  while ((match = importPattern.exec(text))) addReference(bucket, source, match[2], 'css:import');
-}
-
-function extractJsReferences(text, source, bucket) {
-  const quotedResource = /(["'`])((?:(?:\.\.?\/)|(?:\/(?:yuhua\/)?cnc\/))[^"'`\r\n]*?\.(?:html?|css|js|json|webmanifest|svg|png|jpe?g|webp|gif|mp4|webm|pdf|txt)(?:[?#][^"'`\r\n]*)?)\1/gi;
-  let match;
-  while ((match = quotedResource.exec(text))) addReference(bucket, source, match[2], 'js:quoted-resource');
+  const inlineScriptPattern = /<script\b(?![^>]*\bsrc\s*=)[^>]*>([\s\S]*?)<\/script>/gi;
+  while ((match = inlineScriptPattern.exec(text))) extractJsReferences(match[1], source, bucket, 'html:inline-script');
 }
 
 function extractManifestReferences(text, source, bucket, errors) {
@@ -158,9 +244,7 @@ function extractManifestReferences(text, source, bucket, errors) {
     return;
   }
 
-  for (const key of ['start_url']) {
-    if (typeof manifest[key] === 'string') addReference(bucket, source, manifest[key], `manifest:${key}`);
-  }
+  if (typeof manifest.start_url === 'string') addReference(bucket, source, manifest.start_url, 'manifest:start_url');
   for (const icon of [...(manifest.icons || []), ...(manifest.screenshots || [])]) {
     if (icon && typeof icon.src === 'string') addReference(bucket, source, icon.src, 'manifest:asset');
   }
@@ -172,7 +256,7 @@ function extractManifestReferences(text, source, bucket, errors) {
   }
 }
 
-function validateTarget(reference, missing, invalid) {
+function validateTarget(reference, missing, invalid, bomNormalized) {
   if (GENERATED_RUNTIME_TARGETS.has(reference.target)) return { generated: true };
 
   let absolute = path.join(root, reference.target);
@@ -207,7 +291,16 @@ function validateTarget(reference, missing, invalid) {
       }
     }
     if (extension === '.json' || extension === '.webmanifest') {
-      try { JSON.parse(text); } catch (error) {
+      let parseText = text;
+      if (text.charCodeAt(0) === 0xFEFF) {
+        if (!BOM_AWARE_JSON_SOURCES.has(reference.source)) {
+          invalid.push({ ...reference, type: 'utf8-bom-without-aware-loader' });
+          return { invalid: true };
+        }
+        parseText = text.slice(1);
+        bomNormalized.push({ source: reference.source, target: reference.target, kind: reference.kind });
+      }
+      try { JSON.parse(parseText); } catch (error) {
         invalid.push({ ...reference, type: 'invalid-json-target', detail: error.message });
         return { invalid: true };
       }
@@ -261,7 +354,16 @@ function main() {
   const errors = [];
   const bucket = { local: [], outsideCnc: [] };
   const allFiles = walk(cncRoot);
-  const sources = allFiles.filter(file => SOURCE_EXTENSIONS.has(path.extname(file).toLowerCase()));
+  const excludedSources = [];
+  const sources = allFiles.filter(file => {
+    if (!SOURCE_EXTENSIONS.has(path.extname(file).toLowerCase())) return false;
+    const relative = rel(file);
+    if (NON_PRODUCTION_SOURCE_PATHS.has(relative)) {
+      excludedSources.push({ path: relative, reason: NON_PRODUCTION_SOURCE_PATHS.get(relative) });
+      return false;
+    }
+    return true;
+  });
 
   for (const absolute of sources) {
     const source = rel(absolute);
@@ -282,11 +384,12 @@ function main() {
 
   const missing = [];
   const invalid = [];
+  const bomNormalized = [];
   let generatedRuntimeReferences = 0;
   let validReferences = 0;
   let validatedBytes = 0;
   for (const reference of references) {
-    const result = validateTarget(reference, missing, invalid);
+    const result = validateTarget(reference, missing, invalid, bomNormalized);
     if (result.generated) generatedRuntimeReferences += 1;
     if (result.valid) {
       validReferences += 1;
@@ -300,9 +403,10 @@ function main() {
     sha256: sha256(fs.readFileSync(file)),
     bytes: fs.statSync(file).size
   }));
+  const uniqueBomNormalized = [...new Map(bomNormalized.map(item => [`${item.source}\u0000${item.target}`, item])).values()];
 
   const report = {
-    schemaVersion: 1,
+    schemaVersion: 2,
     generatedAt: new Date().toISOString(),
     scope: 'cnc/** production HTML/CSS/JS/webmanifest local references',
     sourceFilesScanned: sources.length,
@@ -311,15 +415,18 @@ function main() {
       summary[extension] = (summary[extension] || 0) + 1;
       return summary;
     }, {}),
+    nonProductionSourcesExcluded: excludedSources.sort((a, b) => a.path.localeCompare(b.path, 'zh-CN')),
     localReferencesDiscovered: references.length,
     validReferences,
     generatedRuntimeReferences,
+    bomNormalizedReferences: uniqueBomNormalized,
     outsideCncReferences: bucket.outsideCnc.length,
     validatedBytes,
     missing,
     invalid,
     errors,
     generatedRuntimeAllowlist: [...GENERATED_RUNTIME_TARGETS],
+    bomAwareJsonSources: [...BOM_AWARE_JSON_SOURCES],
     workflow,
     passed: sources.length > 0 && references.length > 0 && missing.length === 0 && invalid.length === 0 && errors.length === 0
   };
@@ -328,14 +435,18 @@ function main() {
   const diagnosticLines = [
     `CNC站内资源完整性：${report.passed ? '通过' : '失败'}`,
     `扫描源文件：${sources.length}`,
+    `明确排除的非生产源：${excludedSources.length}`,
     `本地引用：${references.length}`,
     `有效引用：${validReferences}`,
     `运行时生成引用：${generatedRuntimeReferences}`,
+    `BOM感知加载引用：${uniqueBomNormalized.length}`,
     `CNC范围外引用（仅记录）：${bucket.outsideCnc.length}`,
     `缺失：${missing.length}`,
     `无效：${invalid.length}`,
     `契约错误：${errors.length}`,
     '',
+    ...excludedSources.map(item => `非生产源｜${item.path}｜${item.reason}`),
+    ...uniqueBomNormalized.map(item => `BOM感知｜${item.source}｜${item.target}`),
     ...missing.map(item => `缺失｜${item.source}｜${item.kind}｜${item.raw} -> ${item.target}`),
     ...invalid.map(item => `无效｜${item.source}｜${item.kind}｜${item.raw} -> ${item.target}｜${item.type}`),
     ...errors.map(item => `错误｜${item.source}｜${item.type}｜${item.detail || ''}`)
@@ -345,9 +456,11 @@ function main() {
   console.log(JSON.stringify({
     passed: report.passed,
     sourceFilesScanned: report.sourceFilesScanned,
+    nonProductionSourcesExcluded: report.nonProductionSourcesExcluded.length,
     localReferencesDiscovered: report.localReferencesDiscovered,
     validReferences: report.validReferences,
     generatedRuntimeReferences: report.generatedRuntimeReferences,
+    bomNormalizedReferences: report.bomNormalizedReferences.length,
     outsideCncReferences: report.outsideCncReferences,
     missing: report.missing.length,
     invalid: report.invalid.length,
