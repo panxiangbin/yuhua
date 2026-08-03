@@ -72,15 +72,18 @@ jobs:
           ]) {
             if (!contract.includes(token)) throw new Error(`missing Chinese contract token: ${token}`);
           }
-          for (const forbidden of [
-            'test.skip(',
-            'process.exit(0)',
-            'continue-on-error: true',
-            'cancel-in-progress: true'
-          ]) {
-            if (test.includes(forbidden) || workflow.includes(forbidden)) {
-              throw new Error(`audit bypass found: ${forbidden}`);
-            }
+          for (const forbidden of ['test.skip(', 'process.exit(0)']) {
+            if (test.includes(forbidden)) throw new Error(`audit test bypass found: ${forbidden}`);
+          }
+          const yamlControlLines = workflow.split('\n').filter(line => {
+            const indent = (line.match(/^\s*/) || [''])[0].length;
+            return indent <= 8;
+          });
+          if (yamlControlLines.some(line => /^\s*continue-on-error:\s*true\s*$/.test(line))) {
+            throw new Error('workflow bypass found: continue-on-error true');
+          }
+          if (yamlControlLines.some(line => /^\s*cancel-in-progress:\s*true\s*$/.test(line))) {
+            throw new Error('workflow bypass found: cancel-in-progress true');
           }
           NODE
 
