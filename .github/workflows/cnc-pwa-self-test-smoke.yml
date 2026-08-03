@@ -67,7 +67,7 @@ jobs:
             '关键安全门禁',
             '训练营临时路线',
             '三类测评首步课程',
-            '正式课程正文刷新'
+            'PWA10用于刷新已清理开发占位后的核心课程正文'
           ]) {
             if (!html.includes(token)) throw new Error(`self-test contract missing: ${token}`);
           }
