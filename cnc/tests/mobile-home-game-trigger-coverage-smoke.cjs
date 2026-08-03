@@ -17,6 +17,7 @@ const report = {
   pullRequestPaths: [],
   pushPaths: [],
   homepageTargets: [],
+  redirectAliases: [],
   missingFromPullRequest: [],
   missingFromPush: [],
   missingTargets: [],
@@ -72,6 +73,25 @@ function pathCovered(patterns, target) {
   });
 }
 
+function inspectRedirectAlias(target) {
+  const absolute = path.join(ROOT, target);
+  const source = fs.readFileSync(absolute, 'utf8');
+  expect(source.trim().length > 120, `手机闯关首页目标页面内容异常：${target}`);
+  expect(/<!doctype html>/i.test(source) && /<html\b/i.test(source), `手机闯关首页目标不是有效HTML：${target}`);
+
+  const metaTarget = source.match(/http-equiv=["']refresh["'][^>]*content=["'][^"']*url=([^"'>\s]+)/i)?.[1] || '';
+  const scriptTarget = source.match(/location\.replace\(\s*["']([^"']+\.html)/)?.[1] || '';
+  const redirectTarget = metaTarget || scriptTarget;
+  if (!redirectTarget) return null;
+
+  const cleanTarget = redirectTarget.replace(/^\.\//, '').split(/[?#]/)[0];
+  const resolved = `cnc/${cleanTarget}`;
+  expect(/^cnc\/course-[a-z0-9-]+\.html$/.test(resolved), `手机闯关首页兼容入口跳转到非受控页面：${target} -> ${redirectTarget}`);
+  expect(fs.existsSync(path.join(ROOT, resolved)), `手机闯关首页兼容入口目标不存在：${target} -> ${resolved}`);
+  expect(resolved !== target, `手机闯关首页兼容入口发生自跳转：${target}`);
+  return { alias: target, target: resolved };
+}
+
 function main() {
   const workflow = fs.readFileSync(WORKFLOW_PATH, 'utf8');
   const homeScript = fs.readFileSync(HOME_SCRIPT_PATH, 'utf8');
@@ -118,6 +138,8 @@ function main() {
   const missingTargets = homepageTargets.filter(target => !fs.existsSync(path.join(ROOT, target)));
   expect(missingTargets.length === 0, `手机闯关首页存在失效入口：${missingTargets.join('、')}`);
 
+  const redirectAliases = homepageTargets.map(inspectRedirectAlias).filter(Boolean);
+
   const allRequired = [...new Set([...requiredMaintenancePaths, ...homepageTargets])];
   const missingFromPullRequest = allRequired.filter(target => !pathCovered(pullRequestPaths, target));
   const missingFromPush = allRequired.filter(target => !pathCovered(pushPaths, target));
@@ -135,6 +157,7 @@ function main() {
   report.pullRequestPaths = pullRequestPaths;
   report.pushPaths = pushPaths;
   report.homepageTargets = homepageTargets;
+  report.redirectAliases = redirectAliases;
   report.missingFromPullRequest = missingFromPullRequest;
   report.missingFromPush = missingFromPush;
   report.missingTargets = missingTargets;
@@ -143,6 +166,7 @@ function main() {
     mainPushEnabled: true,
     pullAndPushPathsSymmetric: true,
     runtimeTargetsExist: true,
+    redirectAliasTargetsExist: true,
     runtimeTargetsCoveredByPullRequest: true,
     runtimeTargetsCoveredByPush: true,
     node24: true,
@@ -150,7 +174,7 @@ function main() {
     diagnosticsRequired: true
   };
   report.passed = true;
-  console.log(`CNC 手机闯关首页主分支触发覆盖通过：${homepageTargets.length} 个真实入口、${pullRequestPaths.length} 条对称触发路径。`);
+  console.log(`CNC 手机闯关首页主分支触发覆盖通过：${homepageTargets.length} 个真实入口、${redirectAliases.length} 个受控兼容入口、${pullRequestPaths.length} 条对称触发路径。`);
 }
 
 try {
