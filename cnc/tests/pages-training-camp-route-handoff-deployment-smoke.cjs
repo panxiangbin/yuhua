@@ -199,8 +199,22 @@ function parseBuildInfo(text, label) {
   if (data.scope !== '/cnc/') throw new Error(`${label}作用域错误：${data.scope}`);
   if (data.build !== expectedSiteBuild) throw new Error(`${label}站点构建错误：${data.build}`);
   if (data.cacheRevision !== expectedCache(data.pwaBuild, label)) throw new Error(`${label}缓存修订错误：${data.cacheRevision}`);
-  requireTokens(String(data.contentStage || ''), label, ['测评路线一次性交接', '训练营路线离线核心', 'PWA可靠性']);
-  if (data.pwaBuild === expectedPwaBuild) requireTokens(String(data.contentStage || ''), label, ['测评首步课程离线核心', '正式课程开发占位清零', 'AI老师学习档案异常保护']);
+  const stage = String(data.contentStage || '');
+  requireTokens(stage, label, ['课程12关', '起点测评', '手机首页一屏化', 'AI CNC老师基础版', 'PWA可靠性']);
+  if (data.pwaBuild === expectedPwaBuild) {
+    requireTokens(stage, label, [
+      '起点测评关键安全门禁',
+      '起点测评离线核心',
+      '测评路线一次性交接',
+      '训练营路线离线核心',
+      '测评首步课程离线核心',
+      '正式课程开发占位清零',
+      'AI老师现场问诊单',
+      'AI老师判断说明',
+      'AI老师离线核心',
+      'AI老师学习档案异常保护'
+    ]);
+  }
   return data;
 }
 
