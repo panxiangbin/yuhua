@@ -15,7 +15,7 @@
     <section class="card">
       <small>PWA · 离线能力确定性诊断</small>
       <h1>离线自检与诊断报告</h1>
-      <p class="notice">一次核对浏览器支持、Service Worker注册与接管、运行构建、静态缓存、运行时缓存、核心离线资源和公网构建标记。核心离线资源包含带关键安全项硬门禁的新手起点测评、可一次性显示推荐路线的训练营、三类推荐路线首步课程（安全基础、坐标轴与回零、G00/G01基础）、AI CNC老师、现场问诊单与“为什么被阻断”判断说明页。PWA10用于刷新已清理开发占位后的核心课程正文；只读检查，不修改学习记录、不清空缓存、不发放XP。</p>
+      <p class="notice">一次核对浏览器支持、Service Worker注册与接管、运行构建、静态缓存、运行时缓存、核心离线资源和公网构建标记。核心离线资源包含手机首页、一屏学习入口、12关课程图片、带关键安全项硬门禁的起点测评、训练营、三类推荐路线首步课程、AI CNC老师、现场问诊单与“为什么被阻断”判断说明页。PWA13用于刷新AI老师学习档案异常保护；只读检查，不修改学习记录、不清空缓存、不发放XP。</p>
       <div class="summary"><div class="stat"><span>检查项</span><strong id="total">8</strong></div><div class="stat"><span>通过</span><strong id="passed">0</strong></div><div class="stat"><span>待处理</span><strong id="failed">8</strong></div></div>
     </section>
     <section class="card">
@@ -28,8 +28,12 @@
   </main>
   <nav class="bottom" aria-label="平台主导航"><a href="./index.html">首页</a><a href="./training-camp.html">训练营</a><a href="./practice.html">练习</a><a href="./index.html#workspace">查代码</a><a href="./profile.html">我的</a></nav>
   <script>
-    const EXPECTED='20260804-pwa12';
-    const REQUIRED=['./index.html','./offline.html','./pwa-status.html','./pwa-self-test.html','./pages-status.html','./beginner-placement.html','./training-camp.html','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html','./ai-teacher.html','./ai-teacher-intake.html','./ai-teacher-explainability.html','./build-info.json'];
+    const EXPECTED='20260804-pwa13';
+    const EXPECTED_CACHE='20260804-mobile13';
+    const REQUIRED=[
+      './index.html','./homepage-refresh.css','./homepage-refresh-desktop-legacy.css','./mobile-home-refactor.css','./personal-home.js','./mobile-trust-nav.js','./featured-images-supplement.js','./offline.html','./pwa-status.html','./pwa-self-test.html','./pages-status.html','./beginner-placement.html','./training-camp.html','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html','./ai-teacher.html','./ai-teacher-intake.html','./ai-teacher-explainability.html','./build-info.json',
+      './assets/images/batch01_core/beginner-machine-zero-vs-work-zero-001.webp','./assets/images/batch02_operation_basics/machine-init-flow-001.webp','./assets/images/batch04_milling_tooling/milling-process-overview-001.webp','./assets/images/batch01_core/measure-reading-set-001.webp','./assets/images/batch05_alarm_drawing_material/dial-indicator-detail-001.webp','./assets/images/batch04_milling_tooling/vise-clamping-basic-001.webp','./assets/images/batch04_milling_tooling/tool-selection-beginner-001.webp','./assets/images/batch04_milling_tooling/bt-er-holder-overview-001.webp','./assets/images/batch02_operation_basics/single-block-dry-run-001.webp','./assets/images/batch04_milling_tooling/milling-contour-001.webp','./assets/images/batch02_operation_basics/canned-cycle-overview-001.webp','./assets/images/batch05_alarm_drawing_material/first-piece-inspection-001.webp'
+    ];
     const MAX_AUTO_RETRIES=20;
     let last=[];
     let inspectToken=0;
@@ -72,8 +76,8 @@
       const workerBuild=await readBuild(active);
       output.push(row('运行构建号一致',workerBuild===EXPECTED,workerBuild||'未读取到构建号'));
       const keys=await caches.keys().catch(()=>[]);
-      const staticName=keys.find(name=>name===`cnc-static-${EXPECTED}`)||'';
-      const runtimeName=keys.find(name=>name===`cnc-runtime-${EXPECTED}`)||'';
+      const staticName=keys.find(name=>name===`cnc-static-${EXPECTED_CACHE}`)||'';
+      const runtimeName=keys.find(name=>name===`cnc-runtime-${EXPECTED_CACHE}`)||'';
       output.push(row('静态缓存版本存在',!!staticName,staticName||'未发现当前静态缓存'));
       output.push(row('运行时缓存版本存在',!!runtimeName,runtimeName||'未发现当前运行时缓存'));
       let missing=[...REQUIRED];
@@ -82,10 +86,10 @@
         missing=[];
         for(const url of REQUIRED){if(!await cache.match(url))missing.push(url)}
       }
-      output.push(row('核心离线资源完整',missing.length===0,missing.length?`缺少：${missing.join('、')}`:`已核对${REQUIRED.length}项（含关键安全门禁起点测评、训练营临时路线、三类测评首步课程、AI老师、问诊单与判断说明页）`));
+      output.push(row('核心离线资源完整',missing.length===0,missing.length?`缺少：${missing.join('、')}`:`已核对${REQUIRED.length}项（含手机首页、12关课程图片、关键安全门禁起点测评、训练营、三类测评首步课程、AI老师、问诊单与判断说明页）`));
       let marker=null;
       try{const response=await fetch('./build-info.json',{cache:'no-store'});if(response.ok)marker=await response.json()}catch{}
-      output.push(row('公网构建标记与PWA一致',!!marker&&marker.app==='cnc-training-platform'&&marker.pwaBuild===EXPECTED,marker?`${marker.build||'无站点构建'} / ${marker.pwaBuild||'无PWA构建'}`:'构建标记读取失败'));
+      output.push(row('公网构建标记与PWA一致',!!marker&&marker.app==='cnc-training-platform'&&marker.pwaBuild===EXPECTED&&marker.cacheRevision===EXPECTED_CACHE,marker?`${marker.build||'无站点构建'} / ${marker.pwaBuild||'无PWA构建'} / ${marker.cacheRevision||'无缓存修订'}`:'构建标记读取失败'));
       if(token!==inspectToken)return;
       last=output;
       render();
@@ -98,7 +102,7 @@
       $('#failed').textContent=last.length-passed;
       $('#results').innerHTML=last.map(item=>`<div class="item ${item.ok?'pass':'fail'}"><strong>${item.ok?'通过':'待处理'} · ${item.name}</strong><span>${item.detail}</span></div>`).join('');
       $('#status').className=`status${passed===last.length?' ok':''}`;
-      $('#status').textContent=passed===last.length?'8项检查全部通过，关键安全门禁起点测评、训练营临时路线、三类测评首步课程、AI老师、现场问诊单、判断说明页与当前离线基础及版本标记一致。':`已通过${passed}项，仍有${last.length-passed}项需要处理。正在等待浏览器完成缓存初始化。`;
+      $('#status').textContent=passed===last.length?'8项检查全部通过，手机首页、12关学习图片、关键安全门禁起点测评、训练营、三类测评首步课程、AI老师、现场问诊单、判断说明页与当前离线基础及版本标记一致。':`已通过${passed}项，仍有${last.length-passed}项需要处理。正在等待浏览器完成缓存初始化。`;
     }
     $('#rerun').onclick=()=>run();
     $('#copy').onclick=async()=>{
