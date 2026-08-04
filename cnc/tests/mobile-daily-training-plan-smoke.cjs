@@ -1,9 +1,17 @@
 const { chromium } = require('playwright');
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+
+const artifactDir = path.resolve(__dirname, '../test-artifacts/daily-training-plan');
+fs.mkdirSync(artifactDir, { recursive: true });
+
+let browser;
+let page;
 
 (async () => {
-  const browser = await chromium.launch({ headless: true });
-  const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  browser = await chromium.launch({ headless: true });
+  page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
 
@@ -11,9 +19,8 @@ const assert = require('node:assert/strict');
   await page.waitForFunction(() => window.CNC_TRAINING_PROFILE?.build === '20260724a', null, { timeout: 20000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-startup-home') === 'stable', null, { timeout: 15000 });
   await page.waitForFunction(() => window.CNC_GAME_QUERY_NAV?.build === '20260731d', null, { timeout: 15000 });
-  // 成长档案的样式表由脚本动态挂载，并有一次 900ms 的启动补渲染。
-  // 先确认补渲染结束、CSSOM可用且390px手机媒体查询真实生效，再测量布局。
-  // 这里不降低单列、44px触控高度或连续稳定帧的断言。
+  // 成长档案样式由脚本动态挂载，并有一次启动补渲染。
+  // 必须确认 CSSOM、390px 媒体查询与补渲染全部就绪，不能降低单列或触控断言。
   await page.waitForFunction(() => {
     const link = document.querySelector('link[data-cnc-training-profile]');
     return performance.now() >= 1200 && Boolean(link?.sheet) && matchMedia('(max-width: 760px)').matches;
@@ -32,20 +39,48 @@ const assert = require('node:assert/strict');
     }));
   });
 
-  // 手机首页已取消旧的 #xp-game-home；直接通过真实可见底栏进入“我的”。
   await page.waitForFunction(() => {
-    const node = document.querySelector('body > .xp-bottom-nav');
-    return node && node.getClientRects().length > 0 && node.getAttribute('aria-hidden') === 'false' && !node.hasAttribute('inert');
+    const home = window.CNC_PERSONAL_HOME?.runCheck?.();
+    const nav = document.querySelector('body > .xp-bottom-nav');
+    return home?.legacyHomeRemoved === true
+      && home?.bottomNavReady === true
+      && nav?.getClientRects().length > 0
+      && nav.getAttribute('aria-hidden') === 'false'
+      && !nav.hasAttribute('inert');
   }, null, { timeout: 15000 });
-  await page.locator('body > .xp-bottom-nav [data-xp-route="favorites"]').click();
-  await page.waitForSelector('#view-favorites.active #xp-training-profile', { state: 'visible', timeout: 10000 });
+
+  const profileNav = page.locator('body > .xp-bottom-nav [data-xp-route="favorites"]');
+  await profileNav.waitFor({ state: 'visible', timeout: 15000 });
+  const profileTarget = await profileNav.evaluate(node => {
+    const rect = node.getBoundingClientRect();
+    return {
+      width: rect.width,
+      height: rect.height,
+      label: node.getAttribute('aria-label') || node.querySelector('span')?.textContent.trim() || node.textContent.trim()
+    };
+  });
+  assert.ok(profileTarget.width >= 44, `“我的”底栏入口宽度不得小于44px：${profileTarget.width}`);
+  assert.ok(profileTarget.height >= 48, `“我的”底栏入口高度不得小于48px：${profileTarget.height}`);
+  assert.match(profileTarget.label, /我的/, '“我的”底栏入口必须有明确中文名称');
+  await profileNav.click();
+
+  const activeProfile = page.locator('#view-favorites.active #xp-training-profile');
+  await activeProfile.waitFor({ state: 'visible', timeout: 10000 });
+  assert.equal(await activeProfile.count(), 1, '活跃“我的”视图中必须只有一份成长档案');
   await page.evaluate(() => window.CNC_TRAINING_PROFILE.render());
+
   await page.waitForFunction(() => {
-    const list = document.querySelector('#view-favorites.active .xp-plan-list');
+    const view = document.querySelector('#view-favorites.active');
+    const profile = view?.querySelector('#xp-training-profile');
+    const list = profile?.querySelector('.xp-plan-list');
     const steps = list ? [...list.querySelectorAll('.xp-plan-step')] : [];
     const buttons = list ? [...list.querySelectorAll('button')] : [];
     const columns = list ? getComputedStyle(list).gridTemplateColumns.trim().split(/\s+/).filter(Boolean) : [];
-    return steps.length === 3 && buttons.length > 0 && columns.length === 1 && buttons.every(button => button.getBoundingClientRect().height >= 44);
+    return Boolean(profile?.getClientRects().length)
+      && steps.length === 3
+      && buttons.length > 0
+      && columns.length === 1
+      && buttons.every(button => button.getBoundingClientRect().height >= 44);
   }, null, { timeout: 10000 });
 
   const data = await page.evaluate(() => window.CNC_TRAINING_PROFILE.snapshot());
@@ -56,26 +91,35 @@ const assert = require('node:assert/strict');
   assert.equal(data.dailyPlan.steps[1].type, 'wrong');
   assert.equal(data.dailyPlan.passed, false);
 
-  const plan = page.locator('.xp-daily-plan');
-  await plan.waitFor({ state: 'visible' });
+  const plan = activeProfile.locator('.xp-daily-plan');
+  await plan.waitFor({ state: 'visible', timeout: 10000 });
+  assert.equal(await plan.count(), 1, '活跃成长档案中必须只有一份每日计划');
   assert.match(await plan.textContent(), /今天先练什么/);
   assert.match(await plan.textContent(), /今日目标/);
   assert.match(await plan.textContent(), /重做当前 2 道错题/);
 
-  // 布局过渡的一帧可能刚好满足条件，下一帧仍发生重排。要求相同布局签名
-  // 连续稳定5帧后才接受结果，单列与44px要求保持不变。
+  // 要求活跃视图内同一份计划连续稳定 5 帧，并同时满足：
+  // CSS 计算为单列、三个卡片垂直排列、左边缘对齐、按钮触控高度不小于44px。
   const layout = await plan.evaluate(async panel => {
     const measure = () => {
+      const list = panel.querySelector('.xp-plan-list');
       const rects = [...panel.querySelectorAll('.xp-plan-step')].map(node => node.getBoundingClientRect());
       const buttons = [...panel.querySelectorAll('button')].map(node => node.getBoundingClientRect().height);
+      const columns = list
+        ? getComputedStyle(list).gridTemplateColumns.trim().split(/\s+/).filter(Boolean)
+        : [];
+      const aligned = rects.length === 3 && rects.slice(1).every(rect => Math.abs(rect.left - rects[0].left) < 2);
+      const vertical = rects.length === 3 && rects.slice(1).every((rect, index) => rect.top >= rects[index].bottom - 2);
       return {
         stepCount: rects.length,
         buttonCount: buttons.length,
-        singleColumn: rects.length === 3 && rects.slice(1).every((rect, i) =>
-          Math.abs(rect.left - rects[i].left) < 2 && rect.top > rects[i].top
-        ),
+        computedColumnCount: columns.length,
+        singleColumn: columns.length === 1 && aligned && vertical,
         minButtonHeight: buttons.length ? Math.min(...buttons) : 0,
-        signature: rects.map(rect => [rect.left, rect.top, rect.width, rect.height].map(value => Math.round(value * 10) / 10).join(',')).join('|')
+        signature: [
+          columns.join(','),
+          ...rects.map(rect => [rect.left, rect.top, rect.width, rect.height].map(value => Math.round(value * 10) / 10).join(','))
+        ].join('|')
       };
     };
 
@@ -93,15 +137,36 @@ const assert = require('node:assert/strict');
     }
     return { ...latest, stableFrames };
   });
+
   assert.equal(layout.stepCount, 3);
   assert.ok(layout.buttonCount > 0);
-  assert.equal(layout.singleColumn, true);
-  assert.ok(layout.minButtonHeight >= 44);
-  assert.ok(layout.stableFrames >= 5, `每日计划布局未连续稳定 5 帧：${JSON.stringify(layout)}`);
+  assert.equal(layout.computedColumnCount, 1, `每日计划CSS计算列数必须为1：${JSON.stringify(layout)}`);
+  assert.equal(layout.singleColumn, true, `每日计划必须在活跃手机视图中垂直单列：${JSON.stringify(layout)}`);
+  assert.ok(layout.minButtonHeight >= 44, `每日计划按钮触控高度不得小于44px：${layout.minButtonHeight}`);
+  assert.ok(layout.stableFrames >= 5, `每日计划布局未连续稳定5帧：${JSON.stringify(layout)}`);
 
-  await page.locator('.xp-plan-step [data-ability-train="11"]').click();
+  await plan.locator('[data-ability-train="11"]').click();
   await page.waitForSelector('#view-study.active #study-detail-content .lesson-detail-v2[data-level="11"]', { state: 'visible', timeout: 15000 });
   assert.deepEqual(errors, []);
-  console.log('单层首页真实底栏、个性化每日训练计划、错题优先、80分目标和手机单列布局通过', { dailyPlan: data.dailyPlan, layout });
+
+  const report = { passed: true, dailyPlan: data.dailyPlan, layout, profileTarget, errors };
+  fs.writeFileSync(path.join(artifactDir, 'report.json'), JSON.stringify(report, null, 2));
+  await page.screenshot({ path: path.join(artifactDir, 'daily-training-plan-390x844.png'), fullPage: true });
+  console.log('单层首页真实底栏、活跃成长档案、个性化每日训练计划、错题优先、80分目标和手机单列布局通过', report);
   await browser.close();
-})().catch(error => { console.error(error); process.exit(1); });
+})().catch(async error => {
+  const stack = error && error.stack ? error.stack : String(error);
+  fs.writeFileSync(path.join(artifactDir, 'error.txt'), stack);
+  if (page) {
+    try {
+      await page.screenshot({ path: path.join(artifactDir, 'daily-training-plan-failure-390x844.png'), fullPage: true });
+    } catch (_) {}
+  }
+  if (browser) {
+    try {
+      await browser.close();
+    } catch (_) {}
+  }
+  console.error(error);
+  process.exit(1);
+});
