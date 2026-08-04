@@ -1,0 +1,108 @@
+name: CNC AI teacher data integrity smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/ai-teacher.html'
+      - 'cnc/data-health.html'
+      - 'cnc/data-backup.html'
+      - 'cnc/tests/ai-teacher-data-integrity-smoke.cjs'
+      - 'cnc/docs/ai-teacher-data-integrity-contract.md'
+      - '.github/workflows/cnc-ai-teacher-data-integrity-smoke.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'cnc/ai-teacher.html'
+      - 'cnc/data-health.html'
+      - 'cnc/data-backup.html'
+      - 'cnc/tests/ai-teacher-data-integrity-smoke.cjs'
+      - 'cnc/docs/ai-teacher-data-integrity-contract.md'
+      - '.github/workflows/cnc-ai-teacher-data-integrity-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cnc-ai-teacher-data-integrity-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 初始化诊断目录
+        run: |
+          mkdir -p cnc/test-results
+          printf 'AI老师学习档案异常保护门禁已启动\n' > cnc/test-results/ai-teacher-data-integrity-bootstrap.log
+
+      - name: JavaScript语法与中文契约检查
+        run: |
+          node --check cnc/tests/ai-teacher-data-integrity-smoke.cjs
+          node - <<'NODE'
+          const fs = require('fs');
+          const workflow = fs.readFileSync('.github/workflows/cnc-ai-teacher-data-integrity-smoke.yml', 'utf8');
+          const contract = fs.readFileSync('cnc/docs/ai-teacher-data-integrity-contract.md', 'utf8');
+          const test = fs.readFileSync('cnc/tests/ai-teacher-data-integrity-smoke.cjs', 'utf8');
+          const required = ['静默', '数据健康检查', '备份与恢复', '不得自动覆盖损坏数据', '原厂手册', '授权人员'];
+          for (const token of required) {
+            if (!contract.includes(token)) throw new Error(`中文契约缺少：${token}`);
+          }
+          for (const forbidden of ['test.skip', 'process.exit(0)', 'continue-on-error', 'if-no-files-found: warn', '|| true']) {
+            if (test.includes(forbidden)) throw new Error(`测试脚本包含绕过标记：${forbidden}`);
+          }
+          if (!workflow.includes('cancel-in-progress: false')) throw new Error('不得取消旧运行并把 cancelled 当作成功');
+          console.log('AI老师学习档案异常保护静态契约检查通过');
+          NODE
+
+      - name: 安装真实浏览器运行环境
+        run: |
+          npm install --no-save playwright@1.52.0
+          npx playwright install --with-deps chromium
+
+      - name: 执行390×844损坏档案保护验收
+        id: browser
+        shell: bash
+        run: |
+          set +e
+          node cnc/tests/ai-teacher-data-integrity-smoke.cjs 2>&1 | tee cnc/test-results/ai-teacher-data-integrity-run.log
+          code=${PIPESTATUS[0]}
+          echo "exit_code=${code}" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: 诊断完整性检查
+        if: always()
+        shell: bash
+        run: |
+          test -s cnc/test-results/ai-teacher-data-integrity-bootstrap.log
+          test -s cnc/test-results/ai-teacher-data-integrity-run.log
+          test -s cnc/test-results/ai-teacher-data-integrity.json
+          if [ "${{ steps.browser.outputs.exit_code }}" != "0" ]; then
+            test -s cnc/test-results/ai-teacher-data-integrity-error.txt
+          fi
+
+      - name: 上传结构化诊断
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-ai-teacher-data-integrity-${{ github.run_id }}
+          path: cnc/test-results/ai-teacher-data-integrity*
+          if-no-files-found: error
+
+      - name: 按真实验收结果结束
+        if: always()
+        shell: bash
+        run: |
+          code='${{ steps.browser.outputs.exit_code }}'
+          if [ -z "$code" ]; then
+            echo '浏览器验收未返回退出码' >&2
+            exit 1
+          fi
+          exit "$code"
