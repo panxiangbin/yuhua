@@ -1,0 +1,207 @@
+name: CNC AI teacher integrity exact apply
+
+on:
+  push:
+    branches:
+      - chatgpt/cnc-ai-teacher-data-integrity-mainline
+    paths:
+      - '.github/workflows/cnc-ai-teacher-integrity-apply.yml'
+      - 'cnc/ai-teacher.html'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cnc-ai-teacher-integrity-exact-apply
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chatgpt/cnc-ai-teacher-data-integrity-mainline
+          fetch-depth: 0
+
+      - name: 精确写入学习档案异常保护
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('cnc/ai-teacher.html')
+          text = path.read_text(encoding='utf-8')
+
+          old_build = "const BUILD = '20260801-ai-handoff1';"
+          new_build = "const BUILD = '20260804-mobile-home1';"
+          if old_build in text:
+              text = text.replace(old_build, new_build, 1)
+          elif new_build not in text:
+              raise SystemExit('AI老师站点构建针不符合预期')
+
+          alert = '''  <section class="panel notice" id="data-integrity-alert" data-integrity-status="blocked" role="alert" aria-live="assertive" hidden>
+            <strong>学习数据异常，已暂停个性化判断</strong>
+            <p id="data-integrity-copy">检测到本机学习记录无法可靠解析。页面不会把异常记录当成零进度，也不会自动覆盖或删除原数据。</p>
+            <div class="route"><a class="btn" href="./data-health.html">检查学习数据</a><a class="btn alt" href="./data-backup.html">备份与恢复</a></div>
+          </section>
+
+          '''
+          if 'id="data-integrity-alert"' not in text:
+              anchor = '  <section class="panel">\n    <h2>先问一个新手最常遇到的问题</h2>'
+              if text.count(anchor) != 1:
+                  raise SystemExit('无法唯一定位AI老师快捷问题面板')
+              text = text.replace(anchor, alert + anchor, 1)
+
+          old_read = "function read(key){try{const value=JSON.parse(localStorage.getItem(key)||'null');return value&&typeof value==='object'?value:{}}catch{return {}}}"
+          new_read = "function read(key){const raw=localStorage.getItem(key);if(raw===null)return {};try{const value=JSON.parse(raw);return value&&typeof value==='object'&&!Array.isArray(value)?value:{__cncDataInvalid:true}}catch{return {__cncDataInvalid:true}}}"
+          if old_read in text:
+              text = text.replace(old_read, new_read, 1)
+          elif new_read not in text:
+              raise SystemExit('AI老师档案读取函数不符合预期')
+
+          runtime = '''<script data-integrity-runtime-v1>
+          (() => {
+            'use strict';
+            const MANAGED_KEYS = ['cnc_training_profile_v1','cnc_training_practice_v1','cnc_training_simulator_v1','cnc_training_exam_v1'];
+
+            function inspectLearningData(){
+              const invalid=[];
+              for(const key of MANAGED_KEYS){
+                const raw=localStorage.getItem(key);
+                if(raw===null)continue;
+                try{
+                  const parsed=JSON.parse(raw);
+                  if(!parsed||typeof parsed!=='object'||Array.isArray(parsed))invalid.push({key,reason:'根结构不是对象'});
+                }catch{
+                  invalid.push({key,reason:'JSON无法解析'});
+                }
+              }
+              return {ok:invalid.length===0,invalid};
+            }
+
+            function replaceList(id,items){
+              const root=document.getElementById(id);
+              root.replaceChildren(...items.map(text=>{const item=document.createElement('li');item.textContent=text;return item}));
+            }
+
+            function renderIntegrityBlock(){
+              const integrity=inspectLearningData();
+              if(integrity.ok)return false;
+              const names=integrity.invalid.map(item=>item.key).join('、');
+              const alert=document.getElementById('data-integrity-alert');
+              alert.hidden=false;
+              document.getElementById('data-integrity-copy').textContent=`检测到 ${names} 无法可靠解析。页面已停止显示可信进度和个性化推荐；原始数据保持不变，请先检查或恢复备份。`;
+              document.getElementById('course-progress').textContent='数据异常';
+              document.getElementById('wrong-count').textContent='--';
+              document.getElementById('sim-progress').textContent='--';
+              document.getElementById('weakest').textContent='暂停判断';
+
+              const status=document.getElementById('answer-status');
+              status.textContent='档案异常｜暂停个性化';
+              status.classList.add('blocked');
+              document.getElementById('answer-title').textContent='先检查学习数据，再继续个性化训练';
+              document.getElementById('answer-copy').textContent='本机学习档案存在损坏或根结构异常，当前课程进度、错题、模拟成绩和薄弱能力都不能作为可靠依据。页面不会把异常数据当成零进度，也不会自动清空、覆盖或修复原记录。';
+              replaceList('answer-steps',['打开学习数据健康检查，确认具体异常键和可读状态。','如有可信备份，先在备份与恢复页核对备份时间和内容，再按页面说明恢复。','恢复后重新打开AI CNC老师，确认异常提示消失，再继续个性化训练。']);
+              replaceList('answer-donts',['不要把“数据异常”误当成“从未学习”。','不要为消除提示而直接清空全部浏览器数据。','不要依据当前不可用的进度、错题或能力汇总安排真实上机。']);
+              replaceList('answer-reasons',['损坏JSON无法证明课程、错题、模拟或能力的真实状态。','保留原始数据并先诊断，可避免把尚可恢复的学习记录永久覆盖。']);
+              document.getElementById('answer-scope').textContent='本次仅判断浏览器本机学习数据是否可解析，不推测成绩、XP、错题、连续训练或能力结论。真实机床程序、参数、报警、刀补和安全步骤仍须核对相同系统与机型的原厂手册、企业制度和现场条件，并由授权人员确认。';
+              const routes=document.getElementById('answer-routes');
+              routes.replaceChildren();
+              for(const [label,href,primary] of [['检查学习数据','./data-health.html',true],['备份与恢复','./data-backup.html',false]]){
+                const link=document.createElement('a');
+                link.className=`btn${primary?'':' alt'}`;
+                link.href=href;
+                link.textContent=label;
+                routes.append(link);
+              }
+              document.getElementById('answer-sources').replaceChildren();
+              document.getElementById('answer').classList.add('show');
+              return true;
+            }
+
+            function applyIntegrityState(){
+              const integrity=inspectLearningData();
+              const alert=document.getElementById('data-integrity-alert');
+              if(integrity.ok){alert.hidden=true;return false;}
+              return renderIntegrityBlock();
+            }
+
+            document.addEventListener('click',event=>{
+              const next=event.target.closest('[data-intent="next"]');
+              if(!next||inspectLearningData().ok)return;
+              event.preventDefault();
+              event.stopImmediatePropagation();
+              renderIntegrityBlock();
+              document.getElementById('answer').scrollIntoView({behavior:'smooth',block:'start'});
+            },true);
+
+            document.getElementById('ask-form').addEventListener('submit',event=>{
+              if(inspectLearningData().ok)return;
+              event.preventDefault();
+              event.stopImmediatePropagation();
+              renderIntegrityBlock();
+              document.getElementById('answer').scrollIntoView({behavior:'smooth',block:'start'});
+            },true);
+
+            window.addEventListener('pageshow',applyIntegrityState);
+            const initialIntegrity=inspectLearningData();
+            if(!initialIntegrity.ok)applyIntegrityState();
+            if(window.CNC_AI_TEACHER){
+              const originalGetSummary=window.CNC_AI_TEACHER.getSummary;
+              window.CNC_AI_TEACHER.dataIntegrity={inspect:inspectLearningData,get status(){return inspectLearningData().ok?'ok':'blocked'}};
+              window.CNC_AI_TEACHER.getSummary=()=>{
+                const integrity=inspectLearningData();
+                if(!integrity.ok)return {integrity:'blocked',invalidKeys:integrity.invalid.map(item=>item.key),courses:null,wrong:null,simulations:null,weakest:null};
+                return originalGetSummary();
+              };
+            }
+          })();
+          </script>
+          '''
+          if 'data-integrity-runtime-v1' not in text:
+              if text.count('</body>') != 1:
+                  raise SystemExit('无法唯一定位AI老师body结束标签')
+              text = text.replace('</body>', runtime + '</body>', 1)
+
+          path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: 校验脚本与改动范围
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+          html = Path('cnc/ai-teacher.html').read_text(encoding='utf-8')
+          scripts = re.findall(r'<script(?:\s[^>]*)?>([\s\S]*?)</script>', html)
+          if len(scripts) < 2:
+              raise SystemExit('未找到完整AI老师脚本')
+          Path('/tmp/ai-teacher-scripts.js').write_text('\n'.join(scripts), encoding='utf-8')
+          required = ['data-integrity-alert','data-health.html','data-backup.html','暂停个性化','原厂手册','授权人员','20260804-mobile-home1']
+          for token in required:
+              if token not in html:
+                  raise SystemExit(f'AI老师异常保护缺少：{token}')
+          forbidden = "catch{return {}}"
+          if forbidden in html:
+              raise SystemExit('仍存在损坏档案静默空对象回退')
+          PY
+          node --check /tmp/ai-teacher-scripts.js
+          node --check cnc/tests/ai-teacher-data-integrity-smoke.cjs
+          git diff --check
+          changed="$(git diff --name-only)"
+          test "$changed" = "cnc/ai-teacher.html"
+
+      - name: 提交精确修复
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo '精确修复已存在，无需再次提交'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add cnc/ai-teacher.html
+          git commit -m 'fix(cnc): 阻止AI老师将损坏档案显示为零进度'
+          git push origin HEAD:chatgpt/cnc-ai-teacher-data-integrity-mainline
