@@ -31,6 +31,41 @@ const DECLARED_LEGACY_REFERENCES = [
     file: 'cnc/import-test.js',
     version: '20260728-pwa3',
     reason: '兼容层备用注册诊断标记，不参与Service Worker缓存命名或构建判定'
+  },
+  {
+    file: 'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs',
+    version: '20260803-pwa9',
+    reason: 'AI老师离线核心Pages回归保留的历史部署基线，不是当前运行构建针'
+  },
+  {
+    file: 'cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs',
+    version: '20260803-pwa9',
+    reason: '起点测评离线Pages回归保留的历史部署基线，不是当前运行构建针'
+  },
+  {
+    file: 'cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs',
+    version: '20260803-pwa9',
+    reason: '训练营路线Pages回归保留的历史部署基线，不是当前运行构建针'
+  },
+  {
+    file: '.github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml',
+    version: '20260803-pwa9',
+    reason: 'AI老师离线核心Pages工作流的历史基线参数，不参与当前Service Worker构建判定'
+  },
+  {
+    file: '.github/workflows/cnc-beginner-placement-offline-pages-smoke.yml',
+    version: '20260803-pwa9',
+    reason: '起点测评离线Pages工作流的历史基线参数，不参与当前Service Worker构建判定'
+  },
+  {
+    file: '.github/workflows/cnc-pwa-upgrade-data-smoke.yml',
+    version: '20260803-pwa9',
+    reason: 'PWA跨版本数据升级回归的历史起点参数，不参与当前Service Worker构建判定'
+  },
+  {
+    file: '.github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml',
+    version: '20260803-pwa9',
+    reason: '训练营路线Pages工作流的历史基线参数，不参与当前Service Worker构建判定'
   }
 ];
 
@@ -173,7 +208,7 @@ function main() {
     fail(`发现未声明的运行中PWA构建引用：${unexpectedReferences.map(item => `${item.file}:${item.line}=${item.version}`).join('、')}`);
   }
 
-  console.log(`CNC PWA构建引用审计通过：${currentPins.length}处当前构建针=${current}，上一版本=${previous}，运行引用${operationalReferences.length}处，受控历史诊断引用${legacyReferences.length}处。`);
+  console.log(`CNC PWA构建引用审计通过：${currentPins.length}处当前构建针=${current}，上一版本=${previous}，运行引用${operationalReferences.length}处，受控历史引用${legacyReferences.length}处。`);
 }
 
 try {
