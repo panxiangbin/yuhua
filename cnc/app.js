@@ -46,7 +46,7 @@ const ACCESS_HASHES = new Set([
 ]);
 
 const VIEW_META = {
-  dashboard: { kicker: "", title: "数控小潘CNC助手" },
+  dashboard: { kicker: "", title: "数控学习工作台" },
   study: { kicker: "新手学习路线", title: "先按顺序学，再单点深入" },
   workspace: { kicker: "快速查询", title: "左边找条目，右边看详情" },
   "learning-map": { kicker: "知识地图", title: "可视化知识结构与学习路径" },
@@ -904,7 +904,7 @@ function openSidebar() {
     dom.sidebar.classList.add("open");
   }
   if (dom.sidebarMask) {
-    dom.sidebarMask.hidden = false;
+    dom.sidebarMask.hidden = window.innerWidth > 760;
   }
 }
 

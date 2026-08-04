@@ -43,6 +43,7 @@
   <link rel="stylesheet" href="./styles.css">
   <link rel="stylesheet" href="./styles-enhanced.css">
   <link rel="stylesheet" href="./theme-tech.css?v=20260715a">
+  <link rel="stylesheet" href="./homepage-refresh.css?v=20260804a">
 </head>
 <body>
   <div id="loading-screen">
@@ -145,7 +146,7 @@
           <button class="home-btn" id="home-btn" type="button" aria-label="返回首页" title="返回首页">&#x1F3E0;</button>
           <div>
             <p class="topbar-kicker" id="topbar-kicker">总览面板</p>
-            <h2 id="topbar-title">把网页改成像软件一样用</h2>
+            <h2 id="topbar-title">数控学习工作台</h2>
           </div>
         </div>
 
@@ -158,6 +159,64 @@
       </header>
 
       <section class="view active" id="view-dashboard">
+        <section class="cnc-home-hero" aria-labelledby="cnc-home-title">
+          <div class="cnc-home-hero-copy">
+            <p class="cnc-home-eyebrow">CNC LEARNING OS · 数控小潘</p>
+            <h1 id="cnc-home-title">数控学习，<br><span>不再靠零散搜索</span></h1>
+            <p class="cnc-home-lead">从安全基础、坐标与对刀，到 G/M 代码、报警排查和模拟训练，按清晰路线一步步学会。</p>
+            <div class="cnc-home-actions">
+              <a class="cnc-home-primary" href="./training-camp.html">进入 12 关训练营 <span aria-hidden="true">→</span></a>
+              <a class="cnc-home-secondary" href="./beginner-placement.html">2 分钟起点测评</a>
+            </div>
+            <ul class="cnc-home-capabilities" aria-label="平台核心能力">
+              <li><strong>12 关</strong><span>主线课程</span></li>
+              <li><strong>75 题</strong><span>专项练习</span></li>
+              <li><strong>13 项</strong><span>模拟训练</span></li>
+              <li><strong>离线</strong><span>核心内容</span></li>
+            </ul>
+          </div>
+
+          <div class="cnc-home-route-card">
+            <div class="cnc-home-route-head">
+              <div>
+                <span>今天从这里开始</span>
+                <h2>你的数控学习路线</h2>
+              </div>
+              <b>LIVE</b>
+            </div>
+            <ol class="cnc-home-route-list">
+              <li>
+                <span class="cnc-home-route-number">01</span>
+                <div><strong>先学安全与坐标</strong><small>建立正确的上机顺序</small></div>
+                <a href="./course-safety-foundation.html" aria-label="开始安全基础课程">↗</a>
+              </li>
+              <li>
+                <span class="cnc-home-route-number">02</span>
+                <div><strong>再做专项练习</strong><small>用题目检查是否真正理解</small></div>
+                <a href="./practice.html" aria-label="进入专项练习">↗</a>
+              </li>
+              <li>
+                <span class="cnc-home-route-number">03</span>
+                <div><strong>最后进模拟车间</strong><small>把知识连成完整操作链</small></div>
+                <a href="./simulator-hub.html" aria-label="进入模拟车间">↗</a>
+              </li>
+            </ol>
+            <a class="cnc-home-teacher" href="./ai-teacher.html">
+              <span class="cnc-home-teacher-icon" aria-hidden="true">AI</span>
+              <span><strong>遇到问题？先问 AI CNC 老师</strong><small>学习建议、现场问诊单与安全边界</small></span>
+              <b aria-hidden="true">→</b>
+            </a>
+          </div>
+        </section>
+
+        <div class="cnc-home-section-head">
+          <div>
+            <p>QUICK ACCESS</p>
+            <h2>现场问题，直接进入对应工具</h2>
+          </div>
+          <span>核心功能入口</span>
+        </div>
+
         <!-- 快速启动区 -->
         <div class="launchpad-grid">
           <article class="launchpad-card" data-route="study">

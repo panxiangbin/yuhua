@@ -54,9 +54,9 @@ jobs:
           const swBuild = sw.match(/const BUILD = '([^']+)'/)?.[1];
           if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
           for (const token of [
-            "const branchTargetPwaBuild = '20260804-pwa10'",
+            "const branchTargetPwaBuild = '20260804-pwa11'",
             "const previousPublicPwaBuild = '20260803-pwa9'",
-            "const expectedSiteBuild = '20260801-ai-handoff1'",
+            "const expectedSiteBuild = '20260804-home-refresh1'",
             'CNC_PAGES_VERIFY_ATTEMPTS || 18',
             "cache: 'no-store'",
             'mainPagesExactBytesMatch: true',

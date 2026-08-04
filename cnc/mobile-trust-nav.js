@@ -519,9 +519,9 @@
       sidebar.hidden = false;
       applyHiddenState(sidebar, false);
       sidebar.classList.add('open');
-      if (mask) mask.hidden = false;
+      if (mask) mask.hidden = window.innerWidth > 760;
       window.setTimeout(function () {
-        if (close && sidebar.classList.contains('open')) close.focus();
+        if (window.innerWidth <= 760 && close && sidebar.classList.contains('open')) close.focus();
       }, 0);
     } else {
       sidebar.classList.remove('open');
@@ -542,7 +542,7 @@
 
   function handleSidebarKeydown(event) {
     var sidebar = document.getElementById('sidebar');
-    if (!sidebar || !sidebar.classList.contains('open')) return;
+    if (window.innerWidth > 760 || !sidebar || !sidebar.classList.contains('open')) return;
 
     if (event.key === 'Escape') {
       event.preventDefault();
