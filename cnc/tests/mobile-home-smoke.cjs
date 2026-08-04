@@ -50,7 +50,7 @@ fs.mkdirSync(DIAGNOSTIC_DIR, { recursive: true });
         return style.display !== 'none' && style.visibility !== 'hidden' && Number(style.opacity || 1) > 0 && rect.width > 0 && rect.height > 0;
       };
       const nav = document.querySelector('body > .xp-bottom-nav');
-      const navItems = nav ? Array.from(nav.querySelectorAll('[data-xp-route]')).filter(visible) : [];
+      const navItems = nav ? Array.from(nav.querySelectorAll('[data-xp-route], [data-xp-filter]')).filter(visible) : [];
       const oldSelectors = [
         '#xp-game-home',
         '#xp-personal-home',
@@ -60,7 +60,7 @@ fs.mkdirSync(DIAGNOSTIC_DIR, { recursive: true });
         '#view-dashboard .featured-images-preview',
         '#view-dashboard .faq-preview-section'
       ];
-      const controls = Array.from(document.querySelectorAll('#view-dashboard.active a, #view-dashboard.active button, body > .xp-bottom-nav [data-xp-route]'))
+      const controls = Array.from(document.querySelectorAll('#view-dashboard.active a, #view-dashboard.active button, body > .xp-bottom-nav [data-xp-route], body > .xp-bottom-nav [data-xp-filter]'))
         .filter(visible)
         .map(node => {
           const rect = node.getBoundingClientRect();
@@ -86,6 +86,7 @@ fs.mkdirSync(DIAGNOSTIC_DIR, { recursive: true });
     assert.equal(homeState.practiceVisible, true, '手机首页必须显示练习入口');
     assert.equal(homeState.navVisible, true, '手机首页必须显示真实底部导航');
     assert.equal(homeState.navCount, 5, `手机首页底部导航必须稳定为5项，实际${homeState.navCount}项`);
+    assert.deepEqual(homeState.navLabels, ['首页', '查代码', '报警', '学习', '我的'], `手机首页底栏顺序或中文名称漂移：${homeState.navLabels.join(' / ')}`);
     assert.deepEqual(homeState.oldVisible, [], `手机端不得恢复第二套旧首页：${homeState.oldVisible.join('、')}`);
     assert.deepEqual(homeState.smallTargets, [], '手机首页可见按钮和链接高度不得小于44px');
     assert.ok(homeState.scrollWidth <= homeState.clientWidth + 1, `390px手机首页不得横向溢出：${homeState.scrollWidth}/${homeState.clientWidth}`);
