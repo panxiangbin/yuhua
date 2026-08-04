@@ -60,56 +60,100 @@ const assert = require('node:assert/strict');
   assert.match(studyTarget.label, /学习/, '学习底栏入口必须有明确中文名称');
   await studyNav.click();
   await page.waitForSelector('#view-study.active', { state: 'visible', timeout: 15000 });
-  await page.waitForSelector('#xp-training-overview', { state: 'visible', timeout: 15000 });
+  await page.waitForFunction(() => document.querySelectorAll('#view-study .study-card[data-training-ready="true"]').length === 12, null, { timeout: 15000 });
 
-  const trainingBuild = await page.locator('body').getAttribute('data-cnc-training-build');
-  assert.equal(trainingBuild, '20260728a', '训练营基础构建契约漂移');
-
-  const overview = page.locator('#xp-training-overview');
-  assert.match((await overview.locator('h4').textContent()) || '', /独立完成首件/);
-  const roadmapCards = overview.locator('.xp-roadmap-card');
-  assert.equal(await roadmapCards.count(), 4, '必须展示完整四阶段成长路线');
-  const roadmapText = (await roadmapCards.allTextContents()).join(' ');
-  assert.match(roadmapText, /零基础入门/);
-  assert.match(roadmapText, /现场基础/);
-  assert.match(roadmapText, /编程入门/);
-  assert.match(roadmapText, /独立首件/);
-  assert.match(roadmapText, /第\s*1[—-]3\s*关/);
-  assert.match(roadmapText, /第\s*4[—-]8\s*关/);
-  assert.match(roadmapText, /第\s*9[—-]11\s*关/);
-  assert.match(roadmapText, /第\s*12\s*关/);
-
-  const stats = overview.locator('.xp-training-stat');
-  assert.equal(await stats.count(), 3, '训练营概览必须展示经验值、通关数和待复习错题三项统计');
-  const statsText = (await stats.allTextContents()).join(' ');
-  assert.match(statsText, /累计经验值/);
-  assert.match(statsText, /已通过关卡/);
-  assert.match(statsText, /待复习错题/);
-  assert.match(statsText, /0\s*\/\s*12/, '零记录新手必须明确显示0/12关，不能伪造进度');
-
-  assert.equal(await page.locator('#view-study .study-card[data-training-ready="true"]').count(), 12, '12关必须全部纳入训练营基础结构');
-  assert.equal(await page.locator('#view-study .study-card .xp-course-meta').count(), 12, '12关都必须展示学习目标、易错提醒和闯关说明');
-
-  const layout = await overview.evaluate(node => {
-    const stats = node.querySelector('.xp-training-stats');
-    const cards = Array.from(node.querySelectorAll('.xp-training-stat')).map(card => card.getBoundingClientRect());
+  const study = await page.locator('#view-study').evaluate(view => {
+    const cards = Array.from(view.querySelectorAll('.study-card[data-training-ready="true"]'));
+    const rects = cards.map(card => card.getBoundingClientRect());
     return {
-      columns: getComputedStyle(stats).gridTemplateColumns.split(' ').filter(Boolean).length,
-      singleColumn: cards.every((rect, index) => index === 0 || Math.abs(rect.left - cards[0].left) < 2),
-      widths: cards.map(rect => Math.round(rect.width))
+      cards: cards.length,
+      metadata: view.querySelectorAll('.study-card .xp-course-meta').length,
+      singleColumn: rects.slice(1).every((rect, index) => Math.abs(rect.left - rects[index].left) < 2 && rect.top > rects[index].top),
+      minCardHeight: rects.length ? Math.min(...rects.map(rect => rect.height)) : 0
     };
   });
-  console.log('training layout', JSON.stringify(layout));
-  assert.equal(layout.singleColumn, true, '手机端训练数据必须按真实视觉位置单列显示');
-  assert.ok(layout.widths.every(width => width >= 300), '手机端三项训练统计必须保持可读的整行宽度');
+  assert.equal(study.cards, 12, '固定12关必须全部进入手机学习列表');
+  assert.equal(study.metadata, 12, '12关都必须展示学习目标、易错提醒和闯关说明');
+  assert.equal(study.singleColumn, true, '手机学习列表必须保持单列');
+  assert.ok(study.minCardHeight >= 44, '课程卡片触控高度不得小于44px');
+
+  // 完整训练路线已经从已删除的第二套首页迁移到独立训练营页。
+  // 通过真实公开页面核验十二关主线、专项练习、现场模拟、成长档案和安全边界。
+  await page.goto('http://127.0.0.1:4173/cnc/training-camp.html', { waitUntil: 'domcontentloaded', timeout: 60000 });
+  await page.waitForFunction(() => document.querySelectorAll('#course-list .course').length === 12, null, { timeout: 15000 });
+
+  const hub = await page.evaluate(() => {
+    const routes = Array.from(document.querySelectorAll('.route-grid .route-card'));
+    const courses = Array.from(document.querySelectorAll('#course-list .course'));
+    const stats = Array.from(document.querySelectorAll('.hero .stat'));
+    const visibleTargets = Array.from(document.querySelectorAll('a,button')).filter(node => node.getClientRects().length > 0);
+    const smallTargets = visibleTargets.map(node => {
+      const rect = node.getBoundingClientRect();
+      return {
+        text: (node.getAttribute('aria-label') || node.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 80),
+        width: Math.round(rect.width * 10) / 10,
+        height: Math.round(rect.height * 10) / 10
+      };
+    }).filter(item => item.width < 44 || item.height < 44);
+    return {
+      title: document.querySelector('h1')?.textContent.trim() || '',
+      routes: routes.map(node => ({
+        text: node.textContent.trim().replace(/\s+/g, ' '),
+        href: node.getAttribute('href') || ''
+      })),
+      stats: stats.map(node => node.textContent.trim().replace(/\s+/g, ' ')),
+      progress: document.getElementById('progress-copy')?.textContent.trim() || '',
+      nextTitle: document.getElementById('next-title')?.textContent.trim() || '',
+      nextHref: document.getElementById('continue-main')?.getAttribute('href') || '',
+      courses: courses.map(node => ({
+        stage: node.dataset.stage || '',
+        title: node.querySelector('h2')?.textContent.trim() || '',
+        href: node.getAttribute('href') || '',
+        status: node.querySelector('.status')?.textContent.trim() || ''
+      })),
+      safety: document.querySelector('.panel.notice')?.textContent.trim().replace(/\s+/g, ' ') || '',
+      navLabels: Array.from(document.querySelectorAll('.bottom-nav a')).map(node => node.textContent.trim()),
+      scrollWidth: document.documentElement.scrollWidth,
+      clientWidth: document.documentElement.clientWidth,
+      smallTargets
+    };
+  });
+  console.log('training hub', JSON.stringify(hub));
+
+  assert.match(hub.title, /独立完成首件验证/, '训练营必须面向零基础并明确首件验证目标');
+  assert.equal(hub.routes.length, 4, '训练营必须提供主线课程、专项练习、现场模拟和成长档案四条真实路径');
+  assert.match(hub.routes.map(item => item.text).join(' '), /学主线课程/);
+  assert.match(hub.routes.map(item => item.text).join(' '), /做专项练习/);
+  assert.match(hub.routes.map(item => item.text).join(' '), /练现场模拟/);
+  assert.match(hub.routes.map(item => item.text).join(' '), /看成长档案/);
+  assert.equal(hub.stats.length, 3, '训练营必须展示已通过关卡、平均分和待重做错题三项真实统计');
+  assert.match(hub.stats.join(' '), /已通过关卡/);
+  assert.match(hub.stats.join(' '), /当前平均分/);
+  assert.match(hub.stats.join(' '), /待重做错题/);
+  assert.match(hub.progress, /已通过0\/12关/, '零记录新手必须明确显示0/12关，不能伪造进度');
+  assert.match(hub.nextTitle, /第1关\s*安全基础/, '零记录新手下一关必须是安全基础');
+  assert.match(hub.nextHref, /course-safety-foundation\.html$/, '训练营继续入口必须指向第1关正式课程');
+  assert.equal(hub.courses.length, 12, '训练营必须完整展示固定12关');
+  assert.equal(new Set(hub.courses.map(item => item.stage)).size, 12, '12关阶段标识不得重复或缺失');
+  assert.equal(hub.courses[0].title, '安全基础', '第1关名称和顺序不得漂移');
+  assert.match(hub.courses[0].href, /course-safety-foundation\.html$/);
+  assert.equal(hub.courses[11].title, '完整程序与首件验证', '第12关名称和顺序不得漂移');
+  assert.match(hub.courses[11].href, /course-complete-program-first-piece\.html$/);
+  assert.ok(hub.courses.every(item => item.status === '未开始' || item.status === '继续学习'), '零记录课程状态不得伪造为已通过');
+  assert.match(hub.safety, /机床原厂手册/);
+  assert.match(hub.safety, /企业安全制度/);
+  assert.match(hub.safety, /上机授权/);
+  assert.match(hub.safety, /现场监护/);
+  assert.deepEqual(hub.navLabels, ['首页', '训练营', '练习', '查代码', '我的'], '独立训练营页必须保留五项中文主导航');
+  assert.ok(hub.scrollWidth <= hub.clientWidth + 1, `390px训练营不得横向溢出：${hub.scrollWidth}/${hub.clientWidth}`);
+  assert.deepEqual(hub.smallTargets, [], `训练营可见操作目标不得小于44px：${JSON.stringify(hub.smallTargets)}`);
   assert.deepEqual(errors, []);
 
-  console.log('CNC新手训练营基础、四阶段十二关路线、版本化成长档案与统计概览通过', {
-    trainingBuild,
-    roadmap: 4,
-    lessons: 12,
+  console.log('CNC单层首页、手机学习列表、独立训练营四路径、固定十二关、真实零进度与安全边界通过', {
     profileBuild: startup.profileApi.build,
-    stats: 3,
+    study,
+    routeCount: hub.routes.length,
+    courseCount: hub.courses.length,
     studyTarget
   });
   await browser.close();
