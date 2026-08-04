@@ -31,6 +31,7 @@ jobs:
       - name: 修复真实根因并执行静态验证
         shell: bash
         run: |
+          set -euxo pipefail
           python - <<'PY'
           from pathlib import Path
 
@@ -55,15 +56,16 @@ jobs:
           PY
 
           node --check cnc/tests/placement-first-step-offline-core-drift-smoke.cjs
-          grep -q "const BUILD = '20260804-home-refresh1';" cnc/ai-teacher.html
-          grep -q "'(?:html|json|css)'" cnc/tests/placement-first-step-offline-core-drift-smoke.cjs
-          grep -q "'./homepage-refresh.css'" cnc/sw.js
-          grep -q "'./homepage-refresh.css'" cnc/pwa-self-test.html
+          grep -Fq "const BUILD = '20260804-home-refresh1';" cnc/ai-teacher.html
+          grep -Fq "return normalizeRelativePath(value, 'PWA核心资源', '(?:html|json|css)');" cnc/tests/placement-first-step-offline-core-drift-smoke.cjs
+          grep -Fq "'./homepage-refresh.css'" cnc/sw.js
+          grep -Fq "'./homepage-refresh.css'" cnc/pwa-self-test.html
           git diff --check
 
       - name: 提交最小修复
         shell: bash
         run: |
+          set -euxo pipefail
           if git diff --quiet; then
             echo '未产生修复内容' >&2
             exit 1
