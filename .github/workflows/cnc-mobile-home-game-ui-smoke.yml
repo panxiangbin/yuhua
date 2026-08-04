@@ -1,338 +1,39 @@
-name: CNC mobile home compatibility smoke
+name: CNC mobile branch repair checkpoint
 
 on:
   pull_request:
     paths:
-      - 'cnc/index.html'
-      - 'cnc/personal-home.js'
-      - 'cnc/homepage-refresh.css'
-      - 'cnc/homepage-refresh-desktop-legacy.css'
-      - 'cnc/mobile-home-refactor.css'
-      - 'cnc/mobile-trust-nav.js'
-      - 'cnc/sw.js'
-      - 'cnc/build-info.json'
-      - 'cnc/featured-images*.js'
-      - 'cnc/assets/images/**'
-      - 'cnc/course-*.html'
-      - 'cnc/tests/mobile-home-refactor-smoke.cjs'
-      - '.github/workflows/cnc-mobile-home-game-ui-smoke.yml'
-  push:
-    branches:
-      - main
-    paths:
-      - 'cnc/index.html'
-      - 'cnc/personal-home.js'
-      - 'cnc/homepage-refresh.css'
-      - 'cnc/homepage-refresh-desktop-legacy.css'
-      - 'cnc/mobile-home-refactor.css'
-      - 'cnc/mobile-trust-nav.js'
-      - 'cnc/sw.js'
-      - 'cnc/build-info.json'
-      - 'cnc/featured-images*.js'
-      - 'cnc/assets/images/**'
-      - 'cnc/course-*.html'
-      - 'cnc/tests/mobile-home-refactor-smoke.cjs'
+      - 'cnc/tests/apply-mobile-home-fix.py'
       - '.github/workflows/cnc-mobile-home-game-ui-smoke.yml'
   workflow_dispatch:
 
 permissions:
   contents: write
 
-concurrency:
-  group: cnc-mobile-home-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
-
 jobs:
-  sync-mobile-branch:
+  repair-mobile-branch:
     if: github.event_name == 'pull_request' && github.head_ref == 'codex/mobile-home-refactor-20260804'
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    outputs:
-      changed: ${{ steps.patch.outputs.changed }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: codex/mobile-home-refactor-20260804
 
-      - name: Apply viewport, visible-card and PWA12 synchronization
-        id: patch
-        shell: bash
+      - name: Apply deterministic mobile fix
         run: |
-          python3 - <<'PY'
-          from pathlib import Path
-
-          css_path = Path('cnc/mobile-home-refactor.css')
-          css = css_path.read_text(encoding='utf-8')
-          marker = '/* 20260804 mobile viewport and visible-card hardening */'
-          addition = r'''
-
-          /* 20260804 mobile viewport and visible-card hardening */
-          @media (max-width: 768px) {
-            html:has(body #view-dashboard.active),
-            html body:has(#view-dashboard.active) {
-              box-sizing: border-box !important;
-              width: 100% !important;
-              height: 100dvh !important;
-              min-height: 0 !important;
-              max-height: 100dvh !important;
-              margin: 0 !important;
-              padding: 0 !important;
-              overflow: hidden !important;
-              background: var(--cnc-mobile-paper) !important;
-            }
-
-            html body:has(#view-dashboard.active) .app-shell {
-              position: fixed !important;
-              inset: 0 !important;
-              box-sizing: border-box !important;
-              width: 100vw !important;
-              height: 100dvh !important;
-              min-height: 0 !important;
-              max-height: 100dvh !important;
-              margin: 0 !important;
-              padding: 0 !important;
-              overflow: hidden !important;
-            }
-
-            html body:has(#view-dashboard.active) .main-shell {
-              position: absolute !important;
-              inset: 0 !important;
-              box-sizing: border-box !important;
-              width: 100% !important;
-              max-width: none !important;
-              height: 100dvh !important;
-              min-height: 0 !important;
-              max-height: 100dvh !important;
-              margin: 0 !important;
-              padding: 0 !important;
-              overflow: hidden !important;
-            }
-
-            html body:has(#view-dashboard.active) .topbar {
-              width: 100% !important;
-              margin: 0 !important;
-              transform: none !important;
-            }
-
-            html body:has(#view-dashboard.active) #view-dashboard.active {
-              width: 100% !important;
-              max-width: 100% !important;
-              margin: 0 !important;
-            }
-
-            body:has(#view-dashboard.active):not(:has(.xp-bottom-nav))::after {
-              content: none !important;
-            }
-
-            html body:not(.cnc-mobile-nav-ready):has(#view-dashboard.active)::after {
-              content: '首页　　查询　　报警　　学习　　我的' !important;
-              position: fixed !important;
-              z-index: 900 !important;
-              right: 0 !important;
-              bottom: 0 !important;
-              left: 0 !important;
-              box-sizing: border-box !important;
-              display: flex !important;
-              height: calc(var(--cnc-mobile-nav) + var(--cnc-mobile-safe-bottom)) !important;
-              align-items: flex-start !important;
-              justify-content: center !important;
-              padding: 38px 8px var(--cnc-mobile-safe-bottom) !important;
-              border-top: 1px solid #dfe6ee !important;
-              color: #8190a3 !important;
-              background:
-                radial-gradient(circle at 10% 17px, #cbd7e6 0 8px, transparent 9px),
-                radial-gradient(circle at 30% 17px, #cbd7e6 0 8px, transparent 9px),
-                radial-gradient(circle at 50% 17px, #cbd7e6 0 8px, transparent 9px),
-                radial-gradient(circle at 70% 17px, #cbd7e6 0 8px, transparent 9px),
-                radial-gradient(circle at 90% 17px, #cbd7e6 0 8px, transparent 9px),
-                #fff !important;
-              box-shadow: 0 -8px 24px rgba(25, 42, 67, .08) !important;
-              font-size: 10px !important;
-              white-space: pre !important;
-            }
-
-            html body .xp-bottom-nav {
-              display: grid !important;
-              visibility: visible !important;
-              opacity: 1 !important;
-              pointer-events: auto !important;
-              transform: none !important;
-            }
-
-            html body #view-study.active .learning-stages,
-            html body #view-study.active .study-card-grid,
-            html body #view-study.active .study-card,
-            html body #view-study.active .study-card .study-card-thumb {
-              visibility: visible !important;
-              opacity: 1 !important;
-              transform: none !important;
-            }
-
-            html body #view-study.active .learning-stages {
-              display: block !important;
-            }
-
-            html body #view-study.active .study-card-grid,
-            html body #view-study.active .study-card {
-              display: grid !important;
-            }
-
-            html body #view-study.active .study-card .study-card-thumb {
-              display: block !important;
-            }
-          }
-          '''
-          if marker not in css:
-              css_path.write_text(css.rstrip() + addition + '\n', encoding='utf-8')
-
-          js_path = Path('cnc/personal-home.js')
-          js = js_path.read_text(encoding='utf-8')
-          if 'function syncBottomNav()' not in js:
-              needle = """  function removeLegacyHome() {
-            ['xp-game-home', 'xp-personal-home'].forEach(function (id) {
-              var node = document.getElementById(id);
-              if (node) node.remove();
-            });
-            document.querySelectorAll('link[data-cnc-mobile-home-game]').forEach(function (node) { node.remove(); });
-            if (document.body) document.body.classList.remove('cnc-game-home-enabled');
-          }
-"""
-              replacement = needle + """
-          function syncBottomNav() {
-            if (!document.body) return false;
-            var nav = document.querySelector('body > .xp-bottom-nav');
-            if (!nav || !media.matches) {
-              document.body.classList.remove('cnc-mobile-nav-ready');
-              return false;
-            }
-            nav.hidden = false;
-            nav.removeAttribute('hidden');
-            nav.removeAttribute('inert');
-            nav.setAttribute('aria-hidden', 'false');
-            delete nav.dataset.cncGameUtility;
-            document.body.classList.add('cnc-mobile-nav-ready');
-            return true;
-          }
-"""
-              if needle not in js:
-                  raise SystemExit('removeLegacyHome block not found')
-              js = js.replace(needle, replacement, 1)
-
-          old_boot = """  function boot() {
-            removeLegacyHome();
-            syncLearningContent();
-            syncStudyCards();
-            syncHomeProgress();
-            if (document.body) document.body.dataset.cncMobileHomeBuild = '20260804-mobile1';
-          }
-"""
-          if old_boot in js:
-              new_boot = """  function boot() {
-            removeLegacyHome();
-            syncLearningContent();
-            syncStudyCards();
-            syncHomeProgress();
-            syncBottomNav();
-            [80, 180, 360, 700, 1200, 2200, 4200].forEach(function (delay) {
-              window.setTimeout(syncBottomNav, delay);
-            });
-            if (document.body) document.body.dataset.cncMobileHomeBuild = '20260804-mobile1';
-          }
-"""
-              js = js.replace(old_boot, new_boot, 1)
-          js_path.write_text(js, encoding='utf-8')
-
-          test_path = Path('cnc/tests/mobile-home-refactor-smoke.cjs')
-          test = test_path.read_text(encoding='utf-8')
-          test = test.replace(
-            "await page.locator('.study-card-thumb').first().waitFor();",
-            "await page.locator('#view-study.active .study-card:visible .study-card-thumb').first().waitFor();"
-          )
-          test = test.replace(
-            "const images = Array.from(document.querySelectorAll('#view-study .study-card-thumb'));\n    return images.length === 12 && images.every(image => image.complete && image.naturalWidth > 0);",
-            "const images = Array.from(document.querySelectorAll('#view-study.active .study-card .study-card-thumb')).filter(image => image.getClientRects().length > 0);\n    return images.length === 12 && images.every(image => image.complete && image.naturalWidth > 0);"
-          )
-          test = test.replace(
-            "const images = Array.from(document.querySelectorAll('#view-study .study-card-thumb'));",
-            "const images = Array.from(document.querySelectorAll('#view-study.active .study-card .study-card-thumb')).filter(image => image.getClientRects().length > 0);",
-            1
-          )
-          test_path.write_text(test, encoding='utf-8')
-
-          allowed = {'.yml', '.yaml', '.js', '.cjs', '.json', '.html', '.md'}
-          roots = [Path('cnc'), Path('.github/workflows')]
-          for root in roots:
-              for file in root.rglob('*'):
-                  if not file.is_file() or file.suffix.lower() not in allowed:
-                      continue
-                  if 'test-results' in file.parts or 'node_modules' in file.parts:
-                      continue
-                  raw = file.read_text(encoding='utf-8')
-                  next_text = raw.replace('20260804-pwa11', '20260804-pwa12').replace('20260804-home-refresh1', '20260804-mobile-home1')
-                  if next_text != raw:
-                      file.write_text(next_text, encoding='utf-8')
-
-          for temporary in [
-              Path('.github/workflows/cnc-mobile-pwa12-sync.yml'),
-              Path('.github/workflows/cnc-mobile-fix-visible-nav.yml')
-          ]:
-              if temporary.exists():
-                  temporary.unlink()
-          PY
-
+          set -euxo pipefail
+          python3 cnc/tests/apply-mobile-home-fix.py
           node --check cnc/personal-home.js
           node --check cnc/tests/mobile-home-refactor-smoke.cjs
           git diff --check
           if git diff --quiet; then
-            echo 'changed=false' >> "$GITHUB_OUTPUT"
+            echo 'No pending repair changes.'
             exit 0
           fi
-          echo 'changed=true' >> "$GITHUB_OUTPUT"
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add cnc .github/workflows
           git commit -m 'fix(cnc-mobile): fit viewport nav and visible course cards'
           git push origin HEAD:codex/mobile-home-refactor-20260804
-
-  mobile-home:
-    if: github.event_name != 'pull_request' || needs.sync-mobile-branch.outputs.changed != 'true'
-    needs: sync-mobile-branch
-    runs-on: ubuntu-latest
-    timeout-minutes: 25
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-
-      - name: Validate mobile refactor syntax and contracts
-        run: |
-          set -euxo pipefail
-          test -f cnc/mobile-home-refactor.css
-          test -f cnc/homepage-refresh-desktop-legacy.css
-          test -f cnc/tests/mobile-home-refactor-smoke.cjs
-          test -f cnc/MOBILE_HOME_REFACTOR_PROGRESS.md
-          test -f cnc/MOBILE_HOME_ASSET_INVENTORY.md
-          node --check cnc/personal-home.js
-          node --check cnc/tests/mobile-home-refactor-smoke.cjs
-          grep -q '速肯方面' cnc/MOBILE_HOME_ASSET_INVENTORY.md
-          grep -q '360×800' cnc/MOBILE_HOME_REFACTOR_PROGRESS.md
-          ! grep -Eq "test\.skip\(|describe\.skip\(|it\.skip\(|process\.exit\(0\)" cnc/tests/mobile-home-refactor-smoke.cjs
-
-      - name: Install Playwright Chromium
-        run: |
-          npm install --no-save playwright@1.54.2
-          npx playwright install --with-deps chromium
-
-      - name: Run first-paint, one-screen, learning, query, PWA and desktop checks
-        run: node cnc/tests/mobile-home-refactor-smoke.cjs
-
-      - name: Upload mobile refactor evidence
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: cnc-mobile-home-compatibility-${{ github.run_id }}
-          path: cnc/test-results/mobile-home-refactor/
-          if-no-files-found: error
-          retention-days: 30
