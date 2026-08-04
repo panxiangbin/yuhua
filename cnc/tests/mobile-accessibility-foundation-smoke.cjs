@@ -39,7 +39,10 @@ function seconds(value) {
       timeout: 60000
     });
     await page.waitForFunction(() => window.CNC_TRUST_NAV && (window.__CNC_TRUST_READY_AT__ || 0) > 0, null, { timeout: 30000 });
-    await page.waitForSelector('#xp-game-home .xp-game-bottom-nav', { state: 'visible', timeout: 30000 });
+    await page.waitForFunction(() => {
+      const nav = document.querySelector('body > .xp-bottom-nav');
+      return nav && nav.getClientRects().length > 0 && nav.getAttribute('aria-hidden') === 'false' && !nav.hasAttribute('inert');
+    }, null, { timeout: 30000 });
     await page.waitForFunction(() => window.CNC_GAME_QUERY_NAV?.runCheck().utilityHidden === true, null, { timeout: 20000 });
 
     const audit = await page.evaluate(() => {
@@ -125,7 +128,7 @@ function seconds(value) {
         issues.push('加载层既未声明状态角色，也未标记为纯装饰');
       }
 
-      const motionSamples = ['.loading-ring', '.xp-game-primary', '.xp-game-secondary', '.xp-game-bottom-nav a']
+      const motionSamples = ['.loading-ring', '.xp-game-primary', '.xp-game-secondary', 'body > .xp-bottom-nav [data-xp-route]']
         .map(selector => document.querySelector(selector))
         .filter(Boolean)
         .map(node => {
@@ -223,6 +226,7 @@ function seconds(value) {
     await browser.close();
   }
 })().catch(error => {
+  fs.writeFileSync(path.join(OUTPUT_DIR, 'error.txt'), `${error.stack || error}\n`);
   console.error(error);
   process.exit(1);
 });
