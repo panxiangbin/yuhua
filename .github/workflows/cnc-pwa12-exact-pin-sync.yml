@@ -1,0 +1,246 @@
+name: CNC PWA12 exact pin sync
+on:
+  push:
+    branches:
+      - chatgpt/cnc-home-refresh-regression-fix
+    paths:
+      - '.github/workflows/cnc-pwa12-exact-pin-sync.yml'
+permissions:
+  contents: write
+concurrency:
+  group: cnc-pwa12-exact-pin-sync
+  cancel-in-progress: false
+jobs:
+  sync:
+    if: github.ref == 'refs/heads/chatgpt/cnc-home-refresh-regression-fix'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chatgpt/cnc-home-refresh-regression-fix
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Apply exact PWA12 contract replacements
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          CURRENT = '20260804-pwa12'
+          PREVIOUS = '20260804-pwa11'
+          LEGACY_PREVIOUS = '20260803-' + 'pwa9'
+
+          changed = []
+
+          def replace(path, old, new, expected=1):
+              file = Path(path)
+              text = file.read_text(encoding='utf-8')
+              count = text.count(old)
+              if count != expected:
+                  raise SystemExit(f'{path}: expected {expected} occurrence(s), found {count}: {old!r}')
+              file.write_text(text.replace(old, new), encoding='utf-8')
+              changed.append(path)
+
+          # Active browser and Pages pins.
+          replace('cnc/tests/mobile-pwa-offline-cache-smoke.cjs',
+                  "const PWA_BUILD = '20260804-pwa11';",
+                  f"const PWA_BUILD = '{CURRENT}';")
+          replace('cnc/tests/mobile-pwa-offline-cache-smoke.cjs',
+                  "const CORE_OFFLINE_PATHS = [\n  './beginner-placement.html',",
+                  "const CORE_OFFLINE_PATHS = [\n  './homepage-refresh.css',\n  './beginner-placement.html',")
+          replace('cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs',
+                  "const PWA_BUILD = '20260804-pwa11';",
+                  f"const PWA_BUILD = '{CURRENT}';")
+          replace('cnc/tests/mobile-pwa-upgrade-data-smoke.cjs',
+                  "const CURRENT_PWA_BUILD = '20260804-pwa11';",
+                  f"const CURRENT_PWA_BUILD = '{CURRENT}';")
+          replace('cnc/tests/mobile-pwa-upgrade-data-smoke.cjs',
+                  f"const PREVIOUS_PWA_BUILD = '{LEGACY_PREVIOUS}';",
+                  f"const PREVIOUS_PWA_BUILD = '{PREVIOUS}';")
+
+          page_tests = [
+              'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs',
+              'cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs'
+          ]
+          for path in page_tests:
+              replace(path,
+                      "const branchTargetPwaBuild = '20260804-pwa11';",
+                      f"const branchTargetPwaBuild = '{CURRENT}';")
+              replace(path,
+                      f"const previousPublicPwaBuild = '{LEGACY_PREVIOUS}';",
+                      f"const previousPublicPwaBuild = '{PREVIOUS}';")
+              replace(path,
+                      "  const core = [\n    './index.html',\n    './offline.html',",
+                      "  const core = [\n    './index.html',\n    './homepage-refresh.css',\n    './offline.html',")
+
+          training_test = 'cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs'
+          replace(training_test,
+                  "const expectedPwaBuild = '20260804-pwa11';",
+                  f"const expectedPwaBuild = '{CURRENT}';")
+          replace(training_test,
+                  f"const previousPublicPwaBuild = '{LEGACY_PREVIOUS}';",
+                  f"const previousPublicPwaBuild = '{PREVIOUS}';")
+          replace(training_test,
+                  "  const core = [\n    './index.html',\n    './offline.html',",
+                  "  const core = [\n    './index.html',\n    './homepage-refresh.css',\n    './offline.html',")
+
+          # Exact core-list and PWA12 wording assertions for Pages gates.
+          ai_pages = 'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs'
+          replace(ai_pages,
+                  "    \"const RUNTIME_CACHE = `cnc-runtime-${BUILD}`\",\n    \"'./beginner-placement.html'\",",
+                  "    \"const RUNTIME_CACHE = `cnc-runtime-${BUILD}`\",\n    \"'./homepage-refresh.css'\",\n    \"'./beginner-placement.html'\",")
+          replace(ai_pages,
+                  "    `const EXPECTED='${expectedBuild}'`,\n    \"'./beginner-placement.html'\",",
+                  "    `const EXPECTED='${expectedBuild}'`,\n    \"'./homepage-refresh.css'\",\n    \"'./beginner-placement.html'\",")
+          replace(ai_pages,
+                  "['起点测评关键安全门禁', '测评路线一次性交接', '训练营路线离线核心', '测评首步课程离线核心', '正式课程开发占位清零']",
+                  "['起点测评关键安全门禁', '测评路线一次性交接', '训练营路线离线核心', '测评首步课程离线核心', '正式课程开发占位清零', '桌面首页离线样式一致性']")
+          replace(ai_pages,
+                  "['PWA10会刷新已清理开发占位后的核心课程正文']",
+                  "['PWA12用于刷新桌面首页本地样式、自检核心资源与离线缓存的一致性']")
+          replace(ai_pages,
+                  "['PWA10用于刷新已清理开发占位后的核心课程正文']",
+                  "['PWA12用于刷新桌面首页本地样式、自检核心资源与离线缓存的一致性']")
+          replace(ai_pages, 'fourteenCoreResourcesVerified: true', 'fifteenCoreResourcesVerified: true')
+          replace(ai_pages, '当前分支PWA自检核心资源：14项且无重复', '当前分支PWA自检核心资源：15项且无重复')
+
+          beginner_pages = 'cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs'
+          replace(beginner_pages,
+                  "    `const BUILD = '${expectedBuild}'`,\n    \"'./beginner-placement.html'\",",
+                  "    `const BUILD = '${expectedBuild}'`,\n    \"'./homepage-refresh.css'\",\n    \"'./beginner-placement.html'\",")
+          replace(beginner_pages,
+                  "['起点测评关键安全门禁', '测评路线一次性交接', '训练营路线离线核心', '测评首步课程离线核心', '正式课程开发占位清零']",
+                  "['起点测评关键安全门禁', '测评路线一次性交接', '训练营路线离线核心', '测评首步课程离线核心', '正式课程开发占位清零', '桌面首页离线样式一致性']")
+          replace(beginner_pages,
+                  '当前分支起点测评、训练营与三类首步课程进入14项核心预缓存：是',
+                  '当前分支起点测评、训练营与三类首步课程及桌面首页样式进入15项核心预缓存：是')
+
+          replace(training_test,
+                  "    'const REQUIRED_CORE_PATHS = [',\n    \"'./training-camp.html'\",",
+                  "    'const REQUIRED_CORE_PATHS = [',\n    \"'./homepage-refresh.css'\",\n    \"'./training-camp.html'\",")
+          replace(training_test,
+                  "['测评首步课程离线核心', '正式课程开发占位清零']",
+                  "['测评首步课程离线核心', '正式课程开发占位清零', '桌面首页离线样式一致性']")
+          replace(training_test,
+                  "throw new Error('分支与main一致时公网必须已经是PWA10')",
+                  "throw new Error('分支与main一致时公网必须已经是PWA12')")
+          replace(training_test,
+                  '训练营与三类测评首步课程进入14项核心预缓存：已验证',
+                  '训练营、三类测评首步课程与桌面首页样式进入15项核心预缓存：已验证')
+
+          # Workflow contracts: current=PWA12, previous public=PWA11, 15 exact core resources.
+          replace('.github/workflows/cnc-pwa-offline-cache-smoke.yml',
+                  "if (info.pwaBuild !== '20260804-pwa11')",
+                  f"if (info.pwaBuild !== '{CURRENT}')")
+          replace('.github/workflows/cnc-pwa-offline-cache-smoke.yml',
+                  "          for (const file of [\n            './beginner-placement.html',",
+                  "          for (const file of [\n            './homepage-refresh.css',\n            './beginner-placement.html',")
+          replace('.github/workflows/cnc-pwa-offline-cache-smoke.yml',
+                  "['起点测评关键安全门禁','起点测评离线核心','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','AI老师离线核心','正式课程开发占位清零']",
+                  "['起点测评关键安全门禁','起点测评离线核心','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','AI老师离线核心','正式课程开发占位清零','桌面首页离线样式一致性']")
+
+          replace('.github/workflows/cnc-pwa-self-test-smoke.yml',
+                  "if (info.pwaBuild !== '20260804-pwa11')",
+                  f"if (info.pwaBuild !== '{CURRENT}')")
+          replace('.github/workflows/cnc-pwa-self-test-smoke.yml',
+                  "            './beginner-placement.html',",
+                  "            './homepage-refresh.css',\n            './beginner-placement.html',")
+          replace('.github/workflows/cnc-pwa-self-test-smoke.yml',
+                  "            'PWA10用于刷新已清理开发占位后的核心课程正文'",
+                  "            'PWA12用于刷新桌面首页本地样式、自检核心资源与离线缓存的一致性'")
+          replace('.github/workflows/cnc-pwa-self-test-smoke.yml',
+                  "['起点测评关键安全门禁','训练营路线离线核心','测评首步课程离线核心','正式课程开发占位清零']",
+                  "['起点测评关键安全门禁','训练营路线离线核心','测评首步课程离线核心','正式课程开发占位清零','桌面首页离线样式一致性']")
+
+          replace('.github/workflows/cnc-pwa-upgrade-data-smoke.yml',
+                  "if (info.pwaBuild !== '20260804-pwa11')",
+                  f"if (info.pwaBuild !== '{CURRENT}')")
+          replace('.github/workflows/cnc-pwa-upgrade-data-smoke.yml',
+                  f"\"const PREVIOUS_PWA_BUILD = '{LEGACY_PREVIOUS}'\"",
+                  f"\"const PREVIOUS_PWA_BUILD = '{PREVIOUS}'\"")
+          replace('.github/workflows/cnc-pwa-upgrade-data-smoke.yml',
+                  "for (const file of ['./training-camp.html','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html'])",
+                  "for (const file of ['./homepage-refresh.css','./training-camp.html','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html'])")
+          replace('.github/workflows/cnc-pwa-upgrade-data-smoke.yml',
+                  "if (!String(info.contentStage || '').includes('正式课程开发占位清零')) throw new Error('build marker missing formal course content refresh');",
+                  "if (!String(info.contentStage || '').includes('正式课程开发占位清零')) throw new Error('build marker missing formal course content refresh');\n          if (!String(info.contentStage || '').includes('桌面首页离线样式一致性')) throw new Error('build marker missing desktop homepage offline style consistency');")
+
+          ai_workflow = '.github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml'
+          replace(ai_workflow,
+                  "\"const branchTargetPwaBuild = '20260804-pwa11'\"",
+                  f"\"const branchTargetPwaBuild = '{CURRENT}'\"")
+          replace(ai_workflow,
+                  f"\"const previousPublicPwaBuild = '{LEGACY_PREVIOUS}'\"",
+                  f"\"const previousPublicPwaBuild = '{PREVIOUS}'\"")
+          replace(ai_workflow,
+                  "            'fourteenCoreResourcesVerified: true',",
+                  "            'fifteenCoreResourcesVerified: true',")
+          replace(ai_workflow,
+                  "          for (const file of [\n            './beginner-placement.html',",
+                  "          for (const file of [\n            './homepage-refresh.css',\n            './beginner-placement.html',")
+          replace(ai_workflow,
+                  "['起点测评关键安全门禁','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','正式课程开发占位清零']",
+                  "['起点测评关键安全门禁','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','正式课程开发占位清零','桌面首页离线样式一致性']")
+
+          beginner_workflow = '.github/workflows/cnc-beginner-placement-offline-pages-smoke.yml'
+          replace(beginner_workflow,
+                  "if (info.pwaBuild !== '20260804-pwa11')",
+                  f"if (info.pwaBuild !== '{CURRENT}')")
+          replace(beginner_workflow,
+                  "if (!sw.includes(\"const BUILD = '20260804-pwa11'\"))",
+                  f"if (!sw.includes(\"const BUILD = '{CURRENT}'\"))")
+          replace(beginner_workflow,
+                  "\"const branchTargetPwaBuild = '20260804-pwa11'\"",
+                  f"\"const branchTargetPwaBuild = '{CURRENT}'\"")
+          replace(beginner_workflow,
+                  f"\"const previousPublicPwaBuild = '{LEGACY_PREVIOUS}'\"",
+                  f"\"const previousPublicPwaBuild = '{PREVIOUS}'\"")
+          replace(beginner_workflow,
+                  "for (const file of ['./training-camp.html','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html'])",
+                  "for (const file of ['./homepage-refresh.css','./training-camp.html','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html'])")
+          replace(beginner_workflow,
+                  "if (!String(info.contentStage || '').includes('正式课程开发占位清零')) throw new Error('build marker missing formal course content refresh');",
+                  "if (!String(info.contentStage || '').includes('正式课程开发占位清零')) throw new Error('build marker missing formal course content refresh');\n          if (!String(info.contentStage || '').includes('桌面首页离线样式一致性')) throw new Error('build marker missing desktop homepage offline style consistency');")
+
+          training_workflow = '.github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml'
+          replace(training_workflow,
+                  "if (info.pwaBuild !== '20260804-pwa11')",
+                  f"if (info.pwaBuild !== '{CURRENT}')")
+          replace(training_workflow,
+                  "if (!sw.includes(\"const BUILD = '20260804-pwa11'\"))",
+                  f"if (!sw.includes(\"const BUILD = '{CURRENT}'\"))")
+          replace(training_workflow,
+                  "\"const expectedPwaBuild = '20260804-pwa11'\"",
+                  f"\"const expectedPwaBuild = '{CURRENT}'\"")
+          replace(training_workflow,
+                  f"\"const previousPublicPwaBuild = '{LEGACY_PREVIOUS}'\"",
+                  f"\"const previousPublicPwaBuild = '{PREVIOUS}'\"")
+          replace(training_workflow,
+                  "for (const file of ['./training-camp.html','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html'])",
+                  "for (const file of ['./homepage-refresh.css','./training-camp.html','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html'])")
+          replace(training_workflow,
+                  "if (!String(info.contentStage || '').includes('正式课程开发占位清零')) throw new Error('build marker missing formal course content refresh');",
+                  "if (!String(info.contentStage || '').includes('正式课程开发占位清零')) throw new Error('build marker missing formal course content refresh');\n          if (!String(info.contentStage || '').includes('桌面首页离线样式一致性')) throw new Error('build marker missing desktop homepage offline style consistency');")
+
+          print(f'Exact replacements completed in {len(set(changed))} files')
+          PY
+      - name: Validate syntax and PWA reference audit
+        run: |
+          node --check cnc/tests/mobile-pwa-offline-cache-smoke.cjs
+          node --check cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs
+          node --check cnc/tests/mobile-pwa-upgrade-data-smoke.cjs
+          node --check cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs
+          node --check cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs
+          node --check cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs
+          node cnc/tests/pwa-build-reference-audit-smoke.cjs
+          git diff --check
+      - name: Commit exact pin synchronization
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add cnc/tests .github/workflows/cnc-pwa-offline-cache-smoke.yml .github/workflows/cnc-pwa-self-test-smoke.yml .github/workflows/cnc-pwa-upgrade-data-smoke.yml .github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml .github/workflows/cnc-beginner-placement-offline-pages-smoke.yml .github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml
+          git diff --cached --quiet && { echo 'No synchronization changes found'; exit 1; }
+          git commit -m 'test(cnc): 同步PWA12完整门禁与15项核心资源'
+          git push origin HEAD:chatgpt/cnc-home-refresh-regression-fix
