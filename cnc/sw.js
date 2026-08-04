@@ -1,5 +1,5 @@
 /* CNC PWA：版本化缓存、离线回退与安全更新。 */
-const BUILD = '20260804-pwa11';
+const BUILD = '20260804-pwa12';
 const CACHE_REVISION = '20260804-mobile12';
 const STATIC_CACHE = `cnc-static-${CACHE_REVISION}`;
 const RUNTIME_CACHE = `cnc-runtime-${CACHE_REVISION}`;
