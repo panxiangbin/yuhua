@@ -1,0 +1,107 @@
+/* 手机首页最终视口、底栏和学习卡可见性加固。 */
+@media (max-width: 768px) {
+  html:has(body #view-dashboard.active),
+  html body:has(#view-dashboard.active) {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    height: 100dvh !important;
+    min-height: 0 !important;
+    max-height: 100dvh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: var(--cnc-mobile-paper) !important;
+  }
+
+  html body:has(#view-dashboard.active) .app-shell {
+    position: fixed !important;
+    inset: 0 !important;
+    box-sizing: border-box !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    min-height: 0 !important;
+    max-height: 100dvh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+
+  html body:has(#view-dashboard.active) .main-shell {
+    position: absolute !important;
+    inset: 0 !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: 100dvh !important;
+    min-height: 0 !important;
+    max-height: 100dvh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+
+  html body:has(#view-dashboard.active) .topbar {
+    width: 100% !important;
+    margin: 0 !important;
+    transform: none !important;
+  }
+
+  html body:has(#view-dashboard.active) #view-dashboard.active {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+
+  body:has(#view-dashboard.active):not(:has(.xp-bottom-nav))::after {
+    content: none !important;
+  }
+
+  html body:not(.cnc-mobile-nav-ready):has(#view-dashboard.active)::after {
+    content: "首页　　查询　　报警　　学习　　我的" !important;
+    position: fixed !important;
+    z-index: 900 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    height: calc(var(--cnc-mobile-nav) + var(--cnc-mobile-safe-bottom)) !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    padding: 38px 8px var(--cnc-mobile-safe-bottom) !important;
+    border-top: 1px solid #dfe6ee !important;
+    color: #8190a3 !important;
+    background:
+      radial-gradient(circle at 10% 17px, #cbd7e6 0 8px, transparent 9px),
+      radial-gradient(circle at 30% 17px, #cbd7e6 0 8px, transparent 9px),
+      radial-gradient(circle at 50% 17px, #cbd7e6 0 8px, transparent 9px),
+      radial-gradient(circle at 70% 17px, #cbd7e6 0 8px, transparent 9px),
+      radial-gradient(circle at 90% 17px, #cbd7e6 0 8px, transparent 9px),
+      #fff !important;
+    box-shadow: 0 -8px 24px rgba(25, 42, 67, .08) !important;
+    font-size: 10px !important;
+    white-space: pre !important;
+  }
+
+  html body .xp-bottom-nav {
+    display: grid !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: none !important;
+  }
+
+  html body #view-study.active .learning-stages,
+  html body #view-study.active .study-card-grid,
+  html body #view-study.active .study-card,
+  html body #view-study.active .study-card .study-card-thumb {
+    visibility: visible !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  html body #view-study.active .learning-stages { display: block !important; }
+  html body #view-study.active .study-card-grid,
+  html body #view-study.active .study-card { display: grid !important; }
+  html body #view-study.active .study-card .study-card-thumb { display: block !important; }
+}

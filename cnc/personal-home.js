@@ -5,7 +5,6 @@
 (function () {
   'use strict';
 
-  /* import-test.js 仍按该兼容版本识别本模块，保持现有加载关系稳定。 */
   var BUILD = '20260722b';
   var PROFILE_KEY = 'cnc_training_profile_v1';
   var DONE_KEY = 'cnc_study_completed_v1';
@@ -130,6 +129,22 @@
     if (document.body) document.body.classList.remove('cnc-game-home-enabled');
   }
 
+  function syncBottomNav() {
+    if (!document.body) return false;
+    var nav = document.querySelector('body > .xp-bottom-nav');
+    if (!nav || !media.matches) {
+      document.body.classList.remove('cnc-mobile-nav-ready');
+      return false;
+    }
+    nav.hidden = false;
+    nav.removeAttribute('hidden');
+    nav.removeAttribute('inert');
+    nav.setAttribute('aria-hidden', 'false');
+    delete nav.dataset.cncGameUtility;
+    document.body.classList.add('cnc-mobile-nav-ready');
+    return true;
+  }
+
   function syncLearningContent() {
     var content = window.CNC_LEARNING_CONTENT;
     if (!content || !content.lessons) return;
@@ -219,13 +234,16 @@
 
   function runCheck() {
     var images = Array.from(document.querySelectorAll('#view-study .study-card-thumb'));
+    var visibleImages = images.filter(function (image) { return image.getClientRects().length > 0; });
     var legacy = document.querySelector('#xp-game-home,#xp-personal-home');
     return {
       build: BUILD,
       mobile: media.matches,
       legacyHomeRemoved: !legacy,
       courseImages: images.length,
-      decodedImages: images.filter(function (image) { return image.complete && image.naturalWidth > 0; }).length,
+      visibleCourseImages: visibleImages.length,
+      decodedImages: visibleImages.filter(function (image) { return image.complete && image.naturalWidth > 0; }).length,
+      bottomNavReady: Boolean(document.body && document.body.classList.contains('cnc-mobile-nav-ready')),
       nextCourse: progressState().next.file
     };
   }
@@ -235,6 +253,10 @@
     syncLearningContent();
     syncStudyCards();
     syncHomeProgress();
+    syncBottomNav();
+    [80, 180, 360, 700, 1200, 2200, 4200].forEach(function (delay) {
+      window.setTimeout(syncBottomNav, delay);
+    });
     if (document.body) document.body.dataset.cncMobileHomeBuild = '20260804-mobile1';
   }
 
@@ -248,6 +270,7 @@
     removeLegacyHome();
     syncStudyCards();
     syncHomeProgress();
+    syncBottomNav();
   });
   window.addEventListener('pageshow', boot);
 
