@@ -5,55 +5,11 @@ const fs = require('node:fs');
 const DIAGNOSTIC_DIR = 'cnc/test-artifacts/industrial-card-sample';
 fs.mkdirSync(DIAGNOSTIC_DIR, { recursive: true });
 
-async function trustedClickHiddenRoute(page, selector) {
-  const route = page.locator(selector);
-  await route.waitFor({ state: 'attached', timeout: 15000 });
-  const markerId = `cnc-home-route-marker-${Date.now()}`;
-  const routeId = `cnc-home-route-target-${Date.now()}`;
-  await route.evaluate((node, ids) => {
-    const marker = document.createElement('span');
-    marker.id = ids.markerId;
-    marker.hidden = true;
-    node.parentNode.insertBefore(marker, node);
-    node.dataset.homeOriginalStyle = node.getAttribute('style') || '';
-    node.dataset.homeOriginalId = node.id || '';
-    node.id = ids.routeId;
-    document.body.appendChild(node);
-    Object.assign(node.style, {
-      position: 'fixed',
-      left: '16px',
-      top: '16px',
-      width: '180px',
-      height: '48px',
-      display: 'block',
-      visibility: 'visible',
-      opacity: '1',
-      pointerEvents: 'auto',
-      zIndex: '2147483647'
-    });
-  }, { markerId, routeId });
-
-  try {
-    await page.locator(`#${routeId}`).click({ timeout: 15000 });
-  } finally {
-    await page.evaluate(({ routeId, markerId }) => {
-      const node = document.getElementById(routeId);
-      const marker = document.getElementById(markerId);
-      if (!node) return;
-      const originalStyle = node.dataset.homeOriginalStyle || '';
-      const originalId = node.dataset.homeOriginalId || '';
-      if (originalStyle) node.setAttribute('style', originalStyle);
-      else node.removeAttribute('style');
-      if (originalId) node.id = originalId;
-      else node.removeAttribute('id');
-      delete node.dataset.homeOriginalStyle;
-      delete node.dataset.homeOriginalId;
-      if (marker && marker.parentNode) {
-        marker.parentNode.insertBefore(node, marker);
-        marker.remove();
-      }
-    }, { routeId, markerId });
-  }
+function isVisible(node) {
+  if (!node) return false;
+  const style = getComputedStyle(node);
+  const rect = node.getBoundingClientRect();
+  return style.display !== 'none' && style.visibility !== 'hidden' && Number(style.opacity || 1) > 0 && rect.width > 0 && rect.height > 0;
 }
 
 (async () => {
@@ -66,80 +22,112 @@ async function trustedClickHiddenRoute(page, selector) {
   page.on('pageerror', error => pageErrors.push(String(error.stack || error.message || error)));
   page.on('requestfailed', request => failedRequests.push({ url: request.url(), error: request.failure() }));
 
-  // 使用与专项闯关首页、Pages 和公网一致的规范入口，避免目录 URL + 测试查询串触发非生产启动分支。
-  await page.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded', timeout: 60000 });
   try {
-    await page.waitForSelector('#xp-game-home[data-ready="true"]', { state: 'visible', timeout: 60000 });
-  } catch (error) {
-    const diagnostic = await page.evaluate(() => {
-      const panel = document.getElementById('xp-game-home');
-      const dashboard = document.getElementById('view-dashboard');
-      const launch = dashboard && dashboard.querySelector('.launchpad-grid');
-      const personal = window.CNC_PERSONAL_HOME;
-      let selfCheck = null;
-      try { selfCheck = personal && typeof personal.runCheck === 'function' ? personal.runCheck() : null; } catch (checkError) { selfCheck = { error: String(checkError.stack || checkError) }; }
+    await page.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await page.waitForFunction(() => {
+      const home = window.CNC_PERSONAL_HOME;
+      const dashboard = document.querySelector('#view-dashboard.active');
+      const nav = document.querySelector('body > .xp-bottom-nav');
+      const hero = document.querySelector('#view-dashboard .cnc-home-hero-copy');
+      const query = document.querySelector('#view-dashboard .launchpad-search');
+      const practice = document.querySelector('#view-dashboard .cnc-home-route-card');
+      return home?.build === '20260722b' && home?.refactorBuild === '20260804-mobile1' &&
+        dashboard && isVisible(nav) && isVisible(hero) && isVisible(query) && isVisible(practice);
+    }, null, { timeout: 60000 });
+    await page.waitForFunction(() => window.CNC_INDUSTRIAL_SAMPLE?.build === '20260722e', null, { timeout: 60000 });
+    await page.waitForTimeout(1100);
+
+    assert.equal(await page.title(), '数控小潘 CNC速查与学习助手');
+    assert.equal(await page.locator('body').evaluate(node => node.classList.contains('cnc-clean-ui')), true);
+    assert.equal(await page.locator('body').evaluate(node => node.classList.contains('cnc-industrial-sample')), true);
+    assert.match((await page.locator('.study-card[data-level="9"] p').textContent()) || '', /不保证直线/);
+    assert.match((await page.locator('.study-card[data-level="10"] p').textContent()) || '', /最小输入单位/);
+
+    const homeState = await page.evaluate(() => {
+      const visible = node => {
+        if (!node) return false;
+        const style = getComputedStyle(node);
+        const rect = node.getBoundingClientRect();
+        return style.display !== 'none' && style.visibility !== 'hidden' && Number(style.opacity || 1) > 0 && rect.width > 0 && rect.height > 0;
+      };
+      const nav = document.querySelector('body > .xp-bottom-nav');
+      const navItems = nav ? Array.from(nav.querySelectorAll('[data-xp-route]')).filter(visible) : [];
+      const oldSelectors = [
+        '#xp-game-home',
+        '#xp-personal-home',
+        '#view-dashboard .launchpad-grid',
+        '#view-dashboard .fan-suggestion-panel',
+        '#view-dashboard .recent-section',
+        '#view-dashboard .featured-images-preview',
+        '#view-dashboard .faq-preview-section'
+      ];
+      const controls = Array.from(document.querySelectorAll('#view-dashboard.active a, #view-dashboard.active button, body > .xp-bottom-nav [data-xp-route]'))
+        .filter(visible)
+        .map(node => {
+          const rect = node.getBoundingClientRect();
+          return { text: (node.textContent || '').trim(), width: rect.width, height: rect.height };
+        });
       return {
-        url: location.href,
-        readyState: document.readyState,
-        panelExists: Boolean(panel),
-        panelReady: panel && panel.dataset.ready || null,
-        panelDisplay: panel ? getComputedStyle(panel).display : null,
-        dashboardExists: Boolean(dashboard),
-        launchExists: Boolean(launch),
-        personalHomeBuild: personal && personal.build || null,
-        personalHomeCheck: selfCheck,
-        bodyClasses: document.body ? document.body.className : null,
-        activeView: document.querySelector('.view.active') && document.querySelector('.view.active').id || null,
-        scripts: Array.from(document.scripts).map(script => script.src || '[inline]').filter(src => /personal-home|app\.js|industrial/i.test(src))
+        heroVisible: visible(document.querySelector('#view-dashboard .cnc-home-hero-copy')),
+        queryVisible: visible(document.querySelector('#view-dashboard .launchpad-search')),
+        practiceVisible: visible(document.querySelector('#view-dashboard .cnc-home-route-card')),
+        navVisible: visible(nav),
+        navCount: navItems.length,
+        navLabels: navItems.map(node => (node.textContent || '').replace(/\s+/g, ' ').trim()),
+        oldVisible: oldSelectors.filter(selector => visible(document.querySelector(selector))),
+        smallTargets: controls.filter(item => item.height < 44),
+        scrollWidth: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),
+        clientWidth: document.documentElement.clientWidth,
+        personal: window.CNC_PERSONAL_HOME?.runCheck?.() || null
       };
     });
-    fs.writeFileSync(`${DIAGNOSTIC_DIR}/mobile-home-startup-timeout.json`, JSON.stringify({ diagnostic, consoleErrors, pageErrors, failedRequests }, null, 2));
-    await page.screenshot({ path: `${DIAGNOSTIC_DIR}/mobile-home-startup-timeout-390x844.png`, fullPage: true });
+
+    assert.equal(homeState.heroVisible, true, '手机首页必须显示学习主入口');
+    assert.equal(homeState.queryVisible, true, '手机首页必须显示查询入口');
+    assert.equal(homeState.practiceVisible, true, '手机首页必须显示练习入口');
+    assert.equal(homeState.navVisible, true, '手机首页必须显示真实底部导航');
+    assert.equal(homeState.navCount, 5, `手机首页底部导航必须稳定为5项，实际${homeState.navCount}项`);
+    assert.deepEqual(homeState.oldVisible, [], `手机端不得恢复第二套旧首页：${homeState.oldVisible.join('、')}`);
+    assert.deepEqual(homeState.smallTargets, [], '手机首页可见按钮和链接高度不得小于44px');
+    assert.ok(homeState.scrollWidth <= homeState.clientWidth + 1, `390px手机首页不得横向溢出：${homeState.scrollWidth}/${homeState.clientWidth}`);
+    assert.equal(homeState.personal?.legacyHomeRemoved, true, '兼容层必须确认旧首页已移除');
+    assert.equal(homeState.personal?.bottomNavReady, true, '兼容层必须确认真实底栏可见');
+    assert.equal(homeState.personal?.courseImages, 12, '12关课程必须各有一张学习图片');
+
+    await page.locator('body > .xp-bottom-nav [data-xp-route="study"]').click();
+    await page.waitForSelector('#view-study.active', { state: 'visible', timeout: 15000 });
+    await page.waitForFunction(() => document.querySelectorAll('#view-study .study-card[data-level] .study-card-thumb').length === 12, null, { timeout: 15000 });
+    const study = await page.evaluate(() => {
+      const grid = document.querySelector('#view-study.active .study-card-grid');
+      const cards = Array.from(document.querySelectorAll('#view-study.active .study-card[data-level]'));
+      const images = cards.map(card => card.querySelector('.study-card-thumb'));
+      return {
+        columns: grid ? getComputedStyle(grid).gridTemplateColumns.split(/\s+/).filter(Boolean).length : 0,
+        cards: cards.length,
+        images: images.filter(Boolean).length,
+        missingAlt: images.filter(image => image && !image.alt.trim()).length,
+        minTargetHeight: Math.min(...cards.map(card => card.getBoundingClientRect().height))
+      };
+    });
+    assert.equal(study.columns, 1, '课程必须继续保持竖向单列');
+    assert.equal(study.cards, 12, '课程页必须保持固定12关');
+    assert.equal(study.images, 12, '12关课程图片必须完整');
+    assert.equal(study.missingAlt, 0, '课程图片必须具备中文替代文字');
+    assert.ok(study.minTargetHeight >= 44, '课程卡片触控高度不得小于44px');
+    assert.ok(await page.locator('.study-card h4').first().evaluate(node => Number(getComputedStyle(node).fontWeight)) >= 800);
+
+    await page.screenshot({ path: `${DIAGNOSTIC_DIR}/mobile-home-current-390x844.png`, fullPage: true });
+    fs.writeFileSync(`${DIAGNOSTIC_DIR}/mobile-home-current-report.json`, JSON.stringify({ homeState, study, consoleErrors, pageErrors, failedRequests }, null, 2));
+
+    assert.deepEqual(pageErrors, [], `手机首页不能出现页面错误：${pageErrors.join(' | ')}`);
+    assert.deepEqual(consoleErrors, [], `手机首页不能出现控制台错误：${consoleErrors.join(' | ')}`);
+    assert.deepEqual(failedRequests, [], `手机首页不能出现资源请求失败：${JSON.stringify(failedRequests)}`);
+    console.log('手机单层首页、真实底栏、工业样板、触控尺寸与12关课程入口通过', { homeState, study });
+  } catch (error) {
+    fs.writeFileSync(`${DIAGNOSTIC_DIR}/mobile-home-current-error.txt`, `${error.stack || error}\n`);
+    try { await page.screenshot({ path: `${DIAGNOSTIC_DIR}/mobile-home-current-error-390x844.png`, fullPage: true }); } catch (_) {}
     throw error;
+  } finally {
+    await browser.close();
   }
-
-  await page.waitForFunction(() => window.CNC_INDUSTRIAL_SAMPLE && window.CNC_INDUSTRIAL_SAMPLE.build === '20260722e', null, { timeout: 60000 });
-  await page.waitForFunction(() => window.CNC_PERSONAL_HOME && window.CNC_PERSONAL_HOME.build === '20260728-game1', null, { timeout: 60000 });
-  await page.waitForFunction(() => document.body.getAttribute('data-cnc-industrial-surface') === 'home', null, { timeout: 60000 });
-  await page.waitForTimeout(1100);
-
-  assert.equal(await page.title(), '数控小潘 CNC速查与学习助手');
-  assert.equal(await page.locator('body').evaluate(node => node.classList.contains('cnc-clean-ui')), true);
-  assert.equal(await page.locator('body').evaluate(node => node.classList.contains('cnc-industrial-sample')), true);
-  assert.match((await page.locator('.study-card[data-level="9"] p').textContent()) || '', /不保证直线/);
-  assert.match((await page.locator('.study-card[data-level="10"] p').textContent()) || '', /最小输入单位/);
-
-  for (const selector of ['.fan-suggestion-panel', '#view-dashboard .featured-images-preview', '#view-dashboard #faq-preview-section']) {
-    assert.equal(await page.locator(selector).evaluate(node => getComputedStyle(node).display), 'none');
-  }
-
-  assert.equal(await page.locator('.launchpad-grid').evaluate(node => getComputedStyle(node).display), 'none', '手机端旧工具首页必须隐藏');
-  assert.equal(await page.locator('#xp-game-home').evaluate(node => getComputedStyle(node).display !== 'none'), true, '手机端闯关首页必须显示');
-  assert.match((await page.locator('.xp-game-hero h1').textContent()) || '', /从零基础.*闯.*独立编程/s);
-
-  const visibleTargets = await page.locator('#xp-game-home a:visible,#xp-game-home button:visible').evaluateAll(nodes => nodes.map(node => {
-    const rect = node.getBoundingClientRect();
-    return { text: node.textContent.trim(), width: rect.width, height: rect.height };
-  }).filter(item => item.width > 0 && item.height > 0 && item.height < 44));
-  assert.deepEqual(visibleTargets, [], '手机首页可见按钮和链接高度不得小于44px');
-
-  const gameColumns = await page.locator('.xp-game-shortcuts').evaluate(node => getComputedStyle(node).gridTemplateColumns.split(' ').filter(Boolean).length);
-  assert.ok(gameColumns >= 1 && gameColumns <= 2, '手机快捷入口必须保持适合窄屏的单列或双列布局');
-
-  const personal = await page.evaluate(() => window.CNC_PERSONAL_HOME && window.CNC_PERSONAL_HOME.runCheck());
-  assert.equal(Boolean(personal && personal.passed), true, '闯关首页不能破坏学习进度数据自检');
-
-  // 首页保护期内会纠正非用户导航；等待窗口结束后，通过既有隐藏路由按钮执行可信点击。
-  await page.waitForTimeout(5600);
-  await trustedClickHiddenRoute(page, '#sidebar .tree-item[data-route="study"]');
-  await page.waitForSelector('#view-study.active', { state: 'visible', timeout: 15000 });
-  const studyColumns = await page.locator('.study-card-grid').first().evaluate(node => getComputedStyle(node).gridTemplateColumns.split(' ').filter(Boolean).length);
-  assert.equal(studyColumns, 1, '课程必须继续保持竖向单列');
-  assert.ok(await page.locator('.study-card h4').first().evaluate(node => Number(getComputedStyle(node).fontWeight)) >= 800);
-
-  assert.deepEqual(pageErrors, [], `手机首页不能出现页面错误：${pageErrors.join(' | ')}`);
-  assert.deepEqual(consoleErrors, [], `手机首页不能出现控制台错误：${consoleErrors.join(' | ')}`);
-  assert.deepEqual(failedRequests, [], `手机首页不能出现资源请求失败：${JSON.stringify(failedRequests)}`);
-  console.log('手机闯关首页、工业样板加载、触控尺寸与课程入口通过');
-  await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });
