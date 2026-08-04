@@ -25,4 +25,15 @@ jobs:
       - name: Start static server
         run: python3 -m http.server 4173 --directory . > /tmp/cnc-server.log 2>&1 &
       - name: Chromium 390x844 personalized daily training plan
-        run: node cnc/tests/mobile-daily-training-plan-smoke.cjs
+        run: |
+          set -o pipefail
+          mkdir -p cnc/test-artifacts/daily-training-plan
+          node cnc/tests/mobile-daily-training-plan-smoke.cjs 2>&1 | tee cnc/test-artifacts/daily-training-plan/test.log
+      - name: Upload daily training plan diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-daily-training-plan-${{ github.run_id }}
+          path: cnc/test-artifacts/daily-training-plan/*
+          if-no-files-found: error
+          retention-days: 14
