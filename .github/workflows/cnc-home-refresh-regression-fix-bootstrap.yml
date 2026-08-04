@@ -1,0 +1,179 @@
+name: CNC home refresh regression fix bootstrap
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/cnc-home-refresh-regression-fix-bootstrap.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cnc-home-refresh-regression-fix-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  apply-fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chatgpt/cnc-home-refresh-regression-fix
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: 修复真实根因并升级PWA12
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import json
+
+          root = Path('.')
+
+          teacher = Path('cnc/ai-teacher.html')
+          teacher_text = teacher.read_text(encoding='utf-8')
+          old_build = "const BUILD = '20260801-ai-handoff1';"
+          new_build = "const BUILD = '20260804-home-refresh1';"
+          if teacher_text.count(old_build) != 1:
+              raise SystemExit(f'AI老师旧构建针数量异常：{teacher_text.count(old_build)}')
+          teacher.write_text(teacher_text.replace(old_build, new_build), encoding='utf-8')
+
+          drift = Path('cnc/tests/placement-first-step-offline-core-drift-smoke.cjs')
+          drift_text = drift.read_text(encoding='utf-8')
+          old_rule = "return normalizeRelativePath(value, 'PWA核心资源', '(?:html|json)');"
+          new_rule = "return normalizeRelativePath(value, 'PWA核心资源', '(?:html|json|css)');"
+          if drift_text.count(old_rule) != 1:
+              raise SystemExit(f'核心资源扩展名规则数量异常：{drift_text.count(old_rule)}')
+          drift.write_text(drift_text.replace(old_rule, new_rule), encoding='utf-8')
+
+          self_test = Path('cnc/pwa-self-test.html')
+          self_text = self_test.read_text(encoding='utf-8')
+          old_required = "const REQUIRED=['./index.html','./offline.html'"
+          new_required = "const REQUIRED=['./index.html','./homepage-refresh.css','./offline.html'"
+          if self_text.count(old_required) != 1:
+              raise SystemExit(f'PWA自检核心资源起始契约数量异常：{self_text.count(old_required)}')
+          self_test.write_text(self_text.replace(old_required, new_required), encoding='utf-8')
+
+          operational = []
+          extensions = {'.cjs', '.js', '.html', '.json', '.yml', '.yaml'}
+          for path in Path('cnc').rglob('*'):
+              if not path.is_file() or path.suffix not in extensions:
+                  continue
+              if 'docs' in path.parts or 'test-results' in path.parts or 'node_modules' in path.parts:
+                  continue
+              if path.as_posix() == 'cnc/tests/pwa-build-reference-audit-smoke.cjs':
+                  continue
+              operational.append(path)
+          for path in Path('.github/workflows').glob('cnc-*'):
+              if path.is_file() and path.suffix in {'.yml', '.yaml'}:
+                  operational.append(path)
+
+          changed_version_files = []
+          for path in operational:
+              original = path.read_text(encoding='utf-8')
+              text = original.replace('20260804-pwa11', '20260804-pwa12')
+              text = text.replace('20260803-pwa9', '20260804-pwa10')
+              text = text.replace('PWA11', 'PWA12')
+              text = text.replace('PWA9', 'PWA10')
+              text = text.replace("source: 'pwa9'", "source: 'pwa10'")
+              text = text.replace(
+                  'PWA10会刷新已清理开发占位后的核心课程正文',
+                  'PWA12会补齐桌面学习首页样式的离线自检与构建一致性',
+              )
+              text = text.replace(
+                  'PWA10用于刷新已清理开发占位后的核心课程正文',
+                  'PWA12用于补齐桌面学习首页样式的离线自检与构建一致性',
+              )
+              text = text.replace('14项核心离线资源', '15项核心离线资源')
+              text = text.replace('14项核心资源', '15项核心资源')
+              if text != original:
+                  path.write_text(text, encoding='utf-8')
+                  changed_version_files.append(path.as_posix())
+
+          info_path = Path('cnc/build-info.json')
+          info = json.loads(info_path.read_text(encoding='utf-8'))
+          if info.get('pwaBuild') != '20260804-pwa12':
+              raise SystemExit(f"build-info未同步PWA12：{info.get('pwaBuild')}")
+          marker = '桌面学习首页样式离线自检补齐'
+          stages = [item.strip() for item in str(info.get('contentStage', '')).split('·') if item.strip()]
+          if marker not in stages:
+              stages.append(marker)
+          info['contentStage'] = ' · '.join(stages)
+          info['generatedAt'] = '2026-08-04T10:58:00+08:00'
+          info_path.write_text(json.dumps(info, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+          self_workflow = Path('.github/workflows/cnc-pwa-self-test-smoke.yml')
+          workflow_text = self_workflow.read_text(encoding='utf-8')
+          css_token = "            './homepage-refresh.css',\n"
+          anchor = "            './training-camp.html',\n"
+          if css_token not in workflow_text:
+              if workflow_text.count(anchor) != 1:
+                  raise SystemExit('PWA自检工作流资源令牌锚点异常')
+              workflow_text = workflow_text.replace(anchor, anchor + css_token)
+          stage_anchor = "'正式课程开发占位清零']"
+          if marker not in workflow_text:
+              if stage_anchor not in workflow_text:
+                  raise SystemExit('PWA自检工作流阶段锚点缺失')
+              workflow_text = workflow_text.replace(stage_anchor, "'正式课程开发占位清零','桌面学习首页样式离线自检补齐']")
+          self_workflow.write_text(workflow_text, encoding='utf-8')
+
+          offline_workflow = Path('.github/workflows/cnc-pwa-offline-cache-smoke.yml')
+          offline_text = offline_workflow.read_text(encoding='utf-8')
+          offline_css = "            './homepage-refresh.css',\n"
+          offline_anchor = "            './training-camp.html',\n"
+          if offline_css not in offline_text:
+              if offline_text.count(offline_anchor) != 1:
+                  raise SystemExit('冷离线工作流资源锚点异常')
+              offline_text = offline_text.replace(offline_anchor, offline_anchor + offline_css)
+          offline_stage_anchor = "'正式课程开发占位清零']"
+          if marker not in offline_text:
+              if offline_stage_anchor not in offline_text:
+                  raise SystemExit('冷离线工作流阶段锚点缺失')
+              offline_text = offline_text.replace(offline_stage_anchor, "'正式课程开发占位清零','桌面学习首页样式离线自检补齐']")
+          offline_workflow.write_text(offline_text, encoding='utf-8')
+
+          workflow = Path('.github/workflows/cnc-home-refresh-regression-fix-bootstrap.yml')
+          workflow.unlink()
+
+          print('已同步PWA版本引用文件：')
+          for item in sorted(set(changed_version_files)):
+              print(item)
+          PY
+
+          node --check cnc/sw.js
+          node --check cnc/tests/placement-first-step-offline-core-drift-smoke.cjs
+          node --check cnc/tests/mobile-pwa-offline-cache-smoke.cjs
+          node --check cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs
+          node --check cnc/tests/mobile-pwa-upgrade-data-smoke.cjs
+          node cnc/tests/pwa-build-reference-audit-smoke.cjs
+          node cnc/tests/placement-first-step-offline-core-drift-smoke.cjs
+          grep -Fq "const BUILD = '20260804-home-refresh1';" cnc/ai-teacher.html
+          grep -Fq "const BUILD = '20260804-pwa12';" cnc/sw.js
+          grep -Fq "const EXPECTED='20260804-pwa12';" cnc/pwa-self-test.html
+          grep -Fq "'./homepage-refresh.css'" cnc/sw.js
+          grep -Fq "'./homepage-refresh.css'" cnc/pwa-self-test.html
+          grep -Fq '"pwaBuild": "20260804-pwa12"' cnc/build-info.json
+          grep -Fq '桌面学习首页样式离线自检补齐' cnc/build-info.json
+          git diff --check
+
+      - name: 提交真实修复并移除引导工作流
+        shell: bash
+        run: |
+          set -euxo pipefail
+          if git diff --quiet; then
+            echo '未产生修复内容' >&2
+            exit 1
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -u cnc .github/workflows
+          git commit -m 'fix(cnc): 升级PWA12补齐首页离线自检与构建一致性'
+          git push origin HEAD:chatgpt/cnc-home-refresh-regression-fix
