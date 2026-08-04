@@ -47,7 +47,7 @@ jobs:
           if (swBuild !== info.pwaBuild || !html.includes(`const EXPECTED='${info.pwaBuild}'`)) {
             throw new Error('PWA self-test/build-info/Service Worker version mismatch');
           }
-          if (info.pwaBuild !== '20260804-pwa10') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
+          if (info.pwaBuild !== '20260804-pwa11') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
           for (const token of [
             'Service Worker已注册',
             '当前页面已被接管',

@@ -46,7 +46,7 @@ jobs:
           const camp = fs.readFileSync('cnc/training-camp.html', 'utf8');
           const swBuild = sw.match(/const BUILD = '([^']+)'/)?.[1];
           if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
-          if (info.pwaBuild !== '20260804-pwa10') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
+          if (info.pwaBuild !== '20260804-pwa11') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
           for (const file of [
             './beginner-placement.html',
             './training-camp.html',

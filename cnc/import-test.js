@@ -85,7 +85,7 @@
       var home = document.getElementById('home-btn');
       if (home) home.classList.remove('visible');
       var title = document.getElementById('topbar-title');
-      if (title) title.textContent = '数控小潘CNC助手';
+      if (title) title.textContent = '数控学习工作台';
     }
 
     function forceHome(reason) {

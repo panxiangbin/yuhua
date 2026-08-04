@@ -49,10 +49,10 @@ jobs:
           const sw = fs.readFileSync('cnc/sw.js', 'utf8');
           const placement = fs.readFileSync('cnc/beginner-placement.html', 'utf8');
           const camp = fs.readFileSync('cnc/training-camp.html', 'utf8');
-          if (info.pwaBuild !== '20260804-pwa10') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
-          if (!sw.includes("const BUILD = '20260804-pwa10'")) throw new Error('Service Worker build mismatch');
+          if (info.pwaBuild !== '20260804-pwa11') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
+          if (!sw.includes("const BUILD = '20260804-pwa11'")) throw new Error('Service Worker build mismatch');
           for (const token of [
-            "const branchTargetPwaBuild = '20260804-pwa10'",
+            "const branchTargetPwaBuild = '20260804-pwa11'",
             "const previousPublicPwaBuild = '20260803-pwa9'",
             'CNC_PAGES_VERIFY_ATTEMPTS || 18',
             "cache: 'no-store'",

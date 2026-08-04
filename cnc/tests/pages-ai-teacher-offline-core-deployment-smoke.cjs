@@ -8,9 +8,9 @@ fs.mkdirSync(resultsDir, { recursive: true });
 
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
-const branchTargetPwaBuild = '20260804-pwa10';
+const branchTargetPwaBuild = '20260804-pwa11';
 const previousPublicPwaBuild = '20260803-pwa9';
-const expectedSiteBuild = '20260801-ai-handoff1';
+const expectedSiteBuild = '20260804-home-refresh1';
 const attempts = Number(process.env.CNC_PAGES_VERIFY_ATTEMPTS || 18);
 const intervalMs = Number(process.env.CNC_PAGES_VERIFY_INTERVAL_MS || 10000);
 const eventName = process.env.GITHUB_EVENT_NAME || '';
