@@ -19,6 +19,19 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+      - name: Initialize performance diagnostics
+        run: |
+          mkdir -p artifacts/mobile-performance-budget
+          node - <<'NODE'
+          const fs = require('fs');
+          fs.writeFileSync('artifacts/mobile-performance-budget/workflow-bootstrap.json', JSON.stringify({
+            stage: 'workflow-bootstrap',
+            runId: process.env.GITHUB_RUN_ID,
+            headSha: process.env.GITHUB_SHA,
+            eventName: process.env.GITHUB_EVENT_NAME,
+            initializedAt: new Date().toISOString()
+          }, null, 2));
+          NODE
       - name: Check performance audit syntax and contract
         run: |
           node --check cnc/tests/mobile-performance-budget-smoke.cjs
@@ -40,7 +53,7 @@ jobs:
             'domNodeCount',
             '390, height: 844',
             'visibleBottomNavCount !== 5',
-            "body > .xp-bottom-nav [data-xp-route]",
+            "body > .xp-bottom-nav button[data-xp-route],body > .xp-bottom-nav button[data-xp-filter]",
             "path.join(OUTPUT_DIR, 'error.txt')"
           ]) {
             if (!test.includes(marker)) throw new Error(`手机性能审计缺少契约：${marker}`);
