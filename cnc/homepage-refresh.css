@@ -21,4 +21,9 @@
   body:has(#view-dashboard.active) .cnc-home-primary > span {
     display: none !important;
   }
+
+  /* 手机首页四个快捷查询也是主要操作入口，保持至少 44px 触控高度。 */
+  body:has(#view-dashboard.active) .quick-keywords .keyword-chip:nth-of-type(-n+4) {
+    min-height: 44px !important;
+  }
 }
