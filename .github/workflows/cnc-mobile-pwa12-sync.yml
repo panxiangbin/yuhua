@@ -1,0 +1,51 @@
+name: CNC mobile PWA12 one-time sync
+
+on:
+  push:
+    branches:
+      - codex/mobile-home-refactor-20260804
+    paths:
+      - '.github/workflows/cnc-mobile-pwa12-sync.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync-build-references:
+    if: github.event_name == 'workflow_dispatch' || github.event.head_commit.message != 'chore(cnc-mobile): sync PWA12 build references'
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: codex/mobile-home-refactor-20260804
+
+      - name: Replace current build references
+        shell: pwsh
+        run: |
+          $allowed = @('.yml', '.yaml', '.js', '.cjs', '.json', '.html', '.md')
+          $files = Get-ChildItem -Path 'cnc', '.github/workflows' -Recurse -File | Where-Object {
+            $allowed -contains $_.Extension.ToLowerInvariant() -and
+            $_.FullName -notmatch '[\\/]node_modules[\\/]' -and
+            $_.FullName -notmatch '[\\/]test-results[\\/]'
+          }
+          $changed = 0
+          foreach ($file in $files) {
+            $raw = [System.IO.File]::ReadAllText($file.FullName)
+            $next = $raw.Replace('20260804-pwa11', '20260804-pwa12').Replace('20260804-home-refresh1', '20260804-mobile-home1')
+            if ($next -ne $raw) {
+              [System.IO.File]::WriteAllText($file.FullName, $next, [System.Text.UTF8Encoding]::new($false))
+              $changed += 1
+            }
+          }
+          Write-Host "Updated files: $changed"
+          git diff --check
+          git diff --stat
+          if ($changed -eq 0) { exit 0 }
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add cnc .github/workflows
+          git commit -m 'chore(cnc-mobile): sync PWA12 build references'
+          git push origin HEAD:codex/mobile-home-refactor-20260804
