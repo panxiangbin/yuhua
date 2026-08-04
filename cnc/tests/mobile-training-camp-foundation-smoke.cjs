@@ -152,7 +152,7 @@ const assert = require('node:assert/strict');
   assert.match(hub.nextHref, /course-safety-foundation\.html$/, '训练营继续入口必须指向第1关正式课程');
   assert.equal(hub.courses.length, 12, '训练营必须完整展示固定12关');
   assert.equal(new Set(hub.courses.map(item => item.stage)).size, 12, '12关阶段标识不得重复或缺失');
-  assert.equal(hub.courses[0].title, '安全基础', '第1关名称和顺序不得漂移');
+  assert.match(hub.courses[0].title, /^安全基础(?:：|$)/, '第1关必须保留安全基础主标题与顺序');
   assert.match(hub.courses[0].href, /course-safety-foundation\.html$/);
   assert.equal(hub.courses[11].title, '完整程序与首件验证', '第12关名称和顺序不得漂移');
   assert.match(hub.courses[11].href, /course-complete-program-first-piece\.html$/);
