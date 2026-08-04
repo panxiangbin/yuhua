@@ -1,0 +1,683 @@
+/*
+ * 数控小潘 CNC 学习站：手机首页首屏稳定层
+ * 目标：首次绘制即为最终手机结构；360×800 / 390×844 / 412×915 一屏可用。
+ */
+
+@media (max-width: 768px) {
+  :root {
+    --cnc-mobile-topbar: 54px;
+    --cnc-mobile-nav: 66px;
+    --cnc-mobile-gap: 8px;
+    --cnc-mobile-blue: #176fe5;
+    --cnc-mobile-navy: #102744;
+    --cnc-mobile-paper: #f2f5f9;
+    --cnc-mobile-line: #dbe4ef;
+    --cnc-mobile-safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden !important;
+  }
+
+  body {
+    margin: 0;
+    background: var(--cnc-mobile-paper) !important;
+    color: #172033;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  /* 首屏不显示旧版转圈层，也不靠白屏掩盖旧首页。 */
+  #loading-screen {
+    display: none !important;
+  }
+
+  body:has(#view-dashboard.active) {
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow: hidden !important;
+  }
+
+  body:has(#view-dashboard.active) .app-shell,
+  body:has(#view-dashboard.active) .main-shell {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    overflow: hidden !important;
+  }
+
+  body:has(#view-dashboard.active) .topbar {
+    position: relative !important;
+    top: auto !important;
+    z-index: 90;
+    box-sizing: border-box;
+    height: var(--cnc-mobile-topbar) !important;
+    min-height: var(--cnc-mobile-topbar) !important;
+    padding: 6px 10px !important;
+    border: 0 !important;
+    border-bottom: 1px solid #e4eaf1 !important;
+    border-radius: 0 !important;
+    background: rgba(255, 255, 255, .98) !important;
+    box-shadow: 0 4px 16px rgba(28, 47, 73, .06) !important;
+    backdrop-filter: none !important;
+  }
+
+  body:has(#view-dashboard.active) .topbar-left {
+    min-width: 0;
+    gap: 8px !important;
+  }
+
+  body:has(#view-dashboard.active) .topbar-left > div,
+  body:has(#view-dashboard.active) #topbar-title {
+    min-width: 0;
+  }
+
+  body:has(#view-dashboard.active) .topbar-kicker,
+  body:has(#view-dashboard.active) .topbar-right {
+    display: none !important;
+  }
+
+  body:has(#view-dashboard.active) #topbar-title {
+    margin: 0 !important;
+    overflow: hidden;
+    color: #102744 !important;
+    font-size: 17px !important;
+    line-height: 1.25 !important;
+    font-weight: 900 !important;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  body:has(#view-dashboard.active) .menu-button,
+  body:has(#view-dashboard.active) #home-btn {
+    width: 42px !important;
+    min-width: 42px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    padding: 0 !important;
+    border-radius: 12px !important;
+  }
+
+  /* 只保留学习、查询、练习/模拟三个核心板块。 */
+  body:has(#view-dashboard.active) #view-dashboard.active {
+    box-sizing: border-box;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto auto;
+    gap: var(--cnc-mobile-gap);
+    width: 100%;
+    max-width: none !important;
+    height: calc(100dvh - var(--cnc-mobile-topbar) - var(--cnc-mobile-nav) - var(--cnc-mobile-safe-bottom));
+    min-height: 0;
+    margin: 0 !important;
+    padding: 8px 10px !important;
+    overflow: hidden !important;
+    overscroll-behavior: none;
+  }
+
+  body:has(#view-dashboard.active) #view-dashboard > .cnc-home-hero {
+    display: contents !important;
+  }
+
+  body:has(#view-dashboard.active) #view-dashboard .cnc-home-hero-copy {
+    position: relative;
+    order: 1;
+    box-sizing: border-box;
+    display: flex;
+    min-height: 0;
+    overflow: hidden;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(16px, 4.2vw, 22px) 132px clamp(15px, 3.8vw, 21px) 17px;
+    border: 1px solid #b9d3f2;
+    border-radius: 21px;
+    color: #fff;
+    background:
+      radial-gradient(circle at 88% 12%, rgba(86, 180, 255, .45), transparent 30%),
+      linear-gradient(137deg, #0d284c 0%, #13508f 67%, #167ab6 100%);
+    box-shadow: 0 12px 30px rgba(19, 75, 134, .18);
+  }
+
+  body:has(#view-dashboard.active) #view-dashboard .cnc-home-hero-copy::after {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    top: 50%;
+    right: 14px;
+    width: 106px;
+    height: 118px;
+    border: 1px solid rgba(255, 255, 255, .35);
+    border-radius: 16px;
+    background:
+      linear-gradient(180deg, rgba(7, 35, 66, .04), rgba(7, 35, 66, .18)),
+      url('./assets/images/batch01_core/beginner-machine-zero-vs-work-zero-001.webp') center / cover no-repeat;
+    box-shadow: 0 12px 28px rgba(2, 25, 54, .28);
+    transform: translateY(-50%);
+  }
+
+  body:has(#view-dashboard.active) #view-dashboard .cnc-home-hero-copy > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-eyebrow {
+    margin: 0 0 7px !important;
+    color: #a9d6ff !important;
+    font-size: 11px !important;
+    line-height: 1.25 !important;
+    font-weight: 900 !important;
+    letter-spacing: .08em !important;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-hero h1 {
+    margin: 0 !important;
+    color: #fff !important;
+    font-size: clamp(23px, 7vw, 31px) !important;
+    line-height: 1.08 !important;
+    font-weight: 950 !important;
+    letter-spacing: -.035em !important;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-hero h1 br {
+    display: none;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-hero h1 span {
+    color: #d3e9ff !important;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-lead {
+    display: -webkit-box;
+    max-width: 290px;
+    margin: 8px 0 0 !important;
+    overflow: hidden;
+    color: #d5e7f8 !important;
+    font-size: 12px !important;
+    line-height: 1.55 !important;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-actions {
+    display: flex !important;
+    margin-top: 11px !important;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-secondary {
+    display: none !important;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-primary {
+    min-width: 126px;
+    min-height: 44px !important;
+    padding: 0 14px !important;
+    border-radius: 12px !important;
+    color: #162035 !important;
+    background: linear-gradient(180deg, #ffd270, #ffad36) !important;
+    box-shadow: 0 8px 18px rgba(252, 162, 43, .25) !important;
+    font-size: 13px !important;
+    font-weight: 950 !important;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-capabilities {
+    display: flex !important;
+    gap: 6px !important;
+    margin: 10px 0 0 !important;
+    padding: 0 !important;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-capabilities li {
+    display: none !important;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-capabilities li:first-child {
+    display: flex !important;
+    min-height: 29px;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 9px !important;
+    border: 1px solid rgba(255, 255, 255, .18) !important;
+    border-radius: 99px !important;
+    background: rgba(6, 38, 76, .32) !important;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-capabilities strong,
+  body:has(#view-dashboard.active) .cnc-home-capabilities span {
+    display: inline !important;
+    color: #eaf5ff !important;
+    font-size: 11px !important;
+  }
+
+  /* 查询：一行输入 + 四个现有快捷分类。 */
+  body:has(#view-dashboard.active) #view-dashboard .launchpad-search {
+    order: 2;
+    box-sizing: border-box;
+    min-height: 126px;
+    margin: 0 !important;
+    padding: 11px 12px !important;
+    border: 1px solid var(--cnc-mobile-line) !important;
+    border-radius: 17px !important;
+    background: #fff !important;
+    box-shadow: 0 7px 20px rgba(29, 52, 81, .07) !important;
+  }
+
+  body:has(#view-dashboard.active) .launchpad-search-header {
+    margin: 0 0 7px !important;
+  }
+
+  body:has(#view-dashboard.active) .launchpad-search-header h3 {
+    margin: 0 !important;
+    color: #142945 !important;
+    font-size: 16px !important;
+    line-height: 1.2 !important;
+    font-weight: 950 !important;
+  }
+
+  body:has(#view-dashboard.active) .launchpad-search-header p,
+  body:has(#view-dashboard.active) .quick-keywords .keyword-label {
+    display: none !important;
+  }
+
+  body:has(#view-dashboard.active) .launchpad-search-bar {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 68px !important;
+    gap: 7px !important;
+  }
+
+  body:has(#view-dashboard.active) .launchpad-search-bar input,
+  body:has(#view-dashboard.active) .launchpad-search-bar button {
+    box-sizing: border-box;
+    min-height: 44px !important;
+    border-radius: 11px !important;
+  }
+
+  body:has(#view-dashboard.active) .launchpad-search-bar input {
+    min-width: 0;
+    padding: 0 12px !important;
+    border: 1px solid #cad7e6 !important;
+    background: #f7f9fc !important;
+    font-size: 16px !important;
+  }
+
+  body:has(#view-dashboard.active) .launchpad-search-bar button {
+    width: 68px !important;
+    min-width: 68px !important;
+    padding: 0 !important;
+    background: var(--cnc-mobile-blue) !important;
+    font-size: 14px !important;
+  }
+
+  body:has(#view-dashboard.active) .quick-keywords {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px !important;
+    margin: 7px 0 0 !important;
+    overflow: visible !important;
+  }
+
+  body:has(#view-dashboard.active) .quick-keywords .keyword-chip {
+    display: none !important;
+  }
+
+  body:has(#view-dashboard.active) .quick-keywords .keyword-chip:nth-of-type(-n+4) {
+    display: inline-flex !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 36px !important;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 5px !important;
+    border: 1px solid #dce5ef !important;
+    border-radius: 9px !important;
+    background: #f4f7fb !important;
+    color: #38516d !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+  }
+
+  /* 第三块只保留一个紧凑的练习/模拟入口。 */
+  body:has(#view-dashboard.active) #view-dashboard .cnc-home-route-card {
+    position: relative;
+    order: 3;
+    box-sizing: border-box;
+    min-height: 82px;
+    margin: 0 !important;
+    padding: 10px 11px !important;
+    border: 1px solid #d6e1ed !important;
+    border-radius: 17px !important;
+    background: linear-gradient(115deg, #ffffff, #f1f6fc) !important;
+    box-shadow: 0 7px 20px rgba(29, 52, 81, .06) !important;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-route-head {
+    display: block !important;
+    margin: 0 !important;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-route-head > * {
+    display: none !important;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-route-head::before {
+    content: "练习与模拟";
+    display: block;
+    margin-bottom: 5px;
+    color: #142945;
+    font-size: 14px;
+    line-height: 1.2;
+    font-weight: 950;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-route-list {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-route-list li {
+    display: none !important;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-route-list li:nth-child(3) {
+    display: grid !important;
+    grid-template-columns: 37px minmax(0, 1fr) 44px !important;
+    gap: 9px !important;
+    min-height: 47px !important;
+    align-items: center;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-route-list li:nth-child(3)::before {
+    content: "练";
+    display: grid;
+    width: 37px;
+    height: 37px;
+    place-items: center;
+    border-radius: 11px;
+    color: #fff;
+    background: linear-gradient(135deg, #7558e8, #4d7cf0);
+    font-size: 14px;
+    font-weight: 950;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-route-number,
+  body:has(#view-dashboard.active) .cnc-home-teacher {
+    display: none !important;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-route-list strong,
+  body:has(#view-dashboard.active) .cnc-home-route-list small {
+    display: block !important;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-route-list strong {
+    color: #20344f !important;
+    font-size: 13px !important;
+    line-height: 1.25 !important;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-route-list small {
+    margin-top: 2px !important;
+    color: #6a7d94 !important;
+    font-size: 10px !important;
+    line-height: 1.25 !important;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-route-list a {
+    display: grid !important;
+    width: 44px !important;
+    min-width: 44px !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    place-items: center;
+    border-radius: 12px !important;
+    color: #176fe5 !important;
+    background: #e9f2ff !important;
+  }
+
+  body:has(#view-dashboard.active) #view-dashboard .cnc-home-section-head,
+  body:has(#view-dashboard.active) #view-dashboard .launchpad-grid,
+  body:has(#view-dashboard.active) #view-dashboard .fan-suggestion-panel,
+  body:has(#view-dashboard.active) #view-dashboard .recent-section,
+  body:has(#view-dashboard.active) #view-dashboard .featured-images-preview,
+  body:has(#view-dashboard.active) #view-dashboard .faq-preview-section,
+  body:has(#view-dashboard.active) #view-dashboard #xp-game-home,
+  body:has(#view-dashboard.active) #view-dashboard #xp-personal-home,
+  body:has(#view-dashboard.active) #view-dashboard .xp-game-home,
+  body:has(#view-dashboard.active) #view-dashboard .xp-personal-home {
+    display: none !important;
+  }
+
+  /* 动态底栏出现前也保留相同高度，避免 0~1000ms 布局跳动。 */
+  body:has(#view-dashboard.active):not(:has(.xp-bottom-nav))::after {
+    content: "首页　　查询　　报警　　学习　　我的";
+    position: fixed;
+    z-index: 900;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    box-sizing: border-box;
+    display: flex;
+    height: calc(var(--cnc-mobile-nav) + var(--cnc-mobile-safe-bottom));
+    align-items: flex-start;
+    justify-content: center;
+    padding: 38px 8px var(--cnc-mobile-safe-bottom);
+    border-top: 1px solid #dfe6ee;
+    color: #8190a3;
+    background:
+      radial-gradient(circle at 10% 17px, #cbd7e6 0 8px, transparent 9px),
+      radial-gradient(circle at 30% 17px, #cbd7e6 0 8px, transparent 9px),
+      radial-gradient(circle at 50% 17px, #cbd7e6 0 8px, transparent 9px),
+      radial-gradient(circle at 70% 17px, #cbd7e6 0 8px, transparent 9px),
+      radial-gradient(circle at 90% 17px, #cbd7e6 0 8px, transparent 9px),
+      #fff;
+    box-shadow: 0 -8px 24px rgba(25, 42, 67, .08);
+    font-size: 10px;
+    white-space: pre;
+  }
+
+  html body .xp-bottom-nav {
+    position: fixed !important;
+    z-index: 920 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    box-sizing: border-box !important;
+    display: grid !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    width: 100% !important;
+    height: calc(var(--cnc-mobile-nav) + var(--cnc-mobile-safe-bottom)) !important;
+    min-height: calc(var(--cnc-mobile-nav) + var(--cnc-mobile-safe-bottom)) !important;
+    padding: 5px 5px var(--cnc-mobile-safe-bottom) !important;
+    border-top: 1px solid #dfe6ee !important;
+    background: rgba(255, 255, 255, .985) !important;
+    box-shadow: 0 -8px 24px rgba(25, 42, 67, .08) !important;
+    backdrop-filter: none !important;
+  }
+
+  html body .xp-bottom-nav button {
+    display: flex !important;
+    min-width: 0 !important;
+    min-height: 55px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+    padding: 2px !important;
+    border: 0 !important;
+    border-radius: 10px !important;
+    color: #718096 !important;
+    background: transparent !important;
+    font-size: 10px !important;
+  }
+
+  html body .xp-bottom-nav button b {
+    display: grid !important;
+    width: 26px !important;
+    height: 26px !important;
+    place-items: center !important;
+    border-radius: 9px !important;
+    font-size: 13px !important;
+  }
+
+  html body .xp-bottom-nav button.active,
+  html body .xp-bottom-nav button[aria-current="page"] {
+    color: var(--cnc-mobile-blue) !important;
+    background: #edf5ff !important;
+  }
+
+  /* 学习列表：12关各用对应缩略图，图片节点由 personal-home.js 写入并带 alt。 */
+  body #view-study .study-card-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 9px !important;
+  }
+
+  body #view-study .study-card {
+    box-sizing: border-box;
+    display: grid !important;
+    grid-template-columns: 92px minmax(0, 1fr) !important;
+    grid-template-rows: auto auto auto !important;
+    min-height: 98px !important;
+    padding: 9px !important;
+    overflow: hidden;
+    border: 1px solid #dfe6ee !important;
+    border-radius: 15px !important;
+    background: #fff !important;
+    box-shadow: none !important;
+  }
+
+  body #view-study .study-card .study-card-thumb {
+    display: block !important;
+    grid-column: 1 !important;
+    grid-row: 1 / 4 !important;
+    width: 82px !important;
+    height: 78px !important;
+    align-self: center;
+    object-fit: cover !important;
+    border-radius: 11px !important;
+    background: #eaf0f6;
+  }
+
+  body #view-study .study-card-header,
+  body #view-study .study-card h4,
+  body #view-study .study-card p,
+  body #view-study .study-card-tags {
+    grid-column: 2 !important;
+    min-width: 0;
+  }
+
+  body #view-study .study-card-header {
+    margin: 0 0 3px !important;
+  }
+
+  body #view-study .study-card-icon {
+    display: none !important;
+  }
+
+  body #view-study .study-card h4 {
+    margin: 0 !important;
+    color: #172b46 !important;
+    font-size: 14px !important;
+    line-height: 1.3 !important;
+  }
+
+  body #view-study .study-card p {
+    display: -webkit-box !important;
+    margin: 4px 0 0 !important;
+    overflow: hidden;
+    color: #697b90 !important;
+    font-size: 11px !important;
+    line-height: 1.45 !important;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  body #view-study .study-card-tags {
+    display: none !important;
+  }
+
+  /* 查询结果重新显示已有明确映射的图片。 */
+  html body.cnc-clean-ui #view-workspace .result-card.has-thumb,
+  html body #view-workspace .result-card.has-thumb {
+    display: grid !important;
+    grid-template-columns: 80px minmax(0, 1fr) !important;
+    gap: 10px !important;
+    min-height: 92px !important;
+    align-items: center !important;
+  }
+
+  html body.cnc-clean-ui #view-workspace .result-card.has-thumb .result-thumb,
+  html body #view-workspace .result-card.has-thumb .result-thumb {
+    display: block !important;
+    grid-column: 1 !important;
+    width: 80px !important;
+    height: 70px !important;
+    overflow: hidden !important;
+    border-radius: 10px !important;
+    background: #e8eef5 !important;
+  }
+
+  html body #view-workspace .result-card.has-thumb .result-thumb img {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+
+  html body #view-workspace .result-card.has-thumb > :not(.result-thumb):not(.result-button) {
+    grid-column: 2 !important;
+  }
+}
+
+@media (max-width: 380px) {
+  :root {
+    --cnc-mobile-topbar: 52px;
+    --cnc-mobile-nav: 64px;
+    --cnc-mobile-gap: 7px;
+  }
+
+  body:has(#view-dashboard.active) #view-dashboard.active {
+    padding: 7px 8px !important;
+  }
+
+  body:has(#view-dashboard.active) #view-dashboard .cnc-home-hero-copy {
+    padding-right: 118px;
+  }
+
+  body:has(#view-dashboard.active) #view-dashboard .cnc-home-hero-copy::after {
+    right: 10px;
+    width: 96px;
+    height: 108px;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-hero h1 {
+    font-size: 22px !important;
+  }
+
+  body:has(#view-dashboard.active) #view-dashboard .launchpad-search {
+    min-height: 122px;
+    padding: 9px 10px !important;
+  }
+
+  body:has(#view-dashboard.active) #view-dashboard .cnc-home-route-card {
+    min-height: 79px;
+    padding: 8px 10px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body:has(#view-dashboard.active) *,
+  body:has(#view-dashboard.active) *::before,
+  body:has(#view-dashboard.active) *::after {
+    scroll-behavior: auto !important;
+    animation: none !important;
+    transition: none !important;
+  }
+}
