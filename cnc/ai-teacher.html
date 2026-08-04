@@ -257,11 +257,13 @@
   if(window.CNC_AI_TEACHER){
     const originalGetSummary=window.CNC_AI_TEACHER.getSummary;
     window.CNC_AI_TEACHER.dataIntegrity={inspect:inspectLearningData,get status(){return inspectLearningData().ok?'ok':'blocked'}};
+    const blockedSummary=integrity=>({integrity:'blocked',invalidKeys:integrity.invalid.map(item=>item.key),courses:null,wrong:null,simulations:null,weakest:null});
     window.CNC_AI_TEACHER.getSummary=()=>{
       const integrity=inspectLearningData();
-      if(!integrity.ok)return {integrity:'blocked',invalidKeys:integrity.invalid.map(item=>item.key),courses:null,wrong:null,simulations:null,weakest:null};
+      if(!integrity.ok)return blockedSummary(integrity);
       return originalGetSummary();
     };
+    if(!initialIntegrity.ok)window.CNC_AI_TEACHER.initialSummary=blockedSummary(initialIntegrity);
   }
 })();
 </script>
