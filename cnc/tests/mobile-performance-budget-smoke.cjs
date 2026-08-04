@@ -100,7 +100,10 @@ function pushBudget(findings, label, actual, limit, formatter = value => `${Math
       timeout: 60000
     });
     await page.waitForFunction(() => window.CNC_TRUST_NAV && (window.__CNC_TRUST_READY_AT__ || 0) > 0, null, { timeout: 30000 });
-    await page.waitForSelector('#xp-game-home .xp-game-bottom-nav', { state: 'visible', timeout: 30000 });
+    await page.waitForFunction(() => {
+      const nav = document.querySelector('body > .xp-bottom-nav');
+      return nav && nav.getClientRects().length > 0 && nav.getAttribute('aria-hidden') === 'false' && !nav.hasAttribute('inert');
+    }, null, { timeout: 30000 });
     await page.waitForFunction(() => window.CNC_GAME_QUERY_NAV?.runCheck().utilityHidden === true, null, { timeout: 20000 });
     await page.waitForTimeout(1200);
 
@@ -137,7 +140,7 @@ function pushBudget(findings, label, actual, limit, formatter = value => `${Math
       const trustReadyMs = trustReadyEpoch > 0 ? trustReadyEpoch - performance.timeOrigin : NaN;
       const loading = document.getElementById('loading-screen');
       const loadingVisible = Boolean(loading && loading.getClientRects().length && getComputedStyle(loading).display !== 'none' && getComputedStyle(loading).visibility !== 'hidden');
-      const navItems = Array.from(document.querySelectorAll('#xp-game-home .xp-game-bottom-nav a')).filter(node => {
+      const navItems = Array.from(document.querySelectorAll('body > .xp-bottom-nav [data-xp-route]')).filter(node => {
         const rect = node.getBoundingClientRect();
         const style = getComputedStyle(node);
         return rect.width > 0 && rect.height > 0 && style.display !== 'none' && style.visibility !== 'hidden';
@@ -243,6 +246,7 @@ function pushBudget(findings, label, actual, limit, formatter = value => `${Math
     await browser.close();
   }
 })().catch(error => {
+  fs.writeFileSync(path.join(OUTPUT_DIR, 'error.txt'), `${error.stack || error}\n`);
   console.error(error);
   process.exit(1);
 });
