@@ -211,9 +211,36 @@ async function decodeAllCourseImages(page) {
   });
 }
 
+async function waitForStableQueryInventory(page, selector) {
+  await page.waitForFunction(() => {
+    return Array.from(document.scripts).filter(script => /knowledge-core-0[1-3]\.js(?:\?|$)/.test(script.src)).length === 3;
+  }, null, { timeout: 20000 });
+  await page.waitForLoadState('networkidle');
+
+  let previous = null;
+  let stableSamples = 0;
+  let latest = null;
+  const deadline = Date.now() + 15000;
+  while (Date.now() < deadline) {
+    latest = await page.evaluate(querySelector => ({
+      cards: document.querySelectorAll('#view-workspace .result-card').length,
+      images: document.querySelectorAll(querySelector).length,
+      scripts: Array.from(document.scripts).filter(script => /knowledge-core-0[1-3]\.js(?:\?|$)/.test(script.src)).length
+    }), selector);
+    const signature = `${latest.cards}:${latest.images}:${latest.scripts}`;
+    if (signature === previous && latest.images > 0 && latest.scripts === 3) stableSamples += 1;
+    else stableSamples = 0;
+    previous = signature;
+    if (stableSamples >= 5) return latest;
+    await page.waitForTimeout(250);
+  }
+  throw new Error(`查询结果库存未稳定：${JSON.stringify(latest)}`);
+}
+
 async function decodeAllQueryImages(page) {
   const selector = '#view-workspace .result-card.has-thumb .result-thumb img';
-  const expectedImages = await page.locator(selector).count();
+  const stableInventory = await waitForStableQueryInventory(page, selector);
+  const expectedImages = stableInventory.images;
   let snapshot = null;
 
   for (let pass = 0; pass < 4; pass += 1) {
@@ -258,7 +285,7 @@ async function decodeAllQueryImages(page) {
 
   await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
   await page.waitForTimeout(200);
-  return { expectedImages, ...snapshot };
+  return { expectedImages, stableInventory, ...snapshot };
 }
 
 async function testLearningAndQuery(browser, report) {
