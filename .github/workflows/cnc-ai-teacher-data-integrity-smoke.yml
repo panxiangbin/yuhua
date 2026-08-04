@@ -3,120 +3,109 @@ name: CNC AI teacher data integrity smoke
 on:
   pull_request:
     paths:
+      - 'cnc/ai-teacher.html'
+      - 'cnc/data-health.html'
+      - 'cnc/data-backup.html'
+      - 'cnc/tests/ai-teacher-data-integrity-smoke.cjs'
+      - 'cnc/docs/ai-teacher-data-integrity-contract.md'
+      - '.github/workflows/cnc-ai-teacher-data-integrity-smoke.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'cnc/ai-teacher.html'
+      - 'cnc/data-health.html'
+      - 'cnc/data-backup.html'
+      - 'cnc/tests/ai-teacher-data-integrity-smoke.cjs'
+      - 'cnc/docs/ai-teacher-data-integrity-contract.md'
       - '.github/workflows/cnc-ai-teacher-data-integrity-smoke.yml'
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
-  group: cnc-ai-teacher-data-integrity-sync-${{ github.sha }}
+  group: cnc-ai-teacher-data-integrity-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
-  sync-pwa11-pins:
-    if: github.event_name == 'pull_request' && github.actor != 'github-actions[bot]'
+  smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: chatgpt/cnc-ai-teacher-data-integrity
-          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 20
 
-      - name: 修复PWA11真实版本漂移
+      - name: 初始化诊断目录
+        run: |
+          mkdir -p cnc/test-results
+          printf 'AI老师学习档案异常保护门禁已启动\n' > cnc/test-results/ai-teacher-data-integrity-bootstrap.log
+
+      - name: JavaScript语法与中文契约检查
+        run: |
+          node --check cnc/tests/ai-teacher-data-integrity-smoke.cjs
+          node - <<'NODE'
+          const fs = require('fs');
+          const workflow = fs.readFileSync('.github/workflows/cnc-ai-teacher-data-integrity-smoke.yml', 'utf8');
+          const contract = fs.readFileSync('cnc/docs/ai-teacher-data-integrity-contract.md', 'utf8');
+          const test = fs.readFileSync('cnc/tests/ai-teacher-data-integrity-smoke.cjs', 'utf8');
+          const required = ['静默', '数据健康检查', '备份与恢复', '不得自动覆盖损坏数据', '原厂手册', '授权人员'];
+          for (const token of required) {
+            if (!contract.includes(token)) throw new Error(`中文契约缺少：${token}`);
+          }
+          for (const forbidden of ['test.skip', 'process.exit(0)', 'continue-on-error', 'if-no-files-found: warn', '|| true']) {
+            if (test.includes(forbidden)) throw new Error(`测试脚本包含绕过标记：${forbidden}`);
+          }
+          if (!workflow.includes('cancel-in-progress: false')) throw new Error('不得取消旧运行并把 cancelled 当作成功');
+          console.log('AI老师学习档案异常保护静态契约检查通过');
+          NODE
+
+      - name: 安装真实浏览器运行环境
+        run: |
+          npm install --no-save playwright@1.52.0
+          npx playwright install --with-deps chromium
+
+      - name: 执行390×844损坏档案保护验收
+        id: browser
         shell: bash
         run: |
-          python - <<'PY'
-          from pathlib import Path
+          set +e
+          node cnc/tests/ai-teacher-data-integrity-smoke.cjs 2>&1 | tee cnc/test-results/ai-teacher-data-integrity-run.log
+          code=${PIPESTATUS[0]}
+          if [ "$code" = "0" ]; then
+            printf '390×844损坏档案保护真实浏览器验收通过\n' >> cnc/test-results/ai-teacher-data-integrity-run.log
+          fi
+          echo "exit_code=${code}" >> "$GITHUB_OUTPUT"
+          exit 0
 
-          current_only = [
-              Path('cnc/tests/mobile-pwa-offline-cache-smoke.cjs'),
-              Path('cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs'),
-              Path('.github/workflows/cnc-pwa-offline-cache-smoke.yml'),
-              Path('.github/workflows/cnc-pwa-self-test-smoke.yml'),
-          ]
-          current_previous = [
-              Path('cnc/tests/mobile-pwa-upgrade-data-smoke.cjs'),
-              Path('cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs'),
-              Path('cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs'),
-              Path('cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs'),
-              Path('.github/workflows/cnc-pwa-upgrade-data-smoke.yml'),
-              Path('.github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml'),
-              Path('.github/workflows/cnc-beginner-placement-offline-pages-smoke.yml'),
-              Path('.github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml'),
-          ]
-
-          def save(path, text, original):
-              if text == original:
-                  raise SystemExit(f'{path}没有发生预期的PWA11同步')
-              path.write_text(text, encoding='utf-8')
-
-          for path in current_only:
-              original = path.read_text(encoding='utf-8')
-              text = original.replace('20260804-pwa10', '20260804-pwa11')
-              text = text.replace(
-                  'PWA10用于刷新已清理开发占位后的核心课程正文',
-                  'PWA11用于刷新AI老师学习档案异常保护',
-              )
-              text = text.replace(
-                  "'正式课程开发占位清零']",
-                  "'正式课程开发占位清零','AI老师学习档案异常保护']",
-              )
-              save(path, text, original)
-
-          for path in current_previous:
-              original = path.read_text(encoding='utf-8')
-              text = original.replace(
-                  'PWA10会刷新已清理开发占位后的核心课程正文',
-                  'PWA11会刷新AI老师学习档案异常保护',
-              )
-              text = text.replace(
-                  'PWA10用于刷新已清理开发占位后的核心课程正文',
-                  'PWA11用于刷新AI老师学习档案异常保护',
-              )
-              text = text.replace('20260804-pwa10', '__PWA_CURRENT__')
-              text = text.replace('20260803-pwa9', '20260804-pwa10')
-              text = text.replace('__PWA_CURRENT__', '20260804-pwa11')
-              text = text.replace("source: 'pwa9'", "source: 'pwa10'")
-              text = text.replace(
-                  "'正式课程开发占位清零']",
-                  "'正式课程开发占位清零', 'AI老师学习档案异常保护']",
-              )
-              text = text.replace(
-                  "if (!String(info.contentStage || '').includes('正式课程开发占位清零')) throw new Error('build marker missing formal course content refresh');",
-                  "if (!String(info.contentStage || '').includes('正式课程开发占位清零')) throw new Error('build marker missing formal course content refresh');\n          if (!String(info.contentStage || '').includes('AI老师学习档案异常保护')) throw new Error('build marker missing AI teacher data integrity protection');",
-              )
-              save(path, text, original)
-          PY
-
-          git show b3e4b860dfaf5515a96113e678bf93727c188e58:.github/workflows/cnc-ai-teacher-data-integrity-smoke.yml > .github/workflows/cnc-ai-teacher-data-integrity-smoke.yml
-
-          for file in \
-            cnc/tests/mobile-pwa-offline-cache-smoke.cjs \
-            cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs \
-            cnc/tests/mobile-pwa-upgrade-data-smoke.cjs \
-            cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs \
-            cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs \
-            cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs; do
-            node --check "$file"
-          done
-          node cnc/tests/pwa-build-reference-audit-smoke.cjs
-
-      - name: 提交修复并恢复只读工作流
+      - name: 诊断完整性检查
+        if: always()
         shell: bash
         run: |
-          git diff --check
-          if git diff --quiet; then
-            echo 'PWA11同步未产生修改' >&2
+          test -s cnc/test-results/ai-teacher-data-integrity-bootstrap.log
+          test -s cnc/test-results/ai-teacher-data-integrity-run.log
+          test -s cnc/test-results/ai-teacher-data-integrity.json
+          if [ "${{ steps.browser.outputs.exit_code }}" != "0" ]; then
+            test -s cnc/test-results/ai-teacher-data-integrity-error.txt
+          fi
+
+      - name: 上传结构化诊断
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-ai-teacher-data-integrity-${{ github.run_id }}
+          path: cnc/test-results/ai-teacher-data-integrity*
+          if-no-files-found: error
+
+      - name: 按真实验收结果结束
+        if: always()
+        shell: bash
+        run: |
+          code='${{ steps.browser.outputs.exit_code }}'
+          if [ -z "$code" ]; then
+            echo '浏览器验收未返回退出码' >&2
             exit 1
           fi
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add cnc/tests .github/workflows
-          git commit -m 'test(cnc): 同步PWA11测试与门禁版本针'
-          git push origin HEAD:chatgpt/cnc-ai-teacher-data-integrity
+          exit "$code"
