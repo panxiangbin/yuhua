@@ -7,7 +7,7 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const PWA_BUILD = '20260804-pwa11';
+const PWA_BUILD = '20260804-pwa12';
 fs.mkdirSync(out, { recursive: true });
 
 const types = {

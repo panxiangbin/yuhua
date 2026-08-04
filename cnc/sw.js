@@ -1,12 +1,18 @@
 /* CNC PWA：版本化缓存、离线回退与安全更新。 */
-const BUILD = '20260804-pwa11';
-const STATIC_CACHE = `cnc-static-${BUILD}`;
-const RUNTIME_CACHE = `cnc-runtime-${BUILD}`;
+const BUILD = '20260804-pwa12';
+const CACHE_REVISION = '20260804-mobile12';
+const STATIC_CACHE = `cnc-static-${CACHE_REVISION}`;
+const RUNTIME_CACHE = `cnc-runtime-${CACHE_REVISION}`;
 const INSTALL_DIAGNOSTIC_PATH = './pwa-install-diagnostics.json';
 
 const REQUIRED_CORE_PATHS = [
   './index.html',
   './homepage-refresh.css',
+  './homepage-refresh-desktop-legacy.css',
+  './mobile-home-refactor.css',
+  './personal-home.js',
+  './mobile-trust-nav.js',
+  './featured-images-supplement.js',
   './offline.html',
   './pwa-status.html',
   './pwa-self-test.html',
@@ -19,7 +25,19 @@ const REQUIRED_CORE_PATHS = [
   './ai-teacher.html',
   './ai-teacher-intake.html',
   './ai-teacher-explainability.html',
-  './build-info.json'
+  './build-info.json',
+  './assets/images/batch01_core/beginner-machine-zero-vs-work-zero-001.webp',
+  './assets/images/batch02_operation_basics/machine-init-flow-001.webp',
+  './assets/images/batch04_milling_tooling/milling-process-overview-001.webp',
+  './assets/images/batch01_core/measure-reading-set-001.webp',
+  './assets/images/batch05_alarm_drawing_material/dial-indicator-detail-001.webp',
+  './assets/images/batch04_milling_tooling/vise-clamping-basic-001.webp',
+  './assets/images/batch04_milling_tooling/tool-selection-beginner-001.webp',
+  './assets/images/batch04_milling_tooling/bt-er-holder-overview-001.webp',
+  './assets/images/batch02_operation_basics/single-block-dry-run-001.webp',
+  './assets/images/batch04_milling_tooling/milling-contour-001.webp',
+  './assets/images/batch02_operation_basics/canned-cycle-overview-001.webp',
+  './assets/images/batch05_alarm_drawing_material/first-piece-inspection-001.webp'
 ];
 
 function scopeUrl(path) {
@@ -51,11 +69,15 @@ async function fetchWithTimeout(url, timeoutMs = 8000) {
 async function writeInstallDiagnostic(payload) {
   try {
     const runtimeCache = await caches.open(RUNTIME_CACHE);
-    await runtimeCache.put(scopeUrl(INSTALL_DIAGNOSTIC_PATH), new Response(JSON.stringify(payload), {
+    await runtimeCache.put(scopeUrl(INSTALL_DIAGNOSTIC_PATH), new Response(JSON.stringify({
+      build: BUILD,
+      cacheRevision: CACHE_REVISION,
+      ...payload
+    }), {
       headers: { 'Content-Type': 'application/json; charset=utf-8' }
     }));
   } catch {
-    // 诊断本身属于辅助能力，任何缓存配额或浏览器存储异常都不能让Worker安装失败。
+    // 诊断属于辅助能力，缓存配额或浏览器存储异常不能让 Worker 安装失败。
   }
 }
 
@@ -63,8 +85,6 @@ async function ensureStaticCacheShell() {
   const staticCache = await caches.open(STATIC_CACHE);
   const offlineUrl = scopeUrl('./offline.html');
   if (!await staticCache.match(offlineUrl)) {
-    // CacheStorage在部分Chromium时序下不会保留503兜底响应；使用200响应建立静态缓存壳，
-    // 正式offline.html成功获取后会覆盖它，实际未缓存导航仍由网络分支返回503兜底。
     await staticCache.put(offlineUrl, createOfflineResponse(200));
   }
   const names = await caches.keys();
@@ -96,7 +116,6 @@ async function cacheCoreBestEffort() {
   }
 
   await writeInstallDiagnostic({
-    build: BUILD,
     checkedAt: new Date().toISOString(),
     cached: staticCache ? REQUIRED_CORE_PATHS.length - failures.filter(item => item.path !== '__static_cache__').length : 0,
     total: REQUIRED_CORE_PATHS.length,
@@ -121,13 +140,10 @@ async function offlineFallbackResponse() {
 
 self.addEventListener('install', (event) => {
   event.waitUntil((async () => {
-    // 预缓存和诊断都是增强能力：无论缓存API、配额或单个资源发生什么异常，
-    // Worker都必须完成安装，确保在线导航和后续离线自检仍可继续。
     try {
       await cacheCoreBestEffort();
     } catch (error) {
       await writeInstallDiagnostic({
-        build: BUILD,
         checkedAt: new Date().toISOString(),
         cached: 0,
         total: REQUIRED_CORE_PATHS.length,
@@ -143,17 +159,14 @@ self.addEventListener('activate', (event) => {
     const names = await caches.keys();
     await Promise.all(
       names
-        .filter((name) => name.startsWith('cnc-') && !name.endsWith(BUILD))
+        .filter((name) => name.startsWith('cnc-') && name !== STATIC_CACHE && name !== RUNTIME_CACHE)
         .map((name) => caches.delete(name))
     );
 
-    // 安装阶段可能因瞬时网络、缓存配额或浏览器时序只留下运行时诊断缓存。
-    // 激活时再次修复核心静态缓存，并在修复完成后才接管页面，避免页面看到“已接管但静态缓存尚未就绪”的半初始化状态。
     try {
       await ensureCurrentCaches();
     } catch (error) {
       await writeInstallDiagnostic({
-        build: BUILD,
         checkedAt: new Date().toISOString(),
         cached: 0,
         total: REQUIRED_CORE_PATHS.length,
@@ -172,7 +185,7 @@ self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'GET_BUILD') {
     const target = event.ports && event.ports[0] ? event.ports[0] : event.source;
     if (target) {
-      target.postMessage({ type: 'CNC_SW_BUILD', build: BUILD });
+      target.postMessage({ type: 'CNC_SW_BUILD', build: BUILD, cacheRevision: CACHE_REVISION });
     }
   }
   if (event.data && event.data.type === 'ENSURE_CACHES') {
@@ -183,24 +196,23 @@ self.addEventListener('message', (event) => {
         ready = await ensureCurrentCaches();
       } catch (error) {
         await writeInstallDiagnostic({
-          build: BUILD,
           checkedAt: new Date().toISOString(),
           cached: 0,
           total: REQUIRED_CORE_PATHS.length,
           failures: [{ path: '__message_repair__', error: String(error && error.message ? error.message : error) }]
         });
       }
-      if (target) target.postMessage({ type: 'CNC_CACHES_READY', build: BUILD, ready });
+      if (target) target.postMessage({ type: 'CNC_CACHES_READY', build: BUILD, cacheRevision: CACHE_REVISION, ready });
     })());
   }
 });
 
 self.addEventListener('fetch', (event) => {
   const request = event.request;
-  if(request.method!=='GET') return;
+  if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
-  if(url.origin!==location.origin) return;
+  if (url.origin !== location.origin) return;
 
   if (request.mode === 'navigate') {
     event.respondWith((async () => {
@@ -215,8 +227,6 @@ self.addEventListener('fetch', (event) => {
         const cached = await caches.match(request);
         if (cached) return cached;
 
-        // Chromium在离线模拟时，Service Worker中的fetch有时仍会收到本地静态服务器404。
-        // 离线状态下必须返回中文回退页，而不是把404正文交给用户。
         if (self.navigator && self.navigator.onLine === false) {
           return offlineFallbackResponse();
         }
