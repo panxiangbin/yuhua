@@ -26,9 +26,7 @@ const assert = require('node:assert/strict');
     }));
   });
 
-  // 从新版手机首页可见的“G/M代码”入口进入工作区，再使用工具导航进入“我的”。
-  await page.locator('#view-dashboard .launchpad-card[data-route="workspace"][data-filter="gcode"]').click();
-  await page.waitForSelector('#view-workspace.active', { state: 'visible', timeout: 15000 });
+  // 手机首页已取消第二套旧首页；直接使用真实可见底栏进入“我的”。
   await page.waitForFunction(() => {
     const node = document.querySelector('body > .xp-bottom-nav');
     return node && node.getClientRects().length > 0 && node.getAttribute('aria-hidden') === 'false' && !node.hasAttribute('inert');
@@ -80,6 +78,6 @@ const assert = require('node:assert/strict');
   await page.waitForSelector('h1', { state: 'visible' });
   assert.match(await page.locator('h1').textContent(), /成长成果/);
   assert.deepEqual(errors, []);
-  console.log('新版单层首页真实导航、成长档案、课程成绩、阶段能力、连续训练与成长成果入口通过', { data, layout });
+  console.log('新版单层首页真实底栏、成长档案、课程成绩、阶段能力、连续训练与成长成果入口通过', { data, layout });
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });
