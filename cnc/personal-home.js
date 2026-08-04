@@ -1,6 +1,6 @@
 /*
- * 数控小潘：手机学习进度兼容层。
- * 不再动态插入第二套首页，不再追加游戏化首页样式；只保留进度、课程图片和继续学习能力。
+ * 数控小潘：手机学习进度与查询图片兼容层。
+ * 不再动态插入第二套首页；保留进度、12关课程图片、真实底栏和查询结果图片加载。
  */
 (function () {
   'use strict';
@@ -10,6 +10,7 @@
   var DONE_KEY = 'cnc_study_completed_v1';
   var CURRENT_KEY = 'cnc_study_current_v1';
   var media = window.matchMedia('(max-width: 768px)');
+  var queryObserver = null;
 
   var COURSES = [
     { id: 'stage-1', title: '安全基础', file: 'course-safety-foundation.html', image: './assets/images/batch02_operation_basics/machine-init-flow-001.webp', alt: '数控机床开机、自检、回零与安全确认流程演示图', caption: '先确认急停、模式、门锁和回零状态，再进行受控操作。' },
@@ -107,6 +108,37 @@
     return nav.getBoundingClientRect().height > 0;
   }
 
+  function primeQueryImages(root) {
+    var scope = root && root.querySelectorAll ? root : document;
+    var images = scope.querySelectorAll('#view-workspace .result-card.has-thumb .result-thumb img');
+    images.forEach(function (image) {
+      image.loading = 'eager';
+      image.decoding = 'async';
+      try { image.fetchPriority = 'high'; } catch (error) {}
+      if (!image.dataset.cncDecodeTracked) {
+        image.dataset.cncDecodeTracked = 'true';
+        image.addEventListener('error', function () {
+          image.closest('.result-thumb')?.setAttribute('data-image-error', 'true');
+        }, { once: true });
+      }
+      if (typeof image.decode === 'function') image.decode().catch(function () {});
+    });
+    return images.length;
+  }
+
+  function installQueryImageObserver() {
+    var resultList = document.getElementById('result-list');
+    if (!resultList) return false;
+    if (!queryObserver) {
+      queryObserver = new MutationObserver(function () {
+        window.requestAnimationFrame(function () { primeQueryImages(resultList); });
+      });
+      queryObserver.observe(resultList, { childList: true, subtree: true });
+    }
+    primeQueryImages(resultList);
+    return true;
+  }
+
   function syncLearningContent() {
     var content = window.CNC_LEARNING_CONTENT;
     if (!content || !content.lessons) return;
@@ -178,6 +210,7 @@
   function runCheck() {
     var images = Array.from(document.querySelectorAll('#view-study .study-card-thumb'));
     var visibleImages = images.filter(function (image) { return image.getClientRects().length > 0; });
+    var queryImages = Array.from(document.querySelectorAll('#view-workspace .result-card.has-thumb img'));
     var legacy = document.querySelector('#xp-game-home,#xp-personal-home');
     var nav = document.querySelector('body > .xp-bottom-nav');
     return {
@@ -187,6 +220,8 @@
       courseImages: images.length,
       visibleCourseImages: visibleImages.length,
       decodedImages: visibleImages.filter(function (image) { return image.complete && image.naturalWidth > 0; }).length,
+      queryImages: queryImages.length,
+      decodedQueryImages: queryImages.filter(function (image) { return image.complete && image.naturalWidth > 0; }).length,
       bottomNavReady: Boolean(nav && nav.getBoundingClientRect().height > 0),
       nextCourse: progressState().next.file
     };
@@ -198,8 +233,13 @@
     syncStudyCards();
     syncHomeProgress();
     syncBottomNav();
+    installQueryImageObserver();
     [60, 120, 240, 480, 900, 1600, 2600, 4200].forEach(function (delay) {
-      window.setTimeout(syncBottomNav, delay);
+      window.setTimeout(function () {
+        syncBottomNav();
+        installQueryImageObserver();
+        primeQueryImages(document);
+      }, delay);
     });
     if (document.body) document.body.dataset.cncMobileHomeBuild = '20260804-mobile1';
   }
@@ -212,8 +252,17 @@
     syncStudyCards();
     syncHomeProgress();
     syncBottomNav();
+    primeQueryImages(document);
   });
   window.addEventListener('pageshow', boot);
+  document.addEventListener('cnc:route-changed', function () { window.setTimeout(function () { primeQueryImages(document); }, 0); });
 
-  window.CNC_PERSONAL_HOME = { build: BUILD, refactorBuild: '20260804-mobile1', courses: COURSES, refresh: boot, runCheck: runCheck };
+  window.CNC_PERSONAL_HOME = {
+    build: BUILD,
+    refactorBuild: '20260804-mobile1',
+    courses: COURSES,
+    refresh: boot,
+    primeQueryImages: primeQueryImages,
+    runCheck: runCheck
+  };
 })();
