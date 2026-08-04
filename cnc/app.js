@@ -7,7 +7,9 @@ if (DEV_MODE) {
 const FAVORITES_KEY = "cnc_app_favorites_v2";
 const RECENTS_KEY = "cnc_app_recents_v2";
 const ACCESS_KEY = "cnc_app_access_code_v1";
+const STUDY_PROGRESS_KEY = "cnc_study_progress_v1";
 const ACCESS_PUBLIC_URL = "https://panxiangbin.github.io/yuhua/cnc/";
+const MAX_STUDY_LEVEL = 12;
 
 // ⚠️ 安全边界说明（非真实后端控制，仅前端演示层/分发便利层）：
 // 下面的邀请码机制只是"发链接的人自己知道口令"这类轻量分发过滤，不是访问控制。
@@ -92,7 +94,7 @@ const state = {
   entries: [],
   baseEntries: [],
   archiveEntries: [],
-  activeView: "dashboard",
+  activeView: "study",
   activeFilter: "all",
   selectedCategory: "全部栏目",
   keyword: "",
@@ -101,6 +103,9 @@ const state = {
   selectedId: null,
   favorites: [],
   recents: [],
+  studyProgress: {
+    completedLevels: []
+  },
   accessGranted: window.__FORCE_ACCESS_GRANTED__ || false,
   accessProfileLabel: "",
   loadedScripts: new Set(),
@@ -128,6 +133,7 @@ const dom = {
   knowledgePill: document.querySelector("#knowledge-pill"),
   treeNav: document.querySelector("#tree-nav"),
   sidebar: document.querySelector("#sidebar"),
+  homeButton: document.querySelector("#home-btn"),
   sidebarMask: document.querySelector("#sidebar-mask"),
   sidebarOpen: document.querySelector("#sidebar-open"),
   sidebarClose: document.querySelector("#sidebar-close"),
@@ -191,6 +197,83 @@ function readStorage(key) {
 
 function writeStorage(key, value) {
   localStorage.setItem(key, JSON.stringify(value));
+}
+
+function readStudyProgress() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(STUDY_PROGRESS_KEY) || "{}");
+    const levels = [];
+    const source = Array.isArray(raw) ? raw : (raw && Array.isArray(raw.completedLevels) ? raw.completedLevels : []);
+    const unique = new Set();
+
+    source.forEach((item) => {
+      const level = parseInt(item, 10);
+      if (level >= 1 && level <= MAX_STUDY_LEVEL && Number.isInteger(level)) {
+        unique.add(level);
+      }
+    });
+
+    return {
+      completedLevels: [...unique].sort((a, b) => a - b)
+    };
+  } catch {
+    return {
+      completedLevels: []
+    };
+  }
+}
+
+function writeStudyProgress(progress) {
+  const normalized = normalizeStudyProgress(progress);
+  state.studyProgress = normalized;
+  localStorage.setItem(STUDY_PROGRESS_KEY, JSON.stringify(normalized));
+}
+
+function normalizeStudyProgress(progress) {
+  const normalized = {
+    completedLevels: []
+  };
+  if (!progress || typeof progress !== "object") {
+    return normalized;
+  }
+  const source = Array.isArray(progress.completedLevels) ? progress.completedLevels : [];
+  const unique = new Set();
+  source.forEach((item) => {
+    const level = parseInt(item, 10);
+    if (level >= 1 && level <= MAX_STUDY_LEVEL && Number.isInteger(level)) {
+      unique.add(level);
+    }
+  });
+  normalized.completedLevels = [...unique].sort((a, b) => a - b);
+  return normalized;
+}
+
+function getStudyProgress() {
+  return state.studyProgress && Array.isArray(state.studyProgress.completedLevels)
+    ? state.studyProgress
+    : { completedLevels: [] };
+}
+
+function isStudyLevelCompleted(level) {
+  const target = parseInt(level, 10);
+  if (!target || !Number.isInteger(target)) return false;
+  const progress = getStudyProgress();
+  return progress.completedLevels.includes(target);
+}
+
+function markStudyLevelCompleted(level) {
+  const target = parseInt(level, 10);
+  if (!target || target < 1 || target > MAX_STUDY_LEVEL) return false;
+  const current = getStudyProgress();
+  if (!current.completedLevels.includes(target)) {
+    current.completedLevels.push(target);
+    current.completedLevels = current.completedLevels.sort((a, b) => a - b);
+    writeStudyProgress(current);
+    renderStudyProgressPanel();
+    syncStudyCardCompletion();
+    return true;
+  }
+  return false;
 }
 
 function escapeHtml(value = "") {
@@ -804,6 +887,7 @@ function navigate(view, options = {}) {
   }
 
   if (view === "dashboard") renderDashboardRecent();
+  if (view === "study") renderStudyProgressPanel();
   // 图库视图由 gallery-featured.js 独立管理 #cncGalleryGrid，此处不再重复渲染（旧的 #gallery-grid 容器已废弃）
   if (view === "library") renderLibraryStats();
   if (view === "favorites") renderProgressLinks();
@@ -1719,6 +1803,7 @@ function handleHashChange() {
   const hash = location.hash.slice(1);
   // 路由映射：hash -> 实际视图名称
   const routeMap = {
+    "dashboard": "dashboard",
     "study-map": "learning-map",
     "workspace": "workspace",
     "study": "study",
@@ -1729,7 +1814,7 @@ function handleHashChange() {
     "access": "access"
   };
 
-  const view = routeMap[hash] || "dashboard";
+  const view = routeMap[hash] || "study";
   navigate(view, { skipHash: true });
 }
 
@@ -1818,6 +1903,11 @@ function bindSidebarEvents() {
   }
   if (dom.sidebarMask) {
     dom.sidebarMask.addEventListener("click", closeSidebar);
+  }
+  if (dom.homeButton) {
+    dom.homeButton.addEventListener("click", () => {
+      navigate("study");
+    });
   }
 }
 
@@ -1963,6 +2053,7 @@ async function initAccess() {
 async function bootstrap() {
   state.favorites = readStorage(FAVORITES_KEY);
   state.recents = readStorage(RECENTS_KEY);
+  state.studyProgress = readStudyProgress();
 
   bindRouteButtons();
   bindWorkspaceEvents();
@@ -2167,10 +2258,67 @@ function goToKnowledgeDetail(item) {
   renderAll();
 }
 
-/**
- * 绑定 12 张学习卡片点击事件
- */
-function bindStudyCards() {
+function openStudyDetail(level) {
+  var panel = document.getElementById("study-detail-panel");
+  var content = document.getElementById("study-detail-content");
+  var stagesList = document.querySelector("#view-study .learning-stages");
+  var studyHead = document.querySelector("#view-study .section-head");
+  var title = parseInt(level, 10);
+
+  if (!panel || !content) {
+    console.error('[openStudyDetail] 找不到详情面板容器');
+    return;
+  }
+  if (!title || title < 1 || title > MAX_STUDY_LEVEL) {
+    content.innerHTML = '<div style="padding:20px;text-align:center;color:#64748B;">'
+      + '<h3>关卡参数无效</h3>'
+      + '<p>请从左侧第 1-12 关卡卡片进入。</p>'
+      + '</div>';
+    panel.style.display = "block";
+    return;
+  }
+
+  var html = "";
+  if (window.CNC_LEARNING_UI && typeof window.CNC_LEARNING_UI.renderLessonDetail === "function") {
+    html = window.CNC_LEARNING_UI.renderLessonDetail(title);
+  }
+
+  if (!html) {
+    html = '<div style="padding:20px;text-align:center;color:#64748B;">'
+      + '<h3>第 ' + title + ' 关</h3>'
+      + '<p>详细内容正在准备中，敬请期待...</p>'
+      + '</div>';
+  }
+
+  content.innerHTML = html;
+  if (typeof window.CNC_LEARNING_UI.initNavigation === "function") {
+    window.CNC_LEARNING_UI.initNavigation();
+  }
+  if (typeof window.CNC_LEARNING_UI.hydrateLessonImages === "function") {
+    window.CNC_LEARNING_UI.hydrateLessonImages(title);
+  }
+  bindStudyLessonNavigation();
+
+  // 隐藏关卡列表，显示详情
+  if (stagesList) stagesList.style.display = "none";
+  if (studyHead) studyHead.style.display = "none";
+  panel.style.display = "block";
+
+  // 滚动到顶部
+  panel.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function closeStudyDetail() {
+  var panel = document.getElementById("study-detail-panel");
+  var stagesList = document.querySelector("#view-study .learning-stages");
+  var studyHead = document.querySelector("#view-study .section-head");
+
+  if (panel) panel.style.display = "none";
+  if (stagesList) stagesList.style.display = "";
+  if (studyHead) studyHead.style.display = "";
+}
+
+function getStudyCardElements() {
   const cardSelector = [
     '.study-card',
     '.level-card',
@@ -2179,7 +2327,101 @@ function bindStudyCards() {
     '[data-study-card]'
   ].join(',');
 
-  const cards = document.querySelectorAll(cardSelector);
+  return document.querySelectorAll(cardSelector);
+}
+
+function syncStudyCardCompletion() {
+  const cards = getStudyCardElements();
+  const completed = new Set(getStudyProgress().completedLevels);
+
+  cards.forEach((card) => {
+    const level = parseInt(card.dataset.level, 10);
+    if (!level) return;
+    if (completed.has(level)) {
+      card.classList.add("is-complete");
+      card.setAttribute("aria-complete", "true");
+      card.dataset.studyCompleted = "1";
+    } else {
+      card.classList.remove("is-complete");
+      card.setAttribute("aria-complete", "false");
+      card.dataset.studyCompleted = "0";
+    }
+  });
+}
+
+function renderStudyProgressPanel() {
+  var container = document.getElementById("study-progress-panel");
+  if (!container) return;
+
+  var progress = getStudyProgress();
+  var total = MAX_STUDY_LEVEL;
+  var done = progress.completedLevels.length;
+  var percent = Math.round((done / total) * 100);
+  var stageOne = (Math.max(0, Math.min(done, 4)));
+  var stageTwo = (Math.max(0, Math.min(done - 4, 3)));
+  var stageThree = (Math.max(0, Math.min(done - 7, 4)));
+  var stageFour = Math.max(0, done - 11);
+
+  container.innerHTML = ""
+    + '<div class="study-progress-overview">'
+    + '  <div>学习进度：<strong>' + done + '</strong> / ' + total + ' 关</div>'
+    + '  <span>' + percent + '%</span>'
+    + '</div>'
+    + '<div class="study-progress-track"><div class="study-progress-fill" style="width:' + percent + '%"></div></div>'
+    + '<div class="study-progress-stage">'
+    + '  <span>阶段一（4）</span>' + stageOne + '/4、'
+    + '  <span>阶段二（3）</span>' + stageTwo + '/3、'
+    + '  <span>阶段三（4）</span>' + stageThree + '/4、'
+    + '  <span>阶段四（1）</span>' + stageFour + '/1'
+    + '</div>'
+    + '<div class="study-progress-items">'
+    + Array.from({ length: total }, function (_, idx) {
+      var lv = idx + 1;
+      return '<span class="study-progress-item' + (progress.completedLevels.includes(lv) ? " completed" : "") + '" title="第 ' + lv + ' 关">' + lv + '</span>';
+    }).join("")
+    + '</div>';
+}
+
+function bindStudyLessonNavigation() {
+  var nav = document.getElementById("lesson-nav");
+  if (!nav) return;
+
+  if (!nav.dataset.bound) {
+    nav.addEventListener("click", function(event) {
+      var target = event.target.closest(".lesson-nav-btn");
+      if (!target || !nav.contains(target)) return;
+      var level = parseInt(target.dataset.level, 10);
+      if (!level) return;
+
+      if (target.classList.contains("mark-complete")) {
+        markStudyLevelCompleted(level);
+        return;
+      }
+
+      if (!Number.isNaN(level)) {
+        openStudyDetail(level);
+      }
+    });
+    nav.dataset.bound = "true";
+  }
+
+  var currentLevel = window.CNC_LEARNING_UI && typeof window.CNC_LEARNING_UI.getCurrentLevel === "function"
+    ? parseInt(window.CNC_LEARNING_UI.getCurrentLevel(), 10)
+    : -1;
+  var completeBtn = nav.querySelector(".mark-complete");
+  if (completeBtn) {
+    var isCurrentDone = currentLevel >= 1 && currentLevel <= MAX_STUDY_LEVEL
+      ? getStudyProgress().completedLevels.includes(currentLevel)
+      : false;
+    completeBtn.textContent = isCurrentDone ? "已标记完成 ✓" : "标记完成 ✓";
+  }
+}
+
+/**
+ * 绑定 12 张学习卡片点击事件
+ */
+function bindStudyCards() {
+  const cards = getStudyCardElements();
 
   if (!cards.length) {
     console.warn('[bindStudyCards] 没找到学习卡片，请检查卡片 class。');
@@ -2198,6 +2440,12 @@ function bindStudyCards() {
     card.setAttribute('tabindex', '0');
 
     const handleOpen = () => {
+      const level = parseInt(card.dataset.level, 10);
+      if (level) {
+        openStudyDetail(level);
+        return;
+      }
+
       const cardTitle = getStudyCardTitle(card);
       const rule = findStudyRuleByCardTitle(cardTitle);
 
@@ -2229,6 +2477,9 @@ function bindStudyCards() {
       }
     });
   });
+
+  syncStudyCardCompletion();
+  renderStudyProgressPanel();
 }
 
 async function initEnhancedFeatures() {

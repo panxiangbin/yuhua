@@ -1,0 +1,2318 @@
+window.CNC_MEDIA_IMPORT_GALLERY_BATCH8_20260731 = {
+  "count": 177,
+  "items": [
+    {
+      "id": "media-5720ead8ce0042a7",
+      "src": "./assets/images/staged_batches/batchA_20260731/12.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "12.png",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-c426e06e9c2b5db7",
+      "src": "./assets/images/staged_batches/batchA_20260731/17.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "17.png",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-ca4b608c0af6a369",
+      "src": "./assets/images/staged_batches/batchA_20260731/18.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "18.png",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-0ce9238ccca1d698",
+      "src": "./assets/images/staged_batches/batchA_20260731/11.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "11.png",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-c6ddd51001122f3d",
+      "src": "./assets/images/staged_batches/batchA_20260731/14.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "14.png",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-bc91626beff8ad27",
+      "src": "./assets/images/staged_batches/batchA_20260731/16.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "16.png",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-e48d2c5b37406649",
+      "src": "./assets/images/staged_batches/batchA_20260731/15.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "15.png",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-9ad832bd38f4a3c8",
+      "src": "./assets/images/staged_batches/batchA_20260731/13.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "13.png",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-60ce3f4149f7b4a7",
+      "src": "./assets/images/staged_batches/batchA_20260731/0136_镗孔类G代码速查.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0136_镗孔类G代码速查.jpg",
+      "category": "03_刀路动画与仿真",
+      "desc": "从素材整理总表导入的高相关素材（03_刀路动画与仿真）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-30739a79ee4259f3",
+      "src": "./assets/images/staged_batches/batchA_20260731/02_数控车床基础操作 - 对刀方法.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "02_数控车床基础操作 - 对刀方法.jpg",
+      "category": "04_机床操作演示",
+      "desc": "从素材整理总表导入的高相关素材（04_机床操作演示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-1163ed872cbc8a9b",
+      "src": "./assets/images/staged_batches/batchA_20260731/0214_★收藏.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0214_★收藏.jpg",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-28280bc556ad0d63",
+      "src": "./assets/images/staged_batches/batchA_20260731/0028_刀具磨损判断速查表.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0028_刀具磨损判断速查表.jpg",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-65fdf933569718dd",
+      "src": "./assets/images/staged_batches/batchA_20260731/10_粗加工vs精加工切削参数_09.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "10_粗加工vs精加工切削参数_09.jpg",
+      "category": "02_加工过程实录",
+      "desc": "从素材整理总表导入的高相关素材（02_加工过程实录）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-d158f55cbc0f4416",
+      "src": "./assets/images/staged_batches/batchA_20260731/10_粗加工vs精加工切削参数_03.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "10_粗加工vs精加工切削参数_03.jpg",
+      "category": "02_加工过程实录",
+      "desc": "从素材整理总表导入的高相关素材（02_加工过程实录）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-031764234e2f28e5",
+      "src": "./assets/images/staged_batches/batchA_20260731/0215_刀具成本核算表.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0215_刀具成本核算表.jpg",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-183d354192ba3815",
+      "src": "./assets/images/staged_batches/batchA_20260731/0216_刀片型号解读速查表.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0216_刀片型号解读速查表.jpg",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-ccf4179f02a0cea8",
+      "src": "./assets/images/staged_batches/batchA_20260731/0218_《刀片型号解读速查表》.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0218_《刀片型号解读速查表》.jpg",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-c5d5c422615342a7",
+      "src": "./assets/images/staged_batches/batchA_20260731/0222_刀片型号解读速查表.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0222_刀片型号解读速查表.jpg",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-3b8cec82c8ebd818",
+      "src": "./assets/images/staged_batches/batchA_20260731/0022_G50VS G54.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0022_G50VS G54.jpg",
+      "category": "04_机床操作演示",
+      "desc": "从素材整理总表导入的高相关素材（04_机床操作演示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-cea4787a3fa8d7ea",
+      "src": "./assets/images/staged_batches/batchA_20260731/0144_G32螺纹切削精讲.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0144_G32螺纹切削精讲.jpg",
+      "category": "02_加工过程实录",
+      "desc": "从素材整理总表导入的高相关素材（02_加工过程实录）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-7fe40e3ca180fa03",
+      "src": "./assets/images/staged_batches/batchA_20260731/0094_刀具材料.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0094_刀具材料.jpg",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-055503b5ed2bcfb7",
+      "src": "./assets/images/staged_batches/batchA_20260731/0256_CNC故障3秒判断表.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0256_CNC故障3秒判断表.jpg",
+      "category": "05_故障与异常",
+      "desc": "从素材整理总表导入的高相关素材（05_故障与异常）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-2ad65ad5dbe0feae",
+      "src": "./assets/images/staged_batches/batchA_20260731/0148_G32螺纹切削精讲.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0148_G32螺纹切削精讲.jpg",
+      "category": "02_加工过程实录",
+      "desc": "从素材整理总表导入的高相关素材（02_加工过程实录）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-a81257529b9314ac",
+      "src": "./assets/images/staged_batches/batchA_20260731/0156_加工中心.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0156_加工中心.jpg",
+      "category": "02_加工过程实录",
+      "desc": "从素材整理总表导入的高相关素材（02_加工过程实录）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-b503bfa1f0dfc10f",
+      "src": "./assets/images/staged_batches/batchA_20260731/0152_加工中心.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0152_加工中心.jpg",
+      "category": "02_加工过程实录",
+      "desc": "从素材整理总表导入的高相关素材（02_加工过程实录）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-f652b34e25d59501",
+      "src": "./assets/images/staged_batches/batchA_20260731/0091_铣削参数.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0091_铣削参数.jpg",
+      "category": "02_加工过程实录",
+      "desc": "从素材整理总表导入的高相关素材（02_加工过程实录）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-77bb28ab0de957b6",
+      "src": "./assets/images/staged_batches/batchA_20260731/0092_铣削参数.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0092_铣削参数.jpg",
+      "category": "02_加工过程实录",
+      "desc": "从素材整理总表导入的高相关素材（02_加工过程实录）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-5c759b2740de5b66",
+      "src": "./assets/images/staged_batches/batchA_20260731/0155_加工中心.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0155_加工中心.jpg",
+      "category": "02_加工过程实录",
+      "desc": "从素材整理总表导入的高相关素材（02_加工过程实录）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-9eff744bb1a91ad0",
+      "src": "./assets/images/staged_batches/batchA_20260731/0089_车削参数.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0089_车削参数.jpg",
+      "category": "02_加工过程实录",
+      "desc": "从素材整理总表导入的高相关素材（02_加工过程实录）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-f5467ce091f2520c",
+      "src": "./assets/images/staged_batches/batchA_20260731/0224_刀片型号解读速查表.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0224_刀片型号解读速查表.jpg",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-e3bea6beb66e12c7",
+      "src": "./assets/images/staged_batches/batchA_20260731/0131_FanucPeck.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0131_FanucPeck.jpg",
+      "category": "02_加工过程实录",
+      "desc": "从素材整理总表导入的高相关素材（02_加工过程实录）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-b470815222925c36",
+      "src": "./assets/images/staged_batches/batchA_20260731/0158_加工中心.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0158_加工中心.jpg",
+      "category": "02_加工过程实录",
+      "desc": "从素材整理总表导入的高相关素材（02_加工过程实录）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-2b0d9066c76309a7",
+      "src": "./assets/images/staged_batches/batchA_20260731/0254_CNC故障3秒判断表.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0254_CNC故障3秒判断表.jpg",
+      "category": "05_故障与异常",
+      "desc": "从素材整理总表导入的高相关素材（05_故障与异常）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-b724ac7ac39ece09",
+      "src": "./assets/images/staged_batches/batchA_20260731/0090_车削参数.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0090_车削参数.jpg",
+      "category": "02_加工过程实录",
+      "desc": "从素材整理总表导入的高相关素材（02_加工过程实录）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-7fb727f57cea5ecb",
+      "src": "./assets/images/staged_batches/batchA_20260731/0260_《CNC故障3秒判断表》系列.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0260_《CNC故障3秒判断表》系列.jpg",
+      "category": "05_故障与异常",
+      "desc": "从素材整理总表导入的高相关素材（05_故障与异常）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-4cef13156230866a",
+      "src": "./assets/images/staged_batches/batchA_20260731/0257_CNC故障3秒判断表.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0257_CNC故障3秒判断表.jpg",
+      "category": "05_故障与异常",
+      "desc": "从素材整理总表导入的高相关素材（05_故障与异常）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-db930f03e6605184",
+      "src": "./assets/images/staged_batches/batchA_20260731/0252_《CNC故障3秒判断表》.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0252_《CNC故障3秒判断表》.jpg",
+      "category": "05_故障与异常",
+      "desc": "从素材整理总表导入的高相关素材（05_故障与异常）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-fab917d6133c0a73",
+      "src": "./assets/images/staged_batches/batchA_20260731/0261_CNC故障·3秒判断总表.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0261_CNC故障·3秒判断总表.jpg",
+      "category": "05_故障与异常",
+      "desc": "从素材整理总表导入的高相关素材（05_故障与异常）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-4a68eaf60b038fd2",
+      "src": "./assets/images/staged_batches/batchA_20260731/0240_刀补报警.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0240_刀补报警.jpg",
+      "category": "05_故障与异常",
+      "desc": "从素材整理总表导入的高相关素材（05_故障与异常）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-d99542e0e68f46bf",
+      "src": "./assets/images/staged_batches/batchA_20260731/05_M03_M04_M05主轴控制.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "05_M03_M04_M05主轴控制.jpg",
+      "category": "07_设备调试与安装",
+      "desc": "从素材整理总表导入的高相关素材（07_设备调试与安装）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-056f138749350a84",
+      "src": "./assets/images/staged_batches/batchA_20260731/0017_G02_G03圆弧编程.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0017_G02_G03圆弧编程.jpg",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-06a2c89d98d2f811",
+      "src": "./assets/images/staged_batches/batchA_20260731/10.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "10.png",
+      "category": "04_机床操作演示",
+      "desc": "从素材整理总表导入的高相关素材（04_机床操作演示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-6106c15eb876e39d",
+      "src": "./assets/images/staged_batches/batchA_20260731/04_数控车床刀杆规格速查_04.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "04_数控车床刀杆规格速查_04.png",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-0021e91be13ed925",
+      "src": "./assets/images/staged_batches/batchA_20260731/09.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "09.png",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-720b1fd609fbbe35",
+      "src": "./assets/images/staged_batches/batchA_20260731/01.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "01.png",
+      "category": "04_机床操作演示",
+      "desc": "从素材整理总表导入的高相关素材（04_机床操作演示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-91e5b03063500cf1",
+      "src": "./assets/images/staged_batches/batchA_20260731/06_刀具预调仪对刀仪_04.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "06_刀具预调仪对刀仪_04.png",
+      "category": "04_机床操作演示",
+      "desc": "从素材整理总表导入的高相关素材（04_机床操作演示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-ccb8797fe01d8e40",
+      "src": "./assets/images/staged_batches/batchA_20260731/04_数控车床刀杆规格速查_05.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "04_数控车床刀杆规格速查_05.png",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-87e0c19f02a9fcf3",
+      "src": "./assets/images/staged_batches/batchA_20260731/04_数控车床刀杆规格速查_06.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "04_数控车床刀杆规格速查_06.png",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-20805236085f206c",
+      "src": "./assets/images/staged_batches/batchA_20260731/02.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "02.png",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-5c6cea0d0f5fd2c8",
+      "src": "./assets/images/staged_batches/batchA_20260731/06_刀具预调仪对刀仪_06.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "06_刀具预调仪对刀仪_06.png",
+      "category": "04_机床操作演示",
+      "desc": "从素材整理总表导入的高相关素材（04_机床操作演示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-82ff0166d477f8b7",
+      "src": "./assets/images/staged_batches/batchA_20260731/03.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "03.png",
+      "category": "04_机床操作演示",
+      "desc": "从素材整理总表导入的高相关素材（04_机床操作演示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-993bb698397297c4",
+      "src": "./assets/images/staged_batches/batchA_20260731/08.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "08.png",
+      "category": "04_机床操作演示",
+      "desc": "从素材整理总表导入的高相关素材（04_机床操作演示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-57ca737be9824459",
+      "src": "./assets/images/staged_batches/batchA_20260731/0070_车刀刀片型号速查表.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0070_车刀刀片型号速查表.jpg",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-56538138dbdebdac",
+      "src": "./assets/images/staged_batches/batchA_20260731/新来的学徒，为什么编程总是撞刀.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "新来的学徒，为什么编程总是撞刀.jpg",
+      "category": "05_故障与异常",
+      "desc": "从素材整理总表导入的高相关素材（05_故障与异常）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-d7d330546e28775a",
+      "src": "./assets/images/staged_batches/batchA_20260731/S01_E03_结构图_04_机床坐标系和工件坐标系_v1.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "S01_E03_结构图_04_机床坐标系和工件坐标系_v1.png",
+      "category": "01_加工成品展示",
+      "desc": "从素材整理总表导入的高相关素材（01_加工成品展示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-4fe3000d897cb0e3",
+      "src": "./assets/images/staged_batches/batchA_20260731/19张数控编程图片_10.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "19张数控编程图片_10.jpg",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-ec2d2521b04a1e8a",
+      "src": "./assets/images/staged_batches/batchA_20260731/0058_宏程序·球面编程.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0058_宏程序·球面编程.jpg",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-ab5c1c03f1433790",
+      "src": "./assets/images/staged_batches/batchA_20260731/0054_宏程序·抛物线编程.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0054_宏程序·抛物线编程.jpg",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-68cb76a1676e7c1a",
+      "src": "./assets/images/staged_batches/batchA_20260731/0055_宏程序·锥度编程.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0055_宏程序·锥度编程.jpg",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-95b2059cee030a33",
+      "src": "./assets/images/staged_batches/batchA_20260731/0057_宏程序·公式槽编程.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0057_宏程序·公式槽编程.jpg",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-fdfe11ee2260cb68",
+      "src": "./assets/images/staged_batches/batchA_20260731/0060_宏程序·变螺距编程.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0060_宏程序·变螺距编程.jpg",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-faf0862e2da3965b",
+      "src": "./assets/images/staged_batches/batchA_20260731/0056_宏程序·椭圆弧编程.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0056_宏程序·椭圆弧编程.jpg",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-a4cc54bdcd102ec6",
+      "src": "./assets/images/staged_batches/batchA_20260731/0053_宏程序·椭圆编程模板.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0053_宏程序·椭圆编程模板.jpg",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-19d34eeb3115e8b2",
+      "src": "./assets/images/staged_batches/batchA_20260731/0059_宏程序·梯形螺纹编程.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0059_宏程序·梯形螺纹编程.jpg",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-1e41f65cb29221cf",
+      "src": "./assets/images/staged_batches/batchA_20260731/19张数控编程图片_19.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "19张数控编程图片_19.png",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-5d6921cf9bf69e42",
+      "src": "./assets/images/staged_batches/batchA_20260731/19张数控编程图片_13.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "19张数控编程图片_13.jpg",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-81e6d379fd39c562",
+      "src": "./assets/images/staged_batches/batchA_20260731/0167_表面粗糙度Ra对照表.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0167_表面粗糙度Ra对照表.jpg",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-c7c63e2d3ef5c8b9",
+      "src": "./assets/images/staged_batches/batchA_20260731/0010_宏程序赋值入门.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0010_宏程序赋值入门.jpg",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-76f628e794128b0c",
+      "src": "./assets/images/staged_batches/batchA_20260731/0282_铣削加工余量标准.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0282_铣削加工余量标准.jpg",
+      "category": "02_加工过程实录",
+      "desc": "从素材整理总表导入的高相关素材（02_加工过程实录）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-f2806513bf79c1e6",
+      "src": "./assets/images/staged_batches/batchA_20260731/0219_刀片型号解读速查表.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0219_刀片型号解读速查表.jpg",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-2f3e486e39bc84e7",
+      "src": "./assets/images/staged_batches/batchA_20260731/⑥FANUCvs广数vs西门子对照表_02.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "⑥FANUCvs广数vs西门子对照表_02.png",
+      "category": "04_机床操作演示",
+      "desc": "从素材整理总表导入的高相关素材（04_机床操作演示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-a86f82933a905482",
+      "src": "./assets/images/staged_batches/batchA_20260731/⑥FANUCvs广数vs西门子对照表_10.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "⑥FANUCvs广数vs西门子对照表_10.png",
+      "category": "04_机床操作演示",
+      "desc": "从素材整理总表导入的高相关素材（04_机床操作演示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-991472a752039995",
+      "src": "./assets/images/staged_batches/batchA_20260731/⑥FANUCvs广数vs西门子对照表_01.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "⑥FANUCvs广数vs西门子对照表_01.png",
+      "category": "04_机床操作演示",
+      "desc": "从素材整理总表导入的高相关素材（04_机床操作演示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-c795e159ceb0d288",
+      "src": "./assets/images/staged_batches/batchA_20260731/⑥FANUCvs广数vs西门子对照表_04.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "⑥FANUCvs广数vs西门子对照表_04.png",
+      "category": "04_机床操作演示",
+      "desc": "从素材整理总表导入的高相关素材（04_机床操作演示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-29b818318a8b85d7",
+      "src": "./assets/images/staged_batches/batchA_20260731/⑥FANUCvs广数vs西门子对照表_03.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "⑥FANUCvs广数vs西门子对照表_03.png",
+      "category": "04_机床操作演示",
+      "desc": "从素材整理总表导入的高相关素材（04_机床操作演示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-2281b1bb6e294951",
+      "src": "./assets/images/staged_batches/batchA_20260731/0259_《CNC故障3秒判断表》.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0259_《CNC故障3秒判断表》.jpg",
+      "category": "05_故障与异常",
+      "desc": "从素材整理总表导入的高相关素材（05_故障与异常）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-bcf14ebb76ada6a3",
+      "src": "./assets/images/staged_batches/batchA_20260731/②数控车床刀杆规格速查_7.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "②数控车床刀杆规格速查_7.jpg",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-3d7b1cb30e781317",
+      "src": "./assets/images/staged_batches/batchA_20260731/8.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "8.jpg",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-52349b3e78ca4b63",
+      "src": "./assets/images/staged_batches/batchA_20260731/0104_CNC公式系列.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0104_CNC公式系列.jpg",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-a76d04ca0122a928",
+      "src": "./assets/images/staged_batches/batchA_20260731/0009_G代码使用频率排行榜.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0009_G代码使用频率排行榜.jpg",
+      "category": "03_刀路动画与仿真",
+      "desc": "从素材整理总表导入的高相关素材（03_刀路动画与仿真）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-cbbac8193028f22b",
+      "src": "./assets/images/staged_batches/batchA_20260731/9.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "9.jpg",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-4c3f7c12a2dee4e4",
+      "src": "./assets/images/staged_batches/batchA_20260731/0255_CNC故障3秒判断表.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0255_CNC故障3秒判断表.jpg",
+      "category": "05_故障与异常",
+      "desc": "从素材整理总表导入的高相关素材（05_故障与异常）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-c0d443f2e364bfc6",
+      "src": "./assets/images/staged_batches/batchA_20260731/②数控车床刀杆规格速查_1.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "②数控车床刀杆规格速查_1.jpg",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-2d59b15be24fb64b",
+      "src": "./assets/images/staged_batches/batchA_20260731/2.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "2.jpg",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-97b206df8e3b6c35",
+      "src": "./assets/images/staged_batches/batchA_20260731/②数控车床刀杆规格速查_4.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "②数控车床刀杆规格速查_4.jpg",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-fbde690a36721add",
+      "src": "./assets/images/staged_batches/batchA_20260731/0248_CNC安全操作10条铁律.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0248_CNC安全操作10条铁律.jpg",
+      "category": "05_故障与异常",
+      "desc": "从素材整理总表导入的高相关素材（05_故障与异常）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-a50ae965c5f8ef98",
+      "src": "./assets/images/staged_batches/batchA_20260731/0242_CNC安全操作10条铁律.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0242_CNC安全操作10条铁律.jpg",
+      "category": "05_故障与异常",
+      "desc": "从素材整理总表导入的高相关素材（05_故障与异常）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-9cd1badbcef60fa7",
+      "src": "./assets/images/staged_batches/batchA_20260731/0005_Fanuc.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0005_Fanuc.jpg",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-eb868d9e4f4dddfc",
+      "src": "./assets/images/staged_batches/batchA_20260731/0258_《CNC故障3秒判断表》.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0258_《CNC故障3秒判断表》.jpg",
+      "category": "05_故障与异常",
+      "desc": "从素材整理总表导入的高相关素材（05_故障与异常）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-75fb95c53b72eb45",
+      "src": "./assets/images/staged_batches/batchA_20260731/0132_Fanuc.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0132_Fanuc.jpg",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-aca7b51629741f97",
+      "src": "./assets/images/staged_batches/batchA_20260731/27_G54到G59多工件坐标系_01.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "27_G54到G59多工件坐标系_01.jpg",
+      "category": "01_加工成品展示",
+      "desc": "从素材整理总表导入的高相关素材（01_加工成品展示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-0f6aba0157e325f3",
+      "src": "./assets/images/staged_batches/batchA_20260731/27_G54到G59多工件坐标系_04.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "27_G54到G59多工件坐标系_04.jpg",
+      "category": "01_加工成品展示",
+      "desc": "从素材整理总表导入的高相关素材（01_加工成品展示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-e2991f6a0c25a438",
+      "src": "./assets/images/staged_batches/batchA_20260731/27_G54到G59多工件坐标系_08.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "27_G54到G59多工件坐标系_08.jpg",
+      "category": "01_加工成品展示",
+      "desc": "从素材整理总表导入的高相关素材（01_加工成品展示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-2ce096f79f83bd43",
+      "src": "./assets/images/staged_batches/batchA_20260731/27_G54到G59多工件坐标系_10.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "27_G54到G59多工件坐标系_10.jpg",
+      "category": "01_加工成品展示",
+      "desc": "从素材整理总表导入的高相关素材（01_加工成品展示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-61924d77e0e298d4",
+      "src": "./assets/images/staged_batches/batchA_20260731/27_G54到G59多工件坐标系_06.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "27_G54到G59多工件坐标系_06.jpg",
+      "category": "01_加工成品展示",
+      "desc": "从素材整理总表导入的高相关素材（01_加工成品展示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-9834a657effd8dbf",
+      "src": "./assets/images/staged_batches/batchA_20260731/02进给.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "02进给.jpg",
+      "category": "09_行业日常与车间",
+      "desc": "从素材整理总表导入的高相关素材（09_行业日常与车间）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-81ac5bed655da147",
+      "src": "./assets/images/staged_batches/batchA_20260731/0025_槽底圆弧倒角编程.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0025_槽底圆弧倒角编程.jpg",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-6f09341a85dd71e8",
+      "src": "./assets/images/staged_batches/batchA_20260731/0020_C倒角编程速查.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0020_C倒角编程速查.jpg",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-bd6e3765da87b59f",
+      "src": "./assets/images/staged_batches/batchA_20260731/CNC切削参数速查.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "CNC切削参数速查.jpg",
+      "category": "02_加工过程实录",
+      "desc": "从素材整理总表导入的高相关素材（02_加工过程实录）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-5064c1e987290f7a",
+      "src": "./assets/images/staged_batches/batchA_20260731/5招提升光洁度技巧.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "5招提升光洁度技巧.jpg",
+      "category": "01_加工成品展示",
+      "desc": "从素材整理总表导入的高相关素材（01_加工成品展示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-08b7a2efd2752399",
+      "src": "./assets/images/staged_batches/batchA_20260731/0023_45°倒角VS.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0023_45°倒角VS.jpg",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-d461e80eed1d05b5",
+      "src": "./assets/images/staged_batches/batchA_20260731/开粗省时间的核心口诀.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "开粗省时间的核心口诀.jpg",
+      "category": "02_加工过程实录",
+      "desc": "从素材整理总表导入的高相关素材（02_加工过程实录）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-baca17b8df2d7cf0",
+      "src": "./assets/images/staged_batches/batchA_20260731/0164_机床面板常见英文单词含义速查.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0164_机床面板常见英文单词含义速查.jpg",
+      "category": "04_机床操作演示",
+      "desc": "从素材整理总表导入的高相关素材（04_机床操作演示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-cc10311fda076947",
+      "src": "./assets/images/staged_batches/batchA_20260731/0202_量具使用速查表.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0202_量具使用速查表.jpg",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-2d88991297a191ca",
+      "src": "./assets/images/staged_batches/batchA_20260731/7-1_02.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "7-1_02.jpg",
+      "category": "09_行业日常与车间",
+      "desc": "从素材整理总表导入的高相关素材（09_行业日常与车间）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-e95dc3aff176960c",
+      "src": "./assets/images/staged_batches/batchA_20260731/7-1_01.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "7-1_01.jpg",
+      "category": "09_行业日常与车间",
+      "desc": "从素材整理总表导入的高相关素材（09_行业日常与车间）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-4ec311a31f619131",
+      "src": "./assets/images/staged_batches/batchA_20260731/7-8_08.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "7-8_08.jpg",
+      "category": "09_行业日常与车间",
+      "desc": "从素材整理总表导入的高相关素材（09_行业日常与车间）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-718f183c1140fdd8",
+      "src": "./assets/images/staged_batches/batchA_20260731/6-26_02.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "6-26_02.jpg",
+      "category": "09_行业日常与车间",
+      "desc": "从素材整理总表导入的高相关素材（09_行业日常与车间）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-68980a22a16e28a0",
+      "src": "./assets/images/staged_batches/batchA_20260731/6-29_07.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "6-29_07.jpg",
+      "category": "09_行业日常与车间",
+      "desc": "从素材整理总表导入的高相关素材（09_行业日常与车间）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-4a99433478c3119d",
+      "src": "./assets/images/staged_batches/batchA_20260731/24_零件超差原因排查_02.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "24_零件超差原因排查_02.jpg",
+      "category": "01_加工成品展示",
+      "desc": "从素材整理总表导入的高相关素材（01_加工成品展示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-b9492dea4c715d16",
+      "src": "./assets/images/staged_batches/batchA_20260731/18_数控工人最怕的5种零件_01.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "18_数控工人最怕的5种零件_01.jpg",
+      "category": "01_加工成品展示",
+      "desc": "从素材整理总表导入的高相关素材（01_加工成品展示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-aca9382227c7a44c",
+      "src": "./assets/images/staged_batches/batchA_20260731/18_数控工人最怕的5种零件_07.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "18_数控工人最怕的5种零件_07.jpg",
+      "category": "01_加工成品展示",
+      "desc": "从素材整理总表导入的高相关素材（01_加工成品展示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-8723c1e534206160",
+      "src": "./assets/images/staged_batches/batchA_20260731/18_数控工人最怕的5种零件_09.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "18_数控工人最怕的5种零件_09.jpg",
+      "category": "01_加工成品展示",
+      "desc": "从素材整理总表导入的高相关素材（01_加工成品展示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-7ab4420580d835b3",
+      "src": "./assets/images/staged_batches/batchA_20260731/24_零件超差原因排查_04.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "24_零件超差原因排查_04.jpg",
+      "category": "01_加工成品展示",
+      "desc": "从素材整理总表导入的高相关素材（01_加工成品展示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-31a0d642220b58c6",
+      "src": "./assets/images/staged_batches/batchA_20260731/18_数控工人最怕的5种零件_03.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "18_数控工人最怕的5种零件_03.jpg",
+      "category": "01_加工成品展示",
+      "desc": "从素材整理总表导入的高相关素材（01_加工成品展示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-2e46d96296266fd1",
+      "src": "./assets/images/staged_batches/batchA_20260731/18_数控工人最怕的5种零件_02.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "18_数控工人最怕的5种零件_02.jpg",
+      "category": "01_加工成品展示",
+      "desc": "从素材整理总表导入的高相关素材（01_加工成品展示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-07ba0e3492987f7e",
+      "src": "./assets/images/staged_batches/batchA_20260731/0287_加工余量·速查总表.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "0287_加工余量·速查总表.jpg",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-616fd9053d484dd4",
+      "src": "./assets/images/staged_batches/batchA_20260731/⑤基准ABC到底怎么看图纸入门必会_1.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "⑤基准ABC到底怎么看图纸入门必会_1.png",
+      "category": "09_行业日常与车间",
+      "desc": "从素材整理总表导入的高相关素材（09_行业日常与车间）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-4cef8ad9e75ac282",
+      "src": "./assets/images/staged_batches/batchA_20260731/⑤基准ABC到底怎么看图纸入门必会_4.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "⑤基准ABC到底怎么看图纸入门必会_4.png",
+      "category": "09_行业日常与车间",
+      "desc": "从素材整理总表导入的高相关素材（09_行业日常与车间）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-e62e95d247b165ac",
+      "src": "./assets/images/staged_batches/batchA_20260731/2.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "2.png",
+      "category": "09_行业日常与车间",
+      "desc": "从素材整理总表导入的高相关素材（09_行业日常与车间）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-d0bd853861bd7b18",
+      "src": "./assets/images/staged_batches/batchA_20260731/⑤基准ABC到底怎么看图纸入门必会_3.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "⑤基准ABC到底怎么看图纸入门必会_3.png",
+      "category": "09_行业日常与车间",
+      "desc": "从素材整理总表导入的高相关素材（09_行业日常与车间）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-3581389d2a4e9ba4",
+      "src": "./assets/images/staged_batches/batchA_20260731/6.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "6.png",
+      "category": "09_行业日常与车间",
+      "desc": "从素材整理总表导入的高相关素材（09_行业日常与车间）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-ca36c3b9b35f9862",
+      "src": "./assets/images/staged_batches/batchA_20260731/⑤基准ABC到底怎么看图纸入门必会_5.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "⑤基准ABC到底怎么看图纸入门必会_5.png",
+      "category": "09_行业日常与车间",
+      "desc": "从素材整理总表导入的高相关素材（09_行业日常与车间）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-d98de9c63f78b242",
+      "src": "./assets/images/staged_batches/batchA_20260731/③硬质合金牌号速查_5.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "③硬质合金牌号速查_5.png",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-58e330417381e8c5",
+      "src": "./assets/images/staged_batches/batchA_20260731/③硬质合金牌号速查_4.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "③硬质合金牌号速查_4.png",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-185ac23b37f53962",
+      "src": "./assets/images/staged_batches/batchA_20260731/Gemini_Generated_Image_mivc9fmivc9fmivc.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "Gemini_Generated_Image_mivc9fmivc9fmivc.png",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-83231c8d425fbfd1",
+      "src": "./assets/images/staged_batches/batchA_20260731/速具刀具图_05.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "速具刀具图_05.png",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-2809f999a3d8dc2d",
+      "src": "./assets/images/staged_batches/batchA_20260731/速具刀具图_13.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "速具刀具图_13.jpg",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-bc147e87dff17d0c",
+      "src": "./assets/images/staged_batches/batchA_20260731/17.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "17.jpg",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-56296553f22c2071",
+      "src": "./assets/images/staged_batches/batchA_20260731/CNC刀具选用速查.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "CNC刀具选用速查.jpg",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-ae1e8e2c877d08e7",
+      "src": "./assets/images/staged_batches/batchA_20260731/CNC常用G代码速查.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "CNC常用G代码速查.jpg",
+      "category": "03_刀路动画与仿真",
+      "desc": "从素材整理总表导入的高相关素材（03_刀路动画与仿真）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-ef08612d8d5753ae",
+      "src": "./assets/images/staged_batches/batchA_20260731/候选03_帧01.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "候选03_帧01.png",
+      "category": "02_加工过程实录",
+      "desc": "从素材整理总表导入的高相关素材（02_加工过程实录）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-817e635a3f3a11f8",
+      "src": "./assets/images/staged_batches/batchA_20260731/候选01_帧01.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "候选01_帧01.png",
+      "category": "02_加工过程实录",
+      "desc": "从素材整理总表导入的高相关素材（02_加工过程实录）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-6310196207772175",
+      "src": "./assets/images/staged_batches/batchA_20260731/新建文件夹_01.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "新建文件夹_01.png",
+      "category": "03_刀路动画与仿真",
+      "desc": "从素材整理总表导入的高相关素材（03_刀路动画与仿真）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-99d3d8983c0dabbd",
+      "src": "./assets/images/staged_batches/batchA_20260731/新建文件夹_09.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "新建文件夹_09.png",
+      "category": "03_刀路动画与仿真",
+      "desc": "从素材整理总表导入的高相关素材（03_刀路动画与仿真）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-c2eeea6215889a3f",
+      "src": "./assets/images/staged_batches/batchA_20260731/新建文件夹_05.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "新建文件夹_05.png",
+      "category": "03_刀路动画与仿真",
+      "desc": "从素材整理总表导入的高相关素材（03_刀路动画与仿真）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-6eb5177a2df00b7d",
+      "src": "./assets/images/staged_batches/batchA_20260731/新建文件夹_02.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "新建文件夹_02.png",
+      "category": "03_刀路动画与仿真",
+      "desc": "从素材整理总表导入的高相关素材（03_刀路动画与仿真）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-2924702ec12853b7",
+      "src": "./assets/images/staged_batches/batchA_20260731/新建文件夹_03.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "新建文件夹_03.png",
+      "category": "03_刀路动画与仿真",
+      "desc": "从素材整理总表导入的高相关素材（03_刀路动画与仿真）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-60e5851330d26c1c",
+      "src": "./assets/images/staged_batches/batchA_20260731/S01_E03_结构图_05_候选原点机床不会猜_v1.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "S01_E03_结构图_05_候选原点机床不会猜_v1.png",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-b0dc91da6046bbb6",
+      "src": "./assets/images/staged_batches/batchA_20260731/S01_E03_结构图_01_同程序不同原点不同落点.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "S01_E03_结构图_01_同程序不同原点不同落点.png",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-6ec8681a80e631e7",
+      "src": "./assets/images/staged_batches/batchA_20260731/S01_E03_结构图_03_起点认错刀路整体平移.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "S01_E03_结构图_03_起点认错刀路整体平移.png",
+      "category": "03_刀路动画与仿真",
+      "desc": "从素材整理总表导入的高相关素材（03_刀路动画与仿真）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-d1d60d611b299478",
+      "src": "./assets/images/staged_batches/batchA_20260731/CNC常用夹具大全速查.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "CNC常用夹具大全速查.jpg",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-05390cbe35bfcc18",
+      "src": "./assets/images/staged_batches/batchA_20260731/薄壁件防变形技巧.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "薄壁件防变形技巧.jpg",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-3f4132a81cef5864",
+      "src": "./assets/images/staged_batches/batchA_20260731/振纹消除5步走.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "振纹消除5步走.jpg",
+      "category": "05_故障与异常",
+      "desc": "从素材整理总表导入的高相关素材（05_故障与异常）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-9e4807df8df5b855",
+      "src": "./assets/images/staged_batches/batchA_20260731/深孔钻削技巧.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "深孔钻削技巧.jpg",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-bc0008d36b84cf85",
+      "src": "./assets/images/staged_batches/batchA_20260731/难切削材料加工攻略.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "难切削材料加工攻略.jpg",
+      "category": "02_加工过程实录",
+      "desc": "从素材整理总表导入的高相关素材（02_加工过程实录）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-9d5ca9c28afa1d87",
+      "src": "./assets/images/staged_batches/batchA_20260731/CNC加工余量标准速查.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "CNC加工余量标准速查.jpg",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-bcbe5a900a14745f",
+      "src": "./assets/images/staged_batches/batchA_20260731/数控常用M代码速查.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "数控常用M代码速查.jpg",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-ede83e1d69c4d788",
+      "src": "./assets/images/staged_batches/batchA_20260731/CNC工艺路线设计速查.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "CNC工艺路线设计速查.jpg",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-da4125c53fe6826a",
+      "src": "./assets/images/staged_batches/batchA_20260731/数控常用M代码速查 2.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "数控常用M代码速查 2.jpg",
+      "category": "06_科普与教学图解",
+      "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-a905d0dd1ed3a9ea",
+      "src": "./assets/images/staged_batches/batchA_20260731/CNC操作安全速查.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "CNC操作安全速查.jpg",
+      "category": "04_机床操作演示",
+      "desc": "从素材整理总表导入的高相关素材（04_机床操作演示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-58bb09b13fbd2f13",
+      "src": "./assets/images/staged_batches/batchA_20260731/06_G76分层切削原理.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "06_G76分层切削原理.jpg",
+      "category": "02_加工过程实录",
+      "desc": "从素材整理总表导入的高相关素材（02_加工过程实录）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-fc12082cad865490",
+      "src": "./assets/images/staged_batches/batchA_20260731/详情图_10.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "详情图_10.jpg",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-136c63105556c54c",
+      "src": "./assets/images/staged_batches/batchA_20260731/BT-SLA侧固式刀柄新图_1.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "BT-SLA侧固式刀柄新图_1.png",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-a9d2011d7bbf3c03",
+      "src": "./assets/images/staged_batches/batchA_20260731/BT-SLA侧固式刀柄新图_5.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "BT-SLA侧固式刀柄新图_5.png",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-c52c4a84d70baec0",
+      "src": "./assets/images/staged_batches/batchA_20260731/BT-SLA侧固式刀柄新图_3.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "BT-SLA侧固式刀柄新图_3.png",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-5121cda100a9377e",
+      "src": "./assets/images/staged_batches/batchA_20260731/cardC02_刀具运动.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "cardC02_刀具运动.png",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-ba5725dd36a0bf20",
+      "src": "./assets/images/staged_batches/batchA_20260731/cardB04_选择刀具.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "cardB04_选择刀具.png",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-843e7fbe07a7f180",
+      "src": "./assets/images/staged_batches/batchA_20260731/cardC03_主轴状态.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "cardC03_主轴状态.png",
+      "category": "07_设备调试与安装",
+      "desc": "从素材整理总表导入的高相关素材（07_设备调试与安装）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-479371b80107e8dc",
+      "src": "./assets/images/staged_batches/batchA_20260731/65_数控车削编程_02.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "65_数控车削编程_02.jpg",
+      "category": "02_加工过程实录",
+      "desc": "从素材整理总表导入的高相关素材（02_加工过程实录）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-56e2485767d73428",
+      "src": "./assets/images/staged_batches/batchA_20260731/66_数控铣削编程_03.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "66_数控铣削编程_03.jpg",
+      "category": "02_加工过程实录",
+      "desc": "从素材整理总表导入的高相关素材（02_加工过程实录）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-2c0aeca7317d7f72",
+      "src": "./assets/images/staged_batches/batchA_20260731/66_数控铣削编程_06.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "66_数控铣削编程_06.jpg",
+      "category": "02_加工过程实录",
+      "desc": "从素材整理总表导入的高相关素材（02_加工过程实录）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-8805cc9dba0c3869",
+      "src": "./assets/images/staged_batches/batchA_20260731/65_数控车削编程_04.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "65_数控车削编程_04.jpg",
+      "category": "02_加工过程实录",
+      "desc": "从素材整理总表导入的高相关素材（02_加工过程实录）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-cf647ae184ec0763",
+      "src": "./assets/images/staged_batches/batchA_20260731/数控铣床常用夹具大全.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "数控铣床常用夹具大全.jpg",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-d428667b83427636",
+      "src": "./assets/images/staged_batches/batchA_20260731/五轴加工中心 vs 三轴加工中心.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "五轴加工中心 vs 三轴加工中心.jpg",
+      "category": "11_未分类待内容复核",
+      "desc": "从素材整理总表导入的高相关素材（11_未分类待内容复核）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-8563623b8e08f832",
+      "src": "./assets/images/staged_batches/batchA_20260731/6.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "6.jpg",
+      "category": "04_机床操作演示",
+      "desc": "从素材整理总表导入的高相关素材（04_机床操作演示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-4a882b3928f94154",
+      "src": "./assets/images/staged_batches/batchA_20260731/五轴加工实战_7.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "五轴加工实战_7.jpg",
+      "category": "04_机床操作演示",
+      "desc": "从素材整理总表导入的高相关素材（04_机床操作演示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-3198532d34a83f35",
+      "src": "./assets/images/staged_batches/batchA_20260731/五轴加工实战_10.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "五轴加工实战_10.jpg",
+      "category": "04_机床操作演示",
+      "desc": "从素材整理总表导入的高相关素材（04_机床操作演示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-7c534fcbea8b0297",
+      "src": "./assets/images/staged_batches/batchA_20260731/a3c03ce5-9a8a-4627-8486-400170288603.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "a3c03ce5-9a8a-4627-8486-400170288603.png",
+      "category": "09_行业日常与车间",
+      "desc": "从素材整理总表导入的高相关素材（09_行业日常与车间）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-b802f27c2c79c87b",
+      "src": "./assets/images/staged_batches/batchA_20260731/速具刀具图_19.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "速具刀具图_19.png",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-c79c970420df0683",
+      "src": "./assets/images/staged_batches/batchA_20260731/mg_0.4.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "mg_0.4.png",
+      "category": "11_未分类待内容复核",
+      "desc": "从素材整理总表导入的高相关素材（11_未分类待内容复核）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-c46196080e65ab1c",
+      "src": "./assets/images/staged_batches/batchA_20260731/速具刀具图_1.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "速具刀具图_1.jpg",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-30b2048016d26adf",
+      "src": "./assets/images/staged_batches/batchA_20260731/v2_1.5.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "v2_1.5.png",
+      "category": "11_未分类待内容复核",
+      "desc": "从素材整理总表导入的高相关素材（11_未分类待内容复核）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-578c3f990e8b8a82",
+      "src": "./assets/images/staged_batches/batchA_20260731/v2_23.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "v2_23.png",
+      "category": "11_未分类待内容复核",
+      "desc": "从素材整理总表导入的高相关素材（11_未分类待内容复核）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-438e73d6a0939c6e",
+      "src": "./assets/images/staged_batches/batchA_20260731/主图1.png",
+      "batch": "media_import_batch8_20260731",
+      "title": "主图1.png",
+      "category": "08_刀具夹具与量具",
+      "desc": "从素材整理总表导入的高相关素材（08_刀具夹具与量具）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-522e5843640b8d9c",
+      "src": "./assets/images/staged_batches/batchA_20260731/3.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "3.jpg",
+      "category": "04_机床操作演示",
+      "desc": "从素材整理总表导入的高相关素材（04_机床操作演示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    },
+    {
+      "id": "media-ab5ba559630ce33e",
+      "src": "./assets/images/staged_batches/batchA_20260731/新手看图-卷一_4.jpg",
+      "batch": "media_import_batch8_20260731",
+      "title": "新手看图-卷一_4.jpg",
+      "category": "04_机床操作演示",
+      "desc": "从素材整理总表导入的高相关素材（04_机床操作演示）。",
+      "keywords": [
+        "数控",
+        "实操",
+        "速查"
+      ]
+    }
+  ]
+}
+;
+
+(function(){
+  var sourceRaw = window.CNC_MEDIA_IMPORT_GALLERY_BATCH8_20260731;
+  var source = Array.isArray(sourceRaw) ? sourceRaw : (Array.isArray(sourceRaw && sourceRaw.items) ? sourceRaw.items : []);
+  if (!Array.isArray(source) || !source.length) return;
+  var merged = Array.isArray(window.CNC_GALLERY_LIBRARY_ENHANCED) ? window.CNC_GALLERY_LIBRARY_ENHANCED : Array.isArray(window.CNC_GALLERY_LIBRARY) ? window.CNC_GALLERY_LIBRARY : [];
+  var exists = {};
+  merged.forEach(function(item){ if (item && item.id) exists[item.id] = true; });
+  source.forEach(function(item){ if (item && item.id && !exists[item.id]) { merged.push(item); exists[item.id] = true; }});
+  window.CNC_GALLERY_LIBRARY_ENHANCED = merged;
+})();

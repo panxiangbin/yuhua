@@ -489,6 +489,90 @@ pre {
   border-radius: 12px;
 }
 
+/* ---------- 10.2 学习进度与完成状态 ---------- */
+#study-progress-panel {
+  margin: 18px 0 24px;
+  padding: 16px;
+  border: 1px solid #e8eaed;
+  border-radius: 12px;
+  background: var(--card-strong);
+}
+
+.study-progress-overview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.study-progress-overview strong {
+  color: var(--ink);
+  font-size: 16px;
+}
+
+.study-progress-track {
+  height: 8px;
+  background: #e8eaed;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.study-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), #f3a66e);
+  transition: width 0.3s ease;
+}
+
+.study-progress-stage {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.study-progress-stage span {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.study-progress-items {
+  display: grid;
+  margin-top: 10px;
+  gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(34px, 1fr));
+  max-width: 520px;
+}
+
+.study-progress-item {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  height: 32px;
+  border-radius: 999px;
+  background: #edf0f3;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.study-progress-item.completed {
+  background: #dff3eb;
+  color: #0f766e;
+  border: 1px solid #c9f0e2;
+}
+
+.study-card.is-complete {
+  border-color: #7cc8a1;
+  box-shadow: 0 0 0 1px #9ee0bc;
+}
+
+.study-card.is-complete .study-card-badge {
+  background: #0f766e;
+}
+
 /* ---------- 11. 图库 ---------- */
 .cnc-gallery-card {
   background: var(--card-strong);

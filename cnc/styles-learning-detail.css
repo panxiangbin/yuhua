@@ -86,6 +86,62 @@
 .lesson-summary h3 { font-size: 18px; margin: 0 0 12px; color: var(--lesson-primary-dark); }
 .summary-content { font-size: 15px; line-height: 1.8; color: var(--lesson-text); }
 
+/* 教学配图 */
+.lesson-media { background: var(--lesson-card-bg); border-radius: var(--lesson-radius); padding: 20px 24px; margin-bottom: 24px; box-shadow: var(--lesson-shadow); }
+.lesson-media h3 { font-size: 18px; margin: 0 0 16px; color: var(--lesson-primary-dark); }
+.lesson-media-note { margin: -2px 0 14px; font-size: 13px; color: var(--lesson-text-light); }
+.lesson-media-grid { display: grid; gap: 14px; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; }
+.lesson-media-item { position: relative; border-radius: 10px; overflow: hidden; background: #fff; border: 1px solid var(--lesson-border); }
+.lesson-media-item .image-placeholder,
+.lesson-media-item .lesson-fallback-image,
+.lesson-media-item .lesson-video { width: 100%; }
+.lesson-media-item .image-placeholder { margin: 0; }
+.lesson-fallback-image { box-sizing: border-box; }
+.lesson-media-item .lesson-video {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  background: #000;
+}
+
+.lesson-media-item-featured { grid-column: 1 / -1; }
+
+.lesson-media-item-featured .lesson-video {
+  aspect-ratio: 16 / 9;
+}
+
+.lesson-media-item-video {
+  border-color: rgba(207, 109, 54, 0.32);
+}
+
+.media-type-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 4px 9px;
+  font-size: 12px;
+  font-weight: 600;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.media-type-video {
+  background: rgba(207, 109, 54, 0.95);
+  color: #fff;
+}
+
+.media-type-image {
+  background: rgba(255, 255, 255, 0.95);
+  color: #374151;
+  border: 1px solid rgba(229, 224, 219, 0.9);
+}
+
 /* 导航按钮 */
 .lesson-navigation { margin-top: 36px; padding-top: 24px; border-top: 2px solid var(--lesson-border); }
 .lesson-nav-buttons { display: flex; gap: 12px; flex-wrap: wrap; justify-content: space-between; align-items: center; }
@@ -138,6 +194,7 @@
 @media (max-width: 768px) {
   .lesson-detail { padding: 16px 12px 40px; }
   .lesson-header h2 { font-size: 22px; }
+  .lesson-media-grid { grid-template-columns: 1fr; }
   .lesson-nav-buttons { flex-direction: column; }
   .lesson-nav-btn { width: 100%; text-align: center; }
   .toc-list { flex-direction: column; }

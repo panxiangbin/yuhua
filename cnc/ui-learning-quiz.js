@@ -78,18 +78,33 @@
     if (!quizEl) return { correct: false, error: '未找到题目元素' };
     var feedbackEl = quizEl.querySelector('.quiz-feedback');
     var submitBtn = quizEl.querySelector('.quiz-submit');
-    submitBtn.disabled = true;
-    submitBtn.textContent = '已提交';
-
     var quiz = _findQuizData(quizId);
     if (!quiz) {
       _showFeedback(feedbackEl, '未找到答案数据', 'error');
       return { correct: false, error: '未找到答案数据' };
     }
+
+    var textAnswer = normalizeFillText(userAnswer);
+    if (quiz.type === 'fillblank') {
+      if (!textAnswer) {
+        _showFeedback(feedbackEl, '请先填写答案再提交', 'incorrect');
+        return { correct: false, error: '请先填写答案' };
+      }
+    } else {
+      var selected = String(userAnswer);
+      if (!selected || selected === 'null' || selected === '-1') {
+        _showFeedback(feedbackEl, '请先选择一个选项', 'incorrect');
+        return { correct: false, error: '未选择答案' };
+      }
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = '已提交';
+
     var correct = false;
     if (quiz.type === 'fillblank') {
       var acceptable = Array.isArray(quiz.answer) ? quiz.answer : [quiz.answer];
-      correct = acceptable.some(function (a) { return a.toLowerCase().trim() === String(userAnswer).toLowerCase().trim(); });
+      correct = acceptable.some(function (a) { return normalizeFillText(a) === textAnswer; });
     } else {
       correct = Number(userAnswer) === quiz.answer;
     }
@@ -171,6 +186,15 @@
     var d = document.createElement('div');
     d.appendChild(document.createTextNode(text));
     return d.innerHTML;
+  }
+
+  function normalizeFillText(value) {
+    return String(value || '')
+      .normalize('NFKC')
+      .toLowerCase()
+      .replace(/\s+/g, '')
+      .replace(/[，。；;：:、%()【】\[\]{}<>《》]/g, '')
+      .replace(/[`'"]/g, '');
   }
 
   window.CNC_QUIZ_SYSTEM = {

@@ -1,0 +1,330 @@
+{
+  "generated": "2026-07-31T13:33:14",
+  "count": 36,
+  "items": [
+    {
+      "id": "media-2ac0c25c2f99",
+      "title": "24_G代码编程基础_最终预览.png",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\CODEX文件\\24_G代码编程基础_最终预览.png",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-2ac0c25c2f99_24_G_.png",
+      "size": 1260976,
+      "sha256": "7bba781a5c3ad81e"
+    },
+    {
+      "id": "media-01d7c1902ea3",
+      "title": "24_G代码编程基础_资源顺序预览.png",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\CODEX文件\\24_G代码编程基础_资源顺序预览.png",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-01d7c1902ea3_24_G_.png",
+      "size": 1265165,
+      "sha256": "4e010fb2ad1e8a05"
+    },
+    {
+      "id": "media-ac83180eaa5a",
+      "title": "biaopan.jpg",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\mill\\DialIndicatorSet\\biaopan.jpg",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-ac83180eaa5a_biaopan.jpg",
+      "size": 86750,
+      "sha256": "7513911345d30446"
+    },
+    {
+      "id": "media-2f6f72540b0d",
+      "title": "door.jpg",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\model\\workshop\\door.jpg",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-2f6f72540b0d_door.jpg",
+      "size": 72625,
+      "sha256": "7b85ca4400d4d390"
+    },
+    {
+      "id": "media-e38989c65234",
+      "title": "GRASS.jpg",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\model\\workshop\\GRASS.jpg",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-e38989c65234_GRASS.jpg",
+      "size": 565130,
+      "sha256": "8ae14baf247e833a"
+    },
+    {
+      "id": "media-356c33be9a29",
+      "title": "qiangzhi.jpg",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\model\\workshop\\qiangzhi.jpg",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-356c33be9a29_qiangzhi.jpg",
+      "size": 81705,
+      "sha256": "788ceca9d1af519b"
+    },
+    {
+      "id": "media-3657f024063c",
+      "title": "arrow.bmp",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\pic\\arrow.bmp",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-3657f024063c_arrow.bmp",
+      "size": 824,
+      "sha256": "3657f024063c1efc"
+    },
+    {
+      "id": "media-491d2094540c",
+      "title": "axisccw.bmp",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\pic\\axisccw.bmp",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-491d2094540c_axisccw.bmp",
+      "size": 1956,
+      "sha256": "491d2094540cd0c4"
+    },
+    {
+      "id": "media-6c3764d2c9e2",
+      "title": "axiscw.bmp",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\pic\\axiscw.bmp",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-6c3764d2c9e2_axiscw.bmp",
+      "size": 1956,
+      "sha256": "6c3764d2c9e2d51a"
+    },
+    {
+      "id": "media-1c66c9561c0a",
+      "title": "axisstop.bmp",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\pic\\axisstop.bmp",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-1c66c9561c0a_axisstop.bmp",
+      "size": 1956,
+      "sha256": "1c66c9561c0afe79"
+    },
+    {
+      "id": "media-d3a3ca7887c8",
+      "title": "box_1.bmp",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\pic\\box_1.bmp",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-d3a3ca7887c8_box_1.bmp",
+      "size": 228536,
+      "sha256": "d3a3ca7887c8c925"
+    },
+    {
+      "id": "media-fb34d67ac5ed",
+      "title": "box_2.bmp",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\pic\\box_2.bmp",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-fb34d67ac5ed_box_2.bmp",
+      "size": 228536,
+      "sha256": "fb34d67ac5edc38b"
+    },
+    {
+      "id": "media-2d7cbbecb8b4",
+      "title": "box_3.bmp",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\pic\\box_3.bmp",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-2d7cbbecb8b4_box_3.bmp",
+      "size": 228536,
+      "sha256": "2d7cbbecb8b40d31"
+    },
+    {
+      "id": "media-058f3669c75a",
+      "title": "ccw.bmp",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\pic\\ccw.bmp",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-058f3669c75a_ccw.bmp",
+      "size": 824,
+      "sha256": "058f3669c75aeb2a"
+    },
+    {
+      "id": "media-0a92f89c054a",
+      "title": "clamp_mode1.bmp",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\pic\\clamp_mode1.bmp",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-0a92f89c054a_clamp_mode1.bmp",
+      "size": 631856,
+      "sha256": "0a92f89c054ac043"
+    },
+    {
+      "id": "media-f5fc3248737b",
+      "title": "clamp_mode2.bmp",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\pic\\clamp_mode2.bmp",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-f5fc3248737b_clamp_mode2.bmp",
+      "size": 631856,
+      "sha256": "f5fc3248737bd276"
+    },
+    {
+      "id": "media-3a732c054fb6",
+      "title": "clamp_mode3.bmp",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\pic\\clamp_mode3.bmp",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-3a732c054fb6_clamp_mode3.bmp",
+      "size": 631856,
+      "sha256": "3a732c054fb67996"
+    },
+    {
+      "id": "media-1e58a274f1a8",
+      "title": "clamp_mode4.bmp",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\pic\\clamp_mode4.bmp",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-1e58a274f1a8_clamp_mode4.bmp",
+      "size": 631856,
+      "sha256": "1e58a274f1a89b2e"
+    },
+    {
+      "id": "media-03e2baa9598c",
+      "title": "coord_circle_center.bmp",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\pic\\coord_circle_center.bmp",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-03e2baa9598c_coord_circle_center.bmp",
+      "size": 40076,
+      "sha256": "03e2baa9598cf812"
+    },
+    {
+      "id": "media-85655e2b2cea",
+      "title": "coord_circular_bottom.bmp",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\pic\\coord_circular_bottom.bmp",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-85655e2b2cea_coord_circular_bottom.bmp",
+      "size": 40076,
+      "sha256": "85655e2b2cea5c7c"
+    },
+    {
+      "id": "media-6f480286a1e4",
+      "title": "coord_circular_in.bmp",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\pic\\coord_circular_in.bmp",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-6f480286a1e4_coord_circular_in.bmp",
+      "size": 40076,
+      "sha256": "6f480286a1e46188"
+    },
+    {
+      "id": "media-8f4a87420976",
+      "title": "coord_circular_out.bmp",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\pic\\coord_circular_out.bmp",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-8f4a87420976_coord_circular_out.bmp",
+      "size": 40076,
+      "sha256": "8f4a874209760084"
+    },
+    {
+      "id": "media-fc6014fdaffb",
+      "title": "coord_circular_top.bmp",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\pic\\coord_circular_top.bmp",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-fc6014fdaffb_coord_circular_top.bmp",
+      "size": 40076,
+      "sha256": "fc6014fdaffb24c4"
+    },
+    {
+      "id": "media-c601124d6a57",
+      "title": "coord_irregular.bmp",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\pic\\coord_irregular.bmp",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-c601124d6a57_coord_irregular.bmp",
+      "size": 40076,
+      "sha256": "c601124d6a5774bd"
+    },
+    {
+      "id": "media-429c89fbc76c",
+      "title": "coord_line_aux.bmp",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\pic\\coord_line_aux.bmp",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-429c89fbc76c_coord_line_aux.bmp",
+      "size": 40076,
+      "sha256": "429c89fbc76c9422"
+    },
+    {
+      "id": "media-29c0964df884",
+      "title": "coord_round.bmp",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\pic\\coord_round.bmp",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-29c0964df884_coord_round.bmp",
+      "size": 40076,
+      "sha256": "29c0964df88419ef"
+    },
+    {
+      "id": "media-d17962191509",
+      "title": "coord_roundface_in.bmp",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\pic\\coord_roundface_in.bmp",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-d17962191509_coord_roundface_in.bmp",
+      "size": 40076,
+      "sha256": "d179621915097beb"
+    },
+    {
+      "id": "media-e37ab8dbf0b1",
+      "title": "coord_roundface_out.bmp",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\pic\\coord_roundface_out.bmp",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-e37ab8dbf0b1_coord_roundface_out.bmp",
+      "size": 40076,
+      "sha256": "e37ab8dbf0b16e8c"
+    },
+    {
+      "id": "media-34eaef019070",
+      "title": "coord_slice.bmp",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\pic\\coord_slice.bmp",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-34eaef019070_coord_slice.bmp",
+      "size": 40076,
+      "sha256": "34eaef0190708a33"
+    },
+    {
+      "id": "media-c2af64e46504",
+      "title": "cw.bmp",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\pic\\cw.bmp",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-c2af64e46504_cw.bmp",
+      "size": 824,
+      "sha256": "c2af64e4650486f5"
+    },
+    {
+      "id": "media-0ca9d4080af0",
+      "title": "exclamation_mark.png",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\pic\\exclamation_mark.png",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-0ca9d4080af0_exclamation_mark.png",
+      "size": 375,
+      "sha256": "892b9545dabd7091"
+    },
+    {
+      "id": "media-0e305101913a",
+      "title": "gl_millmeasuretoolbar2_64.bmp",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\pic\\gl_millmeasuretoolbar2_64.bmp",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-0e305101913a_gl_millmeasuretoolbar2_64.bmp",
+      "size": 122936,
+      "sha256": "0e305101913a1d3b"
+    },
+    {
+      "id": "media-e6ea534321c9",
+      "title": "gl_millmeasuretoolbar2_c_64.bmp",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\pic\\gl_millmeasuretoolbar2_c_64.bmp",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-e6ea534321c9_gl_millmeasuretoolbar2_c_64.bmp",
+      "size": 122936,
+      "sha256": "e6ea534321c9fa7d"
+    },
+    {
+      "id": "media-84915a82432d",
+      "title": "gl_millmeasuretoolbar2_d_64.bmp",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\pic\\gl_millmeasuretoolbar2_d_64.bmp",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-84915a82432d_gl_millmeasuretoolbar2_d_64.bmp",
+      "size": 122936,
+      "sha256": "84915a82432d93da"
+    },
+    {
+      "id": "media-139684a962b8",
+      "title": "gl_turnmeasuretoolbar2_64.bmp",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\pic\\gl_turnmeasuretoolbar2_64.bmp",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-139684a962b8_gl_turnmeasuretoolbar2_64.bmp",
+      "size": 122936,
+      "sha256": "139684a962b8426d"
+    },
+    {
+      "id": "media-ca2f0d85610d",
+      "title": "gl_turnmeasuretoolbar2_c_64.bmp",
+      "category": "03_刀路动画与仿真",
+      "src_path": "D:\\Nanjing Swansoft\\SSCNC\\common\\pic\\gl_turnmeasuretoolbar2_c_64.bmp",
+      "dest_src": "./assets/images/media_import_batch_20260731/media-ca2f0d85610d_gl_turnmeasuretoolbar2_c_64.bmp",
+      "size": 122936,
+      "sha256": "ca2f0d85610d71d3"
+    }
+  ]
+}

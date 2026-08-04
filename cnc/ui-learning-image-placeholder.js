@@ -55,6 +55,7 @@
         var images = imageMap[lessonId];
         for (var i = 0; i < images.length; i++) {
           var slot = images[i];
+          if (slot && slot.type && slot.type !== 'image') continue;
           if (loadActualImage(slot.id, slot.src)) count++;
         }
       }

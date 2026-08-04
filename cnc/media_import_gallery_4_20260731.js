@@ -1,0 +1,480 @@
+window.CNC_MEDIA_IMPORT_GALLERY_4_20260731 = [
+  {
+    "id": "media-90b2a73c6874",
+    "src": "./assets/images/media_import_batch4_20260731/media-90b2a73c6874_tb_misc_bmp.bmp",
+    "batch": "media_import_batch4_20260731",
+    "title": "tb_misc.bmp",
+    "category": "03_刀路动画与仿真",
+    "desc": "从素材整理总表导入的高相关素材（03_刀路动画与仿真）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-ef1de871428e",
+    "src": "./assets/images/media_import_batch4_20260731/media-ef1de871428e_tb_misc_d_bmp.bmp",
+    "batch": "media_import_batch4_20260731",
+    "title": "tb_misc_d.bmp",
+    "category": "03_刀路动画与仿真",
+    "desc": "从素材整理总表导入的高相关素材（03_刀路动画与仿真）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-af1275b310a9",
+    "src": "./assets/images/media_import_batch4_20260731/media-af1275b310a9_tb_view_bmp.bmp",
+    "batch": "media_import_batch4_20260731",
+    "title": "tb_view.bmp",
+    "category": "03_刀路动画与仿真",
+    "desc": "从素材整理总表导入的高相关素材（03_刀路动画与仿真）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-1f27b54c6496",
+    "src": "./assets/images/media_import_batch4_20260731/media-1f27b54c6496_tb_view_touch_bmp.bmp",
+    "batch": "media_import_batch4_20260731",
+    "title": "tb_view_touch.bmp",
+    "category": "03_刀路动画与仿真",
+    "desc": "从素材整理总表导入的高相关素材（03_刀路动画与仿真）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-32044376786c",
+    "src": "./assets/images/media_import_batch4_20260731/media-32044376786c_tb_vscap_bmp.bmp",
+    "batch": "media_import_batch4_20260731",
+    "title": "tb_vscap.bmp",
+    "category": "03_刀路动画与仿真",
+    "desc": "从素材整理总表导入的高相关素材（03_刀路动画与仿真）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-4165e5cf88c6",
+    "src": "./assets/images/media_import_batch4_20260731/media-4165e5cf88c6_tb_vscap_d_bmp.bmp",
+    "batch": "media_import_batch4_20260731",
+    "title": "tb_vscap_d.bmp",
+    "category": "03_刀路动画与仿真",
+    "desc": "从素材整理总表导入的高相关素材（03_刀路动画与仿真）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-022d3d7bb10b",
+    "src": "./assets/images/media_import_batch4_20260731/media-022d3d7bb10b_tb_winmacro_bmp.bmp",
+    "batch": "media_import_batch4_20260731",
+    "title": "tb_winmacro.bmp",
+    "category": "03_刀路动画与仿真",
+    "desc": "从素材整理总表导入的高相关素材（03_刀路动画与仿真）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-11c47c30306b",
+    "src": "./assets/images/media_import_batch4_20260731/media-11c47c30306b_tb_winmacro_d_bmp.bmp",
+    "batch": "media_import_batch4_20260731",
+    "title": "tb_winmacro_d.bmp",
+    "category": "03_刀路动画与仿真",
+    "desc": "从素材整理总表导入的高相关素材（03_刀路动画与仿真）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-dba526b0001c",
+    "src": "./assets/images/media_import_batch4_20260731/media-dba526b0001c_timer_big_bmp.bmp",
+    "batch": "media_import_batch4_20260731",
+    "title": "timer_big.bmp",
+    "category": "03_刀路动画与仿真",
+    "desc": "从素材整理总表导入的高相关素材（03_刀路动画与仿真）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-6b1fc0289e08",
+    "src": "./assets/images/media_import_batch4_20260731/media-6b1fc0289e08_timer_pane_bmp.bmp",
+    "batch": "media_import_batch4_20260731",
+    "title": "timer_pane.bmp",
+    "category": "03_刀路动画与仿真",
+    "desc": "从素材整理总表导入的高相关素材（03_刀路动画与仿真）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-30a766d3e826",
+    "src": "./assets/images/media_import_batch4_20260731/media-30a766d3e826_timer_small_bmp.bmp",
+    "batch": "media_import_batch4_20260731",
+    "title": "timer_small.bmp",
+    "category": "03_刀路动画与仿真",
+    "desc": "从素材整理总表导入的高相关素材（03_刀路动画与仿真）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-62c8fd118a93",
+    "src": "./assets/images/media_import_batch4_20260731/media-62c8fd118a93_tree_icon_01_bmp.bmp",
+    "batch": "media_import_batch4_20260731",
+    "title": "tree_icon_01.bmp",
+    "category": "03_刀路动画与仿真",
+    "desc": "从素材整理总表导入的高相关素材（03_刀路动画与仿真）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-733e595622b6",
+    "src": "./assets/images/media_import_batch4_20260731/media-733e595622b6_01_Pexels_spinning_drill.jpg",
+    "batch": "media_import_batch4_20260731",
+    "title": "01_Pexels_spinning_drill.jpg",
+    "category": "06_科普与教学图解",
+    "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-a6d012edb538",
+    "src": "./assets/images/media_import_batch4_20260731/media-a6d012edb538_02_Pixabay_drill_milling.jpg",
+    "batch": "media_import_batch4_20260731",
+    "title": "02_Pixabay_drill_milling_manufacturing.jpg",
+    "category": "06_科普与教学图解",
+    "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-110b48b28b57",
+    "src": "./assets/images/media_import_batch4_20260731/media-110b48b28b57_03_Pixabay_machine_drill.jpg",
+    "batch": "media_import_batch4_20260731",
+    "title": "03_Pixabay_machine_drill_steel.jpg",
+    "category": "06_科普与教学图解",
+    "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-f6202bf981a9",
+    "src": "./assets/images/media_import_batch4_20260731/media-f6202bf981a9_04_Pexels_control_panel_.jpg",
+    "batch": "media_import_batch4_20260731",
+    "title": "04_Pexels_control_panel.jpg",
+    "category": "06_科普与教学图解",
+    "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-45b3b0d76898",
+    "src": "./assets/images/media_import_batch4_20260731/media-45b3b0d76898_05_Pexels_operator_contr.jpg",
+    "batch": "media_import_batch4_20260731",
+    "title": "05_Pexels_operator_control_panel.jpg",
+    "category": "06_科普与教学图解",
+    "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-491a4ad29035",
+    "src": "./assets/images/media_import_batch4_20260731/media-491a4ad29035_06_Pixabay_machine_manuf.jpg",
+    "batch": "media_import_batch4_20260731",
+    "title": "06_Pixabay_machine_manufacturing_milling.jpg",
+    "category": "06_科普与教学图解",
+    "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-8f3f66588ce9",
+    "src": "./assets/images/media_import_batch4_20260731/media-8f3f66588ce9_07_Pexels_industrial_lat.jpg",
+    "batch": "media_import_batch4_20260731",
+    "title": "07_Pexels_industrial_lathe.jpg",
+    "category": "06_科普与教学图解",
+    "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-0cc288c17cf9",
+    "src": "./assets/images/media_import_batch4_20260731/media-0cc288c17cf9_08_Pexels_man_operating_.jpg",
+    "batch": "media_import_batch4_20260731",
+    "title": "08_Pexels_man_operating_cnc.jpg",
+    "category": "06_科普与教学图解",
+    "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-559291e3fe33",
+    "src": "./assets/images/media_import_batch4_20260731/media-559291e3fe33_09_Pexels_cnc_cutting_me.jpg",
+    "batch": "media_import_batch4_20260731",
+    "title": "09_Pexels_cnc_cutting_metal_tool_9033891.jpg",
+    "category": "06_科普与教学图解",
+    "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-a9e7d20ec956",
+    "src": "./assets/images/media_import_batch4_20260731/media-a9e7d20ec956_10_Pexels_precision_meta.jpg",
+    "batch": "media_import_batch4_20260731",
+    "title": "10_Pexels_precision_metal_milling_31801781.jpg",
+    "category": "06_科普与教学图解",
+    "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-e3bd44abeb50",
+    "src": "./assets/images/media_import_batch4_20260731/media-e3bd44abeb50_11_Pexels_cnc_coolant_sp.jpg",
+    "batch": "media_import_batch4_20260731",
+    "title": "11_Pexels_cnc_coolant_spray_5998850.jpg",
+    "category": "06_科普与教学图解",
+    "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-92cad4b52c74",
+    "src": "./assets/images/media_import_batch4_20260731/media-92cad4b52c74_12_Pexels_cnc_metal_cutt.jpg",
+    "batch": "media_import_batch4_20260731",
+    "title": "12_Pexels_cnc_metal_cutting_27936934.jpg",
+    "category": "06_科普与教学图解",
+    "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-8dfbc40f7e08",
+    "src": "./assets/images/media_import_batch4_20260731/media-8dfbc40f7e08_13_Pexels_turning_steel_.jpg",
+    "batch": "media_import_batch4_20260731",
+    "title": "13_Pexels_turning_steel_cnc_19791092.jpg",
+    "category": "06_科普与教学图解",
+    "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-141a63aaa3e0",
+    "src": "./assets/images/media_import_batch4_20260731/media-141a63aaa3e0_14_Pexels_automated_mach.jpg",
+    "batch": "media_import_batch4_20260731",
+    "title": "14_Pexels_automated_machine_moving_9431331.jpg",
+    "category": "06_科普与教学图解",
+    "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-9a3a739d312a",
+    "src": "./assets/images/media_import_batch4_20260731/media-9a3a739d312a_15_Pexels_metal_drilling.jpg",
+    "batch": "media_import_batch4_20260731",
+    "title": "15_Pexels_metal_drilling_workshop_29913842.jpg",
+    "category": "06_科普与教学图解",
+    "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-557693abfac1",
+    "src": "./assets/images/media_import_batch4_20260731/media-557693abfac1_a_person_pressing_a_butt.jpg",
+    "batch": "media_import_batch4_20260731",
+    "title": "a-person-pressing-a-button-4957783_A Person Pressing a Button Free Stock Video Footage, Royalty-Free 4K & HD Video .jpg",
+    "category": "06_科普与教学图解",
+    "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-1065cd147584",
+    "src": "./assets/images/media_import_batch4_20260731/media-1065cd147584_close_up_of_metal_lathe_.jpg",
+    "batch": "media_import_batch4_20260731",
+    "title": "close-up-of-metal-lathe-machining-process-30907183_Close-up of Metal Lathe Machining Process Free Stock Video Footage, Royalty-Free.jpg",
+    "category": "06_科普与教学图解",
+    "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-04fb93ff88d7",
+    "src": "./assets/images/media_import_batch4_20260731/media-04fb93ff88d7_close_up_view_of_industr.jpg",
+    "batch": "media_import_batch4_20260731",
+    "title": "close-up-view-of-industrial-equipment-indoors-35069360_Close-up View of Industrial Equipment Indoors Free Stock Video Footage, Royalty-.jpg",
+    "category": "06_科普与教学图解",
+    "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-ab7893c66933",
+    "src": "./assets/images/media_import_batch4_20260731/media-ab7893c66933_cnc_27936929_cnc_Free_St.jpg",
+    "batch": "media_import_batch4_20260731",
+    "title": "cnc-27936929_cnc Free Stock Video Footage, Royalty-Free 4K & HD Video Clip.jpg",
+    "category": "06_科普与教学图解",
+    "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-7131593de252",
+    "src": "./assets/images/media_import_batch4_20260731/media-7131593de252_cnc_milling_machine_in_o.jpg",
+    "batch": "media_import_batch4_20260731",
+    "title": "cnc-milling-machine-in-operation-with-operator-31474685_CNC Milling Machine in Operation with Operator Free Stock Video Footage, Royalty.jpg",
+    "category": "06_科普与教学图解",
+    "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-4cb5a7e77255",
+    "src": "./assets/images/media_import_batch4_20260731/media-4cb5a7e77255_drilling_holes_on_metal_.jpg",
+    "batch": "media_import_batch4_20260731",
+    "title": "drilling-holes-on-metal-8926451_Drilling Holes on Metal Free Stock Video Footage, Royalty-Free 4K & HD Video Cli.jpg",
+    "category": "06_科普与教学图解",
+    "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-7a7852f10c46",
+    "src": "./assets/images/media_import_batch4_20260731/media-7a7852f10c46_industrial_lathe_machine.jpg",
+    "batch": "media_import_batch4_20260731",
+    "title": "industrial-lathe-machine-in-workshop-setting-31228376_Industrial Lathe Machine in Workshop Setting Free Stock Video Footage, Royalty-F.jpg",
+    "category": "06_科普与教学图解",
+    "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-7063b2951425",
+    "src": "./assets/images/media_import_batch4_20260731/media-7063b2951425_industrial_machine_in_ac.jpg",
+    "batch": "media_import_batch4_20260731",
+    "title": "industrial-machine-in-action-close-up-view-30228463_Industrial Machine in Action： Close-up View Free Stock Video Footage, Royalty-Fr.jpg",
+    "category": "06_科普与教学图解",
+    "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  },
+  {
+    "id": "media-8699b1d53afa",
+    "src": "./assets/images/media_import_batch4_20260731/media-8699b1d53afa_industrial_machinery_in_.jpg",
+    "batch": "media_import_batch4_20260731",
+    "title": "industrial-machinery-in-factory-setting-35451867_Industrial Machinery in Factory Setting Free Stock Video Footage, Royalty-Free 4.jpg",
+    "category": "06_科普与教学图解",
+    "desc": "从素材整理总表导入的高相关素材（06_科普与教学图解）。",
+    "keywords": [
+      "数控",
+      "实操",
+      "速查"
+    ]
+  }
+];
+
+(function(){
+  var source = window.CNC_MEDIA_IMPORT_GALLERY_4_20260731 || [];
+  if (!Array.isArray(source) || !source.length) return;
+  var merged = Array.isArray(window.CNC_GALLERY_LIBRARY_ENHANCED) ? window.CNC_GALLERY_LIBRARY_ENHANCED : Array.isArray(window.CNC_GALLERY_LIBRARY) ? window.CNC_GALLERY_LIBRARY : [];
+  var exists = {};
+  merged.forEach(function(item){ if (item && item.id) exists[item.id] = true; });
+  source.forEach(function(item){ if (item && item.id && !exists[item.id]) { merged.push(item); exists[item.id] = true; }});
+  window.CNC_GALLERY_LIBRARY_ENHANCED = merged;
+})();

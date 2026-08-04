@@ -18,6 +18,7 @@
   <link rel="stylesheet" href="./styles.css">
   <link rel="stylesheet" href="./styles-enhanced.css">
   <link rel="stylesheet" href="./theme-tech.css?v=20260708b">
+  <link rel="stylesheet" href="./styles-learning-detail.css">
 </head>
 <body>
   <div class="gate-backdrop" id="access-gate" hidden>
@@ -113,8 +114,8 @@
           <button class="menu-button" id="sidebar-open" type="button" aria-label="打开目录">☰</button>
           <button class="home-btn" id="home-btn" type="button" aria-label="返回首页" title="返回首页">&#x1F3E0;</button>
           <div>
-            <p class="topbar-kicker" id="topbar-kicker">总览面板</p>
-            <h2 id="topbar-title">把网页改成像软件一样用</h2>
+            <p class="topbar-kicker" id="topbar-kicker">新手路线</p>
+            <h2 id="topbar-title">先按顺序学，再单点深入</h2>
           </div>
         </div>
 
@@ -319,6 +320,15 @@
               <h3>新手入门 12 关</h3>
             </div>
             <p>按顺序闯关，从认识图纸到独立编程。每关 5-10 分钟，边学边练。</p>
+          </div>
+          <div id="study-progress-panel"></div>
+
+          <div id="study-detail-panel" style="display:none; margin: 12px 0 16px;">
+            <div style="display:flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
+              <button class="ghost-button" type="button" onclick="navigate('dashboard')">← 返回主页</button>
+              <button class="ghost-button" type="button" onclick="closeStudyDetail()">↩ 返回关卡列表</button>
+            </div>
+            <div id="study-detail-content"></div>
           </div>
 
           <div class="learning-stages">
@@ -1023,6 +1033,15 @@
   <script src="./featured-images-supplement.js"></script>
   <script src="./gallery-library.js"></script>
   <script src="./gallery-library-enhanced.js"></script>
+  <script src="./media_import_gallery_20260731.js"></script>
+  <script src="./media_import_gallery_2_20260731.js"></script>
+  <script src="./media_import_gallery_3_20260731.js"></script>
+  <script src="./media_import_gallery_4_20260731.js"></script>
+  <script src="./media_import_gallery_5_20260731.js"></script>
+  <script src="./media_import_gallery_6_20260731.js"></script>
+  <script src="./media_import_gallery_7_20260731.js"></script>
+  <script src="./media_import_gallery_8_20260731.js"></script>
+  <script src="./media_import_gallery_9_20260731.js"></script>
   <script src="./kb-content-manifest.js"></script>
   <script src="./ui-knowledge-tree.js"></script>
   <script src="./ui-recommendations.js"></script>
@@ -1030,7 +1049,12 @@
   <script src="./search-runtime-debug.js"></script>
   <script src="./study-entry-rules.js"></script>
   <script src="./learning-content-data.js"></script>
+  <script src="./entry-to-images-map.js"></script>
+  <script src="./entry-to-videos-map.js"></script>
+  <script src="./ui-learning-image-placeholder.js"></script>
   <script src="./alarm-data.js?v=20260708b"></script>
+  <script src="./ui-learning-detail.js"></script>
+  <script src="./ui-learning-quiz.js"></script>
 
   <!-- 3号：JSON加载器（处理BOM） -->
   <script src="./json-loader.js"></script>
