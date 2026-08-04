@@ -72,7 +72,7 @@ fs.mkdirSync(DIAGNOSTIC_DIR, { recursive: true });
         practiceVisible: visible(document.querySelector('#view-dashboard .cnc-home-route-card')),
         navVisible: visible(nav),
         navCount: navItems.length,
-        navLabels: navItems.map(node => (node.textContent || '').replace(/\s+/g, ' ').trim()),
+        navLabels: navItems.map(node => (node.querySelector('span')?.textContent || '').replace(/\s+/g, ' ').trim()),
         oldVisible: oldSelectors.filter(selector => visible(document.querySelector(selector))),
         smallTargets: controls.filter(item => item.height < 44),
         scrollWidth: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),
