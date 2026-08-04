@@ -5,13 +5,6 @@ const fs = require('node:fs');
 const DIAGNOSTIC_DIR = 'cnc/test-artifacts/industrial-card-sample';
 fs.mkdirSync(DIAGNOSTIC_DIR, { recursive: true });
 
-function isVisible(node) {
-  if (!node) return false;
-  const style = getComputedStyle(node);
-  const rect = node.getBoundingClientRect();
-  return style.display !== 'none' && style.visibility !== 'hidden' && Number(style.opacity || 1) > 0 && rect.width > 0 && rect.height > 0;
-}
-
 (async () => {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
@@ -25,6 +18,12 @@ function isVisible(node) {
   try {
     await page.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded', timeout: 60000 });
     await page.waitForFunction(() => {
+      const visible = node => {
+        if (!node) return false;
+        const style = getComputedStyle(node);
+        const rect = node.getBoundingClientRect();
+        return style.display !== 'none' && style.visibility !== 'hidden' && Number(style.opacity || 1) > 0 && rect.width > 0 && rect.height > 0;
+      };
       const home = window.CNC_PERSONAL_HOME;
       const dashboard = document.querySelector('#view-dashboard.active');
       const nav = document.querySelector('body > .xp-bottom-nav');
@@ -32,7 +31,7 @@ function isVisible(node) {
       const query = document.querySelector('#view-dashboard .launchpad-search');
       const practice = document.querySelector('#view-dashboard .cnc-home-route-card');
       return home?.build === '20260722b' && home?.refactorBuild === '20260804-mobile1' &&
-        dashboard && isVisible(nav) && isVisible(hero) && isVisible(query) && isVisible(practice);
+        dashboard && visible(nav) && visible(hero) && visible(query) && visible(practice);
     }, null, { timeout: 60000 });
     await page.waitForFunction(() => window.CNC_INDUSTRIAL_SAMPLE?.build === '20260722e', null, { timeout: 60000 });
     await page.waitForTimeout(1100);
@@ -106,7 +105,7 @@ function isVisible(node) {
         cards: cards.length,
         images: images.filter(Boolean).length,
         missingAlt: images.filter(image => image && !image.alt.trim()).length,
-        minTargetHeight: Math.min(...cards.map(card => card.getBoundingClientRect().height))
+        minTargetHeight: cards.length ? Math.min(...cards.map(card => card.getBoundingClientRect().height)) : 0
       };
     });
     assert.equal(study.columns, 1, '课程必须继续保持竖向单列');
