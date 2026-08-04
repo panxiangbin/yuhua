@@ -6,6 +6,7 @@ const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..', '..');
 const ROUTE_REPORT_PATH = path.join(ROOT, 'cnc', 'test-results', 'beginner-placement-route-catalog-drift', 'report.json');
+const HOME_PATH = path.join(ROOT, 'cnc', 'index.html');
 const SW_PATH = path.join(ROOT, 'cnc', 'sw.js');
 const SELF_TEST_PATH = path.join(ROOT, 'cnc', 'pwa-self-test.html');
 const OFFLINE_TEST_PATH = path.join(ROOT, 'cnc', 'tests', 'mobile-pwa-offline-cache-smoke.cjs');
@@ -20,6 +21,7 @@ const report = {
   sources: {},
   decisions: {},
   expectedFirstSteps: [],
+  homepageStylesheets: [],
   serviceWorkerCore: [],
   selfTestCore: [],
   offlineBrowserCourses: [],
@@ -117,6 +119,21 @@ function extractCourseObjectPaths(source, constantName) {
   return values;
 }
 
+function extractLocalStylesheets(source) {
+  const values = [];
+  const tags = source.match(/<link\b[^>]*>/gi) || [];
+  for (const tag of tags) {
+    const rel = /\brel\s*=\s*(?:"([^"]+)"|'([^']+)')/i.exec(tag);
+    const href = /\bhref\s*=\s*(?:"([^"]+)"|'([^']+)')/i.exec(tag);
+    const relValue = rel && (rel[1] || rel[2]);
+    const hrefValue = href && (href[1] || href[2]);
+    if (!relValue || !hrefValue || !relValue.split(/\s+/).includes('stylesheet')) continue;
+    expect(!/^(?:https?:|data:|\/\/)/i.test(hrefValue), `首页样式不得依赖站外资源：${hrefValue}`);
+    values.push(hrefValue);
+  }
+  return values;
+}
+
 function exactSetMatch(actual, expected) {
   return JSON.stringify([...actual].sort()) === JSON.stringify([...expected].sort());
 }
@@ -130,6 +147,7 @@ function main() {
   expect(routeReport.passed === true, '路线目录主报告未通过，不能审计首步离线核心');
   expect(routeReport.consumer && routeReport.consumer.routes, '路线目录主报告缺少消费端路线');
 
+  const homepage = readUtf8(HOME_PATH);
   const sw = readUtf8(SW_PATH);
   const selfTest = readUtf8(SELF_TEST_PATH);
   const offlineTest = readUtf8(OFFLINE_TEST_PATH);
@@ -137,6 +155,7 @@ function main() {
 
   report.sources = {
     routeReport: { file: 'cnc/test-results/beginner-placement-route-catalog-drift/report.json', sha256: sha256(routeReportSource) },
+    homepage: { file: 'cnc/index.html', sha256: sha256(homepage) },
     serviceWorker: { file: 'cnc/sw.js', sha256: sha256(sw) },
     selfTest: { file: 'cnc/pwa-self-test.html', sha256: sha256(selfTest) },
     offlineBrowserTest: { file: 'cnc/tests/mobile-pwa-offline-cache-smoke.cjs', sha256: sha256(offlineTest) },
@@ -163,6 +182,7 @@ function main() {
 
   const expectedFirstSteps = [...new Set(firstSteps)].sort();
   expect(expectedFirstSteps.length >= 1, '没有可用的首步课程');
+  const homepageStylesheets = sortedUnique(extractLocalStylesheets(homepage), '首页本地样式', normalizeCoreResourcePath);
   const serviceWorkerCore = sortedUnique(extractStringArray(sw, 'REQUIRED_CORE_PATHS'), 'Service Worker 核心资源', normalizeCoreResourcePath);
   const selfTestCore = sortedUnique(extractStringArray(selfTest, 'REQUIRED'), 'PWA 自检核心资源', normalizeCoreResourcePath);
   const offlineBrowserCourses = sortedUnique(extractCourseObjectPaths(offlineTest, 'PLACEMENT_FIRST_STEP_COURSES'), '冷离线浏览器首步课程', normalizeCoursePath);
@@ -170,17 +190,22 @@ function main() {
 
   const missingFromServiceWorker = expectedFirstSteps.filter(item => !serviceWorkerCore.includes(item));
   const missingFromSelfTest = expectedFirstSteps.filter(item => !selfTestCore.includes(item));
+  const homepageStylesMissingFromServiceWorker = homepageStylesheets.filter(item => !serviceWorkerCore.includes(item));
+  const homepageStylesMissingFromSelfTest = homepageStylesheets.filter(item => !selfTestCore.includes(item));
   const offlineBrowserCourseSetExact = exactSetMatch(offlineBrowserCourses, expectedFirstSteps);
   const upgradeCourseSetExact = exactSetMatch(upgradeCourses, expectedFirstSteps);
   const serviceWorkerAndSelfTestCoreExact = exactSetMatch(serviceWorkerCore, selfTestCore);
 
   expect(missingFromServiceWorker.length === 0, `Service Worker 未缓存当前路线首步：${missingFromServiceWorker.join('、')}`);
   expect(missingFromSelfTest.length === 0, `PWA 自检未核对当前路线首步：${missingFromSelfTest.join('、')}`);
+  expect(homepageStylesMissingFromServiceWorker.length === 0, `Service Worker 未缓存首页本地样式：${homepageStylesMissingFromServiceWorker.join('、')}`);
+  expect(homepageStylesMissingFromSelfTest.length === 0, `PWA 自检未核对首页本地样式：${homepageStylesMissingFromSelfTest.join('、')}`);
   expect(offlineBrowserCourseSetExact, `冷离线浏览器首步课程与路线目录不一致：${JSON.stringify(offlineBrowserCourses)} / ${JSON.stringify(expectedFirstSteps)}`);
   expect(upgradeCourseSetExact, `升级保护首步课程与路线目录不一致：${JSON.stringify(upgradeCourses)} / ${JSON.stringify(expectedFirstSteps)}`);
   expect(serviceWorkerAndSelfTestCoreExact, 'Service Worker 与 PWA 自检核心资源集合不一致');
 
   report.expectedFirstSteps = expectedFirstSteps;
+  report.homepageStylesheets = homepageStylesheets;
   report.serviceWorkerCore = serviceWorkerCore;
   report.selfTestCore = selfTestCore;
   report.offlineBrowserCourses = offlineBrowserCourses;
@@ -188,18 +213,23 @@ function main() {
   report.checks = {
     decisionCount: decisionEntries.length,
     uniqueFirstStepCount: expectedFirstSteps.length,
+    homepageStylesheetCount: homepageStylesheets.length,
     routeHrefMatchesFirstStep: true,
     firstStepTargetsExist: true,
     firstStepsInServiceWorker: true,
     firstStepsInSelfTest: true,
+    homepageStylesInServiceWorker: true,
+    homepageStylesInSelfTest: true,
     offlineBrowserCourseSetExact,
     upgradeCourseSetExact,
     serviceWorkerAndSelfTestCoreExact,
     missingFromServiceWorker,
-    missingFromSelfTest
+    missingFromSelfTest,
+    homepageStylesMissingFromServiceWorker,
+    homepageStylesMissingFromSelfTest
   };
   report.passed = true;
-  console.log(`CNC 测评首步离线核心防漂移通过：${decisionEntries.length} 类决策归并为 ${expectedFirstSteps.length} 张首步课程，Service Worker、自检、冷离线与升级保护完全一致。`);
+  console.log(`CNC 测评首步离线核心防漂移通过：${decisionEntries.length} 类决策归并为 ${expectedFirstSteps.length} 张首步课程，${homepageStylesheets.length} 个首页本地样式与 Service Worker、自检、冷离线和升级保护完全一致。`);
 }
 
 try {
