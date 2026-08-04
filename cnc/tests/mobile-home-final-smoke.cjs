@@ -211,6 +211,57 @@ async function decodeAllCourseImages(page) {
   });
 }
 
+async function decodeAllQueryImages(page) {
+  const selector = '#view-workspace .result-card.has-thumb .result-thumb img';
+  const images = page.locator(selector);
+  const total = await images.count();
+
+  for (let index = 0; index < total; index += 1) {
+    const image = images.nth(index);
+    await image.scrollIntoViewIfNeeded();
+    await image.evaluate(async node => {
+      node.loading = 'eager';
+      if (node.complete && node.naturalWidth > 0) return;
+      await Promise.race([
+        node.decode().catch(() => undefined),
+        new Promise(resolve => setTimeout(resolve, 3000))
+      ]);
+      if (!node.complete) {
+        await Promise.race([
+          new Promise(resolve => {
+            node.addEventListener('load', resolve, { once: true });
+            node.addEventListener('error', resolve, { once: true });
+          }),
+          new Promise(resolve => setTimeout(resolve, 3000))
+        ]);
+      }
+    });
+  }
+
+  await page.waitForTimeout(300);
+  return page.evaluate(querySelector => {
+    const cards = Array.from(document.querySelectorAll('#view-workspace .result-card'));
+    const imageNodes = Array.from(document.querySelectorAll(querySelector));
+    const items = imageNodes.map(image => ({
+      src: image.getAttribute('src'),
+      alt: image.alt,
+      complete: image.complete,
+      naturalWidth: image.naturalWidth,
+      naturalHeight: image.naturalHeight,
+      loading: image.loading
+    }));
+    return {
+      count: cards.length,
+      withImages: imageNodes.length,
+      decoded: items.filter(item => item.complete && item.naturalWidth > 0).length,
+      unresolved: items.filter(item => !item.complete || item.naturalWidth <= 0),
+      titles: cards.slice(0, 8).map(card => card.querySelector('h4')?.textContent?.trim() || ''),
+      imageSources: items.map(item => item.src),
+      items
+    };
+  }, selector);
+}
+
 async function testLearningAndQuery(browser, report) {
   const errors = [], failedRequests = [], failures = [];
   const context = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block' });
@@ -232,18 +283,7 @@ async function testLearningAndQuery(browser, report) {
   await page.locator('#quick-search-btn').click();
   await page.locator('#view-workspace.active').waitFor();
   await page.locator('.result-card').first().waitFor();
-  await page.waitForTimeout(500);
-  const query = await page.evaluate(() => {
-    const cards = Array.from(document.querySelectorAll('#view-workspace .result-card'));
-    const images = Array.from(document.querySelectorAll('#view-workspace .result-card.has-thumb .result-thumb img'));
-    return {
-      count: cards.length,
-      withImages: images.length,
-      decoded: images.filter(image => image.complete && image.naturalWidth > 0).length,
-      titles: cards.slice(0, 8).map(card => card.querySelector('h4')?.textContent?.trim() || ''),
-      imageSources: images.slice(0, 8).map(image => image.getAttribute('src'))
-    };
-  });
+  const query = await decodeAllQueryImages(page);
   await page.screenshot({ path: path.join(out, 'mobile-query-g41-results.png'), fullPage: true });
 
   check(learning.totalCards === 12, `course card count ${learning.totalCards}`, failures);
@@ -255,8 +295,9 @@ async function testLearningAndQuery(browser, report) {
   check(learning.visibleCardsWithVisibleImages === learning.visibleCards, `visible cards with images ${learning.visibleCardsWithVisibleImages}/${learning.visibleCards}`, failures);
   check(query.count > 0, 'G41 query returned no results', failures);
   check(query.withImages > 0, 'G41 query returned no mapped images', failures);
-  check(query.decoded === query.withImages, `query image decode ${query.decoded}/${query.withImages}`, failures);
+  check(query.decoded === query.withImages, `query image decode ${query.decoded}/${query.withImages}: ${query.unresolved.map(item => item.src).join(', ')}`, failures);
   check(errors.length === 0, `learning/query console errors: ${errors.join(' | ')}`, failures);
+  check(failedRequests.length === 0, `learning/query failed resources: ${failedRequests.map(item => item.url).join(' | ')}`, failures);
   report.learningAndQuery = { learning, query, errors, failedRequests, failures };
   await context.close();
 }
