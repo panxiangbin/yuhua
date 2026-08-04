@@ -19,6 +19,7 @@ const report = {
   explicitAlertVisible: false,
   summaryBlocked: false,
   recommendationBlocked: false,
+  publicApiBlocked: false,
   healthLink: false,
   backupLink: false,
   passed: false
@@ -61,6 +62,24 @@ function writeDiagnostics(error) {
     const summary = await page.locator('#course-progress').textContent();
     report.summaryBlocked = /数据异常|不可用|--/.test(summary || '');
 
+    const publicApi = await page.evaluate(() => ({
+      initialSummary: window.CNC_AI_TEACHER?.initialSummary || null,
+      currentSummary: typeof window.CNC_AI_TEACHER?.getSummary === 'function'
+        ? window.CNC_AI_TEACHER.getSummary()
+        : null
+    }));
+    report.publicApi = publicApi;
+    report.publicApiBlocked = publicApi.initialSummary?.integrity === 'blocked'
+      && publicApi.currentSummary?.integrity === 'blocked'
+      && publicApi.initialSummary?.courses === null
+      && publicApi.initialSummary?.wrong === null
+      && publicApi.initialSummary?.simulations === null
+      && publicApi.initialSummary?.weakest === null
+      && publicApi.currentSummary?.courses === null
+      && publicApi.currentSummary?.wrong === null
+      && publicApi.currentSummary?.simulations === null
+      && publicApi.currentSummary?.weakest === null;
+
     await page.locator('[data-intent="next"]').click();
     await page.waitForTimeout(100);
     const answerStatus = await page.locator('#answer-status').textContent();
@@ -72,6 +91,7 @@ function writeDiagnostics(error) {
 
     logs.push(`显式异常提示：${report.explicitAlertVisible}`);
     logs.push(`汇总停止显示可信进度：${report.summaryBlocked}（${summary}）`);
+    logs.push(`公开摘要接口停止伪报零进度：${report.publicApiBlocked}`);
     logs.push(`个性化推荐已阻断：${report.recommendationBlocked}（${answerStatus}）`);
     logs.push(`数据健康入口：${report.healthLink}`);
     logs.push(`备份恢复入口：${report.backupLink}`);
@@ -81,6 +101,7 @@ function writeDiagnostics(error) {
     assert.equal(report.staticSilentFallbackDetected, false, 'AI老师仍将解析失败静默替换为空对象');
     assert.equal(report.explicitAlertVisible, true, '损坏档案时必须显示可见、可访问的数据异常提示');
     assert.equal(report.summaryBlocked, true, '损坏档案时不得继续显示 0/12 等伪装成真实进度的汇总');
+    assert.equal(report.publicApiBlocked, true, '损坏档案时公开 initialSummary/getSummary 接口不得继续暴露可信零进度');
     assert.equal(report.recommendationBlocked, true, '损坏档案时必须暂停基于不可信数据的个性化推荐');
     assert.equal(report.healthLink, true, '异常处置必须提供数据健康检查入口');
     assert.equal(report.backupLink, true, '异常处置必须提供备份恢复入口');
