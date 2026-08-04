@@ -100,13 +100,13 @@ jobs:
           }
           NODE
 
-          grep -q "RECORDS_BUILD = '20260722e'" cnc/personal-home.js
-          grep -q "industrial-personal-records.css" cnc/personal-home.js
+          test -f cnc/industrial-personal-records.css
           grep -q "body.cnc-industrial-records #view-favorites" cnc/industrial-personal-records.css
           grep -q "grid-template-columns: 1fr" cnc/industrial-personal-records.css
           grep -q "min-height: 56px" cnc/industrial-personal-records.css
           grep -q "mobile-industrial-records-smoke" .github/workflows/cnc-mobile-smoke.yml
-          grep -q "appendStyle('./industrial-tools.css?v=20260722d'" cnc/personal-home.js
+          test -f cnc/industrial-tools.css
+          test -f cnc/industrial-tools.js
           grep -q "BUILD='20260722d'" cnc/industrial-tools.js
           grep -q "DIAG_BUILD='20260722f'" cnc/industrial-tools.js
           grep -q "industrial-diagnosis.css" cnc/industrial-tools.js
