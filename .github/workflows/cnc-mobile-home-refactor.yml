@@ -4,12 +4,12 @@ on:
   pull_request:
     paths:
       - 'cnc/**'
-      - '.github/workflows/cnc-*.yml'
+      - '.github/workflows/cnc-mobile-home-refactor.yml'
   push:
     branches: [main]
     paths:
       - 'cnc/**'
-      - '.github/workflows/cnc-*.yml'
+      - '.github/workflows/cnc-mobile-home-refactor.yml'
   workflow_dispatch:
 
 permissions:
@@ -37,35 +37,54 @@ jobs:
           from pathlib import Path
           from datetime import datetime, timezone
           import json
+          import re
 
           current = '20260804-pwa11'
           target = '20260804-pwa12'
-          extensions = {'.js', '.cjs', '.json', '.html', '.md', '.yml', '.yaml'}
-          roots = [Path('cnc'), Path('.github/workflows')]
+          extensions = {'.js', '.cjs', '.json', '.html', '.md'}
+          root = Path('cnc')
           changed = []
 
-          for root in roots:
-              for file in root.rglob('*'):
-                  if not file.is_file() or file.suffix.lower() not in extensions:
-                      continue
-                  if 'node_modules' in file.parts or 'test-results' in file.parts or 'docs' in file.parts:
-                      continue
-                  text = file.read_text(encoding='utf-8')
-                  updated = text.replace(current, target)
-                  if updated != text:
-                      file.write_text(updated, encoding='utf-8')
-                      changed.append(str(file))
+          for file in root.rglob('*'):
+              if not file.is_file() or file.suffix.lower() not in extensions:
+                  continue
+              if 'node_modules' in file.parts or 'test-results' in file.parts or 'docs' in file.parts:
+                  continue
+              text = file.read_text(encoding='utf-8')
+              updated = text.replace(current, target)
+              if file.as_posix() == 'cnc/tests/pwa-build-reference-audit-smoke.cjs':
+                  updated = re.sub(
+                      r"const PREVIOUS_PWA_BUILD = '[^']+';",
+                      "const PREVIOUS_PWA_BUILD = '20260804-pwa11';",
+                      updated,
+                      count=1
+                  )
+              if file.as_posix() == 'cnc/tests/mobile-pwa-upgrade-data-smoke.cjs':
+                  updated = re.sub(
+                      r"const PREVIOUS_PWA_BUILD = '[^']+';",
+                      "const PREVIOUS_PWA_BUILD = '20260804-pwa11';",
+                      updated,
+                      count=1
+                  )
+              if updated != text:
+                  file.write_text(updated, encoding='utf-8')
+                  changed.append(str(file))
 
           info_path = Path('cnc/build-info.json')
           info = json.loads(info_path.read_text(encoding='utf-8'))
-          info['build'] = '20260804-mobile-home1'
-          info['pwaBuild'] = target
-          info['mobileBuild'] = '20260804-mobile-home1'
-          info['cacheRevision'] = '20260804-mobile12'
-          info['generatedAt'] = datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
-          info_path.write_text(json.dumps(info, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
-          if str(info_path) not in changed:
-              changed.append(str(info_path))
+          desired = {
+              'build': '20260804-mobile-home1',
+              'pwaBuild': target,
+              'mobileBuild': '20260804-mobile-home1',
+              'cacheRevision': '20260804-mobile12'
+          }
+          info_changed = any(info.get(key) != value for key, value in desired.items())
+          if info_changed:
+              info.update(desired)
+              info['generatedAt'] = datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
+              info_path.write_text(json.dumps(info, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+              if str(info_path) not in changed:
+                  changed.append(str(info_path))
 
           print(f'PWA references synchronized: {len(changed)} files')
           for file in changed:
@@ -80,7 +99,7 @@ jobs:
           if (git status --porcelain) {
             git config user.name 'github-actions[bot]'
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git add cnc .github/workflows
+            git add -u cnc
             git commit -m 'chore(cnc-mobile): bump PWA12 for mobile home release'
             git push origin HEAD:codex/mobile-home-refactor-20260804
           } else {
