@@ -51,6 +51,12 @@ jobs:
             if (!script.includes(token)) throw new Error(`PWA引用审计缺少结构契约：${token}`);
           }
 
+          const legacyBlock = script.match(/const\s+DECLARED_LEGACY_REFERENCES\s*=\s*\[([\s\S]*?)\n\];/)?.[1] || '';
+          const declaredLegacyCount = (legacyBlock.match(/\{\s*\n\s*file:/g) || []).length;
+          if (declaredLegacyCount < 2) {
+            throw new Error(`PWA历史引用声明解析异常：${declaredLegacyCount}`);
+          }
+
           const report = JSON.parse(fs.readFileSync('cnc/test-results/pwa-build-reference-audit/report.json', 'utf8'));
           if (!report.passed) throw new Error('PWA引用审计报告未通过');
 
@@ -78,8 +84,8 @@ jobs:
           if (report.operationalReferenceCount < 10) {
             throw new Error(`PWA运行引用覆盖不足：${report.operationalReferenceCount}`);
           }
-          if (report.legacyReferenceCount !== 2) {
-            throw new Error(`PWA受控历史诊断引用必须恰好为2：${report.legacyReferenceCount}`);
+          if (report.legacyReferenceCount !== declaredLegacyCount) {
+            throw new Error(`PWA受控历史引用数量与声明清单不一致：实际${report.legacyReferenceCount}，声明${declaredLegacyCount}`);
           }
           for (const key of ['staleActivePins', 'unexpectedReferences', 'unusedLegacyAllowances']) {
             if (!Array.isArray(report[key]) || report[key].length !== 0) {
