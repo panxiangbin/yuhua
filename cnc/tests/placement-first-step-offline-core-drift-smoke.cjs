@@ -47,7 +47,10 @@ function readUtf8(file) {
 }
 
 function normalizeRelativePath(value, label, extensionPattern) {
-  const normalized = `./${String(value || '').trim().replace(/^\.?\//, '')}`;
+  const raw = String(value || '').trim();
+  expect(!/^(?:https?:|data:|\/\/)/i.test(raw), `${label}不得使用站外资源：${value}`);
+  const pathname = raw.split(/[?#]/, 1)[0];
+  const normalized = `./${pathname.replace(/^\.?\//, '')}`;
   expect(new RegExp(`^\\./[a-z0-9-]+\\.${extensionPattern}$`).test(normalized), `${label}路径不受控：${value}`);
   return normalized;
 }
