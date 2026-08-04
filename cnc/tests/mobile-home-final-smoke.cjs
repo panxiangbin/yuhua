@@ -213,53 +213,52 @@ async function decodeAllCourseImages(page) {
 
 async function decodeAllQueryImages(page) {
   const selector = '#view-workspace .result-card.has-thumb .result-thumb img';
-  const images = page.locator(selector);
-  const total = await images.count();
+  const expectedImages = await page.locator(selector).count();
+  let snapshot = null;
 
-  for (let index = 0; index < total; index += 1) {
-    const image = images.nth(index);
-    await image.scrollIntoViewIfNeeded();
-    await image.evaluate(async node => {
-      node.loading = 'eager';
-      if (node.complete && node.naturalWidth > 0) return;
-      await Promise.race([
-        node.decode().catch(() => undefined),
-        new Promise(resolve => setTimeout(resolve, 3000))
-      ]);
-      if (!node.complete) {
-        await Promise.race([
-          new Promise(resolve => {
-            node.addEventListener('load', resolve, { once: true });
-            node.addEventListener('error', resolve, { once: true });
-          }),
-          new Promise(resolve => setTimeout(resolve, 3000))
-        ]);
-      }
-    });
+  for (let pass = 0; pass < 4; pass += 1) {
+    const scrollHeight = await page.evaluate(querySelector => {
+      document.querySelectorAll(querySelector).forEach(image => { image.loading = 'eager'; });
+      return Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+    }, selector);
+
+    for (let y = 0; y <= scrollHeight; y += 420) {
+      await page.evaluate(({ querySelector, top }) => {
+        document.querySelectorAll(querySelector).forEach(image => { image.loading = 'eager'; });
+        window.scrollTo({ top, behavior: 'instant' });
+      }, { querySelector: selector, top: y });
+      await page.waitForTimeout(70);
+    }
+
+    snapshot = await page.evaluate(querySelector => {
+      const cards = Array.from(document.querySelectorAll('#view-workspace .result-card'));
+      const imageNodes = Array.from(document.querySelectorAll(querySelector));
+      const items = imageNodes.map(image => ({
+        src: image.getAttribute('src'),
+        alt: image.alt,
+        complete: image.complete,
+        naturalWidth: image.naturalWidth,
+        naturalHeight: image.naturalHeight,
+        loading: image.loading
+      }));
+      return {
+        count: cards.length,
+        withImages: imageNodes.length,
+        decoded: items.filter(item => item.complete && item.naturalWidth > 0).length,
+        unresolved: items.filter(item => !item.complete || item.naturalWidth <= 0),
+        titles: cards.slice(0, 8).map(card => card.querySelector('h4')?.textContent?.trim() || ''),
+        imageSources: items.map(item => item.src),
+        items
+      };
+    }, selector);
+
+    if (snapshot.withImages === expectedImages && snapshot.decoded === snapshot.withImages) break;
+    await page.waitForTimeout(250);
   }
 
-  await page.waitForTimeout(300);
-  return page.evaluate(querySelector => {
-    const cards = Array.from(document.querySelectorAll('#view-workspace .result-card'));
-    const imageNodes = Array.from(document.querySelectorAll(querySelector));
-    const items = imageNodes.map(image => ({
-      src: image.getAttribute('src'),
-      alt: image.alt,
-      complete: image.complete,
-      naturalWidth: image.naturalWidth,
-      naturalHeight: image.naturalHeight,
-      loading: image.loading
-    }));
-    return {
-      count: cards.length,
-      withImages: imageNodes.length,
-      decoded: items.filter(item => item.complete && item.naturalWidth > 0).length,
-      unresolved: items.filter(item => !item.complete || item.naturalWidth <= 0),
-      titles: cards.slice(0, 8).map(card => card.querySelector('h4')?.textContent?.trim() || ''),
-      imageSources: items.map(item => item.src),
-      items
-    };
-  }, selector);
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  await page.waitForTimeout(200);
+  return { expectedImages, ...snapshot };
 }
 
 async function testLearningAndQuery(browser, report) {
@@ -294,7 +293,8 @@ async function testLearningAndQuery(browser, report) {
   check(learning.visibleCards > 0, 'no visible course cards', failures);
   check(learning.visibleCardsWithVisibleImages === learning.visibleCards, `visible cards with images ${learning.visibleCardsWithVisibleImages}/${learning.visibleCards}`, failures);
   check(query.count > 0, 'G41 query returned no results', failures);
-  check(query.withImages > 0, 'G41 query returned no mapped images', failures);
+  check(query.expectedImages > 0, 'G41 query returned no mapped images', failures);
+  check(query.withImages === query.expectedImages, `query image DOM count changed ${query.withImages}/${query.expectedImages}`, failures);
   check(query.decoded === query.withImages, `query image decode ${query.decoded}/${query.withImages}: ${query.unresolved.map(item => item.src).join(', ')}`, failures);
   check(errors.length === 0, `learning/query console errors: ${errors.join(' | ')}`, failures);
   check(failedRequests.length === 0, `learning/query failed resources: ${failedRequests.map(item => item.url).join(' | ')}`, failures);
