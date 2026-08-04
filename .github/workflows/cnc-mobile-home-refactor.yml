@@ -1,0 +1,59 @@
+name: CNC mobile home refactor acceptance
+
+on:
+  push:
+    branches:
+      - codex/mobile-home-refactor-20260804
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-mobile-home-refactor.yml'
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-mobile-home-refactor.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mobile-home-acceptance:
+    runs-on: windows-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Playwright library without bundled browsers
+        shell: pwsh
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+        run: npm install --no-save playwright@1.54.2
+
+      - name: Verify Microsoft Edge is available
+        shell: pwsh
+        run: |
+          $edge = 'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe'
+          if (-not (Test-Path $edge)) { throw "Microsoft Edge not found at $edge" }
+          & $edge --version
+
+      - name: Run mobile and desktop acceptance suite
+        shell: pwsh
+        env:
+          CNC_EDGE_PATH: 'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe'
+        run: node cnc/tests/mobile-home-refactor-smoke.cjs
+
+      - name: Upload screenshots and report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-mobile-home-refactor-evidence
+          path: cnc/test-results/mobile-home-refactor
+          if-no-files-found: error
+          retention-days: 30
