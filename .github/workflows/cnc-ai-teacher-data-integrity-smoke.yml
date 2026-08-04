@@ -74,6 +74,9 @@ jobs:
           set +e
           node cnc/tests/ai-teacher-data-integrity-smoke.cjs 2>&1 | tee cnc/test-results/ai-teacher-data-integrity-run.log
           code=${PIPESTATUS[0]}
+          if [ "$code" = "0" ]; then
+            printf '390×844损坏档案保护真实浏览器验收通过\n' >> cnc/test-results/ai-teacher-data-integrity-run.log
+          fi
           echo "exit_code=${code}" >> "$GITHUB_OUTPUT"
           exit 0
 
