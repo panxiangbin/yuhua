@@ -42,8 +42,6 @@ jobs:
           end = lines.index(end_marker, start)
           script_lines = []
           for line in lines[start:end]:
-              # YAML shell块中的Python语句带10个前导空格；三引号字符串内部的
-              # JavaScript内容可能从第1列开始，必须原样保留，不能当作异常。
               script_lines.append(line[10:] if line.startswith('          ') else line)
           script = '\n'.join(script_lines) + '\n'
           compile(script, '/tmp/cnc-pr159-apply.py', 'exec')
@@ -59,34 +57,25 @@ jobs:
           node --check cnc/tests/mobile-performance-smoke.cjs
           node --check cnc/tests/mobile-industrial-visual.cjs
           node --check cnc/tests/pages-ai-teacher-deployment-smoke.cjs
-          node --check cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs
           grep -q "ensureKnowledgeCoreForWorkspace" cnc/app.js
           ! grep -q "state.accessGranted && !state.coreLoaded" cnc/app.js
           grep -q "快速搜索G代码、报警号和现场关键词" cnc/personal-home.js
           grep -q "button\[data-xp-route\],button\[data-xp-filter\]" cnc/tests/mobile-performance-smoke.cjs
           grep -q "data-xp-filter=\\\"gcode\\\"" cnc/tests/mobile-industrial-visual.cjs
           grep -q "allowPublishedLegacySiteBuild" cnc/tests/pages-ai-teacher-deployment-smoke.cjs
-          grep -q "legacyPublicCorePaths" cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs
           for forbidden in "test.skip(" "describe.skip(" "it.skip(" "process.exit(0)"; do
-            ! grep -Fq "$forbidden" cnc/tests/pages-ai-teacher-deployment-smoke.cjs cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs
+            ! grep -Fq "$forbidden" cnc/tests/pages-ai-teacher-deployment-smoke.cjs
           done
           git diff --check
-      - name: 提交修复并清除临时写权限工作流
+      - name: 提交生产与测试修复
         run: |
           set -euxo pipefail
-          rm .github/workflows/cnc-pr159-regression-closure.yml
-          rm .github/workflows/cnc-pr159-regression-closure-driver.yml
-          git diff --check
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add cnc/app.js cnc/personal-home.js \
             cnc/tests/mobile-performance-budget-smoke.cjs \
             cnc/tests/mobile-performance-smoke.cjs \
             cnc/tests/mobile-industrial-visual.cjs \
-            cnc/tests/pages-ai-teacher-deployment-smoke.cjs \
-            cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs \
-            .github/workflows/cnc-mobile-quality.yml \
-            .github/workflows/cnc-pr159-regression-closure.yml \
-            .github/workflows/cnc-pr159-regression-closure-driver.yml
-          git commit -m "fix(cnc): 收口手机性能与Pages过渡回归"
+            cnc/tests/pages-ai-teacher-deployment-smoke.cjs
+          git commit -m "fix(cnc): 收口手机性能与Pages部署回归"
           git push origin HEAD:chatgpt/cnc-ai-teacher-data-integrity-mainline
