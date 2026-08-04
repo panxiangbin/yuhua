@@ -1,0 +1,229 @@
+name: CNC PR155 targeted regression repair
+on:
+  push:
+    branches:
+      - chatgpt/cnc-home-refresh-regression-fix
+    paths:
+      - '.github/workflows/cnc-pr155-targeted-repair.yml'
+permissions:
+  contents: write
+concurrency:
+  group: cnc-pr155-targeted-repair
+  cancel-in-progress: false
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chatgpt/cnc-home-refresh-regression-fix
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Apply exact CNC-only repairs
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          import re
+
+          root = Path('.')
+          workflow = Path('.github/workflows/cnc-pr155-targeted-repair.yml')
+          changed = set()
+
+          def read(path):
+              return Path(path).read_text(encoding='utf-8')
+
+          def write(path, text):
+              path = Path(path)
+              old = path.read_text(encoding='utf-8')
+              if old != text:
+                  path.write_text(text, encoding='utf-8')
+                  changed.add(path.as_posix())
+
+          def replace_exact(path, old, new, minimum=1, maximum=None):
+              text = read(path)
+              count = text.count(old)
+              if count < minimum or (maximum is not None and count > maximum):
+                  raise SystemExit(f'{path}: replacement count {count}, expected {minimum}..{maximum}')
+              write(path, text.replace(old, new))
+
+          # 1) 查询参数属于同一站内资源，先剥离query/hash再做严格白名单校验。
+          replace_exact(
+              'cnc/tests/placement-first-step-offline-core-drift-smoke.cjs',
+              "function normalizeRelativePath(value, label, extensionPattern) {\n  const normalized = `./${String(value || '').trim().replace(/^\\.?\\//, '')}`;\n  expect(new RegExp(`^\\\\./[a-z0-9-]+\\\\.${extensionPattern}$`).test(normalized), `${label}路径不受控：${value}`);\n  return normalized;\n}",
+              "function normalizeRelativePath(value, label, extensionPattern) {\n  const raw = String(value || '').trim();\n  expect(!/^(?:https?:|data:|\\/\\/)/i.test(raw), `${label}不得使用站外资源：${value}`);\n  const pathname = raw.split(/[?#]/, 1)[0];\n  const normalized = `./${pathname.replace(/^\\.?\\//, '')}`;\n  expect(new RegExp(`^\\\\./[a-z0-9-]+\\\\.${extensionPattern}$`).test(normalized), `${label}路径不受控：${value}`);\n  return normalized;\n}",
+              minimum=1,
+              maximum=1
+          )
+
+          # 2) AI老师真实浏览器门禁同步当前站点构建，不再等待已过期构建针。
+          ai_build_files = [Path('cnc/tests/mobile-ai-teacher-smoke.cjs')]
+          ai_build_files += list(Path('.github/workflows').glob('cnc-ai-teacher*.yml'))
+          ai_build_files += list(Path('cnc/tests').glob('*ai-teacher*.cjs'))
+          for path in sorted(set(ai_build_files)):
+              if not path.exists():
+                  continue
+              text = read(path)
+              if '20260801-ai-handoff1' in text:
+                  write(path, text.replace('20260801-ai-handoff1', '20260804-home-refresh1'))
+
+          # 3) 核心自检资源发生变化，严格升级PWA11到PWA12；PWA11成为唯一受控上一版本。
+          production = [
+              Path('cnc/sw.js'),
+              Path('cnc/build-info.json'),
+              Path('cnc/pwa-status.html'),
+              Path('cnc/pwa-self-test.html'),
+          ]
+          for path in production:
+              text = read(path)
+              if '20260804-pwa11' not in text:
+                  raise SystemExit(f'{path}: missing current PWA11 marker')
+              write(path, text.replace('20260804-pwa11', '20260804-pwa12'))
+
+          version_targets = set()
+          version_targets.update(Path('cnc/tests').glob('*pwa*.cjs'))
+          version_targets.update([
+              Path('cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs'),
+              Path('cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs'),
+              Path('cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs'),
+          ])
+          version_targets.update(Path('.github/workflows').glob('cnc-*pwa*.yml'))
+          version_targets.update([
+              Path('.github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml'),
+              Path('.github/workflows/cnc-beginner-placement-offline-pages-smoke.yml'),
+              Path('.github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml'),
+          ])
+          for path in sorted(version_targets):
+              if not path.exists():
+                  continue
+              text = read(path)
+              text = text.replace('20260804-pwa11', '20260804-pwa12')
+              text = text.replace('20260803-pwa9', '20260804-pwa11')
+              write(path, text)
+
+          # 4) 三项精确部署门禁以真实15项核心资源核验首页本地CSS。
+          pages_tests = [
+              'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs',
+              'cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs',
+              'cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs',
+          ]
+          for path in pages_tests:
+              replace_exact(
+                  path,
+                  "    './index.html',\n    './offline.html',",
+                  "    './index.html',\n    './homepage-refresh.css',\n    './offline.html',",
+                  minimum=1,
+                  maximum=1
+              )
+
+          for path in [
+              'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs',
+              '.github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml',
+          ]:
+              text = read(path)
+              if 'fourteenCoreResourcesVerified' in text:
+                  write(path, text.replace('fourteenCoreResourcesVerified', 'fifteenCoreResourcesVerified'))
+
+          # 5) PWA12说明和构建阶段必须准确描述本次缓存刷新目的。
+          pwa_phrase_old = 'PWA10用于刷新已清理开发占位后的核心课程正文'
+          pwa_phrase_new = 'PWA12用于刷新桌面首页本地样式、自检核心资源与离线缓存的一致性'
+          for path in [
+              'cnc/pwa-status.html',
+              'cnc/pwa-self-test.html',
+              '.github/workflows/cnc-pwa-self-test-smoke.yml',
+          ]:
+              text = read(path)
+              if pwa_phrase_old in text:
+                  write(path, text.replace(pwa_phrase_old, pwa_phrase_new))
+
+          info_path = Path('cnc/build-info.json')
+          info = json.loads(read(info_path))
+          if info.get('build') != '20260804-home-refresh1' or info.get('pwaBuild') != '20260804-pwa12':
+              raise SystemExit(f'unexpected build marker: {info}')
+          stage = str(info.get('contentStage') or '')
+          if '桌面首页离线样式一致性' not in stage:
+              info['contentStage'] = stage + ' · 桌面首页离线样式一致性'
+          info['generatedAt'] = '2026-08-04T11:31:00+08:00'
+          write(info_path, json.dumps(info, ensure_ascii=False, indent=2) + '\n')
+
+          # 6) PR期间允许已知main旧AI页面构建针存在，但必须由当前分支精确修复；main push仍保持严格一致。
+          deploy_path = 'cnc/tests/pages-ai-teacher-deployment-smoke.cjs'
+          replace_exact(
+              deploy_path,
+              "function assertContracts(source, label) {\n  const page = assertAiTeacher(source['cnc/ai-teacher.html'].buffer.toString('utf8').replace(/^\\uFEFF/, ''), `${label} AI老师页面`);\n  const sw = assertServiceWorker(source['cnc/sw.js'].buffer.toString('utf8').replace(/^\\uFEFF/, ''), `${label} Service Worker`);\n  const info = assertBuildInfo(source['cnc/build-info.json'].buffer.toString('utf8').replace(/^\\uFEFF/, ''), `${label} 构建信息`);\n  if (page.build !== info.build) throw new Error(`${label} AI老师页面与站点构建不一致：${page.build} / ${info.build}`);\n  if (sw.build !== info.pwaBuild) throw new Error(`${label} Service Worker 与 PWA 构建不一致：${sw.build} / ${info.pwaBuild}`);\n  return { page, serviceWorker: sw, buildInfo: info };\n}",
+              "function assertContracts(source, label, { allowSiteBuildDrift = false } = {}) {\n  const page = assertAiTeacher(source['cnc/ai-teacher.html'].buffer.toString('utf8').replace(/^\\uFEFF/, ''), `${label} AI老师页面`);\n  const sw = assertServiceWorker(source['cnc/sw.js'].buffer.toString('utf8').replace(/^\\uFEFF/, ''), `${label} Service Worker`);\n  const info = assertBuildInfo(source['cnc/build-info.json'].buffer.toString('utf8').replace(/^\\uFEFF/, ''), `${label} 构建信息`);\n  const siteBuildConsistent = page.build === info.build;\n  if (!siteBuildConsistent && !allowSiteBuildDrift) throw new Error(`${label} AI老师页面与站点构建不一致：${page.build} / ${info.build}`);\n  if (sw.build !== info.pwaBuild) throw new Error(`${label} Service Worker 与 PWA 构建不一致：${sw.build} / ${info.pwaBuild}`);\n  return { page, serviceWorker: sw, buildInfo: info, siteBuildConsistent };\n}",
+              minimum=1,
+              maximum=1
+          )
+          replace_exact(
+              deploy_path,
+              "    const mainContracts = assertContracts(published.main, 'main');\n    const pagesContracts = assertContracts(published.pages, 'Pages公网');\n    const localMatchesMain = exactSetMatch(local, published.main);",
+              "    const allowPublishedSiteBuildDrift = eventName === 'pull_request';\n    const mainContracts = assertContracts(published.main, 'main', { allowSiteBuildDrift: allowPublishedSiteBuildDrift });\n    const pagesContracts = assertContracts(published.pages, 'Pages公网', { allowSiteBuildDrift: allowPublishedSiteBuildDrift });\n    const localMatchesMain = exactSetMatch(local, published.main);\n\n    if (allowPublishedSiteBuildDrift && (!mainContracts.siteBuildConsistent || !pagesContracts.siteBuildConsistent)) {\n      if (mainContracts.page.build !== pagesContracts.page.build || mainContracts.buildInfo.build !== pagesContracts.buildInfo.build) {\n        throw new Error('PR期间main与Pages的AI老师构建漂移状态必须完全一致');\n      }\n      if (localContracts.page.build !== mainContracts.buildInfo.build) {\n        throw new Error(`当前分支没有修复main站点构建针：${localContracts.page.build} / ${mainContracts.buildInfo.build}`);\n      }\n      if (localMatchesMain) throw new Error('已知main构建漂移只能由包含修复的PR分支临时验收');\n    }",
+              minimum=1,
+              maximum=1
+          )
+          replace_exact(
+              deploy_path,
+              "      buildConsistency: true,",
+              "      buildConsistency: localContracts.siteBuildConsistent,\n      publishedBaselineSiteBuildConsistent: mainContracts.siteBuildConsistent && pagesContracts.siteBuildConsistent,",
+              minimum=1,
+              maximum=1
+          )
+
+          # 7) 生产PWA与自检必须保持15项精确一致，且所有改动路径均在CNC许可范围。
+          sw_text = read('cnc/sw.js')
+          self_text = read('cnc/pwa-self-test.html')
+          if sw_text.count("'./homepage-refresh.css'") != 1 or self_text.count("'./homepage-refresh.css'") != 1:
+              raise SystemExit('homepage-refresh.css must appear exactly once in SW and self-test core')
+          if "const BUILD = '20260804-pwa12'" not in sw_text or "const EXPECTED='20260804-pwa12'" not in self_text:
+              raise SystemExit('PWA12 production markers are incomplete')
+
+          # 防止遗留的旧AI站点构建针继续进入执行型门禁。
+          stale_ai = []
+          for path in list(Path('cnc/tests').glob('*ai-teacher*.cjs')) + list(Path('.github/workflows').glob('cnc-ai-teacher*.yml')):
+              if path.exists() and '20260801-ai-handoff1' in read(path):
+                  stale_ai.append(path.as_posix())
+          if stale_ai:
+              raise SystemExit(f'stale AI build references: {stale_ai}')
+
+          # 只允许CNC生产、CNC测试和明确CNC工作流发生变化。
+          allowed_prefixes = ('cnc/', '.github/workflows/cnc-')
+          if any(not item.startswith(allowed_prefixes) for item in changed):
+              raise SystemExit(f'out-of-scope changes: {sorted(changed)}')
+
+          # 删除一次性工作流，最终PR不保留写仓库权限。
+          workflow.unlink()
+          changed.add(workflow.as_posix())
+          print('\n'.join(sorted(changed)))
+          PY
+
+          node --check cnc/sw.js
+          node --check cnc/tests/placement-first-step-offline-core-drift-smoke.cjs
+          node --check cnc/tests/mobile-ai-teacher-smoke.cjs
+          node --check cnc/tests/mobile-pwa-offline-cache-smoke.cjs
+          node --check cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs
+          node --check cnc/tests/mobile-pwa-upgrade-data-smoke.cjs
+          node --check cnc/tests/pages-ai-teacher-deployment-smoke.cjs
+          node --check cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs
+          node --check cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs
+          node --check cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs
+
+          git diff --check
+          git status --short
+      - name: Commit exact repairs and remove write workflow
+        run: |
+          set -euo pipefail
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add cnc .github/workflows
+          git diff --cached --name-only | while read -r file; do
+            case "$file" in
+              cnc/*|.github/workflows/cnc-*) ;;
+              *) echo "超出CNC许可范围：$file" >&2; exit 1 ;;
+            esac
+          done
+          git commit -m "fix(cnc): 按真实日志修复首页与PWA12回归"
+          git push origin HEAD:chatgpt/cnc-home-refresh-regression-fix
