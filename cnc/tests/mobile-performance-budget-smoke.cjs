@@ -104,7 +104,10 @@ function pushBudget(findings, label, actual, limit, formatter = value => `${Math
       const nav = document.querySelector('body > .xp-bottom-nav');
       return nav && nav.getClientRects().length > 0 && nav.getAttribute('aria-hidden') === 'false' && !nav.hasAttribute('inert');
     }, null, { timeout: 30000 });
-    await page.waitForFunction(() => window.CNC_GAME_QUERY_NAV?.runCheck().utilityHidden === true, null, { timeout: 20000 });
+    await page.waitForFunction(() => {
+      const state = window.CNC_PERSONAL_HOME?.runCheck?.();
+      return state?.legacyHomeRemoved === true && state?.bottomNavReady === true;
+    }, null, { timeout: 20000 });
     await page.waitForTimeout(1200);
 
     const metrics = await page.evaluate(() => {
