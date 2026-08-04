@@ -1,0 +1,118 @@
+name: CNC PWA core resource build bump smoke
+on:
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-pwa-core-resource-build-bump-smoke.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-pwa-core-resource-build-bump-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: cnc-pwa-core-resource-build-bump-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Initialize diagnostics
+        run: |
+          mkdir -p cnc/test-results/pwa-core-resource-build-bump
+          node - <<'NODE'
+          const fs = require('fs');
+          fs.writeFileSync('cnc/test-results/pwa-core-resource-build-bump/workflow-bootstrap.json', JSON.stringify({
+            stage: 'workflow-bootstrap',
+            runId: process.env.GITHUB_RUN_ID,
+            headSha: process.env.GITHUB_SHA,
+            eventName: process.env.GITHUB_EVENT_NAME,
+            initializedAt: new Date().toISOString()
+          }, null, 2));
+          NODE
+      - name: Resolve comparison commits
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "CNC_BASE_SHA=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_ENV"
+            echo "CNC_HEAD_SHA=${{ github.event.pull_request.head.sha }}" >> "$GITHUB_ENV"
+          elif [[ "${{ github.event_name }}" == "push" ]]; then
+            echo "CNC_BASE_SHA=${{ github.event.before }}" >> "$GITHUB_ENV"
+            echo "CNC_HEAD_SHA=${{ github.sha }}" >> "$GITHUB_ENV"
+          else
+            echo "CNC_BASE_SHA=$(git rev-parse HEAD^)" >> "$GITHUB_ENV"
+            echo "CNC_HEAD_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          fi
+      - name: Check audit implementation and anti-bypass contract
+        shell: bash
+        run: |
+          set +e
+          {
+            node --check cnc/tests/pwa-core-resource-build-bump-smoke.cjs
+            node - <<'NODE'
+          const fs = require('fs');
+          const script = fs.readFileSync('cnc/tests/pwa-core-resource-build-bump-smoke.cjs', 'utf8');
+          const workflow = fs.readFileSync('.github/workflows/cnc-pwa-core-resource-build-bump-smoke.yml', 'utf8');
+          const forbidden = ['test' + '.skip(', 'describe' + '.skip(', 'it' + '.skip(', 'process' + '.exit(0)'];
+          for (const token of forbidden) if (script.includes(token)) throw new Error(`核心资源构建审计发现绕过：${token}`);
+          for (const token of ['CNC_BASE_SHA', 'CNC_HEAD_SHA', 'REQUIRED_CORE_PATHS', 'changedProtectedFiles', 'isStrictlyNewer', 'build-info.json']) {
+            if (!script.includes(token)) throw new Error(`核心资源构建审计缺少结构契约：${token}`);
+          }
+          if (!/fetch-depth:\s*0/.test(workflow)) throw new Error('核心资源构建审计必须获取完整Git历史');
+          if (/continue\s*-\s*on\s*-\s*error\s*:/.test(workflow)) throw new Error('核心资源构建审计不得吞掉失败');
+          const shellBypass = new RegExp('\\|\\|' + '\\s*true');
+          if (shellBypass.test(workflow)) throw new Error('核心资源构建审计不得使用' + '||' + ' true绕过失败');
+          NODE
+            echo "核心资源构建审计静态契约检查通过"
+          } 2>&1 | tee cnc/test-results/pwa-core-resource-build-bump/contract.log
+          status=${PIPESTATUS[0]}
+          if [[ "$status" -ne 0 ]]; then
+            cp cnc/test-results/pwa-core-resource-build-bump/contract.log cnc/test-results/pwa-core-resource-build-bump/contract-error.txt
+          fi
+          exit "$status"
+      - name: Audit core resource changes and PWA build bump
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          node cnc/tests/pwa-core-resource-build-bump-smoke.cjs 2>&1 | tee cnc/test-results/pwa-core-resource-build-bump/runtime.log
+          status=${PIPESTATUS[0]}
+          exit "$status"
+      - name: Verify diagnostic completeness
+        if: always()
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const dir = 'cnc/test-results/pwa-core-resource-build-bump';
+          const runtime = `${dir}/runtime.log`;
+          const contract = `${dir}/contract.log`;
+          if (!fs.existsSync(contract) || fs.statSync(contract).size === 0) throw new Error('核心资源构建审计缺少静态契约日志');
+          if (!fs.existsSync(runtime) || fs.statSync(runtime).size === 0) throw new Error('核心资源构建审计缺少完整运行日志');
+          const reportPath = `${dir}/report.json`;
+          const errorPath = `${dir}/error.txt`;
+          if (!fs.existsSync(reportPath) && !fs.existsSync(errorPath)) throw new Error('核心资源构建审计缺少报告或错误诊断');
+          if (fs.existsSync(reportPath)) {
+            const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
+            for (const key of ['baseSha', 'headSha', 'basePwaBuild', 'currentPwaBuild', 'changedFiles', 'changedProtectedFiles', 'passed']) {
+              if (!(key in report)) throw new Error(`核心资源构建报告缺少字段：${key}`);
+            }
+            if (!Array.isArray(report.changedFiles) || !Array.isArray(report.changedProtectedFiles)) throw new Error('核心资源构建报告变更字段无效');
+          }
+          NODE
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-pwa-core-resource-build-bump-${{ github.run_id }}
+          path: cnc/test-results/pwa-core-resource-build-bump/**
+          if-no-files-found: error
+          retention-days: 14

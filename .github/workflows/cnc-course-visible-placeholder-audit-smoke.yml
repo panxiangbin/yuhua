@@ -1,0 +1,144 @@
+name: CNC course visible placeholder audit smoke
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'cnc/course-*.html'
+      - 'cnc/tests/course-visible-placeholder-audit-smoke.cjs'
+      - 'cnc/docs/course-visible-placeholder-audit-contract.md'
+      - '.github/workflows/cnc-course-visible-placeholder-audit-smoke.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'cnc/course-*.html'
+      - 'cnc/tests/course-visible-placeholder-audit-smoke.cjs'
+      - 'cnc/docs/course-visible-placeholder-audit-contract.md'
+      - '.github/workflows/cnc-course-visible-placeholder-audit-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cnc-course-visible-placeholder-audit-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  course-visible-placeholder-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Verify audit source and Chinese contract
+        shell: bash
+        run: |
+          node --check cnc/tests/course-visible-placeholder-audit-smoke.cjs
+          node - <<'NODE'
+          const fs = require('fs');
+          const test = fs.readFileSync('cnc/tests/course-visible-placeholder-audit-smoke.cjs', 'utf8');
+          const contract = fs.readFileSync('cnc/docs/course-visible-placeholder-audit-contract.md', 'utf8');
+          const workflow = fs.readFileSync('.github/workflows/cnc-course-visible-placeholder-audit-smoke.yml', 'utf8');
+          for (const token of [
+            'cnc/course-*.html',
+            'image-animation-slot',
+            'suggest-add-later',
+            'content-waiting',
+            'development-marker',
+            'course-visible-placeholder-audit.json',
+            'course-visible-placeholder-audit-error.txt',
+            'process.exitCode = 1'
+          ]) {
+            if (!test.includes(token)) throw new Error(`missing audit contract token: ${token}`);
+          }
+          for (const token of [
+            '正式课程页',
+            '图片 / 动画位',
+            '建议后续加入',
+            '结构化 JSON',
+            'Artifact',
+            '原厂手册',
+            '授权人员',
+            '不得修改予华仪器官网根目录'
+          ]) {
+            if (!contract.includes(token)) throw new Error(`missing Chinese contract token: ${token}`);
+          }
+          for (const forbidden of ['test.skip(', 'process.exit(0)']) {
+            if (test.includes(forbidden)) throw new Error(`audit test bypass found: ${forbidden}`);
+          }
+          const yamlControlLines = workflow.split('\n').filter(line => {
+            const indent = (line.match(/^\s*/) || [''])[0].length;
+            return indent <= 8;
+          });
+          if (yamlControlLines.some(line => /^\s*continue-on-error:\s*true\s*$/.test(line))) {
+            throw new Error('workflow bypass found: continue-on-error true');
+          }
+          if (yamlControlLines.some(line => /^\s*cancel-in-progress:\s*true\s*$/.test(line))) {
+            throw new Error('workflow bypass found: cancel-in-progress true');
+          }
+          NODE
+
+      - name: Run visible placeholder audit and retain exit status
+        id: audit
+        shell: bash
+        run: |
+          mkdir -p cnc/test-results
+          set +e
+          node cnc/tests/course-visible-placeholder-audit-smoke.cjs 2>&1 | tee cnc/test-results/course-visible-placeholder-audit.log
+          status=${PIPESTATUS[0]}
+          set -e
+          echo "status=${status}" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Verify diagnostic completeness
+        if: always()
+        shell: bash
+        run: |
+          test -s cnc/test-results/course-visible-placeholder-audit.json
+          test -s cnc/test-results/course-visible-placeholder-audit.log
+          node - <<'NODE'
+          const fs = require('fs');
+          const report = JSON.parse(fs.readFileSync('cnc/test-results/course-visible-placeholder-audit.json', 'utf8'));
+          for (const key of ['checkedAt', 'scope', 'scannedFileCount', 'scannedFiles', 'patternIds', 'findings', 'errors', 'passed']) {
+            if (!(key in report)) throw new Error(`diagnostic missing key: ${key}`);
+          }
+          if (!Array.isArray(report.scannedFiles) || report.scannedFiles.length < 12) {
+            throw new Error('diagnostic did not scan the complete course set');
+          }
+          if (!Array.isArray(report.findings) || !Array.isArray(report.errors)) {
+            throw new Error('diagnostic findings or errors are not arrays');
+          }
+          NODE
+          if [ "${{ steps.audit.outputs.status }}" != "0" ]; then
+            test -s cnc/test-results/course-visible-placeholder-audit-error.txt
+          fi
+
+      - name: Upload course placeholder audit Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-course-visible-placeholder-audit-${{ github.run_id }}
+          path: |
+            cnc/test-results/course-visible-placeholder-audit.json
+            cnc/test-results/course-visible-placeholder-audit-error.txt
+            cnc/test-results/course-visible-placeholder-audit.log
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Enforce audit result
+        if: always()
+        shell: bash
+        run: |
+          status="${{ steps.audit.outputs.status }}"
+          test -n "$status"
+          cat cnc/test-results/course-visible-placeholder-audit.log
+          exit "$status"

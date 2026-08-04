@@ -11,6 +11,13 @@ const assert = require('node:assert/strict');
   await page.waitForFunction(() => window.CNC_TRAINING_PROFILE?.build === '20260724a', null, { timeout: 20000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-startup-home') === 'stable', null, { timeout: 15000 });
   await page.waitForFunction(() => window.CNC_GAME_QUERY_NAV?.build === '20260731d', null, { timeout: 15000 });
+  // 成长档案的样式表由脚本动态挂载，并有一次 900ms 的启动补渲染。
+  // 先确认补渲染结束、CSSOM可用且390px手机媒体查询真实生效，再测量布局。
+  // 这里不降低单列、44px触控高度或连续稳定帧的断言。
+  await page.waitForFunction(() => {
+    const link = document.querySelector('link[data-cnc-training-profile]');
+    return performance.now() >= 1200 && Boolean(link?.sheet) && matchMedia('(max-width: 760px)').matches;
+  }, null, { timeout: 10000 });
   assert.equal(await page.locator('.view.active').getAttribute('id'), 'view-dashboard');
 
   await page.evaluate(() => {
@@ -36,6 +43,13 @@ const assert = require('node:assert/strict');
   await page.locator('body > .xp-bottom-nav [data-xp-route="favorites"]').click();
   await page.waitForSelector('#view-favorites.active #xp-training-profile', { state: 'visible', timeout: 10000 });
   await page.evaluate(() => window.CNC_TRAINING_PROFILE.render());
+  await page.waitForFunction(() => {
+    const list = document.querySelector('#view-favorites.active .xp-plan-list');
+    const steps = list ? [...list.querySelectorAll('.xp-plan-step')] : [];
+    const buttons = list ? [...list.querySelectorAll('button')] : [];
+    const columns = list ? getComputedStyle(list).gridTemplateColumns.trim().split(/\s+/).filter(Boolean) : [];
+    return steps.length === 3 && buttons.length > 0 && columns.length === 1 && buttons.every(button => button.getBoundingClientRect().height >= 44);
+  }, null, { timeout: 10000 });
 
   const data = await page.evaluate(() => window.CNC_TRAINING_PROFILE.snapshot());
   assert.equal(data.dailyPlan.steps.length, 3);
@@ -51,9 +65,8 @@ const assert = require('node:assert/strict');
   assert.match(await plan.textContent(), /今日目标/);
   assert.match(await plan.textContent(), /重做当前 2 道错题/);
 
-  // 旧门禁在布局过渡的一帧刚好满足条件后立即取样，下一帧仍可能发生重排，
-  // 导致同一轮测试先通过 waitForFunction、随后又断言失败。这里不降低单列与 44px
-  // 断言，而是要求相同布局签名连续稳定 5 帧后才接受结果。
+  // 布局过渡的一帧可能刚好满足条件，下一帧仍发生重排。要求相同布局签名
+  // 连续稳定5帧后才接受结果，单列与44px要求保持不变。
   const layout = await plan.evaluate(async panel => {
     const measure = () => {
       const rects = [...panel.querySelectorAll('.xp-plan-step')].map(node => node.getBoundingClientRect());
