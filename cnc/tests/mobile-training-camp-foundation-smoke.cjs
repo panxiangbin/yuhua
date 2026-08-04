@@ -60,20 +60,37 @@ const assert = require('node:assert/strict');
   assert.match(studyTarget.label, /学习/, '学习底栏入口必须有明确中文名称');
   await studyNav.click();
   await page.waitForSelector('#view-study.active', { state: 'visible', timeout: 15000 });
-  await page.waitForFunction(() => document.querySelectorAll('#view-study .study-card[data-training-ready="true"]').length === 12, null, { timeout: 15000 });
+  await page.waitForFunction(() => {
+    const cards = Array.from(document.querySelectorAll('#view-study .study-card[data-level]'));
+    const images = Array.from(document.querySelectorAll('#view-study .study-card-thumb'));
+    return cards.length === 12
+      && images.length === 12
+      && cards.every(card => card.dataset.courseFile && card.getAttribute('aria-label'))
+      && images.every(image => image.complete && image.naturalWidth > 0 && image.alt.trim());
+  }, null, { timeout: 20000 });
 
   const study = await page.locator('#view-study').evaluate(view => {
-    const cards = Array.from(view.querySelectorAll('.study-card[data-training-ready="true"]'));
+    const cards = Array.from(view.querySelectorAll('.study-card[data-level]'));
     const rects = cards.map(card => card.getBoundingClientRect());
     return {
-      cards: cards.length,
-      metadata: view.querySelectorAll('.study-card .xp-course-meta').length,
+      cards: cards.map(card => ({
+        level: Number(card.dataset.level || 0),
+        courseFile: card.dataset.courseFile || '',
+        ariaLabel: card.getAttribute('aria-label') || '',
+        title: card.querySelector('h4')?.textContent.trim() || '',
+        imageAlt: card.querySelector('.study-card-thumb')?.alt.trim() || '',
+        imageDecoded: Boolean(card.querySelector('.study-card-thumb')?.complete && card.querySelector('.study-card-thumb')?.naturalWidth > 0)
+      })),
       singleColumn: rects.slice(1).every((rect, index) => Math.abs(rect.left - rects[index].left) < 2 && rect.top > rects[index].top),
       minCardHeight: rects.length ? Math.min(...rects.map(rect => rect.height)) : 0
     };
   });
-  assert.equal(study.cards, 12, '固定12关必须全部进入手机学习列表');
-  assert.equal(study.metadata, 12, '12关都必须展示学习目标、易错提醒和闯关说明');
+  assert.equal(study.cards.length, 12, '固定12关必须全部进入手机学习列表');
+  assert.deepEqual(study.cards.map(card => card.level), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], '固定12关等级不得缺失、重复或改序');
+  assert.equal(new Set(study.cards.map(card => card.courseFile)).size, 12, '12关正式课程文件不得重复');
+  assert.match(study.cards[0].courseFile, /course-safety-foundation\.html$/, '第1关必须指向安全基础正式课程');
+  assert.match(study.cards[11].courseFile, /course-complete-program-first-piece\.html$/, '第12关必须指向完整程序与首件验证正式课程');
+  assert.ok(study.cards.every(card => card.ariaLabel && card.title && card.imageAlt && card.imageDecoded), '每关必须具备中文可访问名称、标题和成功解码的教学图片');
   assert.equal(study.singleColumn, true, '手机学习列表必须保持单列');
   assert.ok(study.minCardHeight >= 44, '课程卡片触控高度不得小于44px');
 
@@ -149,9 +166,9 @@ const assert = require('node:assert/strict');
   assert.deepEqual(hub.smallTargets, [], `训练营可见操作目标不得小于44px：${JSON.stringify(hub.smallTargets)}`);
   assert.deepEqual(errors, []);
 
-  console.log('CNC单层首页、手机学习列表、独立训练营四路径、固定十二关、真实零进度与安全边界通过', {
+  console.log('CNC单层首页、真实十二关课程卡、独立训练营四路径、真实零进度与安全边界通过', {
     profileBuild: startup.profileApi.build,
-    study,
+    studyCards: study.cards.length,
     routeCount: hub.routes.length,
     courseCount: hub.courses.length,
     studyTarget
