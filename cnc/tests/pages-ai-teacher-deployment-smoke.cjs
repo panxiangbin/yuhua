@@ -160,7 +160,12 @@ function assertBuildInfo(text, label) {
   if (info.app !== 'cnc-training-platform') throw new Error(`${label}应用标识错误`);
   if (!/^\d{8}-[a-z0-9-]+$/.test(String(info.build || ''))) throw new Error(`${label}站点构建标识格式错误`);
   if (!/^\d{8}-pwa\d+$/.test(String(info.pwaBuild || ''))) throw new Error(`${label}PWA 构建标识格式错误`);
-  if (!String(info.contentStage || '').includes('AI老师问诊闭环')) throw new Error(`${label}缺少 AI 老师问诊闭环能力标识`);
+  const contentStage = String(info.contentStage || '');
+  if (!contentStage.includes('AI CNC老师基础版')) throw new Error(`${label}缺少 AI 老师基础能力标识`);
+  const pwaSequence = Number(String(info.pwaBuild).match(/pwa(\d+)$/)?.[1] || 0);
+  if (pwaSequence >= 13 && !contentStage.includes('AI老师问诊闭环')) {
+    throw new Error(`${label}PWA13及后续版本缺少 AI 老师问诊闭环能力标识`);
+  }
   return {
     app: info.app,
     build: info.build,
