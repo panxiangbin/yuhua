@@ -42,13 +42,12 @@ jobs:
           end = lines.index(end_marker, start)
           script_lines = []
           for line in lines[start:end]:
-              if line.startswith('          '):
-                  script_lines.append(line[10:])
-              elif line:
-                  raise SystemExit(f'脚本行缩进异常：{line[:120]}')
-              else:
-                  script_lines.append('')
-          Path('/tmp/cnc-pr159-apply.py').write_text('\n'.join(script_lines) + '\n', encoding='utf-8')
+              # YAML shell块中的Python语句带10个前导空格；三引号字符串内部的
+              # JavaScript内容可能从第1列开始，必须原样保留，不能当作异常。
+              script_lines.append(line[10:] if line.startswith('          ') else line)
+          script = '\n'.join(script_lines) + '\n'
+          compile(script, '/tmp/cnc-pr159-apply.py', 'exec')
+          Path('/tmp/cnc-pr159-apply.py').write_text(script, encoding='utf-8')
           PY
           python /tmp/cnc-pr159-apply.py
       - name: 语法、契约与反绕过核验
