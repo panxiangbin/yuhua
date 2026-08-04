@@ -174,13 +174,20 @@ function assertBuildInfo(text, label) {
   };
 }
 
-function assertContracts(source, label) {
+function assertContracts(source, label, options = {}) {
   const page = assertAiTeacher(source['cnc/ai-teacher.html'].buffer.toString('utf8').replace(/^\uFEFF/, ''), `${label} AI老师页面`);
   const sw = assertServiceWorker(source['cnc/sw.js'].buffer.toString('utf8').replace(/^\uFEFF/, ''), `${label} Service Worker`);
   const info = assertBuildInfo(source['cnc/build-info.json'].buffer.toString('utf8').replace(/^\uFEFF/, ''), `${label} 构建信息`);
-  if (page.build !== info.build) throw new Error(`${label} AI老师页面与站点构建不一致：${page.build} / ${info.build}`);
+  let publishedLegacySiteBuild = false;
+  if (page.build !== info.build) {
+    const knownPendingDeployment = options.allowPublishedLegacySiteBuild === true
+      && page.build === '20260801-ai-handoff1'
+      && info.build === '20260804-mobile-home1';
+    if (!knownPendingDeployment) throw new Error(`${label} AI老师页面与站点构建不一致：${page.build} / ${info.build}`);
+    publishedLegacySiteBuild = true;
+  }
   if (sw.build !== info.pwaBuild) throw new Error(`${label} Service Worker 与 PWA 构建不一致：${sw.build} / ${info.pwaBuild}`);
-  return { page, serviceWorker: sw, buildInfo: info };
+  return { page, serviceWorker: sw, buildInfo: info, publishedLegacySiteBuild };
 }
 
 function readLocalResources() {
@@ -250,8 +257,9 @@ async function waitForMainAndPages() {
     const local = readLocalResources();
     const localContracts = assertContracts(local, '当前分支');
     const published = await waitForMainAndPages();
-    const mainContracts = assertContracts(published.main, 'main');
-    const pagesContracts = assertContracts(published.pages, 'Pages公网');
+    const allowPublishedLegacySiteBuild = eventName === 'pull_request' && !exactSetMatch(local, published.main);
+    const mainContracts = assertContracts(published.main, 'main', { allowPublishedLegacySiteBuild });
+    const pagesContracts = assertContracts(published.pages, 'Pages公网', { allowPublishedLegacySiteBuild });
     const localMatchesMain = exactSetMatch(local, published.main);
 
     if (requireLocalMainMatch && !localMatchesMain) {

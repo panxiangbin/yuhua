@@ -227,7 +227,16 @@
     };
   }
 
+  function syncQuickSearchAccessibility() {
+    var input = document.getElementById('quick-search-input');
+    if (input && !input.getAttribute('aria-label')) {
+      input.setAttribute('aria-label', '快速搜索G代码、报警号和现场关键词');
+    }
+    return Boolean(input && input.getAttribute('aria-label'));
+  }
+
   function boot() {
+    syncQuickSearchAccessibility();
     removeLegacyHome();
     syncLearningContent();
     syncStudyCards();

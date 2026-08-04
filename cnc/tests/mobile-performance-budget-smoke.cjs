@@ -143,7 +143,7 @@ function pushBudget(findings, label, actual, limit, formatter = value => `${Math
       const trustReadyMs = trustReadyEpoch > 0 ? trustReadyEpoch - performance.timeOrigin : NaN;
       const loading = document.getElementById('loading-screen');
       const loadingVisible = Boolean(loading && loading.getClientRects().length && getComputedStyle(loading).display !== 'none' && getComputedStyle(loading).visibility !== 'hidden');
-      const navItems = Array.from(document.querySelectorAll('body > .xp-bottom-nav [data-xp-route]')).filter(node => {
+      const navItems = Array.from(document.querySelectorAll('body > .xp-bottom-nav button[data-xp-route],body > .xp-bottom-nav button[data-xp-filter]')).filter(node => {
         const rect = node.getBoundingClientRect();
         const style = getComputedStyle(node);
         return rect.width > 0 && rect.height > 0 && style.display !== 'none' && style.visibility !== 'hidden';

@@ -43,7 +43,7 @@ fs.mkdirSync(DIAGNOSTIC_DIR, { recursive: true });
         return style.display !== 'none' && style.visibility !== 'hidden' && Number(style.opacity || 1) > 0 && rect.width > 0 && rect.height > 0;
       };
       const nav = document.querySelector('body > .xp-bottom-nav');
-      const navItems = nav ? Array.from(nav.querySelectorAll('[data-xp-route]')).filter(visible) : [];
+      const navItems = nav ? Array.from(nav.querySelectorAll('button[data-xp-route],button[data-xp-filter]')).filter(visible) : [];
       const oldHome = document.querySelector('#xp-game-home,#xp-personal-home');
       const legacyGcode = document.querySelector('.launchpad-card[data-filter="gcode"]');
       return {

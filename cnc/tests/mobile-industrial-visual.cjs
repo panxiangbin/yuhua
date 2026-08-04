@@ -33,18 +33,15 @@ async function openGcodeWorkspace(page) {
     && (window.__CNC_TRUST_READY_AT__ || 0) > 0
     && typeof window.navigate === 'function', null, { timeout: 30000 });
 
-  const input = page.locator('#quick-search-input');
-  const button = page.locator('#quick-search-btn');
-  await input.waitFor({ state: 'visible', timeout: 15000 });
+  const button = page.locator('body > .xp-bottom-nav [data-xp-filter="gcode"]');
   await button.waitFor({ state: 'visible', timeout: 15000 });
   const target = await button.evaluate(node => {
     const rect = node.getBoundingClientRect();
     return { width: rect.width, height: rect.height };
   });
   if (target.width < 44 || target.height < 44) {
-    throw new Error(`首页快捷查询按钮点击区不足：${JSON.stringify(target)}`);
+    throw new Error(`查代码底栏按钮点击区不足：${JSON.stringify(target)}`);
   }
-  await input.fill('G1');
   await button.click();
 
   await page.waitForFunction(() => {
