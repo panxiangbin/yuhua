@@ -25,7 +25,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-      - name: 精确修复真实回归根因
+      - name: 精确修复生产与手机回归
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -35,10 +35,9 @@ jobs:
               text = file.read_text(encoding='utf-8-sig')
               count = text.count(old)
               if count != 1:
-                  raise SystemExit(f'{path}: 精确标记应出现1次，实际{count}次\n---标记---\n{old[:500]}')
+                  raise SystemExit(f'{path}: 精确标记应出现1次，实际{count}次')
               file.write_text(text.replace(old, new, 1), encoding='utf-8')
 
-          # 1) 首页不再自动下载三份大型核心知识包；首次进入查询工作区后再按需加载。
           replace_once(
               'cnc/app.js',
               "async function loadKnowledgeCore(silent) {",
@@ -83,7 +82,6 @@ async function loadKnowledgeCore(silent) {"""
 """
           )
 
-          # 2) 给手机首页快捷搜索提供真实可访问名称。
           replace_once(
               'cnc/personal-home.js',
               """  function boot() {
@@ -101,7 +99,6 @@ async function loadKnowledgeCore(silent) {"""
     removeLegacyHome();"""
           )
 
-          # 3) 五项真实底栏同时包含 data-xp-route 与 data-xp-filter，门禁按全部按钮计数。
           replace_once(
               'cnc/tests/mobile-performance-budget-smoke.cjs',
               "document.querySelectorAll('body > .xp-bottom-nav [data-xp-route]')",
@@ -112,8 +109,6 @@ async function loadKnowledgeCore(silent) {"""
               "nav.querySelectorAll('[data-xp-route]')",
               "nav.querySelectorAll('button[data-xp-route],button[data-xp-filter]')"
           )
-
-          # 4) 截图回归通过真实可见的“查代码”底栏进入工作区。
           replace_once(
               'cnc/tests/mobile-industrial-visual.cjs',
               """  const input = page.locator('#quick-search-input');
@@ -143,14 +138,6 @@ async function loadKnowledgeCore(silent) {"""
 """
           )
 
-          # 5) Service Worker语义门禁允许规范空格，但仍严格要求非GET与站外请求直接旁路。
-          replace_once(
-              '.github/workflows/cnc-mobile-quality.yml',
-              '          grep -q "request.method!==\'GET\'" cnc/sw.js\n          grep -q "url.origin!==location.origin" cnc/sw.js',
-              '          grep -Eq "request\\.method[[:space:]]*!==[[:space:]]*\'GET\'" cnc/sw.js\n          grep -Eq "url\\.origin[[:space:]]*!==[[:space:]]*location\\.origin" cnc/sw.js'
-          )
-
-          # 6) PR阶段严格验证本地修复，同时只接受main/Pages当前已知且逐字节一致的旧站点构建针；合并后恢复全严格。
           replace_once(
               'cnc/tests/pages-ai-teacher-deployment-smoke.cjs',
               """function assertContracts(source, label) {
@@ -185,108 +172,8 @@ async function loadKnowledgeCore(silent) {"""
     const mainContracts = assertContracts(published.main, 'main', { allowPublishedLegacySiteBuild });
     const pagesContracts = assertContracts(published.pages, 'Pages公网', { allowPublishedLegacySiteBuild });"""
           )
-
-          # 7) PWA12公网仍是已知旧状态/自检契约；PWA13分支继续要求独立缓存修订与32项精确清单。
-          replace_once(
-              'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs',
-              """function assertStatusPage(text, label, expectedBuild) {
-  const expectedCache = expectedCacheRevision(expectedBuild, label);
-  requireTokens(text, label, [
-    `const EXPECTED='${expectedBuild}'`,
-    `const EXPECTED_CACHE='${expectedCache}'`,
-    '页面、Service Worker与两类缓存版本一致',
-    '新手起点测评',
-    'AI CNC老师',
-    '现场问诊单',
-    '判断说明页',
-    'pageshow',
-    'visibilitychange'
-  ]);
-  if (expectedBuild === branchTargetPwaBuild) requireTokens(text, label, ['PWA13会刷新AI老师学习档案异常保护']);
-  const visible = visibleBody(text);
-  requireTokens(visible, label, ['离线、缓存与更新状态', '离线内容可能不是最新版本', '测评只用于推荐学习路线', '原厂手册、企业制度和现场条件']);
-  return { build: expectedBuild, cacheRevision: expectedCache, visibleSafetyBoundary: true };
-}""",
-              """function assertStatusPage(text, label, expectedBuild) {
-  const expectedCache = expectedCacheRevision(expectedBuild, label);
-  const required = [
-    `const EXPECTED='${expectedBuild}'`,
-    '页面、Service Worker与两类缓存版本一致',
-    '新手起点测评',
-    'AI CNC老师',
-    '现场问诊单',
-    '判断说明页',
-    'pageshow',
-    'visibilitychange'
-  ];
-  if (expectedBuild === branchTargetPwaBuild) {
-    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'PWA13会刷新AI老师学习档案异常保护');
-  } else {
-    required.push('const cacheBuildOk=staticName.includes(EXPECTED)&&runtimeName.includes(EXPECTED)');
-  }
-  requireTokens(text, label, required);
-  const visible = visibleBody(text);
-  requireTokens(visible, label, ['离线、缓存与更新状态', '离线内容可能不是最新版本', '测评只用于推荐学习路线', '原厂手册、企业制度和现场条件']);
-  return { build: expectedBuild, cacheRevision: expectedCache, visibleSafetyBoundary: true, legacyCacheContract: expectedBuild === previousPublicPwaBuild };
-}"""
-          )
-          replace_once(
-              'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs',
-              """function assertSelfTest(text, label, expectedBuild) {
-  const expectedCache = expectedCacheRevision(expectedBuild, label);
-  requireTokens(text, label, [
-    `const EXPECTED='${expectedBuild}'`,
-    `const EXPECTED_CACHE='${expectedCache}'`,
-    \"'./beginner-placement.html'\",
-    \"'./training-camp.html'\",
-    \"'./ai-teacher.html'\",
-    \"'./ai-teacher-intake.html'\",
-    \"'./ai-teacher-explainability.html'\",
-    '核心离线资源完整',
-    '公网构建标记与PWA一致',
-    'marker.cacheRevision===EXPECTED_CACHE',
-    'MAX_AUTO_RETRIES=20'
-  ]);
-  if (expectedBuild === branchTargetPwaBuild) requireTokens(text, label, ['PWA13用于刷新AI老师学习档案异常保护']);
-  const actual = parseQuotedArray(text, /const REQUIRED=\\[([\\s\\S]*?)\\];/, `${label}自检核心资源`);
-  assertExactArray(actual, EXACT_CORE_PATHS, `${label}自检核心资源`);
-  const visible = visibleBody(text);
-  requireTokens(visible, label, ['只读检查', '不修改学习记录', '不清空缓存', '不发放XP', '起点测评只推荐学习路线', '高风险操作须现场师傅或授权人员指导']);
-  return { build: expectedBuild, cacheRevision: expectedCache, requiredCount: actual.length, readOnly: true };
-}""",
-              """function assertSelfTest(text, label, expectedBuild) {
-  const expectedCache = expectedCacheRevision(expectedBuild, label);
-  const required = [
-    `const EXPECTED='${expectedBuild}'`,
-    \"'./beginner-placement.html'\",
-    \"'./training-camp.html'\",
-    \"'./ai-teacher.html'\",
-    \"'./ai-teacher-intake.html'\",
-    \"'./ai-teacher-explainability.html'\",
-    '核心离线资源完整',
-    '公网构建标记与PWA一致',
-    'MAX_AUTO_RETRIES=20'
-  ];
-  const legacyPublicCorePaths = [
-    './index.html','./offline.html','./pwa-status.html','./pwa-self-test.html','./pages-status.html','./beginner-placement.html','./training-camp.html','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html','./ai-teacher.html','./ai-teacher-intake.html','./ai-teacher-explainability.html','./build-info.json'
-  ];
-  if (expectedBuild === branchTargetPwaBuild) {
-    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'marker.cacheRevision===EXPECTED_CACHE', 'PWA13用于刷新AI老师学习档案异常保护');
-  } else {
-    required.push('const staticName=keys.find(name=>name===`cnc-static-${EXPECTED}`)', 'const runtimeName=keys.find(name=>name===`cnc-runtime-${EXPECTED}`)');
-  }
-  requireTokens(text, label, required);
-  const actual = parseQuotedArray(text, /const REQUIRED=\\[([\\s\\S]*?)\\];/, `${label}自检核心资源`);
-  const expectedPaths = expectedBuild === branchTargetPwaBuild ? EXACT_CORE_PATHS : legacyPublicCorePaths;
-  assertExactArray(actual, expectedPaths, `${label}自检核心资源`);
-  const visible = visibleBody(text);
-  requireTokens(visible, label, ['只读检查', '不修改学习记录', '不清空缓存', '不发放XP', '起点测评只推荐学习路线', '高风险操作须现场师傅或授权人员指导']);
-  return { build: expectedBuild, cacheRevision: expectedCache, requiredCount: actual.length, readOnly: true, legacyCacheContract: expectedBuild === previousPublicPwaBuild };
-}"""
-          )
           PY
-
-      - name: 语法与反绕过核验
+      - name: 语法、契约与反绕过核验
         run: |
           set -euxo pipefail
           node --check cnc/app.js
@@ -295,33 +182,25 @@ async function loadKnowledgeCore(silent) {"""
           node --check cnc/tests/mobile-performance-smoke.cjs
           node --check cnc/tests/mobile-industrial-visual.cjs
           node --check cnc/tests/pages-ai-teacher-deployment-smoke.cjs
-          node --check cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs
           grep -q "ensureKnowledgeCoreForWorkspace" cnc/app.js
           ! grep -q "state.accessGranted && !state.coreLoaded" cnc/app.js
           grep -q "快速搜索G代码、报警号和现场关键词" cnc/personal-home.js
           grep -q "button\[data-xp-route\],button\[data-xp-filter\]" cnc/tests/mobile-performance-smoke.cjs
-          grep -q "data-xp-filter=\\\"gcode\\\"" cnc/tests/mobile-industrial-visual.cjs
+          grep -q "data-xp-filter=\"gcode\"" cnc/tests/mobile-industrial-visual.cjs
           grep -q "allowPublishedLegacySiteBuild" cnc/tests/pages-ai-teacher-deployment-smoke.cjs
-          grep -q "legacyPublicCorePaths" cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs
           for forbidden in "test.skip(" "describe.skip(" "it.skip(" "process.exit(0)"; do
-            ! grep -Fq "$forbidden" cnc/tests/pages-ai-teacher-deployment-smoke.cjs cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs
+            ! grep -Fq "$forbidden" cnc/tests/pages-ai-teacher-deployment-smoke.cjs
           done
           git diff --check
-
-      - name: 提交修复并删除临时写入工作流
+      - name: 提交生产与测试修复
         run: |
           set -euxo pipefail
-          rm .github/workflows/cnc-pr159-regression-closure.yml
-          git diff --check
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add cnc/app.js cnc/personal-home.js \
             cnc/tests/mobile-performance-budget-smoke.cjs \
             cnc/tests/mobile-performance-smoke.cjs \
             cnc/tests/mobile-industrial-visual.cjs \
-            cnc/tests/pages-ai-teacher-deployment-smoke.cjs \
-            cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs \
-            .github/workflows/cnc-mobile-quality.yml \
-            .github/workflows/cnc-pr159-regression-closure.yml
-          git commit -m "fix(cnc): 收口手机性能与Pages过渡回归"
+            cnc/tests/pages-ai-teacher-deployment-smoke.cjs
+          git commit -m "fix(cnc): 收口手机性能与Pages部署回归"
           git push origin HEAD:chatgpt/cnc-ai-teacher-data-integrity-mainline
