@@ -39,12 +39,14 @@ jobs:
             'cumulativeLayoutShift',
             'domNodeCount',
             '390, height: 844',
-            'visibleBottomNavCount !== 5'
+            'visibleBottomNavCount !== 5',
+            "body > .xp-bottom-nav [data-xp-route]",
+            "path.join(OUTPUT_DIR, 'error.txt')"
           ]) {
             if (!test.includes(marker)) throw new Error(`手机性能审计缺少契约：${marker}`);
           }
-          for (const forbidden of ['test.skip(', 'process.exit(0)']) {
-            if (test.includes(forbidden)) throw new Error(`手机性能门禁禁止绕过：${forbidden}`);
+          for (const forbidden of ['test.skip(', 'process.exit(0)', '#xp-game-home .xp-game-bottom-nav']) {
+            if (test.includes(forbidden)) throw new Error(`手机性能门禁禁止绕过或引用旧首页：${forbidden}`);
           }
 
           const tree = fs.readFileSync('cnc/ui-knowledge-tree.js', 'utf8');
@@ -76,5 +78,5 @@ jobs:
         with:
           name: cnc-mobile-performance-budget-${{ github.run_id }}
           path: artifacts/mobile-performance-budget
-          if-no-files-found: warn
+          if-no-files-found: error
           retention-days: 14
