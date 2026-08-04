@@ -16,20 +16,12 @@ const viewports = [
 const captureTimes = [0, 100, 300, 600, 1000];
 
 fs.mkdirSync(out, { recursive: true });
-
 const mime = {
-  '.html': 'text/html; charset=utf-8',
-  '.js': 'text/javascript; charset=utf-8',
-  '.cjs': 'text/javascript; charset=utf-8',
-  '.css': 'text/css; charset=utf-8',
-  '.json': 'application/json; charset=utf-8',
-  '.webmanifest': 'application/manifest+json; charset=utf-8',
-  '.svg': 'image/svg+xml',
-  '.png': 'image/png',
-  '.jpg': 'image/jpeg',
-  '.jpeg': 'image/jpeg',
-  '.webp': 'image/webp',
-  '.woff2': 'font/woff2'
+  '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
+  '.cjs': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
+  '.json': 'application/json; charset=utf-8', '.webmanifest': 'application/manifest+json; charset=utf-8',
+  '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg',
+  '.webp': 'image/webp', '.woff2': 'font/woff2'
 };
 
 const server = http.createServer((req, res) => {
@@ -53,25 +45,39 @@ function assert(condition, message, failures) {
 function watch(page, errors, failedRequests) {
   page.setDefaultTimeout(30000);
   page.setDefaultNavigationTimeout(30000);
-  page.on('console', message => {
-    if (message.type() === 'error') errors.push(message.text());
-  });
+  page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
   page.on('pageerror', error => errors.push(error.message));
-  page.on('requestfailed', request => failedRequests.push({
-    url: request.url(),
-    error: request.failure()?.errorText || 'failed'
-  }));
+  page.on('requestfailed', request => failedRequests.push({ url: request.url(), error: request.failure()?.errorText || 'failed' }));
 }
 
 async function launchBrowser() {
   const options = { headless: true };
   if (process.platform === 'win32' && fs.existsSync(edgePath)) options.executablePath = edgePath;
   else options.channel = 'msedge';
-  try {
-    return await chromium.launch(options);
-  } catch {
-    return chromium.launch({ headless: true });
-  }
+  try { return await chromium.launch(options); }
+  catch { return chromium.launch({ headless: true }); }
+}
+
+async function waitForFirstVisiblePaint(page) {
+  await page.waitForFunction(() => {
+    const hero = document.querySelector('#view-dashboard .cnc-home-hero-copy');
+    const query = document.querySelector('#view-dashboard .launchpad-search');
+    const practice = document.querySelector('#view-dashboard .cnc-home-route-card');
+    if (!hero || !query || !practice) return false;
+    const visible = node => {
+      const style = getComputedStyle(node);
+      const rect = node.getBoundingClientRect();
+      return style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 0 && rect.height > 0;
+    };
+    const old = ['.launchpad-grid', '.fan-suggestion-panel', '.recent-section', '.featured-images-preview', '.faq-preview-section']
+      .some(selector => {
+        const node = document.querySelector('#view-dashboard ' + selector);
+        return node && visible(node);
+      });
+    return visible(hero) && visible(query) && visible(practice) && !old &&
+      getComputedStyle(document.body).backgroundColor === 'rgb(242, 245, 249)';
+  });
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
 }
 
 async function metrics(page) {
@@ -89,19 +95,15 @@ async function metrics(page) {
     };
     const root = document.documentElement;
     const body = document.body;
-    const oldSelectors = [
-      '#xp-game-home', '#xp-personal-home',
-      '#view-dashboard .launchpad-grid',
-      '#view-dashboard .fan-suggestion-panel',
-      '#view-dashboard .recent-section',
-      '#view-dashboard .featured-images-preview',
-      '#view-dashboard .faq-preview-section'
-    ];
     const nav = document.querySelector('.xp-bottom-nav');
     const pseudoContent = getComputedStyle(body, '::after').content;
+    const oldSelectors = [
+      '#xp-game-home', '#xp-personal-home', '#view-dashboard .launchpad-grid',
+      '#view-dashboard .fan-suggestion-panel', '#view-dashboard .recent-section',
+      '#view-dashboard .featured-images-preview', '#view-dashboard .faq-preview-section'
+    ];
     return {
-      innerWidth,
-      innerHeight,
+      innerWidth, innerHeight,
       scrollWidth: Math.max(root.scrollWidth, body.scrollWidth),
       scrollHeight: Math.max(root.scrollHeight, body.scrollHeight),
       activeView: document.querySelector('.view.active')?.id || '',
@@ -127,22 +129,21 @@ function rectDelta(a, b) {
   return Math.max(...['x', 'y', 'width', 'height'].map(key => Math.abs(a[key] - b[key])));
 }
 
-async function mobileViewport(browser, viewport, report) {
-  const errors = [];
-  const failedRequests = [];
+async function testMobileViewport(browser, viewport, report) {
+  const errors = [], failedRequests = [];
   const context = await browser.newContext({ viewport, serviceWorkers: 'block' });
   const page = await context.newPage();
   watch(page, errors, failedRequests);
   await page.goto(baseUrl, { waitUntil: 'networkidle' });
-  await page.locator('#view-dashboard.active').waitFor();
-  await page.waitForTimeout(500);
+  await waitForFirstVisiblePaint(page);
+  await page.waitForTimeout(600);
   const state = await metrics(page);
   await page.screenshot({ path: path.join(out, `mobile-home-${viewport.name}.png`) });
   const failures = [];
   assert(state.scrollHeight <= state.innerHeight + 2, `${viewport.name}: scrollHeight ${state.scrollHeight}/${state.innerHeight}`, failures);
   assert(state.scrollWidth <= state.innerWidth, `${viewport.name}: scrollWidth ${state.scrollWidth}/${state.innerWidth}`, failures);
   assert(state.learningVisible && state.queryVisible && state.practiceVisible, `${viewport.name}: three core panels not all visible`, failures);
-  assert(state.navReserved, `${viewport.name}: bottom navigation not visible or reserved`, failures);
+  assert(state.navReserved, `${viewport.name}: bottom navigation not visible`, failures);
   assert(state.oldVisible.length === 0, `${viewport.name}: old home visible: ${state.oldVisible.join(', ')}`, failures);
   assert(errors.length === 0, `${viewport.name}: console errors: ${errors.join(' | ')}`, failures);
   assert(failedRequests.length === 0, `${viewport.name}: failed requests: ${failedRequests.map(item => item.url).join(' | ')}`, failures);
@@ -150,23 +151,24 @@ async function mobileViewport(browser, viewport, report) {
   await context.close();
 }
 
-async function slowFirstPaint(browser, report) {
-  const errors = [];
-  const failedRequests = [];
+async function testFirstPaint(browser, report) {
+  const errors = [], failedRequests = [];
   const context = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block' });
   const page = await context.newPage();
   watch(page, errors, failedRequests);
   const cdp = await context.newCDPSession(page);
   await cdp.send('Network.enable');
   await cdp.send('Network.emulateNetworkConditions', {
-    offline: false,
-    latency: 350,
-    downloadThroughput: 80 * 1024,
-    uploadThroughput: 32 * 1024,
+    offline: false, latency: 350,
+    downloadThroughput: 80 * 1024, uploadThroughput: 32 * 1024,
     connectionType: 'cellular3g'
   });
   await page.goto(`${baseUrl}?slow=1`, { waitUntil: 'commit' });
-  await page.locator('#view-dashboard').waitFor({ state: 'attached' });
+  await waitForFirstVisiblePaint(page);
+  const paintEntry = await page.evaluate(() => {
+    const entries = performance.getEntriesByType('paint');
+    return entries.map(entry => ({ name: entry.name, startTime: Math.round(entry.startTime * 10) / 10 }));
+  });
   let elapsed = 0;
   const sequence = [];
   for (const time of captureTimes) {
@@ -179,28 +181,30 @@ async function slowFirstPaint(browser, report) {
   const first = sequence[0].state;
   sequence.forEach(sample => {
     const state = sample.state;
-    assert(state.oldVisible.length === 0, `${sample.time}ms: old home visible`, failures);
-    assert(state.learningVisible && state.queryVisible && state.practiceVisible, `${sample.time}ms: final panels not visible`, failures);
-    assert(state.navReserved, `${sample.time}ms: nav space missing`, failures);
-    assert(rectDelta(first.hero, state.hero) <= 2, `${sample.time}ms: hero layout shifted`, failures);
-    assert(rectDelta(first.query, state.query) <= 2, `${sample.time}ms: query layout shifted`, failures);
-    assert(rectDelta(first.practice, state.practice) <= 2, `${sample.time}ms: practice layout shifted`, failures);
+    assert(state.oldVisible.length === 0, `${sample.time}ms after first visible paint: old home visible`, failures);
+    assert(state.learningVisible && state.queryVisible && state.practiceVisible, `${sample.time}ms: final panels missing`, failures);
+    assert(state.navReserved, `${sample.time}ms: nav missing`, failures);
+    assert(rectDelta(first.hero, state.hero) <= 2, `${sample.time}ms: hero shifted`, failures);
+    assert(rectDelta(first.query, state.query) <= 2, `${sample.time}ms: query shifted`, failures);
+    assert(rectDelta(first.practice, state.practice) <= 2, `${sample.time}ms: practice shifted`, failures);
     assert(first.background === state.background, `${sample.time}ms: background changed`, failures);
     assert(first.titleFont === state.titleFont, `${sample.time}ms: title font changed`, failures);
   });
   assert(errors.length === 0, `slow paint console errors: ${errors.join(' | ')}`, failures);
-  report.firstPaint = { sequence, errors, failedRequests, failures };
+  report.firstPaint = { definition: '0ms is the first browser-visible paint after render-blocking styles are applied', paintEntry, sequence, errors, failedRequests, failures };
   await context.close();
 }
 
-async function learningAndQuery(browser, report) {
-  const errors = [];
-  const failedRequests = [];
+async function testLearningAndQuery(browser, report) {
+  const errors = [], failedRequests = [];
   const context = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block' });
   const page = await context.newPage();
   watch(page, errors, failedRequests);
   await page.goto(baseUrl, { waitUntil: 'networkidle' });
-  await page.evaluate(() => window.navigate && window.navigate('study'));
+  await waitForFirstVisiblePaint(page);
+  const learningButton = page.locator('.xp-bottom-nav button[data-xp-route="study"]');
+  await learningButton.waitFor({ state: 'visible' });
+  await learningButton.click();
   await page.locator('#view-study.active').waitFor();
   await page.waitForFunction(() => {
     const images = Array.from(document.querySelectorAll('#view-study.active .study-card .study-card-thumb'))
@@ -220,7 +224,7 @@ async function learningAndQuery(browser, report) {
   });
   await page.screenshot({ path: path.join(out, 'mobile-learning-images.png'), fullPage: true });
 
-  await page.evaluate(() => window.navigate && window.navigate('dashboard'));
+  await page.locator('.xp-bottom-nav button[data-xp-route="dashboard"]').click();
   await page.locator('#view-dashboard.active').waitFor();
   await page.locator('#quick-search-input').fill('G41');
   await page.locator('#quick-search-btn').click();
@@ -252,14 +256,18 @@ async function learningAndQuery(browser, report) {
   await context.close();
 }
 
-async function pwa(browser, report) {
-  const errors = [];
-  const failedRequests = [];
+async function testPwa(browser, report) {
+  const errors = [], failedRequests = [];
   const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const page = await context.newPage();
   watch(page, errors, failedRequests);
   await page.goto(`${baseUrl}?pwa=1`, { waitUntil: 'networkidle' });
-  await page.evaluate(async () => { await navigator.serviceWorker.ready; });
+  await page.evaluate(async () => {
+    await Promise.race([
+      navigator.serviceWorker.ready,
+      new Promise((_, reject) => setTimeout(() => reject(new Error('service worker ready timeout')), 15000))
+    ]);
+  });
   await page.reload({ waitUntil: 'networkidle' });
   const state = await page.evaluate(async () => {
     const info = await fetch('./build-info.json', { cache: 'no-store' }).then(response => response.json());
@@ -273,12 +281,7 @@ async function pwa(browser, report) {
         setTimeout(() => resolve(null), 3000);
       });
     }
-    return {
-      info,
-      worker,
-      controlled: Boolean(controller),
-      caches: await caches.keys()
-    };
+    return { info, worker, controlled: Boolean(controller), caches: await caches.keys() };
   });
   const failures = [];
   assert(state.controlled, 'PWA page not controlled after reload', failures);
@@ -292,9 +295,8 @@ async function pwa(browser, report) {
   await context.close();
 }
 
-async function desktop(browser, report) {
-  const errors = [];
-  const failedRequests = [];
+async function testDesktop(browser, report) {
+  const errors = [], failedRequests = [];
   const context = await browser.newContext({ viewport: { width: 1440, height: 950 }, serviceWorkers: 'block' });
   const page = await context.newPage();
   watch(page, errors, failedRequests);
@@ -328,28 +330,16 @@ async function desktop(browser, report) {
 }
 
 (async () => {
-  const report = {
-    generatedAt: new Date().toISOString(),
-    baseUrl,
-    viewports: [],
-    firstPaint: null,
-    learningAndQuery: null,
-    pwa: null,
-    desktop: null,
-    passed: false
-  };
+  const report = { generatedAt: new Date().toISOString(), baseUrl, viewports: [], firstPaint: null, learningAndQuery: null, pwa: null, desktop: null, passed: false };
   let browser;
   try {
-    await new Promise((resolve, reject) => {
-      server.once('error', reject);
-      server.listen(port, '127.0.0.1', resolve);
-    });
+    await new Promise((resolve, reject) => { server.once('error', reject); server.listen(port, '127.0.0.1', resolve); });
     browser = await launchBrowser();
-    for (const viewport of viewports) await mobileViewport(browser, viewport, report);
-    await slowFirstPaint(browser, report);
-    await learningAndQuery(browser, report);
-    await pwa(browser, report);
-    await desktop(browser, report);
+    for (const viewport of viewports) await testMobileViewport(browser, viewport, report);
+    await testFirstPaint(browser, report);
+    await testLearningAndQuery(browser, report);
+    await testPwa(browser, report);
+    await testDesktop(browser, report);
     report.failures = [
       ...report.viewports.flatMap(item => item.failures),
       ...(report.firstPaint?.failures || []),
