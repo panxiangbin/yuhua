@@ -23,9 +23,8 @@ const assert = require('node:assert/strict');
     }));
   });
 
-  // 从手机首页可见的“现场速查”进入工作区，再使用恢复后的工具导航进入“我的”。
-  await page.locator('#xp-game-home [data-xp-query-filter="gcode"]').click();
-  await page.waitForSelector('#view-workspace.active', { state: 'visible', timeout: 15000 });
+  // 手机首页已取消第二套旧首页；直接使用当前真实可见底栏进入“我的”，
+  // 验证真实用户路径而不是等待已经删除的 #xp-game-home 入口。
   await page.waitForFunction(() => {
     const node = document.querySelector('body > .xp-bottom-nav');
     return node && node.getClientRects().length > 0 && node.getAttribute('aria-hidden') === 'false' && !node.hasAttribute('inert');
@@ -109,6 +108,6 @@ const assert = require('node:assert/strict');
   await page.locator('[data-ability-train="11"]').first().click();
   await page.waitForSelector('#view-study.active #study-detail-content .lesson-detail-v2[data-level="11"]', { state: 'visible', timeout: 15000 });
   assert.deepEqual(errors, []);
-  console.log('单层首页真实导航、六维阶段能力、薄弱项识别与针对训练入口通过', { abilities: data.abilities, weakest: data.weakest, layout });
+  console.log('单层首页真实底栏、六维阶段能力、薄弱项识别与针对训练入口通过', { abilities: data.abilities, weakest: data.weakest, layout });
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });
