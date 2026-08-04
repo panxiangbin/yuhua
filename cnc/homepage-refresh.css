@@ -4,3 +4,20 @@
  */
 @import url('./homepage-refresh-desktop-legacy.css?v=20260804-mobile1');
 @import url('./mobile-home-refactor.css?v=20260804-mobile1');
+
+@media (max-width: 768px) {
+  body:has(#view-dashboard.active) .cnc-home-primary {
+    width: 126px !important;
+    font-size: 0 !important;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-primary::before {
+    content: '继续学习';
+    font-size: 13px;
+    line-height: 1;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-primary > span {
+    display: none !important;
+  }
+}
