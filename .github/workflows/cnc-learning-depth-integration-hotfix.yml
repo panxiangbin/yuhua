@@ -1,6 +1,9 @@
 name: CNC learning depth integration script hotfix
 
 on:
+  pull_request:
+    paths:
+      - '.github/workflows/cnc-learning-depth-integration-hotfix.yml'
   push:
     branches:
       - chatgpt/cnc-learning-depth-mainline-20260806
@@ -12,7 +15,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: cnc-learning-depth-integration-script-hotfix
+  group: cnc-learning-depth-integration-script-hotfix-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -33,11 +36,14 @@ jobs:
           from pathlib import Path
           path = Path('.github/workflows/cnc-learning-depth-mainline-integration-audit.yml')
           text = path.read_text(encoding='utf-8')
-          old = "    if (id && title && file && reason) entries.push({ id, title, file, reason });\\n  }\\n\""
-          new = "    if (id && title && file && reason) entries.push({ id, title, file, reason });\\n\""
-          if text.count(old) != 1:
-              raise SystemExit(f'目录解析修复目标数量异常：{text.count(old)}')
-          path.write_text(text.replace(old, new), encoding='utf-8')
+          start = text.index('parser = "')
+          end = text.index("resolve('cnc/tests/main-course-catalog-drift-smoke.cjs'", start)
+          block = text[start:end]
+          needle = '\\n  }\\n"\n'
+          if block.count(needle) != 1:
+              raise SystemExit(f'目录解析闭合括号目标数量异常：{block.count(needle)}')
+          fixed = block.replace(needle, '\\n"\n')
+          path.write_text(text[:start] + fixed + text[end:], encoding='utf-8')
           PY
           rm .github/workflows/cnc-learning-depth-integration-hotfix.yml
           git config user.name 'github-actions[bot]'
