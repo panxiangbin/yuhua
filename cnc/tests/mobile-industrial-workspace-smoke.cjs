@@ -11,7 +11,33 @@ const path = require('node:path');
   page.on('pageerror', error => pageErrors.push(String(error.message || error)));
   page.on('console', message => { if (message.type() === 'error') consoleErrors.push(message.text()); });
 
+  async function targetMetrics(locator, label) {
+    await locator.waitFor({ state: 'visible', timeout: 15000 });
+    const target = await locator.evaluate(node => {
+      const rect = node.getBoundingClientRect();
+      return {
+        width: rect.width,
+        height: rect.height,
+        label: node.getAttribute('aria-label') || node.querySelector('h3')?.textContent?.trim() || node.textContent?.trim() || ''
+      };
+    });
+    assert.ok(target.width >= 44, `${label}入口宽度不足：${target.width}`);
+    assert.ok(target.height >= 44, `${label}入口高度不足：${target.height}`);
+    assert.ok(target.label, `${label}入口缺少可识别名称`);
+    return target;
+  }
+
+  async function closeSidebarIfOpen() {
+    if (await page.locator('#sidebar.open').count()) {
+      const closeButton = page.locator('#sidebar-close');
+      await closeButton.waitFor({ state: 'visible', timeout: 15000 });
+      await closeButton.click();
+      await page.waitForFunction(() => !document.getElementById('sidebar')?.classList.contains('open'), null, { timeout: 15000 });
+    }
+  }
+
   async function goHome() {
+    await closeSidebarIfOpen();
     const homeNav = page.locator('body > .xp-bottom-nav button[data-xp-route="dashboard"]');
     await homeNav.waitFor({ state: 'visible', timeout: 15000 });
     await homeNav.click();
@@ -27,29 +53,27 @@ const path = require('node:path');
     }, null, { timeout: 15000 });
   }
 
+  async function openSidebarMode(mode) {
+    const menuButton = page.locator('#sidebar-open');
+    await targetMetrics(menuButton, '手机目录');
+    await menuButton.click();
+    await page.waitForFunction(() => document.getElementById('sidebar')?.classList.contains('open'), null, { timeout: 15000 });
+    const button = page.locator(`#sidebar [data-tree-panel="workspace"] .tree-item[data-filter="${mode}"]`).first();
+    await targetMetrics(button, mode);
+    return button;
+  }
+
   async function openMode(mode) {
     await goHome();
-    const selectors = {
-      gcode: 'body > .xp-bottom-nav button[data-xp-filter="gcode"]',
-      alarm: 'body > .xp-bottom-nav button[data-xp-filter="alarm"]',
-      parameter: '#view-dashboard .launchpad-card[data-filter="parameter"]',
-      fault: '#view-dashboard .launchpad-card[data-filter="fault"]'
-    };
-    const selector = selectors[mode];
-    assert.ok(selector, `未知查询模式：${mode}`);
-    const button = page.locator(selector).first();
-    await button.waitFor({ state: 'visible', timeout: 15000 });
-    const target = await button.evaluate(node => {
-      const rect = node.getBoundingClientRect();
-      return {
-        width: rect.width,
-        height: rect.height,
-        label: node.getAttribute('aria-label') || node.querySelector('h3')?.textContent?.trim() || node.textContent?.trim() || ''
-      };
-    });
-    assert.ok(target.width >= 44, `${mode}入口宽度不足：${target.width}`);
-    assert.ok(target.height >= 44, `${mode}入口高度不足：${target.height}`);
-    assert.ok(target.label, `${mode}入口缺少可识别名称`);
+    let button;
+    if (mode === 'gcode' || mode === 'alarm') {
+      button = page.locator(`body > .xp-bottom-nav button[data-xp-filter="${mode}"]`).first();
+      await targetMetrics(button, mode);
+    } else if (mode === 'parameter' || mode === 'fault') {
+      button = await openSidebarMode(mode);
+    } else {
+      assert.fail(`未知查询模式：${mode}`);
+    }
     await button.click();
     await page.waitForSelector('#view-workspace.active', { state: 'visible', timeout: 15000 });
     await page.waitForFunction(expected => document.body.getAttribute('data-cnc-query-mode') === expected, mode, { timeout: 15000 });
@@ -76,13 +100,16 @@ const path = require('node:path');
     const visible = node => Boolean(node && node.getClientRects().length > 0 && getComputedStyle(node).visibility !== 'hidden');
     const nav = document.querySelector('body > .xp-bottom-nav');
     const navItems = nav ? Array.from(nav.querySelectorAll('button[data-xp-route], button[data-xp-filter]')) : [];
-    const queryCards = ['gcode', 'alarm', 'parameter', 'fault'].map(mode => {
-      const node = document.querySelector(`#view-dashboard .launchpad-card[data-filter="${mode}"]`);
+    const visibleBottomQueryEntries = ['gcode', 'alarm'].map(mode => {
+      const node = nav?.querySelector(`button[data-xp-filter="${mode}"]`);
+      const rect = node?.getBoundingClientRect();
       return {
         mode,
         present: Boolean(node),
         visible: visible(node),
-        title: node?.querySelector('h3')?.textContent?.trim() || ''
+        width: rect?.width || 0,
+        height: rect?.height || 0,
+        label: node?.getAttribute('aria-label') || node?.textContent?.trim() || ''
       };
     });
     return {
@@ -94,7 +121,8 @@ const path = require('node:path');
       navInert: Boolean(nav?.hasAttribute('inert')),
       navCount: navItems.length,
       navLabels: navItems.map(node => (node.querySelector('span')?.textContent || '').replace(/\s+/g, ' ').trim()),
-      queryCards,
+      visibleBottomQueryEntries,
+      hiddenDesktopQueryCards: Array.from(document.querySelectorAll('#view-dashboard .launchpad-grid .launchpad-card[data-query-mode]')).filter(visible).length,
       personal: window.CNC_PERSONAL_HOME?.runCheck?.() || null
     };
   });
@@ -108,11 +136,44 @@ const path = require('node:path');
   assert.deepEqual(mobileHomeState.navLabels, ['首页', '查代码', '报警', '学习', '我的']);
   assert.equal(mobileHomeState.personal?.legacyHomeRemoved, true);
   assert.equal(mobileHomeState.personal?.bottomNavReady, true);
-  mobileHomeState.queryCards.forEach(card => {
-    assert.equal(card.present, true, `${card.mode}首页入口不存在`);
-    assert.equal(card.visible, true, `${card.mode}首页入口不可见`);
-    assert.ok(card.title, `${card.mode}首页入口缺少标题`);
+  assert.equal(mobileHomeState.hiddenDesktopQueryCards, 0, '手机端不得把旧桌面启动卡恢复成第二套首页');
+  mobileHomeState.visibleBottomQueryEntries.forEach(entry => {
+    assert.equal(entry.present, true, `${entry.mode}真实底栏入口不存在`);
+    assert.equal(entry.visible, true, `${entry.mode}真实底栏入口不可见`);
+    assert.ok(entry.width >= 44, `${entry.mode}真实底栏入口宽度不足：${entry.width}`);
+    assert.ok(entry.height >= 44, `${entry.mode}真实底栏入口高度不足：${entry.height}`);
+    assert.ok(entry.label, `${entry.mode}真实底栏入口缺少名称`);
   });
+
+  const sidebarEntries = await (async () => {
+    const menuButton = page.locator('#sidebar-open');
+    await targetMetrics(menuButton, '手机目录');
+    await menuButton.click();
+    await page.waitForFunction(() => document.getElementById('sidebar')?.classList.contains('open'), null, { timeout: 15000 });
+    return page.evaluate(() => {
+      const visible = node => Boolean(node && node.getClientRects().length > 0 && getComputedStyle(node).visibility !== 'hidden');
+      return ['gcode', 'alarm', 'parameter', 'fault'].map(mode => {
+        const node = document.querySelector(`#sidebar [data-tree-panel="workspace"] .tree-item[data-filter="${mode}"]`);
+        const rect = node?.getBoundingClientRect();
+        return {
+          mode,
+          present: Boolean(node),
+          visible: visible(node),
+          width: rect?.width || 0,
+          height: rect?.height || 0,
+          label: node?.textContent?.replace(/\s+/g, ' ').trim() || ''
+        };
+      });
+    });
+  })();
+  sidebarEntries.forEach(entry => {
+    assert.equal(entry.present, true, `${entry.mode}手机目录入口不存在`);
+    assert.equal(entry.visible, true, `${entry.mode}手机目录入口不可见`);
+    assert.ok(entry.width >= 44, `${entry.mode}手机目录入口宽度不足：${entry.width}`);
+    assert.ok(entry.height >= 44, `${entry.mode}手机目录入口高度不足：${entry.height}`);
+    assert.ok(entry.label, `${entry.mode}手机目录入口缺少标题`);
+  });
+  await closeSidebarIfOpen();
 
   await openMode('gcode');
   await page.waitForFunction(() => window.__CNC_GM_PRO_INSTALLED__ === '20260720h', null, { timeout: 30000 });
@@ -242,7 +303,7 @@ const path = require('node:path');
 
   const relevantErrors = [...pageErrors, ...consoleErrors].filter(text => /industrial-workspace|CNC工业查询|game-query|TypeError|ReferenceError/i.test(text));
   assert.deepEqual(relevantErrors, []);
-  console.log('手机单层首页现场速查、工业查询工作区与键盘搜索建议通过', { mobileHomeState, workspace });
+  console.log('手机单层首页真实底栏、真实目录入口、工业查询工作区与键盘搜索建议通过', { mobileHomeState, sidebarEntries, workspace });
   await browser.close();
 })().catch(error => {
   try {
