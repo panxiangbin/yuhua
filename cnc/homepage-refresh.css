@@ -34,8 +34,9 @@
     min-height: 44px !important;
   }
 
-  /* 与 mobile-home-refactor.css 的双 ID 选择器保持同等特异性，确保实体卡面覆盖渐变。 */
+  /* 与 mobile-home-refactor.css 的双 ID 选择器保持同等特异性，确保实体卡面和克制圆角覆盖旧值。 */
   body:has(#view-dashboard.active) #view-dashboard .cnc-home-route-card {
+    border-radius: 16px !important;
     background: #fffdf9 !important;
   }
 }
