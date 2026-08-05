@@ -1,0 +1,110 @@
+name: CNC learning depth mainline integration audit
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/cnc-learning-depth-mainline-integration-audit.yml'
+  push:
+    branches:
+      - chatgpt/cnc-learning-depth-mainline-20260806
+    paths:
+      - '.github/workflows/cnc-learning-depth-mainline-integration-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cnc-learning-depth-mainline-integration-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 初始化结构化诊断
+        run: |
+          set -euxo pipefail
+          mkdir -p cnc/test-results/learning-depth-mainline-integration
+          printf '%s\n' '6ed004d55a808a43c2c225b54d8ec6da956b3062' > cnc/test-results/learning-depth-mainline-integration/expected-main.txt
+          printf '%s\n' '4dd43680d8cc9b1ca754cc75c062d526600ee570' > cnc/test-results/learning-depth-mainline-integration/expected-feature.txt
+          git rev-parse HEAD > cnc/test-results/learning-depth-mainline-integration/checked-out-head.txt
+
+      - name: 核验精确主线与功能头
+        run: |
+          set -euxo pipefail
+          git fetch --no-tags origin main codex/learning-depth-refactor-20260805
+          test "$(git rev-parse origin/main)" = '6ed004d55a808a43c2c225b54d8ec6da956b3062'
+          test "$(git rev-parse origin/codex/learning-depth-refactor-20260805)" = '4dd43680d8cc9b1ca754cc75c062d526600ee570'
+          test "$(git merge-base HEAD origin/main)" = '6ed004d55a808a43c2c225b54d8ec6da956b3062'
+
+      - name: 执行只读三方合并审计
+        id: merge_audit
+        shell: bash
+        run: |
+          set +e
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git merge --no-commit --no-ff origin/codex/learning-depth-refactor-20260805 > cnc/test-results/learning-depth-mainline-integration/merge.log 2>&1
+          code=$?
+          printf '%s\n' "$code" > cnc/test-results/learning-depth-mainline-integration/merge-exit-code.txt
+          git status --short > cnc/test-results/learning-depth-mainline-integration/status-short.txt
+          git diff --name-only --diff-filter=U > cnc/test-results/learning-depth-mainline-integration/conflict-files.txt
+          git diff --cc > cnc/test-results/learning-depth-mainline-integration/conflicts.diff
+          node - <<'NODE'
+          const fs = require('fs');
+          const path = 'cnc/test-results/learning-depth-mainline-integration';
+          const conflictFiles = fs.readFileSync(`${path}/conflict-files.txt`, 'utf8').trim().split(/\r?\n/).filter(Boolean);
+          fs.writeFileSync(`${path}/report.json`, JSON.stringify({
+            expectedMain: '6ed004d55a808a43c2c225b54d8ec6da956b3062',
+            expectedFeature: '4dd43680d8cc9b1ca754cc75c062d526600ee570',
+            mergeExitCode: Number(fs.readFileSync(`${path}/merge-exit-code.txt`, 'utf8').trim()),
+            conflictCount: conflictFiles.length,
+            conflictFiles,
+            auditedAt: new Date().toISOString()
+          }, null, 2));
+          NODE
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: 保存冲突文件原文
+        if: always()
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p cnc/test-results/learning-depth-mainline-integration/conflicted-files
+          while IFS= read -r file; do
+            [ -n "$file" ] || continue
+            safe="${file//\//__}"
+            cp "$file" "cnc/test-results/learning-depth-mainline-integration/conflicted-files/$safe"
+          done < cnc/test-results/learning-depth-mainline-integration/conflict-files.txt
+
+      - name: 上传真实合并诊断
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-learning-depth-mainline-integration-${{ github.run_id }}
+          path: cnc/test-results/learning-depth-mainline-integration/
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: 按真实冲突结果结束
+        if: always()
+        shell: bash
+        run: |
+          code='${{ steps.merge_audit.outputs.exit_code }}'
+          if [ -z "$code" ]; then
+            echo '合并审计未返回退出码' >&2
+            exit 1
+          fi
+          if [ "$code" != '0' ]; then
+            echo '检测到真实合并冲突，必须读取诊断后逐项解决' >&2
+            cat cnc/test-results/learning-depth-mainline-integration/conflict-files.txt >&2
+            exit "$code"
+          fi
+          echo '功能分支可干净合并到最新main'
