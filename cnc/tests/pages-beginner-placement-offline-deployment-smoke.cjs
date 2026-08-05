@@ -8,13 +8,13 @@ fs.mkdirSync(out, { recursive: true });
 
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
-const branchTargetPwaBuild = '20260804-pwa13';
-const previousPublicPwaBuild = '20260804-pwa12';
+const branchTargetPwaBuild = '20260806-pwa14';
+const previousPublicPwaBuild = '20260804-pwa13';
+const expectedSiteBuild = '20260806-learning-depth1';
 const cacheRevisionByBuild = {
-  [branchTargetPwaBuild]: '20260804-mobile13',
-  [previousPublicPwaBuild]: '20260804-mobile12'
+  [branchTargetPwaBuild]: '20260806-learning14',
+  [previousPublicPwaBuild]: '20260804-mobile13'
 };
-const expectedSiteBuild = '20260804-mobile-home1';
 const attempts = Number(process.env.CNC_PAGES_VERIFY_ATTEMPTS || 18);
 const intervalMs = Number(process.env.CNC_PAGES_VERIFY_INTERVAL_MS || 10000);
 const eventName = process.env.GITHUB_EVENT_NAME || '';
