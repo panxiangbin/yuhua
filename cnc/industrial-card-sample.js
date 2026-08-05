@@ -1,12 +1,14 @@
-/* 数控小潘：锤子工业卡片风，覆盖手机首页与全部知识详情页。 */
+/* 数控小潘：锤子工业卡片风，覆盖手机首页、学习记录与全部知识详情页。 */
 (function () {
   'use strict';
 
   var BUILD = '20260722e';
   var DETAIL_STYLE_BUILD = '20260722d';
+  var RECORDS_STYLE_BUILD = '20260722e';
   var patchedRenderWorkspace = false;
   var patchedRenderDetail = false;
   var patchedRenderDashboardRecent = false;
+  var patchedRenderProgressLinks = false;
   var pendingEntryId = '';
   var retryDelays = [0, 80, 180, 360, 700, 1200];
 
@@ -29,6 +31,19 @@
       link.dataset.cncIndustrialDetailPages = '1';
       document.head.appendChild(link);
     }
+    return link;
+  }
+
+  function ensureRecordsStyle() {
+    var link = document.querySelector('link[data-cnc-industrial-records]');
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = './industrial-personal-records.css?v=' + RECORDS_STYLE_BUILD;
+      link.dataset.cncIndustrialRecords = '1';
+      document.head.appendChild(link);
+    }
+    if (document.body) document.body.classList.add('cnc-industrial-records');
     return link;
   }
 
@@ -111,6 +126,98 @@
       '}' +
     '}';
     document.head.appendChild(style);
+  }
+
+  function escapeRecordHtml(value) {
+    return String(value == null ? '' : value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function sourceEntries() {
+    var names = [
+      'CNC_DATA',
+      'CNC_KB_EXTRA',
+      'CNC_ALARM_FAQ',
+      'CNC_ALARM_DATA',
+      'CNC_WEAK_CATEGORY',
+      'CNC_WEAK_CATEGORY_DATA',
+      'CNC_GM_CODES',
+      'CNC_GM_CODE_COMPLETE',
+      'CNC_DIAGNOSIS_DATA'
+    ];
+    var all = [];
+    names.forEach(function (name) {
+      var value = window[name];
+      if (Array.isArray(value)) all = all.concat(value);
+    });
+    return all;
+  }
+
+  function findRecordEntry(id) {
+    var target = String(id || '');
+    return sourceEntries().find(function (item) {
+      return item && String(item.id || '') === target;
+    }) || null;
+  }
+
+  function countRecordBadge(card, count) {
+    var heading = card && card.querySelector('h4');
+    if (!heading) return;
+    var badge = heading.querySelector('.xp-record-count');
+    if (!badge) {
+      badge = document.createElement('span');
+      badge.className = 'xp-record-count';
+      heading.appendChild(badge);
+    }
+    badge.textContent = String(count);
+    badge.setAttribute('aria-label', count + ' 条');
+  }
+
+  function decorateRecordButton(button) {
+    var id = button.getAttribute('data-link-entry');
+    if (!id) {
+      button.classList.add('xp-record-empty');
+      button.setAttribute('aria-disabled', 'true');
+      return;
+    }
+    var entry = findRecordEntry(id);
+    var title = (entry && (entry.title || entry.name)) || button.textContent.trim() || '知识条目';
+    var code = (entry && (entry.code || entry.title)) || '记录';
+    var category = (entry && entry.category) || '点击继续查看';
+    button.classList.remove('xp-record-empty');
+    button.classList.add('xp-record-link');
+    button.removeAttribute('aria-disabled');
+    button.setAttribute('aria-label', (code ? code + ' ' : '') + title);
+    button.innerHTML = '<span class="xp-record-code">' + escapeRecordHtml(code) + '</span>' +
+      '<span class="xp-record-copy"><strong>' + escapeRecordHtml(title) + '</strong><small>' + escapeRecordHtml(category) + '</small></span>' +
+      '<span class="xp-record-arrow" aria-hidden="true">›</span>';
+  }
+
+  function decorateRecords() {
+    ensureRecordsStyle();
+    var view = document.getElementById('view-favorites');
+    if (!view) return false;
+    var clouds = Array.from(view.querySelectorAll('.link-cloud'));
+    if (clouds.length !== 2) {
+      delete view.dataset.industrialRecords;
+      return false;
+    }
+    clouds.forEach(function (cloud) {
+      cloud.setAttribute('role', 'list');
+      Array.from(cloud.querySelectorAll('button')).forEach(function (button) {
+        button.setAttribute('role', 'listitem');
+        decorateRecordButton(button);
+      });
+    });
+    Array.from(view.querySelectorAll('.favorites-grid > .detail-card')).forEach(function (card) {
+      countRecordBadge(card, card.querySelectorAll('[data-link-entry]').length);
+    });
+    view.dataset.industrialRecords = 'ready';
+    return true;
   }
 
   function isG01Code(value) {
@@ -234,9 +341,11 @@
     if (!document.body) return false;
     ensurePriorityStyle();
     ensureDetailStyle();
+    ensureRecordsStyle();
     document.body.classList.add('cnc-industrial-sample');
     decorateHomeCards();
     decorateDashboardRecent();
+    decorateRecords();
     var surface = '';
     if (detailPanelOpen()) {
       var codeText = (document.getElementById('detail-code') || {}).textContent || '';
@@ -271,6 +380,7 @@
     patchedRenderWorkspace = patchRenderer('renderWorkspace', '__CNC_INDUSTRIAL_WORKSPACE_PATCHED__') || patchedRenderWorkspace;
     patchedRenderDetail = patchRenderer('renderDetail', '__CNC_INDUSTRIAL_DETAIL_PATCHED__') || patchedRenderDetail;
     patchedRenderDashboardRecent = patchRenderer('renderDashboardRecent', '__CNC_INDUSTRIAL_DASHBOARD_RECENT_PATCHED__') || patchedRenderDashboardRecent;
+    patchedRenderProgressLinks = patchRenderer('renderProgressLinks', '__CNC_INDUSTRIAL_RECORDS_PATCHED__') || patchedRenderProgressLinks;
     return patchedRenderWorkspace && patchedRenderDetail;
   }
 
@@ -288,17 +398,20 @@
       var entryButton = event.target.closest('[data-open-entry]');
       if (entryButton) setEntry(entryButton.getAttribute('data-open-entry') || '');
       if (event.target.closest('#detail-back-btn,[data-cnc-bottom="back"]')) clearEntry();
-      if (event.target.closest('[data-route],[data-filter],.result-card,[data-open-entry],#detail-back-btn,#favorite-toggle,.xp-bottom-nav button,.recent-card')) scheduleInteractionSync();
+      if (event.target.closest('[data-route],[data-filter],.result-card,[data-open-entry],#detail-back-btn,#favorite-toggle,.xp-bottom-nav button,.recent-card,[data-link-entry]')) scheduleInteractionSync();
     }, true);
     window.addEventListener('hashchange', function () { scheduleSync(40); scheduleSync(150); scheduleSync(420); });
     window.addEventListener('popstate', function () { scheduleSync(50); });
+    window.addEventListener('storage', function () { scheduleSync(20); scheduleSync(160); });
   }
 
   function boot() {
     ensurePriorityStyle();
     ensureDetailStyle();
+    ensureRecordsStyle();
     decorateHomeCards();
     decorateDashboardRecent();
+    decorateRecords();
     bindEvents();
     retryDelays.forEach(function (delay) { window.setTimeout(function () { patchRenderers(); syncSurface(); }, delay); });
   }
@@ -309,31 +422,39 @@
   window.CNC_INDUSTRIAL_SAMPLE = {
     build: BUILD,
     detailStyleBuild: DETAIL_STYLE_BUILD,
+    recordsStyleBuild: RECORDS_STYLE_BUILD,
     polling: false,
     observer: false,
     sync: syncSurface,
     setEntry: setEntry,
     clearEntry: clearEntry,
     decorateDashboardRecent: decorateDashboardRecent,
+    decorateRecords: decorateRecords,
     tokens: { canvas: '#f1efe9', surface: '#fffdf9', ink: '#292c2f', blue: '#3f6179', warning: '#c48722', cardRadius: '14px', controlRadius: '10px' },
     runCheck: function () {
       var surface = document.body ? document.body.getAttribute('data-cnc-industrial-surface') : '';
       var cards = document.querySelectorAll('#view-dashboard .launchpad-card[data-industrial-tone]');
       var detailStyle = document.querySelector('link[data-cnc-industrial-detail-pages]');
+      var recordsStyle = document.querySelector('link[data-cnc-industrial-records]');
+      var recordsView = document.getElementById('view-favorites');
       var recentCards = document.querySelectorAll('#dashboard-recent-list .recent-card[role="button"][tabindex="0"]');
       var recentReady = Boolean(document.getElementById('dashboard-recent-list'));
       return {
         passed: Boolean(document.body && document.body.classList.contains('cnc-industrial-sample') && cards.length >= 6 && document.querySelector('style[data-cnc-industrial-priority]') && detailStyle && recentReady),
         build: BUILD,
         detailStyleBuild: DETAIL_STYLE_BUILD,
+        recordsStyleBuild: RECORDS_STYLE_BUILD,
         surface: surface,
         detailKind: document.body ? document.body.getAttribute('data-cnc-detail-kind') || '' : '',
         decoratedCards: cards.length,
         decoratedRecentCards: recentCards.length,
+        recordsStyle: Boolean(recordsStyle),
+        recordsReady: Boolean(recordsView && recordsView.dataset.industrialRecords === 'ready'),
         pendingEntryId: pendingEntryId,
         workspacePatched: patchedRenderWorkspace,
         detailPatched: patchedRenderDetail,
         dashboardRecentPatched: patchedRenderDashboardRecent,
+        progressLinksPatched: patchedRenderProgressLinks,
         polling: false,
         observer: false
       };
