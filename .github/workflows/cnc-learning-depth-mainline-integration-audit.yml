@@ -1,11 +1,10 @@
 name: CNC learning depth mainline integration apply
 
 on:
-  push:
-    branches:
-      - chatgpt/cnc-learning-depth-mainline-20260806
+  pull_request:
     paths:
       - '.github/workflows/cnc-learning-depth-mainline-integration-audit.yml'
+      - 'cnc/tools/apply-learning-depth-mainline-integration.py'
   workflow_dispatch:
 
 permissions:
@@ -29,6 +28,7 @@ jobs:
           persist-credentials: true
 
       - name: 核验精确来源与修改范围
+        id: prepare
         shell: bash
         run: |
           set -euxo pipefail
@@ -36,6 +36,13 @@ jobs:
           git fetch --no-tags origin main codex/learning-depth-refactor-20260805
           test "$(git rev-parse origin/main)" = '6ed004d55a808a43c2c225b54d8ec6da956b3062'
           test "$(git rev-parse origin/codex/learning-depth-refactor-20260805)" = '4dd43680d8cc9b1ca754cc75c062d526600ee570'
+          git rev-parse HEAD > /tmp/cnc-learning-depth-integration/bootstrap-head.txt
+          if git merge-base --is-ancestor origin/codex/learning-depth-refactor-20260805 HEAD; then
+            echo 'already_integrated=true' >> "$GITHUB_OUTPUT"
+            echo '80课来源头已经进入当前分支历史，本轮不重复合并。' | tee /tmp/cnc-learning-depth-integration/already-integrated.txt
+            exit 0
+          fi
+          echo 'already_integrated=false' >> "$GITHUB_OUTPUT"
           test "$(git merge-base HEAD origin/main)" = '6ed004d55a808a43c2c225b54d8ec6da956b3062'
           test -f cnc/tools/apply-learning-depth-mainline-integration.py
           changed="$(git diff --name-only origin/main...HEAD)"
@@ -44,9 +51,9 @@ jobs:
             echo '整合分支已出现非CNC范围改动' >&2
             exit 1
           fi
-          git rev-parse HEAD > /tmp/cnc-learning-depth-integration/bootstrap-head.txt
 
       - name: 执行真实三方合并并核对冲突
+        if: steps.prepare.outputs.already_integrated != 'true'
         shell: bash
         run: |
           set +e
@@ -78,6 +85,7 @@ jobs:
           diff -u /tmp/cnc-learning-depth-integration/expected-conflicts.txt /tmp/cnc-learning-depth-integration/conflict-files.txt
 
       - name: 保留当前CNC工作流并解决12个冲突
+        if: steps.prepare.outputs.already_integrated != 'true'
         shell: bash
         run: |
           set -euxo pipefail
@@ -95,6 +103,7 @@ jobs:
           fi
 
       - name: 执行静态、80课、目录与PWA门禁
+        if: steps.prepare.outputs.already_integrated != 'true'
         shell: bash
         run: |
           set -euxo pipefail
@@ -136,6 +145,7 @@ jobs:
           fi
 
       - name: 创建只含CNC文件的整合提交
+        if: steps.prepare.outputs.already_integrated != 'true'
         shell: bash
         run: |
           set -euxo pipefail
@@ -165,6 +175,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           JOB_STATUS: ${{ job.status }}
           RUN_ID: ${{ github.run_id }}
+          API_URL: ${{ github.api_url }}
           SERVER_URL: ${{ github.server_url }}
           REPOSITORY: ${{ github.repository }}
         run: |
@@ -188,5 +199,5 @@ jobs:
             -H "Authorization: Bearer ${GH_TOKEN}" \
             -H 'Accept: application/vnd.github+json' \
             -H 'X-GitHub-Api-Version: 2022-11-28' \
-            "${SERVER_URL}/api/v3/repos/${REPOSITORY}/issues/161/comments" \
+            "${API_URL}/repos/${REPOSITORY}/issues/161/comments" \
             -d "$payload"
