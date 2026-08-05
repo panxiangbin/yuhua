@@ -48,15 +48,15 @@ jobs:
           const camp = fs.readFileSync('cnc/training-camp.html', 'utf8');
           const sw = fs.readFileSync('cnc/sw.js', 'utf8');
           const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
-          if (info.build !== '20260804-mobile-home1') throw new Error(`unexpected site build: ${info.build}`);
-          if (info.pwaBuild !== '20260804-pwa13' || info.cacheRevision !== '20260804-mobile13') throw new Error(`unexpected PWA/cache build: ${info.pwaBuild}/${info.cacheRevision}`);
-          if (!sw.includes("const BUILD = '20260804-pwa13'") || !sw.includes("const CACHE_REVISION = '20260804-mobile13'")) throw new Error('Service Worker build/cache mismatch');
+          if (info.build !== '20260806-learning-depth1') throw new Error(`unexpected site build: ${info.build}`);
+          if (info.pwaBuild !== '20260806-pwa14' || info.cacheRevision !== '20260806-learning14') throw new Error(`unexpected PWA/cache build: ${info.pwaBuild}/${info.cacheRevision}`);
+          if (!sw.includes("const BUILD = '20260806-pwa14'") || !sw.includes("const CACHE_REVISION = '20260806-learning14'")) throw new Error('Service Worker build/cache mismatch');
           for (const token of [
-            "const expectedSiteBuild = '20260804-mobile-home1'",
-            "const expectedPwaBuild = '20260804-pwa13'",
-            "const previousPublicPwaBuild = '20260804-pwa12'",
-            "[expectedPwaBuild]: '20260804-mobile13'",
-            "[previousPublicPwaBuild]: '20260804-mobile12'",
+            "const expectedSiteBuild = '20260806-learning-depth1'",
+            "const expectedPwaBuild = '20260806-pwa14'",
+            "const previousPublicPwaBuild = '20260804-pwa13'",
+            "[expectedPwaBuild]: '20260806-learning14'",
+            "[previousPublicPwaBuild]: '20260804-mobile13'",
             'CNC_PAGES_VERIFY_ATTEMPTS || 18',
             "cache: 'no-store'",
             "const resources = ['cnc/training-camp.html', 'cnc/sw.js', 'cnc/build-info.json']",
@@ -92,7 +92,7 @@ jobs:
           for (const file of ['./training-camp.html','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html','./ai-teacher.html','./ai-teacher-intake.html','./ai-teacher-explainability.html']) {
             if (!sw.includes(`'${file}'`)) throw new Error(`PWA core missing: ${file}`);
           }
-          for (const stage of ['起点测评关键安全门禁','起点测评离线核心','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','正式课程开发占位清零','AI老师学习档案异常保护']) {
+          for (const stage of ['起点测评关键安全门禁','起点测评离线核心','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','正式课程开发占位清零','AI老师学习档案异常保护','80个图文小课']) {
             if (!String(info.contentStage || '').includes(stage)) throw new Error(`build marker missing: ${stage}`);
           }
           for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)', 'CNC_PAGES_VERIFY_ATTEMPTS || 0']) {
