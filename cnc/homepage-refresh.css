@@ -34,8 +34,8 @@
     min-height: 44px !important;
   }
 
-  /* 练习卡保持单一实体卡面，避免浅色大面积渐变削弱文字与操作层级。 */
-  body:has(#view-dashboard.active) .cnc-home-route-card {
+  /* 与 mobile-home-refactor.css 的双 ID 选择器保持同等特异性，确保实体卡面覆盖渐变。 */
+  body:has(#view-dashboard.active) #view-dashboard .cnc-home-route-card {
     background: #fffdf9 !important;
   }
 }
