@@ -193,8 +193,22 @@
     window.setTimeout(function () { openMobilePanel(entryId); }, 200);
   }
 
+  function normalizedLabelText(node) {
+    return String(node && node.textContent || '').replace(/\s+/g, ' ').trim();
+  }
+
+  function ensureResultButtonAccessibleName(button) {
+    if (!button || button.getAttribute('aria-label') || button.getAttribute('aria-labelledby')) return;
+    var card = button.closest('.result-card') || button.parentElement;
+    var code = normalizedLabelText(card && card.querySelector('.result-top strong'));
+    var title = normalizedLabelText(card && card.querySelector('h4'));
+    var details = [code, title].filter(Boolean).join(' ');
+    button.setAttribute('aria-label', details ? '查看 ' + details + ' 详情' : '查看 CNC 条目详情');
+  }
+
   function bindResultButtons() {
     document.querySelectorAll('#result-list [data-open-entry]').forEach(function (button) {
+      ensureResultButtonAccessibleName(button);
       if (button.dataset.cncCleanBound === 'true') return;
       button.dataset.cncCleanBound = 'true';
       button.addEventListener('pointerdown', captureWorkspaceState);
