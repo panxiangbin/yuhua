@@ -42,8 +42,21 @@ jobs:
           import hashlib
 
           tools = Path('cnc/tools')
-          part_paths = [f'cnc/tools/learning-depth-payload.b64.part{index:02d}' for index in range(1, 9)]
+          payload_paths = [
+              'cnc/tools/learning-depth-payload.b64.part01',
+              'cnc/tools/learning-depth-payload.b64.part02',
+              'cnc/tools/learning-depth-payload.b64.part03',
+              'cnc/tools/learning-depth-payload.b64.part04.sub01',
+              'cnc/tools/learning-depth-payload.b64.part04.sub02',
+              'cnc/tools/learning-depth-payload.b64.part04.sub03',
+              'cnc/tools/learning-depth-payload.b64.part04.sub04',
+              'cnc/tools/learning-depth-payload.b64.part05',
+              'cnc/tools/learning-depth-payload.b64.part06',
+              'cnc/tools/learning-depth-payload.b64.part07',
+              'cnc/tools/learning-depth-payload.b64.part08',
+          ]
           corrupt_payload = tools / 'learning-depth-payload.zip'
+          wrong_part04 = tools / 'learning-depth-payload.b64.part04'
           restored_payload = tools / 'learning-depth-payload-restored.zip'
           expected_sha256 = '2dabb822df5c6727f1cb1cac040b465d853bc33ab35efb04ebecd13707fc1f9c'
           expected = {
@@ -56,12 +69,13 @@ jobs:
               'cnc/LEARNING_DEPTH_PROGRESS.md',
           }
 
-          existing_parts = [Path(path) for path in part_paths if Path(path).exists()]
-          if existing_parts:
-              if len(existing_parts) != 8:
-                  raise RuntimeError(f'Payload part count mismatch: {len(existing_parts)}/8')
+          existing_paths = [Path(path) for path in payload_paths if Path(path).exists()]
+          if existing_paths:
+              if len(existing_paths) != len(payload_paths):
+                  missing_parts = [path for path in payload_paths if not Path(path).exists()]
+                  raise RuntimeError(f'Payload chunks missing: {missing_parts}')
               encoded_parts = []
-              for path in part_paths:
+              for path in payload_paths:
                   raw = check_output(['git', 'show', f'HEAD:{path}'])
                   object_sha = check_output(['git', 'rev-parse', f'HEAD:{path}']).decode('ascii').strip()
                   print(f'  {path}: blob={object_sha}, bytes={len(raw)}, sha256={hashlib.sha256(raw).hexdigest()}')
@@ -70,7 +84,7 @@ jobs:
               payload_bytes = b64decode(encoded, validate=True)
               actual_sha256 = hashlib.sha256(payload_bytes).hexdigest()
               if actual_sha256 != expected_sha256:
-                  raise RuntimeError(f'Payload SHA-256 mismatch after direct Git object read: {actual_sha256}')
+                  raise RuntimeError(f'Payload SHA-256 mismatch after verified subchunk read: {actual_sha256}')
               restored_payload.write_bytes(payload_bytes)
               try:
                   with ZipFile(restored_payload, 'r') as archive:
@@ -86,11 +100,12 @@ jobs:
                   raise RuntimeError(f'Restored payload ZIP is invalid: {error}') from error
               restored_payload.unlink(missing_ok=True)
               corrupt_payload.unlink(missing_ok=True)
-              for path in existing_parts:
+              wrong_part04.unlink(missing_ok=True)
+              for path in existing_paths:
                   path.unlink()
               print(f'Learning depth payload restored and verified: {actual_sha256}')
           else:
-              print('Payload parts already consumed; verifying restored target files.')
+              print('Payload chunks already consumed; verifying restored target files.')
 
           for item in sorted(expected):
               path = Path(item)
@@ -175,8 +190,8 @@ jobs:
           git add -u cnc
           git add cnc/learning-sublesson-catalog.js cnc/learning-detail.html cnc/learning-depth.css cnc/tests/learning-depth-smoke.cjs cnc/LEARNING_DEPTH_PROGRESS.md
           git diff --cached --check
-
-          if (-not (git diff --cached --quiet)) {
+          git diff --cached --quiet
+          if ($LASTEXITCODE -ne 0) {
             git commit -m 'feat(cnc-learning): add 80 expandable image lessons'
             git push origin HEAD:codex/learning-depth-refactor-20260805
           } else {
