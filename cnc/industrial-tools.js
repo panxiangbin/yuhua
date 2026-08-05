@@ -22,11 +22,33 @@ function ensureDiagnosisAssets(){
   }
 }
 
+function ensureSingleHomeEntryStyle(){
+  if(document.querySelector('style[data-cnc-single-home-tools-entry]'))return;
+  var style=document.createElement('style');
+  style.dataset.cncSingleHomeToolsEntry='1';
+  style.textContent='@media(max-width:768px){body:has(#view-dashboard.active) #view-dashboard .launchpad-search{position:relative!important}body:has(#view-dashboard.active) #view-dashboard .launchpad-search-header{padding-right:52px!important}body:has(#view-dashboard.active) #view-dashboard .cnc-mobile-tools-entry{position:absolute;z-index:3;top:8px;right:10px;display:inline-flex!important;width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;align-items:center;justify-content:center;padding:0!important;border:1px solid #c5d7ea!important;border-radius:11px!important;background:#eef5ff!important;color:#176fe5!important;box-shadow:0 4px 12px rgba(24,91,172,.12)!important;font:950 17px/1 system-ui,-apple-system,"Segoe UI",sans-serif!important;cursor:pointer}.cnc-mobile-tools-entry:focus-visible{outline:3px solid rgba(23,111,229,.28)!important;outline-offset:2px!important}}@media(min-width:769px){.cnc-mobile-tools-entry{display:none!important}}';
+  document.head.appendChild(style);
+}
+
 function ensureSingleHomeEntry(){
-  var entry=document.querySelector('#view-dashboard [data-route="calculator"]');
-  if(!entry)return false;
-  if(!entry.getAttribute('aria-label'))entry.setAttribute('aria-label','进入换算工具，计算转速、进给、锥度和直径');
-  return true;
+  ensureSingleHomeEntryStyle();
+  var dashboard=document.getElementById('view-dashboard');
+  if(!dashboard)return false;
+  var entry=dashboard.querySelector('.cnc-mobile-tools-entry');
+  if(!entry){
+    var searchPanel=dashboard.querySelector('.launchpad-search');
+    if(!searchPanel)return Boolean(dashboard.querySelector('[data-route="calculator"]'));
+    entry=document.createElement('button');
+    entry.type='button';
+    entry.className='cnc-mobile-tools-entry';
+    entry.dataset.route='calculator';
+    entry.dataset.cncIndustrialToolsEntry='true';
+    entry.setAttribute('aria-label','进入换算工具，计算转速、进给、锥度和直径');
+    entry.title='换算工具';
+    entry.textContent='ƒ';
+    searchPanel.appendChild(entry);
+  }
+  return entry.isConnected;
 }
 
 function decorate(){
@@ -72,12 +94,32 @@ function activateHeader(header){
   syncHeader(header);
 }
 
+function openCalculatorFromSingleHome(event,entry){
+  var canonical=document.querySelector('#view-dashboard .launchpad-card[data-route="calculator"]');
+  if(canonical&&canonical!==entry){
+    event.preventDefault();
+    canonical.click();
+    return true;
+  }
+  var guard=window.CNC_STARTUP_HOME_GUARD;
+  if(guard&&typeof guard.acceptTrustedRouteEvent==='function')guard.acceptTrustedRouteEvent(event);
+  if(typeof window.navigate==='function'){
+    event.preventDefault();
+    window.navigate('calculator');
+    return true;
+  }
+  return false;
+}
+
 function bind(){
   if(mounted)return;
   mounted=true;
   document.addEventListener('click',function(event){
     var route=event.target.closest&&event.target.closest('[data-route="calculator"]');
-    if(route)window.setTimeout(decorate,40);
+    if(route){
+      if(route.dataset.cncIndustrialToolsEntry==='true')openCalculatorFromSingleHome(event,route);
+      window.setTimeout(decorate,40);
+    }
     var header=event.target.closest&&event.target.closest('#view-calculator .calc-card-header');
     if(header)syncHeader(header);
   },true);
@@ -116,7 +158,8 @@ var api={
       var result=card.querySelector('.calc-result');
       return header&&header.getAttribute('role')==='button'&&header.hasAttribute('aria-expanded')&&result&&result.getAttribute('aria-live')==='polite';
     });
-    var singleHomeEntry=Boolean(document.querySelector('#view-dashboard [data-route="calculator"]'));
+    var entry=document.querySelector('#view-dashboard .cnc-mobile-tools-entry');
+    var singleHomeEntry=Boolean(entry&&entry.isConnected&&entry.getClientRects().length);
     var legacyHomeAbsent=!document.querySelector('#xp-game-home,#xp-personal-home');
     return{
       passed:Boolean(document.body.classList.contains('cnc-industrial-tools')&&cards.length===6&&accessible&&singleHomeEntry&&legacyHomeAbsent),
