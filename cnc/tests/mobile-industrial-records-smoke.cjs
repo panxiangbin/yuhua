@@ -31,7 +31,9 @@ async function waitForSingleMobileHome(page) {
   return page.evaluate(() => {
     const dashboard = document.querySelector('#view-dashboard');
     const nav = document.querySelector('body > .xp-bottom-nav');
-    const items = nav ? [...nav.querySelectorAll('button[data-xp-route]')] : [];
+    const items = nav
+      ? [...nav.querySelectorAll('button[data-xp-route], button[data-xp-filter]')]
+      : [];
     return {
       activeView: document.querySelector('.view.active')?.id || '',
       dashboardActive: Boolean(dashboard && dashboard.classList.contains('active')),
@@ -39,11 +41,11 @@ async function waitForSingleMobileHome(page) {
       navVisible: Boolean(nav && nav.getClientRects().length),
       navAriaHidden: nav?.getAttribute('aria-hidden') || null,
       navInert: Boolean(nav?.hasAttribute('inert')),
-      navLabels: items.map(item => (item.textContent || '').replace(/\s+/g, ' ').trim()),
+      navLabels: items.map(item => (item.querySelector('span')?.textContent || '').replace(/\s+/g, ' ').trim()),
       navTargets: items.map(item => {
         const rect = item.getBoundingClientRect();
         return {
-          route: item.dataset.xpRoute || '',
+          route: item.dataset.xpRoute || item.dataset.xpFilter || '',
           label: item.getAttribute('aria-label') || (item.textContent || '').trim(),
           width: rect.width,
           height: rect.height
