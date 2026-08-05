@@ -159,7 +159,8 @@ var api={
       return header&&header.getAttribute('role')==='button'&&header.hasAttribute('aria-expanded')&&result&&result.getAttribute('aria-live')==='polite';
     });
     var entry=document.querySelector('#view-dashboard .cnc-mobile-tools-entry');
-    var singleHomeEntry=Boolean(entry&&entry.isConnected&&entry.getClientRects().length);
+    var singleHomeEntry=Boolean(entry&&entry.isConnected);
+    var singleHomeEntryVisible=Boolean(entry&&entry.getClientRects().length);
     var legacyHomeAbsent=!document.querySelector('#xp-game-home,#xp-personal-home');
     return{
       passed:Boolean(document.body.classList.contains('cnc-industrial-tools')&&cards.length===6&&accessible&&singleHomeEntry&&legacyHomeAbsent),
@@ -168,6 +169,7 @@ var api={
       cards:cards.length,
       accessible:accessible,
       singleHomeEntry:singleHomeEntry,
+      singleHomeEntryVisible:singleHomeEntryVisible,
       gameHomeEntry:singleHomeEntry,
       legacyHomeAbsent:legacyHomeAbsent,
       polling:false,
