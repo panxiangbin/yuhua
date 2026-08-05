@@ -38,10 +38,11 @@ jobs:
           from pathlib import Path
           from base64 import b64decode
           from zipfile import ZipFile, BadZipFile
+          from subprocess import check_output
           import hashlib
 
           tools = Path('cnc/tools')
-          parts = sorted(tools.glob('learning-depth-payload.b64.part*'))
+          part_paths = [f'cnc/tools/learning-depth-payload.b64.part{index:02d}' for index in range(1, 9)]
           corrupt_payload = tools / 'learning-depth-payload.zip'
           restored_payload = tools / 'learning-depth-payload-restored.zip'
           expected_sha256 = '2dabb822df5c6727f1cb1cac040b465d853bc33ab35efb04ebecd13707fc1f9c'
@@ -55,14 +56,21 @@ jobs:
               'cnc/LEARNING_DEPTH_PROGRESS.md',
           }
 
-          if parts:
-              if len(parts) != 8:
-                  raise RuntimeError(f'Payload part count mismatch: {len(parts)}/8')
-              encoded = ''.join(part.read_text(encoding='utf-8').strip() for part in parts)
+          existing_parts = [Path(path) for path in part_paths if Path(path).exists()]
+          if existing_parts:
+              if len(existing_parts) != 8:
+                  raise RuntimeError(f'Payload part count mismatch: {len(existing_parts)}/8')
+              encoded_parts = []
+              for path in part_paths:
+                  raw = check_output(['git', 'show', f'HEAD:{path}'])
+                  object_sha = check_output(['git', 'rev-parse', f'HEAD:{path}']).decode('ascii').strip()
+                  print(f'  {path}: blob={object_sha}, bytes={len(raw)}, sha256={hashlib.sha256(raw).hexdigest()}')
+                  encoded_parts.append(raw.decode('ascii').strip())
+              encoded = ''.join(encoded_parts)
               payload_bytes = b64decode(encoded, validate=True)
               actual_sha256 = hashlib.sha256(payload_bytes).hexdigest()
               if actual_sha256 != expected_sha256:
-                  raise RuntimeError(f'Payload SHA-256 mismatch: {actual_sha256}')
+                  raise RuntimeError(f'Payload SHA-256 mismatch after direct Git object read: {actual_sha256}')
               restored_payload.write_bytes(payload_bytes)
               try:
                   with ZipFile(restored_payload, 'r') as archive:
@@ -78,8 +86,8 @@ jobs:
                   raise RuntimeError(f'Restored payload ZIP is invalid: {error}') from error
               restored_payload.unlink(missing_ok=True)
               corrupt_payload.unlink(missing_ok=True)
-              for part in parts:
-                  part.unlink()
+              for path in existing_parts:
+                  path.unlink()
               print(f'Learning depth payload restored and verified: {actual_sha256}')
           else:
               print('Payload parts already consumed; verifying restored target files.')
