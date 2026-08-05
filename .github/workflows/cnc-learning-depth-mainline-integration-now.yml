@@ -49,7 +49,7 @@ jobs:
             exit 1
           fi
 
-      - name: 合并并验证12个真实冲突
+      - name: 合并并验证13个真实冲突
         if: steps.prepare.outputs.already != 'true'
         shell: bash
         run: |
@@ -61,6 +61,7 @@ jobs:
           printf '%s\n' "$code" > /tmp/cnc-learning-depth-integration-now/merge-exit-code.txt
           git diff --name-only --diff-filter=U | sort > /tmp/cnc-learning-depth-integration-now/conflict-files.txt
           cat > /tmp/cnc-learning-depth-integration-now/expected-conflicts.txt <<'EOF'
+          .github/workflows/cnc-learning-depth-browser-smoke.yml
           cnc/build-info.json
           cnc/personal-home.js
           cnc/pwa-self-test.html
