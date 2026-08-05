@@ -86,6 +86,8 @@ jobs:
           set -euxo pipefail
           git restore --source=HEAD --staged --worktree -- .github/workflows
           python3 cnc/tools/apply-learning-depth-mainline-integration.py | tee /tmp/cnc-learning-depth-integration-now/resolution-report.json
+          sed -i 's/[[:blank:]]\+$//' cnc/LEARNING_DEPTH_PROGRESS.md
+          git diff --check -- cnc/LEARNING_DEPTH_PROGRESS.md
           rm cnc/tools/apply-learning-depth-mainline-integration.py
           git add -A cnc
           test -z "$(git diff --name-only --diff-filter=U)"
