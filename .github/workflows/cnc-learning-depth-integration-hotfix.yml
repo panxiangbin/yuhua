@@ -1,0 +1,49 @@
+name: CNC learning depth integration script hotfix
+
+on:
+  push:
+    branches:
+      - chatgpt/cnc-learning-depth-mainline-20260806
+    paths:
+      - '.github/workflows/cnc-learning-depth-integration-hotfix.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cnc-learning-depth-integration-script-hotfix
+  cancel-in-progress: false
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chatgpt/cnc-learning-depth-mainline-20260806
+          persist-credentials: true
+
+      - name: 修复并删除临时工作流
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('.github/workflows/cnc-learning-depth-mainline-integration-audit.yml')
+          text = path.read_text(encoding='utf-8')
+          old = "    if (id && title && file && reason) entries.push({ id, title, file, reason });\\n  }\\n\""
+          new = "    if (id && title && file && reason) entries.push({ id, title, file, reason });\\n\""
+          if text.count(old) != 1:
+              raise SystemExit(f'目录解析修复目标数量异常：{text.count(old)}')
+          path.write_text(text.replace(old, new), encoding='utf-8')
+          PY
+          rm .github/workflows/cnc-learning-depth-integration-hotfix.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git diff --check --cached
+          test "$(git diff --cached --name-only)" = '.github/workflows/cnc-learning-depth-mainline-integration-audit.yml'
+          git commit -m 'ci(cnc): 修复80课整合目录解析脚本'
+          git push origin HEAD:chatgpt/cnc-learning-depth-mainline-20260806
