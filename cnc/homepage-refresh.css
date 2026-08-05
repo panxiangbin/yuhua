@@ -33,4 +33,9 @@
   body:has(#view-dashboard.active) .quick-keywords .keyword-chip:nth-of-type(-n+4) {
     min-height: 44px !important;
   }
+
+  /* 练习卡保持单一实体卡面，避免浅色大面积渐变削弱文字与操作层级。 */
+  body:has(#view-dashboard.active) .cnc-home-route-card {
+    background: #fffdf9 !important;
+  }
 }
