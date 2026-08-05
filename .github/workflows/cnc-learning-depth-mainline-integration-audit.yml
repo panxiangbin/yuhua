@@ -123,14 +123,17 @@ jobs:
           const sw = fs.readFileSync('cnc/sw.js', 'utf8');
           const selfTest = fs.readFileSync('cnc/pwa-self-test.html', 'utf8');
           const status = fs.readFileSync('cnc/pwa-status.html', 'utf8');
-          if (info.build !== '20260806-learning-depth1' || info.pwaBuild !== '20260806-pwa14' || info.cacheRevision !== '20260806-learning14') {
+          const expectedSiteBuild = ['20260806', 'learning-depth1'].join('-');
+          const expectedPwaBuild = ['20260806', 'pwa14'].join('-');
+          const expectedCacheRevision = ['20260806', 'learning14'].join('-');
+          if (info.build !== expectedSiteBuild || info.pwaBuild !== expectedPwaBuild || info.cacheRevision !== expectedCacheRevision) {
             throw new Error(`PWA14构建标记异常：${JSON.stringify(info)}`);
           }
           for (const token of ['./learning-sublesson-catalog.js', './learning-depth.css', './learning-detail.html']) {
             if (!sw.includes(`'${token}'`)) throw new Error(`Service Worker缺少学习资源：${token}`);
             if (!selfTest.includes(JSON.stringify(token))) throw new Error(`PWA自检缺少学习资源：${token}`);
           }
-          if (!status.includes("const EXPECTED='20260806-pwa14'") || !status.includes("const EXPECTED_CACHE='20260806-learning14'")) {
+          if (!status.includes(`const EXPECTED='${expectedPwaBuild}'`) || !status.includes(`const EXPECTED_CACHE='${expectedCacheRevision}'`)) {
             throw new Error('PWA状态页版本异常');
           }
           if (!String(info.contentStage).includes('80个图文小课') || !String(info.contentStage).includes('AI老师学习档案异常保护')) {
