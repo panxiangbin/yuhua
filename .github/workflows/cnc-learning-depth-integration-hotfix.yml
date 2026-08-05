@@ -50,6 +50,8 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
           git diff --check --cached
-          test "$(git diff --cached --name-only)" = '.github/workflows/cnc-learning-depth-mainline-integration-audit.yml'
+          actual="$(git diff --cached --name-only | sort)"
+          expected="$(printf '%s\n' '.github/workflows/cnc-learning-depth-integration-hotfix.yml' '.github/workflows/cnc-learning-depth-mainline-integration-audit.yml' | sort)"
+          test "$actual" = "$expected"
           git commit -m 'ci(cnc): 修复80课整合目录解析脚本'
           git push origin HEAD:chatgpt/cnc-learning-depth-mainline-20260806
