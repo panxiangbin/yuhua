@@ -84,6 +84,7 @@ function readPin(spec) {
 
 function referenceScope(file) {
   if (file === 'cnc/tests/pwa-build-reference-audit-smoke.cjs') return 'audit-governance';
+  if (file === 'cnc/MOBILE_HOME_REFACTOR_PROGRESS.md') return 'documentation-history';
   if (file.startsWith('cnc/docs/')) return 'documentation-history';
   if (file.startsWith('.github/workflows/')) return 'workflow';
   if (file.startsWith('cnc/tests/')) return 'test';
