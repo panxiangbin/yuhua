@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'cnc/tools/learning-depth-payload.zip'
+      - 'cnc/tools/learning-depth-payload.b64.part*'
       - 'cnc/personal-home.js'
       - 'cnc/learning-sublesson-catalog.js'
       - 'cnc/learning-detail.html'
@@ -23,21 +24,27 @@ jobs:
   prepare:
     if: github.event_name == 'pull_request' && github.head_ref == 'codex/learning-depth-refactor-20260805'
     runs-on: windows-latest
-    timeout-minutes: 18
+    timeout-minutes: 22
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: ${{ github.head_ref }}
 
-      - name: Restore learning depth payload
+      - name: Restore verified learning depth payload
         shell: pwsh
         run: |
           @'
           from pathlib import Path
+          from base64 import b64decode
           from zipfile import ZipFile, BadZipFile
+          import hashlib
 
-          payload = Path('cnc/tools/learning-depth-payload.zip')
+          tools = Path('cnc/tools')
+          parts = sorted(tools.glob('learning-depth-payload.b64.part*'))
+          corrupt_payload = tools / 'learning-depth-payload.zip'
+          restored_payload = tools / 'learning-depth-payload-restored.zip'
+          expected_sha256 = '2dabb822df5c6727f1cb1cac040b465d853bc33ab35efb04ebecd13707fc1f9c'
           expected = {
               'cnc/personal-home.js',
               'cnc/learning-sublesson-catalog.js',
@@ -48,36 +55,43 @@ jobs:
               'cnc/LEARNING_DEPTH_PROGRESS.md',
           }
 
-          if payload.exists():
+          if parts:
+              if len(parts) != 8:
+                  raise RuntimeError(f'Payload part count mismatch: {len(parts)}/8')
+              encoded = ''.join(part.read_text(encoding='utf-8').strip() for part in parts)
+              payload_bytes = b64decode(encoded, validate=True)
+              actual_sha256 = hashlib.sha256(payload_bytes).hexdigest()
+              if actual_sha256 != expected_sha256:
+                  raise RuntimeError(f'Payload SHA-256 mismatch: {actual_sha256}')
+              restored_payload.write_bytes(payload_bytes)
               try:
-                  with ZipFile(payload, 'r') as archive:
+                  with ZipFile(restored_payload, 'r') as archive:
                       members = set(archive.namelist())
-                      bad_member = archive.testzip()
-                      if bad_member:
-                          raise RuntimeError(f'Payload ZIP CRC failed: {bad_member}')
                       missing = sorted(expected - members)
                       if missing:
                           raise RuntimeError(f'Payload ZIP missing files: {missing}')
+                      bad_member = archive.testzip()
+                      if bad_member:
+                          raise RuntimeError(f'Payload ZIP CRC failed: {bad_member}')
                       archive.extractall(Path('.'))
               except BadZipFile as error:
-                  raise RuntimeError(f'Payload ZIP is invalid: {error}') from error
-              payload.unlink()
-              print('Learning depth payload restored:')
-              for item in sorted(expected):
-                  path = Path(item)
-                  if not path.is_file() or path.stat().st_size == 0:
-                      raise RuntimeError(f'Restored file missing or empty: {item}')
-                  print(f'  {item} ({path.stat().st_size} bytes)')
+                  raise RuntimeError(f'Restored payload ZIP is invalid: {error}') from error
+              restored_payload.unlink(missing_ok=True)
+              corrupt_payload.unlink(missing_ok=True)
+              for part in parts:
+                  part.unlink()
+              print(f'Learning depth payload restored and verified: {actual_sha256}')
           else:
-              print('Payload already restored; verifying target files.')
-              for item in sorted(expected):
-                  path = Path(item)
-                  if not path.is_file() or path.stat().st_size == 0:
-                      raise RuntimeError(f'Target file missing after prior restore: {item}')
-                  print(f'  {item} ({path.stat().st_size} bytes)')
+              print('Payload parts already consumed; verifying restored target files.')
+
+          for item in sorted(expected):
+              path = Path(item)
+              if not path.is_file() or path.stat().st_size == 0:
+                  raise RuntimeError(f'Restored file missing or empty: {item}')
+              print(f'  {item} ({path.stat().st_size} bytes)')
           '@ | python -
 
-      - name: Synchronize PWA13 learning depth release
+      - name: Synchronize PWA13 and validate 80 lessons
         shell: pwsh
         run: |
           @'
@@ -86,54 +100,56 @@ jobs:
           import json
           import re
 
-          current='20260804-pwa12'
-          target='20260805-pwa13'
-          old_cache='20260804-mobile12'
-          new_cache='20260805-learning13'
-          root=Path('cnc')
-          changed=[]
+          current = '20260804-pwa12'
+          target = '20260805-pwa13'
+          old_cache = '20260804-mobile12'
+          new_cache = '20260805-learning13'
 
-          for file in root.rglob('*'):
-              if not file.is_file() or file.suffix.lower() not in {'.js','.cjs','.json','.html','.md'}:
-                  continue
-              if 'node_modules' in file.parts or 'test-results' in file.parts or 'docs' in file.parts:
-                  continue
-              text=file.read_text(encoding='utf-8')
-              updated=text.replace(current,target)
-              if file.as_posix()=='cnc/tests/mobile-pwa-upgrade-data-smoke.cjs':
-                  updated=re.sub(r"const PREVIOUS_PWA_BUILD = '[^']+';","const PREVIOUS_PWA_BUILD = '20260804-pwa12';",updated,count=1)
-              if updated!=text:
-                  file.write_text(updated,encoding='utf-8')
-                  changed.append(str(file))
+          active_files = [
+              Path('cnc/sw.js'),
+              Path('cnc/pwa-status.html'),
+              Path('cnc/pwa-self-test.html'),
+              Path('cnc/tests/mobile-pwa-offline-cache-smoke.cjs'),
+              Path('cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs'),
+              Path('cnc/tests/mobile-pwa-upgrade-data-smoke.cjs'),
+              Path('cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs'),
+              Path('cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs'),
+              Path('cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs'),
+          ]
 
-          sw=Path('cnc/sw.js')
-          text=sw.read_text(encoding='utf-8')
-          updated=text.replace(old_cache,new_cache)
-          marker="  './personal-home.js',"
-          additions="\n  './learning-sublesson-catalog.js',\n  './learning-depth.css',\n  './learning-detail.html',"
-          if './learning-sublesson-catalog.js' not in updated and marker in updated:
-              updated=updated.replace(marker,marker+additions)
-          if updated!=text:
-              sw.write_text(updated,encoding='utf-8')
-              if str(sw) not in changed: changed.append(str(sw))
+          for file in active_files:
+              text = file.read_text(encoding='utf-8')
+              updated = text.replace(current, target)
+              if file.as_posix() == 'cnc/tests/mobile-pwa-upgrade-data-smoke.cjs':
+                  updated = re.sub(
+                      r"const PREVIOUS_PWA_BUILD = '[^']+';",
+                      "const PREVIOUS_PWA_BUILD = '20260804-pwa12';",
+                      updated,
+                      count=1
+                  )
+              file.write_text(updated, encoding='utf-8')
 
-          info_path=Path('cnc/build-info.json')
-          info=json.loads(info_path.read_text(encoding='utf-8'))
-          desired={
-              'build':'20260805-learning-depth1',
-              'pwaBuild':target,
-              'learningBuild':'20260805-learning-depth1',
-              'cacheRevision':new_cache,
-              'contentStage':'课程12关 · 80个图文小课 · 第1/2关各10课 · 手机首页一屏化 · 学习与查询图片 · AI CNC老师 · PWA可靠性'
-          }
-          if any(info.get(k)!=v for k,v in desired.items()):
-              info.update(desired)
-              info['generatedAt']=datetime.now(timezone.utc).isoformat().replace('+00:00','Z')
-              info_path.write_text(json.dumps(info,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
-              if str(info_path) not in changed: changed.append(str(info_path))
+          sw = Path('cnc/sw.js')
+          text = sw.read_text(encoding='utf-8').replace(old_cache, new_cache)
+          marker = "  './personal-home.js',"
+          additions = "\n  './learning-sublesson-catalog.js',\n  './learning-depth.css',\n  './learning-detail.html',"
+          if './learning-sublesson-catalog.js' not in text:
+              if marker not in text:
+                  raise RuntimeError('Service Worker personal-home cache marker missing')
+              text = text.replace(marker, marker + additions)
+          sw.write_text(text, encoding='utf-8')
 
-          print(f'learning depth PWA sync: {len(changed)} files')
-          for file in changed: print(file)
+          info_path = Path('cnc/build-info.json')
+          info = json.loads(info_path.read_text(encoding='utf-8'))
+          info.update({
+              'build': '20260805-learning-depth1',
+              'pwaBuild': target,
+              'learningBuild': '20260805-learning-depth1',
+              'cacheRevision': new_cache,
+              'contentStage': '课程12关 · 80个图文小课 · 第1/2关各10课 · 手机首页一屏化 · 学习与查询图片 · AI CNC老师 · PWA可靠性',
+              'generatedAt': datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
+          })
+          info_path.write_text(json.dumps(info, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
           '@ | python -
 
           node --check cnc/sw.js
@@ -146,10 +162,13 @@ jobs:
           node cnc/tests/pwa-build-reference-audit-smoke.cjs
           git diff --check
 
-          if (git status --porcelain) {
-            git config user.name 'github-actions[bot]'
-            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git add -A cnc
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -u cnc
+          git add cnc/learning-sublesson-catalog.js cnc/learning-detail.html cnc/learning-depth.css cnc/tests/learning-depth-smoke.cjs cnc/LEARNING_DEPTH_PROGRESS.md
+          git diff --cached --check
+
+          if (-not (git diff --cached --quiet)) {
             git commit -m 'feat(cnc-learning): add 80 expandable image lessons'
             git push origin HEAD:codex/learning-depth-refactor-20260805
           } else {
