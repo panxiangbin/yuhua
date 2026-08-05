@@ -1,4 +1,4 @@
-name: CNC learning depth mainline integration audit
+name: CNC learning depth mainline integration apply
 
 on:
   pull_request:
@@ -12,99 +12,221 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: cnc-learning-depth-mainline-integration-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: false
 
 jobs:
-  audit:
+  integrate:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: chatgpt/cnc-learning-depth-mainline-20260806
           fetch-depth: 0
+          persist-credentials: true
 
-      - name: 初始化结构化诊断
+      - name: 初始化并核验精确来源
         run: |
           set -euxo pipefail
-          mkdir -p cnc/test-results/learning-depth-mainline-integration
-          printf '%s\n' '6ed004d55a808a43c2c225b54d8ec6da956b3062' > cnc/test-results/learning-depth-mainline-integration/expected-main.txt
-          printf '%s\n' '4dd43680d8cc9b1ca754cc75c062d526600ee570' > cnc/test-results/learning-depth-mainline-integration/expected-feature.txt
-          git rev-parse HEAD > cnc/test-results/learning-depth-mainline-integration/checked-out-head.txt
-
-      - name: 核验精确主线与功能头
-        run: |
-          set -euxo pipefail
+          mkdir -p /tmp/cnc-learning-depth-integration
           git fetch --no-tags origin main codex/learning-depth-refactor-20260805
           test "$(git rev-parse origin/main)" = '6ed004d55a808a43c2c225b54d8ec6da956b3062'
           test "$(git rev-parse origin/codex/learning-depth-refactor-20260805)" = '4dd43680d8cc9b1ca754cc75c062d526600ee570'
           test "$(git merge-base HEAD origin/main)" = '6ed004d55a808a43c2c225b54d8ec6da956b3062'
+          test "$(git diff --name-only origin/main...HEAD | sort)" = '.github/workflows/cnc-learning-depth-mainline-integration-audit.yml'
+          git rev-parse HEAD > /tmp/cnc-learning-depth-integration/bootstrap-head.txt
 
-      - name: 执行只读三方合并审计
-        id: merge_audit
+      - name: 合并并核对真实冲突集合
         shell: bash
         run: |
           set +e
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git merge --no-commit --no-ff origin/codex/learning-depth-refactor-20260805 > cnc/test-results/learning-depth-mainline-integration/merge.log 2>&1
+          git merge --no-commit --no-ff origin/codex/learning-depth-refactor-20260805 > /tmp/cnc-learning-depth-integration/merge.log 2>&1
           code=$?
-          printf '%s\n' "$code" > cnc/test-results/learning-depth-mainline-integration/merge-exit-code.txt
-          git status --short > cnc/test-results/learning-depth-mainline-integration/status-short.txt
-          git diff --name-only --diff-filter=U > cnc/test-results/learning-depth-mainline-integration/conflict-files.txt
-          git diff --cc > cnc/test-results/learning-depth-mainline-integration/conflicts.diff
-          node - <<'NODE'
-          const fs = require('fs');
-          const path = 'cnc/test-results/learning-depth-mainline-integration';
-          const conflictFiles = fs.readFileSync(`${path}/conflict-files.txt`, 'utf8').trim().split(/\r?\n/).filter(Boolean);
-          fs.writeFileSync(`${path}/report.json`, JSON.stringify({
-            expectedMain: '6ed004d55a808a43c2c225b54d8ec6da956b3062',
-            expectedFeature: '4dd43680d8cc9b1ca754cc75c062d526600ee570',
-            mergeExitCode: Number(fs.readFileSync(`${path}/merge-exit-code.txt`, 'utf8').trim()),
-            conflictCount: conflictFiles.length,
-            conflictFiles,
-            auditedAt: new Date().toISOString()
-          }, null, 2));
-          NODE
-          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
-          exit 0
+          git diff --name-only --diff-filter=U | sort > /tmp/cnc-learning-depth-integration/conflict-files.txt
+          cat > /tmp/cnc-learning-depth-integration/expected-conflicts.txt <<'EOF'
+          cnc/build-info.json
+          cnc/personal-home.js
+          cnc/pwa-self-test.html
+          cnc/pwa-status.html
+          cnc/sw.js
+          cnc/tests/main-course-catalog-drift-smoke.cjs
+          cnc/tests/mobile-pwa-offline-cache-smoke.cjs
+          cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs
+          cnc/tests/mobile-pwa-upgrade-data-smoke.cjs
+          cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs
+          cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs
+          cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs
+          EOF
+          sed -i 's/^          //' /tmp/cnc-learning-depth-integration/expected-conflicts.txt
+          if [ "$code" = '0' ]; then
+            echo '预期存在已审计冲突，但本次合并意外无冲突' >&2
+            exit 1
+          fi
+          diff -u /tmp/cnc-learning-depth-integration/expected-conflicts.txt /tmp/cnc-learning-depth-integration/conflict-files.txt
 
-      - name: 保存冲突文件原文
-        if: always()
+      - name: 逐项解决冲突并升级PWA14
         shell: bash
         run: |
           set -euxo pipefail
-          mkdir -p cnc/test-results/learning-depth-mainline-integration/conflicted-files
-          while IFS= read -r file; do
-            [ -n "$file" ] || continue
-            safe="${file//\//__}"
-            cp "$file" "cnc/test-results/learning-depth-mainline-integration/conflicted-files/$safe"
-          done < cnc/test-results/learning-depth-mainline-integration/conflict-files.txt
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, re
 
-      - name: 上传真实合并诊断
+          FEATURE = 'origin/codex/learning-depth-refactor-20260805'
+          MARKER = re.compile(r'<<<<<<< HEAD\n(.*?)=======\n(.*?)>>>>>>> ' + re.escape(FEATURE) + r'\n', re.S)
+
+          def resolve(path, replacements):
+              file = Path(path)
+              text = file.read_text(encoding='utf-8')
+              blocks = list(MARKER.finditer(text))
+              if len(blocks) != len(replacements):
+                  raise SystemExit(f'{path} 冲突块数量异常：{len(blocks)} / {len(replacements)}')
+              output = []
+              cursor = 0
+              for block, replacement in zip(blocks, replacements):
+                  output.append(text[cursor:block.start()])
+                  output.append(replacement)
+                  cursor = block.end()
+              output.append(text[cursor:])
+              file.write_text(''.join(output), encoding='utf-8')
+
+          info = {
+              'app': 'cnc-training-platform',
+              'name': '数控小潘 CNC随身助手',
+              'build': '20260806-learning-depth1',
+              'pwaBuild': '20260806-pwa14',
+              'mobileBuild': '20260804-mobile-home1',
+              'cacheRevision': '20260806-learning14',
+              'contentStage': '课程12关 · 80个图文小课 · 第1/2关各10课 · 专项75题 · 模拟13项 · 起点测评 · 起点测评关键安全门禁 · 起点测评离线核心 · 测评路线一次性交接 · 手机首页一屏化 · 首绘无旧首页 · 12关学习图片 · 查询图片复用 · 训练营路线离线核心 · 测评首步课程离线核心 · 正式课程开发占位清零 · AI CNC老师基础版 · AI老师现场问诊单 · AI老师判断说明 · AI老师离线核心 · AI老师问诊闭环 · AI老师学习档案异常保护 · PWA可靠性',
+              'generatedAt': '2026-08-05T22:40:00.000Z',
+              'source': 'GitHub Pages static build marker',
+              'scope': '/cnc/',
+              'learningBuild': '20260806-learning-depth1'
+          }
+          Path('cnc/build-info.json').write_text(json.dumps(info, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+          resolve('cnc/personal-home.js', [
+              "  var routeObserver = null;\n  var routeSyncFrame = 0;\n  var routeSyncTimer = 0;\n  var depthPromise = null;\n",
+              "  window.addEventListener('hashchange', scheduleRouteSync);\n  document.addEventListener('cnc:route-changed', function () {\n    scheduleRouteSync();\n    window.setTimeout(function () {\n      primeQueryImages(document);\n      if (window.CNC_LEARNING_SUBLESSONS) renderLearningDepth(window.CNC_LEARNING_SUBLESSONS);\n    }, 0);\n  });\n"
+          ])
+
+          required = [
+              './index.html','./homepage-refresh.css','./homepage-refresh-desktop-legacy.css','./mobile-home-refactor.css','./personal-home.js',
+              './learning-sublesson-catalog.js','./learning-depth.css','./learning-detail.html','./mobile-trust-nav.js','./featured-images-supplement.js',
+              './offline.html','./pwa-status.html','./pwa-self-test.html','./pages-status.html','./beginner-placement.html','./training-camp.html',
+              './course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html','./ai-teacher.html','./ai-teacher-intake.html',
+              './ai-teacher-explainability.html','./build-info.json',
+              './assets/images/batch01_core/beginner-machine-zero-vs-work-zero-001.webp','./assets/images/batch02_operation_basics/machine-init-flow-001.webp',
+              './assets/images/batch04_milling_tooling/milling-process-overview-001.webp','./assets/images/batch01_core/measure-reading-set-001.webp',
+              './assets/images/batch05_alarm_drawing_material/dial-indicator-detail-001.webp','./assets/images/batch04_milling_tooling/vise-clamping-basic-001.webp',
+              './assets/images/batch04_milling_tooling/tool-selection-beginner-001.webp','./assets/images/batch04_milling_tooling/bt-er-holder-overview-001.webp',
+              './assets/images/batch02_operation_basics/single-block-dry-run-001.webp','./assets/images/batch04_milling_tooling/milling-contour-001.webp',
+              './assets/images/batch02_operation_basics/canned-cycle-overview-001.webp','./assets/images/batch05_alarm_drawing_material/first-piece-inspection-001.webp'
+          ]
+          required_js = "    const EXPECTED='20260806-pwa14';\n    const EXPECTED_CACHE='20260806-learning14';\n    const REQUIRED=[\n" + ''.join(f"      {json.dumps(item, ensure_ascii=False)},\n" for item in required) + "    ];\n"
+          resolve('cnc/pwa-self-test.html', [required_js])
+          resolve('cnc/pwa-status.html', [
+              '        <li>页面期望构建：<strong id="expected">20260806-pwa14</strong></li>\n',
+              "    const EXPECTED='20260806-pwa14';\n    const EXPECTED_CACHE='20260806-learning14';\n"
+          ])
+          resolve('cnc/sw.js', ["const BUILD = '20260806-pwa14';\nconst CACHE_REVISION = '20260806-learning14';\n"])
+
+          parser = "  for (const objectMatch of match[1].matchAll(/\\{([^{}]+)\\}/g)) {\n    const object = objectMatch[1];\n    const id = object.match(/\\bid\\s*:\\s*'([^']+)'/)?.[1];\n    const title = object.match(/\\btitle\\s*:\\s*'([^']+)'/)?.[1];\n    const file = object.match(/\\bfile\\s*:\\s*'([^']+)'/)?.[1];\n    const reason = object.match(/\\breason\\s*:\\s*'([^']+)'/)?.[1]\n      || object.match(/\\bcaption\\s*:\\s*'([^']+)'/)?.[1];\n    if (id && title && file && reason) entries.push({ id, title, file, reason });\n  }\n"
+          resolve('cnc/tests/main-course-catalog-drift-smoke.cjs', [parser])
+          resolve('cnc/tests/mobile-pwa-offline-cache-smoke.cjs', ["const PWA_BUILD = '20260806-pwa14';\nconst CACHE_REVISION = '20260806-learning14';\n"])
+          resolve('cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs', ["const PWA_BUILD = '20260806-pwa14';\nconst CACHE_REVISION = '20260806-learning14';\n"])
+          resolve('cnc/tests/mobile-pwa-upgrade-data-smoke.cjs', [
+              "const CURRENT_PWA_BUILD = '20260806-pwa14';\nconst PREVIOUS_PWA_BUILD = '20260804-pwa13';\nconst CURRENT_CACHE_REVISION = '20260806-learning14';\nconst PREVIOUS_CACHE_REVISION = '20260804-mobile13';\nconst CURRENT_STATIC_CACHE = `cnc-static-${CURRENT_CACHE_REVISION}`;\nconst CURRENT_RUNTIME_CACHE = `cnc-runtime-${CURRENT_CACHE_REVISION}`;\nconst PREVIOUS_STATIC_CACHE = `cnc-static-${PREVIOUS_CACHE_REVISION}`;\nconst PREVIOUS_RUNTIME_CACHE = `cnc-runtime-${PREVIOUS_CACHE_REVISION}`;\n"
+          ])
+          pages_common = "const branchTargetPwaBuild = '20260806-pwa14';\nconst previousPublicPwaBuild = '20260804-pwa13';\nconst expectedSiteBuild = '20260806-learning-depth1';\nconst cacheRevisionByBuild = {\n  [branchTargetPwaBuild]: '20260806-learning14',\n  [previousPublicPwaBuild]: '20260804-mobile13'\n};\n"
+          resolve('cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs', [pages_common])
+          resolve('cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs', [pages_common])
+          training_pages = "const expectedSiteBuild = '20260806-learning-depth1';\nconst expectedPwaBuild = '20260806-pwa14';\nconst previousPublicPwaBuild = '20260804-pwa13';\nconst cacheRevisionByBuild = {\n  [expectedPwaBuild]: '20260806-learning14',\n  [previousPublicPwaBuild]: '20260804-mobile13'\n};\n"
+          resolve('cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs', [training_pages])
+
+          workflow = Path('.github/workflows/cnc-learning-depth-browser-smoke.yml')
+          text = workflow.read_text(encoding='utf-8')
+          if text.count('cancel-in-progress: true') != 1:
+              raise SystemExit('新学习深度工作流的取消策略数量异常')
+          workflow.write_text(text.replace('cancel-in-progress: true', 'cancel-in-progress: false'), encoding='utf-8')
+
+          for path in [
+              'cnc/build-info.json','cnc/personal-home.js','cnc/pwa-self-test.html','cnc/pwa-status.html','cnc/sw.js',
+              'cnc/tests/main-course-catalog-drift-smoke.cjs','cnc/tests/mobile-pwa-offline-cache-smoke.cjs',
+              'cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs','cnc/tests/mobile-pwa-upgrade-data-smoke.cjs',
+              'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs','cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs',
+              'cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs'
+          ]:
+              text = Path(path).read_text(encoding='utf-8')
+              if any(marker in text for marker in ('<<<<<<<','=======','>>>>>>>')):
+                  raise SystemExit(f'{path} 仍有冲突标记')
+          PY
+          git add cnc .github/workflows/cnc-learning-depth-browser-smoke.yml .github/workflows/cnc-main-course-catalog-drift-smoke.yml
+          test -z "$(git diff --name-only --diff-filter=U)"
+
+      - name: 执行静态与80课门禁
+        shell: bash
+        run: |
+          set -euxo pipefail
+          node --check cnc/personal-home.js
+          node --check cnc/learning-sublesson-catalog.js
+          node --check cnc/tests/learning-depth-smoke.cjs
+          node --check cnc/tests/learning-depth-browser-smoke.cjs
+          node --check cnc/tests/main-course-catalog-drift-smoke.cjs
+          node --check cnc/tests/mobile-pwa-offline-cache-smoke.cjs
+          node --check cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs
+          node --check cnc/tests/mobile-pwa-upgrade-data-smoke.cjs
+          node cnc/tests/learning-depth-smoke.cjs
+          node cnc/tests/main-course-catalog-drift-smoke.cjs
+          node - <<'NODE'
+          const fs = require('fs');
+          const info = JSON.parse(fs.readFileSync('cnc/build-info.json','utf8'));
+          const sw = fs.readFileSync('cnc/sw.js','utf8');
+          const selfTest = fs.readFileSync('cnc/pwa-self-test.html','utf8');
+          const status = fs.readFileSync('cnc/pwa-status.html','utf8');
+          if (info.build !== '20260806-learning-depth1' || info.pwaBuild !== '20260806-pwa14' || info.cacheRevision !== '20260806-learning14') throw new Error('PWA14构建标记异常');
+          for (const token of ['./learning-sublesson-catalog.js','./learning-depth.css','./learning-detail.html']) {
+            if (!sw.includes(`'${token}'`)) throw new Error(`Service Worker缺少学习资源：${token}`);
+            if (!selfTest.includes(JSON.stringify(token))) throw new Error(`PWA自检缺少学习资源：${token}`);
+          }
+          if (!status.includes("const EXPECTED='20260806-pwa14'") || !status.includes("const EXPECTED_CACHE='20260806-learning14'")) throw new Error('PWA状态页版本异常');
+          if (!String(info.contentStage).includes('80个图文小课') || !String(info.contentStage).includes('AI老师学习档案异常保护')) throw new Error('内容阶段未保留80课或AI老师保护');
+          NODE
+          git diff --check --cached
+          changed="$(git diff --cached --name-only)"
+          printf '%s\n' "$changed" > /tmp/cnc-learning-depth-integration/staged-files.txt
+          if printf '%s\n' "$changed" | grep -Ev '^(cnc/|\.github/workflows/cnc-)' ; then
+            echo '检测到非CNC范围改动' >&2
+            exit 1
+          fi
+
+      - name: 删除临时写入工作流并提交
+        shell: bash
+        run: |
+          set -euxo pipefail
+          rm .github/workflows/cnc-learning-depth-mainline-integration-audit.yml
+          git add -A
+          git diff --check --cached
+          if git diff --cached --name-only | grep -Ev '^(cnc/|\.github/workflows/cnc-)' ; then
+            echo '最终提交包含非CNC范围文件' >&2
+            exit 1
+          fi
+          git status --short > /tmp/cnc-learning-depth-integration/final-status.txt
+          git commit -m 'feat(cnc-learning): 整合80个图文小课并升级PWA14'
+          git rev-parse HEAD > /tmp/cnc-learning-depth-integration/result-head.txt
+          git push origin HEAD:chatgpt/cnc-learning-depth-mainline-20260806
+
+      - name: 上传整合诊断
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: cnc-learning-depth-mainline-integration-${{ github.run_id }}
-          path: cnc/test-results/learning-depth-mainline-integration/
+          name: cnc-learning-depth-mainline-apply-${{ github.run_id }}
+          path: /tmp/cnc-learning-depth-integration/
           if-no-files-found: error
           retention-days: 30
-
-      - name: 按真实冲突结果结束
-        if: always()
-        shell: bash
-        run: |
-          code='${{ steps.merge_audit.outputs.exit_code }}'
-          if [ -z "$code" ]; then
-            echo '合并审计未返回退出码' >&2
-            exit 1
-          fi
-          if [ "$code" != '0' ]; then
-            echo '检测到真实合并冲突，必须读取诊断后逐项解决' >&2
-            cat cnc/test-results/learning-depth-mainline-integration/conflict-files.txt >&2
-            exit "$code"
-          fi
-          echo '功能分支可干净合并到最新main'
