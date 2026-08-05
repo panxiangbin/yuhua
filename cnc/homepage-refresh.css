@@ -6,6 +6,13 @@
 @import url('./mobile-home-refactor.css?v=20260804-mobile1');
 @import url('./mobile-home-hardening.css?v=20260804-mobile1');
 
+@media (min-width: 769px) {
+  /* 最近查看卡片中的代码是关键信息，保持工业卡片视觉层级。 */
+  #dashboard-recent-list .recent-card-meta strong {
+    font-weight: 800;
+  }
+}
+
 @media (max-width: 768px) {
   body:has(#view-dashboard.active) .cnc-home-primary {
     width: 126px !important;
