@@ -8,12 +8,14 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const CURRENT_PWA_BUILD = '20260804-pwa12';
-const PREVIOUS_PWA_BUILD = '20260804-pwa11';
-const CURRENT_STATIC_CACHE = `cnc-static-${CURRENT_PWA_BUILD}`;
-const CURRENT_RUNTIME_CACHE = `cnc-runtime-${CURRENT_PWA_BUILD}`;
-const PREVIOUS_STATIC_CACHE = `cnc-static-${PREVIOUS_PWA_BUILD}`;
-const PREVIOUS_RUNTIME_CACHE = `cnc-runtime-${PREVIOUS_PWA_BUILD}`;
+const CURRENT_PWA_BUILD = '20260804-pwa13';
+const PREVIOUS_PWA_BUILD = '20260804-pwa12';
+const CURRENT_CACHE_REVISION = '20260804-mobile13';
+const PREVIOUS_CACHE_REVISION = '20260804-mobile12';
+const CURRENT_STATIC_CACHE = `cnc-static-${CURRENT_CACHE_REVISION}`;
+const CURRENT_RUNTIME_CACHE = `cnc-runtime-${CURRENT_CACHE_REVISION}`;
+const PREVIOUS_STATIC_CACHE = `cnc-static-${PREVIOUS_CACHE_REVISION}`;
+const PREVIOUS_RUNTIME_CACHE = `cnc-runtime-${PREVIOUS_CACHE_REVISION}`;
 const UNRELATED_CACHE = 'other-app-cache-v1';
 const PLACEMENT_HANDOFF_KEY = 'cnc_beginner_placement_route_handoff_v1';
 const PLACEMENT_FIRST_STEP_COURSES = [
@@ -200,7 +202,7 @@ async function verifyColdOfflineCourse(page, course) {
         request.onsuccess = () => {
           const db = request.result;
           const transaction = db.transaction('records', 'readwrite');
-          transaction.objectStore('records').put({ xp: 680, streak: 12, source: 'pwa9' }, 'growth');
+          transaction.objectStore('records').put({ xp: 680, streak: 12, source: 'pwa12' }, 'growth');
           transaction.onerror = () => reject(transaction.error);
           transaction.oncomplete = () => {
             db.close();
@@ -265,18 +267,19 @@ async function verifyColdOfflineCourse(page, course) {
     assert.equal(scopedRegistrations[0].waiting, '', `升级后不应残留waiting Worker: ${JSON.stringify(scopedRegistrations[0])}`);
     assert.equal(scopedRegistrations[0].installing, '', `升级后不应残留installing Worker: ${JSON.stringify(scopedRegistrations[0])}`);
 
-    const workerBuild = await page.evaluate(() => new Promise((resolve, reject) => {
+    const workerState = await page.evaluate(() => new Promise((resolve, reject) => {
       const controller = navigator.serviceWorker.controller;
       if (!controller) return reject(new Error('页面未被Service Worker接管'));
       const channel = new MessageChannel();
       const timer = setTimeout(() => reject(new Error('读取Service Worker构建号超时')), 5000);
       channel.port1.onmessage = event => {
         clearTimeout(timer);
-        resolve(event.data?.build || '');
+        resolve({ build: event.data?.build || '', cacheRevision: event.data?.cacheRevision || '' });
       };
       controller.postMessage({ type: 'GET_BUILD' }, [channel.port2]);
     }));
-    assert.equal(workerBuild, CURRENT_PWA_BUILD, `Worker构建号错误: ${workerBuild}`);
+    assert.equal(workerState.build, CURRENT_PWA_BUILD, `Worker构建号错误: ${workerState.build}`);
+    assert.equal(workerState.cacheRevision, CURRENT_CACHE_REVISION, `Worker缓存修订错误: ${workerState.cacheRevision}`);
 
     const cachesAfter = await page.evaluate(() => caches.keys());
     assert(!cachesAfter.includes(PREVIOUS_STATIC_CACHE), `旧静态缓存未清理: ${JSON.stringify(cachesAfter)}`);
@@ -354,6 +357,8 @@ async function verifyColdOfflineCourse(page, course) {
     fs.writeFileSync(path.join(out, 'pwa-upgrade-data-result.json'), JSON.stringify({
       previousPwaBuild: PREVIOUS_PWA_BUILD,
       currentPwaBuild: CURRENT_PWA_BUILD,
+      previousCacheRevision: PREVIOUS_CACHE_REVISION,
+      currentCacheRevision: CURRENT_CACHE_REVISION,
       oldCachesRemoved: true,
       currentCachesReady: true,
       unrelatedCachePreserved: true,
@@ -375,10 +380,11 @@ async function verifyColdOfflineCourse(page, course) {
       preservedKeys: DATA_KEYS,
       cachesBefore,
       cachesAfter,
-      workerBuild
+      workerBuild: workerState.build,
+      workerCacheRevision: workerState.cacheRevision
     }, null, 2));
 
-    console.log(`CNC PWA upgrade data smoke passed: ${PREVIOUS_PWA_BUILD} -> ${CURRENT_PWA_BUILD}`);
+    console.log(`CNC PWA upgrade data smoke passed: ${PREVIOUS_PWA_BUILD}/${PREVIOUS_CACHE_REVISION} -> ${CURRENT_PWA_BUILD}/${CURRENT_CACHE_REVISION}`);
   } catch (error) {
     if (page && context) await captureDiagnostics(page, context, stage, errors);
     fs.writeFileSync(path.join(out, 'pwa-upgrade-data-error.txt'), `stage=${stage}\n${error.stack || error}`);

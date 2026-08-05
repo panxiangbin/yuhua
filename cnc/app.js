@@ -1,4 +1,4 @@
-﻿// === 开发模式：禁用访问控制 ===
+// === 开发模式：禁用访问控制 ===
 const DEV_MODE = true;
 if (DEV_MODE) {
   window.__FORCE_ACCESS_GRANTED__ = true;
@@ -862,6 +862,9 @@ function navigate(view, options = {}) {
     }
 
     renderWorkspace();
+    if (!state.coreLoaded) {
+      void ensureKnowledgeCoreForWorkspace();
+    }
   }
 
   if (view === "dashboard") renderDashboardRecent();
@@ -2119,6 +2122,20 @@ function ensureScript(id, src) {
   });
 }
 
+let workspaceCoreLoadPromise = null;
+
+async function ensureKnowledgeCoreForWorkspace() {
+  if (state.coreLoaded) return true;
+  if (!workspaceCoreLoadPromise) {
+    workspaceCoreLoadPromise = loadKnowledgeCore(true)
+      .then(() => state.coreLoaded)
+      .finally(() => { workspaceCoreLoadPromise = null; });
+  }
+  const loaded = await workspaceCoreLoadPromise;
+  if (state.activeView === 'workspace') renderWorkspace();
+  return loaded;
+}
+
 async function loadKnowledgeCore(silent) {
   if (state.coreLoaded) {
     logLibrary("核心知识库包已经加载过，不再重复加载。");
@@ -2483,9 +2500,8 @@ async function bootstrap() {
       initRuntimeLayers();
     });
   }
-  if (state.accessGranted && !state.coreLoaded) {
-    await loadKnowledgeCore(true);
-  }
+  // 首页只加载基础条目。核心知识包在用户进入查询工作区后按需加载，
+  // 避免首屏无交互时下载三份大型脚本；不改变查询内容和原有显式加载入口。
   await initEnhancedFeatures();
 }
 

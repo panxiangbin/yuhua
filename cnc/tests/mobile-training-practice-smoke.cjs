@@ -1,58 +1,6 @@
 const { chromium } = require('playwright');
 const assert = require('node:assert/strict');
 
-async function trustedClickHiddenRoute(page, selector) {
-  const route = page.locator(selector);
-  await route.waitFor({ state: 'attached', timeout: 15000 });
-  const markerId = `cnc-practice-route-marker-${Date.now()}`;
-  const routeId = `cnc-practice-route-target-${Date.now()}`;
-
-  await route.evaluate((node, ids) => {
-    const marker = document.createElement('span');
-    marker.id = ids.markerId;
-    marker.hidden = true;
-    node.parentNode.insertBefore(marker, node);
-    node.dataset.practiceOriginalStyle = node.getAttribute('style') || '';
-    node.dataset.practiceOriginalId = node.id || '';
-    node.id = ids.routeId;
-    document.body.appendChild(node);
-    Object.assign(node.style, {
-      position: 'fixed',
-      left: '16px',
-      top: '16px',
-      width: '180px',
-      height: '48px',
-      display: 'block',
-      visibility: 'visible',
-      opacity: '1',
-      pointerEvents: 'auto',
-      zIndex: '2147483647'
-    });
-  }, { markerId, routeId });
-
-  try {
-    await page.locator(`#${routeId}`).click({ timeout: 15000 });
-  } finally {
-    await page.evaluate(({ routeId, markerId }) => {
-      const node = document.getElementById(routeId);
-      const marker = document.getElementById(markerId);
-      if (!node) return;
-      const originalStyle = node.dataset.practiceOriginalStyle || '';
-      const originalId = node.dataset.practiceOriginalId || '';
-      if (originalStyle) node.setAttribute('style', originalStyle);
-      else node.removeAttribute('style');
-      if (originalId) node.id = originalId;
-      else node.removeAttribute('id');
-      delete node.dataset.practiceOriginalStyle;
-      delete node.dataset.practiceOriginalId;
-      if (marker && marker.parentNode) {
-        marker.parentNode.insertBefore(node, marker);
-        marker.remove();
-      }
-    }, { routeId, markerId });
-  }
-}
-
 (async () => {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
@@ -61,6 +9,17 @@ async function trustedClickHiddenRoute(page, selector) {
 
   await page.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded', timeout: 60000 });
   await page.waitForFunction(() => window.CNC_TRAINING_PRACTICE && /^\d{8}[a-z]$/.test(window.CNC_TRAINING_PRACTICE.build), null, { timeout: 20000 });
+  await page.waitForFunction(() => {
+    const home = window.CNC_PERSONAL_HOME?.runCheck?.();
+    const nav = document.querySelector('body > .xp-bottom-nav');
+    return home?.legacyHomeRemoved === true
+      && home?.bottomNavReady === true
+      && nav?.getClientRects().length > 0
+      && nav.getAttribute('aria-hidden') === 'false'
+      && !nav.hasAttribute('inert');
+  }, null, { timeout: 20000 });
+  await page.waitForFunction(() => document.body.getAttribute('data-cnc-startup-home') === 'stable', null, { timeout: 15000 });
+
   const buildConsistency = await page.evaluate(() => {
     const build = window.CNC_TRAINING_PRACTICE.build;
     const style = document.querySelector('link[data-cnc-training-practice]');
@@ -69,18 +28,34 @@ async function trustedClickHiddenRoute(page, selector) {
       build,
       bodyBuild: document.body.dataset.cncPracticeBuild || '',
       styleHref: style ? style.getAttribute('href') || '' : '',
-      profileSrc: profileScript ? profileScript.getAttribute('src') || '' : ''
+      profileSrc: profileScript ? profileScript.getAttribute('src') || '' : '',
+      activeView: document.querySelector('.view.active')?.id || '',
+      oldHomes: document.querySelectorAll('#xp-game-home,#xp-personal-home').length,
+      home: window.CNC_PERSONAL_HOME.runCheck()
     };
   });
   assert.equal(buildConsistency.bodyBuild, buildConsistency.build, '练习API与页面构建标识必须一致');
   assert.ok(buildConsistency.styleHref.endsWith(`training-practice.css?v=${buildConsistency.build}`), '练习样式资源版本必须与API构建一致');
   assert.ok(buildConsistency.profileSrc.endsWith(`training-profile.js?v=${buildConsistency.build}`), '成长档案脚本版本必须与API构建一致');
-  await page.waitForSelector('#xp-game-home[data-ready="true"]', { state: 'visible', timeout: 60000 });
-  await page.waitForFunction(() => document.body.getAttribute('data-cnc-startup-home') === 'stable', null, { timeout: 15000 });
-  assert.equal(await page.locator('.view.active').getAttribute('id'), 'view-dashboard', '根网址必须稳定停留首页');
+  assert.equal(buildConsistency.activeView, 'view-dashboard', '根网址必须稳定停留首页');
+  assert.equal(buildConsistency.oldHomes, 0, '练习闭环不得依赖已删除的双首页节点');
+  assert.equal(buildConsistency.home.legacyHomeRemoved, true, '旧双首页必须保持移除');
+  assert.equal(buildConsistency.home.bottomNavReady, true, '真实五项底栏必须就绪');
 
-  await page.waitForTimeout(5600);
-  await trustedClickHiddenRoute(page, '#sidebar .tree-item[data-route="study"]');
+  const studyNav = page.locator('body > .xp-bottom-nav [data-xp-route="study"]');
+  await studyNav.waitFor({ state: 'visible', timeout: 15000 });
+  const studyTarget = await studyNav.evaluate(node => {
+    const rect = node.getBoundingClientRect();
+    return {
+      width: rect.width,
+      height: rect.height,
+      label: node.getAttribute('aria-label') || node.querySelector('span')?.textContent.trim() || node.textContent.trim()
+    };
+  });
+  assert.ok(studyTarget.width >= 44, `学习底栏入口宽度不得小于44px：${studyTarget.width}`);
+  assert.ok(studyTarget.height >= 48, `学习底栏入口高度不得小于48px：${studyTarget.height}`);
+  assert.match(studyTarget.label, /学习/, '学习底栏入口必须有明确中文名称');
+  await studyNav.click();
   await page.waitForSelector('#view-study.active', { state: 'visible', timeout: 15000 });
   await page.waitForSelector('#xp-practice-entry', { state: 'visible', timeout: 15000 });
 
@@ -134,6 +109,11 @@ async function trustedClickHiddenRoute(page, selector) {
   assert.equal(optionLayout.singleColumn, true, '手机端答案必须单列显示');
   assert.ok(optionLayout.minHeight >= 54, '答案点击区不得过小');
   assert.deepEqual(errors, []);
-  console.log('CNC新手在线练习、解析、错题记录、80分课程门槛、构建一致性与XP防重复通过', { build: api.build, questions: api.questions, xp: saved.profile.xp });
+  console.log('CNC真实学习底栏、新手在线练习、解析、错题记录、80分课程门槛、构建一致性与XP防重复通过', {
+    build: api.build,
+    questions: api.questions,
+    xp: saved.profile.xp,
+    studyTarget
+  });
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });

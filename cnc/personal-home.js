@@ -11,6 +11,9 @@
   var CURRENT_KEY = 'cnc_study_current_v1';
   var media = window.matchMedia('(max-width: 768px)');
   var queryObserver = null;
+  var routeObserver = null;
+  var routeSyncFrame = 0;
+  var routeSyncTimer = 0;
 
   var COURSES = [
     { id: 'stage-1', title: '安全基础', file: 'course-safety-foundation.html', image: './assets/images/batch02_operation_basics/machine-init-flow-001.webp', alt: '数控机床开机、自检、回零与安全确认流程演示图', caption: '先确认急停、模式、门锁和回零状态，再进行受控操作。' },
@@ -106,6 +109,48 @@
     forceStyle(nav, 'pointer-events', 'auto');
     document.body.classList.add('cnc-mobile-nav-ready');
     return nav.getBoundingClientRect().height > 0;
+  }
+
+  function refreshRouteState() {
+    if (!media.matches) return false;
+    removeLegacyHome();
+    syncHomeProgress();
+    var ready = syncBottomNav();
+    installQueryImageObserver();
+    primeQueryImages(document);
+    return ready;
+  }
+
+  function scheduleRouteSync() {
+    if (!media.matches) return;
+    if (routeSyncFrame) window.cancelAnimationFrame(routeSyncFrame);
+    if (routeSyncTimer) window.clearTimeout(routeSyncTimer);
+    routeSyncFrame = window.requestAnimationFrame(function () {
+      routeSyncFrame = window.requestAnimationFrame(function () {
+        routeSyncFrame = 0;
+        refreshRouteState();
+      });
+    });
+    routeSyncTimer = window.setTimeout(function () {
+      routeSyncTimer = 0;
+      refreshRouteState();
+    }, 120);
+  }
+
+  function installRouteObserver() {
+    if (routeObserver) return true;
+    var views = Array.from(document.querySelectorAll('.view'));
+    if (!views.length) return false;
+    routeObserver = new MutationObserver(function (records) {
+      var routeChanged = records.some(function (record) {
+        return record.type === 'attributes' && record.attributeName === 'class';
+      });
+      if (routeChanged) scheduleRouteSync();
+    });
+    views.forEach(function (view) {
+      routeObserver.observe(view, { attributes: true, attributeFilter: ['class'] });
+    });
+    return true;
   }
 
   function primeQueryImages(root) {
@@ -227,12 +272,22 @@
     };
   }
 
+  function syncQuickSearchAccessibility() {
+    var input = document.getElementById('quick-search-input');
+    if (input && !input.getAttribute('aria-label')) {
+      input.setAttribute('aria-label', '快速搜索G代码、报警号和现场关键词');
+    }
+    return Boolean(input && input.getAttribute('aria-label'));
+  }
+
   function boot() {
+    syncQuickSearchAccessibility();
     removeLegacyHome();
     syncLearningContent();
     syncStudyCards();
     syncHomeProgress();
     syncBottomNav();
+    installRouteObserver();
     installQueryImageObserver();
     [60, 120, 240, 480, 900, 1600, 2600, 4200].forEach(function (delay) {
       window.setTimeout(function () {
@@ -252,16 +307,19 @@
     syncStudyCards();
     syncHomeProgress();
     syncBottomNav();
+    installRouteObserver();
     primeQueryImages(document);
   });
   window.addEventListener('pageshow', boot);
-  document.addEventListener('cnc:route-changed', function () { window.setTimeout(function () { primeQueryImages(document); }, 0); });
+  window.addEventListener('hashchange', scheduleRouteSync);
+  document.addEventListener('cnc:route-changed', scheduleRouteSync);
 
   window.CNC_PERSONAL_HOME = {
     build: BUILD,
     refactorBuild: '20260804-mobile1',
     courses: COURSES,
     refresh: boot,
+    refreshRoute: scheduleRouteSync,
     primeQueryImages: primeQueryImages,
     runCheck: runCheck
   };

@@ -27,10 +27,8 @@ const assert = require('node:assert/strict');
     localStorage.setItem('cnc_training_practice_v1', JSON.stringify({ version:1, attempts:{}, wrong:[], correct:['first-piece-check'], lessonScores }));
   });
 
-  // 手机闯关首页只显示一层主导航；先从可见“现场速查”进入工作区，
-  // 再使用恢复后的工具导航进入“我的”，验证真实用户路径而不是操作隐藏元素。
-  await page.locator('#xp-game-home [data-xp-query-filter="gcode"]').click();
-  await page.waitForSelector('#view-workspace.active', { state: 'visible', timeout: 15000 });
+  // 手机首页已取消第二套旧首页；直接使用当前真实可见底栏进入“我的”，
+  // 验证真实用户路径而不是等待已经删除的 #xp-game-home 入口。
   await page.waitForFunction(() => {
     const node = document.querySelector('body > .xp-bottom-nav');
     return node && node.getClientRects().length > 0 && node.getAttribute('aria-hidden') === 'false' && !node.hasAttribute('inert');
@@ -74,6 +72,6 @@ const assert = require('node:assert/strict');
   assert.equal(stored.xp, 420);
   assert.equal(stored.trainingDays.length, 3);
   assert.deepEqual(errors, []);
-  console.log('单层首页真实导航、每日训练记录、连续天数、20XP、防重复与3天徽章通过', { before: before.streak, after: after.streak, badges: after.badges, buttonHeight });
+  console.log('单层首页真实底栏、每日训练记录、连续天数、20XP、防重复与3天徽章通过', { before: before.streak, after: after.streak, badges: after.badges, buttonHeight });
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });

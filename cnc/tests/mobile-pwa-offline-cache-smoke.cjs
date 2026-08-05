@@ -7,7 +7,8 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const PWA_BUILD = '20260804-pwa12';
+const PWA_BUILD = '20260804-pwa13';
+const CACHE_REVISION = '20260804-mobile13';
 const PLACEMENT_FIRST_STEP_COURSES = [
   {
     path: './course-safety-foundation.html',
@@ -103,7 +104,7 @@ async function captureDiagnostics(page, context, stage, errors) {
     diagnostic.staticEntries = await page.evaluate(async expected => {
       const cache = await caches.open(`cnc-static-${expected}`);
       return (await cache.keys()).map(request => request.url);
-    }, PWA_BUILD);
+    }, CACHE_REVISION);
   } catch {}
   try { diagnostic.offline = await context.isOffline(); } catch {}
   fs.writeFileSync(path.join(out, 'pwa-offline-diagnostic.json'), JSON.stringify(diagnostic, null, 2));
@@ -167,8 +168,8 @@ async function verifyColdOfflineCourse(page, course) {
     const registration = await page.evaluate(() => navigator.serviceWorker.getRegistration('./'));
     if (!registration) throw new Error('Service Worker未注册');
     const cachesBefore = await page.evaluate(() => caches.keys());
-    if (!cachesBefore.includes(`cnc-static-${PWA_BUILD}`)) throw new Error(`静态缓存版本缺失: ${JSON.stringify(cachesBefore)}`);
-    if (!cachesBefore.includes(`cnc-runtime-${PWA_BUILD}`)) throw new Error(`运行时缓存版本缺失: ${JSON.stringify(cachesBefore)}`);
+    if (!cachesBefore.includes(`cnc-static-${CACHE_REVISION}`)) throw new Error(`静态缓存版本缺失: ${JSON.stringify(cachesBefore)}`);
+    if (!cachesBefore.includes(`cnc-runtime-${CACHE_REVISION}`)) throw new Error(`运行时缓存版本缺失: ${JSON.stringify(cachesBefore)}`);
 
     stage = 'core-precache';
     const missingCore = await page.evaluate(async ({ build, paths }) => {
@@ -178,7 +179,7 @@ async function verifyColdOfflineCourse(page, course) {
         if (!await cache.match(new URL(item, location.href))) missing.push(item);
       }
       return missing;
-    }, { build: PWA_BUILD, paths: CORE_OFFLINE_PATHS });
+    }, { build: CACHE_REVISION, paths: CORE_OFFLINE_PATHS });
     if (missingCore.length) throw new Error(`核心预缓存缺失: ${missingCore.join('、')}`);
 
     stage = 'cold-offline-beginner-placement';
@@ -267,6 +268,7 @@ async function verifyColdOfflineCourse(page, course) {
     if (errors.length) throw new Error(`控制台错误 ${errors.join(' | ')}`);
     fs.writeFileSync(path.join(out, 'pwa-offline-result.json'), JSON.stringify({
       build,
+      cacheRevision: CACHE_REVISION,
       caches: cachesBefore,
       offlineFallback: true,
       beginnerPlacementColdOffline: true,

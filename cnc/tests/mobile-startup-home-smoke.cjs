@@ -17,54 +17,32 @@ async function createPage(browser) {
   return { page, pageErrors, consoleErrors };
 }
 
-async function trustedClickHiddenRoute(page, selector) {
-  const route = page.locator(selector);
-  await route.waitFor({ state: 'attached', timeout: 15000 });
-  const markerId = `cnc-smoke-route-marker-${Date.now()}`;
-  const routeId = `cnc-smoke-route-target-${Date.now()}`;
-  await route.evaluate((node, ids) => {
-    const marker = document.createElement('span');
-    marker.id = ids.markerId;
-    marker.hidden = true;
-    node.parentNode.insertBefore(marker, node);
-    node.dataset.smokeOriginalStyle = node.getAttribute('style') || '';
-    node.dataset.smokeOriginalId = node.id || '';
-    node.id = ids.routeId;
-    document.body.appendChild(node);
-    Object.assign(node.style, {
-      position: 'fixed',
-      left: '16px',
-      top: '16px',
-      width: '160px',
-      height: '48px',
-      display: 'block',
-      visibility: 'visible',
-      opacity: '1',
-      pointerEvents: 'auto',
-      zIndex: '2147483647'
-    });
-  }, { markerId, routeId });
-  try {
-    await page.locator(`#${routeId}`).click({ timeout: 15000 });
-  } finally {
-    await page.evaluate(({ routeId, markerId }) => {
-      const node = document.getElementById(routeId);
-      const marker = document.getElementById(markerId);
-      if (!node) return;
-      const originalStyle = node.dataset.smokeOriginalStyle || '';
-      const originalId = node.dataset.smokeOriginalId || '';
-      if (originalStyle) node.setAttribute('style', originalStyle);
-      else node.removeAttribute('style');
-      if (originalId) node.id = originalId;
-      else node.removeAttribute('id');
-      delete node.dataset.smokeOriginalStyle;
-      delete node.dataset.smokeOriginalId;
-      if (marker && marker.parentNode) {
-        marker.parentNode.insertBefore(node, marker);
-        marker.remove();
-      }
-    }, { routeId, markerId });
-  }
+async function waitForSingleLayerHome(page) {
+  await page.waitForFunction(() => {
+    const state = window.CNC_PERSONAL_HOME?.runCheck?.();
+    const dashboard = document.querySelector('#view-dashboard');
+    const nav = document.querySelector('body > .xp-bottom-nav');
+    const visible = node => {
+      if (!node) return false;
+      const style = getComputedStyle(node);
+      const rect = node.getBoundingClientRect();
+      return rect.width > 0 && rect.height > 0 && style.display !== 'none' && style.visibility !== 'hidden';
+    };
+    return state?.legacyHomeRemoved === true &&
+      state?.bottomNavReady === true &&
+      dashboard?.classList.contains('active') &&
+      visible(nav) &&
+      nav.getAttribute('aria-hidden') === 'false' &&
+      !nav.hasAttribute('inert');
+  }, null, { timeout: 30000 });
+}
+
+async function clickVisibleStudyRoute(page) {
+  const route = page.locator('body > .xp-bottom-nav button[data-xp-route="study"]');
+  await route.waitFor({ state: 'visible', timeout: 15000 });
+  const box = await route.boundingBox();
+  assert.ok(box && box.width >= 44 && box.height >= 44, `手机学习入口触控区不足44px：${JSON.stringify(box)}`);
+  await route.click({ timeout: 15000 });
 }
 
 (async () => {
@@ -75,10 +53,7 @@ async function trustedClickHiddenRoute(page, selector) {
     waitUntil: 'domcontentloaded',
     timeout: 60000
   });
-  await first.page.waitForSelector('#xp-game-home[data-ready="true"]', {
-    state: 'visible',
-    timeout: 30000
-  });
+  await waitForSingleLayerHome(first.page);
   await first.page.waitForFunction(() => {
     return window.CNC_STARTUP_HOME_GUARD &&
       window.CNC_STARTUP_HOME_GUARD.build === '20260722a';
@@ -97,7 +72,7 @@ async function trustedClickHiddenRoute(page, selector) {
   assert.equal(
     await first.page.locator('#view-dashboard').evaluate(node => node.classList.contains('active')),
     true,
-    '根网址启动阶段必须稳定停在首页'
+    '根网址启动阶段必须稳定停在单层手机首页'
   );
   assert.equal(
     await first.page.locator('#view-study').evaluate(node => node.classList.contains('active')),
@@ -109,21 +84,20 @@ async function trustedClickHiddenRoute(page, selector) {
   assert.equal(startupReport.passed, true);
   assert.ok(startupReport.forceCount >= 1, '测试必须真实触发一次自动跳转拦截');
 
-  // 等待启动保护窗口完整结束后，把手机端隐藏的既有路由按钮临时移到 body 可视区，
-  // 再由 Playwright 发出可信点击；点击后恢复原DOM位置和样式。
+  // 等待启动保护窗口结束后，真实点击手机底栏“学习”入口。
   await first.page.waitForTimeout(3500);
-  await trustedClickHiddenRoute(first.page, '#sidebar .tree-item[data-route="study"]');
+  await clickVisibleStudyRoute(first.page);
   await first.page.waitForSelector('#view-study.active', { state: 'visible', timeout: 15000 });
   await first.page.waitForTimeout(2100);
   assert.equal(
     await first.page.locator('#view-study').evaluate(node => node.classList.contains('active')),
     true,
-    '用户主动点击新手学习后必须正常停留'
+    '用户主动点击手机学习入口后必须正常停留'
   );
   assert.equal(
     (await first.page.evaluate(() => window.CNC_STARTUP_HOME_GUARD.runCheck())).userRouteRequested,
     true,
-    '必须识别产品路由按钮的可信点击操作'
+    '必须识别手机底栏路由按钮的可信点击操作'
   );
 
   const relevantFirstErrors = [...first.pageErrors, ...first.consoleErrors]
@@ -137,6 +111,7 @@ async function trustedClickHiddenRoute(page, selector) {
     waitUntil: 'domcontentloaded',
     timeout: 60000
   });
+  await waitForSingleLayerHome(second.page);
   await second.page.waitForFunction(() => {
     return window.CNC_STARTUP_HOME_GUARD &&
       window.CNC_STARTUP_HOME_GUARD.build === '20260722a';
@@ -152,16 +127,22 @@ async function trustedClickHiddenRoute(page, selector) {
   assert.equal(
     await second.page.locator('#view-dashboard').evaluate(node => node.classList.contains('active')),
     true,
-    'BFCache恢复根网址时必须回到首页'
+    'BFCache恢复根网址时必须回到单层手机首页'
+  );
+  assert.equal(
+    await second.page.locator('#view-study').evaluate(node => node.classList.contains('active')),
+    false,
+    'BFCache恢复根网址时学习页不得继续激活'
   );
 
   const relevantSecondErrors = [...second.pageErrors, ...second.consoleErrors]
     .filter(text => /startup-home|CNC_STARTUP_HOME_GUARD|TypeError|ReferenceError/i.test(text));
   assert.deepEqual(relevantSecondErrors, []);
 
-  console.log('手机根网址启动稳定性通过', {
+  console.log('手机根网址单层首页启动稳定性通过', {
     startupReport,
-    activeView: await second.page.locator('.view.active').getAttribute('id')
+    activeView: await second.page.locator('.view.active').getAttribute('id'),
+    personalHome: await second.page.evaluate(() => window.CNC_PERSONAL_HOME?.runCheck?.())
   });
 
   await browser.close();

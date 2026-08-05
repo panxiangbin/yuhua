@@ -35,9 +35,14 @@ jobs:
             'positiveTabindex',
             'hiddenFocusable',
             'Escape',
-            '390, height: 844'
+            '390, height: 844',
+            'body > .xp-bottom-nav',
+            "path.join(OUTPUT_DIR, 'error.txt')"
           ]) {
             if (!test.includes(marker)) throw new Error(`无障碍审计缺少契约：${marker}`);
+          }
+          for (const forbidden of ['#xp-game-home .xp-game-bottom-nav', 'test.skip(', 'process.exit(0)']) {
+            if (test.includes(forbidden)) throw new Error(`无障碍门禁禁止绕过或引用旧首页：${forbidden}`);
           }
 
           const implementation = fs.readFileSync('cnc/mobile-trust-nav.js', 'utf8');
@@ -71,5 +76,5 @@ jobs:
         with:
           name: cnc-mobile-accessibility-foundation-${{ github.run_id }}
           path: artifacts/mobile-accessibility-foundation
-          if-no-files-found: warn
+          if-no-files-found: error
           retention-days: 14

@@ -52,9 +52,14 @@ function extractCourseBlock(source, declaration, label) {
 
 function parseCourseCatalog(block, label) {
   const entries = [];
-  const pattern = /\{\s*id\s*:\s*'([^']+)'\s*,\s*title\s*:\s*'([^']+)'\s*,\s*file\s*:\s*'([^']+)'\s*,\s*reason\s*:\s*'([^']+)'\s*\}/g;
-  for (const match of block.matchAll(pattern)) {
-    entries.push({ id: match[1], title: match[2], file: match[3], reason: match[4] });
+  for (const objectMatch of block.matchAll(/\{([^{}]+)\}/g)) {
+    const object = objectMatch[1];
+    const id = object.match(/\bid\s*:\s*'([^']+)'/)?.[1];
+    const title = object.match(/\btitle\s*:\s*'([^']+)'/)?.[1];
+    const file = object.match(/\bfile\s*:\s*'([^']+)'/)?.[1];
+    const reason = object.match(/\breason\s*:\s*'([^']+)'/)?.[1]
+      || object.match(/\bcaption\s*:\s*'([^']+)'/)?.[1];
+    if (id && title && file && reason) entries.push({ id, title, file, reason });
   }
   expect(entries.length === 12, `${label}课程数量必须为12，实际${entries.length}`);
   return entries;

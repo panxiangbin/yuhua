@@ -27,18 +27,19 @@
       <h2>版本一致性</h2>
       <p id="status" class="warn" role="status" aria-live="polite">正在检查版本。</p>
       <ul class="details">
-        <li>页面期望构建：<strong id="expected">20260804-pwa12</strong></li>
+        <li>页面期望构建：<strong id="expected">20260804-pwa13</strong></li>
         <li>静态缓存：<span id="static-cache">检测中</span></li>
         <li>运行时缓存：<span id="runtime-cache">检测中</span></li>
         <li>最近检查：<span id="checked-at">尚未完成</span></li>
       </ul>
       <div class="actions"><button class="btn" id="check" type="button">检查更新</button><button class="btn alt" id="refresh" type="button">重新核对状态</button><button class="btn alt" id="apply" type="button" disabled>应用新版本</button></div>
-      <p class="notice">当前核心离线资源包含带关键安全项硬门禁的新手起点测评、可一次性显示推荐路线的训练营、三类推荐路线首步课程（安全基础、坐标轴与回零、G00/G01基础）、AI CNC老师、现场问诊单和“为什么被阻断”判断说明页。PWA10会刷新已清理开发占位后的核心课程正文；若页面期望构建、Service Worker构建和缓存版本不一致，请先联网检查更新，再由你明确点击应用。离线内容可能不是最新版本；测评只用于推荐学习路线，报警、参数、刀补和现场操作仍须核对原厂手册、企业制度和现场条件。</p>
+      <p class="notice">当前核心离线资源包含带关键安全项硬门禁的新手起点测评、可一次性显示推荐路线的训练营、三类推荐路线首步课程（安全基础、坐标轴与回零、G00/G01基础）、AI CNC老师、现场问诊单和“为什么被阻断”判断说明页。PWA13会刷新AI老师学习档案异常保护，确保损坏记录不会在旧离线缓存中被误显示为零进度；若页面期望构建、Service Worker构建和缓存版本不一致，请先联网检查更新，再由你明确点击应用。离线内容可能不是最新版本；测评只用于推荐学习路线，报警、参数、刀补和现场操作仍须核对原厂手册、企业制度和现场条件。</p>
     </section>
   </main>
   <nav class="bottom" aria-label="平台主导航"><a href="./index.html">首页</a><a href="./training-camp.html">训练营</a><a href="./practice.html">练习</a><a href="./index.html#workspace">查代码</a><a href="./profile.html">我的</a></nav>
   <script>
-    const EXPECTED='20260804-pwa12';
+    const EXPECTED='20260804-pwa13';
+    const EXPECTED_CACHE='20260804-mobile13';
     const network=document.querySelector('#network');
     const worker=document.querySelector('#worker');
     const buildElement=document.querySelector('#build');
@@ -106,7 +107,7 @@
       const currentBuild=await workerBuild(registration.active);
       if(token!==inspectToken)return;
       buildElement.textContent=currentBuild||'读取失败';
-      const cacheBuildOk=staticName.includes(EXPECTED)&&runtimeName.includes(EXPECTED);
+      const cacheBuildOk=staticName.includes(EXPECTED_CACHE)&&runtimeName.includes(EXPECTED_CACHE);
       const workerOk=currentBuild===EXPECTED;
       if(waiting){
         statusElement.className='warn';

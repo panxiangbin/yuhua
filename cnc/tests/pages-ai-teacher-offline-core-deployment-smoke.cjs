@@ -8,9 +8,13 @@ fs.mkdirSync(resultsDir, { recursive: true });
 
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
-const branchTargetPwaBuild = '20260804-pwa12';
-const previousPublicPwaBuild = '20260803-pwa9';
-const expectedSiteBuild = '20260804-home-refresh1';
+const branchTargetPwaBuild = '20260804-pwa13';
+const previousPublicPwaBuild = '20260804-pwa12';
+const expectedSiteBuild = '20260804-mobile-home1';
+const cacheRevisionByBuild = {
+  [branchTargetPwaBuild]: '20260804-mobile13',
+  [previousPublicPwaBuild]: '20260804-mobile12'
+};
 const attempts = Number(process.env.CNC_PAGES_VERIFY_ATTEMPTS || 18);
 const intervalMs = Number(process.env.CNC_PAGES_VERIFY_INTERVAL_MS || 10000);
 const eventName = process.env.GITHUB_EVENT_NAME || '';
@@ -23,6 +27,58 @@ const resources = [
   { path: 'cnc/build-info.json', kind: 'build-info' },
   { path: 'cnc/pwa-status.html', kind: 'pwa-status' },
   { path: 'cnc/pwa-self-test.html', kind: 'pwa-self-test' }
+];
+
+const EXACT_CORE_PATHS = [
+  './index.html',
+  './homepage-refresh.css',
+  './homepage-refresh-desktop-legacy.css',
+  './mobile-home-refactor.css',
+  './personal-home.js',
+  './mobile-trust-nav.js',
+  './featured-images-supplement.js',
+  './offline.html',
+  './pwa-status.html',
+  './pwa-self-test.html',
+  './pages-status.html',
+  './beginner-placement.html',
+  './training-camp.html',
+  './course-safety-foundation.html',
+  './course-coordinate-axes.html',
+  './course-g00-g01-basics.html',
+  './ai-teacher.html',
+  './ai-teacher-intake.html',
+  './ai-teacher-explainability.html',
+  './build-info.json',
+  './assets/images/batch01_core/beginner-machine-zero-vs-work-zero-001.webp',
+  './assets/images/batch02_operation_basics/machine-init-flow-001.webp',
+  './assets/images/batch04_milling_tooling/milling-process-overview-001.webp',
+  './assets/images/batch01_core/measure-reading-set-001.webp',
+  './assets/images/batch05_alarm_drawing_material/dial-indicator-detail-001.webp',
+  './assets/images/batch04_milling_tooling/vise-clamping-basic-001.webp',
+  './assets/images/batch04_milling_tooling/tool-selection-beginner-001.webp',
+  './assets/images/batch04_milling_tooling/bt-er-holder-overview-001.webp',
+  './assets/images/batch02_operation_basics/single-block-dry-run-001.webp',
+  './assets/images/batch04_milling_tooling/milling-contour-001.webp',
+  './assets/images/batch02_operation_basics/canned-cycle-overview-001.webp',
+  './assets/images/batch05_alarm_drawing_material/first-piece-inspection-001.webp'
+];
+
+const LEGACY_PUBLIC_SELF_TEST_PATHS = [
+  './index.html',
+  './offline.html',
+  './pwa-status.html',
+  './pwa-self-test.html',
+  './pages-status.html',
+  './beginner-placement.html',
+  './training-camp.html',
+  './course-safety-foundation.html',
+  './course-coordinate-axes.html',
+  './course-g00-g01-basics.html',
+  './ai-teacher.html',
+  './ai-teacher-intake.html',
+  './ai-teacher-explainability.html',
+  './build-info.json'
 ];
 
 const diagnostics = {
@@ -103,32 +159,10 @@ function assertAllowedBuild(build, label) {
   if (![previousPublicPwaBuild, branchTargetPwaBuild].includes(build)) throw new Error(`${label}出现未受控PWA构建：${build}`);
 }
 
-function hasCourseCore(build) {
-  return [previousPublicPwaBuild, branchTargetPwaBuild].includes(build);
-}
-
-function expectedCorePaths(build) {
-  const core = [
-    './index.html',
-    './offline.html',
-    './pwa-status.html',
-    './pwa-self-test.html',
-    './pages-status.html',
-    './beginner-placement.html',
-    './training-camp.html',
-    './ai-teacher.html',
-    './ai-teacher-intake.html',
-    './ai-teacher-explainability.html',
-    './build-info.json'
-  ];
-  if (hasCourseCore(build)) {
-    core.splice(7, 0,
-      './course-safety-foundation.html',
-      './course-coordinate-axes.html',
-      './course-g00-g01-basics.html'
-    );
-  }
-  return core;
+function expectedCacheRevision(build, label) {
+  const revision = cacheRevisionByBuild[build];
+  if (!revision) throw new Error(`${label}出现未受控缓存修订对应关系：${build}`);
+  return revision;
 }
 
 function parseQuotedArray(text, pattern, label) {
@@ -144,10 +178,12 @@ function assertExactArray(actual, expected, label) {
 }
 
 function assertServiceWorker(text, label, expectedBuild) {
+  const expectedCache = expectedCacheRevision(expectedBuild, label);
   requireTokens(text, label, [
     `const BUILD = '${expectedBuild}'`,
-    "const STATIC_CACHE = `cnc-static-${BUILD}`",
-    "const RUNTIME_CACHE = `cnc-runtime-${BUILD}`",
+    `const CACHE_REVISION = '${expectedCache}'`,
+    "const STATIC_CACHE = `cnc-static-${CACHE_REVISION}`",
+    "const RUNTIME_CACHE = `cnc-runtime-${CACHE_REVISION}`",
     "'./beginner-placement.html'",
     "'./training-camp.html'",
     "'./ai-teacher.html'",
@@ -156,20 +192,15 @@ function assertServiceWorker(text, label, expectedBuild) {
     "'./pwa-self-test.html'",
     "'./pwa-status.html'",
     "'./build-info.json'",
-    "name.startsWith('cnc-') && !name.endsWith(BUILD)",
+    "name.startsWith('cnc-') && name !== STATIC_CACHE && name !== RUNTIME_CACHE",
     "event.data.type === 'GET_BUILD'",
+    'cacheRevision: CACHE_REVISION',
     "event.data.type === 'ENSURE_CACHES'"
-  ]);
-  if (hasCourseCore(expectedBuild)) requireTokens(text, label, [
-    "'./course-safety-foundation.html'",
-    "'./course-coordinate-axes.html'",
-    "'./course-g00-g01-basics.html'"
   ]);
   forbidTokens(text, label, [/test\.skip\(/, /describe\.skip\(/, /it\.skip\(/, /allowOperationalUse\s*:\s*true/]);
   const actual = parseQuotedArray(text, /const REQUIRED_CORE_PATHS = \[([\s\S]*?)\];/, `${label}核心缓存`);
-  const expected = expectedCorePaths(expectedBuild);
-  assertExactArray(actual, expected, `${label}核心缓存`);
-  return { build: expectedBuild, corePaths: actual };
+  assertExactArray(actual, EXACT_CORE_PATHS, `${label}核心缓存`);
+  return { build: expectedBuild, cacheRevision: expectedCache, corePaths: actual };
 }
 
 function parseBuildInfo(text, label) {
@@ -178,6 +209,8 @@ function parseBuildInfo(text, label) {
   if (data.app !== 'cnc-training-platform') throw new Error(`${label}应用标识错误：${data.app}`);
   if (data.build !== expectedSiteBuild) throw new Error(`${label}站点构建错误：${data.build}`);
   assertAllowedBuild(data.pwaBuild, label);
+  const expectedCache = expectedCacheRevision(data.pwaBuild, label);
+  if (data.cacheRevision !== expectedCache) throw new Error(`${label}缓存修订错误：${data.cacheRevision}，期望${expectedCache}`);
   if (data.scope !== '/cnc/') throw new Error(`${label}作用域错误：${data.scope}`);
   return data;
 }
@@ -185,9 +218,12 @@ function parseBuildInfo(text, label) {
 function assertBuildInfo(text, label, expectedBuild) {
   const data = parseBuildInfo(text, label);
   if (data.pwaBuild !== expectedBuild) throw new Error(`${label}PWA构建错误：${data.pwaBuild}，期望${expectedBuild}`);
-  requireTokens(String(data.contentStage || ''), label, ['起点测评离线核心', 'AI CNC老师基础版', 'AI老师现场问诊单', 'AI老师判断说明', 'AI老师离线核心', 'PWA可靠性']);
-  if (expectedBuild === branchTargetPwaBuild) requireTokens(String(data.contentStage || ''), label, ['起点测评关键安全门禁', '测评路线一次性交接', '训练营路线离线核心', '测评首步课程离线核心', '正式课程开发占位清零']);
-  return { build: data.build, pwaBuild: data.pwaBuild, scope: data.scope };
+  const stage = String(data.contentStage || '');
+  requireTokens(stage, label, ['课程12关', '起点测评', '手机首页一屏化', 'AI CNC老师基础版', 'PWA可靠性']);
+  if (expectedBuild === branchTargetPwaBuild) {
+    requireTokens(stage, label, ['起点测评关键安全门禁', '起点测评离线核心', '测评路线一次性交接', '训练营路线离线核心', '测评首步课程离线核心', '正式课程开发占位清零', 'AI老师现场问诊单', 'AI老师判断说明', 'AI老师离线核心', 'AI老师学习档案异常保护']);
+  }
+  return { build: data.build, pwaBuild: data.pwaBuild, cacheRevision: data.cacheRevision, scope: data.scope };
 }
 
 function visibleBody(text) {
@@ -196,7 +232,8 @@ function visibleBody(text) {
 }
 
 function assertStatusPage(text, label, expectedBuild) {
-  requireTokens(text, label, [
+  const expectedCache = expectedCacheRevision(expectedBuild, label);
+  const required = [
     `const EXPECTED='${expectedBuild}'`,
     '页面、Service Worker与两类缓存版本一致',
     '新手起点测评',
@@ -205,16 +242,23 @@ function assertStatusPage(text, label, expectedBuild) {
     '判断说明页',
     'pageshow',
     'visibilitychange'
-  ]);
-  if (hasCourseCore(expectedBuild)) requireTokens(text, label, ['关键安全项硬门禁', '训练营', '临时路线', '三类测评首步课程']);
-  if (expectedBuild === branchTargetPwaBuild) requireTokens(text, label, ['PWA10会刷新已清理开发占位后的核心课程正文']);
+  ];
+  let legacyCacheContract = false;
+  if (expectedBuild === branchTargetPwaBuild) {
+    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'PWA13会刷新AI老师学习档案异常保护');
+  } else {
+    required.push('const cacheBuildOk=staticName.includes(EXPECTED)&&runtimeName.includes(EXPECTED)');
+    legacyCacheContract = true;
+  }
+  requireTokens(text, label, required);
   const visible = visibleBody(text);
   requireTokens(visible, label, ['离线、缓存与更新状态', '离线内容可能不是最新版本', '测评只用于推荐学习路线', '原厂手册、企业制度和现场条件']);
-  return { build: expectedBuild, visibleSafetyBoundary: true };
+  return { build: expectedBuild, cacheRevision: expectedCache, legacyCacheContract, visibleSafetyBoundary: true };
 }
 
 function assertSelfTest(text, label, expectedBuild) {
-  requireTokens(text, label, [
+  const expectedCache = expectedCacheRevision(expectedBuild, label);
+  const required = [
     `const EXPECTED='${expectedBuild}'`,
     "'./beginner-placement.html'",
     "'./training-camp.html'",
@@ -224,22 +268,23 @@ function assertSelfTest(text, label, expectedBuild) {
     '核心离线资源完整',
     '公网构建标记与PWA一致',
     'MAX_AUTO_RETRIES=20'
-  ]);
-  if (hasCourseCore(expectedBuild)) requireTokens(text, label, [
-    "'./course-safety-foundation.html'",
-    "'./course-coordinate-axes.html'",
-    "'./course-g00-g01-basics.html'",
-    '关键安全项硬门禁',
-    '训练营临时路线',
-    '三类测评首步课程'
-  ]);
-  if (expectedBuild === branchTargetPwaBuild) requireTokens(text, label, ['PWA10用于刷新已清理开发占位后的核心课程正文']);
-  const actual = parseQuotedArray(text, /const REQUIRED=\[([^\]]+)\]/, `${label}自检核心资源`);
-  const expected = expectedCorePaths(expectedBuild);
-  assertExactArray(actual, expected, `${label}自检核心资源`);
+  ];
+  let expectedPaths;
+  let legacyCacheContract = false;
+  if (expectedBuild === branchTargetPwaBuild) {
+    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'marker.cacheRevision===EXPECTED_CACHE', 'PWA13用于刷新AI老师学习档案异常保护');
+    expectedPaths = EXACT_CORE_PATHS;
+  } else {
+    required.push('const staticName=keys.find(name=>name===`cnc-static-${EXPECTED}`)', 'const runtimeName=keys.find(name=>name===`cnc-runtime-${EXPECTED}`)');
+    expectedPaths = LEGACY_PUBLIC_SELF_TEST_PATHS;
+    legacyCacheContract = true;
+  }
+  requireTokens(text, label, required);
+  const actual = parseQuotedArray(text, /const REQUIRED=\[([\s\S]*?)\];/, `${label}自检核心资源`);
+  assertExactArray(actual, expectedPaths, `${label}自检核心资源`);
   const visible = visibleBody(text);
   requireTokens(visible, label, ['只读检查', '不修改学习记录', '不清空缓存', '不发放XP', '起点测评只推荐学习路线', '高风险操作须现场师傅或授权人员指导']);
-  return { build: expectedBuild, requiredCount: actual.length, readOnly: true };
+  return { build: expectedBuild, cacheRevision: expectedCache, requiredCount: actual.length, legacyCacheContract, readOnly: true };
 }
 
 function assertContract(kind, text, label, expectedBuild) {
@@ -289,7 +334,7 @@ async function waitForMainPagesMatch() {
 
     const mainBuildData = parseBuildInfo(deployed['cnc/build-info.json'].main.buffer.toString('utf8'), 'main cnc/build-info.json');
     const pagesBuildData = parseBuildInfo(deployed['cnc/build-info.json'].pages.buffer.toString('utf8'), 'Pages cnc/build-info.json');
-    if (mainBuildData.pwaBuild !== pagesBuildData.pwaBuild) throw new Error('main与Pages PWA构建标记不一致');
+    if (mainBuildData.pwaBuild !== pagesBuildData.pwaBuild || mainBuildData.cacheRevision !== pagesBuildData.cacheRevision) throw new Error('main与Pages PWA构建或缓存修订标记不一致');
     const publicPwaBuild = mainBuildData.pwaBuild;
 
     const findings = [];
@@ -331,7 +376,9 @@ async function waitForMainPagesMatch() {
       localMatchesMain,
       branchDeploymentPending,
       branchPwaBuild: branchTargetPwaBuild,
+      branchCacheRevision: cacheRevisionByBuild[branchTargetPwaBuild],
       publicPwaBuild,
+      publicCacheRevision: cacheRevisionByBuild[publicPwaBuild],
       siteBuild: expectedSiteBuild,
       beginnerPlacementInCoreCache: true,
       trainingCampInCoreCache: true,
@@ -341,7 +388,7 @@ async function waitForMainPagesMatch() {
       explainabilityInCoreCache: true,
       aiTeacherInCoreCache: true,
       intakeInCoreCache: true,
-      fourteenCoreResourcesVerified: true,
+      coreResourceCount: EXACT_CORE_PATHS.length,
       publicCoreResourcesVerified: true,
       upgradeBoundaryVisible: true,
       safetyBoundaryVisible: true
@@ -351,12 +398,12 @@ async function waitForMainPagesMatch() {
     fs.writeFileSync(findingsPath, [
       'PWA离线核心Pages公网可达：是',
       'main与Pages四项资源逐字节一致：是',
-      `当前分支PWA构建：${branchTargetPwaBuild}`,
-      `main与Pages公网PWA构建：${publicPwaBuild}`,
+      `当前分支PWA构建/缓存修订：${branchTargetPwaBuild}/${cacheRevisionByBuild[branchTargetPwaBuild]}`,
+      `main与Pages公网PWA构建/缓存修订：${publicPwaBuild}/${cacheRevisionByBuild[publicPwaBuild]}`,
       `分支待合并或待部署：${branchDeploymentPending ? '是' : '否'}`,
-      '当前分支起点测评、训练营路线、三类测评首步课程、AI老师、现场问诊单、判断说明页核心预缓存：完整',
-      '当前分支PWA自检核心资源：14项且无重复',
-      `Pages公网测评首步课程核心：${hasCourseCore(publicPwaBuild) ? '已部署' : '尚未部署'}`,
+      '当前分支手机首页、12关图片、起点测评、训练营路线、三类测评首步课程、AI老师、现场问诊单、判断说明页核心预缓存：完整',
+      `当前分支PWA自检核心资源：${EXACT_CORE_PATHS.length}项且无重复`,
+      `当前公网PWA自检核心资源：${publicPwaBuild === previousPublicPwaBuild ? LEGACY_PUBLIC_SELF_TEST_PATHS.length : EXACT_CORE_PATHS.length}项且无重复`,
       '测评安全硬门禁、路线隐私、固定值、原厂手册与授权人员边界：可见',
       ...findings
     ].join('\n') + '\n');
