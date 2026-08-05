@@ -33,14 +33,49 @@ jobs:
       - name: Restore learning depth payload
         shell: pwsh
         run: |
-          $payload = 'cnc/tools/learning-depth-payload.zip'
-          if (Test-Path $payload) {
-            Expand-Archive -Path $payload -DestinationPath . -Force
-            Remove-Item $payload -Force
-            Write-Host 'Learning depth payload restored.'
-          } else {
-            Write-Host 'Payload already restored.'
+          @'
+          from pathlib import Path
+          from zipfile import ZipFile, BadZipFile
+
+          payload = Path('cnc/tools/learning-depth-payload.zip')
+          expected = {
+              'cnc/personal-home.js',
+              'cnc/learning-sublesson-catalog.js',
+              'cnc/learning-detail.html',
+              'cnc/learning-depth.css',
+              'cnc/tests/main-course-catalog-drift-smoke.cjs',
+              'cnc/tests/learning-depth-smoke.cjs',
+              'cnc/LEARNING_DEPTH_PROGRESS.md',
           }
+
+          if payload.exists():
+              try:
+                  with ZipFile(payload, 'r') as archive:
+                      members = set(archive.namelist())
+                      bad_member = archive.testzip()
+                      if bad_member:
+                          raise RuntimeError(f'Payload ZIP CRC failed: {bad_member}')
+                      missing = sorted(expected - members)
+                      if missing:
+                          raise RuntimeError(f'Payload ZIP missing files: {missing}')
+                      archive.extractall(Path('.'))
+              except BadZipFile as error:
+                  raise RuntimeError(f'Payload ZIP is invalid: {error}') from error
+              payload.unlink()
+              print('Learning depth payload restored:')
+              for item in sorted(expected):
+                  path = Path(item)
+                  if not path.is_file() or path.stat().st_size == 0:
+                      raise RuntimeError(f'Restored file missing or empty: {item}')
+                  print(f'  {item} ({path.stat().st_size} bytes)')
+          else:
+              print('Payload already restored; verifying target files.')
+              for item in sorted(expected):
+                  path = Path(item)
+                  if not path.is_file() or path.stat().st_size == 0:
+                      raise RuntimeError(f'Target file missing after prior restore: {item}')
+                  print(f'  {item} ({path.stat().st_size} bytes)')
+          '@ | python -
 
       - name: Synchronize PWA13 learning depth release
         shell: pwsh
