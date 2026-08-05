@@ -29,13 +29,20 @@
     display: none !important;
   }
 
-  /* 手机目录开关是进入参数与故障查询的主入口，触控区不得小于 44×44px。 */
-  #sidebar-open,
-  #sidebar-close {
+  /* 44px 顶栏控件需要 5px 上下内边距，保持 54px 顶栏不溢出。 */
+  body:has(#view-dashboard.active) .topbar {
+    padding-top: 5px !important;
+    padding-bottom: 5px !important;
+  }
+
+  /* 手机目录、返回首页和关闭目录都是高频入口，触控区不得小于 44×44px。 */
+  body:has(#view-dashboard.active) #sidebar-open,
+  body:has(#view-dashboard.active) #home-btn,
+  body:has(#view-dashboard.active) #sidebar-close {
     width: 44px !important;
     height: 44px !important;
-    min-width: 44px;
-    min-height: 44px;
+    min-width: 44px !important;
+    min-height: 44px !important;
     flex: 0 0 44px;
   }
 
