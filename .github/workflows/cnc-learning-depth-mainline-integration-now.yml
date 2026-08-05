@@ -1,0 +1,155 @@
+name: CNC learning depth mainline integration now
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/cnc-learning-depth-mainline-integration-now.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cnc-learning-depth-mainline-integration-now-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chatgpt/cnc-learning-depth-mainline-20260806
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: 核验来源并判断是否已整合
+        id: prepare
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p /tmp/cnc-learning-depth-integration-now
+          git fetch --no-tags origin main codex/learning-depth-refactor-20260805
+          test "$(git rev-parse origin/main)" = '6ed004d55a808a43c2c225b54d8ec6da956b3062'
+          test "$(git rev-parse origin/codex/learning-depth-refactor-20260805)" = '4dd43680d8cc9b1ca754cc75c062d526600ee570'
+          git rev-parse HEAD > /tmp/cnc-learning-depth-integration-now/bootstrap-head.txt
+          if git merge-base --is-ancestor origin/codex/learning-depth-refactor-20260805 HEAD; then
+            echo 'already=true' >> "$GITHUB_OUTPUT"
+            echo '80课来源提交已经进入当前分支。' > /tmp/cnc-learning-depth-integration-now/already.txt
+            exit 0
+          fi
+          echo 'already=false' >> "$GITHUB_OUTPUT"
+          test "$(git merge-base HEAD origin/main)" = '6ed004d55a808a43c2c225b54d8ec6da956b3062'
+          test -f cnc/tools/apply-learning-depth-mainline-integration.py
+          changed="$(git diff --name-only origin/main...HEAD)"
+          printf '%s\n' "$changed" > /tmp/cnc-learning-depth-integration-now/bootstrap-files.txt
+          if printf '%s\n' "$changed" | grep -Ev '^(cnc/|\.github/workflows/cnc-)' ; then
+            echo '检测到非CNC范围改动' >&2
+            exit 1
+          fi
+
+      - name: 合并并验证12个真实冲突
+        if: steps.prepare.outputs.already != 'true'
+        shell: bash
+        run: |
+          set +e
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git merge --no-commit --no-ff origin/codex/learning-depth-refactor-20260805 > /tmp/cnc-learning-depth-integration-now/merge.log 2>&1
+          code=$?
+          printf '%s\n' "$code" > /tmp/cnc-learning-depth-integration-now/merge-exit-code.txt
+          git diff --name-only --diff-filter=U | sort > /tmp/cnc-learning-depth-integration-now/conflict-files.txt
+          cat > /tmp/cnc-learning-depth-integration-now/expected-conflicts.txt <<'EOF'
+          cnc/build-info.json
+          cnc/personal-home.js
+          cnc/pwa-self-test.html
+          cnc/pwa-status.html
+          cnc/sw.js
+          cnc/tests/main-course-catalog-drift-smoke.cjs
+          cnc/tests/mobile-pwa-offline-cache-smoke.cjs
+          cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs
+          cnc/tests/mobile-pwa-upgrade-data-smoke.cjs
+          cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs
+          cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs
+          cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs
+          EOF
+          sed -i 's/^          //' /tmp/cnc-learning-depth-integration-now/expected-conflicts.txt
+          test "$code" != '0'
+          diff -u /tmp/cnc-learning-depth-integration-now/expected-conflicts.txt /tmp/cnc-learning-depth-integration-now/conflict-files.txt
+
+      - name: 精确解决冲突并保留当前工作流
+        if: steps.prepare.outputs.already != 'true'
+        shell: bash
+        run: |
+          set -euxo pipefail
+          git restore --source=HEAD --staged --worktree -- .github/workflows
+          python3 cnc/tools/apply-learning-depth-mainline-integration.py | tee /tmp/cnc-learning-depth-integration-now/resolution-report.json
+          rm cnc/tools/apply-learning-depth-mainline-integration.py
+          git add -A cnc
+          test -z "$(git diff --name-only --diff-filter=U)"
+          staged="$(git diff --cached --name-only)"
+          printf '%s\n' "$staged" > /tmp/cnc-learning-depth-integration-now/staged-files.txt
+          test -n "$staged"
+          if printf '%s\n' "$staged" | grep -Ev '^cnc/' ; then
+            echo '整合提交包含非cnc文件' >&2
+            exit 1
+          fi
+
+      - name: 执行80课目录与PWA14门禁
+        if: steps.prepare.outputs.already != 'true'
+        shell: bash
+        run: |
+          set -euxo pipefail
+          node --check cnc/personal-home.js
+          node --check cnc/learning-sublesson-catalog.js
+          node --check cnc/tests/learning-depth-smoke.cjs
+          node --check cnc/tests/learning-depth-browser-smoke.cjs
+          node --check cnc/tests/main-course-catalog-drift-smoke.cjs
+          node --check cnc/tests/mobile-pwa-offline-cache-smoke.cjs
+          node --check cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs
+          node --check cnc/tests/mobile-pwa-upgrade-data-smoke.cjs
+          node cnc/tests/learning-depth-smoke.cjs
+          node cnc/tests/main-course-catalog-drift-smoke.cjs
+          node - <<'NODE'
+          const fs = require('fs');
+          const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
+          const sw = fs.readFileSync('cnc/sw.js', 'utf8');
+          const selfTest = fs.readFileSync('cnc/pwa-self-test.html', 'utf8');
+          const status = fs.readFileSync('cnc/pwa-status.html', 'utf8');
+          if (info.build !== '20260806-learning-depth1' || info.pwaBuild !== '20260806-pwa14' || info.cacheRevision !== '20260806-learning14') throw new Error('PWA14构建标记异常');
+          for (const token of ['./learning-sublesson-catalog.js', './learning-depth.css', './learning-detail.html']) {
+            if (!sw.includes(`'${token}'`)) throw new Error(`Service Worker缺少学习资源：${token}`);
+            if (!selfTest.includes(JSON.stringify(token))) throw new Error(`PWA自检缺少学习资源：${token}`);
+          }
+          if (!status.includes("const EXPECTED='20260806-pwa14'") || !status.includes("const EXPECTED_CACHE='20260806-learning14'")) throw new Error('PWA状态页版本异常');
+          if (!String(info.contentStage).includes('80个图文小课') || !String(info.contentStage).includes('AI老师学习档案异常保护')) throw new Error('内容阶段未保留80课或AI老师档案保护');
+          NODE
+          git diff --check --cached
+          mkdir -p /tmp/cnc-learning-depth-integration-now/test-results
+          cp -R cnc/test-results/main-course-catalog-drift /tmp/cnc-learning-depth-integration-now/test-results/
+          if [ -d cnc/test-results/learning-depth ]; then cp -R cnc/test-results/learning-depth /tmp/cnc-learning-depth-integration-now/test-results/; fi
+
+      - name: 提交并推送仅CNC文件
+        if: steps.prepare.outputs.already != 'true'
+        shell: bash
+        run: |
+          set -euxo pipefail
+          git status --short > /tmp/cnc-learning-depth-integration-now/final-status.txt
+          git commit -m 'feat(cnc-learning): 整合80个图文小课并升级PWA14'
+          git rev-parse HEAD > /tmp/cnc-learning-depth-integration-now/result-head.txt
+          git diff-tree --no-commit-id --name-only -r HEAD^1 HEAD | tee /tmp/cnc-learning-depth-integration-now/commit-files.txt
+          if git diff-tree --no-commit-id --name-only -r HEAD^1 HEAD | grep -Ev '^cnc/' ; then
+            echo '最终提交包含非cnc文件' >&2
+            exit 1
+          fi
+          git push origin HEAD:chatgpt/cnc-learning-depth-mainline-20260806
+
+      - name: 上传真实诊断
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-learning-depth-mainline-now-${{ github.run_id }}
+          path: /tmp/cnc-learning-depth-integration-now/
+          if-no-files-found: error
+          retention-days: 30
