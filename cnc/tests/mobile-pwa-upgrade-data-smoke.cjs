@@ -8,8 +8,8 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const CURRENT_PWA_BUILD = '20260804-pwa12';
-const PREVIOUS_PWA_BUILD = '20260804-pwa11';
+const CURRENT_PWA_BUILD = '20260805-pwa13';
+const PREVIOUS_PWA_BUILD = '20260804-pwa12';
 const CURRENT_STATIC_CACHE = `cnc-static-${CURRENT_PWA_BUILD}`;
 const CURRENT_RUNTIME_CACHE = `cnc-runtime-${CURRENT_PWA_BUILD}`;
 const PREVIOUS_STATIC_CACHE = `cnc-static-${PREVIOUS_PWA_BUILD}`;
