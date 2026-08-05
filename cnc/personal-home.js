@@ -264,7 +264,15 @@
     primeQueryImages(document);
   });
   window.addEventListener('pageshow', boot);
-  document.addEventListener('cnc:route-changed', function () { window.setTimeout(function () { primeQueryImages(document); }, 0); });
+  document.addEventListener('cnc:route-changed', function () {
+    window.setTimeout(function () {
+      removeLegacyHome();
+      syncHomeProgress();
+      syncBottomNav();
+      installQueryImageObserver();
+      primeQueryImages(document);
+    }, 0);
+  });
 
   window.CNC_PERSONAL_HOME = {
     build: BUILD,
