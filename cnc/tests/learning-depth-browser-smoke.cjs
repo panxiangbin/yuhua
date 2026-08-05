@@ -16,6 +16,7 @@ fs.mkdirSync(OUT, { recursive: true });
 const types = { '.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.cjs':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp','.woff2':'font/woff2' };
 const server = http.createServer((req,res)=>{
   let requestPath = decodeURIComponent(req.url.split('?')[0]);
+  if (requestPath.endsWith('/favicon.ico')) { res.writeHead(204); res.end(); return; }
   if (requestPath === '/' || requestPath === '/cnc' || requestPath === '/cnc/') requestPath = '/cnc/index.html';
   const file = path.normalize(path.join(ROOT, requestPath));
   if (!file.startsWith(ROOT) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) { res.writeHead(404,{'Content-Type':'text/plain; charset=utf-8'}); res.end('404'); return; }
