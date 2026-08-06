@@ -56,6 +56,14 @@ def write(relative: str, content: str) -> None:
 
 def sync_versions(relative: str) -> None:
     source = read(relative)
+    already_current = (
+        CURRENT_PWA in source
+        and CURRENT_CACHE in source
+        and OLD_PREVIOUS_PWA not in source
+        and OLD_PREVIOUS_CACHE not in source
+    )
+    if already_current:
+        return
     if PREVIOUS_PWA not in source and PREVIOUS_CACHE not in source:
         raise RuntimeError(f"没有找到待升级的PWA15运行针：{relative}")
     source = source.replace(PREVIOUS_PWA, "__CNC_CURRENT_PWA__")
@@ -94,8 +102,6 @@ def add_workflow_core(relative: str) -> None:
     except RuntimeError:
         source = read(relative)
 
-    # 部分CNC工作流把核心文件写成单行数组；在训练营资源后精确加入新脚本，
-    # 仍由原有循环同时核验Service Worker与PWA自检页，不能只检查字符串存在。
     needle = "'./training-camp.html',"
     if needle in source:
         source = source.replace(needle, needle + f"'{NEW_CORE}',", 1)
