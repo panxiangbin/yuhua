@@ -128,6 +128,7 @@ function expectedCorePaths(build) {
       './course-g00-g01-basics.html'
     );
   }
+  if (build === branchTargetPwaBuild) core.push('./learning-sublesson-catalog.js', './learning-depth.css', './learning-detail.html');
   return core;
 }
 

@@ -177,6 +177,7 @@ function expectedCore(build) {
       './course-g00-g01-basics.html'
     );
   }
+  if (build === expectedPwaBuild) core.push('./learning-sublesson-catalog.js', './learning-depth.css', './learning-detail.html');
   return core;
 }
 

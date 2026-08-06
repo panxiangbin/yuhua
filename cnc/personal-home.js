@@ -23,8 +23,8 @@
     { id:'stage-6', title:'工件装夹基础', file:'course-workholding-basics.html', reason:'同时检查定位、夹紧、支撑和刀具运动通道。', image:'./assets/images/batch04_milling_tooling/vise-clamping-basic-001.webp', alt:'平口钳、等高垫块和工件装夹找正演示图', caption:'定位、夹紧和刀具通道必须同时确认。' },
     { id:'stage-7', title:'刀具基础', file:'course-tool-basics.html', reason:'认识刀具类型、刀具材料、刀柄夹头和伸出量。', image:'./assets/images/batch04_milling_tooling/tool-selection-beginner-001.webp', alt:'立铣刀、球头刀和常见铣削刀具选用演示图', caption:'根据加工特征认识刀具类型和基本用途。' },
     { id:'stage-8', title:'对刀与刀长补偿', file:'course-tool-length-offset.html', reason:'把实物刀具、H号、刀长数据和程序调用连成一条链。', image:'./assets/images/batch04_milling_tooling/bt-er-holder-overview-001.webp', alt:'BT刀柄、ER夹头、刀具伸出量和刀长关系演示图', caption:'把实物刀具、刀柄、H号和程序调用连成一条链。' },
-    { id:'stage-9', title:'G00与G01', file:'course-g00-g01-basics.html', reason:'分清快速定位和直线切削，并学会受控验证。', image:'./assets/images/batch02_operation_basics/single-block-dry-run-001.webp', alt:'单段、空运行和低倍率验证G00与G01程序的演示图', caption:'快速定位与直线切削必须先用单段、空运行和低倍率验证。' },
-    { id:'stage-10', title:'G02与G03', file:'course-g02-g03-basics.html', reason:'结合加工平面、方向、圆心和半径理解圆弧编程。', image:'./assets/images/batch04_milling_tooling/milling-contour-001.webp', alt:'轮廓圆弧切入切出和圆弧方向演示图', caption:'结合加工平面、圆弧方向和切向进退刀理解圆弧编程。' },
+    { id:'stage-9', title:'G00与G01', file:'course-g00-g01-basics.html', reason:'分清快速定位和直线切削；G00移动轨迹不保证直线，必须使用单段、空运行和低倍率受控验证。', image:'./assets/images/batch02_operation_basics/single-block-dry-run-001.webp', alt:'单段、空运行和低倍率验证G00与G01程序的演示图', caption:'快速定位与直线切削必须先用单段、空运行和低倍率验证。' },
+    { id:'stage-10', title:'G02与G03', file:'course-g02-g03-basics.html', reason:'结合加工平面、方向、圆心和半径理解圆弧编程；I、J、K等圆心增量受系统最小输入单位约束。', image:'./assets/images/batch04_milling_tooling/milling-contour-001.webp', alt:'轮廓圆弧切入切出和圆弧方向演示图', caption:'结合加工平面、圆弧方向和切向进退刀理解圆弧编程。' },
     { id:'stage-11', title:'孔加工循环', file:'course-hole-cycles.html', reason:'分清R平面、孔深、孔底动作、退刀方式和循环取消。', image:'./assets/images/batch02_operation_basics/canned-cycle-overview-001.webp', alt:'钻孔固定循环快速定位、进给、孔底动作和退刀演示图', caption:'分清R平面、孔深、孔底动作和返回方式。' },
     { id:'stage-12', title:'完整程序与首件验证', file:'course-complete-program-first-piece.html', reason:'把程序、装夹、空运行、试切、测量和放行串成闭环。', image:'./assets/images/batch05_alarm_drawing_material/first-piece-inspection-001.webp', alt:'完整程序试切后进行首件尺寸检测和记录的演示图', caption:'程序、装夹、空运行、试切和首件测量必须形成闭环。' }
   ];
@@ -347,6 +347,13 @@
     };
   }
 
+  function syncQuickSearchAccessibility() {
+    var input = document.getElementById('quick-search-input');
+    if (!input) return false;
+    input.setAttribute('aria-label', '快速搜索G代码、报警和参数');
+    return true;
+  }
+
   function boot() {
     removeLegacyHome();
     syncLearningContent();
@@ -354,6 +361,7 @@
     syncHomeProgress();
     syncBottomNav();
     installQueryImageObserver();
+    syncQuickSearchAccessibility();
     ensureDepthAssets().then(renderLearningDepth).catch(function (error) {
       console.error('[CNC学习深度] ' + error.message);
     });
@@ -361,6 +369,7 @@
       window.setTimeout(function () {
         syncBottomNav();
         installQueryImageObserver();
+    syncQuickSearchAccessibility();
         primeQueryImages(document);
         if (window.CNC_LEARNING_SUBLESSONS) renderLearningDepth(window.CNC_LEARNING_SUBLESSONS);
       }, delay);
