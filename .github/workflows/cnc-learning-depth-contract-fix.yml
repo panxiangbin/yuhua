@@ -4,6 +4,13 @@ on:
   push:
     branches:
       - codex/learning-depth-refactor-20260805
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - reopened
+      - synchronize
 
 permissions:
   contents: write
