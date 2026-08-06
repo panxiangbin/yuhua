@@ -43,7 +43,8 @@ jobs:
             'pages: write',
             '/pages/builds/latest',
             '/pages/builds',
-            "github.event_name != 'pull_request'",
+            'github.event.pull_request.head.repo.full_name == github.repository',
+            'github.event.pull_request.user.login == github.repository_owner',
             "cache: 'no-store'",
             'CNC_PAGES_RECOVERY_ATTEMPTS || 40',
             'mobile-pages-deployment-status-smoke.cjs',
@@ -76,7 +77,7 @@ jobs:
 
   recover:
     name: 恢复并验收CNC Pages公网版本
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' || (github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.user.login == github.repository_owner)
     needs: contract
     runs-on: ubuntu-latest
     timeout-minutes: 18
