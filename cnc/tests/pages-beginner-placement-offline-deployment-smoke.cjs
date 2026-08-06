@@ -8,13 +8,13 @@ fs.mkdirSync(out, { recursive: true });
 
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
-const branchTargetPwaBuild = '20260806-pwa14';
-const previousPublicPwaBuild = '20260804-pwa13';
+const branchTargetPwaBuild = '20260806-pwa15';
+const previousPublicPwaBuild = '20260806-pwa14';
 const expectedSiteBuild = '20260806-learning-depth1';
-const previousPublicSiteBuild = '20260804-mobile-home1';
+const previousPublicSiteBuild = '20260806-learning-depth1';
 const cacheRevisionByBuild = {
-  [branchTargetPwaBuild]: '20260806-learning14',
-  [previousPublicPwaBuild]: '20260804-mobile13'
+  [branchTargetPwaBuild]: '20260806-learning15',
+  [previousPublicPwaBuild]: '20260806-learning14'
 };
 const siteBuildByPwaBuild = {
   [branchTargetPwaBuild]: expectedSiteBuild,
@@ -36,7 +36,7 @@ const LEARNING_DEPTH_CORE_PATHS = new Set([
 
 function expectedCoreForBuild(build, label) {
   if (build === branchTargetPwaBuild) return EXACT_CORE;
-  if (build === previousPublicPwaBuild) return EXACT_CORE.filter(item => !LEARNING_DEPTH_CORE_PATHS.has(item));
+  if (build === previousPublicPwaBuild) return EXACT_CORE;
   throw new Error(`${label}出现未受控核心资源构建：${build}`);
 }
 

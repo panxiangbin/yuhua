@@ -48,10 +48,10 @@ jobs:
           const swCacheRevision = sw.match(/const CACHE_REVISION = '([^']+)'/)?.[1];
           if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
           if (swCacheRevision !== info.cacheRevision) throw new Error(`Service Worker/build-info cache mismatch: ${swCacheRevision} / ${info.cacheRevision}`);
-          if (info.pwaBuild !== '20260806-pwa14') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
-          if (info.cacheRevision !== '20260806-learning14') throw new Error(`unexpected cache revision: ${info.cacheRevision}`);
-          if (!test.includes("const PWA_BUILD = '20260806-pwa14'")) throw new Error('offline browser PWA build mismatch');
-          if (!test.includes("const CACHE_REVISION = '20260806-learning14'")) throw new Error('offline browser cache revision mismatch');
+          if (info.pwaBuild !== '20260806-pwa15') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
+          if (info.cacheRevision !== '20260806-learning15') throw new Error(`unexpected cache revision: ${info.cacheRevision}`);
+          if (!test.includes("const PWA_BUILD = '20260806-pwa15'")) throw new Error('offline browser PWA build mismatch');
+          if (!test.includes("const CACHE_REVISION = '20260806-learning15'")) throw new Error('offline browser cache revision mismatch');
           for (const file of [
             './beginner-placement.html',
             './training-camp.html',
@@ -78,7 +78,7 @@ jobs:
             'placementFirstStepCoursesColdOffline: true',
             'explainabilityColdOffline: true'
           ]) if (!test.includes(token)) throw new Error(`offline diagnostics missing: ${token}`);
-          for (const stage of ['起点测评关键安全门禁','起点测评离线核心','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','AI老师离线核心','正式课程开发占位清零','AI老师学习档案异常保护','80个图文小课']) {
+          for (const stage of ['起点测评关键安全门禁','起点测评离线核心','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','AI老师离线核心','正式课程开发占位清零','AI老师学习档案异常保护','80个图文小课','学习目录紧凑布局']) {
             if (!String(info.contentStage || '').includes(stage)) throw new Error(`build marker missing: ${stage}`);
           }
           NODE
