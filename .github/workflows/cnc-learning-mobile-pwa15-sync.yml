@@ -90,28 +90,28 @@ jobs:
               (r"const CACHE_REVISION = '20260806-learning14';", f"const CACHE_REVISION = '{CURRENT_CACHE}';", 1),
           ])
           edit('cnc/tests/mobile-pwa-upgrade-data-smoke.cjs', [
-              (r"const PREVIOUS_PWA_BUILD = '20260804-pwa13';", f"const PREVIOUS_PWA_BUILD = '{PREVIOUS_PWA}';", 1),
+              (r"const PREVIOUS_PWA_BUILD = '[^']+';", f"const PREVIOUS_PWA_BUILD = '{PREVIOUS_PWA}';", 1),
               (r"const CURRENT_PWA_BUILD = '20260806-pwa14';", f"const CURRENT_PWA_BUILD = '{CURRENT_PWA}';", 1),
-              (r"const PREVIOUS_CACHE_REVISION = '20260804-mobile13';", f"const PREVIOUS_CACHE_REVISION = '{PREVIOUS_CACHE}';", 1),
+              (r"const PREVIOUS_CACHE_REVISION = '[^']+';", f"const PREVIOUS_CACHE_REVISION = '{PREVIOUS_CACHE}';", 1),
               (r"const CURRENT_CACHE_REVISION = '20260806-learning14';", f"const CURRENT_CACHE_REVISION = '{CURRENT_CACHE}';", 1),
           ])
           edit('cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs', [
               (r"const branchTargetPwaBuild = '20260806-pwa14';", f"const branchTargetPwaBuild = '{CURRENT_PWA}';", 1),
-              (r"const previousPublicPwaBuild = '20260804-pwa13';", f"const previousPublicPwaBuild = '{PREVIOUS_PWA}';", 1),
+              (r"const previousPublicPwaBuild = '[^']+';", f"const previousPublicPwaBuild = '{PREVIOUS_PWA}';", 1),
               (r"\[branchTargetPwaBuild\]: '20260806-learning14'", f"[branchTargetPwaBuild]: '{CURRENT_CACHE}'", 1),
-              (r"\[previousPublicPwaBuild\]: '20260804-mobile13'", f"[previousPublicPwaBuild]: '{PREVIOUS_CACHE}'", 1),
+              (r"\[previousPublicPwaBuild\]: '[^']+'", f"[previousPublicPwaBuild]: '{PREVIOUS_CACHE}'", 1),
           ])
           edit('cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs', [
               (r"const branchTargetPwaBuild = '20260806-pwa14';", f"const branchTargetPwaBuild = '{CURRENT_PWA}';", 1),
-              (r"const previousPublicPwaBuild = '20260804-pwa13';", f"const previousPublicPwaBuild = '{PREVIOUS_PWA}';", 1),
+              (r"const previousPublicPwaBuild = '[^']+';", f"const previousPublicPwaBuild = '{PREVIOUS_PWA}';", 1),
               (r"\[branchTargetPwaBuild\]: '20260806-learning14'", f"[branchTargetPwaBuild]: '{CURRENT_CACHE}'", 1),
-              (r"\[previousPublicPwaBuild\]: '20260804-mobile13'", f"[previousPublicPwaBuild]: '{PREVIOUS_CACHE}'", 1),
+              (r"\[previousPublicPwaBuild\]: '[^']+'", f"[previousPublicPwaBuild]: '{PREVIOUS_CACHE}'", 1),
           ])
           edit('cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs', [
               (r"const expectedPwaBuild = '20260806-pwa14';", f"const expectedPwaBuild = '{CURRENT_PWA}';", 1),
-              (r"const previousPublicPwaBuild = '20260804-pwa13';", f"const previousPublicPwaBuild = '{PREVIOUS_PWA}';", 1),
+              (r"const previousPublicPwaBuild = '[^']+';", f"const previousPublicPwaBuild = '{PREVIOUS_PWA}';", 1),
               (r"\[expectedPwaBuild\]: '20260806-learning14'", f"[expectedPwaBuild]: '{CURRENT_CACHE}'", 1),
-              (r"\[previousPublicPwaBuild\]: '20260804-mobile13'", f"[previousPublicPwaBuild]: '{PREVIOUS_CACHE}'", 1),
+              (r"\[previousPublicPwaBuild\]: '[^']+'", f"[previousPublicPwaBuild]: '{PREVIOUS_CACHE}'", 1),
           ])
           PY
 
