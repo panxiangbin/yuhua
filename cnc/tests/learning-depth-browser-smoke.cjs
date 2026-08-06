@@ -31,7 +31,7 @@ function watch(page, errors, failed) {
 }
 
 (async()=>{
-  const report = { generatedAt:new Date().toISOString(), baseUrl:BASE, passed:false, failures:[], learning:null, detail:null, errors:[], failedRequests:[] };
+  const report = { generatedAt:new Date().toISOString(), baseUrl:BASE, passed:false, failures:[], learning:null, narrow:null, detail:null, errors:[], failedRequests:[] };
   let browser;
   try {
     await new Promise((resolve,reject)=>{ server.once('error',reject); server.listen(PORT,'127.0.0.1',resolve); });
@@ -118,6 +118,76 @@ function watch(page, errors, failed) {
     fail(expanded.firstLinkHeight >= 44, `小课入口触控高度不足：${expanded.firstLinkHeight}px`, report.failures);
     fail(learning.firstHref.includes('learning-detail.html'), '首个小课链接错误', report.failures);
 
+    const narrowContext = await browser.newContext({ viewport:{ width:360, height:800 }, serviceWorkers:'block' });
+    const narrowPage = await narrowContext.newPage(); watch(narrowPage, report.errors, report.failedRequests);
+    await narrowPage.goto(BASE, { waitUntil:'networkidle' });
+    await narrowPage.locator('.xp-bottom-nav button[data-xp-route="study"]').click();
+    await narrowPage.locator('#view-study.active').waitFor();
+    await narrowPage.waitForFunction(()=>document.querySelectorAll('#view-study .cnc-sublesson-panel').length === 12 && document.querySelectorAll('#view-study .study-card-thumb').length === 12);
+    await narrowPage.evaluate(async()=>{
+      const cards = Array.from(document.querySelectorAll('#view-study .study-card[data-level]'));
+      const images = Array.from(document.querySelectorAll('#view-study .study-card-thumb'));
+      cards.forEach(card=>{ card.style.contentVisibility='visible'; });
+      images.forEach(image=>{
+        image.loading='eager';
+        try { image.fetchPriority='high'; } catch {}
+      });
+      await Promise.all(images.map(image=>typeof image.decode === 'function' ? image.decode().catch(()=>{}) : Promise.resolve()));
+    });
+    await narrowPage.waitForFunction(()=>Array.from(document.querySelectorAll('#view-study .study-card-thumb')).every(image=>image.complete), null, { timeout:30000 });
+    const narrow = await narrowPage.evaluate(()=>{
+      const root = document.documentElement;
+      const panels = Array.from(document.querySelectorAll('#view-study .cnc-sublesson-panel'));
+      const cards = Array.from(document.querySelectorAll('#view-study .study-card[data-level]'));
+      const thumbs = Array.from(document.querySelectorAll('#view-study .study-card-thumb'));
+      const summaries = panels.map(panel=>panel.querySelector('summary'));
+      const cardRects = cards.map(card=>card.getBoundingClientRect());
+      const cardHeights = cardRects.map(rect=>Math.round(rect.height));
+      const thumbRects = thumbs.map(image=>{
+        const rect = image.getBoundingClientRect();
+        return { width:Math.round(rect.width), height:Math.round(rect.height), naturalWidth:image.naturalWidth, naturalHeight:image.naturalHeight };
+      });
+      return {
+        viewportWidth:window.innerWidth,
+        clientWidth:root.clientWidth,
+        scrollWidth:root.scrollWidth,
+        panelCount:panels.length,
+        defaultOpenPanels:panels.filter(panel=>panel.open).length,
+        cardHeights,
+        averageCardHeight:Math.round(cardHeights.reduce((sum,value)=>sum+value,0)/Math.max(cardHeights.length,1)),
+        maxCardHeight:Math.max(...cardHeights),
+        minCardLeft:Math.round(Math.min(...cardRects.map(rect=>rect.left))),
+        maxCardRight:Math.round(Math.max(...cardRects.map(rect=>rect.right))),
+        thumbRects,
+        decodedThumbnails:thumbRects.filter(item=>item.naturalWidth>0).length,
+        summaryHeights:summaries.map(summary=>Math.round(summary.getBoundingClientRect().height)),
+        firstCardColumns:getComputedStyle(cards[0]).gridTemplateColumns
+      };
+    });
+    report.narrow = narrow;
+    await narrowPage.locator('#view-study .cnc-sublesson-panel').first().locator('summary').click();
+    await narrowPage.waitForFunction(()=>document.querySelector('#view-study .cnc-sublesson-panel')?.open === true);
+    narrow.expanded = await narrowPage.evaluate(()=>{
+      const first = document.querySelector('#view-study .cnc-sublesson-panel');
+      const firstLink = first?.querySelector('.cnc-sublesson-link');
+      return {
+        openPanels:Array.from(document.querySelectorAll('#view-study .cnc-sublesson-panel')).filter(panel=>panel.open).length,
+        firstLinkHeight:Math.round(firstLink?.getBoundingClientRect().height || 0)
+      };
+    });
+    await narrowPage.screenshot({ path:path.join(OUT,'learning-depth-mobile-360x800.png'), fullPage:true });
+    fail(narrow.viewportWidth === 360, `窄屏视口异常：${narrow.viewportWidth}px`, report.failures);
+    fail(narrow.scrollWidth <= narrow.clientWidth, `窄屏横向溢出：${narrow.scrollWidth}/${narrow.clientWidth}`, report.failures);
+    fail(narrow.panelCount === 12 && narrow.defaultOpenPanels === 0, `窄屏目录状态异常：${narrow.panelCount}/${narrow.defaultOpenPanels}`, report.failures);
+    fail(narrow.decodedThumbnails === 12, `窄屏已解码缩略图 ${narrow.decodedThumbnails}/12`, report.failures);
+    fail(narrow.thumbRects.every(item=>item.width>=90 && item.height>=70), `窄屏缩略图尺寸不足：${JSON.stringify(narrow.thumbRects)}`, report.failures);
+    fail(narrow.summaryHeights.every(height=>height>=44), `窄屏折叠按钮触控高度不足：${narrow.summaryHeights.join(',')}`, report.failures);
+    fail(narrow.averageCardHeight <= 195 && narrow.maxCardHeight <= 210, `窄屏课程卡过高：平均${narrow.averageCardHeight}px，最大${narrow.maxCardHeight}px`, report.failures);
+    fail(narrow.minCardLeft >= -1 && narrow.maxCardRight <= narrow.clientWidth + 1, `窄屏课程卡越界：${narrow.minCardLeft}/${narrow.maxCardRight}/${narrow.clientWidth}`, report.failures);
+    fail(narrow.firstCardColumns.includes('92px'), `窄屏网格列未命中92px规则：${narrow.firstCardColumns}`, report.failures);
+    fail(narrow.expanded.openPanels === 1 && narrow.expanded.firstLinkHeight >= 44, `窄屏展开触控异常：${JSON.stringify(narrow.expanded)}`, report.failures);
+    await narrowContext.close();
+
     await page.goto(new URL(learning.firstHref, BASE).href, { waitUntil:'networkidle' });
     await page.waitForFunction(()=>document.body.dataset.cncLearningDetail === 'ready');
     await page.waitForFunction(()=>{ const image=document.querySelector('#image'); return image && image.complete && image.naturalWidth > 0; });
@@ -146,7 +216,7 @@ function watch(page, errors, failed) {
     report.passed = report.failures.length === 0;
     fs.writeFileSync(path.join(OUT,'report.json'),JSON.stringify(report,null,2));
     if (!report.passed) throw new Error(report.failures.join('\n'));
-    console.log(JSON.stringify({ passed:true, panels:learning.panelCount, sublessons:learning.linkCount, averageCardHeight:learning.averageCardHeight, thumbnails:learning.decodedThumbnails, detail:detail.title },null,2));
+    console.log(JSON.stringify({ passed:true, panels:learning.panelCount, sublessons:learning.linkCount, averageCardHeight:learning.averageCardHeight, narrowAverageCardHeight:narrow.averageCardHeight, thumbnails:learning.decodedThumbnails, detail:detail.title },null,2));
     await context.close();
   } catch (error) {
     report.passed = false; report.fatal = String(error && error.stack ? error.stack : error);
