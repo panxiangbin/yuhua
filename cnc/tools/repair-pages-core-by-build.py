@@ -63,8 +63,7 @@ for spec in SPECS:
         raise SystemExit(f"{spec['path']}: core array end missing")
     insert_at = end + len('\n];')
 
-    helper_marker = 'function expectedCoreForBuild(build, label)'
-    if helper_marker not in source:
+    if 'function expectedCoreForBuild(build, label)' not in source:
         quoted = ',\n  '.join(repr(item) for item in LEARNING_PATHS)
         helper = f"""
 
@@ -110,6 +109,7 @@ for old, new, label in [
     (self_test_old, self_test_new, 'self-test cache contract'),
 ]:
     ai_source = replace_once(ai_source, old, new, ai_path, label)
+
 ai_source = replace_once(
     ai_source,
     '    expectedPaths = LEGACY_PUBLIC_SELF_TEST_PATHS;',
@@ -117,6 +117,10 @@ ai_source = replace_once(
     ai_path,
     'PWA13 self-test core paths',
 )
+
+self_test_notice_old = """    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'marker.cacheRevision===EXPECTED_CACHE', 'PWA13用于刷新AI老师学习档案异常保护');"""
+self_test_notice_new = """    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'marker.cacheRevision===EXPECTED_CACHE', 'PWA14用于刷新80个图文小课与AI老师学习档案异常保护');"""
+ai_source = replace_once(ai_source, self_test_notice_old, self_test_notice_new, ai_path, 'PWA14 self-test visible notice')
 ai_file.write_text(ai_source, encoding='utf-8', newline='\n')
 
 mobile_path = 'cnc/tests/mobile-home-smoke.cjs'
@@ -143,6 +147,7 @@ for token in [
     quote_parser_new,
     status_new,
     self_test_new,
+    self_test_notice_new,
     'expectedPaths = expectedCoreForBuild(expectedBuild, label);',
 ]:
     if token not in final_ai:
@@ -163,4 +168,4 @@ for item in [
 if 'window.CNC_LEARNING_SUBLESSONS.safetyNotice' not in mobile_file.read_text(encoding='utf-8'):
     raise SystemExit('mobile 80-course safetyNotice verification failed')
 
-print('Pages gates now distinguish PWA13/PWA14 core resources and cache revisions; quote style is normalized semantically; mobile 80-course safety field repaired.')
+print('Pages gates now distinguish PWA13/PWA14 core resources and cache revisions; quote style and PWA14 visible notice are verified semantically; mobile 80-course safety field repaired.')
