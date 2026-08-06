@@ -76,7 +76,7 @@ jobs:
             './assets/images/batch02_operation_basics/machine-init-flow-001.webp',
             '关键安全门禁',
             '三类测评首步课程',
-            'PWA16用于刷新80个图文小课、紧凑学习目录与AI老师学习档案异常保护'
+            'PWA16用于刷新80课针对性内容、紧凑学习目录与AI老师学习档案异常保护'
           ]) {
             if (!html.includes(token)) throw new Error(`self-test contract missing: ${token}`);
           }
