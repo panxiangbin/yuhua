@@ -4,20 +4,28 @@ on:
   pull_request:
     paths:
       - 'cnc/personal-home.js'
+      - 'cnc/learning-sublesson-catalog.js'
+      - 'cnc/learning-detail.html'
+      - 'cnc/learning-depth.css'
       - 'cnc/training-camp.html'
       - 'cnc/ai-teacher.html'
       - 'cnc/course-*.html'
       - 'cnc/tests/main-course-catalog-drift-smoke.cjs'
+      - 'cnc/tests/learning-depth-smoke.cjs'
       - 'cnc/docs/main-course-catalog-drift-contract.md'
       - '.github/workflows/cnc-main-course-catalog-drift-smoke.yml'
   push:
     branches: [main]
     paths:
       - 'cnc/personal-home.js'
+      - 'cnc/learning-sublesson-catalog.js'
+      - 'cnc/learning-detail.html'
+      - 'cnc/learning-depth.css'
       - 'cnc/training-camp.html'
       - 'cnc/ai-teacher.html'
       - 'cnc/course-*.html'
       - 'cnc/tests/main-course-catalog-drift-smoke.cjs'
+      - 'cnc/tests/learning-depth-smoke.cjs'
       - 'cnc/docs/main-course-catalog-drift-contract.md'
       - '.github/workflows/cnc-main-course-catalog-drift-smoke.yml'
   workflow_dispatch:
@@ -38,18 +46,24 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-      - name: Validate syntax, Chinese contract and anti-bypass rules
+      - name: Validate syntax, learning depth and Chinese contract
         run: |
           set -euxo pipefail
+          node --check cnc/personal-home.js
+          node --check cnc/learning-sublesson-catalog.js
           node --check cnc/tests/main-course-catalog-drift-smoke.cjs
+          node --check cnc/tests/learning-depth-smoke.cjs
           grep -q '12关' cnc/docs/main-course-catalog-drift-contract.md
           grep -q '三端' cnc/docs/main-course-catalog-drift-contract.md
           grep -q 'AI CNC 老师' cnc/docs/main-course-catalog-drift-contract.md
           grep -q '原厂手册' cnc/docs/main-course-catalog-drift-contract.md
           grep -q '授权人员确认' cnc/docs/main-course-catalog-drift-contract.md
-          ! grep -Eq "test\.skip\(|describe\.skip\(|it\.skip\(|process\.exit\(0\)" cnc/tests/main-course-catalog-drift-smoke.cjs
-      - name: Verify mobile home, training camp and AI teacher course catalogs
-        run: node cnc/tests/main-course-catalog-drift-smoke.cjs
+          grep -q '教学参考，需按机床说明书、现场工艺和空运行验证' cnc/learning-sublesson-catalog.js
+          ! grep -Eq "test\.skip\(|describe\.skip\(|it\.skip\(|process\.exit\(0\)" cnc/tests/main-course-catalog-drift-smoke.cjs cnc/tests/learning-depth-smoke.cjs
+      - name: Verify fixed 12-stage catalog and 80 sublessons
+        run: |
+          node cnc/tests/learning-depth-smoke.cjs
+          node cnc/tests/main-course-catalog-drift-smoke.cjs
       - name: Reject incomplete diagnostics
         run: |
           node - <<'NODE'
@@ -59,8 +73,11 @@ jobs:
           if (report.homeCatalog.length !== 12 || report.trainingCampCatalog.length !== 12 || report.aiTeacherCourseLinks.length !== 12 || report.canonicalCourses.length !== 12) {
             throw new Error(`12关目录覆盖不足：${JSON.stringify({home: report.homeCatalog.length, camp: report.trainingCampCatalog.length, aiTeacher: report.aiTeacherCourseLinks.length, canonical: report.canonicalCourses.length})}`);
           }
-          for (const key of ['stageIdsAndOrderMatch', 'entryFilesMatch', 'aiTeacherCourseLinksMatch', 'aiTeacherRecommendationUsesCatalog', 'titlesCompatible', 'allTargetsExist', 'redirectAliasesControlled', 'canonicalTargetsUnique', 'pullRequestAndMainPushPathsSymmetric', 'requiredTriggerPathsCovered', 'readOnlyPermissions', 'noCancellation']) {
+          for (const key of ['stageIdsAndOrderMatch','entryFilesMatch','aiTeacherCourseLinksMatch','aiTeacherRecommendationUsesCatalog','titlesCompatible','allTargetsExist','redirectAliasesControlled','canonicalTargetsUnique','learningDepthCatalog','sublessonImagesExist','sublessonSafetyBoundaries','pullRequestAndMainPushPathsSymmetric','requiredTriggerPathsCovered','readOnlyPermissions','noCancellation']) {
             if (report.checks[key] !== true) throw new Error(`12关目录检查缺失或失败：${key}`);
+          }
+          if (report.checks.totalSublessons !== 80 || report.sublessonCounts['1'] !== 10 || report.sublessonCounts['2'] !== 10) {
+            throw new Error(`学习深度不足：${JSON.stringify({total:report.checks.totalSublessons, stage1:report.sublessonCounts['1'], stage2:report.sublessonCounts['2']})}`);
           }
           NODE
       - name: Upload catalog diagnostics

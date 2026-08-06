@@ -1,0 +1,69 @@
+name: CNC learning depth browser smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/personal-home.js'
+      - 'cnc/learning-sublesson-catalog.js'
+      - 'cnc/learning-detail.html'
+      - 'cnc/learning-depth.css'
+      - 'cnc/tests/learning-depth-browser-smoke.cjs'
+      - '.github/workflows/cnc-learning-depth-browser-smoke.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'cnc/personal-home.js'
+      - 'cnc/learning-sublesson-catalog.js'
+      - 'cnc/learning-detail.html'
+      - 'cnc/learning-depth.css'
+      - 'cnc/tests/learning-depth-browser-smoke.cjs'
+      - '.github/workflows/cnc-learning-depth-browser-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cnc-learning-depth-browser-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  browser:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate learning scripts
+        shell: pwsh
+        run: |
+          node --check cnc/personal-home.js
+          node --check cnc/learning-sublesson-catalog.js
+          node --check cnc/tests/learning-depth-browser-smoke.cjs
+          node cnc/tests/learning-depth-smoke.cjs
+      - name: Install Playwright without bundled browsers
+        shell: pwsh
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+        run: npm install --no-save playwright@1.54.2
+      - name: Verify Microsoft Edge
+        shell: pwsh
+        run: |
+          $edge='C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe'
+          if (-not (Test-Path $edge)) { throw "Microsoft Edge not found: $edge" }
+          & $edge --version
+      - name: Run 12-stage 80-lesson browser acceptance
+        shell: pwsh
+        env:
+          CNC_EDGE_PATH: 'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe'
+        run: node cnc/tests/learning-depth-browser-smoke.cjs
+      - name: Upload learning screenshots and report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-learning-depth-browser-${{ github.run_id }}
+          path: cnc/test-results/learning-depth-browser/
+          if-no-files-found: error
+          retention-days: 30

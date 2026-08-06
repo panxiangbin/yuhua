@@ -48,7 +48,7 @@ fs.mkdirSync(OUT, { recursive: true });
       localStorage.setItem('cnc_training_exam_v1', JSON.stringify({ version: 1, highestScore: 73 }));
     });
     await page.reload({ waitUntil: 'domcontentloaded' });
-    await page.waitForFunction(() => window.CNC_AI_TEACHER?.build === '20260804-mobile-home1');
+    await page.waitForFunction(() => window.CNC_AI_TEACHER?.build === '20260806-learning-depth1');
 
     assert.equal(await page.locator('#course-progress').textContent(), '4/12');
     assert.equal(await page.locator('#wrong-count').textContent(), '2');

@@ -66,8 +66,28 @@ const assert = require('node:assert/strict');
     return cards.length === 12
       && images.length === 12
       && cards.every(card => card.dataset.courseFile && card.getAttribute('aria-label'))
-      && images.every(image => image.complete && image.naturalWidth > 0 && image.alt.trim());
+      && images.every(image => image.alt.trim());
   }, null, { timeout: 20000 });
+
+  // 课程缩略图采用原生懒加载。逐卡滚动到真实可视区域后再验证全部12张图解码，
+  // 避免把“尚未触发懒加载”误判为资源损坏，同时不放宽任何图片完整性断言。
+  const studyImages = page.locator('#view-study .study-card-thumb');
+  for (let index = 0; index < 12; index += 1) {
+    const image = studyImages.nth(index);
+    await image.scrollIntoViewIfNeeded();
+    await image.evaluate(async node => {
+      if (!node.complete) {
+        await new Promise((resolve, reject) => {
+          const timer = window.setTimeout(() => reject(new Error(`课程图片加载超时：${node.src}`)), 15000);
+          node.addEventListener('load', () => { window.clearTimeout(timer); resolve(); }, { once: true });
+          node.addEventListener('error', () => { window.clearTimeout(timer); reject(new Error(`课程图片加载失败：${node.src}`)); }, { once: true });
+        });
+      }
+      if (typeof node.decode === 'function') await node.decode();
+    });
+    const decoded = await image.evaluate(node => node.complete && node.naturalWidth > 0 && Boolean(node.alt.trim()));
+    assert.equal(decoded, true, `第${index + 1}关课程图片必须在滚动到可视区域后成功解码`);
+  }
 
   const study = await page.locator('#view-study').evaluate(view => {
     const cards = Array.from(view.querySelectorAll('.study-card[data-level]'));

@@ -47,13 +47,13 @@ jobs:
           const swCacheRevision = sw.match(/const CACHE_REVISION = '([^']+)'/)?.[1];
           if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
           if (swCacheRevision !== info.cacheRevision) throw new Error(`Service Worker/build-info cache mismatch: ${swCacheRevision} / ${info.cacheRevision}`);
-          if (info.pwaBuild !== '20260804-pwa13') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
-          if (info.cacheRevision !== '20260804-mobile13') throw new Error(`unexpected cache revision: ${info.cacheRevision}`);
+          if (info.pwaBuild !== '20260806-pwa14') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
+          if (info.cacheRevision !== '20260806-learning14') throw new Error(`unexpected cache revision: ${info.cacheRevision}`);
           if (!test.includes(`const CURRENT_PWA_BUILD = '${info.pwaBuild}'`)) throw new Error('upgrade test current PWA build mismatch');
           if (!test.includes(`const CURRENT_CACHE_REVISION = '${info.cacheRevision}'`)) throw new Error('upgrade test current cache revision mismatch');
           for (const required of [
-            "const PREVIOUS_PWA_BUILD = '20260804-pwa12'",
-            "const PREVIOUS_CACHE_REVISION = '20260804-mobile12'",
+            "const PREVIOUS_PWA_BUILD = '20260804-pwa13'",
+            "const PREVIOUS_CACHE_REVISION = '20260804-mobile13'",
             'cnc_training_profile_v1',
             'cnc_training_practice_v1',
             'cnc_training_simulator_v1',
@@ -89,6 +89,7 @@ jobs:
           if (!String(info.contentStage || '').includes('测评首步课程离线核心')) throw new Error('build marker missing placement first-step offline core');
           if (!String(info.contentStage || '').includes('正式课程开发占位清零')) throw new Error('build marker missing formal course content refresh');
           if (!String(info.contentStage || '').includes('AI老师学习档案异常保护')) throw new Error('build marker missing AI teacher data integrity protection');
+          if (!String(info.contentStage || '').includes('80个图文小课')) throw new Error('build marker missing learning depth content');
           for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)']) {
             if (test.includes(forbidden)) throw new Error(`upgrade test bypass found: ${forbidden}`);
           }
