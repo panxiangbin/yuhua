@@ -56,13 +56,13 @@ jobs:
           if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
           if (swCache !== info.cacheRevision) throw new Error(`Service Worker/build-info cache mismatch: ${swCache} / ${info.cacheRevision}`);
           if (info.build !== '20260806-learning-depth1') throw new Error(`unexpected site build: ${info.build}`);
-          if (info.pwaBuild !== '20260806-pwa14' || info.cacheRevision !== '20260806-learning14') throw new Error(`unexpected branch build: ${info.pwaBuild}/${info.cacheRevision}`);
+          if (info.pwaBuild !== '20260806-pwa15' || info.cacheRevision !== '20260806-learning15') throw new Error(`unexpected branch build: ${info.pwaBuild}/${info.cacheRevision}`);
           for (const token of [
-            "const branchTargetPwaBuild = '20260806-pwa14'",
-            "const previousPublicPwaBuild = '20260804-pwa13'",
+            "const branchTargetPwaBuild = '20260806-pwa15'",
+            "const previousPublicPwaBuild = '20260806-pwa14'",
             "const expectedSiteBuild = '20260806-learning-depth1'",
-            "[branchTargetPwaBuild]: '20260806-learning14'",
-            "[previousPublicPwaBuild]: '20260804-mobile13'",
+            "[branchTargetPwaBuild]: '20260806-learning15'",
+            "[previousPublicPwaBuild]: '20260806-learning14'",
             'CNC_PAGES_VERIFY_ATTEMPTS || 18',
             "cache: 'no-store'",
             'mainPagesExactBytesMatch: true',
