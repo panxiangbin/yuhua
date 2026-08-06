@@ -11,7 +11,7 @@ const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubuserconten
 const branchTargetPwaBuild = '20260806-pwa15';
 const previousPublicPwaBuild = '20260806-pwa14';
 const expectedSiteBuild = '20260806-learning-depth1';
-const previousPublicSiteBuild = '20260804-mobile-home1';
+const previousPublicSiteBuild = '20260806-learning-depth1';
 const cacheRevisionByBuild = {
   [branchTargetPwaBuild]: '20260806-learning15',
   [previousPublicPwaBuild]: '20260806-learning14'
@@ -76,7 +76,7 @@ const LEARNING_DEPTH_CORE_PATHS = new Set([
 
 function expectedCoreForBuild(build, label) {
   if (build === branchTargetPwaBuild) return EXACT_CORE_PATHS;
-  if (build === previousPublicPwaBuild) return EXACT_CORE_PATHS.filter(item => !LEARNING_DEPTH_CORE_PATHS.has(item));
+  if (build === previousPublicPwaBuild) return EXACT_CORE_PATHS;
   throw new Error(`${label}出现未受控核心资源构建：${build}`);
 }
 
@@ -269,7 +269,7 @@ function assertStatusPage(text, label, expectedBuild) {
   ];
   let legacyCacheContract = false;
   if (expectedBuild === branchTargetPwaBuild) {
-    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'PWA13会刷新AI老师学习档案异常保护');
+    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'PWA15会刷新80个图文小课、紧凑学习目录与AI老师学习档案异常保护');
   } else {
     required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'const cacheBuildOk=staticName.includes(EXPECTED_CACHE)&&runtimeName.includes(EXPECTED_CACHE)');
     legacyCacheContract = true;
@@ -296,7 +296,7 @@ function assertSelfTest(text, label, expectedBuild) {
   let expectedPaths;
   let legacyCacheContract = false;
   if (expectedBuild === branchTargetPwaBuild) {
-    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'marker.cacheRevision===EXPECTED_CACHE', 'PWA14用于刷新80个图文小课与AI老师学习档案异常保护');
+    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'marker.cacheRevision===EXPECTED_CACHE', 'PWA15用于刷新80个图文小课、紧凑学习目录与AI老师学习档案异常保护');
     expectedPaths = EXACT_CORE_PATHS;
   } else {
     required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'const staticName=keys.find(name=>name===`cnc-static-${EXPECTED_CACHE}`)', 'const runtimeName=keys.find(name=>name===`cnc-runtime-${EXPECTED_CACHE}`)', 'marker.cacheRevision===EXPECTED_CACHE');
