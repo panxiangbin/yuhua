@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'cnc/training-practice.js'
+      - 'cnc/tools/apply-course-gates.cjs'
       - 'cnc/tests/course-gate-specificity-smoke.cjs'
       - 'cnc/tests/mobile-training-practice-smoke.cjs'
       - 'cnc/tests/mobile-training-advanced-practice-smoke.cjs'
@@ -13,7 +14,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   course-gate-specificity:
@@ -21,16 +22,40 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Checkout repository
+      - name: Checkout PR head
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+          fetch-depth: 0
 
-      - name: Check training practice syntax
-        run: node --check cnc/training-practice.js
+      - name: Generate fixed 12-course questions
+        run: node cnc/tools/apply-course-gates.cjs
+
+      - name: Check generated syntax and regression contracts
+        run: |
+          node --check cnc/training-practice.js
+          node --check cnc/tests/mobile-training-practice-smoke.cjs
+          node --check cnc/tests/mobile-training-advanced-practice-smoke.cjs
+          node --check cnc/tests/mobile-training-course-gates-smoke.cjs
+          git diff --check
 
       - name: Audit fixed 12-course gate questions
         env:
           CNC_GATE_REPORT: artifacts/course-gate-specificity.json
         run: node cnc/tests/course-gate-specificity-smoke.cjs
+
+      - name: Commit generated CNC files
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          if git diff --quiet -- cnc/training-practice.js cnc/tests/mobile-training-practice-smoke.cjs cnc/tests/mobile-training-advanced-practice-smoke.cjs cnc/docs/course-gate-specificity-audit.md; then
+            echo '生成结果已与分支一致，无需提交。'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add cnc/training-practice.js cnc/tests/mobile-training-practice-smoke.cjs cnc/tests/mobile-training-advanced-practice-smoke.cjs cnc/docs/course-gate-specificity-audit.md
+          git commit -m 'feat(cnc): 补齐固定12关专属闯关题'
+          git push origin HEAD:${{ github.head_ref }}
 
       - name: Upload course gate specificity diagnostics
         if: always()
