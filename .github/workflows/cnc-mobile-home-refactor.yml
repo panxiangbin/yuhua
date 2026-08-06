@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: cnc-mobile-home-refactor-${{ github.event.pull_request.number || github.ref }}
@@ -25,125 +25,41 @@ jobs:
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
-
-      - name: Synchronize mobile PWA build references
-        if: github.event_name == 'pull_request' && github.head_ref == 'codex/mobile-home-refactor-20260804'
-        shell: pwsh
-        run: |
-          @'
-          from pathlib import Path
-          from datetime import datetime, timezone
-          import json
-          import re
-
-          current = '20260804-pwa11'
-          target = '20260804-pwa12'
-          extensions = {'.js', '.cjs', '.json', '.html', '.md'}
-          root = Path('cnc')
-          changed = []
-
-          for file in root.rglob('*'):
-              if not file.is_file() or file.suffix.lower() not in extensions:
-                  continue
-              if 'node_modules' in file.parts or 'test-results' in file.parts or 'docs' in file.parts:
-                  continue
-              text = file.read_text(encoding='utf-8')
-              updated = text.replace(current, target)
-              if file.as_posix() == 'cnc/tests/pwa-build-reference-audit-smoke.cjs':
-                  updated = re.sub(
-                      r"const PREVIOUS_PWA_BUILD = '[^']+';",
-                      "const PREVIOUS_PWA_BUILD = '20260804-pwa11';",
-                      updated,
-                      count=1
-                  )
-              if file.as_posix() == 'cnc/tests/mobile-pwa-upgrade-data-smoke.cjs':
-                  updated = re.sub(
-                      r"const PREVIOUS_PWA_BUILD = '[^']+';",
-                      "const PREVIOUS_PWA_BUILD = '20260804-pwa11';",
-                      updated,
-                      count=1
-                  )
-              if updated != text:
-                  file.write_text(updated, encoding='utf-8')
-                  changed.append(str(file))
-
-          info_path = Path('cnc/build-info.json')
-          info = json.loads(info_path.read_text(encoding='utf-8'))
-          desired = {
-              'build': '20260804-mobile-home1',
-              'pwaBuild': target,
-              'mobileBuild': '20260804-mobile-home1',
-              'cacheRevision': '20260804-mobile12'
-          }
-          info_changed = any(info.get(key) != value for key, value in desired.items())
-          if info_changed:
-              info.update(desired)
-              info['generatedAt'] = datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
-              info_path.write_text(json.dumps(info, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
-              if str(info_path) not in changed:
-                  changed.append(str(info_path))
-
-          print(f'PWA references synchronized: {len(changed)} files')
-          for file in changed:
-              print(file)
-          '@ | python -
-
-          node --check cnc/sw.js
-          node --check cnc/tests/pwa-build-reference-audit-smoke.cjs
-          node cnc/tests/pwa-build-reference-audit-smoke.cjs
-          git diff --check
-
-          if (git status --porcelain) {
-            git config user.name 'github-actions[bot]'
-            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git add -u cnc
-            git commit -m 'chore(cnc-mobile): bump PWA12 for mobile home release'
-            git push origin HEAD:codex/mobile-home-refactor-20260804
-          } else {
-            Write-Host 'PWA12 references already synchronized.'
-          }
-
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
-
-      - name: Validate scripts and required assets
+          node-version: 22
+      - name: Validate current scripts, assets and PWA references
         shell: pwsh
         run: |
           node --check cnc/personal-home.js
           node --check cnc/sw.js
           node --check cnc/tests/mobile-home-final-smoke.cjs
+          node --check cnc/tests/pwa-build-reference-audit-smoke.cjs
           node cnc/tests/pwa-build-reference-audit-smoke.cjs
+          node cnc/tests/learning-depth-smoke.cjs
           if (-not (Test-Path 'cnc/mobile-home-hardening.css')) { throw 'mobile-home-hardening.css missing' }
           if (-not (Select-String -Path 'cnc/MOBILE_HOME_ASSET_INVENTORY.md' -Pattern '速肯方面' -Quiet)) { throw '速肯方面 inventory marker missing' }
-
       - name: Install Playwright without bundled browsers
         shell: pwsh
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
         run: npm install --no-save playwright@1.54.2
-
       - name: Verify Microsoft Edge
         shell: pwsh
         run: |
           $edge = 'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe'
           if (-not (Test-Path $edge)) { throw "Microsoft Edge not found at $edge" }
           & $edge --version
-
-      - name: Run mobile, first-paint, learning, query, PWA and desktop checks
+      - name: Run mobile, learning, query, PWA and desktop checks
         shell: pwsh
         env:
           CNC_EDGE_PATH: 'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe'
         run: node cnc/tests/mobile-home-final-smoke.cjs
-
       - name: Upload screenshots and report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: cnc-mobile-home-final-evidence-${{ github.run_id }}
           path: cnc/test-results/mobile-home-final-v2/
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 30

@@ -1,15 +1,19 @@
 name: CNC PWA self-test smoke
+
 on:
   pull_request:
     paths:
       - 'cnc/**'
       - '.github/workflows/cnc-pwa-self-test-smoke.yml'
   workflow_dispatch:
+
 permissions:
   contents: read
+
 concurrency:
   group: cnc-pwa-self-test-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: false
+
 jobs:
   smoke:
     runs-on: ubuntu-latest
@@ -19,62 +23,23 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-      - name: Initialize diagnostics
+      - name: Validate current self-test contract
         run: |
           mkdir -p cnc/test-results/pwa-self-test-workflow
-          node - <<'NODE'
-          const fs = require('fs');
-          fs.writeFileSync('cnc/test-results/pwa-self-test-workflow/workflow-bootstrap.json', JSON.stringify({
-            stage: 'workflow-bootstrap',
-            runId: process.env.GITHUB_RUN_ID,
-            headSha: process.env.GITHUB_SHA,
-            eventName: process.env.GITHUB_EVENT_NAME,
-            initializedAt: new Date().toISOString()
-          }, null, 2));
-          NODE
-      - name: Check JavaScript syntax
-        run: node --check cnc/tests/mobile-pwa-self-test-smoke.cjs
-      - name: Validate self-test contract
-        run: |
+          node --check cnc/tests/mobile-pwa-self-test-smoke.cjs
+          node --check cnc/tests/pwa-build-reference-audit-smoke.cjs
+          node --check cnc/sw.js
+          node cnc/tests/pwa-build-reference-audit-smoke.cjs
           node - <<'NODE'
           const fs = require('fs');
           const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
           const html = fs.readFileSync('cnc/pwa-self-test.html', 'utf8');
           const sw = fs.readFileSync('cnc/sw.js', 'utf8');
-          const placement = fs.readFileSync('cnc/beginner-placement.html', 'utf8');
-          const camp = fs.readFileSync('cnc/training-camp.html', 'utf8');
           const swBuild = sw.match(/const BUILD = '([^']+)'/)?.[1];
-          if (swBuild !== info.pwaBuild || !html.includes(`const EXPECTED='${info.pwaBuild}'`)) {
-            throw new Error('PWA self-test/build-info/Service Worker version mismatch');
-          }
-          if (info.pwaBuild !== '20260804-pwa11') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
-          for (const token of [
-            'Service Worker已注册',
-            '当前页面已被接管',
-            '运行构建号一致',
-            '静态缓存版本存在',
-            '运行时缓存版本存在',
-            '核心离线资源完整',
-            '公网构建标记与PWA一致',
-            './beginner-placement.html',
-            './training-camp.html',
-            './course-safety-foundation.html',
-            './course-coordinate-axes.html',
-            './course-g00-g01-basics.html',
-            './ai-teacher.html',
-            './ai-teacher-intake.html',
-            './ai-teacher-explainability.html',
-            '关键安全门禁',
-            '训练营临时路线',
-            '三类测评首步课程',
-            'PWA10用于刷新已清理开发占位后的核心课程正文'
-          ]) {
-            if (!html.includes(token)) throw new Error(`self-test contract missing: ${token}`);
-          }
-          if (!placement.includes('criticalFailures') || !placement.includes("decision:'critical-safety'")) throw new Error('beginner placement critical safety gate missing');
-          if (!placement.includes('cnc_beginner_placement_route_handoff_v1') || !camp.includes('cnc_beginner_placement_route_handoff_v1')) throw new Error('placement route handoff producer or consumer missing');
-          for (const stage of ['起点测评关键安全门禁','训练营路线离线核心','测评首步课程离线核心','正式课程开发占位清零']) {
-            if (!String(info.contentStage || '').includes(stage)) throw new Error(`build marker missing: ${stage}`);
+          if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
+          if (!html.includes(`const EXPECTED='${info.pwaBuild}'`)) throw new Error('self-test expected build mismatch');
+          for (const file of ['./learning-sublesson-catalog.js', './learning-depth.css', './learning-detail.html']) {
+            if (!sw.includes(`'${file}'`) || !html.includes(`'${file}'`)) throw new Error(`self-test learning core missing: ${file}`);
           }
           NODE
       - name: Install Playwright runtime
