@@ -74,9 +74,6 @@ def add_core_after_catalog(relative: str) -> None:
     needles = [
         "'./learning-sublesson-catalog.js',",
         '"./learning-sublesson-catalog.js",',
-        "  './learning-sublesson-catalog.js',\n",
-        "            './learning-sublesson-catalog.js',\n",
-        '      "./learning-sublesson-catalog.js",\n',
     ]
     for needle in needles:
         if needle in source:
@@ -96,15 +93,14 @@ def add_workflow_core(relative: str) -> None:
         return
     except RuntimeError:
         source = read(relative)
-    needles = [
-        "            './training-camp.html',\n",
-        "  './training-camp.html',\n",
-    ]
-    for needle in needles:
-        if needle in source:
-            source = source.replace(needle, needle + needle.replace("./training-camp.html", NEW_CORE), 1)
-            write(relative, source)
-            return
+
+    # 部分CNC工作流把核心文件写成单行数组；在训练营资源后精确加入新脚本，
+    # 仍由原有循环同时核验Service Worker与PWA自检页，不能只检查字符串存在。
+    needle = "'./training-camp.html',"
+    if needle in source:
+        source = source.replace(needle, needle + f"'{NEW_CORE}',", 1)
+        write(relative, source)
+        return
     raise RuntimeError(f"工作流无法插入针对性核心资源：{relative}")
 
 
@@ -163,11 +159,13 @@ def add_stage_marker(relative: str) -> None:
     source = read(relative)
     if "80课现场动作与风险针对性" in source:
         return
-    if "'学习目录紧凑布局'" in source:
-        source = source.replace("'学习目录紧凑布局'", "'学习目录紧凑布局','80课现场动作与风险针对性'", 1)
-    else:
-        raise RuntimeError(f"工作流缺少内容阶段锚点：{relative}")
-    write(relative, source)
+    anchors = ["'学习目录紧凑布局'", "'80个图文小课'"]
+    for anchor in anchors:
+        if anchor in source:
+            source = source.replace(anchor, anchor + ",'80课现场动作与风险针对性'", 1)
+            write(relative, source)
+            return
+    raise RuntimeError(f"工作流缺少内容阶段锚点：{relative}")
 
 
 def verify() -> None:
