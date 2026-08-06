@@ -1,0 +1,74 @@
+name: CNC Pages Jekyll preflight
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-pages-build-recovery.yml'
+      - '.github/workflows/cnc-pages-jekyll-preflight.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-pages-build-recovery.yml'
+      - '.github/workflows/cnc-pages-jekyll-preflight.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: read
+
+concurrency:
+  group: cnc-pages-jekyll-preflight-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: 使用GitHub官方Jekyll构建器预检Pages
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: 读取Pages站点配置
+        id: pages
+        uses: actions/configure-pages@v5
+      - name: 使用与GitHub Pages一致的Jekyll构建器生成站点
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./
+          destination: ./_site
+      - name: 验证CNC构建标记进入生成结果
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const source = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8').replace(/^\uFEFF/, ''));
+          const output = JSON.parse(fs.readFileSync('_site/cnc/build-info.json', 'utf8').replace(/^\uFEFF/, ''));
+          for (const key of ['app', 'build', 'pwaBuild', 'cacheRevision', 'contentStage']) {
+            if (output[key] !== source[key]) throw new Error(`Jekyll生成结果字段不一致：${key}`);
+          }
+          if (source.app !== 'cnc-training-platform') throw new Error('CNC构建标记无效');
+          console.log(`Jekyll预检通过：${output.build}/${output.pwaBuild}/${output.cacheRevision}`);
+          NODE
+      - name: 保存Jekyll诊断与CNC生成标记
+        if: always()
+        run: |
+          mkdir -p cnc/test-results/pages-jekyll-preflight
+          cp cnc/build-info.json cnc/test-results/pages-jekyll-preflight/source-build-info.json
+          if [ -f _site/cnc/build-info.json ]; then
+            cp _site/cnc/build-info.json cnc/test-results/pages-jekyll-preflight/generated-build-info.json
+          fi
+          {
+            echo "run_id=${GITHUB_RUN_ID}"
+            echo "sha=${GITHUB_SHA}"
+            echo "event=${GITHUB_EVENT_NAME}"
+            echo "pages_base_path=${{ steps.pages.outputs.base_path }}"
+            echo "pages_origin=${{ steps.pages.outputs.origin }}"
+          } > cnc/test-results/pages-jekyll-preflight/context.txt
+      - name: 上传Jekyll预检诊断
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-pages-jekyll-preflight-${{ github.run_id }}
+          path: cnc/test-results/pages-jekyll-preflight/
+          if-no-files-found: error
+          retention-days: 14
