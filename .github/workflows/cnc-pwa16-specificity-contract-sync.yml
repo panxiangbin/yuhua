@@ -7,6 +7,10 @@ on:
     paths:
       - 'cnc/tools/sync-pwa16-specificity-contracts.py'
       - '.github/workflows/cnc-pwa16-specificity-contract-sync.yml'
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-pwa16-specificity-contract-sync.yml'
   workflow_dispatch:
 
 permissions:
@@ -18,7 +22,7 @@ concurrency:
 
 jobs:
   sync:
-    if: github.repository == 'panxiangbin/yuhua' && github.ref == 'refs/heads/chatgpt/cnc-sublesson-specificity-20260806'
+    if: github.repository == 'panxiangbin/yuhua' && (github.ref == 'refs/heads/chatgpt/cnc-sublesson-specificity-20260806' || github.head_ref == 'chatgpt/cnc-sublesson-specificity-20260806')
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
