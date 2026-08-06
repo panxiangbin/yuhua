@@ -4,6 +4,9 @@ on:
   pull_request:
     branches:
       - main
+  push:
+    branches:
+      - chatgpt/cnc-learning-depth-mainline-20260806
 
 permissions:
   contents: write
@@ -12,88 +15,13 @@ jobs:
   repair:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout integration branch
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           ref: chatgpt/cnc-learning-depth-mainline-20260806
           fetch-depth: 0
-
-      - name: Make PWA13 and PWA14 core expectations build-aware
-        shell: bash
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-
-          specs = [
-              {
-                  'path': 'cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs',
-                  'const': 'EXACT_CORE',
-                  'target': 'expectedPwaBuild',
-                  'old': """  if (JSON.stringify(core) !== JSON.stringify(EXACT_CORE) || new Set(core).size !== EXACT_CORE.length) {
-    throw new Error(`${label}核心资源不一致：${JSON.stringify(core)}，期望${JSON.stringify(EXACT_CORE)}`);
-  }""",
-                  'new': """  const expectedCore = expectedCoreForBuild(build, label);
-  if (JSON.stringify(core) !== JSON.stringify(expectedCore) || new Set(core).size !== expectedCore.length) {
-    throw new Error(`${label}核心资源不一致：${JSON.stringify(core)}，期望${JSON.stringify(expectedCore)}`);
-  }""",
-              },
-              {
-                  'path': 'cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs',
-                  'const': 'EXACT_CORE',
-                  'target': 'branchTargetPwaBuild',
-                  'old': """  if (JSON.stringify(core) !== JSON.stringify(EXACT_CORE) || new Set(core).size !== EXACT_CORE.length) throw new Error(`${label}核心资源不一致：${JSON.stringify(core)}`);""",
-                  'new': """  const expectedCore = expectedCoreForBuild(build, label);
-  if (JSON.stringify(core) !== JSON.stringify(expectedCore) || new Set(core).size !== expectedCore.length) throw new Error(`${label}核心资源不一致：${JSON.stringify(core)}，期望${JSON.stringify(expectedCore)}`);""",
-              },
-              {
-                  'path': 'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs',
-                  'const': 'EXACT_CORE_PATHS',
-                  'target': 'branchTargetPwaBuild',
-                  'old': """  assertExactArray(actual, EXACT_CORE_PATHS, `${label}核心缓存`);""",
-                  'new': """  assertExactArray(actual, expectedCoreForBuild(expectedBuild, label), `${label}核心缓存`);""",
-              },
-          ]
-
-          learning_paths = [
-              './learning-sublesson-catalog.js',
-              './learning-depth.css',
-              './learning-detail.html',
-          ]
-
-          for spec in specs:
-              file = Path(spec['path'])
-              source = file.read_text(encoding='utf-8')
-              marker = f"const {spec['const']} = ["
-              start = source.find(marker)
-              if start < 0:
-                  raise SystemExit(f"{spec['path']}: core marker missing")
-              end = source.find('\n];', start)
-              if end < 0:
-                  raise SystemExit(f"{spec['path']}: core array end missing")
-              insert_at = end + len('\n];')
-              helper_marker = 'function expectedCoreForBuild(build, label)'
-              if helper_marker not in source:
-                  quoted = ',\n  '.join(repr(item) for item in learning_paths)
-                  helper = f"""
-
-const LEARNING_DEPTH_CORE_PATHS = new Set([
-  {quoted}
-]);
-
-function expectedCoreForBuild(build, label) {{
-  if (build === {spec['target']}) return {spec['const']};
-  if (build === previousPublicPwaBuild) return {spec['const']}.filter(item => !LEARNING_DEPTH_CORE_PATHS.has(item));
-  throw new Error(`${{label}}出现未受控核心资源构建：${{build}}`);
-}}"""
-                  source = source[:insert_at] + helper + source[insert_at:]
-              if source.count(spec['old']) != 1:
-                  raise SystemExit(f"{spec['path']}: assertion anchor count={source.count(spec['old'])}")
-              source = source.replace(spec['old'], spec['new'], 1)
-              file.write_text(source, encoding='utf-8', newline='\n')
-          PY
-
-      - name: Validate three Pages transition gates
-        shell: bash
+      - name: Apply Pages core transition repair
+        run: python3 cnc/tools/repair-pages-core-by-build.py
+      - name: Validate repaired Pages gates
         run: |
           node --check cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs
           node --check cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs
@@ -102,11 +30,10 @@ function expectedCoreForBuild(build, label) {{
           CNC_PAGES_VERIFY_ATTEMPTS=1 CNC_PAGES_VERIFY_INTERVAL_MS=0 node cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs
           CNC_PAGES_VERIFY_ATTEMPTS=1 CNC_PAGES_VERIFY_INTERVAL_MS=0 node cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs
           git diff --check
-
       - name: Commit repair and restore original workflow
-        shell: bash
         run: |
           git show c3100ad2b15dbec1bb1db8613b8ad78078079567:.github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml > .github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml
+          git rm cnc/tools/repair-pages-core-by-build.py
           git config user.name '潘斌'
           git config user.email 'smxpxb008@gmail.com'
           git add .github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml \
