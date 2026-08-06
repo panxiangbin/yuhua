@@ -48,8 +48,8 @@ jobs:
           if (swBuild !== info.pwaBuild || swCache !== info.cacheRevision || !html.includes(`const EXPECTED='${info.pwaBuild}'`) || !html.includes(`const EXPECTED_CACHE='${info.cacheRevision}'`)) {
             throw new Error('PWA self-test/build-info/Service Worker build or cache revision mismatch');
           }
-          if (info.pwaBuild !== '20260806-pwa15') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
-          if (info.cacheRevision !== '20260806-learning15') throw new Error(`unexpected cache revision: ${info.cacheRevision}`);
+          if (info.pwaBuild !== '20260806-pwa16') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
+          if (info.cacheRevision !== '20260806-learning16') throw new Error(`unexpected cache revision: ${info.cacheRevision}`);
           for (const token of [
             'Service Worker已注册',
             '当前页面已被接管',
@@ -62,6 +62,7 @@ jobs:
             './mobile-home-refactor.css',
             './personal-home.js',
             './learning-sublesson-catalog.js',
+            './learning-sublesson-specificity.js',
             './learning-depth.css',
             './learning-detail.html',
             './beginner-placement.html',
@@ -75,13 +76,13 @@ jobs:
             './assets/images/batch02_operation_basics/machine-init-flow-001.webp',
             '关键安全门禁',
             '三类测评首步课程',
-            'PWA15用于刷新80个图文小课、紧凑学习目录与AI老师学习档案异常保护'
+            'PWA16用于刷新80个图文小课、紧凑学习目录与AI老师学习档案异常保护'
           ]) {
             if (!html.includes(token)) throw new Error(`self-test contract missing: ${token}`);
           }
           if (!placement.includes('criticalFailures') || !placement.includes("decision:'critical-safety'")) throw new Error('beginner placement critical safety gate missing');
           if (!placement.includes('cnc_beginner_placement_route_handoff_v1') || !camp.includes('cnc_beginner_placement_route_handoff_v1')) throw new Error('placement route handoff producer or consumer missing');
-          for (const stage of ['起点测评关键安全门禁','训练营路线离线核心','测评首步课程离线核心','正式课程开发占位清零','AI老师学习档案异常保护','80个图文小课','学习目录紧凑布局']) {
+          for (const stage of ['起点测评关键安全门禁','训练营路线离线核心','测评首步课程离线核心','正式课程开发占位清零','AI老师学习档案异常保护','80个图文小课','学习目录紧凑布局','80课现场动作与风险针对性']) {
             if (!String(info.contentStage || '').includes(stage)) throw new Error(`build marker missing: ${stage}`);
           }
           NODE
