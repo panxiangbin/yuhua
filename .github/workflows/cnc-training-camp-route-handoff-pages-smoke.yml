@@ -26,6 +26,8 @@ jobs:
           node --check cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs
           node --check cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs
           node --check cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs
+          node --check cnc/tests/mobile-home-smoke.cjs
+          grep -q 'CNC_LEARNING_SUBLESSONS.safetyNotice' cnc/tests/mobile-home-smoke.cjs
           CNC_PAGES_VERIFY_ATTEMPTS=1 CNC_PAGES_VERIFY_INTERVAL_MS=0 node cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs
           CNC_PAGES_VERIFY_ATTEMPTS=1 CNC_PAGES_VERIFY_INTERVAL_MS=0 node cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs
           CNC_PAGES_VERIFY_ATTEMPTS=1 CNC_PAGES_VERIFY_INTERVAL_MS=0 node cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs
@@ -39,6 +41,7 @@ jobs:
           git add .github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml \
             cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs \
             cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs \
-            cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs
-          git commit -m 'fix(cnc-pages): distinguish PWA13 and PWA14 core resources'
+            cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs \
+            cnc/tests/mobile-home-smoke.cjs
+          git commit -m 'fix(cnc-pages): 区分PWA13与PWA14离线契约'
           git push origin HEAD:chatgpt/cnc-learning-depth-mainline-20260806
