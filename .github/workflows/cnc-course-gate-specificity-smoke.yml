@@ -26,20 +26,28 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Checkout tested commit
+      - name: Checkout exact tested head
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
 
       - name: Reject one-time generator residue
         run: test ! -e cnc/tools/apply-course-gates.cjs
 
       - name: Check syntax and regression contracts
+        shell: bash
         run: |
           node --check cnc/training-practice.js
           node --check cnc/tests/course-gate-specificity-smoke.cjs
           node --check cnc/tests/mobile-training-practice-smoke.cjs
           node --check cnc/tests/mobile-training-advanced-practice-smoke.cjs
           node --check cnc/tests/mobile-training-course-gates-smoke.cjs
-          git diff --check
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git diff --check "${{ github.event.pull_request.base.sha }}...HEAD"
+          else
+            git diff --check HEAD^
+          fi
 
       - name: Audit fixed 12-course gate questions
         env:
