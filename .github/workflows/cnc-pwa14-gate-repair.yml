@@ -1,6 +1,9 @@
 name: CNC PWA14 gate repair
 
 on:
+  pull_request:
+    paths:
+      - .github/workflows/cnc-pwa14-gate-repair.yml
   push:
     branches:
       - chatgpt/cnc-learning-depth-mainline-20260806
@@ -16,6 +19,7 @@ concurrency:
 
 jobs:
   repair:
+    if: github.event.pull_request.head.repo.full_name == github.repository || github.event_name == 'push'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
