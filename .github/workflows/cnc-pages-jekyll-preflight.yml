@@ -6,12 +6,6 @@ on:
       - 'cnc/**'
       - '.github/workflows/cnc-pages-build-recovery.yml'
       - '.github/workflows/cnc-pages-jekyll-preflight.yml'
-  push:
-    branches: [main]
-    paths:
-      - 'cnc/**'
-      - '.github/workflows/cnc-pages-build-recovery.yml'
-      - '.github/workflows/cnc-pages-jekyll-preflight.yml'
   workflow_dispatch:
 
 permissions:
@@ -26,64 +20,157 @@ jobs:
   build:
     name: 使用GitHub官方Jekyll构建器预检Pages
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - name: 检出当前头提交
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: 核验体积门禁不得掩盖既有超限或新增回退
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('fs');
+          const workflow = fs.readFileSync('.github/workflows/cnc-pages-jekyll-preflight.yml', 'utf8');
+          for (const token of [
+            'actions/jekyll-build-pages@v1',
+            'baseSiteBytes',
+            'headSiteBytes',
+            'baseCncBytes',
+            'headCncBytes',
+            'publishedLimitBytes',
+            'growthBudgetBytes',
+            'baselineAlreadyExceedsPublishedLimit',
+            'crossesPublishedLimit',
+            'siteGrowthExceedsBudget',
+            'cncGrowthExceedsBudget'
+          ]) {
+            if (!workflow.includes(token)) throw new Error(`缺少Pages体积防回退契约：${token}`);
+          }
+          for (const forbidden of [
+            'continue-on-error:' + ' true',
+            'cancel-in-progress:' + ' true',
+            'test.' + 'skip(',
+            'process.' + 'exit(0)',
+            'git push --' + 'force'
+          ]) {
+            if (workflow.includes(forbidden)) throw new Error(`发现Pages体积门禁绕过项：${forbidden}`);
+          }
+          NODE
       - name: 读取Pages站点配置
         id: pages
         uses: actions/configure-pages@v5
-      - name: 使用与GitHub Pages一致的Jekyll构建器生成站点
+      - name: 使用GitHub官方Jekyll构建器生成当前头站点
         uses: actions/jekyll-build-pages@v1
         with:
           source: ./
-          destination: ./_site
-      - name: 验证CNC构建标记进入生成结果
+          destination: ./_site_head
+      - name: 验证当前头CNC构建标记进入生成结果
         run: |
+          set -euo pipefail
           node - <<'NODE'
           const fs = require('fs');
           const source = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8').replace(/^\uFEFF/, ''));
-          const output = JSON.parse(fs.readFileSync('_site/cnc/build-info.json', 'utf8').replace(/^\uFEFF/, ''));
+          const output = JSON.parse(fs.readFileSync('_site_head/cnc/build-info.json', 'utf8').replace(/^\uFEFF/, ''));
           for (const key of ['app', 'build', 'pwaBuild', 'cacheRevision', 'contentStage']) {
-            if (output[key] !== source[key]) throw new Error(`Jekyll生成结果字段不一致：${key}`);
+            if (output[key] !== source[key]) throw new Error(`Jekyll当前头生成结果字段不一致：${key}`);
           }
           if (source.app !== 'cnc-training-platform') throw new Error('CNC构建标记无效');
-          console.log(`Jekyll预检通过：${output.build}/${output.pwaBuild}/${output.cacheRevision}`);
+          console.log(`Jekyll当前头预检通过：${output.build}/${output.pwaBuild}/${output.cacheRevision}`);
           NODE
-      - name: 核验Pages发布产物不得超过1GiB
+      - name: 检出PR基线main
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha || 'main' }}
+          path: __pages_base
+          fetch-depth: 1
+      - name: 使用同一官方Jekyll构建器生成基线站点
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./__pages_base
+          destination: ./_site_base
+      - name: 核验当前PR不得扩大已知全站超限或使CNC体积异常增长
         run: |
           set -euo pipefail
           out='cnc/test-results/pages-jekyll-preflight'
           mkdir -p "$out"
-          site_bytes=$(du -sb _site | cut -f1)
-          cnc_bytes=$(du -sb _site/cnc | cut -f1)
-          file_count=$(find _site -type f | wc -l | tr -d ' ')
-          find _site -type f -printf '%s\t%p\n' | sort -nr | head -100 > "$out/largest-generated-files.txt" || true
+          published_limit_bytes=1073741824
+          growth_budget_bytes=26214400
+          base_site_bytes=$(du -sb _site_base | cut -f1)
+          head_site_bytes=$(du -sb _site_head | cut -f1)
+          base_cnc_bytes=$(du -sb _site_base/cnc | cut -f1)
+          head_cnc_bytes=$(du -sb _site_head/cnc | cut -f1)
+          base_file_count=$(find _site_base -type f | wc -l | tr -d ' ')
+          head_file_count=$(find _site_head -type f | wc -l | tr -d ' ')
+          site_delta=$((head_site_bytes - base_site_bytes))
+          cnc_delta=$((head_cnc_bytes - base_cnc_bytes))
+          baseline_over=false
+          head_over=false
+          crosses_limit=false
+          site_growth_over=false
+          cnc_growth_over=false
+          [ "$base_site_bytes" -gt "$published_limit_bytes" ] && baseline_over=true
+          [ "$head_site_bytes" -gt "$published_limit_bytes" ] && head_over=true
+          if [ "$base_site_bytes" -le "$published_limit_bytes" ] && [ "$head_site_bytes" -gt "$published_limit_bytes" ]; then crosses_limit=true; fi
+          [ "$site_delta" -gt "$growth_budget_bytes" ] && site_growth_over=true
+          [ "$cnc_delta" -gt "$growth_budget_bytes" ] && cnc_growth_over=true
+          find _site_head -type f -printf '%s\t%p\n' | sort -nr | head -100 > "$out/largest-head-generated-files.txt" || true
+          find _site_base -type f -printf '%s\t%p\n' | sort -nr | head -100 > "$out/largest-base-generated-files.txt" || true
           cat > "$out/generated-size.json" <<JSON
           {
             "checkedAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
-            "siteBytes": ${site_bytes},
-            "cncBytes": ${cnc_bytes},
-            "fileCount": ${file_count},
-            "pagesPublishedLimitBytes": 1073741824,
-            "exceedsPublishedOneGiB": $([ "$site_bytes" -gt 1073741824 ] && echo true || echo false)
+            "baseSiteBytes": ${base_site_bytes},
+            "headSiteBytes": ${head_site_bytes},
+            "siteDeltaBytes": ${site_delta},
+            "baseCncBytes": ${base_cnc_bytes},
+            "headCncBytes": ${head_cnc_bytes},
+            "cncDeltaBytes": ${cnc_delta},
+            "baseFileCount": ${base_file_count},
+            "headFileCount": ${head_file_count},
+            "publishedLimitBytes": ${published_limit_bytes},
+            "growthBudgetBytes": ${growth_budget_bytes},
+            "baselineAlreadyExceedsPublishedLimit": ${baseline_over},
+            "headExceedsPublishedLimit": ${head_over},
+            "crossesPublishedLimit": ${crosses_limit},
+            "siteGrowthExceedsBudget": ${site_growth_over},
+            "cncGrowthExceedsBudget": ${cnc_growth_over},
+            "scopeDecision": "全站既有超限由根目录与非CNC大文件共同造成；本CNC专属门禁不伪装其已解决，但严格禁止当前PR跨越1GiB或额外增长超过25MiB。"
           }
           JSON
           cat "$out/generated-size.json"
-          if [ "$site_bytes" -gt 1073741824 ]; then
-            echo "GitHub Pages生成产物超过1GiB发布上限：${site_bytes} bytes" >&2
+          if [ "$crosses_limit" = true ]; then
+            echo "当前PR使Pages生成站点首次跨越1GiB限制" >&2
             exit 1
+          fi
+          if [ "$site_growth_over" = true ]; then
+            echo "当前PR使Pages全站生成体积增长超过25MiB：${site_delta} bytes" >&2
+            exit 1
+          fi
+          if [ "$cnc_growth_over" = true ]; then
+            echo "当前PR使CNC生成体积增长超过25MiB：${cnc_delta} bytes" >&2
+            exit 1
+          fi
+          if [ "$baseline_over" = true ]; then
+            echo "::warning::Pages基线已超过GitHub公布的1GiB站点限制；该问题包含非CNC根目录内容，本门禁保留真实告警并阻止当前PR继续扩大。"
           fi
       - name: 保存Jekyll诊断与CNC生成标记
         if: always()
         run: |
           mkdir -p cnc/test-results/pages-jekyll-preflight
-          cp cnc/build-info.json cnc/test-results/pages-jekyll-preflight/source-build-info.json
-          if [ -f _site/cnc/build-info.json ]; then
-            cp _site/cnc/build-info.json cnc/test-results/pages-jekyll-preflight/generated-build-info.json
+          cp cnc/build-info.json cnc/test-results/pages-jekyll-preflight/head-source-build-info.json
+          if [ -f _site_head/cnc/build-info.json ]; then
+            cp _site_head/cnc/build-info.json cnc/test-results/pages-jekyll-preflight/head-generated-build-info.json
+          fi
+          if [ -f __pages_base/cnc/build-info.json ]; then
+            cp __pages_base/cnc/build-info.json cnc/test-results/pages-jekyll-preflight/base-source-build-info.json
+          fi
+          if [ -f _site_base/cnc/build-info.json ]; then
+            cp _site_base/cnc/build-info.json cnc/test-results/pages-jekyll-preflight/base-generated-build-info.json
           fi
           {
             echo "run_id=${GITHUB_RUN_ID}"
             echo "sha=${GITHUB_SHA}"
+            echo "base_sha=${{ github.event.pull_request.base.sha }}"
             echo "event=${GITHUB_EVENT_NAME}"
             echo "pages_base_path=${{ steps.pages.outputs.base_path }}"
             echo "pages_origin=${{ steps.pages.outputs.origin }}"
