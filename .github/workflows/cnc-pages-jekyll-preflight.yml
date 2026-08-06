@@ -49,6 +49,30 @@ jobs:
           if (source.app !== 'cnc-training-platform') throw new Error('CNC构建标记无效');
           console.log(`Jekyll预检通过：${output.build}/${output.pwaBuild}/${output.cacheRevision}`);
           NODE
+      - name: 核验Pages发布产物不得超过1GiB
+        run: |
+          set -euo pipefail
+          out='cnc/test-results/pages-jekyll-preflight'
+          mkdir -p "$out"
+          site_bytes=$(du -sb _site | cut -f1)
+          cnc_bytes=$(du -sb _site/cnc | cut -f1)
+          file_count=$(find _site -type f | wc -l | tr -d ' ')
+          find _site -type f -printf '%s\t%p\n' | sort -nr | head -100 > "$out/largest-generated-files.txt" || true
+          cat > "$out/generated-size.json" <<JSON
+          {
+            "checkedAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "siteBytes": ${site_bytes},
+            "cncBytes": ${cnc_bytes},
+            "fileCount": ${file_count},
+            "pagesPublishedLimitBytes": 1073741824,
+            "exceedsPublishedOneGiB": $([ "$site_bytes" -gt 1073741824 ] && echo true || echo false)
+          }
+          JSON
+          cat "$out/generated-size.json"
+          if [ "$site_bytes" -gt 1073741824 ]; then
+            echo "GitHub Pages生成产物超过1GiB发布上限：${site_bytes} bytes" >&2
+            exit 1
+          fi
       - name: 保存Jekyll诊断与CNC生成标记
         if: always()
         run: |
