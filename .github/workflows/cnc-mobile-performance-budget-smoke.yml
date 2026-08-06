@@ -19,6 +19,19 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+      - name: Initialize performance diagnostics
+        run: |
+          mkdir -p artifacts/mobile-performance-budget
+          node - <<'NODE'
+          const fs = require('fs');
+          fs.writeFileSync('artifacts/mobile-performance-budget/workflow-bootstrap.json', JSON.stringify({
+            stage: 'workflow-bootstrap',
+            runId: process.env.GITHUB_RUN_ID,
+            headSha: process.env.GITHUB_SHA,
+            eventName: process.env.GITHUB_EVENT_NAME,
+            initializedAt: new Date().toISOString()
+          }, null, 2));
+          NODE
       - name: Check performance audit syntax and contract
         run: |
           node --check cnc/tests/mobile-performance-budget-smoke.cjs
@@ -39,12 +52,14 @@ jobs:
             'cumulativeLayoutShift',
             'domNodeCount',
             '390, height: 844',
-            'visibleBottomNavCount !== 5'
+            'visibleBottomNavCount !== 5',
+            "body > .xp-bottom-nav button[data-xp-route],body > .xp-bottom-nav button[data-xp-filter]",
+            "path.join(OUTPUT_DIR, 'error.txt')"
           ]) {
             if (!test.includes(marker)) throw new Error(`手机性能审计缺少契约：${marker}`);
           }
-          for (const forbidden of ['test.skip(', 'process.exit(0)']) {
-            if (test.includes(forbidden)) throw new Error(`手机性能门禁禁止绕过：${forbidden}`);
+          for (const forbidden of ['test.skip(', 'process.exit(0)', '#xp-game-home .xp-game-bottom-nav']) {
+            if (test.includes(forbidden)) throw new Error(`手机性能门禁禁止绕过或引用旧首页：${forbidden}`);
           }
 
           const tree = fs.readFileSync('cnc/ui-knowledge-tree.js', 'utf8');
@@ -76,5 +91,5 @@ jobs:
         with:
           name: cnc-mobile-performance-budget-${{ github.run_id }}
           path: artifacts/mobile-performance-budget
-          if-no-files-found: warn
+          if-no-files-found: error
           retention-days: 14

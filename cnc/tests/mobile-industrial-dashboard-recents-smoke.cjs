@@ -22,51 +22,68 @@ const assert = require('node:assert/strict');
   await page.goto('http://127.0.0.1:4173/cnc/?smoke=dashboard-recents', { waitUntil: 'domcontentloaded', timeout: 60000 });
   await page.waitForFunction(() => window.CNC_INDUSTRIAL_SAMPLE && window.CNC_INDUSTRIAL_SAMPLE.build === '20260722e', null, { timeout: 20000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-industrial-surface') === 'home', null, { timeout: 15000 });
-  await page.waitForSelector('#xp-game-home[data-ready="true"]', { state: 'attached', timeout: 60000 });
+  await page.waitForFunction(() => {
+    const home = window.CNC_PERSONAL_HOME?.runCheck?.();
+    const nav = document.querySelector('body > .xp-bottom-nav');
+    return home?.legacyHomeRemoved === true
+      && home?.bottomNavReady === true
+      && document.body.getAttribute('data-cnc-startup-home') === 'stable'
+      && nav?.getClientRects().length > 0
+      && nav.getAttribute('aria-hidden') === 'false'
+      && !nav.hasAttribute('inert');
+  }, null, { timeout: 20000 });
 
-  // 手机首页样式由 personal-home.js 动态声明。必须等真实 load 完成；资源失败会直接报错。
-  const gameStyle = page.locator('link[data-cnc-mobile-home-game]');
-  await gameStyle.waitFor({ state: 'attached', timeout: 20000 });
-  assert.match((await gameStyle.getAttribute('href')) || '', /mobile-home-game\.css\?v=\d{8}[a-z0-9-]*$/i, '手机闯关首页必须声明版本化样式资源');
-  await gameStyle.evaluate((link) => {
-    if (link.sheet) return true;
-    return new Promise((resolve, reject) => {
-      const timer = setTimeout(() => reject(new Error('手机闯关首页样式资源加载超时: ' + link.href)), 20000);
-      link.addEventListener('load', () => { clearTimeout(timer); resolve(true); }, { once: true });
-      link.addEventListener('error', () => { clearTimeout(timer); reject(new Error('手机闯关首页样式资源加载失败: ' + link.href)); }, { once: true });
-    });
-  });
-
-  const mobileHomeState = await page.evaluate(async () => {
-    const link = document.querySelector('link[data-cnc-mobile-home-game]');
-    const gameHome = document.querySelector('#xp-game-home[data-ready="true"]');
+  const mobileHomeState = await page.evaluate(() => {
     const recent = document.querySelector('#dashboard-recent-section');
-    const cssText = link ? await fetch(link.href, { cache: 'no-store' }).then(response => response.text()) : '';
+    const nav = document.querySelector('body > .xp-bottom-nav');
+    const navButtons = Array.from(nav?.querySelectorAll('button[data-xp-route],button[data-xp-filter]') || []);
     return {
       innerWidth: window.innerWidth,
       mediaMatches: window.matchMedia('(max-width:760px)').matches,
-      bodyClasses: document.body.className,
-      linkHref: link ? link.href : '',
-      stylesheetReady: Boolean(link && link.sheet),
-      servedCssHasRecentRule: cssText.includes('#dashboard-recent-section'),
-      gameDisplay: gameHome ? getComputedStyle(gameHome).display : 'missing',
-      recentDisplay: recent ? getComputedStyle(recent).display : 'missing'
+      activeView: document.querySelector('.view.active')?.id || '',
+      oldHomes: document.querySelectorAll('#xp-game-home,#xp-personal-home').length,
+      legacyStyleLinks: document.querySelectorAll('link[data-cnc-mobile-home-game]').length,
+      legacyGameClass: document.body.classList.contains('cnc-game-home-enabled'),
+      recentDisplay: recent ? getComputedStyle(recent).display : 'missing',
+      navVisible: Boolean(nav && nav.getClientRects().length > 0),
+      navAriaHidden: nav?.getAttribute('aria-hidden') || '',
+      navInert: Boolean(nav?.hasAttribute('inert')),
+      navCount: navButtons.length,
+      navLabels: navButtons.map(button => button.querySelector('span')?.textContent.trim() || button.getAttribute('aria-label') || button.textContent.trim()),
+      home: window.CNC_PERSONAL_HOME?.runCheck?.() || null
     };
   });
   assert.equal(mobileHomeState.innerWidth, 390, '手机视口必须为390px: ' + JSON.stringify(mobileHomeState));
   assert.equal(mobileHomeState.mediaMatches, true, '手机媒体查询必须命中: ' + JSON.stringify(mobileHomeState));
-  assert.match(mobileHomeState.bodyClasses, /cnc-game-home-enabled/, '手机闯关首页状态类必须存在: ' + JSON.stringify(mobileHomeState));
-  assert.equal(mobileHomeState.stylesheetReady, true, '手机闯关首页样式表必须完成解析: ' + JSON.stringify(mobileHomeState));
-  assert.equal(mobileHomeState.servedCssHasRecentRule, true, '实际服务的手机首页CSS必须包含最近查看隐藏规则: ' + JSON.stringify(mobileHomeState));
-  assert.notEqual(mobileHomeState.gameDisplay, 'none', '手机闯关首页必须可见: ' + JSON.stringify(mobileHomeState));
+  assert.equal(mobileHomeState.activeView, 'view-dashboard', '根网址必须稳定停留单层首页: ' + JSON.stringify(mobileHomeState));
+  assert.equal(mobileHomeState.oldHomes, 0, '已删除的双首页节点不得重新出现: ' + JSON.stringify(mobileHomeState));
+  assert.equal(mobileHomeState.legacyStyleLinks, 0, '已废弃的闯关首页样式资源不得重新挂载: ' + JSON.stringify(mobileHomeState));
+  assert.equal(mobileHomeState.legacyGameClass, false, '已废弃的闯关首页状态类不得重新启用: ' + JSON.stringify(mobileHomeState));
+  assert.equal(mobileHomeState.home?.legacyHomeRemoved, true, '单层首页自检必须确认旧首页已移除: ' + JSON.stringify(mobileHomeState));
+  assert.equal(mobileHomeState.home?.bottomNavReady, true, '单层首页自检必须确认真实底栏就绪: ' + JSON.stringify(mobileHomeState));
   assert.equal(mobileHomeState.recentDisplay, 'none', '旧最近查看区域在手机端必须隐藏: ' + JSON.stringify(mobileHomeState));
-  await page.waitForSelector('#xp-game-home[data-ready="true"]', { state: 'visible', timeout: 15000 });
+  assert.equal(mobileHomeState.navVisible, true, '手机真实底栏必须可见: ' + JSON.stringify(mobileHomeState));
+  assert.equal(mobileHomeState.navAriaHidden, 'false', '手机真实底栏不得对辅助技术隐藏: ' + JSON.stringify(mobileHomeState));
+  assert.equal(mobileHomeState.navInert, false, '手机真实底栏不得处于 inert 状态: ' + JSON.stringify(mobileHomeState));
+  assert.equal(mobileHomeState.navCount, 5, '手机真实底栏必须严格保持5项: ' + JSON.stringify(mobileHomeState));
+  assert.deepEqual(mobileHomeState.navLabels, ['首页', '查代码', '报警', '学习', '我的'], '手机真实底栏名称和顺序不得漂移');
 
-  // 手机闯关首页只显示一层主导航。通过首页真实可见的“现场速查”进入查代码工作区，
-  // 并确认后台工具导航在离开首页后恢复可见、可访问。
+  // 通过单层首页真实可见的“查代码”底栏进入工作区，并确认入口触控和可访问名称合格。
   await page.waitForFunction(() => window.CNC_TRUST_NAV && window.CNC_TRUST_NAV.build === '20260721s' && (window.__CNC_TRUST_READY_AT__ || 0) > 0, null, { timeout: 15000 });
-  await page.waitForFunction(() => window.CNC_GAME_QUERY_NAV?.build === '20260731d', null, { timeout: 15000 });
-  await page.locator('#xp-game-home [data-xp-query-filter="gcode"]').click();
+  const gcodeNav = page.locator('body > .xp-bottom-nav button[data-xp-filter="gcode"]');
+  await gcodeNav.waitFor({ state: 'visible', timeout: 15000 });
+  const gcodeTarget = await gcodeNav.evaluate(node => {
+    const rect = node.getBoundingClientRect();
+    return {
+      width: rect.width,
+      height: rect.height,
+      label: node.getAttribute('aria-label') || node.querySelector('span')?.textContent.trim() || node.textContent.trim()
+    };
+  });
+  assert.ok(gcodeTarget.width >= 44, `查代码底栏入口宽度不得小于44px：${gcodeTarget.width}`);
+  assert.ok(gcodeTarget.height >= 48, `查代码底栏入口高度不得小于48px：${gcodeTarget.height}`);
+  assert.match(gcodeTarget.label, /查代码|G代码/, '查代码底栏入口必须有明确中文名称');
+  await gcodeNav.click();
   await page.waitForSelector('#view-workspace.active', { state: 'visible', timeout: 15000 });
   await page.waitForFunction(() => {
     const nav = document.querySelector('body > .xp-bottom-nav');

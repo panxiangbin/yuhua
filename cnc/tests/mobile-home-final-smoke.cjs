@@ -211,6 +211,83 @@ async function decodeAllCourseImages(page) {
   });
 }
 
+async function waitForStableQueryInventory(page, selector) {
+  await page.waitForFunction(() => {
+    return Array.from(document.scripts).filter(script => /knowledge-core-0[1-3]\.js(?:\?|$)/.test(script.src)).length === 3;
+  }, null, { timeout: 20000 });
+  await page.waitForLoadState('networkidle');
+
+  let previous = null;
+  let stableSamples = 0;
+  let latest = null;
+  const deadline = Date.now() + 15000;
+  while (Date.now() < deadline) {
+    latest = await page.evaluate(querySelector => ({
+      cards: document.querySelectorAll('#view-workspace .result-card').length,
+      images: document.querySelectorAll(querySelector).length,
+      scripts: Array.from(document.scripts).filter(script => /knowledge-core-0[1-3]\.js(?:\?|$)/.test(script.src)).length
+    }), selector);
+    const signature = `${latest.cards}:${latest.images}:${latest.scripts}`;
+    if (signature === previous && latest.images > 0 && latest.scripts === 3) stableSamples += 1;
+    else stableSamples = 0;
+    previous = signature;
+    if (stableSamples >= 5) return latest;
+    await page.waitForTimeout(250);
+  }
+  throw new Error(`查询结果库存未稳定：${JSON.stringify(latest)}`);
+}
+
+async function decodeAllQueryImages(page) {
+  const selector = '#view-workspace .result-card.has-thumb .result-thumb img';
+  const stableInventory = await waitForStableQueryInventory(page, selector);
+  const expectedImages = stableInventory.images;
+  let snapshot = null;
+
+  for (let pass = 0; pass < 4; pass += 1) {
+    const scrollHeight = await page.evaluate(querySelector => {
+      document.querySelectorAll(querySelector).forEach(image => { image.loading = 'eager'; });
+      return Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+    }, selector);
+
+    for (let y = 0; y <= scrollHeight; y += 420) {
+      await page.evaluate(({ querySelector, top }) => {
+        document.querySelectorAll(querySelector).forEach(image => { image.loading = 'eager'; });
+        window.scrollTo({ top, behavior: 'instant' });
+      }, { querySelector: selector, top: y });
+      await page.waitForTimeout(70);
+    }
+
+    snapshot = await page.evaluate(querySelector => {
+      const cards = Array.from(document.querySelectorAll('#view-workspace .result-card'));
+      const imageNodes = Array.from(document.querySelectorAll(querySelector));
+      const items = imageNodes.map(image => ({
+        src: image.getAttribute('src'),
+        alt: image.alt,
+        complete: image.complete,
+        naturalWidth: image.naturalWidth,
+        naturalHeight: image.naturalHeight,
+        loading: image.loading
+      }));
+      return {
+        count: cards.length,
+        withImages: imageNodes.length,
+        decoded: items.filter(item => item.complete && item.naturalWidth > 0).length,
+        unresolved: items.filter(item => !item.complete || item.naturalWidth <= 0),
+        titles: cards.slice(0, 8).map(card => card.querySelector('h4')?.textContent?.trim() || ''),
+        imageSources: items.map(item => item.src),
+        items
+      };
+    }, selector);
+
+    if (snapshot.withImages === expectedImages && snapshot.decoded === snapshot.withImages) break;
+    await page.waitForTimeout(250);
+  }
+
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  await page.waitForTimeout(200);
+  return { expectedImages, stableInventory, ...snapshot };
+}
+
 async function testLearningAndQuery(browser, report) {
   const errors = [], failedRequests = [], failures = [];
   const context = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block' });
@@ -232,18 +309,7 @@ async function testLearningAndQuery(browser, report) {
   await page.locator('#quick-search-btn').click();
   await page.locator('#view-workspace.active').waitFor();
   await page.locator('.result-card').first().waitFor();
-  await page.waitForTimeout(500);
-  const query = await page.evaluate(() => {
-    const cards = Array.from(document.querySelectorAll('#view-workspace .result-card'));
-    const images = Array.from(document.querySelectorAll('#view-workspace .result-card.has-thumb .result-thumb img'));
-    return {
-      count: cards.length,
-      withImages: images.length,
-      decoded: images.filter(image => image.complete && image.naturalWidth > 0).length,
-      titles: cards.slice(0, 8).map(card => card.querySelector('h4')?.textContent?.trim() || ''),
-      imageSources: images.slice(0, 8).map(image => image.getAttribute('src'))
-    };
-  });
+  const query = await decodeAllQueryImages(page);
   await page.screenshot({ path: path.join(out, 'mobile-query-g41-results.png'), fullPage: true });
 
   check(learning.totalCards === 12, `course card count ${learning.totalCards}`, failures);
@@ -254,9 +320,11 @@ async function testLearningAndQuery(browser, report) {
   check(learning.visibleCards > 0, 'no visible course cards', failures);
   check(learning.visibleCardsWithVisibleImages === learning.visibleCards, `visible cards with images ${learning.visibleCardsWithVisibleImages}/${learning.visibleCards}`, failures);
   check(query.count > 0, 'G41 query returned no results', failures);
-  check(query.withImages > 0, 'G41 query returned no mapped images', failures);
-  check(query.decoded === query.withImages, `query image decode ${query.decoded}/${query.withImages}`, failures);
+  check(query.expectedImages > 0, 'G41 query returned no mapped images', failures);
+  check(query.withImages === query.expectedImages, `query image DOM count changed ${query.withImages}/${query.expectedImages}`, failures);
+  check(query.decoded === query.withImages, `query image decode ${query.decoded}/${query.withImages}: ${query.unresolved.map(item => item.src).join(', ')}`, failures);
   check(errors.length === 0, `learning/query console errors: ${errors.join(' | ')}`, failures);
+  check(failedRequests.length === 0, `learning/query failed resources: ${failedRequests.map(item => item.url).join(' | ')}`, failures);
   report.learningAndQuery = { learning, query, errors, failedRequests, failures };
   await context.close();
 }

@@ -6,6 +6,13 @@
 @import url('./mobile-home-refactor.css?v=20260804-mobile1');
 @import url('./mobile-home-hardening.css?v=20260804-mobile1');
 
+@media (min-width: 769px) {
+  /* 最近查看卡片中的代码是关键信息，保持工业卡片视觉层级。 */
+  #dashboard-recent-list .recent-card-meta strong {
+    font-weight: 800;
+  }
+}
+
 @media (max-width: 768px) {
   body:has(#view-dashboard.active) .cnc-home-primary {
     width: 126px !important;
@@ -20,5 +27,33 @@
 
   body:has(#view-dashboard.active) .cnc-home-primary > span {
     display: none !important;
+  }
+
+  /* 44px 顶栏控件需要 5px 上下内边距，保持 54px 顶栏不溢出。 */
+  body:has(#view-dashboard.active) .topbar {
+    padding-top: 5px !important;
+    padding-bottom: 5px !important;
+  }
+
+  /* 手机目录、返回首页和关闭目录都是高频入口，触控区不得小于 44×44px。 */
+  body:has(#view-dashboard.active) #sidebar-open,
+  body:has(#view-dashboard.active) #home-btn,
+  body:has(#view-dashboard.active) #sidebar-close {
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+    flex: 0 0 44px;
+  }
+
+  /* 手机首页四个快捷查询也是主要操作入口，保持至少 44px 触控高度。 */
+  body:has(#view-dashboard.active) .quick-keywords .keyword-chip:nth-of-type(-n+4) {
+    min-height: 44px !important;
+  }
+
+  /* 与 mobile-home-refactor.css 的双 ID 选择器保持同等特异性，确保实体卡面和克制圆角覆盖旧值。 */
+  body:has(#view-dashboard.active) #view-dashboard .cnc-home-route-card {
+    border-radius: 16px !important;
+    background: #fffdf9 !important;
   }
 }

@@ -30,7 +30,7 @@ jobs:
       - name: Validate local-only safety and trust contract
         run: |
           set -euxo pipefail
-          grep -q "20260801-ai-handoff1" cnc/ai-teacher.html
+          grep -q "20260804-mobile-home1" cnc/ai-teacher.html
           grep -q "20260802-v2" cnc/ai-teacher.html
           grep -q "localOnly:true\|localOnly: true" cnc/ai-teacher.html
           grep -q "externalModel:false\|externalModel: false" cnc/ai-teacher.html

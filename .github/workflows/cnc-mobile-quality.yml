@@ -44,22 +44,69 @@ jobs:
           grep -q "installStartupHomeGuard" cnc/import-test.js
           grep -q "CNC_STARTUP_HOME_GUARD" cnc/import-test.js
           grep -q "personalHomeFollowsTools" cnc/import-test.js
-          grep -q "BUILD = '20260728-game1'" cnc/personal-home.js
-          grep -q "TRAINING_BUILD = '20260728a'" cnc/personal-home.js
-          grep -q "GAME_STYLE_BUILD = '20260728a'" cnc/personal-home.js
-          grep -q "RECORDS_BUILD = '20260722e'" cnc/personal-home.js
-          grep -q "industrial-personal-records.css" cnc/personal-home.js
-          grep -q "mobile-home-game.css" cnc/personal-home.js
-          grep -q "renderGameHome" cnc/personal-home.js
-          grep -q "keepLegacyPanelAfterLaunch" cnc/personal-home.js
-          grep -q "launch.insertAdjacentElement('afterend', panel)" cnc/personal-home.js
-          grep -q "followsTools" cnc/personal-home.js
-          grep -q "xp-game-xp-track" cnc/personal-home.js
+
+          node - <<'NODE'
+          const fs = require('fs');
+          const personal = fs.readFileSync('cnc/personal-home.js', 'utf8');
+          const mobileHome = fs.readFileSync('cnc/tests/mobile-home-smoke.cjs', 'utf8');
+
+          for (const marker of [
+            "var BUILD = '20260722b'",
+            "refactorBuild: '20260804-mobile1'",
+            'function removeLegacyHome()',
+            'function syncBottomNav()',
+            "document.querySelector('body > .xp-bottom-nav')",
+            'legacyHomeRemoved',
+            'bottomNavReady',
+            'cnc-mobile-nav-ready',
+            'queryObserver.observe(resultList, { childList: true, subtree: true })'
+          ]) {
+            if (!personal.includes(marker)) throw new Error(`单层手机首页兼容层缺少契约：${marker}`);
+          }
+          for (const forbidden of [
+            'renderGameHome',
+            'keepLegacyPanelAfterLaunch',
+            'mobile-home-game.css',
+            'xp-game-xp-track',
+            'queryObserver.observe(document',
+            'queryObserver.observe(document.body',
+            'queryObserver.observe(document.documentElement'
+          ]) {
+            if (personal.includes(forbidden)) throw new Error(`单层手机首页禁止恢复旧首页或全局观察器：${forbidden}`);
+          }
+          const stages = [...personal.matchAll(/id:\s*'stage-(\d+)'/g)].map(match => Number(match[1]));
+          if (stages.length !== 12 || new Set(stages).size !== 12 || stages.some((value, index) => value !== index + 1)) {
+            throw new Error(`手机课程目录必须严格保持 stage-1 至 stage-12，实际：${stages.join(',')}`);
+          }
+
+          for (const marker of [
+            '手机单层首页、真实底栏、工业样板、触控尺寸与12关课程入口通过',
+            '手机端不得恢复第二套旧首页',
+            '手机首页底部导航必须稳定为5项',
+            '手机首页可见按钮和链接高度不得小于44px',
+            '课程页必须保持固定12关',
+            'mobile-home-current-error.txt',
+            'body > .xp-bottom-nav [data-xp-route="study"]'
+          ]) {
+            if (!mobileHome.includes(marker)) throw new Error(`真实手机首页浏览器门禁缺少契约：${marker}`);
+          }
+          for (const forbidden of [
+            '#xp-game-home[data-ready',
+            "window.CNC_PERSONAL_HOME.build === '20260728-game1'",
+            '手机端闯关首页必须显示',
+            'trustedClickHiddenRoute'
+          ]) {
+            if (mobileHome.includes(forbidden)) throw new Error(`真实手机首页门禁仍引用旧双首页契约：${forbidden}`);
+          }
+          NODE
+
+          test -f cnc/industrial-personal-records.css
           grep -q "body.cnc-industrial-records #view-favorites" cnc/industrial-personal-records.css
           grep -q "grid-template-columns: 1fr" cnc/industrial-personal-records.css
           grep -q "min-height: 56px" cnc/industrial-personal-records.css
           grep -q "mobile-industrial-records-smoke" .github/workflows/cnc-mobile-smoke.yml
-          grep -q "appendStyle('./industrial-tools.css?v=20260722d'" cnc/personal-home.js
+          test -f cnc/industrial-tools.css
+          test -f cnc/industrial-tools.js
           grep -q "BUILD='20260722d'" cnc/industrial-tools.js
           grep -q "DIAG_BUILD='20260722f'" cnc/industrial-tools.js
           grep -q "industrial-diagnosis.css" cnc/industrial-tools.js
@@ -142,9 +189,10 @@ jobs:
           grep -q "isParameterEntry" cnc/query-modes.js
           grep -q "isFaultEntry" cnc/query-modes.js
           grep -q "queryPolling" cnc/tests/mobile-performance-smoke.cjs
-          grep -q "手机端旧工具首页必须隐藏" cnc/tests/mobile-home-smoke.cjs
-          grep -q "手机端闯关首页必须显示" cnc/tests/mobile-home-smoke.cjs
+          grep -q "手机端不得恢复第二套旧首页" cnc/tests/mobile-home-smoke.cjs
+          grep -q "手机首页底部导航必须稳定为5项" cnc/tests/mobile-home-smoke.cjs
           grep -q "手机首页可见按钮和链接高度不得小于44px" cnc/tests/mobile-home-smoke.cjs
+          grep -q "课程页必须保持固定12关" cnc/tests/mobile-home-smoke.cjs
           grep -q "clean-ui.css" cnc/import-test.js
           grep -q "vivid-ui.css" cnc/import-test.js
           grep -q "数控小潘 CNC速查与学习助手" cnc/import-test.js
@@ -163,7 +211,7 @@ jobs:
             echo "CNC startup layers must not keep polling intervals"
             exit 1
           fi
-          if grep -q "new MutationObserver" cnc/mobile-trust-nav.js cnc/industrial-card-sample.js cnc/industrial-workspace.js cnc/industrial-tools.js cnc/industrial-diagnosis.js cnc/personal-home.js; then
+          if grep -q "new MutationObserver" cnc/mobile-trust-nav.js cnc/industrial-card-sample.js cnc/industrial-workspace.js cnc/industrial-tools.js cnc/industrial-diagnosis.js; then
             echo "Mobile visual and trust layers must not install global observers"
             exit 1
           fi
@@ -178,8 +226,8 @@ jobs:
           grep -q "const STATIC_CACHE" cnc/sw.js
           grep -q "const RUNTIME_CACHE" cnc/sw.js
           grep -q "addEventListener('fetch'" cnc/sw.js
-          grep -q "request.method!=='GET'" cnc/sw.js
-          grep -q "url.origin!==location.origin" cnc/sw.js
+          grep -Eq "request\.method[[:space:]]*!==[[:space:]]*'GET'" cnc/sw.js
+          grep -Eq "url\.origin[[:space:]]*!==[[:space:]]*location\.origin" cnc/sw.js
           grep -q "offline.html" cnc/sw.js
           grep -q "caches.keys()" cnc/sw.js
           grep -q "skipWaiting" cnc/sw.js

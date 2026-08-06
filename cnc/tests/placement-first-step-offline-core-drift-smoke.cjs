@@ -44,9 +44,14 @@ function readUtf8(file) {
   return fs.readFileSync(file, 'utf8');
 }
 
-function normalizeRelativePath(value, label, extensionPattern) {
-  const normalized = `./${String(value || '').trim().replace(/^\.?\//, '')}`;
-  expect(new RegExp(`^\\./[a-z0-9-]+\\.${extensionPattern}$`).test(normalized), `${label}路径不受控：${value}`);
+function normalizeRelativePath(value, label, extensionPattern, allowDirectories = false) {
+  const raw = String(value || '').trim();
+  expect(!/^(?:https?:|data:|\/\/)/i.test(raw), `${label}不得使用站外或data资源：${value}`);
+  const withoutSuffix = raw.split(/[?#]/, 1)[0];
+  const normalized = `./${withoutSuffix.replace(/^\.?\//, '')}`;
+  expect(!normalized.includes('..'), `${label}不得包含目录穿越：${value}`);
+  const stemPattern = allowDirectories ? '[a-z0-9_./-]+' : '[a-z0-9-]+';
+  expect(new RegExp(`^\\./${stemPattern}\\.${extensionPattern}$`).test(normalized), `${label}路径不受控：${value}`);
   return normalized;
 }
 
@@ -55,7 +60,7 @@ function normalizeCoursePath(value) {
 }
 
 function normalizeCoreResourcePath(value) {
-  return normalizeRelativePath(value, 'PWA核心资源', '(?:html|json)');
+  return normalizeRelativePath(value, 'PWA核心资源', '(?:html|json|js|css|webp)', true);
 }
 
 function sortedUnique(values, label, normalize) {

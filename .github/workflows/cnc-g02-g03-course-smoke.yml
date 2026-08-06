@@ -7,6 +7,13 @@ on:
       - '.github/workflows/cnc-g02-g03-course-smoke.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: cnc-g02-g03-course-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   g02-g03-course:
     runs-on: ubuntu-latest
@@ -16,19 +23,62 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - run: npm install --no-save playwright@1.52.0
-      - run: npx playwright install --with-deps chromium
+
+      - name: 初始化诊断目录
+        run: |
+          mkdir -p artifacts
+          printf 'G02/G03课程门禁已启动\n' > artifacts/g02-g03-bootstrap.log
+
+      - name: 安装Playwright运行时
+        shell: bash
+        run: |
+          set -o pipefail
+          npm install --no-save playwright@1.52.0 2>&1 | tee artifacts/g02-g03-npm-install.log
+
+      - name: 安装Chromium与系统依赖
+        shell: bash
+        run: |
+          set -o pipefail
+          while IFS= read -r source_file; do
+            sudo mv "$source_file" "${source_file}.cnc-disabled"
+            echo "已临时禁用与Chromium依赖无关且可能阻断apt更新的源：$source_file"
+          done < <(grep -rl 'packages.microsoft.com' /etc/apt/sources.list.d 2>/dev/null || true)
+          npx playwright install --with-deps chromium 2>&1 | tee artifacts/g02-g03-playwright-install.log
+
       - name: JavaScript syntax
-        run: node --check cnc/tests/mobile-g02-g03-course-smoke.cjs
+        shell: bash
+        run: |
+          set -o pipefail
+          node --check cnc/tests/mobile-g02-g03-course-smoke.cjs 2>&1 | tee artifacts/g02-g03-syntax.log
+
       - name: Start static server
-        run: python3 -m http.server 4173 --directory . > /tmp/cnc-server.log 2>&1 &
+        shell: bash
+        run: |
+          python3 -m http.server 4173 --directory . > artifacts/g02-g03-server.log 2>&1 &
+          ready=0
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:4173/cnc/course-g02-g03-basics.html >/dev/null; then
+              ready=1
+              break
+            fi
+            sleep 1
+          done
+          if [ "$ready" -ne 1 ]; then
+            cat artifacts/g02-g03-server.log
+            exit 1
+          fi
+
       - name: Chromium 390x844 G02 G03 course
-        run: node cnc/tests/mobile-g02-g03-course-smoke.cjs
+        shell: bash
+        run: |
+          set -o pipefail
+          node cnc/tests/mobile-g02-g03-course-smoke.cjs 2>&1 | tee artifacts/g02-g03-run.log
+
       - name: Upload G02 G03 diagnostics
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: g02-g03-course-diagnostics
+          name: g02-g03-course-diagnostics-${{ github.run_id }}
           path: artifacts/
-          if-no-files-found: warn
+          if-no-files-found: error
           retention-days: 7
