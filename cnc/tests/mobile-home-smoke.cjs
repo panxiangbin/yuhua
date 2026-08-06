@@ -40,7 +40,10 @@ fs.mkdirSync(DIAGNOSTIC_DIR, { recursive: true });
     assert.equal(await page.locator('body').evaluate(node => node.classList.contains('cnc-clean-ui')), true);
     assert.equal(await page.locator('body').evaluate(node => node.classList.contains('cnc-industrial-sample')), true);
     assert.match((await page.locator('.study-card[data-level="9"] p').textContent()) || '', /不保证直线/);
-    assert.match((await page.locator('.study-card[data-level="10"] p').textContent()) || '', /最小输入单位/);
+    const g0203Summary = (await page.locator('.study-card[data-level="10"] p').textContent()) || '';
+    for (const token of ['加工平面', '方向', '圆心', '半径']) {
+      assert.match(g0203Summary, new RegExp(token), `G02/G03课程摘要必须保留${token}技术边界`);
+    }
 
     const homeState = await page.evaluate(() => {
       const visible = node => {
@@ -97,6 +100,11 @@ fs.mkdirSync(DIAGNOSTIC_DIR, { recursive: true });
     await page.locator('body > .xp-bottom-nav [data-xp-route="study"]').click();
     await page.waitForSelector('#view-study.active', { state: 'visible', timeout: 15000 });
     await page.waitForFunction(() => document.querySelectorAll('#view-study .study-card[data-level] .study-card-thumb').length === 12, null, { timeout: 15000 });
+    await page.waitForFunction(() => window.CNC_LEARNING_SUBLESSONS?.version === '20260805-learning-depth1', null, { timeout: 15000 });
+    const learningSafety = await page.evaluate(() => window.CNC_LEARNING_SUBLESSONS.safety || '');
+    assert.match(learningSafety, /机床说明书/, '80课必须要求核对机床说明书');
+    assert.match(learningSafety, /现场工艺/, '80课必须要求核对现场工艺');
+    assert.match(learningSafety, /空运行验证/, '80课必须要求空运行验证');
     const study = await page.evaluate(() => {
       const grid = document.querySelector('#view-study.active .study-card-grid');
       const cards = Array.from(document.querySelectorAll('#view-study.active .study-card[data-level]'));
@@ -117,12 +125,12 @@ fs.mkdirSync(DIAGNOSTIC_DIR, { recursive: true });
     assert.ok(await page.locator('.study-card h4').first().evaluate(node => Number(getComputedStyle(node).fontWeight)) >= 800);
 
     await page.screenshot({ path: `${DIAGNOSTIC_DIR}/mobile-home-current-390x844.png`, fullPage: true });
-    fs.writeFileSync(`${DIAGNOSTIC_DIR}/mobile-home-current-report.json`, JSON.stringify({ homeState, study, consoleErrors, pageErrors, failedRequests }, null, 2));
+    fs.writeFileSync(`${DIAGNOSTIC_DIR}/mobile-home-current-report.json`, JSON.stringify({ homeState, study, g0203Summary, learningSafety, consoleErrors, pageErrors, failedRequests }, null, 2));
 
     assert.deepEqual(pageErrors, [], `手机首页不能出现页面错误：${pageErrors.join(' | ')}`);
     assert.deepEqual(consoleErrors, [], `手机首页不能出现控制台错误：${consoleErrors.join(' | ')}`);
     assert.deepEqual(failedRequests, [], `手机首页不能出现资源请求失败：${JSON.stringify(failedRequests)}`);
-    console.log('手机单层首页、真实底栏、工业样板、触控尺寸与12关课程入口通过', { homeState, study });
+    console.log('手机单层首页、真实底栏、工业样板、触控尺寸与12关课程入口通过', { homeState, study, g0203Summary });
   } catch (error) {
     fs.writeFileSync(`${DIAGNOSTIC_DIR}/mobile-home-current-error.txt`, `${error.stack || error}\n`);
     try { await page.screenshot({ path: `${DIAGNOSTIC_DIR}/mobile-home-current-error-390x844.png`, fullPage: true }); } catch (_) {}
