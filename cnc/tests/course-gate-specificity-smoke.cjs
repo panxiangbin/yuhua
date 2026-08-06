@@ -53,6 +53,7 @@ for (const level of expectedLevels) {
   const duplicateInside = ids.filter((id, index) => ids.indexOf(id) !== index);
   const mappedQuestions = ids.map(id => questionById.get(id)).filter(Boolean);
   const texts = mappedQuestions.map(question => [question.stage, question.title, question.explain].join(' '));
+  const topicMatches = texts.map(text => topicRules[level].test(text));
   const numericAnswers = mappedQuestions
     .filter(question => ['single', 'judge', 'find-error'].includes(question.type))
     .map(question => question.answer);
@@ -65,7 +66,7 @@ for (const level of expectedLevels) {
   check(ids.length === 2, `第${level}关必须恰好配置2道专属闯关题，实际${ids.length}道`);
   check(missing.length === 0, `第${level}关引用不存在的题目：${missing.join(',')}`);
   check(duplicateInside.length === 0, `第${level}关内部重复引用：${duplicateInside.join(',')}`);
-  check(texts.some(text => topicRules[level].test(text)), `第${level}关题目未覆盖本关核心主题`);
+  check(topicMatches.length === ids.length && topicMatches.every(Boolean), `第${level}关存在未覆盖本关核心主题的专属题`);
   if (numericAnswers.length === 2) {
     check(new Set(numericAnswers).size === 2, `第${level}关两道客观题的正确选项位置相同，容易形成猜题规律`);
   }
@@ -74,7 +75,8 @@ for (const level of expectedLevels) {
     questionIds: ids,
     questionCount: ids.length,
     missing,
-    topicMatched: texts.some(text => topicRules[level].test(text)),
+    topicMatched: topicMatches.length === ids.length && topicMatches.every(Boolean),
+    topicMatches,
     numericAnswers
   };
 }
