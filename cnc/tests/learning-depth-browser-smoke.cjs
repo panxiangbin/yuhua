@@ -47,14 +47,19 @@ function watch(page, errors, failed) {
     await page.waitForFunction(()=>document.body.dataset.cncLearningDepthBuild === '20260805-learning-depth1');
     await page.waitForFunction(()=>document.querySelectorAll('#view-study .cnc-sublesson-panel').length === 12 && document.querySelectorAll('#view-study .cnc-sublesson-link').length === 80);
 
-    const thumbnails = page.locator('#view-study .study-card-thumb');
-    fail(await thumbnails.count() === 12, `学习缩略图 ${await thumbnails.count()}/12`, report.failures);
-    for (let index = 0; index < await thumbnails.count(); index += 1) {
-      const image = thumbnails.nth(index);
-      await image.scrollIntoViewIfNeeded();
-      await image.evaluate(node => { node.loading = 'eager'; });
-      await page.waitForFunction(node => node.complete && node.naturalWidth > 0, await image.elementHandle());
-    }
+    const thumbnailCount = await page.locator('#view-study .study-card-thumb').count();
+    fail(thumbnailCount === 12, `学习缩略图 ${thumbnailCount}/12`, report.failures);
+    await page.evaluate(async()=>{
+      const cards = Array.from(document.querySelectorAll('#view-study .study-card[data-level]'));
+      const images = Array.from(document.querySelectorAll('#view-study .study-card-thumb'));
+      cards.forEach(card=>{ card.style.contentVisibility='visible'; });
+      images.forEach(image=>{
+        image.loading='eager';
+        try { image.fetchPriority='high'; } catch {}
+      });
+      await Promise.all(images.map(image=>typeof image.decode === 'function' ? image.decode().catch(()=>{}) : Promise.resolve()));
+    });
+    await page.waitForFunction(()=>Array.from(document.querySelectorAll('#view-study .study-card-thumb')).every(image=>image.complete), null, { timeout:30000 });
 
     const learning = await page.evaluate(()=>{
       const panels = Array.from(document.querySelectorAll('#view-study .cnc-sublesson-panel'));
