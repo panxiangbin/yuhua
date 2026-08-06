@@ -10,7 +10,9 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  issues: write
+  pull-requests: write
 
 concurrency:
   group: cnc-pwa16-specificity-contract-sync
@@ -65,24 +67,7 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-      - name: 仅提交非工作流测试契约
-        run: |
-          git restore \
-            .github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml \
-            .github/workflows/cnc-beginner-placement-offline-pages-smoke.yml \
-            .github/workflows/cnc-pwa-offline-cache-smoke.yml \
-            .github/workflows/cnc-pwa-self-test-smoke.yml \
-            .github/workflows/cnc-pwa-upgrade-data-smoke.yml \
-            .github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add \
-            cnc/tests/mobile-pwa-offline-cache-smoke.cjs \
-            cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs \
-            cnc/tests/mobile-pwa-upgrade-data-smoke.cjs \
-            cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs \
-            cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs \
-            cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs
-          git diff --cached --check
-          git commit -m "test(cnc): 同步PWA16双版本运行契约"
-          git push origin HEAD:chatgpt/cnc-sublesson-specificity-20260806
+      - name: 记录诊断运行
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh pr comment 163 --repo panxiangbin/yuhua --body "PWA16工作流同步诊断 Run: ${GITHUB_RUN_ID}"
