@@ -1,0 +1,40 @@
+name: CNC learning sublesson specificity smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-learning-sublesson-specificity-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cnc-learning-sublesson-specificity-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 检查脚本语法
+        run: |
+          node --check cnc/learning-sublesson-specificity.js
+          node --check cnc/tests/learning-sublesson-specificity-smoke.cjs
+
+      - name: 验证80课现场动作与高风险错误针对性
+        run: node cnc/tests/learning-sublesson-specificity-smoke.cjs
+
+      - name: 上传针对性审计产物
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-learning-sublesson-specificity-${{ github.run_id }}
+          path: cnc/test-results/learning-sublesson-specificity
+          if-no-files-found: error
+          retention-days: 14
