@@ -31,6 +31,21 @@ const DECLARED_LEGACY_REFERENCES = [
     file: 'cnc/import-test.js',
     version: '20260728-pwa3',
     reason: '兼容层备用注册诊断标记，不参与ServiceWorker缓存命名或构建判定'
+  },
+  {
+    file: 'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs',
+    version: '20260803-pwa9',
+    reason: 'AI老师Pages部署测试保留上一公开构建作为受控缓存过渡基线，不作为当前构建针'
+  },
+  {
+    file: 'cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs',
+    version: '20260803-pwa9',
+    reason: '起点测评Pages部署测试保留上一公开构建作为受控缓存过渡基线，不作为当前构建针'
+  },
+  {
+    file: 'cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs',
+    version: '20260803-pwa9',
+    reason: '训练营路线Pages部署测试保留上一公开构建作为受控缓存过渡基线，不作为当前构建针'
   }
 ];
 
@@ -180,7 +195,7 @@ try {
   main();
 } catch (error) {
   const fallback = path.join(OUTPUT_DIR, 'error.txt');
-  fs.writeFileSync(fallback, String(error && error.stack ? error.stack : error));
+  fs.writeFileSync(fallback, String(error && error.stack ? error.stack : String(error)));
   console.error(error);
   process.exitCode = 1;
 }
