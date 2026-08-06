@@ -5,6 +5,9 @@ on:
     paths:
       - 'cnc/training-practice.js'
       - 'cnc/tests/course-gate-specificity-smoke.cjs'
+      - 'cnc/tests/mobile-training-practice-smoke.cjs'
+      - 'cnc/tests/mobile-training-advanced-practice-smoke.cjs'
+      - 'cnc/tests/mobile-training-course-gates-smoke.cjs'
       - 'cnc/docs/course-gate-specificity-audit.md'
       - '.github/workflows/cnc-course-gate-specificity-smoke.yml'
   workflow_dispatch:
@@ -34,6 +37,11 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: cnc-course-gate-specificity-${{ github.run_id }}
-          path: artifacts/course-gate-specificity.json
+          path: |
+            artifacts/course-gate-specificity.json
+            cnc/training-practice.js
+            cnc/tests/mobile-training-practice-smoke.cjs
+            cnc/tests/mobile-training-advanced-practice-smoke.cjs
+            cnc/tests/mobile-training-course-gates-smoke.cjs
           if-no-files-found: error
           retention-days: 14
