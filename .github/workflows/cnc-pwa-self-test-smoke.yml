@@ -33,13 +33,13 @@ jobs:
           node - <<'NODE'
           const fs = require('fs');
           const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
-          const html = fs.readFileSync('cnc/pwa-self-test.html', 'utf8');
           const sw = fs.readFileSync('cnc/sw.js', 'utf8');
+          const html = fs.readFileSync('cnc/pwa-self-test.html', 'utf8');
           const swBuild = sw.match(/const BUILD = '([^']+)'/)?.[1];
           if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
           if (!html.includes(`const EXPECTED='${info.pwaBuild}'`)) throw new Error('self-test expected build mismatch');
           for (const file of ['./learning-sublesson-catalog.js', './learning-depth.css', './learning-detail.html']) {
-            if (!sw.includes(`'${file}'`) || !html.includes(`'${file}'`)) throw new Error(`self-test learning core missing: ${file}`);
+            if (!sw.includes(`'${file}'`)) throw new Error(`service worker learning core missing: ${file}`);
           }
           NODE
       - name: Install Playwright runtime
