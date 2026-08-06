@@ -17,6 +17,7 @@ function parseLiteral(pattern, label) {
 const questions = parseLiteral(/var QUESTIONS=(\[[\s\S]*?\]);\s*var LESSON_REQUIREMENTS=/, '题库');
 const requirements = parseLiteral(/var LESSON_REQUIREMENTS=(\{[\s\S]*?\});\s*var gateObserver=/, '12关映射');
 const questionById = new Map(questions.map(question => [question.id, question]));
+const questionIds = questions.map(question => question.id);
 const levelKeys = Object.keys(requirements).map(Number).sort((a, b) => a - b);
 const expectedLevels = Array.from({ length: 12 }, (_, index) => index + 1);
 const topicRules = {
@@ -40,6 +41,9 @@ function check(condition, message) {
 }
 
 check(JSON.stringify(levelKeys) === JSON.stringify(expectedLevels), `闯关映射必须严格覆盖固定12关，实际：${levelKeys.join(',')}`);
+check(questionIds.every(Boolean), '题库存在空题号');
+check(new Set(questionIds).size === questionIds.length, '题库存在重复题号');
+check(questions.length >= 26, `题库总量不得少于26道，实际${questions.length}道`);
 
 const usage = new Map();
 const levels = {};
@@ -47,26 +51,31 @@ for (const level of expectedLevels) {
   const ids = Array.isArray(requirements[level]) ? requirements[level] : [];
   const missing = ids.filter(id => !questionById.has(id));
   const duplicateInside = ids.filter((id, index) => ids.indexOf(id) !== index);
-  const texts = ids
-    .map(id => questionById.get(id))
-    .filter(Boolean)
-    .map(question => [question.stage, question.title, question.explain].join(' '));
+  const mappedQuestions = ids.map(id => questionById.get(id)).filter(Boolean);
+  const texts = mappedQuestions.map(question => [question.stage, question.title, question.explain].join(' '));
+  const numericAnswers = mappedQuestions
+    .filter(question => ['single', 'judge', 'find-error'].includes(question.type))
+    .map(question => question.answer);
 
   ids.forEach(id => {
     if (!usage.has(id)) usage.set(id, []);
     usage.get(id).push(level);
   });
 
-  check(ids.length >= 2, `第${level}关至少需要2道专属闯关题，实际${ids.length}道`);
+  check(ids.length === 2, `第${level}关必须恰好配置2道专属闯关题，实际${ids.length}道`);
   check(missing.length === 0, `第${level}关引用不存在的题目：${missing.join(',')}`);
   check(duplicateInside.length === 0, `第${level}关内部重复引用：${duplicateInside.join(',')}`);
   check(texts.some(text => topicRules[level].test(text)), `第${level}关题目未覆盖本关核心主题`);
+  if (numericAnswers.length === 2) {
+    check(new Set(numericAnswers).size === 2, `第${level}关两道客观题的正确选项位置相同，容易形成猜题规律`);
+  }
 
   levels[level] = {
     questionIds: ids,
     questionCount: ids.length,
     missing,
-    topicMatched: texts.some(text => topicRules[level].test(text))
+    topicMatched: texts.some(text => topicRules[level].test(text)),
+    numericAnswers
   };
 }
 
@@ -75,18 +84,30 @@ const reused = Array.from(usage.entries())
   .map(([id, levelsUsed]) => ({ id, levels: levelsUsed }));
 const distinctGateQuestions = usage.size;
 check(reused.length === 0, `闯关题不得跨关复用：${reused.map(item => `${item.id}=>${item.levels.join('/')}`).join(', ')}`);
-check(distinctGateQuestions >= 24, `12关至少需要24道不重复专属题，实际${distinctGateQuestions}道`);
+check(distinctGateQuestions === 24, `固定12关应恰好使用24道不重复专属题，实际${distinctGateQuestions}道`);
 
+const singleAnswerPositions = [0, 0, 0, 0];
 for (const [id] of usage) {
   const question = questionById.get(id);
   if (!question) continue;
   check(typeof question.explain === 'string' && question.explain.trim().length >= 12, `${id}缺少足够清晰的中文解析`);
   check(typeof question.system === 'string' && question.system.trim().length > 0, `${id}缺少适用范围`);
+  if (['single', 'judge', 'find-error'].includes(question.type)) {
+    check(Array.isArray(question.options) && question.options.length >= 2, `${id}缺少有效选项`);
+    check(Number.isInteger(question.answer) && question.answer >= 0 && question.answer < question.options.length, `${id}正确答案索引越界`);
+  }
+  if (question.type === 'single' && Number.isInteger(question.answer) && question.answer >= 0 && question.answer <= 3) {
+    singleAnswerPositions[question.answer] += 1;
+  }
   if (question.risk === '高') {
     const safetyText = `${question.explain || ''} ${question.system || ''}`;
     check(/原厂手册|机床说明书|现场|企业制度|核对|验证|授权/.test(safetyText), `${id}为高风险题，但解析缺少手册、现场或受控验证边界`);
   }
 }
+
+singleAnswerPositions.forEach((count, index) => {
+  check(count >= 3, `单选题正确选项${String.fromCharCode(65 + index)}仅${count}道，答案位置分布过于偏斜`);
+});
 
 const report = {
   checkedAt: new Date().toISOString(),
@@ -95,6 +116,12 @@ const report = {
   mappedLevels: levelKeys,
   distinctGateQuestions,
   reused,
+  singleAnswerPositions: {
+    A: singleAnswerPositions[0],
+    B: singleAnswerPositions[1],
+    C: singleAnswerPositions[2],
+    D: singleAnswerPositions[3]
+  },
   levels,
   passed: errors.length === 0,
   errors
@@ -109,8 +136,9 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log('CNC固定12关专属闯关题、主题覆盖、适用范围与高风险安全边界审计通过', {
+console.log('CNC固定12关专属闯关题、答案位置、主题覆盖、适用范围与高风险安全边界审计通过', {
   totalQuestions: questions.length,
   distinctGateQuestions,
+  singleAnswerPositions,
   levels: levelKeys.length
 });
