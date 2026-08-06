@@ -101,7 +101,7 @@ fs.mkdirSync(DIAGNOSTIC_DIR, { recursive: true });
     await page.waitForSelector('#view-study.active', { state: 'visible', timeout: 15000 });
     await page.waitForFunction(() => document.querySelectorAll('#view-study .study-card[data-level] .study-card-thumb').length === 12, null, { timeout: 15000 });
     await page.waitForFunction(() => window.CNC_LEARNING_SUBLESSONS?.version === '20260805-learning-depth1', null, { timeout: 15000 });
-    const learningSafety = await page.evaluate(() => window.CNC_LEARNING_SUBLESSONS.safety || '');
+    const learningSafety = await page.evaluate(() => window.CNC_LEARNING_SUBLESSONS.safetyNotice || '');
     assert.match(learningSafety, /机床说明书/, '80课必须要求核对机床说明书');
     assert.match(learningSafety, /现场工艺/, '80课必须要求核对现场工艺');
     assert.match(learningSafety, /空运行验证/, '80课必须要求空运行验证');

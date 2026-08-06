@@ -68,6 +68,18 @@ const EXACT_CORE_PATHS = [
   './assets/images/batch05_alarm_drawing_material/first-piece-inspection-001.webp'
 ];
 
+const LEARNING_DEPTH_CORE_PATHS = new Set([
+  './learning-sublesson-catalog.js',
+  './learning-depth.css',
+  './learning-detail.html'
+]);
+
+function expectedCoreForBuild(build, label) {
+  if (build === branchTargetPwaBuild) return EXACT_CORE_PATHS;
+  if (build === previousPublicPwaBuild) return EXACT_CORE_PATHS.filter(item => !LEARNING_DEPTH_CORE_PATHS.has(item));
+  throw new Error(`${label}出现未受控核心资源构建：${build}`);
+}
+
 const LEGACY_PUBLIC_SELF_TEST_PATHS = [
   './index.html',
   './offline.html',
@@ -178,7 +190,7 @@ function expectedSiteBuildFor(build, label) {
 
 function parseQuotedArray(text, pattern, label) {
   const block = text.match(pattern)?.[1] || '';
-  const values = [...block.matchAll(/'([^']+)'/g)].map(match => match[1]);
+  const values = [...block.matchAll(/(['"])(.*?)\1/g)].map(match => match[2]);
   if (!values.length) throw new Error(`${label}未读取到资源清单`);
   if (new Set(values).size !== values.length) throw new Error(`${label}资源清单存在重复项`);
   return values;
@@ -195,11 +207,11 @@ function assertServiceWorker(text, label, expectedBuild) {
     `const CACHE_REVISION = '${expectedCache}'`,
     "const STATIC_CACHE = `cnc-static-${CACHE_REVISION}`",
     "const RUNTIME_CACHE = `cnc-runtime-${CACHE_REVISION}`",
-    "'./beginner-placement.html'",
-    "'./training-camp.html'",
-    "'./ai-teacher.html'",
-    "'./ai-teacher-intake.html'",
-    "'./ai-teacher-explainability.html'",
+    './beginner-placement.html',
+    './training-camp.html',
+    './ai-teacher.html',
+    './ai-teacher-intake.html',
+    './ai-teacher-explainability.html',
     "'./pwa-self-test.html'",
     "'./pwa-status.html'",
     "'./build-info.json'",
@@ -210,7 +222,7 @@ function assertServiceWorker(text, label, expectedBuild) {
   ]);
   forbidTokens(text, label, [/test\.skip\(/, /describe\.skip\(/, /it\.skip\(/, /allowOperationalUse\s*:\s*true/]);
   const actual = parseQuotedArray(text, /const REQUIRED_CORE_PATHS = \[([\s\S]*?)\];/, `${label}核心缓存`);
-  assertExactArray(actual, EXACT_CORE_PATHS, `${label}核心缓存`);
+  assertExactArray(actual, expectedCoreForBuild(expectedBuild, label), `${label}核心缓存`);
   return { build: expectedBuild, cacheRevision: expectedCache, corePaths: actual };
 }
 
@@ -259,7 +271,7 @@ function assertStatusPage(text, label, expectedBuild) {
   if (expectedBuild === branchTargetPwaBuild) {
     required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'PWA13会刷新AI老师学习档案异常保护');
   } else {
-    required.push('const cacheBuildOk=staticName.includes(EXPECTED)&&runtimeName.includes(EXPECTED)');
+    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'const cacheBuildOk=staticName.includes(EXPECTED_CACHE)&&runtimeName.includes(EXPECTED_CACHE)');
     legacyCacheContract = true;
   }
   requireTokens(text, label, required);
@@ -272,11 +284,11 @@ function assertSelfTest(text, label, expectedBuild) {
   const expectedCache = expectedCacheRevision(expectedBuild, label);
   const required = [
     `const EXPECTED='${expectedBuild}'`,
-    "'./beginner-placement.html'",
-    "'./training-camp.html'",
-    "'./ai-teacher.html'",
-    "'./ai-teacher-intake.html'",
-    "'./ai-teacher-explainability.html'",
+    './beginner-placement.html',
+    './training-camp.html',
+    './ai-teacher.html',
+    './ai-teacher-intake.html',
+    './ai-teacher-explainability.html',
     '核心离线资源完整',
     '公网构建标记与PWA一致',
     'MAX_AUTO_RETRIES=20'
@@ -284,11 +296,11 @@ function assertSelfTest(text, label, expectedBuild) {
   let expectedPaths;
   let legacyCacheContract = false;
   if (expectedBuild === branchTargetPwaBuild) {
-    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'marker.cacheRevision===EXPECTED_CACHE', 'PWA13用于刷新AI老师学习档案异常保护');
+    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'marker.cacheRevision===EXPECTED_CACHE', 'PWA14用于刷新80个图文小课与AI老师学习档案异常保护');
     expectedPaths = EXACT_CORE_PATHS;
   } else {
-    required.push('const staticName=keys.find(name=>name===`cnc-static-${EXPECTED}`)', 'const runtimeName=keys.find(name=>name===`cnc-runtime-${EXPECTED}`)');
-    expectedPaths = LEGACY_PUBLIC_SELF_TEST_PATHS;
+    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'const staticName=keys.find(name=>name===`cnc-static-${EXPECTED_CACHE}`)', 'const runtimeName=keys.find(name=>name===`cnc-runtime-${EXPECTED_CACHE}`)', 'marker.cacheRevision===EXPECTED_CACHE');
+    expectedPaths = expectedCoreForBuild(expectedBuild, label);
     legacyCacheContract = true;
   }
   requireTokens(text, label, required);

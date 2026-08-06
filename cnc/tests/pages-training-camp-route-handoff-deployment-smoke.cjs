@@ -28,6 +28,18 @@ const EXACT_CORE = [
   './index.html','./homepage-refresh.css','./homepage-refresh-desktop-legacy.css','./mobile-home-refactor.css','./personal-home.js','./learning-sublesson-catalog.js','./learning-depth.css','./learning-detail.html','./mobile-trust-nav.js','./featured-images-supplement.js','./offline.html','./pwa-status.html','./pwa-self-test.html','./pages-status.html','./beginner-placement.html','./training-camp.html','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html','./ai-teacher.html','./ai-teacher-intake.html','./ai-teacher-explainability.html','./build-info.json','./assets/images/batch01_core/beginner-machine-zero-vs-work-zero-001.webp','./assets/images/batch02_operation_basics/machine-init-flow-001.webp','./assets/images/batch04_milling_tooling/milling-process-overview-001.webp','./assets/images/batch01_core/measure-reading-set-001.webp','./assets/images/batch05_alarm_drawing_material/dial-indicator-detail-001.webp','./assets/images/batch04_milling_tooling/vise-clamping-basic-001.webp','./assets/images/batch04_milling_tooling/tool-selection-beginner-001.webp','./assets/images/batch04_milling_tooling/bt-er-holder-overview-001.webp','./assets/images/batch02_operation_basics/single-block-dry-run-001.webp','./assets/images/batch04_milling_tooling/milling-contour-001.webp','./assets/images/batch02_operation_basics/canned-cycle-overview-001.webp','./assets/images/batch05_alarm_drawing_material/first-piece-inspection-001.webp'
 ];
 
+const LEARNING_DEPTH_CORE_PATHS = new Set([
+  './learning-sublesson-catalog.js',
+  './learning-depth.css',
+  './learning-detail.html'
+]);
+
+function expectedCoreForBuild(build, label) {
+  if (build === expectedPwaBuild) return EXACT_CORE;
+  if (build === previousPublicPwaBuild) return EXACT_CORE.filter(item => !LEARNING_DEPTH_CORE_PATHS.has(item));
+  throw new Error(`${label}出现未受控核心资源构建：${build}`);
+}
+
 if (!Number.isInteger(attempts) || attempts < 1) throw new Error('CNC_PAGES_VERIFY_ATTEMPTS必须是大于0的整数');
 if (!Number.isFinite(intervalMs) || intervalMs < 0) throw new Error('CNC_PAGES_VERIFY_INTERVAL_MS不能为负数');
 
@@ -195,8 +207,9 @@ function assertServiceWorker(text, label, build) {
   ]);
   const block = text.match(/const REQUIRED_CORE_PATHS = \[([\s\S]*?)\];/)?.[1] || '';
   const core = [...block.matchAll(/'([^']+)'/g)].map(match => match[1]);
-  if (JSON.stringify(core) !== JSON.stringify(EXACT_CORE) || new Set(core).size !== EXACT_CORE.length) {
-    throw new Error(`${label}核心资源不一致：${JSON.stringify(core)}，期望${JSON.stringify(EXACT_CORE)}`);
+  const expectedCore = expectedCoreForBuild(build, label);
+  if (JSON.stringify(core) !== JSON.stringify(expectedCore) || new Set(core).size !== expectedCore.length) {
+    throw new Error(`${label}核心资源不一致：${JSON.stringify(core)}，期望${JSON.stringify(expectedCore)}`);
   }
 }
 
