@@ -1,0 +1,71 @@
+name: CNC PWA16 specificity contract sync
+
+on:
+  push:
+    branches:
+      - chatgpt/cnc-sublesson-specificity-20260806
+    paths:
+      - 'cnc/tools/sync-pwa16-specificity-contracts.py'
+      - '.github/workflows/cnc-pwa16-specificity-contract-sync.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cnc-pwa16-specificity-contract-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    if: github.repository == 'panxiangbin/yuhua' && github.ref == 'refs/heads/chatgpt/cnc-sublesson-specificity-20260806'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: 检出当前CNC分支
+        uses: actions/checkout@v4
+        with:
+          ref: chatgpt/cnc-sublesson-specificity-20260806
+          fetch-depth: 0
+
+      - name: 同步PWA16与PWA15双版本契约
+        run: python3 cnc/tools/sync-pwa16-specificity-contracts.py
+
+      - name: 验证JavaScript与PWA构建引用
+        run: |
+          node --check cnc/learning-sublesson-specificity.js
+          node --check cnc/tests/learning-sublesson-specificity-smoke.cjs
+          node --check cnc/tests/mobile-pwa-offline-cache-smoke.cjs
+          node --check cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs
+          node --check cnc/tests/mobile-pwa-upgrade-data-smoke.cjs
+          node --check cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs
+          node --check cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs
+          node --check cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs
+          node cnc/tests/learning-sublesson-specificity-smoke.cjs
+          node cnc/tests/pwa-build-reference-audit-smoke.cjs
+          git diff --check
+
+      - name: 提交最终只读契约并清理一次性文件
+        run: |
+          rm cnc/tools/sync-pwa16-specificity-contracts.py
+          rm .github/workflows/cnc-pwa16-specificity-contract-sync.yml
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add \
+            .github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml \
+            .github/workflows/cnc-beginner-placement-offline-pages-smoke.yml \
+            .github/workflows/cnc-pwa-offline-cache-smoke.yml \
+            .github/workflows/cnc-pwa-self-test-smoke.yml \
+            .github/workflows/cnc-pwa-upgrade-data-smoke.yml \
+            .github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml \
+            cnc/tests/mobile-pwa-offline-cache-smoke.cjs \
+            cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs \
+            cnc/tests/mobile-pwa-upgrade-data-smoke.cjs \
+            cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs \
+            cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs \
+            cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs \
+            cnc/tools/sync-pwa16-specificity-contracts.py \
+            .github/workflows/cnc-pwa16-specificity-contract-sync.yml
+          git diff --cached --check
+          git commit -m "ci(cnc): 同步PWA16针对性内容门禁"
+          git push origin HEAD:chatgpt/cnc-sublesson-specificity-20260806
