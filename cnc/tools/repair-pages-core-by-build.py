@@ -70,6 +70,22 @@ function expectedCoreForBuild(build, label) {{
     source = source.replace(spec['old'], spec['new'], 1)
     file.write_text(source, encoding='utf-8', newline='\n')
 
+ai_file = Path('cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs')
+ai_source = ai_file.read_text(encoding='utf-8')
+status_old = """    required.push('const cacheBuildOk=staticName.includes(EXPECTED)&&runtimeName.includes(EXPECTED)');"""
+status_new = """    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'const cacheBuildOk=staticName.includes(EXPECTED_CACHE)&&runtimeName.includes(EXPECTED_CACHE)');"""
+self_test_old = """    required.push('const staticName=keys.find(name=>name===`cnc-static-${EXPECTED}`)', 'const runtimeName=keys.find(name=>name===`cnc-runtime-${EXPECTED}`)');"""
+self_test_new = """    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'const staticName=keys.find(name=>name===`cnc-static-${EXPECTED_CACHE}`)', 'const runtimeName=keys.find(name=>name===`cnc-runtime-${EXPECTED_CACHE}`)', 'marker.cacheRevision===EXPECTED_CACHE');"""
+for old, new, label in [
+    (status_old, status_new, 'status-page cache contract'),
+    (self_test_old, self_test_new, 'self-test cache contract'),
+]:
+    count = ai_source.count(old)
+    if count != 1:
+        raise SystemExit(f'AI Pages {label}: anchor count={count}')
+    ai_source = ai_source.replace(old, new, 1)
+ai_file.write_text(ai_source, encoding='utf-8', newline='\n')
+
 for spec in SPECS:
     source = Path(spec['path']).read_text(encoding='utf-8')
     if 'function expectedCoreForBuild(build, label)' not in source:
@@ -77,4 +93,9 @@ for spec in SPECS:
     if spec['new'] not in source:
         raise SystemExit(f"{spec['path']}: assertion verification failed")
 
-print('Pages core expectations now distinguish previous PWA13 from target PWA14.')
+final_ai = ai_file.read_text(encoding='utf-8')
+for token in [status_new, self_test_new]:
+    if token not in final_ai:
+        raise SystemExit('AI Pages cache-revision verification failed')
+
+print('Pages gates now distinguish PWA13/PWA14 core resources and cache revisions.')
