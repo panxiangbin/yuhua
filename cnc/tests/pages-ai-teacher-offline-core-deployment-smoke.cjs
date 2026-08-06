@@ -8,13 +8,13 @@ fs.mkdirSync(resultsDir, { recursive: true });
 
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
-const branchTargetPwaBuild = '20260806-pwa15';
-const previousPublicPwaBuild = '20260806-pwa14';
+const branchTargetPwaBuild = '20260806-pwa16';
+const previousPublicPwaBuild = '20260806-pwa15';
 const expectedSiteBuild = '20260806-learning-depth1';
 const previousPublicSiteBuild = '20260806-learning-depth1';
 const cacheRevisionByBuild = {
-  [branchTargetPwaBuild]: '20260806-learning15',
-  [previousPublicPwaBuild]: '20260806-learning14'
+  [branchTargetPwaBuild]: '20260806-learning16',
+  [previousPublicPwaBuild]: '20260806-learning15'
 };
 const attempts = Number(process.env.CNC_PAGES_VERIFY_ATTEMPTS || 18);
 const intervalMs = Number(process.env.CNC_PAGES_VERIFY_INTERVAL_MS || 10000);
@@ -36,7 +36,7 @@ const EXACT_CORE_PATHS = [
   './homepage-refresh-desktop-legacy.css',
   './mobile-home-refactor.css',
   './personal-home.js',
-  './learning-sublesson-catalog.js',
+  './learning-sublesson-catalog.js','./learning-sublesson-specificity.js',
   './learning-depth.css',
   './learning-detail.html',
   './mobile-trust-nav.js',
@@ -68,6 +68,8 @@ const EXACT_CORE_PATHS = [
   './assets/images/batch05_alarm_drawing_material/first-piece-inspection-001.webp'
 ];
 
+const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE_PATHS.filter(path => path !== './learning-sublesson-specificity.js');
+
 const LEARNING_DEPTH_CORE_PATHS = new Set([
   './learning-sublesson-catalog.js',
   './learning-depth.css',
@@ -76,7 +78,7 @@ const LEARNING_DEPTH_CORE_PATHS = new Set([
 
 function expectedCoreForBuild(build, label) {
   if (build === branchTargetPwaBuild) return EXACT_CORE_PATHS;
-  if (build === previousPublicPwaBuild) return EXACT_CORE_PATHS;
+  if (build === previousPublicPwaBuild) return PREVIOUS_PUBLIC_CORE_PATHS;
   throw new Error(`${label}出现未受控核心资源构建：${build}`);
 }
 

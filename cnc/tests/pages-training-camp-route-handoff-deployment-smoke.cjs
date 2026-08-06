@@ -9,12 +9,12 @@ fs.mkdirSync(out, { recursive: true });
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
 const expectedSiteBuild = '20260806-learning-depth1';
-const expectedPwaBuild = '20260806-pwa15';
+const expectedPwaBuild = '20260806-pwa16';
 const previousPublicSiteBuild = '20260806-learning-depth1';
-const previousPublicPwaBuild = '20260806-pwa14';
+const previousPublicPwaBuild = '20260806-pwa15';
 const cacheRevisionByBuild = {
-  [expectedPwaBuild]: '20260806-learning15',
-  [previousPublicPwaBuild]: '20260806-learning14'
+  [expectedPwaBuild]: '20260806-learning16',
+  [previousPublicPwaBuild]: '20260806-learning15'
 };
 const siteBuildByPwaBuild = {
   [expectedPwaBuild]: expectedSiteBuild,
@@ -25,8 +25,10 @@ const intervalMs = Number(process.env.CNC_PAGES_VERIFY_INTERVAL_MS || 10000);
 const eventName = process.env.GITHUB_EVENT_NAME || '';
 const resources = ['cnc/training-camp.html', 'cnc/sw.js', 'cnc/build-info.json'];
 const EXACT_CORE = [
-  './index.html','./homepage-refresh.css','./homepage-refresh-desktop-legacy.css','./mobile-home-refactor.css','./personal-home.js','./learning-sublesson-catalog.js','./learning-depth.css','./learning-detail.html','./mobile-trust-nav.js','./featured-images-supplement.js','./offline.html','./pwa-status.html','./pwa-self-test.html','./pages-status.html','./beginner-placement.html','./training-camp.html','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html','./ai-teacher.html','./ai-teacher-intake.html','./ai-teacher-explainability.html','./build-info.json','./assets/images/batch01_core/beginner-machine-zero-vs-work-zero-001.webp','./assets/images/batch02_operation_basics/machine-init-flow-001.webp','./assets/images/batch04_milling_tooling/milling-process-overview-001.webp','./assets/images/batch01_core/measure-reading-set-001.webp','./assets/images/batch05_alarm_drawing_material/dial-indicator-detail-001.webp','./assets/images/batch04_milling_tooling/vise-clamping-basic-001.webp','./assets/images/batch04_milling_tooling/tool-selection-beginner-001.webp','./assets/images/batch04_milling_tooling/bt-er-holder-overview-001.webp','./assets/images/batch02_operation_basics/single-block-dry-run-001.webp','./assets/images/batch04_milling_tooling/milling-contour-001.webp','./assets/images/batch02_operation_basics/canned-cycle-overview-001.webp','./assets/images/batch05_alarm_drawing_material/first-piece-inspection-001.webp'
+  './index.html','./homepage-refresh.css','./homepage-refresh-desktop-legacy.css','./mobile-home-refactor.css','./personal-home.js','./learning-sublesson-catalog.js','./learning-sublesson-specificity.js','./learning-depth.css','./learning-detail.html','./mobile-trust-nav.js','./featured-images-supplement.js','./offline.html','./pwa-status.html','./pwa-self-test.html','./pages-status.html','./beginner-placement.html','./training-camp.html','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html','./ai-teacher.html','./ai-teacher-intake.html','./ai-teacher-explainability.html','./build-info.json','./assets/images/batch01_core/beginner-machine-zero-vs-work-zero-001.webp','./assets/images/batch02_operation_basics/machine-init-flow-001.webp','./assets/images/batch04_milling_tooling/milling-process-overview-001.webp','./assets/images/batch01_core/measure-reading-set-001.webp','./assets/images/batch05_alarm_drawing_material/dial-indicator-detail-001.webp','./assets/images/batch04_milling_tooling/vise-clamping-basic-001.webp','./assets/images/batch04_milling_tooling/tool-selection-beginner-001.webp','./assets/images/batch04_milling_tooling/bt-er-holder-overview-001.webp','./assets/images/batch02_operation_basics/single-block-dry-run-001.webp','./assets/images/batch04_milling_tooling/milling-contour-001.webp','./assets/images/batch02_operation_basics/canned-cycle-overview-001.webp','./assets/images/batch05_alarm_drawing_material/first-piece-inspection-001.webp'
 ];
+
+const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE.filter(path => path !== './learning-sublesson-specificity.js');
 
 const LEARNING_DEPTH_CORE_PATHS = new Set([
   './learning-sublesson-catalog.js',
@@ -36,7 +38,7 @@ const LEARNING_DEPTH_CORE_PATHS = new Set([
 
 function expectedCoreForBuild(build, label) {
   if (build === expectedPwaBuild) return EXACT_CORE;
-  if (build === previousPublicPwaBuild) return EXACT_CORE;
+  if (build === previousPublicPwaBuild) return PREVIOUS_PUBLIC_CORE_PATHS;
   throw new Error(`${label}出现未受控核心资源构建：${build}`);
 }
 
