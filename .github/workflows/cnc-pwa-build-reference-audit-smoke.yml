@@ -2,79 +2,30 @@ name: CNC PWA build reference audit smoke
 
 on:
   pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-*.yml'
   push:
     branches:
       - codex/learning-depth-refactor-20260805
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-*.yml'
 
 permissions:
   contents: write
 
 jobs:
-  repair-pages-transition:
+  repair:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repair branch
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           ref: codex/learning-depth-refactor-20260805
           fetch-depth: 0
-
-      - name: Repair controlled transition baselines
-        shell: bash
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-
-          pages = [
-              ('cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs', 'branchTargetPwaBuild'),
-              ('cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs', 'branchTargetPwaBuild'),
-              ('cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs', 'expectedPwaBuild'),
-          ]
-          previous_line = "const previousPublicPwaBuild = '20260803-pwa9';"
-          current_line = "const currentMainPwaBuild = '20260804-pwa13';"
-          for path, target in pages:
-              file = Path(path)
-              source = file.read_text(encoding='utf-8')
-              if current_line not in source:
-                  if source.count(previous_line) != 1:
-                      raise SystemExit(f'{path}: previous public PWA anchor drift')
-                  source = source.replace(previous_line, previous_line + '\n' + current_line, 1)
-              old = f'[previousPublicPwaBuild, {target}]'
-              new = f'[previousPublicPwaBuild, currentMainPwaBuild, {target}]'
-              if old not in source:
-                  raise SystemExit(f'{path}: controlled build list missing')
-              source = source.replace(old, new)
-              file.write_text(source, encoding='utf-8', newline='\n')
-
-          audit = Path('cnc/tests/pwa-build-reference-audit-smoke.cjs')
-          source = audit.read_text(encoding='utf-8')
-          marker = "file: 'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs',\n    version: '20260804-pwa13'"
-          anchor = "  {\n    file: 'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs',\n    version: '20260803-pwa9',"
-          additions = """  {
-    file: 'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs',
-    version: '20260804-pwa13',
-    reason: 'PR合并前允许读取当前main的PWA13作为受控部署过渡基线，不作为分支目标构建针'
-  },
-  {
-    file: 'cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs',
-    version: '20260804-pwa13',
-    reason: 'PR合并前允许读取当前main的PWA13作为受控部署过渡基线，不作为分支目标构建针'
-  },
-  {
-    file: 'cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs',
-    version: '20260804-pwa13',
-    reason: 'PR合并前允许读取当前main的PWA13作为受控部署过渡基线，不作为分支目标构建针'
-  },
-"""
-          if marker not in source:
-              if source.count(anchor) != 1:
-                  raise SystemExit('PWA audit legacy anchor drift')
-              source = source.replace(anchor, additions + anchor, 1)
-          audit.write_text(source, encoding='utf-8', newline='\n')
-          PY
-
-      - name: Validate repair
-        shell: bash
+      - name: Apply transition baseline repair
+        run: python3 cnc/tools/repair-pages-transition-baseline.py
+      - name: Validate repaired contracts
         run: |
           node --check cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs
           node --check cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs
@@ -82,12 +33,11 @@ jobs:
           node --check cnc/tests/pwa-build-reference-audit-smoke.cjs
           node cnc/tests/pwa-build-reference-audit-smoke.cjs
           git diff --check
-
-      - name: Commit repair and restore original workflows
-        shell: bash
+      - name: Commit repair and restore workflow
         run: |
           git show a45e9702a8e469dd0b4f24bdd231ef4d647e41e6:.github/workflows/cnc-pwa-build-reference-audit-smoke.yml > .github/workflows/cnc-pwa-build-reference-audit-smoke.yml
           git rm -f .github/workflows/cnc-pages-transition-baseline-fix.yml
+          git rm -f cnc/tools/repair-pages-transition-baseline.py
           git config user.name '潘斌'
           git config user.email 'smxpxb008@gmail.com'
           git add .github/workflows/cnc-pwa-build-reference-audit-smoke.yml \
