@@ -80,7 +80,7 @@ jobs:
             './beginner-placement.html','./training-camp.html','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html','./ai-teacher.html','./ai-teacher-intake.html','./ai-teacher-explainability.html'
           ]) {
             if (!sw.includes(`'${file}'`)) throw new Error(`Service Worker core missing: ${file}`);
-            if (!selfTest.includes(`'${file}'`)) throw new Error(`self-test core missing: ${file}`);
+            if (!selfTest.includes(file)) throw new Error(`self-test core missing: ${file}`);
           }
           if (!placement.includes('criticalFailures') || !placement.includes("decision:'critical-safety'")) throw new Error('beginner placement critical safety gate missing');
           if (!placement.includes('cnc_beginner_placement_route_handoff_v1') || !camp.includes('cnc_beginner_placement_route_handoff_v1')) throw new Error('placement route handoff producer or consumer missing');
