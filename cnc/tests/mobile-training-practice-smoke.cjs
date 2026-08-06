@@ -61,7 +61,7 @@ const assert = require('node:assert/strict');
 
   const api = await page.evaluate(() => window.CNC_TRAINING_PRACTICE.runCheck());
   assert.equal(api.passed, true);
-  assert.equal(api.questions, 9);
+  assert.equal(api.questions, 26);
   assert.equal(api.lessonGates, 12);
   assert.equal(api.passScore, 80);
   assert.equal(api.state.version, 1);
