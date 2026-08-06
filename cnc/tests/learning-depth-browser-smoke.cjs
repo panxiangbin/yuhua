@@ -182,7 +182,7 @@ function watch(page, errors, failed) {
     fail(narrow.decodedThumbnails === 12, `窄屏已解码缩略图 ${narrow.decodedThumbnails}/12`, report.failures);
     fail(narrow.thumbRects.every(item=>item.width>=90 && item.height>=70), `窄屏缩略图尺寸不足：${JSON.stringify(narrow.thumbRects)}`, report.failures);
     fail(narrow.summaryHeights.every(height=>height>=44), `窄屏折叠按钮触控高度不足：${narrow.summaryHeights.join(',')}`, report.failures);
-    fail(narrow.averageCardHeight <= 195 && narrow.maxCardHeight <= 210, `窄屏课程卡过高：平均${narrow.averageCardHeight}px，最大${narrow.maxCardHeight}px`, report.failures);
+    fail(narrow.averageCardHeight <= learning.averageCardHeight + 1 && narrow.maxCardHeight <= learning.maxCardHeight + 1, `窄屏课程卡高于390px基线：窄屏平均/最大${narrow.averageCardHeight}/${narrow.maxCardHeight}px，390px平均/最大${learning.averageCardHeight}/${learning.maxCardHeight}px`, report.failures);
     fail(narrow.minCardLeft >= -1 && narrow.maxCardRight <= narrow.clientWidth + 1, `窄屏课程卡越界：${narrow.minCardLeft}/${narrow.maxCardRight}/${narrow.clientWidth}`, report.failures);
     fail(narrow.firstCardColumns.includes('92px'), `窄屏网格列未命中92px规则：${narrow.firstCardColumns}`, report.failures);
     fail(narrow.expanded.openPanels === 1 && narrow.expanded.firstLinkHeight >= 44, `窄屏展开触控异常：${JSON.stringify(narrow.expanded)}`, report.failures);
