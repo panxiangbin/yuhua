@@ -44,6 +44,13 @@ def replace_once(source, old, new, path, label):
     return source.replace(old, new, 1)
 
 
+def replace_all_present(source, old, new, path, label):
+    count = source.count(old)
+    if count < 1:
+        raise SystemExit(f'{path}: {label} anchor count={count}')
+    return source.replace(old, new)
+
+
 for spec in SPECS:
     file = Path(spec['path'])
     source = file.read_text(encoding='utf-8')
@@ -92,7 +99,7 @@ for item in [
 ]:
     old = f'    "\'{item}\'",'
     new = f"    '{item}',"
-    ai_source = replace_once(ai_source, old, new, ai_path, f'quote-agnostic token {item}')
+    ai_source = replace_all_present(ai_source, old, new, ai_path, f'quote-agnostic token {item}')
 
 status_old = """    required.push('const cacheBuildOk=staticName.includes(EXPECTED)&&runtimeName.includes(EXPECTED)');"""
 status_new = """    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'const cacheBuildOk=staticName.includes(EXPECTED_CACHE)&&runtimeName.includes(EXPECTED_CACHE)');"""
@@ -150,6 +157,8 @@ for item in [
 ]:
     if f"    '{item}'," not in final_ai:
         raise SystemExit(f'AI Pages quote-agnostic token verification failed: {item}')
+    if f'    "\'{item}\'",' in final_ai:
+        raise SystemExit(f'AI Pages quote-specific token remains: {item}')
 
 if 'window.CNC_LEARNING_SUBLESSONS.safetyNotice' not in mobile_file.read_text(encoding='utf-8'):
     raise SystemExit('mobile 80-course safetyNotice verification failed')
