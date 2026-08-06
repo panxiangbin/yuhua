@@ -247,7 +247,7 @@ function assertBuildInfo(text, label, expectedBuild) {
   const stage = String(data.contentStage || '');
   requireTokens(stage, label, ['课程12关', '起点测评', '手机首页一屏化', 'AI CNC老师基础版', 'PWA可靠性']);
   if (expectedBuild === branchTargetPwaBuild) {
-    requireTokens(stage, label, ['起点测评关键安全门禁', '起点测评离线核心', '测评路线一次性交接', '训练营路线离线核心', '测评首步课程离线核心', '正式课程开发占位清零', 'AI老师现场问诊单', 'AI老师判断说明', 'AI老师离线核心', 'AI老师学习档案异常保护', '80个图文小课']);
+    requireTokens(stage, label, ['起点测评关键安全门禁', '起点测评离线核心', '测评路线一次性交接', '训练营路线离线核心', '测评首步课程离线核心', '正式课程开发占位清零', 'AI老师现场问诊单', 'AI老师判断说明', 'AI老师离线核心', 'AI老师学习档案异常保护', '80个图文小课', '学习目录紧凑布局', '80课现场动作与风险针对性']);
   }
   return { build: data.build, pwaBuild: data.pwaBuild, cacheRevision: data.cacheRevision, scope: data.scope };
 }
@@ -271,7 +271,7 @@ function assertStatusPage(text, label, expectedBuild) {
   ];
   let legacyCacheContract = false;
   if (expectedBuild === branchTargetPwaBuild) {
-    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'PWA15会刷新80个图文小课、紧凑学习目录与AI老师学习档案异常保护');
+    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'PWA16会刷新80个图文小课的主题化现场动作与高风险错误、紧凑学习目录及AI老师学习档案异常保护');
   } else {
     required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'const cacheBuildOk=staticName.includes(EXPECTED_CACHE)&&runtimeName.includes(EXPECTED_CACHE)');
     legacyCacheContract = true;
@@ -298,7 +298,7 @@ function assertSelfTest(text, label, expectedBuild) {
   let expectedPaths;
   let legacyCacheContract = false;
   if (expectedBuild === branchTargetPwaBuild) {
-    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'marker.cacheRevision===EXPECTED_CACHE', 'PWA15用于刷新80个图文小课、紧凑学习目录与AI老师学习档案异常保护');
+    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'marker.cacheRevision===EXPECTED_CACHE', 'PWA16用于刷新80课针对性内容、紧凑学习目录与AI老师学习档案异常保护');
     expectedPaths = EXACT_CORE_PATHS;
   } else {
     required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'const staticName=keys.find(name=>name===`cnc-static-${EXPECTED_CACHE}`)', 'const runtimeName=keys.find(name=>name===`cnc-runtime-${EXPECTED_CACHE}`)', 'marker.cacheRevision===EXPECTED_CACHE');
