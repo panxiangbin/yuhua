@@ -84,8 +84,28 @@ def add_core_after_catalog(relative: str) -> None:
     raise RuntimeError(f"无法在目录资源后插入针对性脚本：{relative}")
 
 
-def split_pages_core(relative: str) -> None:
+def add_workflow_core(relative: str) -> None:
     source = read(relative)
+    if NEW_CORE in source:
+        return
+    try:
+        add_core_after_catalog(relative)
+        return
+    except RuntimeError:
+        source = read(relative)
+    needles = [
+        "            './training-camp.html',\n",
+        "  './training-camp.html',\n",
+    ]
+    for needle in needles:
+        if needle in source:
+            source = source.replace(needle, needle + needle.replace("./training-camp.html", NEW_CORE), 1)
+            write(relative, source)
+            return
+    raise RuntimeError(f"工作流无法插入针对性核心资源：{relative}")
+
+
+def split_pages_core(relative: str) -> None:
     add_core_after_catalog(relative)
     source = read(relative)
     declaration = "const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE_PATHS.filter(path => path !== './learning-sublesson-specificity.js');\n\n"
@@ -121,8 +141,6 @@ def add_stage_marker(relative: str) -> None:
         return
     if "'学习目录紧凑布局'" in source:
         source = source.replace("'学习目录紧凑布局'", "'学习目录紧凑布局','80课现场动作与风险针对性'", 1)
-    elif "学习目录紧凑布局" in source:
-        source = source.replace("学习目录紧凑布局", "学习目录紧凑布局','80课现场动作与风险针对性", 1)
     else:
         raise RuntimeError(f"工作流缺少内容阶段锚点：{relative}")
     write(relative, source)
@@ -142,10 +160,9 @@ def verify() -> None:
                 raise RuntimeError(f"Pages双版本契约缺少{token}：{relative}")
     for relative in WORKFLOW_CORE_FILES:
         source = read(relative)
-        if relative.endswith("cnc-pwa-upgrade-data-smoke.yml"):
-            continue
-        if NEW_CORE not in source and "pwa-offline-cache" not in relative:
-            raise RuntimeError(f"工作流未审计针对性核心资源：{relative}")
+        for token in [NEW_CORE, "80课现场动作与风险针对性"]:
+            if token not in source:
+                raise RuntimeError(f"工作流未审计{token}：{relative}")
 
 
 def main() -> None:
@@ -155,7 +172,7 @@ def main() -> None:
         split_pages_core(relative)
     add_offline_browser_core()
     for relative in WORKFLOW_CORE_FILES:
-        add_core_after_catalog(relative)
+        add_workflow_core(relative)
         add_stage_marker(relative)
     verify()
     print("PWA16运行针、PWA15上一公网契约和80课针对性核心资源已同步。")
