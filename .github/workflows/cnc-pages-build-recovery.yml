@@ -40,25 +40,26 @@ jobs:
           for (const token of [
             "branches: [main]",
             "- 'cnc/**'",
-            "pages: write",
-            "/pages/builds/latest",
-            "/pages/builds",
+            'pages: write',
+            '/pages/builds/latest',
+            '/pages/builds',
             "github.event_name != 'pull_request'",
             "cache: 'no-store'",
-            "CNC_PAGES_RECOVERY_ATTEMPTS || 40",
-            "mobile-pages-deployment-status-smoke.cjs",
-            "actions/upload-artifact@v4"
+            'CNC_PAGES_RECOVERY_ATTEMPTS || 40',
+            'mobile-pages-deployment-status-smoke.cjs',
+            'actions/upload-artifact@v4'
           ]) {
             if (!workflow.includes(token)) throw new Error(`缺少Pages恢复契约：${token}`);
           }
-          for (const forbidden of [
-            'continue-on-error: true',
-            'cancel-in-progress: true',
-            'git push --force',
-            'force: true',
-            'process.exit(0)',
-            'test.skip('
-          ]) {
+          const workflowForbidden = [
+            'continue-on-error:' + ' true',
+            'cancel-in-progress:' + ' true',
+            'git push --' + 'force',
+            'force:' + ' true',
+            'process.' + 'exit(0)',
+            'test.' + 'skip('
+          ];
+          for (const forbidden of workflowForbidden) {
             if (workflow.includes(forbidden)) throw new Error(`发现恢复流程绕过项：${forbidden}`);
           }
           if (info.app !== 'cnc-training-platform') throw new Error('CNC构建标记无效');
@@ -66,7 +67,8 @@ jobs:
           for (const token of ['mainMatchesPages: true', 'statusPageMatchesMarker: true', 'CNC_PAGES_VERIFY_ATTEMPTS || 18']) {
             if (!publicTest.includes(token)) throw new Error(`公网浏览器门禁缺少：${token}`);
           }
-          for (const forbidden of ['test.skip(', 'process.exit(0)', 'CNC_PAGES_VERIFY_ATTEMPTS || 0']) {
+          const publicTestForbidden = ['test.' + 'skip(', 'process.' + 'exit(0)', 'CNC_PAGES_VERIFY_ATTEMPTS || 0'];
+          for (const forbidden of publicTestForbidden) {
             if (publicTest.includes(forbidden)) throw new Error(`公网浏览器门禁存在绕过项：${forbidden}`);
           }
           console.log(`CNC Pages恢复契约通过：${info.build}/${info.pwaBuild}/${info.cacheRevision}`);
@@ -99,9 +101,10 @@ jobs:
           const repository = process.env.GITHUB_REPOSITORY;
           const sha = process.env.GITHUB_SHA;
           const token = process.env.GH_TOKEN;
-          const publicUrl = `https://${repository.split('/')[0]}.github.io/${repository.split('/')[1]}/cnc/build-info.json`;
+          const [owner, repo] = repository.split('/');
+          const publicUrl = `https://${owner}.github.io/${repo}/cnc/build-info.json`;
           const apiBase = `https://api.github.com/repos/${repository}/pages/builds`;
-          const headers = {
+          const apiHeaders = {
             Accept: 'application/vnd.github+json',
             Authorization: `Bearer ${token}`,
             'X-GitHub-Api-Version': '2026-03-10',
@@ -114,13 +117,14 @@ jobs:
             let body = null;
             try { body = JSON.parse(text.replace(/^\uFEFF/, '')); } catch (_) {}
             if (!response.ok) throw new Error(`${options.method || 'GET'} ${url} HTTP ${response.status}: ${text.slice(0, 300)}`);
-            return { response, body };
+            return body;
           }
           (async () => {
             const report = { checkedAt: new Date().toISOString(), repository, sha, expected, publicUrl };
             try {
-              const publicResult = await readJson(`${publicUrl}?verify=${Date.now()}`, { headers: { 'Cache-Control': 'no-cache, no-store, max-age=0', Pragma: 'no-cache' } });
-              report.publicBefore = publicResult.body;
+              report.publicBefore = await readJson(`${publicUrl}?verify=${Date.now()}`, {
+                headers: { 'Cache-Control': 'no-cache, no-store, max-age=0', Pragma: 'no-cache' }
+              });
             } catch (error) {
               report.publicReadError = error.message;
             }
@@ -131,8 +135,7 @@ jobs:
               return;
             }
             try {
-              const latest = await readJson(`${apiBase}/latest`, { headers });
-              report.latestBuild = latest.body;
+              report.latestBuild = await readJson(`${apiBase}/latest`, { headers: apiHeaders });
             } catch (error) {
               report.latestBuildReadError = error.message;
             }
@@ -142,13 +145,13 @@ jobs:
               report.action = 'await-existing-build';
               console.log(`最新main的Pages构建已在执行：${latestStatus}`);
             } else {
-              const requested = await readJson(apiBase, { method: 'POST', headers });
+              report.requestResponse = await readJson(apiBase, { method: 'POST', headers: apiHeaders });
               report.action = 'requested-rebuild';
-              report.requestResponse = requested.body;
-              if (!['queued', 'building'].includes(String(requested.body?.status || '').toLowerCase())) {
-                throw new Error(`Pages重建请求未进入队列：${JSON.stringify(requested.body)}`);
+              const requestStatus = String(report.requestResponse?.status || '').toLowerCase();
+              if (!['queued', 'building'].includes(requestStatus)) {
+                throw new Error(`Pages重建请求未进入队列：${JSON.stringify(report.requestResponse)}`);
               }
-              console.log(`已请求Pages从最新main重建：${requested.body.status}`);
+              console.log(`已请求Pages从最新main重建：${requestStatus}`);
             }
             fs.writeFileSync(path.join(out, 'request-result.json'), JSON.stringify(report, null, 2));
           })().catch(error => {
