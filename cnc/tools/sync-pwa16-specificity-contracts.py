@@ -72,13 +72,16 @@ def add_core_after_catalog(relative: str) -> None:
     if NEW_CORE in source:
         return
     needles = [
+        "'./learning-sublesson-catalog.js',",
+        '"./learning-sublesson-catalog.js",',
         "  './learning-sublesson-catalog.js',\n",
         "            './learning-sublesson-catalog.js',\n",
         '      "./learning-sublesson-catalog.js",\n',
     ]
     for needle in needles:
         if needle in source:
-            source = source.replace(needle, needle + needle.replace("./learning-sublesson-catalog.js", NEW_CORE), 1)
+            inserted = needle + needle.replace("./learning-sublesson-catalog.js", NEW_CORE)
+            source = source.replace(needle, inserted, 1)
             write(relative, source)
             return
     raise RuntimeError(f"无法在目录资源后插入针对性脚本：{relative}")
@@ -108,18 +111,39 @@ def add_workflow_core(relative: str) -> None:
 def split_pages_core(relative: str) -> None:
     add_core_after_catalog(relative)
     source = read(relative)
-    declaration = "const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE_PATHS.filter(path => path !== './learning-sublesson-specificity.js');\n\n"
-    if declaration not in source:
+    if "const EXACT_CORE_PATHS = [" in source:
+        current_core_name = "EXACT_CORE_PATHS"
+    elif "const EXACT_CORE = [" in source:
+        current_core_name = "EXACT_CORE"
+    else:
+        raise RuntimeError(f"缺少Pages当前核心资源集合：{relative}")
+
+    declaration = (
+        "const PREVIOUS_PUBLIC_CORE_PATHS = "
+        f"{current_core_name}.filter(path => path !== './learning-sublesson-specificity.js');\n\n"
+    )
+    if "const PREVIOUS_PUBLIC_CORE_PATHS = " not in source:
         marker = "const LEARNING_DEPTH_CORE_PATHS = new Set(["
         index = source.find(marker)
         if index < 0:
             raise RuntimeError(f"缺少Pages核心资源集合锚点：{relative}")
         source = source[:index] + declaration + source[index:]
-    old = "if (build === previousPublicPwaBuild) return EXACT_CORE_PATHS;"
-    new = "if (build === previousPublicPwaBuild) return PREVIOUS_PUBLIC_CORE_PATHS;"
-    if old in source:
-        source = source.replace(old, new, 1)
-    elif new not in source:
+
+    previous_variants = [
+        "if (build === previousPublicPwaBuild) return EXACT_CORE_PATHS;",
+        "if (build === previousPublicPwaBuild) return EXACT_CORE;",
+    ]
+    replaced = False
+    for old in previous_variants:
+        if old in source:
+            source = source.replace(
+                old,
+                "if (build === previousPublicPwaBuild) return PREVIOUS_PUBLIC_CORE_PATHS;",
+                1,
+            )
+            replaced = True
+            break
+    if not replaced and "if (build === previousPublicPwaBuild) return PREVIOUS_PUBLIC_CORE_PATHS;" not in source:
         raise RuntimeError(f"缺少上一公网核心资源分支：{relative}")
     write(relative, source)
 
