@@ -11,9 +11,14 @@ const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubuserconten
 const branchTargetPwaBuild = '20260806-pwa14';
 const previousPublicPwaBuild = '20260804-pwa13';
 const expectedSiteBuild = '20260806-learning-depth1';
+const previousPublicSiteBuild = '20260804-mobile-home1';
 const cacheRevisionByBuild = {
   [branchTargetPwaBuild]: '20260806-learning14',
   [previousPublicPwaBuild]: '20260804-mobile13'
+};
+const siteBuildByPwaBuild = {
+  [branchTargetPwaBuild]: expectedSiteBuild,
+  [previousPublicPwaBuild]: previousPublicSiteBuild
 };
 const attempts = Number(process.env.CNC_PAGES_VERIFY_ATTEMPTS || 18);
 const intervalMs = Number(process.env.CNC_PAGES_VERIFY_INTERVAL_MS || 10000);
@@ -26,7 +31,7 @@ const EXACT_CORE = [
 if (!Number.isInteger(attempts) || attempts < 1) throw new Error('CNC_PAGES_VERIFY_ATTEMPTS必须是大于0的整数');
 if (!Number.isFinite(intervalMs) || intervalMs < 0) throw new Error('CNC_PAGES_VERIFY_INTERVAL_MS不能为负数');
 
-const report = { checkedAt: new Date().toISOString(), publicRoot, mainRoot, branchTargetPwaBuild, previousPublicPwaBuild, eventName, attempts: [], resources: {} };
+const report = { checkedAt: new Date().toISOString(), publicRoot, mainRoot, branchTargetPwaBuild, previousPublicPwaBuild, expectedSiteBuild, previousPublicSiteBuild, eventName, attempts: [], resources: {} };
 const digest = buffer => crypto.createHash('sha256').update(buffer).digest('hex');
 const exact = (left, right) => left.bytes === right.bytes && left.sha256 === right.sha256;
 
@@ -57,11 +62,17 @@ function expectedCache(build, label) {
   return cache;
 }
 
+function expectedSite(build, label) {
+  const site = siteBuildByPwaBuild[build];
+  if (!site) throw new Error(`${label}出现未受控站点/PWA构建组合：${build}`);
+  return site;
+}
+
 function parseBuildInfo(text, label) {
   let data;
   try { data = JSON.parse(text.replace(/^\uFEFF/, '')); } catch (error) { throw new Error(`${label}不是合法JSON：${error.message}`); }
   if (data.app !== 'cnc-training-platform') throw new Error(`${label}应用标识错误`);
-  if (data.build !== expectedSiteBuild) throw new Error(`${label}站点构建错误：${data.build}`);
+  if (data.build !== expectedSite(data.pwaBuild, label)) throw new Error(`${label}站点构建错误：${data.build}`);
   if (data.scope !== '/cnc/') throw new Error(`${label}作用域错误：${data.scope}`);
   if (data.cacheRevision !== expectedCache(data.pwaBuild, label)) throw new Error(`${label}缓存修订错误：${data.cacheRevision}`);
   return data;
@@ -85,7 +96,7 @@ function assertBuildInfo(text, label, build) {
   if (data.pwaBuild !== build) throw new Error(`${label}PWA构建错误：${data.pwaBuild}，期望${build}`);
   const stage = String(data.contentStage || '');
   requireTokens(stage, label, ['课程12关','起点测评','手机首页一屏化','AI CNC老师基础版','PWA可靠性']);
-  if (build === branchTargetPwaBuild) requireTokens(stage, label, ['起点测评关键安全门禁','起点测评离线核心','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','正式课程开发占位清零','AI老师现场问诊单','AI老师判断说明','AI老师离线核心','AI老师学习档案异常保护']);
+  if (build === branchTargetPwaBuild) requireTokens(stage, label, ['起点测评关键安全门禁','起点测评离线核心','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','正式课程开发占位清零','AI老师现场问诊单','AI老师判断说明','AI老师离线核心','AI老师学习档案异常保护','80个图文小课']);
 }
 
 function assertContract(resource, text, label, build) {
@@ -133,7 +144,7 @@ async function waitForMainPagesMatch() {
     if (localBuild.pwaBuild !== branchTargetPwaBuild) throw new Error(`当前分支目标PWA构建错误：${localBuild.pwaBuild}`);
     const mainBuild = parseBuildInfo(deployed['cnc/build-info.json'].main.buffer.toString('utf8'), 'main cnc/build-info.json');
     const pagesBuild = parseBuildInfo(deployed['cnc/build-info.json'].pages.buffer.toString('utf8'), 'Pages cnc/build-info.json');
-    if (mainBuild.pwaBuild !== pagesBuild.pwaBuild || mainBuild.cacheRevision !== pagesBuild.cacheRevision) throw new Error('main与Pages PWA构建或缓存修订不一致');
+    if (mainBuild.pwaBuild !== pagesBuild.pwaBuild || mainBuild.cacheRevision !== pagesBuild.cacheRevision || mainBuild.build !== pagesBuild.build) throw new Error('main与Pages站点、PWA构建或缓存修订不一致');
     const publicPwaBuild = mainBuild.pwaBuild;
 
     let localMatchesMain = true;
@@ -154,9 +165,9 @@ async function waitForMainPagesMatch() {
     const branchDeploymentPending = !localMatchesMain;
     if (eventName !== 'pull_request' && branchDeploymentPending) throw new Error('main正式验收不允许当前分支与main/Pages仍不一致');
     if (!branchDeploymentPending && publicPwaBuild !== branchTargetPwaBuild) throw new Error('分支与main一致时公网必须已经是目标PWA构建');
-    report.verified = { publicReachable: true, mainPagesExactBytesMatch: true, mainPagesExactSha256Match: true, localMatchesMain, branchDeploymentPending, branchPwaBuild: branchTargetPwaBuild, branchCacheRevision: cacheRevisionByBuild[branchTargetPwaBuild], publicPwaBuild, publicCacheRevision: cacheRevisionByBuild[publicPwaBuild], beginnerPlacementPublic: true, beginnerPlacementInCoreCache: true, trainingCampInCoreCache: true, placementFirstStepCoursesInCoreCache: true, coreResourceCount: EXACT_CORE.length, criticalSafetyGatePresent: true, explainableRecommendationPresent: true, oneTimeRouteHandoffPresent: true, recommendationBoundaryVisible: true, manualBoundaryVisible: true, authorizedPersonBoundaryVisible: true, noLongTermLearningWrite: true };
+    report.verified = { publicReachable: true, mainPagesExactBytesMatch: true, mainPagesExactSha256Match: true, localMatchesMain, branchDeploymentPending, branchSiteBuild: expectedSiteBuild, branchPwaBuild: branchTargetPwaBuild, branchCacheRevision: cacheRevisionByBuild[branchTargetPwaBuild], publicSiteBuild: mainBuild.build, publicPwaBuild, publicCacheRevision: cacheRevisionByBuild[publicPwaBuild], beginnerPlacementPublic: true, beginnerPlacementInCoreCache: true, trainingCampInCoreCache: true, placementFirstStepCoursesInCoreCache: true, coreResourceCount: EXACT_CORE.length, criticalSafetyGatePresent: true, explainableRecommendationPresent: true, oneTimeRouteHandoffPresent: true, recommendationBoundaryVisible: true, manualBoundaryVisible: true, authorizedPersonBoundaryVisible: true, noLongTermLearningWrite: true };
     fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
-    fs.writeFileSync(findingsPath, ['起点测评Pages公网可达：是','main与Pages三项资源逐字节一致：是',`当前分支PWA构建/缓存修订：${branchTargetPwaBuild}/${cacheRevisionByBuild[branchTargetPwaBuild]}`,`main与Pages公网PWA构建/缓存修订：${publicPwaBuild}/${cacheRevisionByBuild[publicPwaBuild]}`,`分支待合并或待部署：${branchDeploymentPending ? '是' : '否'}`,`当前分支起点测评、训练营、三类首步课程及AI老师资源进入${EXACT_CORE.length}项核心预缓存：是`,'关键安全项高分不能抵消危险答案：已验证','一次性路线交接、中文判断依据、原厂手册与授权人员边界：可见',...findings].join('\n') + '\n');
+    fs.writeFileSync(findingsPath, ['起点测评Pages公网可达：是','main与Pages三项资源逐字节一致：是',`当前分支站点/PWA构建/缓存修订：${expectedSiteBuild}/${branchTargetPwaBuild}/${cacheRevisionByBuild[branchTargetPwaBuild]}`,`main与Pages公网站点/PWA构建/缓存修订：${mainBuild.build}/${publicPwaBuild}/${cacheRevisionByBuild[publicPwaBuild]}`,`分支待合并或待部署：${branchDeploymentPending ? '是' : '否'}`,`当前分支起点测评、训练营、三类首步课程及AI老师资源进入${EXACT_CORE.length}项核心预缓存：是`,'关键安全项高分不能抵消危险答案：已验证','一次性路线交接、中文判断依据、原厂手册与授权人员边界：可见',...findings].join('\n') + '\n');
     console.log(`CNC beginner placement offline Pages verified: branch ${branchTargetPwaBuild} / public ${publicPwaBuild} / pending=${branchDeploymentPending}`);
   } catch (error) {
     report.error = String(error && error.stack || error);
