@@ -1,0 +1,89 @@
+name: CNC Pages site configuration audit
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-pages-build-recovery.yml'
+      - '.github/workflows/cnc-pages-jekyll-preflight.yml'
+      - '.github/workflows/cnc-pages-site-config-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: read
+
+concurrency:
+  group: cnc-pages-site-config-audit-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    name: 读取Pages发布源和最近构建
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: 读取Pages站点配置与最近构建历史
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
+          const out = path.resolve('cnc/test-results/pages-site-config');
+          fs.mkdirSync(out, { recursive: true });
+          const repository = process.env.GITHUB_REPOSITORY;
+          const token = process.env.GH_TOKEN;
+          const headers = {
+            Accept: 'application/vnd.github+json',
+            Authorization: `Bearer ${token}`,
+            'X-GitHub-Api-Version': '2026-03-10',
+            'User-Agent': 'cnc-pages-site-config-audit'
+          };
+          async function read(url) {
+            const response = await fetch(url, { cache: 'no-store', headers });
+            const text = await response.text();
+            if (!response.ok) throw new Error(`GET ${url} HTTP ${response.status}: ${text.slice(0, 500)}`);
+            return JSON.parse(text.replace(/^\uFEFF/, ''));
+          }
+          (async () => {
+            const base = `https://api.github.com/repos/${repository}/pages`;
+            const site = await read(base);
+            const builds = await read(`${base}/builds?per_page=10`);
+            const report = {
+              checkedAt: new Date().toISOString(),
+              repository,
+              site,
+              builds: builds.map(item => ({
+                status: item.status,
+                error: item.error,
+                commit: item.commit,
+                duration: item.duration,
+                created_at: item.created_at,
+                updated_at: item.updated_at,
+                url: item.url
+              }))
+            };
+            fs.writeFileSync(path.join(out, 'pages-site-and-builds.json'), JSON.stringify(report, null, 2));
+            if (!site.source?.branch || !site.source?.path) throw new Error('Pages发布源缺失');
+            if (!['legacy', 'workflow'].includes(String(site.build_type || 'legacy'))) throw new Error(`未知Pages构建类型：${site.build_type}`);
+            if (!Array.isArray(builds) || builds.length === 0) throw new Error('Pages构建历史为空');
+            console.log(`Pages配置：build_type=${site.build_type || 'legacy'} source=${site.source.branch}:${site.source.path} status=${site.status}`);
+            console.log(`最近构建：${builds[0].commit} ${builds[0].status} ${builds[0].error?.message || ''}`);
+          })().catch(error => {
+            fs.writeFileSync(path.join(out, 'error.txt'), `${error.stack || error}\n`);
+            throw error;
+          });
+          NODE
+      - name: 上传Pages配置诊断
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-pages-site-config-${{ github.run_id }}
+          path: cnc/test-results/pages-site-config/
+          if-no-files-found: error
+          retention-days: 14
