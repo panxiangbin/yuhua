@@ -32,14 +32,12 @@ jobs:
           CNC_PAGES_VERIFY_ATTEMPTS=1 CNC_PAGES_VERIFY_INTERVAL_MS=0 node cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs
           CNC_PAGES_VERIFY_ATTEMPTS=1 CNC_PAGES_VERIFY_INTERVAL_MS=0 node cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs
           git diff --check
-      - name: Commit repair and restore original workflow
+      - name: Commit repaired CNC tests
         run: |
-          git show c3100ad2b15dbec1bb1db8613b8ad78078079567:.github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml > .github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml
           git rm cnc/tools/repair-pages-core-by-build.py
           git config user.name '潘斌'
           git config user.email 'smxpxb008@gmail.com'
-          git add .github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml \
-            cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs \
+          git add cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs \
             cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs \
             cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs \
             cnc/tests/mobile-home-smoke.cjs
