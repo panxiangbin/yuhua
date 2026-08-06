@@ -1,0 +1,146 @@
+name: CNC PWA14 gate repair
+
+on:
+  push:
+    branches:
+      - chatgpt/cnc-learning-depth-mainline-20260806
+    paths:
+      - .github/workflows/cnc-pwa14-gate-repair.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cnc-pwa14-gate-repair
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chatgpt/cnc-learning-depth-mainline-20260806
+          fetch-depth: 0
+
+      - name: Apply exact audited repairs
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          def replace_once(path, old, new):
+              p = Path(path)
+              text = p.read_text(encoding='utf-8')
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'{path}: expected exactly one match, found {count}: {old[:120]!r}')
+              p.write_text(text.replace(old, new, 1), encoding='utf-8')
+
+          replace_once(
+              'cnc/tests/mobile-home-smoke.cjs',
+              "    assert.match((await page.locator('.study-card[data-level=\"10\"] p').textContent()) || '', /最小输入单位/);",
+              """    const g0203Summary = (await page.locator('.study-card[data-level=\"10\"] p').textContent()) || '';
+    for (const token of ['加工平面', '方向', '圆心', '半径']) {
+      assert.match(g0203Summary, new RegExp(token), `G02/G03课程摘要必须保留${token}技术边界`);
+    }"""
+          )
+          replace_once(
+              'cnc/tests/mobile-home-smoke.cjs',
+              "    await page.waitForFunction(() => document.querySelectorAll('#view-study .study-card[data-level] .study-card-thumb').length === 12, null, { timeout: 15000 });",
+              """    await page.waitForFunction(() => document.querySelectorAll('#view-study .study-card[data-level] .study-card-thumb').length === 12, null, { timeout: 15000 });
+    await page.waitForFunction(() => window.CNC_LEARNING_SUBLESSONS?.version === '20260805-learning-depth1', null, { timeout: 15000 });
+    const learningSafety = await page.evaluate(() => window.CNC_LEARNING_SUBLESSONS.safety || '');
+    assert.match(learningSafety, /机床说明书/, '80课必须要求核对机床说明书');
+    assert.match(learningSafety, /现场工艺/, '80课必须要求核对现场工艺');
+    assert.match(learningSafety, /空运行验证/, '80课必须要求空运行验证');"""
+          )
+
+          replace_once(
+              'cnc/tests/mobile-ai-teacher-smoke.cjs',
+              "    await page.waitForFunction(() => window.CNC_AI_TEACHER?.build === '20260804-mobile-home1');",
+              "    await page.waitForFunction(() => window.CNC_AI_TEACHER?.build === '20260806-learning-depth1');"
+          )
+          replace_once(
+              '.github/workflows/cnc-ai-teacher-smoke.yml',
+              'grep -q "20260804-mobile-home1" cnc/ai-teacher.html',
+              'grep -q "20260806-learning-depth1" cnc/ai-teacher.html'
+          )
+
+          core_old = """  './personal-home.js',
+  './mobile-trust-nav.js',"""
+          core_new = """  './personal-home.js',
+  './learning-sublesson-catalog.js',
+  './learning-depth.css',
+  './learning-detail.html',
+  './mobile-trust-nav.js',"""
+          for path in [
+              'cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs',
+              'cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs',
+              'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs',
+          ]:
+              replace_once(path, core_old, core_new)
+
+          replace_once(
+              'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs',
+              """const previousPublicPwaBuild = '20260804-pwa13';
+const expectedSiteBuild = '20260806-learning-depth1';""",
+              """const previousPublicPwaBuild = '20260804-pwa13';
+const expectedSiteBuild = '20260806-learning-depth1';
+const previousPublicSiteBuild = '20260804-mobile-home1';"""
+          )
+          replace_once(
+              'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs',
+              """  if (data.app !== 'cnc-training-platform') throw new Error(`${label}应用标识错误：${data.app}`);
+  if (data.build !== expectedSiteBuild) throw new Error(`${label}站点构建错误：${data.build}`);
+  assertAllowedBuild(data.pwaBuild, label);
+  const expectedCache = expectedCacheRevision(data.pwaBuild, label);""",
+              """  if (data.app !== 'cnc-training-platform') throw new Error(`${label}应用标识错误：${data.app}`);
+  assertAllowedBuild(data.pwaBuild, label);
+  const controlledSiteBuild = data.pwaBuild === branchTargetPwaBuild ? expectedSiteBuild : previousPublicSiteBuild;
+  if (data.build !== controlledSiteBuild) throw new Error(`${label}站点构建错误：${data.build}，期望${controlledSiteBuild}`);
+  const expectedCache = expectedCacheRevision(data.pwaBuild, label);"""
+          )
+          PY
+
+      - name: Validate repaired gates without bypass
+        shell: bash
+        run: |
+          set -euxo pipefail
+          node --check cnc/tests/mobile-home-smoke.cjs
+          node --check cnc/tests/mobile-ai-teacher-smoke.cjs
+          node --check cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs
+          node --check cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs
+          node --check cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs
+          node --check cnc/sw.js
+          ! grep -Eq "test\.skip\(|describe\.skip\(|it\.skip\(|process\.exit\(0\)" \
+            cnc/tests/mobile-home-smoke.cjs \
+            cnc/tests/mobile-ai-teacher-smoke.cjs \
+            cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs \
+            cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs \
+            cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs
+          grep -q "20260806-learning-depth1" cnc/tests/mobile-ai-teacher-smoke.cjs
+          grep -q "previousPublicSiteBuild = '20260804-mobile-home1'" cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs
+          grep -q "learning-sublesson-catalog.js" cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs
+          grep -q "learning-sublesson-catalog.js" cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs
+          grep -q "learning-sublesson-catalog.js" cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs
+
+      - name: Commit repairs and remove bootstrap workflow
+        shell: bash
+        run: |
+          set -euxo pipefail
+          rm .github/workflows/cnc-pwa14-gate-repair.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            cnc/tests/mobile-home-smoke.cjs \
+            cnc/tests/mobile-ai-teacher-smoke.cjs \
+            cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs \
+            cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs \
+            cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs \
+            .github/workflows/cnc-ai-teacher-smoke.yml \
+            .github/workflows/cnc-pwa14-gate-repair.yml
+          git diff --cached --check
+          git commit -m "test(cnc): 同步PWA14课程与AI老师门禁"
+          git push origin HEAD:chatgpt/cnc-learning-depth-mainline-20260806
