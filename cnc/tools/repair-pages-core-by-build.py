@@ -78,6 +78,22 @@ function expectedCoreForBuild(build, label) {{
 ai_path = 'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs'
 ai_file = Path(ai_path)
 ai_source = ai_file.read_text(encoding='utf-8')
+
+quote_parser_old = r"""  const values = [...block.matchAll(/'([^']+)'/g)].map(match => match[1]);"""
+quote_parser_new = r"""  const values = [...block.matchAll(/(['"])(.*?)\1/g)].map(match => match[2]);"""
+ai_source = replace_once(ai_source, quote_parser_old, quote_parser_new, ai_path, 'quote-agnostic resource parser')
+
+for item in [
+    './beginner-placement.html',
+    './training-camp.html',
+    './ai-teacher.html',
+    './ai-teacher-intake.html',
+    './ai-teacher-explainability.html',
+]:
+    old = f'    "\'{item}\'",'
+    new = f"    '{item}',"
+    ai_source = replace_once(ai_source, old, new, ai_path, f'quote-agnostic token {item}')
+
 status_old = """    required.push('const cacheBuildOk=staticName.includes(EXPECTED)&&runtimeName.includes(EXPECTED)');"""
 status_new = """    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'const cacheBuildOk=staticName.includes(EXPECTED_CACHE)&&runtimeName.includes(EXPECTED_CACHE)');"""
 self_test_old = """    required.push('const staticName=keys.find(name=>name===`cnc-static-${EXPECTED}`)', 'const runtimeName=keys.find(name=>name===`cnc-runtime-${EXPECTED}`)');"""
@@ -117,6 +133,7 @@ for spec in SPECS:
 
 final_ai = ai_file.read_text(encoding='utf-8')
 for token in [
+    quote_parser_new,
     status_new,
     self_test_new,
     'expectedPaths = expectedCoreForBuild(expectedBuild, label);',
@@ -124,7 +141,17 @@ for token in [
     if token not in final_ai:
         raise SystemExit(f'AI Pages verification failed: {token}')
 
+for item in [
+    './beginner-placement.html',
+    './training-camp.html',
+    './ai-teacher.html',
+    './ai-teacher-intake.html',
+    './ai-teacher-explainability.html',
+]:
+    if f"    '{item}'," not in final_ai:
+        raise SystemExit(f'AI Pages quote-agnostic token verification failed: {item}')
+
 if 'window.CNC_LEARNING_SUBLESSONS.safetyNotice' not in mobile_file.read_text(encoding='utf-8'):
     raise SystemExit('mobile 80-course safetyNotice verification failed')
 
-print('Pages gates now distinguish PWA13/PWA14 core resources and cache revisions; mobile 80-course safety field repaired.')
+print('Pages gates now distinguish PWA13/PWA14 core resources and cache revisions; quote style is normalized semantically; mobile 80-course safety field repaired.')
