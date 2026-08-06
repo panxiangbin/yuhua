@@ -1,0 +1,98 @@
+name: CNC Pages source size audit
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-pages-build-recovery.yml'
+      - '.github/workflows/cnc-pages-source-size-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cnc-pages-source-size-audit-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    name: 审计Pages源站体积与10分钟超时风险
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: 核对审计范围与禁止绕过项
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('fs');
+          const workflow = fs.readFileSync('.github/workflows/cnc-pages-source-size-audit.yml', 'utf8');
+          const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8').replace(/^\uFEFF/, ''));
+          for (const token of [
+            "- 'cnc/**'",
+            'contents: read',
+            'git archive --format=tar.gz',
+            'trackedWorkingTreeBytes',
+            'repositoryApiSizeKiB',
+            'pagesPublishedLimitBytes',
+            'pagesDeploymentTimeoutSeconds',
+            'actions/upload-artifact@v4'
+          ]) {
+            if (!workflow.includes(token)) throw new Error(`缺少Pages源站审计契约：${token}`);
+          }
+          for (const forbidden of ['continue-on-error:' + ' true', 'cancel-in-progress:' + ' true', 'git push --' + 'force', 'process.' + 'exit(0)', 'test.' + 'skip(']) {
+            if (workflow.includes(forbidden)) throw new Error(`发现源站审计绕过项：${forbidden}`);
+          }
+          if (info.app !== 'cnc-training-platform' || info.pwaBuild !== '20260806-pwa16' || info.cacheRevision !== '20260806-learning16') {
+            throw new Error('CNC构建标记不是当前PWA16/learning16');
+          }
+          NODE
+      - name: 生成Pages源站体积与文件分布诊断
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          out='cnc/test-results/pages-source-size-audit'
+          mkdir -p "$out"
+          git ls-files -z > "$out/tracked-files.zlist"
+          tracked_count=$(tr '\0' '\n' < "$out/tracked-files.zlist" | sed '/^$/d' | wc -l | tr -d ' ')
+          tracked_bytes=$(git ls-files -z | xargs -0 -r stat -c '%s' | awk '{sum += $1} END {printf "%.0f", sum + 0}')
+          cnc_bytes=$(git ls-files -z 'cnc/**' | xargs -0 -r stat -c '%s' | awk '{sum += $1} END {printf "%.0f", sum + 0}')
+          git ls-files -z | xargs -0 -r du -k | sort -nr | head -100 > "$out/largest-tracked-files.txt" || true
+          git archive --format=tar.gz --output=/tmp/pages-source-head.tar.gz HEAD
+          archive_bytes=$(stat -c '%s' /tmp/pages-source-head.tar.gz)
+          repo_json=$(gh api "repos/${GITHUB_REPOSITORY}")
+          repo_size_kib=$(printf '%s' "$repo_json" | jq -r '.size')
+          default_branch=$(printf '%s' "$repo_json" | jq -r '.default_branch')
+          cat > "$out/result.json" <<JSON
+          {
+            "checkedAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "repository": "${GITHUB_REPOSITORY}",
+            "commit": "${GITHUB_SHA}",
+            "defaultBranch": "${default_branch}",
+            "trackedFileCount": ${tracked_count},
+            "trackedWorkingTreeBytes": ${tracked_bytes},
+            "cncTrackedBytes": ${cnc_bytes},
+            "gitArchiveBytes": ${archive_bytes},
+            "repositoryApiSizeKiB": ${repo_size_kib},
+            "pagesSourceRecommendedLimitBytes": 1073741824,
+            "pagesPublishedLimitBytes": 1073741824,
+            "pagesDeploymentTimeoutSeconds": 600,
+            "repositoryApiSizeExceedsRecommendedOneGiB": $([ "$repo_size_kib" -gt 1048576 ] && echo true || echo false),
+            "trackedWorkingTreeExceedsPublishedOneGiB": $([ "$tracked_bytes" -gt 1073741824 ] && echo true || echo false),
+            "gitArchiveExceedsPublishedOneGiB": $([ "$archive_bytes" -gt 1073741824 ] && echo true || echo false)
+          }
+          JSON
+          rm -f "$out/tracked-files.zlist" /tmp/pages-source-head.tar.gz
+          cat "$out/result.json"
+      - name: 上传Pages源站体积诊断
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-pages-source-size-audit-${{ github.run_id }}
+          path: cnc/test-results/pages-source-size-audit/
+          if-no-files-found: error
+          retention-days: 14
