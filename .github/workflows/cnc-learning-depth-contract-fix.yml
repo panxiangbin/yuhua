@@ -93,7 +93,7 @@ jobs:
           pages_contracts = [
               ('cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs', 'expectedCorePaths', 'build', 'branchTargetPwaBuild'),
               ('cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs', 'expectedCore', 'expectedBuild', 'branchTargetPwaBuild'),
-              ('cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs', 'expectedCorePaths', 'build', 'expectedPwaBuild'),
+              ('cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs', 'expectedCore', 'build', 'expectedPwaBuild'),
           ]
           learning_push = "core.push('./learning-sublesson-catalog.js', './learning-depth.css', './learning-detail.html');"
           for path, function_name, parameter, target_build in pages_contracts:
