@@ -32,13 +32,11 @@ jobs:
           import json
           from pathlib import Path
 
-          def replace_exact(path, old, new, count=None):
+          def replace_exact(path, old, new, count=1):
               file = Path(path)
               text = file.read_text(encoding='utf-8')
               actual = text.count(old)
-              if actual == 0:
-                  raise SystemExit(f'{path}: missing replacement anchor: {old[:100]}')
-              if count is not None and actual != count:
+              if actual != count:
                   raise SystemExit(f'{path}: expected {count} anchors, found {actual}: {old[:100]}')
               file.write_text(text.replace(old, new), encoding='utf-8', newline='\n')
 
@@ -56,28 +54,24 @@ jobs:
               'cnc/sw.js',
               "const CACHE_REVISION = '20260805-learning13';\nconst STATIC_CACHE = `cnc-static-${CACHE_REVISION}`;\nconst RUNTIME_CACHE = `cnc-runtime-${CACHE_REVISION}`;",
               "const CACHE_REVISION = BUILD;\nconst STATIC_CACHE = `cnc-static-${BUILD}`;\nconst RUNTIME_CACHE = `cnc-runtime-${BUILD}`;",
-              1,
           )
 
-          pwa_self = Path('cnc/pwa-self-test.html')
-          text = pwa_self.read_text(encoding='utf-8')
-          old_required = "const REQUIRED=['./index.html','./offline.html','./pwa-status.html','./pwa-self-test.html','./pages-status.html','./beginner-placement.html','./training-camp.html','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html','./ai-teacher.html','./ai-teacher-intake.html','./ai-teacher-explainability.html','./build-info.json'];"
-          new_required = "const REQUIRED=['./index.html','./offline.html','./pwa-status.html','./pwa-self-test.html','./pages-status.html','./beginner-placement.html','./training-camp.html','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html','./ai-teacher.html','./ai-teacher-intake.html','./ai-teacher-explainability.html','./build-info.json','./learning-sublesson-catalog.js','./learning-depth.css','./learning-detail.html'];"
-          if text.count(old_required) != 1:
-              raise SystemExit('cnc/pwa-self-test.html: REQUIRED anchor drift')
-          pwa_self.write_text(text.replace(old_required, new_required), encoding='utf-8', newline='\n')
+          replace_exact(
+              'cnc/pwa-self-test.html',
+              "const REQUIRED=['./index.html','./offline.html','./pwa-status.html','./pwa-self-test.html','./pages-status.html','./beginner-placement.html','./training-camp.html','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html','./ai-teacher.html','./ai-teacher-intake.html','./ai-teacher-explainability.html','./build-info.json'];",
+              "const REQUIRED=['./index.html','./offline.html','./pwa-status.html','./pwa-self-test.html','./pages-status.html','./beginner-placement.html','./training-camp.html','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html','./ai-teacher.html','./ai-teacher-intake.html','./ai-teacher-explainability.html','./build-info.json','./learning-sublesson-catalog.js','./learning-depth.css','./learning-detail.html'];",
+          )
 
           stage9_old = '分清快速定位和直线切削，并学会受控验证。'
           stage9_new = '分清快速定位和直线切削；G00移动轨迹不保证直线，必须使用单段、空运行和低倍率受控验证。'
           stage10_old = '结合加工平面、方向、圆心和半径理解圆弧编程。'
           stage10_new = '结合加工平面、方向、圆心和半径理解圆弧编程；I、J、K等圆心增量受系统最小输入单位约束。'
-          replace_exact('cnc/personal-home.js', stage9_old, stage9_new, 1)
-          replace_exact('cnc/personal-home.js', stage10_old, stage10_new, 1)
-          replace_exact('cnc/learning-sublesson-catalog.js', stage9_old, stage9_new, 1)
-          replace_exact('cnc/learning-sublesson-catalog.js', stage10_old, stage10_new, 1)
+          for target in ['cnc/personal-home.js', 'cnc/learning-sublesson-catalog.js']:
+              replace_exact(target, stage9_old, stage9_new)
+              replace_exact(target, stage10_old, stage10_new)
 
           personal = Path('cnc/personal-home.js')
-          text = personal.read_text(encoding='utf-8')
+          source = personal.read_text(encoding='utf-8')
           helper_anchor = "  function boot() {\n"
           helper = (
               "  function syncQuickSearchAccessibility() {\n"
@@ -87,34 +81,33 @@ jobs:
               "    return true;\n"
               "  }\n\n"
           )
-          if text.count(helper_anchor) != 1:
+          if source.count(helper_anchor) != 1:
               raise SystemExit('cnc/personal-home.js: boot anchor drift')
-          text = text.replace(helper_anchor, helper + helper_anchor, 1)
-          call_anchor = "    installQueryImageObserver();\n"
-          call_count = text.count(call_anchor)
-          if call_count != 2:
-              raise SystemExit(f'cnc/personal-home.js: expected 2 observer calls, found {call_count}')
-          text = text.replace(call_anchor, call_anchor + "    syncQuickSearchAccessibility();\n")
-          personal.write_text(text, encoding='utf-8', newline='\n')
+          source = source.replace(helper_anchor, helper + helper_anchor, 1)
+          observer_call = "    installQueryImageObserver();\n"
+          if source.count(observer_call) != 2:
+              raise SystemExit(f'cnc/personal-home.js: observer call count={source.count(observer_call)}')
+          source = source.replace(observer_call, observer_call + "    syncQuickSearchAccessibility();\n")
+          personal.write_text(source, encoding='utf-8', newline='\n')
 
-          pages_tests = [
-              ('cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs', 'branchTargetPwaBuild'),
-              ('cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs', 'branchTargetPwaBuild'),
-              ('cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs', 'expectedPwaBuild'),
+          pages_contracts = [
+              ('cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs', 'expectedCorePaths', 'build', 'branchTargetPwaBuild'),
+              ('cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs', 'expectedCore', 'expectedBuild', 'branchTargetPwaBuild'),
+              ('cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs', 'expectedCorePaths', 'build', 'expectedPwaBuild'),
           ]
           learning_push = "core.push('./learning-sublesson-catalog.js', './learning-depth.css', './learning-detail.html');"
-          for path, variable in pages_tests:
+          for path, function_name, parameter, target_build in pages_contracts:
               file = Path(path)
               source = file.read_text(encoding='utf-8')
               if learning_push in source:
                   continue
-              function_start = source.find('function expectedCorePaths(build)')
+              function_start = source.find(f'function {function_name}(')
               if function_start < 0:
-                  raise SystemExit(f'{path}: expectedCorePaths missing')
+                  raise SystemExit(f'{path}: {function_name} missing')
               return_at = source.find('  return core;', function_start)
               if return_at < 0:
-                  raise SystemExit(f'{path}: expectedCorePaths return missing')
-              insertion = f"  if (build === {variable}) {learning_push}\n"
+                  raise SystemExit(f'{path}: core return missing')
+              insertion = f"  if ({parameter} === {target_build}) {learning_push}\n"
               source = source[:return_at] + insertion + source[return_at:]
               file.write_text(source, encoding='utf-8', newline='\n')
 
@@ -125,8 +118,8 @@ jobs:
               'cnc/personal-home.js': ['G00移动轨迹不保证直线', '最小输入单位', '快速搜索G代码、报警和参数'],
           }
           for path, tokens in checks.items():
-              source = Path(path).read_text(encoding='utf-8')
-              missing = [token for token in tokens if token not in source]
+              text = Path(path).read_text(encoding='utf-8')
+              missing = [token for token in tokens if token not in text]
               if missing:
                   raise SystemExit(f'{path}: missing post-repair tokens: {missing}')
           PY
