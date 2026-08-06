@@ -10,10 +10,15 @@ const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
 const expectedSiteBuild = '20260806-learning-depth1';
 const expectedPwaBuild = '20260806-pwa14';
+const previousPublicSiteBuild = '20260804-mobile-home1';
 const previousPublicPwaBuild = '20260804-pwa13';
 const cacheRevisionByBuild = {
   [expectedPwaBuild]: '20260806-learning14',
   [previousPublicPwaBuild]: '20260804-mobile13'
+};
+const siteBuildByPwaBuild = {
+  [expectedPwaBuild]: expectedSiteBuild,
+  [previousPublicPwaBuild]: previousPublicSiteBuild
 };
 const attempts = Number(process.env.CNC_PAGES_VERIFY_ATTEMPTS || 18);
 const intervalMs = Number(process.env.CNC_PAGES_VERIFY_INTERVAL_MS || 10000);
@@ -32,6 +37,7 @@ const report = {
   mainRoot,
   expectedSiteBuild,
   expectedPwaBuild,
+  previousPublicSiteBuild,
   previousPublicPwaBuild,
   eventName,
   attempts: [],
@@ -98,6 +104,12 @@ function expectedCache(build, label) {
   const cache = cacheRevisionByBuild[build];
   if (!cache) throw new Error(`${label}出现未受控PWA构建：${build}`);
   return cache;
+}
+
+function expectedSite(build, label) {
+  const site = siteBuildByPwaBuild[build];
+  if (!site) throw new Error(`${label}出现未受控站点/PWA构建组合：${build}`);
+  return site;
 }
 
 function assertTrainingCamp(text, label) {
@@ -197,7 +209,7 @@ function parseBuildInfo(text, label) {
   }
   if (data.app !== 'cnc-training-platform') throw new Error(`${label}应用标识错误`);
   if (data.scope !== '/cnc/') throw new Error(`${label}作用域错误：${data.scope}`);
-  if (data.build !== expectedSiteBuild) throw new Error(`${label}站点构建错误：${data.build}`);
+  if (data.build !== expectedSite(data.pwaBuild, label)) throw new Error(`${label}站点构建错误：${data.build}`);
   if (data.cacheRevision !== expectedCache(data.pwaBuild, label)) throw new Error(`${label}缓存修订错误：${data.cacheRevision}`);
   const stage = String(data.contentStage || '');
   requireTokens(stage, label, ['课程12关', '起点测评', '手机首页一屏化', 'AI CNC老师基础版', 'PWA可靠性']);
@@ -212,7 +224,8 @@ function parseBuildInfo(text, label) {
       'AI老师现场问诊单',
       'AI老师判断说明',
       'AI老师离线核心',
-      'AI老师学习档案异常保护'
+      'AI老师学习档案异常保护',
+      '80个图文小课'
     ]);
   }
   return data;
@@ -273,7 +286,7 @@ async function waitForMainPagesMatch() {
 
     const mainBuildData = parseBuildInfo(deployed['cnc/build-info.json'].main.buffer.toString('utf8'), 'main cnc/build-info.json');
     const pagesBuildData = parseBuildInfo(deployed['cnc/build-info.json'].pages.buffer.toString('utf8'), 'Pages cnc/build-info.json');
-    if (mainBuildData.pwaBuild !== pagesBuildData.pwaBuild || mainBuildData.cacheRevision !== pagesBuildData.cacheRevision) throw new Error('main与Pages PWA构建或缓存修订标记不一致');
+    if (mainBuildData.pwaBuild !== pagesBuildData.pwaBuild || mainBuildData.cacheRevision !== pagesBuildData.cacheRevision || mainBuildData.build !== pagesBuildData.build) throw new Error('main与Pages站点、PWA构建或缓存修订标记不一致');
     const publicPwaBuild = mainBuildData.pwaBuild;
 
     for (const resource of resources) {
@@ -307,7 +320,7 @@ async function waitForMainPagesMatch() {
     if (eventName !== 'pull_request' && branchDeploymentPending) {
       throw new Error('main正式验收不允许当前分支与main/Pages仍不一致');
     }
-    if (!branchDeploymentPending && publicPwaBuild !== expectedPwaBuild) throw new Error('分支与main一致时公网必须已经是PWA13');
+    if (!branchDeploymentPending && publicPwaBuild !== expectedPwaBuild) throw new Error('分支与main一致时公网必须已经是PWA14');
 
     report.verified = {
       publicReachable: true,
@@ -318,6 +331,7 @@ async function waitForMainPagesMatch() {
       siteBuild: expectedSiteBuild,
       pwaBuild: expectedPwaBuild,
       cacheRevision: cacheRevisionByBuild[expectedPwaBuild],
+      publicSiteBuild: mainBuildData.build,
       publicPwaBuild,
       publicCacheRevision: cacheRevisionByBuild[publicPwaBuild],
       trainingCampPublic: true,
@@ -340,9 +354,8 @@ async function waitForMainPagesMatch() {
     fs.writeFileSync(findingsPath, [
       '训练营Pages公网可达：是',
       'main与Pages三项资源逐字节一致：是',
-      `站点构建：${expectedSiteBuild}`,
-      `分支PWA构建/缓存修订：${expectedPwaBuild}/${cacheRevisionByBuild[expectedPwaBuild]}`,
-      `公网PWA构建/缓存修订：${publicPwaBuild}/${cacheRevisionByBuild[publicPwaBuild]}`,
+      `分支站点/PWA构建/缓存修订：${expectedSiteBuild}/${expectedPwaBuild}/${cacheRevisionByBuild[expectedPwaBuild]}`,
+      `公网站点/PWA构建/缓存修订：${mainBuildData.build}/${publicPwaBuild}/${cacheRevisionByBuild[publicPwaBuild]}`,
       `分支待合并或待部署：${branchDeploymentPending ? '是' : '否'}`,
       '一次性交接键先删除后解析：已验证',
       '四种分类与唯一受控路线完整匹配：已验证',
