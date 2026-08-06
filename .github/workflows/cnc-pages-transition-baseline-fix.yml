@@ -1,6 +1,9 @@
 name: CNC Pages transition baseline one-shot repair
 
 on:
+  push:
+    branches:
+      - codex/learning-depth-refactor-20260805
   pull_request:
     branches:
       - main
