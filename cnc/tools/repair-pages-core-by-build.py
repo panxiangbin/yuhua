@@ -36,6 +36,14 @@ SPECS = [
     },
 ]
 
+
+def replace_once(source, old, new, path, label):
+    count = source.count(old)
+    if count != 1:
+        raise SystemExit(f'{path}: {label} anchor count={count}')
+    return source.replace(old, new, 1)
+
+
 for spec in SPECS:
     file = Path(spec['path'])
     source = file.read_text(encoding='utf-8')
@@ -64,13 +72,11 @@ function expectedCoreForBuild(build, label) {{
 }}"""
         source = source[:insert_at] + helper + source[insert_at:]
 
-    count = source.count(spec['old'])
-    if count != 1:
-        raise SystemExit(f"{spec['path']}: assertion anchor count={count}")
-    source = source.replace(spec['old'], spec['new'], 1)
+    source = replace_once(source, spec['old'], spec['new'], spec['path'], 'core assertion')
     file.write_text(source, encoding='utf-8', newline='\n')
 
-ai_file = Path('cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs')
+ai_path = 'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs'
+ai_file = Path(ai_path)
 ai_source = ai_file.read_text(encoding='utf-8')
 status_old = """    required.push('const cacheBuildOk=staticName.includes(EXPECTED)&&runtimeName.includes(EXPECTED)');"""
 status_new = """    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'const cacheBuildOk=staticName.includes(EXPECTED_CACHE)&&runtimeName.includes(EXPECTED_CACHE)');"""
@@ -80,11 +86,27 @@ for old, new, label in [
     (status_old, status_new, 'status-page cache contract'),
     (self_test_old, self_test_new, 'self-test cache contract'),
 ]:
-    count = ai_source.count(old)
-    if count != 1:
-        raise SystemExit(f'AI Pages {label}: anchor count={count}')
-    ai_source = ai_source.replace(old, new, 1)
+    ai_source = replace_once(ai_source, old, new, ai_path, label)
+ai_source = replace_once(
+    ai_source,
+    '    expectedPaths = LEGACY_PUBLIC_SELF_TEST_PATHS;',
+    '    expectedPaths = expectedCoreForBuild(expectedBuild, label);',
+    ai_path,
+    'PWA13 self-test core paths',
+)
 ai_file.write_text(ai_source, encoding='utf-8', newline='\n')
+
+mobile_path = 'cnc/tests/mobile-home-smoke.cjs'
+mobile_file = Path(mobile_path)
+mobile_source = mobile_file.read_text(encoding='utf-8')
+mobile_source = replace_once(
+    mobile_source,
+    "window.CNC_LEARNING_SUBLESSONS.safety || ''",
+    "window.CNC_LEARNING_SUBLESSONS.safetyNotice || ''",
+    mobile_path,
+    '80-course safety field',
+)
+mobile_file.write_text(mobile_source, encoding='utf-8', newline='\n')
 
 for spec in SPECS:
     source = Path(spec['path']).read_text(encoding='utf-8')
@@ -94,8 +116,15 @@ for spec in SPECS:
         raise SystemExit(f"{spec['path']}: assertion verification failed")
 
 final_ai = ai_file.read_text(encoding='utf-8')
-for token in [status_new, self_test_new]:
+for token in [
+    status_new,
+    self_test_new,
+    'expectedPaths = expectedCoreForBuild(expectedBuild, label);',
+]:
     if token not in final_ai:
-        raise SystemExit('AI Pages cache-revision verification failed')
+        raise SystemExit(f'AI Pages verification failed: {token}')
 
-print('Pages gates now distinguish PWA13/PWA14 core resources and cache revisions.')
+if 'window.CNC_LEARNING_SUBLESSONS.safetyNotice' not in mobile_file.read_text(encoding='utf-8'):
+    raise SystemExit('mobile 80-course safetyNotice verification failed')
+
+print('Pages gates now distinguish PWA13/PWA14 core resources and cache revisions; mobile 80-course safety field repaired.')
