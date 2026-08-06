@@ -1,45 +1,114 @@
 name: CNC training camp route handoff Pages smoke
-
 on:
   pull_request:
-    branches:
-      - main
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml'
   push:
     branches:
-      - chatgpt/cnc-learning-depth-mainline-20260806
-
+      - main
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml'
+  workflow_dispatch:
 permissions:
-  contents: write
-
+  contents: read
+concurrency:
+  group: cnc-training-camp-route-handoff-pages-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
 jobs:
-  repair:
+  verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          ref: chatgpt/cnc-learning-depth-mainline-20260806
-          fetch-depth: 0
-      - name: Apply Pages core transition repair
-        run: python3 cnc/tools/repair-pages-core-by-build.py
-      - name: Validate repaired Pages gates
+          node-version: 24
+      - name: Initialize diagnostics
+        run: |
+          mkdir -p cnc/test-results/training-camp-route-handoff-pages
+          node - <<'NODE'
+          const fs = require('fs');
+          fs.writeFileSync('cnc/test-results/training-camp-route-handoff-pages/workflow-bootstrap.json', JSON.stringify({
+            stage: 'workflow-bootstrap',
+            runId: process.env.GITHUB_RUN_ID,
+            headSha: process.env.GITHUB_SHA,
+            eventName: process.env.GITHUB_EVENT_NAME,
+            initializedAt: new Date().toISOString()
+          }, null, 2));
+          NODE
+      - name: Validate exact deployment contract
         run: |
           node --check cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs
-          node --check cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs
-          node --check cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs
-          node --check cnc/tests/mobile-home-smoke.cjs
-          grep -q 'CNC_LEARNING_SUBLESSONS.safetyNotice' cnc/tests/mobile-home-smoke.cjs
-          CNC_PAGES_VERIFY_ATTEMPTS=1 CNC_PAGES_VERIFY_INTERVAL_MS=0 node cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs
-          CNC_PAGES_VERIFY_ATTEMPTS=1 CNC_PAGES_VERIFY_INTERVAL_MS=0 node cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs
-          CNC_PAGES_VERIFY_ATTEMPTS=1 CNC_PAGES_VERIFY_INTERVAL_MS=0 node cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs
-          git diff --check
-      - name: Commit repaired CNC tests
-        run: |
-          git rm cnc/tools/repair-pages-core-by-build.py
-          git config user.name '潘斌'
-          git config user.email 'smxpxb008@gmail.com'
-          git add cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs \
-            cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs \
-            cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs \
-            cnc/tests/mobile-home-smoke.cjs
-          git commit -m 'fix(cnc-pages): 区分PWA13与PWA14离线契约'
-          git push origin HEAD:chatgpt/cnc-learning-depth-mainline-20260806
+          node --check cnc/sw.js
+          node - <<'NODE'
+          const fs = require('fs');
+          const test = fs.readFileSync('cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs', 'utf8');
+          const camp = fs.readFileSync('cnc/training-camp.html', 'utf8');
+          const sw = fs.readFileSync('cnc/sw.js', 'utf8');
+          const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
+          if (info.build !== '20260806-learning-depth1') throw new Error(`unexpected site build: ${info.build}`);
+          if (info.pwaBuild !== '20260806-pwa14' || info.cacheRevision !== '20260806-learning14') throw new Error(`unexpected PWA/cache build: ${info.pwaBuild}/${info.cacheRevision}`);
+          if (!sw.includes("const BUILD = '20260806-pwa14'") || !sw.includes("const CACHE_REVISION = '20260806-learning14'")) throw new Error('Service Worker build/cache mismatch');
+          for (const token of [
+            "const expectedSiteBuild = '20260806-learning-depth1'",
+            "const expectedPwaBuild = '20260806-pwa14'",
+            "const previousPublicPwaBuild = '20260804-pwa13'",
+            "[expectedPwaBuild]: '20260806-learning14'",
+            "[previousPublicPwaBuild]: '20260804-mobile13'",
+            'CNC_PAGES_VERIFY_ATTEMPTS || 18',
+            "cache: 'no-store'",
+            "const resources = ['cnc/training-camp.html', 'cnc/sw.js', 'cnc/build-info.json']",
+            'mainPagesExactBytesMatch: true',
+            'mainPagesExactSha256Match: true',
+            'branchDeploymentPending',
+            'oneTimeRouteConsumerPresent: true',
+            'consumeBeforeParsePresent: true',
+            'canonicalRouteIntegrityPresent: true',
+            'plainTextRenderingPresent: true',
+            'bfcacheClearingPresent: true',
+            'sessionStorageOnlyHandoffPresent: true',
+            'trainingCampInCoreCache: true',
+            'placementFirstStepCoursesInCoreCache: true',
+            'coreResourceCount: EXACT_CORE.length',
+            'process.exit(1)'
+          ]) {
+            if (!test.includes(token)) throw new Error(`deployment test missing: ${token}`);
+          }
+          for (const token of [
+            "const PLACEMENT_HANDOFF_KEY='cnc_beginner_placement_route_handoff_v1'",
+            'const PLACEMENT_ROUTE_CATALOG=Object.freeze({',
+            'function payloadMatchesCanonicalRoute(data,canonical)',
+            'sessionStorage.removeItem(PLACEMENT_HANDOFF_KEY)',
+            'document.createTextNode(step.title)',
+            "window.addEventListener('pagehide',clearConsumedHandoffView)",
+            'event.persisted&&placementHandoffConsumed',
+            '测评推荐不代表现场上机许可',
+            '不能替代机床原厂手册'
+          ]) {
+            if (!camp.includes(token)) throw new Error(`training camp contract missing: ${token}`);
+          }
+          for (const file of ['./training-camp.html','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html','./ai-teacher.html','./ai-teacher-intake.html','./ai-teacher-explainability.html']) {
+            if (!sw.includes(`'${file}'`)) throw new Error(`PWA core missing: ${file}`);
+          }
+          for (const stage of ['起点测评关键安全门禁','起点测评离线核心','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','正式课程开发占位清零','AI老师学习档案异常保护','80个图文小课']) {
+            if (!String(info.contentStage || '').includes(stage)) throw new Error(`build marker missing: ${stage}`);
+          }
+          for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)', 'CNC_PAGES_VERIFY_ATTEMPTS || 0']) {
+            if (test.includes(forbidden)) throw new Error(`deployment gate bypass found: ${forbidden}`);
+          }
+          NODE
+      - name: Verify main and Pages exact deployment
+        env:
+          CNC_PAGES_VERIFY_ATTEMPTS: 18
+          CNC_PAGES_VERIFY_INTERVAL_MS: 10000
+        run: node cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs
+      - name: Upload deployment diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-training-camp-route-handoff-pages-${{ github.run_id }}
+          path: cnc/test-results/training-camp-route-handoff-pages/**
+          if-no-files-found: error
+          retention-days: 14
