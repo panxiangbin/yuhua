@@ -111,8 +111,7 @@ jobs:
               'cnc/pwa-status.html',
               'cnc/pwa-self-test.html',
               'cnc/tests/mobile-pwa-offline-cache-smoke.cjs',
-              'cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs',
-              'cnc/tests/mobile-pwa-self-test-smoke.cjs'
+              'cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs'
           ]:
               p=Path(file);s=p.read_text(encoding='utf-8')
               if OLD_PWA not in s or OLD_CACHE not in s:
@@ -140,9 +139,9 @@ jobs:
               raise SystemExit(f'unexpected build-info baseline: {info.get("pwaBuild")} / {info.get("cacheRevision")}')
           info['pwaBuild']=NEW_PWA
           info['cacheRevision']=NEW_CACHE
-          stage='12关本地视频离线核心 · 学习目录样式首绘稳定'
-          if stage not in str(info.get('contentStage','')):
-              info['contentStage']=str(info.get('contentStage','')).rstrip(' ·')+' · '+stage
+          for stage in ['12关本地视频离线核心','学习目录样式首绘稳定']:
+              if stage not in str(info.get('contentStage','')):
+                  info['contentStage']=str(info.get('contentStage','')).rstrip(' ·')+' · '+stage
           info['generatedAt']=datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace('+00:00','Z')
           info_path.write_text(json.dumps(info,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 
@@ -211,7 +210,7 @@ jobs:
           if git status --porcelain -- cnc | grep -q .; then
             git config user.name 'github-actions[bot]'
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git add cnc/index.html cnc/learning-detail.html cnc/build-info.json cnc/sw.js cnc/pwa-status.html cnc/pwa-self-test.html cnc/tests/mobile-pwa-offline-cache-smoke.cjs cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs cnc/tests/mobile-pwa-self-test-smoke.cjs cnc/tests/mobile-pwa-upgrade-data-smoke.cjs cnc/assets/videos/learning
+            git add cnc/index.html cnc/learning-detail.html cnc/build-info.json cnc/sw.js cnc/pwa-status.html cnc/pwa-self-test.html cnc/tests/mobile-pwa-offline-cache-smoke.cjs cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs cnc/tests/mobile-pwa-upgrade-data-smoke.cjs cnc/assets/videos/learning
             git commit -m 'feat(cnc-learning): add validated offline media and PWA19 bundle'
             git push origin HEAD:"$branch"
           else
