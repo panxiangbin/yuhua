@@ -119,8 +119,9 @@ function observePage(page, errors) {
 
     stage = 'history-return-real-bfcache';
     await page.goto('http://127.0.0.1:4173/cnc/profile.html', { waitUntil: 'domcontentloaded' });
-    await page.goBack({ waitUntil: 'domcontentloaded' });
-    await page.waitForURL(/pwa-status\.html/);
+    // BFCache恢复不会重新触发DOMContentLoaded；直接触发浏览器历史返回，再只等待URL提交与pageshow.persisted探针。
+    await page.evaluate(() => history.back());
+    await page.waitForURL(/pwa-status\.html/, { waitUntil: 'commit', timeout: 5000 });
     await page.waitForFunction(key => {
       try {
         const value = JSON.parse(sessionStorage.getItem(key) || 'null');
