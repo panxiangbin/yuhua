@@ -8,8 +8,12 @@ on:
       - 'cnc/learning-detail.html'
       - 'cnc/learning-depth.css'
       - 'cnc/homepage-refresh.css'
+      - 'cnc/index.html'
+      - 'cnc/build-info.json'
       - 'cnc/sw.js'
+      - 'cnc/pwa-status.html'
       - 'cnc/pwa-self-test.html'
+      - 'cnc/tests/mobile-pwa-*.cjs'
       - 'cnc/assets/videos/learning/**'
       - '.github/workflows/cnc-learning-media-smoke.yml'
 
@@ -18,7 +22,7 @@ permissions:
 
 concurrency:
   group: cnc-learning-media-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build-and-smoke:
@@ -27,7 +31,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.head_ref }}
+          ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
@@ -36,16 +40,52 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Wire permanent video sources into learning and PWA
+      - name: Record exact tested head
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p cnc/test-results/mobile-learning-media
+          tested="$(git rev-parse HEAD)"
+          expected='${{ github.event.pull_request.head.sha }}'
+          test "$tested" = "$expected"
+          node - "$tested" "$GITHUB_SHA" <<'NODE'
+          const fs=require('fs');
+          const [testedSha,eventSha]=process.argv.slice(2);
+          fs.writeFileSync('cnc/test-results/mobile-learning-media/workflow-bootstrap.json',JSON.stringify({
+            stage:'workflow-bootstrap',
+            runId:process.env.GITHUB_RUN_ID,
+            testedSha,
+            eventSha,
+            eventName:process.env.GITHUB_EVENT_NAME,
+            initializedAt:new Date().toISOString()
+          },null,2));
+          NODE
+
+      - name: Wire stable learning styles, permanent videos and PWA19
         shell: python
         run: |
           from pathlib import Path
+          from datetime import datetime, timezone
           import json
+
+          OLD_PWA='20260807-pwa18'
+          NEW_PWA='20260807-pwa19'
+          OLD_CACHE='20260807-learning18'
+          NEW_CACHE='20260807-learning19'
           names=[
           'stage01_safety.mp4','stage02_xyz.mp4','stage03_z_tool.mp4','stage04_program.mp4',
           'stage05_g90_g91.mp4','stage06_g00_g01.mp4','stage07_sf.mp4','stage08_g02_g03.mp4',
           'stage09_milling_direction.mp4','stage10_g41_g42.mp4','stage11_g81_g83.mp4','stage12_first_part.mp4']
           paths=[f'./assets/videos/learning/{n}' for n in names]
+
+          index=Path('cnc/index.html')
+          index_text=index.read_text(encoding='utf-8')
+          depth_link='<link rel="stylesheet" href="./learning-depth.css?v=20260807-media1" data-cnc-learning-depth="true">'
+          if 'data-cnc-learning-depth="true"' not in index_text:
+              anchor='  <link rel="stylesheet" href="./homepage-refresh.css?v=20260804a">'
+              if anchor not in index_text: raise SystemExit('homepage stylesheet anchor not found')
+              index_text=index_text.replace(anchor,anchor+'\n  '+depth_link,1)
+          index.write_text(index_text,encoding='utf-8')
 
           detail=Path('cnc/learning-detail.html')
           text=detail.read_text(encoding='utf-8')
@@ -65,7 +105,48 @@ jobs:
               p.write_text(s,encoding='utf-8')
           inject_array('cnc/sw.js','const REQUIRED_CORE_PATHS = [',paths)
           inject_array('cnc/pwa-self-test.html','const REQUIRED=[',paths)
-          print('wired',len(paths),'permanent MP4 sources')
+
+          for file in [
+              'cnc/sw.js',
+              'cnc/pwa-status.html',
+              'cnc/pwa-self-test.html',
+              'cnc/tests/mobile-pwa-offline-cache-smoke.cjs',
+              'cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs',
+              'cnc/tests/mobile-pwa-self-test-smoke.cjs'
+          ]:
+              p=Path(file);s=p.read_text(encoding='utf-8')
+              if OLD_PWA not in s or OLD_CACHE not in s:
+                  raise SystemExit(f'expected PWA18 markers missing in {file}')
+              s=s.replace(OLD_PWA,NEW_PWA).replace(OLD_CACHE,NEW_CACHE)
+              p.write_text(s,encoding='utf-8')
+
+          upgrade=Path('cnc/tests/mobile-pwa-upgrade-data-smoke.cjs')
+          s=upgrade.read_text(encoding='utf-8')
+          required={
+              "const CURRENT_PWA_BUILD = '20260807-pwa18'":"const CURRENT_PWA_BUILD = '20260807-pwa19'",
+              "const PREVIOUS_PWA_BUILD = '20260807-pwa17'":"const PREVIOUS_PWA_BUILD = '20260807-pwa18'",
+              "const CURRENT_CACHE_REVISION = '20260807-learning18'":"const CURRENT_CACHE_REVISION = '20260807-learning19'",
+              "const PREVIOUS_CACHE_REVISION = '20260807-learning17'":"const PREVIOUS_CACHE_REVISION = '20260807-learning18'",
+              "source: 'pwa17'":"source: 'pwa18'"
+          }
+          for before,after in required.items():
+              if before not in s: raise SystemExit(f'upgrade marker missing: {before}')
+              s=s.replace(before,after,1)
+          upgrade.write_text(s,encoding='utf-8')
+
+          info_path=Path('cnc/build-info.json')
+          info=json.loads(info_path.read_text(encoding='utf-8-sig'))
+          if info.get('pwaBuild')!=OLD_PWA or info.get('cacheRevision')!=OLD_CACHE:
+              raise SystemExit(f'unexpected build-info baseline: {info.get("pwaBuild")} / {info.get("cacheRevision")}')
+          info['pwaBuild']=NEW_PWA
+          info['cacheRevision']=NEW_CACHE
+          stage='12关本地视频离线核心 · 学习目录样式首绘稳定'
+          if stage not in str(info.get('contentStage','')):
+              info['contentStage']=str(info.get('contentStage','')).rstrip(' ·')+' · '+stage
+          info['generatedAt']=datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace('+00:00','Z')
+          info_path.write_text(json.dumps(info,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+
+          print('wired',len(paths),'permanent MP4 sources; bumped',OLD_PWA,'->',NEW_PWA)
 
       - name: Install video rendering dependencies
         run: |
@@ -84,7 +165,7 @@ jobs:
           else
             echo 'Video set exists; validating only.'
           fi
-      - name: Validate MP4 media contracts
+      - name: Validate MP4 media and PWA19 contracts
         shell: bash
         run: |
           set -euo pipefail
@@ -101,8 +182,9 @@ jobs:
           PY
             echo "$name $codec $dims ${duration}s $(stat -c%s "$file")B"
           done
-          grep -q '20260807-pwa18' cnc/sw.js
-          grep -q '20260807-learning18' cnc/build-info.json
+          grep -q '20260807-pwa19' cnc/sw.js
+          grep -q '20260807-learning19' cnc/build-info.json
+          grep -q 'data-cnc-learning-depth="true"' cnc/index.html
           test $(grep -o "assets/videos/learning/stage[0-9][0-9]_[a-z0-9_]*.mp4" cnc/sw.js | sort -u | wc -l) -eq 12
 
       - name: Install Playwright
@@ -114,16 +196,26 @@ jobs:
       - name: Run real mobile media browser smoke
         run: node cnc/tests/mobile-learning-media-smoke.cjs
 
-      - name: Commit wired pages and generated videos
+      - name: Commit validated PWA19 media bundle
+        shell: bash
         run: |
-          if git status --porcelain -- cnc/learning-detail.html cnc/sw.js cnc/pwa-self-test.html cnc/assets/videos/learning | grep -q .; then
+          set -euo pipefail
+          tested='${{ github.event.pull_request.head.sha }}'
+          branch='${{ github.head_ref }}'
+          git fetch origin "$branch" --depth=1
+          remote="$(git rev-parse FETCH_HEAD)"
+          if [ "$remote" != "$tested" ]; then
+            echo "Remote head moved while this run tested $tested; refusing to push over $remote" >&2
+            exit 1
+          fi
+          if git status --porcelain -- cnc | grep -q .; then
             git config user.name 'github-actions[bot]'
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git add cnc/learning-detail.html cnc/sw.js cnc/pwa-self-test.html cnc/assets/videos/learning
-            git commit -m 'feat(cnc-learning): add 12 playable offline demo videos'
-            git push origin HEAD:${{ github.head_ref }}
+            git add cnc/index.html cnc/learning-detail.html cnc/build-info.json cnc/sw.js cnc/pwa-status.html cnc/pwa-self-test.html cnc/tests/mobile-pwa-offline-cache-smoke.cjs cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs cnc/tests/mobile-pwa-self-test-smoke.cjs cnc/tests/mobile-pwa-upgrade-data-smoke.cjs cnc/assets/videos/learning
+            git commit -m 'feat(cnc-learning): add validated offline media and PWA19 bundle'
+            git push origin HEAD:"$branch"
           else
-            echo 'No generated media changes to commit.'
+            echo 'No validated media/PWA changes to commit.'
           fi
 
       - name: Upload mobile learning media evidence
@@ -134,5 +226,6 @@ jobs:
           path: |
             cnc/test-results/mobile-learning-media/
             cnc/assets/videos/learning/*.mp4
-          if-no-files-found: warn
+            cnc/build-info.json
+          if-no-files-found: error
           retention-days: 14
