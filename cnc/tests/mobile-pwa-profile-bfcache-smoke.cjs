@@ -9,6 +9,7 @@ const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
 const PWA_BUILD = '20260807-pwa17';
 const CACHE_REVISION = '20260807-learning17';
+const BFCACHE_PROBE_KEY = 'cnc_pwa_bfcache_probe_v1';
 fs.mkdirSync(out, { recursive: true });
 
 const types = {
@@ -43,7 +44,9 @@ function observePage(page, errors) {
 (async () => {
   let context;
   let userDataDir;
+  let cdp;
   const errors = [];
+  const bfcacheNotUsedEvents = [];
   let stage = 'server-start';
   try {
     await new Promise((resolve, reject) => {
@@ -55,14 +58,26 @@ function observePage(page, errors) {
     context = await chromium.launchPersistentContext(userDataDir, {
       headless: true,
       viewport: { width: 390, height: 844 },
-      serviceWorkers: 'allow'
+      serviceWorkers: 'allow',
+      // Playwright默认添加--disable-back-forward-cache。移除该默认参数，门禁才真正测试Chromium BFCache。
+      ignoreDefaultArgs: ['--disable-back-forward-cache']
     });
     let page = context.pages()[0] || await context.newPage();
     observePage(page, errors);
+    cdp = await context.newCDPSession(page);
+    await cdp.send('Page.enable');
+    cdp.on('Page.backForwardCacheNotUsed', event => bfcacheNotUsedEvents.push(event));
 
     stage = 'home';
     await page.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded' });
     page = await ensureControlled(page, errors, observePage);
+    if (page !== context.pages()[0]) {
+      // ensureControlled在首次Service Worker接管时可能重建页面，重新绑定CDP诊断。
+      await cdp.detach().catch(() => {});
+      cdp = await context.newCDPSession(page);
+      await cdp.send('Page.enable');
+      cdp.on('Page.backForwardCacheNotUsed', event => bfcacheNotUsedEvents.push(event));
+    }
 
     stage = 'profile-entry';
     await page.goto('http://127.0.0.1:4173/cnc/profile.html', { waitUntil: 'domcontentloaded' });
@@ -79,14 +94,40 @@ function observePage(page, errors) {
     if (!(await page.locator('#static-cache').textContent()).includes(CACHE_REVISION)) throw new Error('静态缓存修订不一致');
     if (!(await page.locator('#runtime-cache').textContent()).includes(CACHE_REVISION)) throw new Error('运行时缓存修订不一致');
 
-    stage = 'history-return';
+    stage = 'arm-real-bfcache-probe';
+    await page.evaluate(key => {
+      sessionStorage.removeItem(key);
+      window.__cncBfcachePageShowPersisted = false;
+      window.addEventListener('pageshow', event => {
+        if (!event.persisted) return;
+        window.__cncBfcachePageShowPersisted = true;
+        sessionStorage.setItem(key, JSON.stringify({
+          persisted: true,
+          href: location.href,
+          restoredAt: Date.now()
+        }));
+      }, { once: true });
+    }, BFCACHE_PROBE_KEY);
+    // checked-at只有秒级显示；确保真正BFCache返回时pageshow触发的inspect可被区分。
+    await page.waitForTimeout(1100);
+
+    stage = 'history-return-real-bfcache';
     await page.goto('http://127.0.0.1:4173/cnc/profile.html', { waitUntil: 'domcontentloaded' });
     await page.goBack({ waitUntil: 'domcontentloaded' });
     await page.waitForURL(/pwa-status\.html/);
-    await page.waitForFunction(oldValue => document.querySelector('#checked-at')?.textContent !== oldValue, initialChecked, { timeout: 5000 }).catch(async () => {
-      await page.locator('#refresh').click();
-      await page.waitForFunction(oldValue => document.querySelector('#checked-at')?.textContent !== oldValue, initialChecked);
+    await page.waitForFunction(key => {
+      try {
+        const value = JSON.parse(sessionStorage.getItem(key) || 'null');
+        return Boolean(value && value.persisted === true && value.href.includes('pwa-status.html') && window.__cncBfcachePageShowPersisted === true);
+      } catch {
+        return false;
+      }
+    }, BFCACHE_PROBE_KEY, { timeout: 5000 }).catch(() => {
+      throw new Error(`Chromium未通过pageshow.persisted=true从BFCache恢复；CDP诊断=${JSON.stringify(bfcacheNotUsedEvents)}`);
     });
+    const bfcacheProbe = await page.evaluate(key => JSON.parse(sessionStorage.getItem(key) || 'null'), BFCACHE_PROBE_KEY);
+    if (!bfcacheProbe?.persisted) throw new Error(`BFCache探针未记录真实恢复：${JSON.stringify(bfcacheProbe)}`);
+    await page.waitForFunction(oldValue => document.querySelector('#checked-at')?.textContent !== oldValue, initialChecked, { timeout: 5000 });
 
     stage = 'cache-mismatch';
     await page.evaluate(async () => {
@@ -120,15 +161,20 @@ function observePage(page, errors) {
       cacheRevision: CACHE_REVISION,
       cacheCount: Number(await page.locator('#cache-count').textContent()),
       profileEntry: true,
+      chromiumBfcacheEnabled: true,
+      pageshowPersisted: true,
       bfcacheRestore: true,
+      bfcacheProbe,
+      bfcacheNotUsedEvents,
       mismatchDetected: true,
       touchTargets: true
     }, null, 2));
-    console.log('CNC PWA profile BFCache smoke passed');
+    console.log('CNC PWA profile real BFCache smoke passed');
   } catch (error) {
-    fs.writeFileSync(path.join(out, 'pwa-profile-bfcache-error.txt'), `stage=${stage}\n${error.stack || error}`);
+    fs.writeFileSync(path.join(out, 'pwa-profile-bfcache-error.txt'), `stage=${stage}\n${error.stack || error}\nCDP.backForwardCacheNotUsed=${JSON.stringify(bfcacheNotUsedEvents, null, 2)}`);
     throw error;
   } finally {
+    if (cdp) await cdp.detach().catch(() => {});
     if (context) await context.close().catch(() => {});
     if (userDataDir) fs.rmSync(userDataDir, { recursive: true, force: true });
     await new Promise(resolve => server.close(resolve)).catch(() => {});
