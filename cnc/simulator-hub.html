@@ -1,1 +1,95 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>CNC模拟训练中心｜数控小潘</title><meta name="description" content="汇总回零、装夹、刀具、坐标、程序验证、首件测量与故障排查等13项CNC新手模拟训练。"><style>:root{--bg:#f1efe9;--card:#fffdf9;--ink:#292d30;--muted:#687078;--line:#d8d2c6;--blue:#355c73;--ok:#466b55;--warn:#8a5a16}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}.shell{width:min(100%,900px);margin:auto;padding:14px 14px 92px}.back,.btn,.sim{min-height:46px;border:1px solid var(--line);border-radius:12px;background:var(--card);text-decoration:none;color:var(--ink)}.back,.btn{display:inline-flex;align-items:center;justify-content:center;padding:0 14px;font-weight:900}.hero,.panel{margin-top:14px;padding:16px;border:1px solid var(--line);border-radius:15px;background:var(--card);box-shadow:0 6px 16px rgba(40,40,35,.07)}h1{font-size:30px;line-height:1.2;margin:7px 0}.muted{color:var(--muted);line-height:1.7}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}.stat{padding:12px;border:1px solid var(--line);border-radius:12px;background:#f7f4ee;text-align:center}.stat strong{display:block;font-size:27px;color:var(--blue)}.bar{height:13px;border:1px solid var(--line);border-radius:999px;background:#ebe7df;overflow:hidden}.bar span{display:block;height:100%;width:0;background:var(--blue)}.ability{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.ability div{padding:12px;border:1px solid var(--line);border-radius:12px;background:#faf8f3}.ability strong{display:block;font-size:20px}.list{display:grid;gap:11px}.sim{display:grid;grid-template-columns:54px 1fr auto;gap:12px;align-items:center;padding:13px}.num{display:grid;place-items:center;min-height:50px;border:1px solid #c7d1d8;border-radius:11px;background:#edf2f5;font-weight:950;color:var(--blue)}.sim h2{margin:0;font-size:18px}.sim p{margin:5px 0 0;color:var(--muted);line-height:1.55}.tag{padding:6px 8px;border:1px solid var(--line);border-radius:999px;font-size:12px;font-weight:900;color:var(--muted);white-space:nowrap}.sim.done .tag{background:#e9f3ee;color:var(--ok);border-color:#a9c2b4}.notice{border-left:4px solid #d4a044}.notice strong{color:var(--warn)}.nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,900px);display:grid;grid-template-columns:repeat(5,1fr);background:#fffdf8f7;border-top:1px solid var(--line)}.nav a{min-height:48px;display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--muted);font-weight:900;font-size:13px}@media(max-width:620px){.stats{grid-template-columns:repeat(2,1fr)}.ability{grid-template-columns:1fr}.sim{grid-template-columns:48px 1fr}.tag{grid-column:2;justify-self:start}h1{font-size:27px}}</style></head><body><main class="shell"><a class="back" href="./training-camp.html">← 返回训练营</a><section class="hero"><small>新手实操判断 · 13项模拟训练</small><h1>把“知道答案”练成“遇到现场问题会按顺序处理”</h1><p class="muted">模拟训练不替代实机授权和现场监护。每项均包含8步正确路径、错误原因、可能后果、正确处理、满分通过、错项记录和重练入口。</p><div class="stats"><div class="stat"><strong id="passed">0</strong><span>已通过</span></div><div class="stat"><strong id="average">0</strong><span>平均最高分</span></div><div class="stat"><strong id="attempts">0</strong><span>累计练习</span></div><div class="stat"><strong id="xp">0</strong><span>模拟训练XP</span></div></div></section><section class="panel"><h2>总体进度</h2><div class="bar" aria-label="模拟训练总进度"><span id="bar"></span></div><p id="next" class="muted">建议从回参考点流程开始。</p><a class="btn" id="continue" href="./simulator-homing.html">继续模拟训练</a></section><section class="panel"><h2>能力画像</h2><div class="ability" id="ability"></div></section><section class="panel"><h2>13项训练清单</h2><div class="list" id="list"></div></section><section class="panel notice"><strong>统一安全边界</strong><p class="muted">实际机床界面、按键名称、回零方式、刀补设置、报警处理和安全要求可能因系统、机型、厂家参数和企业制度不同而变化，请以机床原厂手册、企业安全制度和现场条件为准。高风险操作必须由现场师傅或授权人员指导。</p></section></main><nav class="nav"><a href="./index.html">首页</a><a href="./training-camp.html">训练营</a><a href="./practice.html">练习</a><a href="./index.html#workspace">查代码</a><a href="./profile.html">我的</a></nav><script>const KEY='cnc_training_simulator_v1',PROFILE='cnc_training_profile_v1';const SIMS=[['homing','回参考点流程','simulator-homing.html','安全与机床状态'],['workholding-check','工件装夹检查','simulator-workholding-check.html','装夹与干涉'],['tool-installation','刀具安装与刀柄核对','simulator-tool-installation.html','刀具与刀柄'],['tool-length-offset-check','对刀与刀长补偿核对','simulator-tool-length-offset-check.html','刀补数据链'],['work-offset-setting','工件坐标设定与核对','simulator-work-offset-setting.html','坐标能力'],['program-dry-run','程序检查与空运行','simulator-program-dry-run.html','程序验证'],['single-block-first-approach','单段、倍率与首次接近','simulator-single-block-first-approach.html','安全接近'],['graphics-segment-prediction','图形模拟与程序段预判','simulator-graphics-segment-prediction.html','路径预判'],['first-piece-inspection','首件测量与超差排查','simulator-first-piece-inspection.html','检验能力'],['alarm-troubleshooting','报警排查与安全恢复','simulator-alarm-troubleshooting.html','故障排查'],['cutter-comp-risk','刀补风险判断与修正边界','simulator-cutter-comp-risk.html','刀补风险'],['hole-cycle-troubleshooting','孔加工循环异常排查','simulator-hole-cycle-troubleshooting.html','孔加工排查'],['measurement-vs-machining-error','测量误差与加工误差分类','simulator-measurement-vs-machining-error.html','测量诊断']];function read(k){try{const v=JSON.parse(localStorage.getItem(k)||'{}');return v&&typeof v==='object'?v:{}}catch{return {}}}function item(data,id){return data[id]||data.simulators?.[id]||{}}function render(){const data=read(KEY),profile=read(PROFILE);let passed=0,total=0,attempts=0;const rows=SIMS.map((s,i)=>{const r=item(data,s[0]),best=Number(r.bestScore||r.best||0),tries=Number(r.attempts||0),done=Boolean(r.passed)||best===100;if(done)passed++;total+=best;attempts+=tries;return `<a class="sim ${done?'done':''}" href="./${s[2]}" data-id="${s[0]}"><span class="num">${String(i+1).padStart(2,'0')}</span><span><h2>${s[1]}</h2><p>${s[3]} · 最高${best}分 · ${tries}次</p></span><span class="tag">${done?'已通过':'待训练'}</span></a>`});const nextIndex=SIMS.findIndex(s=>{const r=item(data,s[0]);return !(r.passed||Number(r.bestScore||r.best||0)===100)});const next=SIMS[nextIndex<0?0:nextIndex];document.getElementById('passed').textContent=passed;document.getElementById('average').textContent=SIMS.length?Math.round(total/SIMS.length):0;document.getElementById('attempts').textContent=attempts;document.getElementById('xp').textContent=Math.min(passed*80,SIMS.length*80);document.getElementById('bar').style.width=`${Math.round(passed/SIMS.length*100)}%`;document.getElementById('next').textContent=passed===SIMS.length?'13项全部通过。建议重练低分项，并结合现场师傅指导继续巩固。':`下一项建议：${next[1]}。`;document.getElementById('continue').href=`./${next[2]}`;document.getElementById('continue').textContent=passed===SIMS.length?'重新巩固':'继续模拟训练';document.getElementById('list').innerHTML=rows.join('');const abilities=profile.abilities&&typeof profile.abilities==='object'?profile.abilities:{};const groups=[['安全验证',abilities.safety||abilities.verification||0],['坐标与刀补',Math.max(abilities.coordinate||0,abilities.offsetRisk||0)],['检验诊断',Math.max(abilities.inspection||0,abilities.measurementDiagnosis||0)],['故障排查',Math.max(abilities.troubleshooting||0,abilities.holeCycleTroubleshooting||0)]];document.getElementById('ability').innerHTML=groups.map(g=>`<div><strong>${g[0]} ${Number(g[1]||0)}分</strong><span class="muted">由课程、考试和模拟训练记录综合形成</span></div>`).join('')}render();addEventListener('pageshow',render);</script></body></html>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>CNC模拟训练中心｜数控小潘</title>
+  <meta name="description" content="汇总回零、装夹、刀具、坐标、程序验证、首件测量与故障排查等13项CNC新手模拟训练。">
+  <style>
+    :root{--bg:#f1efe9;--card:#fffdf9;--ink:#292d30;--muted:#687078;--line:#d8d2c6;--blue:#355c73;--ok:#466b55;--warn:#8a5a16}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}.shell{width:min(100%,900px);margin:auto;padding:14px 14px 92px}.back,.btn,.sim{min-height:46px;border:1px solid var(--line);border-radius:12px;background:var(--card);text-decoration:none;color:var(--ink)}.back,.btn{display:inline-flex;align-items:center;justify-content:center;padding:0 14px;font-weight:900}.hero,.panel{margin-top:14px;padding:16px;border:1px solid var(--line);border-radius:15px;background:var(--card);box-shadow:0 6px 16px rgba(40,40,35,.07)}h1{font-size:30px;line-height:1.2;margin:7px 0}.muted{color:var(--muted);line-height:1.7}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}.stat{padding:12px;border:1px solid var(--line);border-radius:12px;background:#f7f4ee;text-align:center}.stat strong{display:block;font-size:27px;color:var(--blue)}.bar{height:13px;border:1px solid var(--line);border-radius:999px;background:#ebe7df;overflow:hidden}.bar span{display:block;height:100%;width:0;background:var(--blue)}.ability{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.ability div{padding:12px;border:1px solid var(--line);border-radius:12px;background:#faf8f3}.ability strong{display:block;font-size:20px}.list{display:grid;gap:11px}.sim{display:grid;grid-template-columns:54px 1fr auto;gap:12px;align-items:center;padding:13px}.num{display:grid;place-items:center;min-height:50px;border:1px solid #c7d1d8;border-radius:11px;background:#edf2f5;font-weight:950;color:var(--blue)}.sim h2{margin:0;font-size:18px}.sim p{margin:5px 0 0;color:var(--muted);line-height:1.55}.tag{padding:6px 8px;border:1px solid var(--line);border-radius:999px;font-size:12px;font-weight:900;color:var(--muted);white-space:nowrap}.sim.done .tag{background:#e9f3ee;color:var(--ok);border-color:#a9c2b4}.notice{border-left:4px solid #d4a044}.notice strong{color:var(--warn)}.data-note{font-size:13px;color:var(--muted);margin:10px 0 0}.nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,900px);display:grid;grid-template-columns:repeat(5,1fr);background:#fffdf8f7;border-top:1px solid var(--line)}.nav a{min-height:48px;display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--muted);font-weight:900;font-size:13px}@media(max-width:620px){.stats{grid-template-columns:repeat(2,1fr)}.ability{grid-template-columns:1fr}.sim{grid-template-columns:48px 1fr}.tag{grid-column:2;justify-self:start}h1{font-size:27px}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <a class="back" href="./training-camp.html">← 返回训练营</a>
+    <section class="hero">
+      <small>新手实操判断 · 13项模拟训练</small>
+      <h1>把“知道答案”练成“遇到现场问题会按顺序处理”</h1>
+      <p class="muted">模拟训练不替代实机授权和现场监护。每项均包含8步正确路径、错误原因、可能后果、正确处理、满分通过、错项记录和重练入口。</p>
+      <div class="stats">
+        <div class="stat"><strong id="passed">0</strong><span>已通过</span></div>
+        <div class="stat"><strong id="average">0</strong><span>平均最高分</span></div>
+        <div class="stat"><strong id="attempts">0</strong><span>累计练习</span></div>
+        <div class="stat"><strong id="xp">0</strong><span>模拟训练XP</span></div>
+      </div>
+      <p class="data-note" id="data-note" role="status" aria-live="polite">正在读取本机训练记录…</p>
+    </section>
+    <section class="panel">
+      <h2>总体进度</h2>
+      <div class="bar" aria-label="模拟训练总进度"><span id="bar"></span></div>
+      <p id="next" class="muted">建议从回参考点流程开始。</p>
+      <a class="btn" id="continue" href="./simulator-homing.html">继续模拟训练</a>
+    </section>
+    <section class="panel"><h2>能力画像</h2><div class="ability" id="ability"></div></section>
+    <section class="panel"><h2>13项训练清单</h2><div class="list" id="list"></div></section>
+    <section class="panel notice"><strong>统一安全边界</strong><p class="muted">实际机床界面、按键名称、回零方式、刀补设置、报警处理和安全要求可能因系统、机型、厂家参数和企业制度不同而变化，请以机床原厂手册、企业安全制度和现场条件为准。高风险操作必须由现场师傅或授权人员指导。</p></section>
+  </main>
+  <nav class="nav"><a href="./index.html">首页</a><a href="./training-camp.html">训练营</a><a href="./practice.html">练习</a><a href="./index.html#workspace">查代码</a><a href="./profile.html">我的</a></nav>
+  <script>
+  (function(){
+    'use strict';
+    const KEY='cnc_training_simulator_v1',PROFILE='cnc_training_profile_v1';
+    const SIMS=[
+      ['homing','回参考点流程','simulator-homing.html','安全与机床状态'],
+      ['workholding-check','工件装夹检查','simulator-workholding-check.html','装夹与干涉'],
+      ['tool-installation','刀具安装与刀柄核对','simulator-tool-installation.html','刀具与刀柄'],
+      ['tool-length-offset-check','对刀与刀长补偿核对','simulator-tool-length-offset-check.html','刀补数据链'],
+      ['work-offset-setting','工件坐标设定与核对','simulator-work-offset-setting.html','坐标能力'],
+      ['program-dry-run','程序检查与空运行','simulator-program-dry-run.html','程序验证'],
+      ['single-block-first-approach','单段、倍率与首次接近','simulator-single-block-first-approach.html','安全接近'],
+      ['graphics-segment-prediction','图形模拟与程序段预判','simulator-graphics-segment-prediction.html','路径预判'],
+      ['first-piece-inspection','首件测量与超差排查','simulator-first-piece-inspection.html','检验能力'],
+      ['alarm-troubleshooting','报警排查与安全恢复','simulator-alarm-troubleshooting.html','故障排查'],
+      ['cutter-comp-risk','刀补风险判断与修正边界','simulator-cutter-comp-risk.html','刀补风险'],
+      ['hole-cycle-troubleshooting','孔加工循环异常排查','simulator-hole-cycle-troubleshooting.html','孔加工排查'],
+      ['measurement-vs-machining-error','测量误差与加工误差分类','simulator-measurement-vs-machining-error.html','测量诊断']
+    ];
+    function read(k){try{const v=JSON.parse(localStorage.getItem(k)||'{}');return v&&typeof v==='object'?v:{}}catch{return {}}}
+    function asRecord(value){return value&&typeof value==='object'&&!Array.isArray(value)?value:null}
+    function recordSignature(record){return [record.lastCompletedAt||record.updatedAt||'',record.bestScore??record.best??'',record.lastScore??'',record.attempts??'',record.passed??''].join('|')}
+    function item(data,id){
+      const candidates=[asRecord(data.records&&data.records[id]),asRecord(data.simulators&&data.simulators[id]),asRecord(data[id])].filter(Boolean);
+      const unique=[];const seen=new Set();
+      candidates.forEach(record=>{const signature=recordSignature(record);if(!seen.has(signature)){seen.add(signature);unique.push(record)}});
+      if(!unique.length)return{bestScore:0,attempts:0,passed:false,sources:0};
+      const bestScore=Math.max(...unique.map(record=>Math.max(0,Math.min(100,Number(record.bestScore??record.best??0)||0))));
+      const attempts=unique.reduce((sum,record)=>sum+Math.max(0,Math.floor(Number(record.attempts)||0)),0);
+      const passed=unique.some(record=>Boolean(record.passed))||bestScore===100;
+      return{bestScore,attempts,passed,sources:unique.length};
+    }
+    function render(){
+      const data=read(KEY),profile=read(PROFILE);let passed=0,total=0,attempts=0,compatRecords=0;
+      const rows=SIMS.map((s,i)=>{const r=item(data,s[0]),best=r.bestScore,tries=r.attempts,done=r.passed;if(done)passed++;total+=best;attempts+=tries;if(r.sources)compatRecords++;return `<a class="sim ${done?'done':''}" href="./${s[2]}" data-id="${s[0]}"><span class="num">${String(i+1).padStart(2,'0')}</span><span><h2>${s[1]}</h2><p>${s[3]} · 最高${best}分 · ${tries}次</p></span><span class="tag">${done?'已通过':'待训练'}</span></a>`});
+      const nextIndex=SIMS.findIndex(s=>!item(data,s[0]).passed),next=SIMS[nextIndex<0?0:nextIndex];
+      document.getElementById('passed').textContent=passed;
+      document.getElementById('average').textContent=SIMS.length?Math.round(total/SIMS.length):0;
+      document.getElementById('attempts').textContent=attempts;
+      document.getElementById('xp').textContent=Math.min(passed*80,SIMS.length*80);
+      document.getElementById('bar').style.width=`${Math.round(passed/SIMS.length*100)}%`;
+      document.getElementById('next').textContent=passed===SIMS.length?'13项全部通过。建议重练低分项，并结合现场师傅指导继续巩固。':`下一项建议：${next[1]}。`;
+      document.getElementById('continue').href=`./${next[2]}`;
+      document.getElementById('continue').textContent=passed===SIMS.length?'重新巩固':'继续模拟训练';
+      document.getElementById('list').innerHTML=rows.join('');
+      document.getElementById('data-note').textContent=compatRecords?`已读取 ${compatRecords}/13 项本机训练记录；兼容旧版 simulators 与新版 records 存储。`:'尚无模拟训练记录，从第1项开始即可。';
+      const abilities=profile.abilities&&typeof profile.abilities==='object'?profile.abilities:{};
+      const groups=[['安全验证',abilities.safety||abilities.verification||0],['坐标与刀补',Math.max(abilities.coordinate||0,abilities.offsetRisk||0)],['检验诊断',Math.max(abilities.inspection||0,abilities.measurementDiagnosis||0)],['故障排查',Math.max(abilities.troubleshooting||0,abilities.holeCycleTroubleshooting||0)]];
+      document.getElementById('ability').innerHTML=groups.map(g=>`<div><strong>${g[0]} ${Number(g[1]||0)}分</strong><span class="muted">由课程、考试和模拟训练记录综合形成</span></div>`).join('');
+      document.body.dataset.simulatorHub='ready';
+      window.CNC_SIMULATOR_HUB={snapshot:()=>({passed,average:SIMS.length?Math.round(total/SIMS.length):0,attempts,records:compatRecords,nextId:nextIndex<0?null:next[0]})};
+    }
+    render();addEventListener('pageshow',render);
+  })();
+  </script>
+</body>
+</html>
