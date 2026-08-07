@@ -21,7 +21,7 @@
       <div><strong id="course-progress">0/12</strong><span>主线课程</span></div>
       <div><strong id="wrong-count">0</strong><span>待复习错题</span></div>
       <div><strong id="sim-progress">0/13</strong><span>模拟通过</span></div>
-      <div><strong id="weakest">安全基础</strong><span>优先补强</span></div>
+      <div><strong id="weakest">安全操作</strong><span>优先补强</span></div>
     </div>
   </section>
 
@@ -83,7 +83,12 @@
   const KEYS = {profile:'cnc_training_profile_v1',practice:'cnc_training_practice_v1',simulator:'cnc_training_simulator_v1',exam:'cnc_training_exam_v1'};
   const COURSE_LINKS = ['./course-safety-foundation.html','./course-machining-center-basics.html','./course-coordinate-axes.html','./course-drawing-basics.html','./course-machine-work-offset.html','./course-workholding-basics.html','./course-tool-basics.html','./course-tool-length-offset.html','./course-g00-g01-basics.html','./course-g02-g03-basics.html','./course-hole-cycles-basics.html','./course-complete-program-first-piece.html'];
   const ABILITY_DEFS = [
-    {name:'安全基础',keys:['safety','安全']},{name:'坐标与对刀',keys:['coordinate','offset','坐标','对刀']},{name:'图纸与工艺',keys:['drawing','process','图纸','工艺']},{name:'程序验证',keys:['program','verification','程序','验证']},{name:'首件与测量',keys:['inspection','measurement','首件','测量']},{name:'故障排查',keys:['troubleshooting','alarm','故障','报警']}
+    {name:'安全操作',lessons:[1],keys:['safety','安全']},
+    {name:'机床与坐标',lessons:[2,3,5],keys:['machine','coordinate','offset','机床','坐标']},
+    {name:'装夹与对刀',lessons:[6,8],keys:['setup','workholding','tool-length','装夹','对刀','刀长']},
+    {name:'编程与读图',lessons:[4,9,10,11],keys:['programming','drawing','program','gcode','编程','读图','图纸','程序']},
+    {name:'刀具与工艺',lessons:[7],keys:['tooling','process','刀具','工艺']},
+    {name:'首件验证',lessons:[12],keys:['verification','inspection','measurement','first-piece','首件','验证','测量']}
   ];
   const SAFETY_SCOPE = '以下内容面向FANUC类立式加工中心的新手学习框架，不代表所有系统与机型一致。具体地址、编号、正负方向、单位、权限、联锁及操作顺序必须核对原厂手册、企业制度、受控工艺和现场条件。';
   const INTAKE_CATEGORY = {alarm:'alarm','work-offset':'coordinate','tool-offset':'offset','program-check':'program','first-piece':'measurement','safety-boundary':'other',blocked:'other',unknown:'other'};
@@ -119,10 +124,47 @@
   function asArray(value){return Array.isArray(value)?value:[]}
   function wrongRows(practice){const value=practice.wrongQuestions||practice.wrong||[];return Array.isArray(value)?value:Object.values(value||{})}
   function simulatorRows(simulator){const root=simulator.simulators&&typeof simulator.simulators==='object'?simulator.simulators:simulator;return Object.values(root||{}).filter(value=>value&&typeof value==='object'&&('passed'in value||'bestScore'in value||'score'in value))}
-  function completedCourses(profile){const completed=new Set(asArray(profile.completed).map(Number).filter(n=>n>=1&&n<=12));const scores=profile.lessonScores&&typeof profile.lessonScores==='object'?profile.lessonScores:{};Object.entries(scores).forEach(([key,value])=>{const level=Number(String(key).match(/\d+/)?.[0]||key);if(level>=1&&level<=12&&Number(value&&value.score!==undefined?value.score:value)>=80)completed.add(level)});return completed}
-  function normalizedAbilityValue(value){const number=Number(value&&value.score!==undefined?value.score:value);return Number.isFinite(number)?Math.max(0,Math.min(100,number)):null}
-  function abilitySnapshot(profile,wrong){const raw=profile.abilities&&typeof profile.abilities==='object'?profile.abilities:{};return ABILITY_DEFS.map(def=>{let score=null;Object.entries(raw).forEach(([key,value])=>{if(def.keys.some(alias=>key.toLowerCase().includes(alias.toLowerCase()))){const candidate=normalizedAbilityValue(value);if(candidate!==null)score=score===null?candidate:Math.max(score,candidate)}});const mistakes=wrong.filter(row=>{const text=`${row.ability||''} ${row.dimension||''} ${row.category||''} ${row.title||''}`;return def.keys.some(alias=>text.toLowerCase().includes(alias.toLowerCase()))}).length;const base=score===null?50:score;return {name:def.name,score:Math.max(0,base-mistakes*5),mistakes}})}
-  function learningState(){const profile=read(KEYS.profile);const practice=read(KEYS.practice);const simulator=read(KEYS.simulator);const exam=read(KEYS.exam);const completed=completedCourses(profile);const wrong=wrongRows(practice);const simulations=simulatorRows(simulator);const abilities=abilitySnapshot(profile,wrong);const weakest=[...abilities].sort((a,b)=>a.score-b.score||b.mistakes-a.mistakes)[0];return {profile,practice,simulator,exam,completed,wrong,simulations,abilities,weakest,simulationPass:simulations.filter(row=>row.passed===true||Number(row.bestScore||row.score||0)>=100).length,nextCourse:Array.from({length:12},(_,i)=>i+1).find(level=>!completed.has(level))||12}}
+  function normalizedScore(value){const number=Number(value&&value.score!==undefined?value.score:value);return Number.isFinite(number)?Math.max(0,Math.min(100,number)):null}
+  function stageLevel(value){const match=String(value??'').match(/(?:stage-)?(\d{1,2})$/i);const level=Number(match?.[1]);return level>=1&&level<=12?level:null}
+  function lessonScore(level,profile,practice){
+    const candidates=[
+      practice.lessonScores?.[level],practice.lessonScores?.[String(level)],
+      profile.courseScores?.[`stage-${level}`],profile.courseScores?.[level],profile.courseScores?.[String(level)],
+      profile.lessonScores?.[level],profile.lessonScores?.[String(level)]
+    ].map(normalizedScore).filter(value=>value!==null);
+    return candidates.length?Math.max(...candidates):0;
+  }
+  function completedCourses(profile,practice){
+    const completed=new Set(asArray(profile.completed).map(stageLevel).filter(Boolean));
+    asArray(profile.completedStages).map(stageLevel).filter(Boolean).forEach(level=>completed.add(level));
+    for(let level=1;level<=12;level+=1){if(lessonScore(level,profile,practice)>=80)completed.add(level)}
+    return completed;
+  }
+  function abilitySnapshot(profile,practice,completed){
+    return ABILITY_DEFS.map(def=>{
+      const rows=def.lessons.map(level=>({level,score:Math.max(lessonScore(level,profile,practice),completed.has(level)?80:0)}));
+      const score=Math.round(rows.reduce((sum,row)=>sum+row.score,0)/def.lessons.length);
+      const attempted=rows.filter(row=>row.score>0);
+      const weakCandidates=attempted.filter(row=>row.score<80);
+      const source=weakCandidates.length?weakCandidates:attempted.length?attempted:rows;
+      const weakLesson=[...source].sort((a,b)=>a.score-b.score||a.level-b.level)[0].level;
+      return {name:def.name,score,lessons:[...def.lessons],attempted:attempted.length,weakLesson};
+    });
+  }
+  function focusLesson(profile,practice,completed){
+    const weak=Array.from({length:12},(_,index)=>({level:index+1,score:lessonScore(index+1,profile,practice)}))
+      .filter(row=>row.score>0&&row.score<80)
+      .sort((a,b)=>a.score-b.score||a.level-b.level)[0];
+    if(weak)return weak.level;
+    return Array.from({length:12},(_,index)=>index+1).find(level=>!completed.has(level))||12;
+  }
+  function learningState(){
+    const profile=read(KEYS.profile),practice=read(KEYS.practice),simulator=read(KEYS.simulator),exam=read(KEYS.exam);
+    const completed=completedCourses(profile,practice),wrong=wrongRows(practice),simulations=simulatorRows(simulator);
+    const abilities=abilitySnapshot(profile,practice,completed),focus=focusLesson(profile,practice,completed);
+    const weakest=abilities.find(item=>item.lessons.includes(focus))||abilities[0];
+    return {profile,practice,simulator,exam,completed,wrong,simulations,abilities,weakest,simulationPass:simulations.filter(row=>row.passed===true||Number(row.bestScore||row.score||0)>=80).length,nextCourse:Array.from({length:12},(_,i)=>i+1).find(level=>!completed.has(level))||12};
+  }
   function route(text,href,primary=false){return {text,href,primary}}
   function source(type,label,status,href){return {type,label,status,href}}
   function trustSources(primaryHref,primaryLabel){return [source('平台训练',primaryLabel,'教学参考，需结合课程说明与现场带教',primaryHref),source('可信度状态','查看高风险内容可信度状态','未逐条复核内容不可直接上机','./content-trust-status.html'),source('证据台账','查看资料与逐条复核边界','资料清单与逐条复核记录不能互相代替','./content-trust-evidence.html')]}
@@ -164,7 +206,8 @@
   document.getElementById('ask-form').addEventListener('submit',event=>{event.preventDefault();const question=document.getElementById('question').value;const classified=classifyQuestion(question);renderAnswer(classified.intent,question)});
   window.addEventListener('pageshow',renderSummary);
   const initialState=renderSummary();
-  window.CNC_AI_TEACHER={build:BUILD,classificationVersion:CLASSIFICATION_VERSION,localOnly:true,externalModel:false,storageKeys:Object.values(KEYS),detectIntent,classifyQuestion,intakeRoute,sourcePolicy:SOURCE_POLICY,handoff:Object.freeze({key:HANDOFF_KEY,schemaVersion:HANDOFF_SCHEMA_VERSION,maxAgeMs:HANDOFF_MAX_AGE_MS,prepare:prepareExplainabilityHandoff,clear:clearExplainabilityHandoff}),classificationSignals:{blocked:BLOCK_RULES.map(rule=>rule.id),safeDiscussion:SAFE_DISCUSSION_RULES.map(rule=>rule.id)},getSummary:()=>{const state=learningState();return {courses:state.completed.size,wrong:state.wrong.length,simulations:state.simulationPass,weakest:state.weakest.name}},initialSummary:{courses:initialState.completed.size,wrong:initialState.wrong.length,simulations:initialState.simulationPass,weakest:initialState.weakest.name}};
+  function summaryOf(state){return {courses:state.completed.size,wrong:state.wrong.length,simulations:state.simulationPass,weakest:state.weakest.name,weakestScore:state.weakest.score,nextCourse:state.nextCourse,abilityNames:state.abilities.map(item=>item.name)}}
+  window.CNC_AI_TEACHER={build:BUILD,classificationVersion:CLASSIFICATION_VERSION,localOnly:true,externalModel:false,storageKeys:Object.values(KEYS),detectIntent,classifyQuestion,intakeRoute,sourcePolicy:SOURCE_POLICY,handoff:Object.freeze({key:HANDOFF_KEY,schemaVersion:HANDOFF_SCHEMA_VERSION,maxAgeMs:HANDOFF_MAX_AGE_MS,prepare:prepareExplainabilityHandoff,clear:clearExplainabilityHandoff}),classificationSignals:{blocked:BLOCK_RULES.map(rule=>rule.id),safeDiscussion:SAFE_DISCUSSION_RULES.map(rule=>rule.id)},getSummary:()=>summaryOf(learningState()),initialSummary:summaryOf(initialState)};
 })();
 </script>
 <script data-integrity-runtime-v1>
