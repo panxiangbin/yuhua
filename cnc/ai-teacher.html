@@ -64,7 +64,7 @@
 
   <section class="panel privacy">
     <strong>隐私与可解释性</strong>
-    <p>本页不调用外部模型、不请求云端接口，只读取本机 <code>cnc_training_profile_v1</code>、<code>cnc_training_practice_v1</code>、<code>cnc_training_simulator_v1</code> 和 <code>cnc_training_exam_v1</code>。每条建议都由公开的关键词规则和学习记录生成，并显示课程、模拟、可信度状态或证据台账入口。</p>
+    <p>本页不调用外部模型、不请求云端接口。主线课程完成状态以本机 <code>cnc_study_completed_v1</code> 为当前主数据源，并兼容旧 <code>cnc_training_profile_v1</code> 完成字段；同时读取 <code>cnc_training_practice_v1</code>、<code>cnc_training_simulator_v1</code> 和 <code>cnc_training_exam_v1</code>。每条建议都由公开的关键词规则和学习记录生成，并显示课程、模拟、可信度状态或证据台账入口。</p>
   </section>
   <section class="panel notice">
     <strong>安全边界</strong>
@@ -80,7 +80,7 @@
   const HANDOFF_KEY = 'cnc_ai_teacher_explainability_handoff_v1';
   const HANDOFF_SCHEMA_VERSION = 1;
   const HANDOFF_MAX_AGE_MS = 5 * 60 * 1000;
-  const KEYS = {profile:'cnc_training_profile_v1',practice:'cnc_training_practice_v1',simulator:'cnc_training_simulator_v1',exam:'cnc_training_exam_v1'};
+  const KEYS = {study:'cnc_study_completed_v1',profile:'cnc_training_profile_v1',practice:'cnc_training_practice_v1',simulator:'cnc_training_simulator_v1',exam:'cnc_training_exam_v1'};
   const COURSE_LINKS = ['./course-safety-foundation.html','./course-machining-center-basics.html','./course-coordinate-axes.html','./course-drawing-basics.html','./course-machine-work-offset.html','./course-workholding-basics.html','./course-tool-basics.html','./course-tool-length-offset.html','./course-g00-g01-basics.html','./course-g02-g03-basics.html','./course-hole-cycles-basics.html','./course-complete-program-first-piece.html'];
   const ABILITY_DEFS = [
     {name:'安全操作',lessons:[1],keys:['safety','安全']},
@@ -121,6 +121,7 @@
   const OVERRIDE_EXECUTION_PATTERN = /(?:顺便|但|不过|同时|然后|还是|实际|现在|现场).{0,18}(?:告诉我|教我|给我|帮我|怎么|如何|步骤|方法).{0,20}(?:屏蔽|绕过|短接|关闭|关掉|复位|清除|修改|改成|设成|填成|写入|具体值)|(?:纯教学|只是学习|假设|研究).{0,18}(?:告诉我|教我|给我|怎么|如何).{0,20}(?:屏蔽|绕过|短接|关闭|复位|清除|修改|改成|设成|填成|写入)|(?:直接用|照着做|马上运行|现场就|现在就)/i;
 
   function read(key){const raw=localStorage.getItem(key);if(raw===null)return {};try{const value=JSON.parse(raw);return value&&typeof value==='object'&&!Array.isArray(value)?value:{__cncDataInvalid:true}}catch{return {__cncDataInvalid:true}}}
+  function readCompleted(key){const raw=localStorage.getItem(key);if(raw===null)return [];try{const value=JSON.parse(raw);return Array.isArray(value)?value:{__cncDataInvalid:true}}catch{return {__cncDataInvalid:true}}}
   function asArray(value){return Array.isArray(value)?value:[]}
   function wrongRows(practice){const value=practice.wrongQuestions||practice.wrong||[];return Array.isArray(value)?value:Object.values(value||{})}
   function simulatorRows(simulator){const root=simulator.simulators&&typeof simulator.simulators==='object'?simulator.simulators:simulator;return Object.values(root||{}).filter(value=>value&&typeof value==='object'&&('passed'in value||'bestScore'in value||'score'in value))}
@@ -134,8 +135,9 @@
     ].map(normalizedScore).filter(value=>value!==null);
     return candidates.length?Math.max(...candidates):0;
   }
-  function completedCourses(profile,practice){
-    const completed=new Set(asArray(profile.completed).map(stageLevel).filter(Boolean));
+  function completedCourses(study,profile,practice){
+    const completed=new Set(asArray(study).map(stageLevel).filter(Boolean));
+    asArray(profile.completed).map(stageLevel).filter(Boolean).forEach(level=>completed.add(level));
     asArray(profile.completedStages).map(stageLevel).filter(Boolean).forEach(level=>completed.add(level));
     for(let level=1;level<=12;level+=1){if(lessonScore(level,profile,practice)>=80)completed.add(level)}
     return completed;
@@ -159,11 +161,11 @@
     return Array.from({length:12},(_,index)=>index+1).find(level=>!completed.has(level))||12;
   }
   function learningState(){
-    const profile=read(KEYS.profile),practice=read(KEYS.practice),simulator=read(KEYS.simulator),exam=read(KEYS.exam);
-    const completed=completedCourses(profile,practice),wrong=wrongRows(practice),simulations=simulatorRows(simulator);
+    const study=readCompleted(KEYS.study),profile=read(KEYS.profile),practice=read(KEYS.practice),simulator=read(KEYS.simulator),exam=read(KEYS.exam);
+    const completed=completedCourses(study,profile,practice),wrong=wrongRows(practice),simulations=simulatorRows(simulator);
     const abilities=abilitySnapshot(profile,practice,completed),focus=focusLesson(profile,practice,completed);
     const weakest=abilities.find(item=>item.lessons.includes(focus))||abilities[0];
-    return {profile,practice,simulator,exam,completed,wrong,simulations,abilities,weakest,simulationPass:simulations.filter(row=>row.passed===true||Number(row.bestScore||row.score||0)>=80).length,nextCourse:Array.from({length:12},(_,i)=>i+1).find(level=>!completed.has(level))||12};
+    return {study,profile,practice,simulator,exam,completed,wrong,simulations,abilities,weakest,simulationPass:simulations.filter(row=>row.passed===true||Number(row.bestScore||row.score||0)>=80).length,nextCourse:Array.from({length:12},(_,i)=>i+1).find(level=>!completed.has(level))||12};
   }
   function route(text,href,primary=false){return {text,href,primary}}
   function source(type,label,status,href){return {type,label,status,href}}
@@ -213,18 +215,25 @@
 <script data-integrity-runtime-v1>
 (() => {
   'use strict';
-  const MANAGED_KEYS = ['cnc_training_profile_v1','cnc_training_practice_v1','cnc_training_simulator_v1','cnc_training_exam_v1'];
+  const MANAGED_KEYS = [
+    {key:'cnc_study_completed_v1',kind:'array'},
+    {key:'cnc_training_profile_v1',kind:'object'},
+    {key:'cnc_training_practice_v1',kind:'object'},
+    {key:'cnc_training_simulator_v1',kind:'object'},
+    {key:'cnc_training_exam_v1',kind:'object'}
+  ];
 
   function inspectLearningData(){
     const invalid=[];
-    for(const key of MANAGED_KEYS){
-      const raw=localStorage.getItem(key);
+    for(const item of MANAGED_KEYS){
+      const raw=localStorage.getItem(item.key);
       if(raw===null)continue;
       try{
         const parsed=JSON.parse(raw);
-        if(!parsed||typeof parsed!=='object'||Array.isArray(parsed))invalid.push({key,reason:'根结构不是对象'});
+        const valid=item.kind==='array'?Array.isArray(parsed):Boolean(parsed&&typeof parsed==='object'&&!Array.isArray(parsed));
+        if(!valid)invalid.push({key:item.key,reason:item.kind==='array'?'根结构不是数组':'根结构不是对象'});
       }catch{
-        invalid.push({key,reason:'JSON无法解析'});
+        invalid.push({key:item.key,reason:'JSON无法解析'});
       }
     }
     return {ok:invalid.length===0,invalid};
