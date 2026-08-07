@@ -7,8 +7,8 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const PWA_BUILD = '20260806-pwa16';
-const CACHE_REVISION = '20260806-learning16';
+const PWA_BUILD = '20260807-pwa17';
+const CACHE_REVISION = '20260807-learning17';
 const PLACEMENT_FIRST_STEP_COURSES = [
   {
     path: './course-safety-foundation.html',
@@ -27,6 +27,8 @@ const PLACEMENT_FIRST_STEP_COURSES = [
   }
 ];
 const CORE_OFFLINE_PATHS = [
+  './training-practice.js',
+  './training-profile.js',
   './learning-sublesson-specificity.js',
   './beginner-placement.html',
   './training-camp.html',
@@ -280,6 +282,8 @@ async function verifyColdOfflineCourse(page, course) {
       placementFirstStepClickColdOffline: true,
       placementFirstStepCoursesColdOffline: true,
       placementFirstStepCoursePaths: PLACEMENT_FIRST_STEP_COURSES.map(item => item.path),
+      trainingPracticeColdOfflineCore: true,
+      trainingProfileColdOfflineCore: true,
       aiTeacherColdOffline: true,
       intakeColdOffline: true,
       explainabilityColdOffline: true,
