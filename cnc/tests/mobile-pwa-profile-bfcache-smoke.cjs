@@ -7,8 +7,8 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const PWA_BUILD = '20260807-pwa19';
-const CACHE_REVISION = '20260807-learning19';
+const PWA_BUILD = '20260808-pwa20';
+const CACHE_REVISION = '20260808-learning20';
 const BFCACHE_PROBE_KEY = 'cnc_pwa_bfcache_probe_v1';
 fs.mkdirSync(out, { recursive: true });
 
@@ -60,12 +60,9 @@ function observePage(page, errors) {
       viewport: { width: 390, height: 844 },
       serviceWorkers: 'allow',
       args: [
-        // Playwright headless=true使用Chromium headless shell；其delegate仅在显式开关存在时支持BFCache。
         '--enable-bfcache',
-        // 本门禁验证CNC站内同站点返回；显式打开Chromium的same-site BFCache参数，避免测试环境因BrowsingInstance不交换而假失败。
         '--enable-features=BackForwardCache:enable_same_site/true'
       ],
-      // Playwright默认添加--disable-back-forward-cache。移除该默认参数，门禁才真正测试Chromium BFCache。
       ignoreDefaultArgs: ['--disable-back-forward-cache']
     });
     let page = context.pages()[0] || await context.newPage();
@@ -78,7 +75,6 @@ function observePage(page, errors) {
     await page.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded' });
     page = await ensureControlled(page, errors, observePage);
     if (page !== context.pages()[0]) {
-      // ensureControlled在首次Service Worker接管时可能重建页面，重新绑定CDP诊断。
       await cdp.detach().catch(() => {});
       cdp = await context.newCDPSession(page);
       await cdp.send('Page.enable');
@@ -114,13 +110,10 @@ function observePage(page, errors) {
         }));
       }, { once: true });
     }, BFCACHE_PROBE_KEY);
-    // checked-at只有秒级显示；确保真正BFCache返回时pageshow触发的inspect可被区分。
     await page.waitForTimeout(1100);
 
     stage = 'history-return-real-bfcache';
     await page.goto('http://127.0.0.1:4173/cnc/profile.html', { waitUntil: 'domcontentloaded' });
-    // 页面中可能存在名为history的DOM全局，不能用page.evaluate(() => history.back())触发返回。
-    // 由Playwright直接驱动浏览器历史，只等待commit；真实BFCache是否发生仍必须由pageshow.persisted与CDP共同证明。
     await page.goBack({ waitUntil: 'commit', timeout: 5000 });
     if (!/\/cnc\/pwa-status\.html(?:[?#]|$)/.test(page.url())) {
       throw new Error(`浏览器历史返回目标错误：${page.url()}`);
