@@ -6,6 +6,7 @@ on:
       - 'cnc/ai-teacher.html'
       - 'cnc/ai-teacher-intake.html'
       - 'cnc/profile.html'
+      - 'cnc/training-profile.js'
       - 'cnc/build-info.json'
       - 'cnc/docs/ai-teacher-trust-boundary-contract.md'
       - 'cnc/docs/ai-teacher-classification-contract.md'
@@ -24,9 +25,34 @@ jobs:
     timeout-minutes: 18
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - name: Record exact tested head
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/ai-teacher
+          tested_head="$(git rev-parse HEAD)"
+          expected_head="${{ github.event.pull_request.head.sha || github.sha }}"
+          if [ "$tested_head" != "$expected_head" ]; then
+            echo "AI老师实际检出提交与预期最新头不一致：tested=$tested_head expected=$expected_head" >&2
+            exit 1
+          fi
+          TESTED_HEAD="$tested_head" EVENT_SHA="$GITHUB_SHA" node - <<'NODE'
+          const fs = require('fs');
+          fs.writeFileSync('artifacts/ai-teacher/workflow-bootstrap.json', JSON.stringify({
+            stage: 'workflow-bootstrap',
+            runId: process.env.GITHUB_RUN_ID,
+            eventName: process.env.GITHUB_EVENT_NAME,
+            testedHead: process.env.TESTED_HEAD,
+            eventSha: process.env.EVENT_SHA,
+            initializedAt: new Date().toISOString()
+          }, null, 2));
+          NODE
       - name: Validate local-only safety and trust contract
         run: |
           set -euxo pipefail
@@ -101,17 +127,36 @@ jobs:
         run: |
           npm install --no-save playwright@1.54.1
           npx playwright install --with-deps chromium
-      - name: Start static server
-        run: python3 -m http.server 4173 --directory . > /tmp/cnc-ai-teacher-server.log 2>&1 &
+      - name: Start static server and wait until ready
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4173 --directory . > /tmp/cnc-ai-teacher-server.log 2>&1 &
+          for attempt in $(seq 1 40); do
+            if curl --fail --silent --show-error http://127.0.0.1:4173/cnc/ai-teacher.html >/dev/null; then
+              cp /tmp/cnc-ai-teacher-server.log artifacts/ai-teacher/server.log
+              exit 0
+            fi
+            sleep 0.25
+          done
+          cp /tmp/cnc-ai-teacher-server.log artifacts/ai-teacher/server.log || true
+          echo 'AI老师静态服务器未在10秒内就绪' >&2
+          exit 1
       - name: Chromium 390x844 local AI teacher
-        run: node cnc/tests/mobile-ai-teacher-smoke.cjs
+        shell: bash
+        run: |
+          set -o pipefail
+          node cnc/tests/mobile-ai-teacher-smoke.cjs 2>&1 | tee artifacts/ai-teacher/mobile-smoke.log
       - name: Validate high-risk and educational classification cases
-        run: node cnc/tests/ai-teacher-classification-smoke.cjs
+        shell: bash
+        run: |
+          set -o pipefail
+          node cnc/tests/ai-teacher-classification-smoke.cjs 2>&1 | tee artifacts/ai-teacher/classification-smoke.log
       - name: Upload AI teacher diagnostics
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: cnc-ai-teacher-diagnostics
+          name: cnc-ai-teacher-diagnostics-${{ github.run_id }}
           path: artifacts/ai-teacher/
-          if-no-files-found: warn
+          if-no-files-found: error
           retention-days: 14
