@@ -53,10 +53,10 @@ jobs:
           const swCacheRevision = sw.match(/const CACHE_REVISION = '([^']+)'/)?.[1];
           if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
           if (swCacheRevision !== info.cacheRevision) throw new Error(`Service Worker/build-info cache mismatch: ${swCacheRevision} / ${info.cacheRevision}`);
-          if (info.pwaBuild !== '20260808-pwa20') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
-          if (info.cacheRevision !== '20260808-learning20') throw new Error(`unexpected cache revision: ${info.cacheRevision}`);
-          if (!test.includes("const PWA_BUILD = '20260808-pwa20'")) throw new Error('offline browser PWA build mismatch');
-          if (!test.includes("const CACHE_REVISION = '20260808-learning20'")) throw new Error('offline browser cache revision mismatch');
+          if (info.pwaBuild !== '20260808-pwa21') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
+          if (info.cacheRevision !== '20260808-learning21') throw new Error(`unexpected cache revision: ${info.cacheRevision}`);
+          if (!test.includes("const PWA_BUILD = '20260808-pwa21'")) throw new Error('offline browser PWA build mismatch');
+          if (!test.includes("const CACHE_REVISION = '20260808-learning21'")) throw new Error('offline browser cache revision mismatch');
           for (const file of [
             './training-practice.js',
             './training-profile.js',
@@ -112,7 +112,7 @@ jobs:
             'item.bytes <= 0',
             'explainabilityColdOffline: true'
           ]) if (!test.includes(token)) throw new Error(`offline diagnostics missing: ${token}`);
-          for (const stage of ['起点测评关键安全门禁','起点测评离线核心','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','AI老师离线核心','正式课程开发占位清零','AI老师学习档案异常保护','80个图文小课','学习目录紧凑布局','80课现场动作与风险针对性','训练题库与成长档案离线核心','手机构建标记一致性','固定12关能力映射与真实薄弱课推荐']) {
+          for (const stage of ['起点测评关键安全门禁','起点测评离线核心','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','AI老师离线核心','正式课程开发占位清零','AI老师学习档案异常保护','80个图文小课','学习目录紧凑布局','80课现场动作与风险针对性','训练题库与成长档案离线核心','手机构建标记一致性','固定12关能力映射与真实薄弱课推荐','AI老师与固定12关成长档案语义一致']) {
             if (!String(info.contentStage || '').includes(stage)) throw new Error(`build marker missing: ${stage}`);
           }
           NODE
