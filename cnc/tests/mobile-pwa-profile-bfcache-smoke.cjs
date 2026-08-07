@@ -59,6 +59,12 @@ function observePage(page, errors) {
       headless: true,
       viewport: { width: 390, height: 844 },
       serviceWorkers: 'allow',
+      args: [
+        // Playwright headless=true使用Chromium headless shell；其delegate仅在显式开关存在时支持BFCache。
+        '--enable-bfcache',
+        // 本门禁验证CNC站内同站点返回；显式打开Chromium的same-site BFCache参数，避免测试环境因BrowsingInstance不交换而假失败。
+        '--enable-features=BackForwardCache:enable_same_site/true'
+      ],
       // Playwright默认添加--disable-back-forward-cache。移除该默认参数，门禁才真正测试Chromium BFCache。
       ignoreDefaultArgs: ['--disable-back-forward-cache']
     });
@@ -162,6 +168,8 @@ function observePage(page, errors) {
       cacheCount: Number(await page.locator('#cache-count').textContent()),
       profileEntry: true,
       chromiumBfcacheEnabled: true,
+      headlessDelegateBfcacheEnabled: true,
+      sameSiteBfcacheEnabled: true,
       pageshowPersisted: true,
       bfcacheRestore: true,
       bfcacheProbe,
