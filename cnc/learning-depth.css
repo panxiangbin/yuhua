@@ -57,7 +57,8 @@
   #view-study .study-card-header{grid-column:2!important;grid-row:1!important;margin:0!important;min-width:0;align-items:center!important}
   #view-study .study-card-icon{display:none!important}
   #view-study .study-card>h4{grid-column:2!important;grid-row:2!important;margin:0!important;font-size:14.5px!important;line-height:1.34!important;letter-spacing:-.01em!important}
-  #view-study .study-card>p{grid-column:2!important;grid-row:3!important;display:-webkit-box;margin:0!important;overflow:hidden;color:#5e7086!important;font-size:12px!important;line-height:1.5!important;-webkit-box-orient:vertical;-webkit-line-clamp:2}
+  /* mobile-home-refactor.css 使用 body #view-study ... !important；这里匹配其特异性并后加载，确保学习目录说明文字真正采用12px而不是旧11px。 */
+  body #view-study .study-card>p{grid-column:2!important;grid-row:3!important;display:-webkit-box;margin:0!important;overflow:hidden;color:#5e7086!important;font-size:12px!important;line-height:1.5!important;-webkit-box-orient:vertical;-webkit-line-clamp:2}
   #view-study .study-card-tags{grid-column:2!important;grid-row:4!important;display:flex!important;min-width:0;margin:1px 0 0!important;gap:5px!important;overflow:hidden;white-space:nowrap}
   #view-study .study-card-tags .tag{max-width:100px;overflow:hidden;padding:3px 7px!important;font-size:10.5px!important;line-height:1.25!important;text-overflow:ellipsis}
   #view-study .cnc-sublesson-panel{grid-column:1/-1!important;grid-row:6!important;margin-top:2px!important;border-color:#d7e3ef;background:#f7faff}
@@ -73,7 +74,7 @@
   #view-study .study-card{grid-template-columns:98px minmax(0,1fr)!important;gap:3px 9px!important;padding:7px!important}
   #view-study .study-card-thumb{width:98px!important;min-width:98px!important;max-width:98px!important;height:78px!important;min-height:78px!important}
   #view-study .study-card>h4{font-size:14px!important}
-  #view-study .study-card>p{font-size:12.5px!important;-webkit-line-clamp:2}
+  body #view-study .study-card>p{font-size:12.5px!important;-webkit-line-clamp:2}
   #view-study .section-head h3::after{display:block;margin-top:3px;font-size:.58em}
   #view-study .cnc-sublesson-panel>summary::before{display:none}
 }
