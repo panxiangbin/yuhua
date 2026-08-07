@@ -119,9 +119,12 @@ function observePage(page, errors) {
 
     stage = 'history-return-real-bfcache';
     await page.goto('http://127.0.0.1:4173/cnc/profile.html', { waitUntil: 'domcontentloaded' });
-    // BFCache恢复不会重新触发DOMContentLoaded；直接触发浏览器历史返回，再只等待URL提交与pageshow.persisted探针。
-    await page.evaluate(() => history.back());
-    await page.waitForURL(/pwa-status\.html/, { waitUntil: 'commit', timeout: 5000 });
+    // 页面中可能存在名为history的DOM全局，不能用page.evaluate(() => history.back())触发返回。
+    // 由Playwright直接驱动浏览器历史，只等待commit；真实BFCache是否发生仍必须由pageshow.persisted与CDP共同证明。
+    await page.goBack({ waitUntil: 'commit', timeout: 5000 });
+    if (!/\/cnc\/pwa-status\.html(?:[?#]|$)/.test(page.url())) {
+      throw new Error(`浏览器历史返回目标错误：${page.url()}`);
+    }
     await page.waitForFunction(key => {
       try {
         const value = JSON.parse(sessionStorage.getItem(key) || 'null');
