@@ -89,6 +89,11 @@ jobs:
 
           detail=Path('cnc/learning-detail.html')
           text=detail.read_text(encoding='utf-8')
+          favicon='<link rel="icon" href="./icon-192.svg" type="image/svg+xml">'
+          if favicon not in text:
+              anchor='<meta name="theme-color" content="#365b72">'
+              if anchor not in text: raise SystemExit('learning-detail theme-color anchor not found')
+              text=text.replace(anchor,anchor+'\n'+favicon,1)
           old="byId('video-slot').innerHTML='<div class=\"video-note\">当前课程先使用轻量动态演示，手机端无需额外下载大视频即可反复播放；真实MP4视频源接入后会在同一区域直接显示。</div>';"
           new="const videoNames="+json.dumps(names,ensure_ascii=False)+";const video=document.createElement('video');video.controls=true;video.playsInline=true;video.preload='metadata';video.src=`./assets/videos/learning/${videoNames[stage-1]}`;video.setAttribute('aria-label',`${media.title} MP4视频演示`);video.setAttribute('poster',item.image);byId('video-slot').replaceChildren(video);"
           if old in text:text=text.replace(old,new,1)
@@ -184,6 +189,7 @@ jobs:
           grep -q '20260807-pwa19' cnc/sw.js
           grep -q '20260807-learning19' cnc/build-info.json
           grep -q 'data-cnc-learning-depth="true"' cnc/index.html
+          grep -q '<link rel="icon" href="./icon-192.svg" type="image/svg+xml">' cnc/learning-detail.html
           test $(grep -o "assets/videos/learning/stage[0-9][0-9]_[a-z0-9_]*.mp4" cnc/sw.js | sort -u | wc -l) -eq 12
 
       - name: Install Playwright
