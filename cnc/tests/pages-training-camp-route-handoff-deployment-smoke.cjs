@@ -9,12 +9,12 @@ fs.mkdirSync(out, { recursive: true });
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
 const expectedSiteBuild = '20260806-learning-depth1';
-const expectedPwaBuild = '20260807-pwa17';
+const expectedPwaBuild = '20260807-pwa18';
 const previousPublicSiteBuild = '20260806-learning-depth1';
-const previousPublicPwaBuild = '20260806-pwa16';
+const previousPublicPwaBuild = '20260807-pwa17';
 const cacheRevisionByBuild = {
-  [expectedPwaBuild]: '20260807-learning17',
-  [previousPublicPwaBuild]: '20260806-learning16'
+  [expectedPwaBuild]: '20260807-learning18',
+  [previousPublicPwaBuild]: '20260807-learning17'
 };
 const siteBuildByPwaBuild = {
   [expectedPwaBuild]: expectedSiteBuild,
@@ -28,7 +28,7 @@ const EXACT_CORE = [
   './index.html','./homepage-refresh.css','./homepage-refresh-desktop-legacy.css','./mobile-home-refactor.css','./personal-home.js','./training-practice.js','./training-profile.js','./learning-sublesson-catalog.js','./learning-sublesson-specificity.js','./learning-depth.css','./learning-detail.html','./mobile-trust-nav.js','./featured-images-supplement.js','./offline.html','./pwa-status.html','./pwa-self-test.html','./pages-status.html','./beginner-placement.html','./training-camp.html','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html','./ai-teacher.html','./ai-teacher-intake.html','./ai-teacher-explainability.html','./build-info.json','./assets/images/batch01_core/beginner-machine-zero-vs-work-zero-001.webp','./assets/images/batch02_operation_basics/machine-init-flow-001.webp','./assets/images/batch04_milling_tooling/milling-process-overview-001.webp','./assets/images/batch01_core/measure-reading-set-001.webp','./assets/images/batch05_alarm_drawing_material/dial-indicator-detail-001.webp','./assets/images/batch04_milling_tooling/vise-clamping-basic-001.webp','./assets/images/batch04_milling_tooling/tool-selection-beginner-001.webp','./assets/images/batch04_milling_tooling/bt-er-holder-overview-001.webp','./assets/images/batch02_operation_basics/single-block-dry-run-001.webp','./assets/images/batch04_milling_tooling/milling-contour-001.webp','./assets/images/batch02_operation_basics/canned-cycle-overview-001.webp','./assets/images/batch05_alarm_drawing_material/first-piece-inspection-001.webp'
 ];
 
-const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE.filter(path => !['./training-practice.js', './training-profile.js'].includes(path));
+const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE;
 
 const LEARNING_DEPTH_CORE_PATHS = new Set([
   './learning-sublesson-catalog.js',
@@ -242,7 +242,8 @@ function parseBuildInfo(text, label) {
       'AI老师离线核心',
       'AI老师学习档案异常保护',
       '80个图文小课',
-      '训练题库与成长档案离线核心'
+      '训练题库与成长档案离线核心',
+      '手机构建标记一致性'
     ]);
   }
   return data;
