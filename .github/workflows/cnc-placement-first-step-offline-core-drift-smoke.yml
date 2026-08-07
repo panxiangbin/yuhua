@@ -39,6 +39,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -62,7 +64,8 @@ jobs:
             'upgradeCourseSetExact',
             'serviceWorkerAndSelfTestCoreExact',
             'missingFromServiceWorker',
-            'missingFromSelfTest'
+            'missingFromSelfTest',
+            '(?:html|json|js|css|webp|mp4)'
           ]) {
             if (!test.includes(token)) throw new Error(`首步离线防漂移测试缺少结构契约：${token}`);
           }
