@@ -12,7 +12,8 @@ const defaultResourceByContract = {
   'mobile-trust-nav': 'cnc/mobile-trust-nav.js',
   'knowledge-tree-lazy': 'cnc/ui-knowledge-tree.js',
   'content-trust-page': 'cnc/content-trust-status.html',
-  'content-trust-manifest': 'cnc/content-trust-manifest.json'
+  'content-trust-manifest': 'cnc/content-trust-manifest.json',
+  'simulator-hub-data': 'cnc/simulator-hub.html'
 };
 const resourceContract = String(process.env.CNC_EXACT_RESOURCE_CONTRACT || 'mobile-trust-nav');
 if (!Object.prototype.hasOwnProperty.call(defaultResourceByContract, resourceContract)) {
@@ -180,10 +181,37 @@ function assertContentTrustManifestContract(text, label) {
   };
 }
 
+function assertSimulatorHubDataContract(text, label) {
+  const required = [
+    'data.records&&data.records[id]',
+    'data.simulators&&data.simulators[id]',
+    'recordSignature(record)',
+    'window.CNC_SIMULATOR_HUB',
+    '已读取 ${compatRecords}/13 项本机训练记录',
+    './icon-192.svg',
+    '请以机床原厂手册、企业安全制度和现场条件为准'
+  ];
+  for (const token of required) {
+    if (!text.includes(token)) throw new Error(`${label}缺少模拟训练数据可靠性契约：${token}`);
+  }
+  if (text.includes("function item(data,id){return data[id]||data.simulators?.[id]||{}}")) {
+    throw new Error(`${label}恢复了仅兼容旧 simulators 的总览读取逻辑`);
+  }
+  return {
+    recordsSchemaPresent: true,
+    legacySimulatorsSchemaPresent: true,
+    duplicateRecordGuardPresent: true,
+    diagnosticsSnapshotPresent: true,
+    explicitFaviconPresent: true,
+    machineManualBoundaryPresent: true
+  };
+}
+
 function assertResourceContract(text, label) {
   if (resourceContract === 'mobile-trust-nav') return assertMobileTrustNavContract(text, label);
   if (resourceContract === 'knowledge-tree-lazy') return assertKnowledgeTreeLazyContract(text, label);
   if (resourceContract === 'content-trust-page') return assertContentTrustPageContract(text, label);
+  if (resourceContract === 'simulator-hub-data') return assertSimulatorHubDataContract(text, label);
   return assertContentTrustManifestContract(text, label);
 }
 
