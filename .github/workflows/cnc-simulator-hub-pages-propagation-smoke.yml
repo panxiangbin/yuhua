@@ -1,0 +1,99 @@
+name: CNC simulator hub Pages propagation smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/simulator-hub.html'
+      - 'cnc/tests/pages-exact-resource-deployment-smoke.cjs'
+      - '.github/workflows/cnc-simulator-hub-pages-propagation-smoke.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'cnc/simulator-hub.html'
+      - 'cnc/tests/pages-exact-resource-deployment-smoke.cjs'
+      - '.github/workflows/cnc-simulator-hub-pages-propagation-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cnc-simulator-hub-pages-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  exact-pages-resource:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Record exact tested head
+        shell: bash
+        run: |
+          mkdir -p cnc/test-results
+          tested_head="$(git rev-parse HEAD)"
+          expected_head="${{ github.event.pull_request.head.sha || github.sha }}"
+          if [ "$tested_head" != "$expected_head" ]; then
+            echo "实际检出提交与预期最新头不一致：tested=$tested_head expected=$expected_head" >&2
+            exit 1
+          fi
+          node - <<'NODE'
+          const fs = require('fs');
+          const { execFileSync } = require('child_process');
+          const testedHead = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+          fs.writeFileSync('cnc/test-results/pages-deployment-status-resource-simulator-hub-data-bootstrap.json', JSON.stringify({
+            stage: 'workflow-bootstrap',
+            runId: process.env.GITHUB_RUN_ID,
+            eventName: process.env.GITHUB_EVENT_NAME,
+            testedHead,
+            eventSha: process.env.GITHUB_SHA,
+            initializedAt: new Date().toISOString()
+          }, null, 2));
+          NODE
+
+      - name: Validate simulator hub Pages contract gate
+        run: |
+          node --check cnc/tests/pages-exact-resource-deployment-smoke.cjs
+          node - <<'NODE'
+          const fs = require('fs');
+          const text = fs.readFileSync('cnc/tests/pages-exact-resource-deployment-smoke.cjs', 'utf8');
+          for (const token of [
+            "'simulator-hub-data': 'cnc/simulator-hub.html'",
+            'assertSimulatorHubDataContract',
+            'data.records&&data.records[id]',
+            'data.simulators&&data.simulators[id]',
+            'recordSignature(record)',
+            'window.CNC_SIMULATOR_HUB',
+            'exactBytesMatch',
+            'exactSha256Match',
+            'CNC_PAGES_VERIFY_ATTEMPTS || 18'
+          ]) {
+            if (!text.includes(token)) throw new Error(`模拟训练公网契约门禁缺失：${token}`);
+          }
+          for (const forbidden of ['test.skip(', 'process.exit(0)', 'CNC_PAGES_VERIFY_ATTEMPTS || 0']) {
+            if (text.includes(forbidden)) throw new Error(`模拟训练公网契约存在绕过：${forbidden}`);
+          }
+          NODE
+
+      - name: Verify simulator hub exact main and Pages deployment
+        env:
+          CNC_EXACT_RESOURCE_PATH: cnc/simulator-hub.html
+          CNC_EXACT_RESOURCE_CONTRACT: simulator-hub-data
+        run: node cnc/tests/pages-exact-resource-deployment-smoke.cjs
+
+      - name: Upload simulator hub Pages diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-simulator-hub-pages-${{ github.run_id }}
+          path: cnc/test-results/pages-deployment-status-resource-simulator-hub-data*
+          if-no-files-found: error
+          retention-days: 30
