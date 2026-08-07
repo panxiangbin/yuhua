@@ -1,0 +1,110 @@
+name: CNC simulator hub data reliability smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/simulator-hub.html'
+      - 'cnc/tests/simulator-hub-data-smoke.cjs'
+      - '.github/workflows/cnc-simulator-hub-data-smoke.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'cnc/simulator-hub.html'
+      - 'cnc/tests/simulator-hub-data-smoke.cjs'
+      - '.github/workflows/cnc-simulator-hub-data-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cnc-simulator-hub-data-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  mixed-schema-browser-smoke:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Record exact tested head
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path 'cnc/test-results/simulator-hub-data' | Out-Null
+          $testedHead = (git rev-parse HEAD).Trim()
+          if ($env:GITHUB_EVENT_NAME -eq 'pull_request') {
+            $eventPayload = Get-Content -Raw $env:GITHUB_EVENT_PATH | ConvertFrom-Json
+            $expectedHead = [string]$eventPayload.pull_request.head.sha
+            if ($testedHead -ne $expectedHead) {
+              throw "实际检出提交与PR最新头不一致：tested=$testedHead expected=$expectedHead"
+            }
+          }
+          @{
+            stage = 'workflow-bootstrap'
+            runId = $env:GITHUB_RUN_ID
+            testedHead = $testedHead
+            eventSha = $env:GITHUB_SHA
+            eventName = $env:GITHUB_EVENT_NAME
+            initializedAt = (Get-Date).ToUniversalTime().ToString('o')
+          } | ConvertTo-Json | Set-Content -Encoding utf8 'cnc/test-results/simulator-hub-data/workflow-bootstrap.json'
+
+      - name: Validate test syntax and data adapter contract
+        shell: pwsh
+        run: |
+          node --check cnc/tests/simulator-hub-data-smoke.cjs
+          $hub = Get-Content -Raw 'cnc/simulator-hub.html'
+          foreach ($token in @('data.records&&data.records[id]', 'data.simulators&&data.simulators[id]', 'recordSignature(record)', 'window.CNC_SIMULATOR_HUB')) {
+            if (-not $hub.Contains($token)) { throw "模拟训练总览数据兼容契约缺失：$token" }
+          }
+          if ($hub.Contains('test.skip(') -or $hub.Contains('describe.skip(') -or $hub.Contains('it.skip(')) { throw '不得跳过模拟训练数据门禁' }
+
+      - name: Install Playwright library without bundled browsers
+        shell: pwsh
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+        run: npm install --no-save playwright@1.54.2
+
+      - name: Run 390x844 mixed-schema browser verification
+        shell: pwsh
+        run: |
+          $edge = 'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe'
+          if (-not (Test-Path $edge)) { throw "Microsoft Edge not found at $edge" }
+          & $edge --version
+          $testedHead = (git rev-parse HEAD).Trim()
+          $stdout = 'cnc/test-results/simulator-hub-data/http-server.stdout.log'
+          $stderr = 'cnc/test-results/simulator-hub-data/http-server.stderr.log'
+          $server = Start-Process -FilePath 'python' -ArgumentList '-m','http.server','4173','--bind','127.0.0.1' -PassThru -RedirectStandardOutput $stdout -RedirectStandardError $stderr
+          try {
+            $ready = $false
+            for ($i = 0; $i -lt 40; $i++) {
+              try {
+                $response = Invoke-WebRequest -Uri 'http://127.0.0.1:4173/cnc/simulator-hub.html' -UseBasicParsing -TimeoutSec 2
+                if ($response.StatusCode -eq 200) { $ready = $true; break }
+              } catch {}
+              Start-Sleep -Milliseconds 500
+            }
+            if (-not $ready) { throw '静态服务在20秒内未就绪' }
+            $env:CNC_BROWSER_PATH = $edge
+            $env:CNC_BASE_URL = 'http://127.0.0.1:4173'
+            $env:CNC_TESTED_HEAD = $testedHead
+            node cnc/tests/simulator-hub-data-smoke.cjs
+          } finally {
+            if ($server -and -not $server.HasExited) { Stop-Process -Id $server.Id -Force }
+          }
+
+      - name: Upload simulator hub diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-simulator-hub-data-${{ github.run_id }}
+          path: cnc/test-results/simulator-hub-data/
+          if-no-files-found: error
+          retention-days: 30
