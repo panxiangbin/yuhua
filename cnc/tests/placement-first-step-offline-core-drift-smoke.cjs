@@ -60,7 +60,7 @@ function normalizeCoursePath(value) {
 }
 
 function normalizeCoreResourcePath(value) {
-  return normalizeRelativePath(value, 'PWA核心资源', '(?:html|json|js|css|webp)', true);
+  return normalizeRelativePath(value, 'PWA核心资源', '(?:html|json|js|css|webp|mp4)', true);
 }
 
 function sortedUnique(values, label, normalize) {
