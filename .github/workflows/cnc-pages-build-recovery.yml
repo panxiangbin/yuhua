@@ -39,10 +39,12 @@ jobs:
           const workflow = fs.readFileSync('.github/workflows/cnc-pages-build-recovery.yml', 'utf8');
           const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8').replace(/^\uFEFF/, ''));
           const publicTest = fs.readFileSync('cnc/tests/mobile-pages-deployment-status-smoke.cjs', 'utf8');
+          // 拆开“$”与“{{”以避免GitHub在run脚本生成阶段把契约字符串本身提前展开成SHA。
+          const exactHeadRef = 'ref: $' + '{{ github.event.pull_request.head.sha || github.sha }}';
           for (const token of [
             "branches: [main]",
             "- 'cnc/**'",
-            "ref: ${{ github.event.pull_request.head.sha || github.sha }}",
+            exactHeadRef,
             "if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'",
             'pages: write',
             '/pages/builds/latest',
