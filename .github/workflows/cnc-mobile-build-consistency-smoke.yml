@@ -1,0 +1,52 @@
+name: CNC mobile build consistency smoke
+on:
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-mobile-build-consistency-smoke.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-mobile-build-consistency-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: cnc-mobile-build-consistency-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+jobs:
+  mobile-build-consistency:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Check syntax
+        run: node --check cnc/tests/mobile-build-consistency-smoke.cjs
+      - name: Verify mobile build markers
+        run: node cnc/tests/mobile-build-consistency-smoke.cjs
+      - name: Reject bypasses
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const source = fs.readFileSync('cnc/tests/mobile-build-consistency-smoke.cjs', 'utf8');
+          for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)']) {
+            if (source.includes(forbidden)) throw new Error(`手机构建一致性门禁发现绕过：${forbidden}`);
+          }
+          for (const required of ['build-info.json','personal-home.js','mobile-home-final-smoke.cjs','cncMobileHomeBuild','refactorBuild','browserExpected','mismatches']) {
+            if (!source.includes(required)) throw new Error(`手机构建一致性门禁缺少契约：${required}`);
+          }
+          NODE
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-mobile-build-consistency-${{ github.run_id }}
+          path: cnc/test-results/mobile-build-consistency/**
+          if-no-files-found: error
+          retention-days: 14
