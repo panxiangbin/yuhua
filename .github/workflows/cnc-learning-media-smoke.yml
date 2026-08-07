@@ -67,10 +67,14 @@ jobs:
           inject_array('cnc/pwa-self-test.html','const REQUIRED=[',paths)
           print('wired',len(paths),'permanent MP4 sources')
 
-      - name: Install video rendering dependency
-        run: python -m pip install --disable-pip-version-check pillow==11.3.0
+      - name: Install video rendering dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg
+          python -m pip install --disable-pip-version-check pillow==11.3.0
       - name: Verify ffmpeg
         run: |
+          set -euo pipefail
           ffmpeg -version | head -n 1
           ffprobe -version | head -n 1
       - name: Generate missing 12-stage MP4 set
