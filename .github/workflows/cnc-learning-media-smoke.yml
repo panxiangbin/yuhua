@@ -1,0 +1,147 @@
+name: CNC learning media build and browser smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/scripts/generate-learning-demo-videos.py'
+      - 'cnc/tests/mobile-learning-media-smoke.cjs'
+      - 'cnc/learning-detail.html'
+      - 'cnc/learning-depth.css'
+      - 'cnc/homepage-refresh.css'
+      - 'cnc/index.html'
+      - 'cnc/build-info.json'
+      - 'cnc/sw.js'
+      - 'cnc/pwa-status.html'
+      - 'cnc/pwa-self-test.html'
+      - 'cnc/tests/mobile-pwa-*.cjs'
+      - 'cnc/assets/videos/learning/**'
+      - '.github/workflows/cnc-learning-media-smoke.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cnc-learning-media-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  validate-media-and-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Record exact tested head
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p cnc/test-results/mobile-learning-media
+          tested="$(git rev-parse HEAD)"
+          expected='${{ github.event.pull_request.head.sha }}'
+          test "$tested" = "$expected"
+          node - "$tested" "$GITHUB_SHA" <<'NODE'
+          const fs=require('fs');
+          const [testedSha,eventSha]=process.argv.slice(2);
+          fs.writeFileSync('cnc/test-results/mobile-learning-media/workflow-bootstrap.json',JSON.stringify({
+            stage:'workflow-bootstrap',
+            runId:process.env.GITHUB_RUN_ID,
+            testedSha,
+            eventSha,
+            eventName:process.env.GITHUB_EVENT_NAME,
+            permissionModel:'contents:read',
+            initializedAt:new Date().toISOString()
+          },null,2));
+          NODE
+
+      - name: Validate committed PWA19 media contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          files=(stage01_safety.mp4 stage02_xyz.mp4 stage03_z_tool.mp4 stage04_program.mp4 stage05_g90_g91.mp4 stage06_g00_g01.mp4 stage07_sf.mp4 stage08_g02_g03.mp4 stage09_milling_direction.mp4 stage10_g41_g42.mp4 stage11_g81_g83.mp4 stage12_first_part.mp4)
+          for name in "${files[@]}"; do
+            test -s "cnc/assets/videos/learning/$name"
+          done
+          grep -q '20260807-pwa19' cnc/build-info.json
+          grep -q '20260807-learning19' cnc/build-info.json
+          grep -q '20260807-pwa19' cnc/sw.js
+          grep -q '20260807-learning19' cnc/sw.js
+          grep -q '20260807-pwa19' cnc/pwa-status.html
+          grep -q '20260807-pwa19' cnc/pwa-self-test.html
+          grep -q 'data-cnc-learning-depth="true"' cnc/index.html
+          grep -q '<link rel="icon" href="./icon-192.svg" type="image/svg+xml">' cnc/learning-detail.html
+          grep -q 'const videoNames=' cnc/learning-detail.html
+          test "$(grep -o "assets/videos/learning/stage[0-9][0-9]_[a-z0-9_]*.mp4" cnc/sw.js | sort -u | wc -l)" -eq 12
+          test "$(grep -o "assets/videos/learning/stage[0-9][0-9]_[a-z0-9_]*.mp4" cnc/pwa-self-test.html | sort -u | wc -l)" -eq 12
+          echo 'Committed PWA19 media contract passed.'
+
+      - name: Install ffmpeg runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg
+          ffmpeg -version | head -n 1
+          ffprobe -version | head -n 1
+
+      - name: Validate committed H264 media
+        shell: bash
+        run: |
+          set -euo pipefail
+          : > cnc/test-results/mobile-learning-media/ffprobe-media.txt
+          files=(stage01_safety.mp4 stage02_xyz.mp4 stage03_z_tool.mp4 stage04_program.mp4 stage05_g90_g91.mp4 stage06_g00_g01.mp4 stage07_sf.mp4 stage08_g02_g03.mp4 stage09_milling_direction.mp4 stage10_g41_g42.mp4 stage11_g81_g83.mp4 stage12_first_part.mp4)
+          for name in "${files[@]}"; do
+            file="cnc/assets/videos/learning/$name"
+            codec=$(ffprobe -v error -select_streams v:0 -show_entries stream=codec_name -of default=nw=1:nk=1 "$file")
+            dims=$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 "$file")
+            duration=$(ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 "$file")
+            test "$codec" = h264
+            test "$dims" = 320x180
+            python3 - "$duration" <<'PY'
+          import sys
+          d=float(sys.argv[1])
+          assert 5.7 <= d <= 6.3, d
+          PY
+            line="$name $codec $dims ${duration}s $(stat -c%s "$file")B"
+            echo "$line" | tee -a cnc/test-results/mobile-learning-media/ffprobe-media.txt
+          done
+
+      - name: Install Playwright package without bundled browser
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+        run: npm install --no-save --package-lock=false playwright@1.54.2
+
+      - name: Verify hosted Chrome for H264 browser playback
+        shell: bash
+        run: |
+          set -euo pipefail
+          command -v google-chrome
+          google-chrome --version | tee cnc/test-results/mobile-learning-media/chrome-version.txt
+
+      - name: Run real mobile media browser smoke
+        env:
+          CNC_BROWSER_CHANNEL: chrome
+        run: node cnc/tests/mobile-learning-media-smoke.cjs
+
+      - name: Prove gate is read-only for tracked CNC sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- cnc .github/workflows/cnc-learning-media-smoke.yml
+          echo 'Tracked CNC sources remained unchanged during validation.' | tee cnc/test-results/mobile-learning-media/read-only-check.txt
+
+      - name: Upload mobile learning media evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-learning-media-${{ github.run_id }}
+          path: |
+            cnc/test-results/mobile-learning-media/
+            cnc/build-info.json
+          if-no-files-found: error
+          retention-days: 14

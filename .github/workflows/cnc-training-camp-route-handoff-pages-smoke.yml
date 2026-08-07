@@ -32,10 +32,13 @@ jobs:
           mkdir -p cnc/test-results/training-camp-route-handoff-pages
           node - <<'NODE'
           const fs = require('fs');
+          const { execFileSync } = require('child_process');
+          const testedHead = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
           fs.writeFileSync('cnc/test-results/training-camp-route-handoff-pages/workflow-bootstrap.json', JSON.stringify({
             stage: 'workflow-bootstrap',
             runId: process.env.GITHUB_RUN_ID,
-            headSha: process.env.GITHUB_SHA,
+            testedHead,
+            eventSha: process.env.GITHUB_SHA,
             eventName: process.env.GITHUB_EVENT_NAME,
             initializedAt: new Date().toISOString()
           }, null, 2));
@@ -51,14 +54,17 @@ jobs:
           const sw = fs.readFileSync('cnc/sw.js', 'utf8');
           const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
           if (info.build !== '20260806-learning-depth1') throw new Error(`unexpected site build: ${info.build}`);
-          if (info.pwaBuild !== '20260807-pwa18' || info.cacheRevision !== '20260807-learning18') throw new Error(`unexpected PWA/cache build: ${info.pwaBuild}/${info.cacheRevision}`);
-          if (!sw.includes("const BUILD = '20260807-pwa18'") || !sw.includes("const CACHE_REVISION = '20260807-learning18'")) throw new Error('Service Worker build/cache mismatch');
+          if (info.pwaBuild !== '20260807-pwa19' || info.cacheRevision !== '20260807-learning19') throw new Error(`unexpected PWA/cache build: ${info.pwaBuild}/${info.cacheRevision}`);
+          if (!sw.includes("const BUILD = '20260807-pwa19'") || !sw.includes("const CACHE_REVISION = '20260807-learning19'")) throw new Error('Service Worker build/cache mismatch');
           for (const token of [
             "const expectedSiteBuild = '20260806-learning-depth1'",
-            "const expectedPwaBuild = '20260807-pwa18'",
-            "const previousPublicPwaBuild = '20260807-pwa17'",
-            "[expectedPwaBuild]: '20260807-learning18'",
-            "[previousPublicPwaBuild]: '20260807-learning17'",
+            "const expectedPwaBuild = '20260807-pwa19'",
+            "const previousPublicPwaBuild = '20260807-pwa18'",
+            "[expectedPwaBuild]: '20260807-learning19'",
+            "[previousPublicPwaBuild]: '20260807-learning18'",
+            'const VIDEO_CORE = [',
+            'const EXACT_CORE = [...BASE_CORE, ...VIDEO_CORE]',
+            'const PREVIOUS_PUBLIC_CORE_PATHS = BASE_CORE',
             'CNC_PAGES_VERIFY_ATTEMPTS || 18',
             "cache: 'no-store'",
             "const resources = ['cnc/training-camp.html', 'cnc/sw.js', 'cnc/build-info.json']",
@@ -75,6 +81,7 @@ jobs:
             'sessionStorageOnlyHandoffPresent: true',
             'trainingCampInCoreCache: true',
             'placementFirstStepCoursesInCoreCache: true',
+            'localVideoCoreCount: VIDEO_CORE.length',
             'coreResourceCount: EXACT_CORE.length',
             'process.exit(1)'
           ]) {
@@ -95,6 +102,11 @@ jobs:
           }
           for (const file of ['./training-practice.js','./training-profile.js','./training-camp.html','./learning-sublesson-specificity.js','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html','./ai-teacher.html','./ai-teacher-intake.html','./ai-teacher-explainability.html']) {
             if (!sw.includes(`'${file}'`)) throw new Error(`PWA core missing: ${file}`);
+          }
+          for (const video of [
+            './assets/videos/learning/stage01_safety.mp4','./assets/videos/learning/stage02_xyz.mp4','./assets/videos/learning/stage03_z_tool.mp4','./assets/videos/learning/stage04_program.mp4','./assets/videos/learning/stage05_g90_g91.mp4','./assets/videos/learning/stage06_g00_g01.mp4','./assets/videos/learning/stage07_sf.mp4','./assets/videos/learning/stage08_g02_g03.mp4','./assets/videos/learning/stage09_milling_direction.mp4','./assets/videos/learning/stage10_g41_g42.mp4','./assets/videos/learning/stage11_g81_g83.mp4','./assets/videos/learning/stage12_first_part.mp4'
+          ]) {
+            if (!sw.includes(`'${video}'`)) throw new Error(`PWA video core missing: ${video}`);
           }
           for (const stage of ['起点测评关键安全门禁','起点测评离线核心','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','正式课程开发占位清零','AI老师学习档案异常保护','80个图文小课','80课现场动作与风险针对性','训练题库与成长档案离线核心','手机构建标记一致性']) {
             if (!String(info.contentStage || '').includes(stage)) throw new Error(`build marker missing: ${stage}`);

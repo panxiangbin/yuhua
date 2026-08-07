@@ -7,7 +7,6 @@
 @import url('./mobile-home-hardening.css?v=20260804-mobile1');
 
 @media (min-width: 769px) {
-  /* 最近查看卡片中的代码是关键信息，保持工业卡片视觉层级。 */
   #dashboard-recent-list .recent-card-meta strong {
     font-weight: 800;
   }
@@ -29,13 +28,11 @@
     display: none !important;
   }
 
-  /* 44px 顶栏控件需要 5px 上下内边距，保持 54px 顶栏不溢出。 */
   body:has(#view-dashboard.active) .topbar {
     padding-top: 5px !important;
     padding-bottom: 5px !important;
   }
 
-  /* 手机目录、返回首页和关闭目录都是高频入口，触控区不得小于 44×44px。 */
   body:has(#view-dashboard.active) #sidebar-open,
   body:has(#view-dashboard.active) #home-btn,
   body:has(#view-dashboard.active) #sidebar-close {
@@ -46,14 +43,77 @@
     flex: 0 0 44px;
   }
 
-  /* 手机首页四个快捷查询也是主要操作入口，保持至少 44px 触控高度。 */
   body:has(#view-dashboard.active) .quick-keywords .keyword-chip:nth-of-type(-n+4) {
     min-height: 44px !important;
   }
 
-  /* 与 mobile-home-refactor.css 的双 ID 选择器保持同等特异性，确保实体卡面和克制圆角覆盖旧值。 */
   body:has(#view-dashboard.active) #view-dashboard .cnc-home-route-card {
     border-radius: 16px !important;
     background: #fffdf9 !important;
+  }
+
+  /* 2026-08-07：手机文字层级再平衡，避免标题过重、搜索区拥挤。 */
+  body:has(#view-dashboard.active) #topbar-title {
+    font-size: 16px !important;
+    letter-spacing: -.01em !important;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-eyebrow {
+    margin-bottom: 6px !important;
+    font-size: 10.5px !important;
+    letter-spacing: .06em !important;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-hero h1 {
+    max-width: 12em;
+    font-size: clamp(21px, 6.2vw, 27px) !important;
+    line-height: 1.12 !important;
+    letter-spacing: -.025em !important;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-lead {
+    max-width: 25em;
+    margin-top: 7px !important;
+    font-size: 12.5px !important;
+    line-height: 1.48 !important;
+    -webkit-line-clamp: 2 !important;
+  }
+
+  body:has(#view-dashboard.active) .launchpad-search-header h3 {
+    font-size: 15px !important;
+    letter-spacing: -.01em !important;
+  }
+
+  body:has(#view-dashboard.active) .launchpad-search-bar input {
+    font-size: 14px !important;
+    line-height: 1.2 !important;
+  }
+
+  body:has(#view-dashboard.active) .launchpad-search-bar input::placeholder {
+    color: #8a97a7 !important;
+    font-size: 13px !important;
+  }
+
+  body:has(#view-dashboard.active) .launchpad-search-bar button {
+    font-size: 13px !important;
+  }
+
+  body:has(#view-dashboard.active) .quick-keywords .keyword-chip:nth-of-type(-n+4) {
+    font-size: 10.5px !important;
+    line-height: 1.2 !important;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-route-head::before {
+    font-size: 13.5px !important;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-route-list li:nth-child(3) strong {
+    font-size: 12.5px !important;
+    line-height: 1.3 !important;
+  }
+
+  body:has(#view-dashboard.active) .cnc-home-route-list li:nth-child(3) span {
+    font-size: 10.5px !important;
+    line-height: 1.35 !important;
   }
 }

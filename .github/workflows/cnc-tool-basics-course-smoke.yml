@@ -7,12 +7,17 @@ on:
       - '.github/workflows/cnc-tool-basics-course-smoke.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   tool-basics-course:
     runs-on: ubuntu-latest
     timeout-minutes: 18
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
@@ -20,10 +25,32 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - name: JavaScript syntax
         run: node --check cnc/tests/mobile-tool-basics-course-smoke.cjs
-      - name: Start static server
-        run: python3 -m http.server 4173 --directory . > /tmp/cnc-server.log 2>&1 &
+      - name: Start static server and wait until ready
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          python3 -m http.server 4173 --directory . > /tmp/cnc-server.log 2>&1 &
+          echo $! > /tmp/cnc-server.pid
+          for attempt in {1..40}; do
+            if curl --fail --silent --show-error --max-time 2 http://127.0.0.1:4173/cnc/course-tool-basics.html > /dev/null; then
+              echo "CNC static server ready on attempt ${attempt}"
+              cp /tmp/cnc-server.log artifacts/server.log || true
+              exit 0
+            fi
+            sleep 0.25
+          done
+          cp /tmp/cnc-server.log artifacts/server.log || true
+          cat /tmp/cnc-server.log || true
+          echo "CNC static server did not become ready" >&2
+          exit 1
       - name: Chromium 390x844 tool basics course
         run: node cnc/tests/mobile-tool-basics-course-smoke.cjs
+      - name: Capture static server log
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          cp /tmp/cnc-server.log artifacts/server.log || true
       - name: Upload tool basics diagnostics
         if: always()
         uses: actions/upload-artifact@v4

@@ -1,6 +1,6 @@
 /* CNC PWA：版本化缓存、离线回退与安全更新。 */
-const BUILD = '20260807-pwa18';
-const CACHE_REVISION = '20260807-learning18';
+const BUILD = '20260807-pwa19';
+const CACHE_REVISION = '20260807-learning19';
 const STATIC_CACHE = `cnc-static-${CACHE_REVISION}`;
 const RUNTIME_CACHE = `cnc-runtime-${CACHE_REVISION}`;
 const INSTALL_DIAGNOSTIC_PATH = './pwa-install-diagnostics.json';
@@ -43,7 +43,19 @@ const REQUIRED_CORE_PATHS = [
   './assets/images/batch02_operation_basics/single-block-dry-run-001.webp',
   './assets/images/batch04_milling_tooling/milling-contour-001.webp',
   './assets/images/batch02_operation_basics/canned-cycle-overview-001.webp',
-  './assets/images/batch05_alarm_drawing_material/first-piece-inspection-001.webp'
+  './assets/images/batch05_alarm_drawing_material/first-piece-inspection-001.webp',
+  './assets/videos/learning/stage01_safety.mp4',
+  './assets/videos/learning/stage02_xyz.mp4',
+  './assets/videos/learning/stage03_z_tool.mp4',
+  './assets/videos/learning/stage04_program.mp4',
+  './assets/videos/learning/stage05_g90_g91.mp4',
+  './assets/videos/learning/stage06_g00_g01.mp4',
+  './assets/videos/learning/stage07_sf.mp4',
+  './assets/videos/learning/stage08_g02_g03.mp4',
+  './assets/videos/learning/stage09_milling_direction.mp4',
+  './assets/videos/learning/stage10_g41_g42.mp4',
+  './assets/videos/learning/stage11_g81_g83.mp4',
+  './assets/videos/learning/stage12_first_part.mp4',
 ];
 
 function scopeUrl(path) {

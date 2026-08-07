@@ -7,8 +7,8 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const PWA_BUILD = '20260807-pwa18';
-const CACHE_REVISION = '20260807-learning18';
+const PWA_BUILD = '20260807-pwa19';
+const CACHE_REVISION = '20260807-learning19';
 const PLACEMENT_FIRST_STEP_COURSES = [
   {
     path: './course-safety-foundation.html',
@@ -26,6 +26,20 @@ const PLACEMENT_FIRST_STEP_COURSES = [
     required: ['G00与G01', '不能直接用于真实加工', '原厂手册']
   }
 ];
+const VIDEO_CORE_PATHS = [
+  './assets/videos/learning/stage01_safety.mp4',
+  './assets/videos/learning/stage02_xyz.mp4',
+  './assets/videos/learning/stage03_z_tool.mp4',
+  './assets/videos/learning/stage04_program.mp4',
+  './assets/videos/learning/stage05_g90_g91.mp4',
+  './assets/videos/learning/stage06_g00_g01.mp4',
+  './assets/videos/learning/stage07_sf.mp4',
+  './assets/videos/learning/stage08_g02_g03.mp4',
+  './assets/videos/learning/stage09_milling_direction.mp4',
+  './assets/videos/learning/stage10_g41_g42.mp4',
+  './assets/videos/learning/stage11_g81_g83.mp4',
+  './assets/videos/learning/stage12_first_part.mp4'
+];
 const CORE_OFFLINE_PATHS = [
   './training-practice.js',
   './training-profile.js',
@@ -35,7 +49,8 @@ const CORE_OFFLINE_PATHS = [
   ...PLACEMENT_FIRST_STEP_COURSES.map(item => item.path),
   './ai-teacher.html',
   './ai-teacher-intake.html',
-  './ai-teacher-explainability.html'
+  './ai-teacher-explainability.html',
+  ...VIDEO_CORE_PATHS
 ];
 const PLACEMENT_HANDOFF_KEY = 'cnc_beginner_placement_route_handoff_v1';
 fs.mkdirSync(out, { recursive: true });
@@ -46,7 +61,8 @@ const types = {
   '.css': 'text/css',
   '.json': 'application/json',
   '.webmanifest': 'application/manifest+json',
-  '.svg': 'image/svg+xml'
+  '.svg': 'image/svg+xml',
+  '.mp4': 'video/mp4'
 };
 
 const server = http.createServer((req, res) => {
@@ -187,6 +203,26 @@ async function verifyColdOfflineCourse(page, course) {
 
     stage = 'cold-offline-beginner-placement';
     await context.setOffline(true);
+
+    stage = 'cold-offline-video-core';
+    const offlineVideoCore = await page.evaluate(async ({ build, paths }) => {
+      const cache = await caches.open(`cnc-static-${build}`);
+      const result = [];
+      for (const item of paths) {
+        const response = await cache.match(new URL(item, location.href));
+        if (!response) {
+          result.push({ path: item, present: false, bytes: 0, contentType: '' });
+          continue;
+        }
+        const clone = response.clone();
+        const bytes = (await clone.arrayBuffer()).byteLength;
+        result.push({ path: item, present: true, bytes, contentType: response.headers.get('content-type') || '' });
+      }
+      return result;
+    }, { build: CACHE_REVISION, paths: VIDEO_CORE_PATHS });
+    const badOfflineVideos = offlineVideoCore.filter(item => !item.present || item.bytes <= 0 || !item.contentType.toLowerCase().includes('video/mp4'));
+    if (badOfflineVideos.length) throw new Error(`12关视频冷离线核心不完整: ${JSON.stringify(badOfflineVideos)}`);
+
     await page.goto('http://127.0.0.1:4173/cnc/beginner-placement.html', { waitUntil: 'domcontentloaded' });
     if (!(await page.title()).includes('CNC新手起点测评')) throw new Error('起点测评首次安装后离线打开失败');
     const placementBody = await page.locator('body').innerText();
@@ -284,6 +320,9 @@ async function verifyColdOfflineCourse(page, course) {
       placementFirstStepCoursePaths: PLACEMENT_FIRST_STEP_COURSES.map(item => item.path),
       trainingPracticeColdOfflineCore: true,
       trainingProfileColdOfflineCore: true,
+      learningVideosColdOfflineCore: true,
+      learningVideoCorePaths: VIDEO_CORE_PATHS,
+      learningVideoCoreResponses: offlineVideoCore,
       aiTeacherColdOffline: true,
       intakeColdOffline: true,
       explainabilityColdOffline: true,

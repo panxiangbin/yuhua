@@ -8,13 +8,13 @@ fs.mkdirSync(out, { recursive: true });
 
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
-const branchTargetPwaBuild = '20260807-pwa18';
-const previousPublicPwaBuild = '20260807-pwa17';
+const branchTargetPwaBuild = '20260807-pwa19';
+const previousPublicPwaBuild = '20260807-pwa18';
 const expectedSiteBuild = '20260806-learning-depth1';
 const previousPublicSiteBuild = '20260806-learning-depth1';
 const cacheRevisionByBuild = {
-  [branchTargetPwaBuild]: '20260807-learning18',
-  [previousPublicPwaBuild]: '20260807-learning17'
+  [branchTargetPwaBuild]: '20260807-learning19',
+  [previousPublicPwaBuild]: '20260807-learning18'
 };
 const siteBuildByPwaBuild = {
   [branchTargetPwaBuild]: expectedSiteBuild,
@@ -24,11 +24,25 @@ const attempts = Number(process.env.CNC_PAGES_VERIFY_ATTEMPTS || 18);
 const intervalMs = Number(process.env.CNC_PAGES_VERIFY_INTERVAL_MS || 10000);
 const eventName = process.env.GITHUB_EVENT_NAME || '';
 const resources = ['cnc/beginner-placement.html', 'cnc/sw.js', 'cnc/build-info.json'];
-const EXACT_CORE = [
+const BASE_CORE = [
   './index.html','./homepage-refresh.css','./homepage-refresh-desktop-legacy.css','./mobile-home-refactor.css','./personal-home.js','./training-practice.js','./training-profile.js','./learning-sublesson-catalog.js','./learning-sublesson-specificity.js','./learning-depth.css','./learning-detail.html','./mobile-trust-nav.js','./featured-images-supplement.js','./offline.html','./pwa-status.html','./pwa-self-test.html','./pages-status.html','./beginner-placement.html','./training-camp.html','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html','./ai-teacher.html','./ai-teacher-intake.html','./ai-teacher-explainability.html','./build-info.json','./assets/images/batch01_core/beginner-machine-zero-vs-work-zero-001.webp','./assets/images/batch02_operation_basics/machine-init-flow-001.webp','./assets/images/batch04_milling_tooling/milling-process-overview-001.webp','./assets/images/batch01_core/measure-reading-set-001.webp','./assets/images/batch05_alarm_drawing_material/dial-indicator-detail-001.webp','./assets/images/batch04_milling_tooling/vise-clamping-basic-001.webp','./assets/images/batch04_milling_tooling/tool-selection-beginner-001.webp','./assets/images/batch04_milling_tooling/bt-er-holder-overview-001.webp','./assets/images/batch02_operation_basics/single-block-dry-run-001.webp','./assets/images/batch04_milling_tooling/milling-contour-001.webp','./assets/images/batch02_operation_basics/canned-cycle-overview-001.webp','./assets/images/batch05_alarm_drawing_material/first-piece-inspection-001.webp'
 ];
-
-const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE;
+const VIDEO_CORE = [
+  './assets/videos/learning/stage01_safety.mp4',
+  './assets/videos/learning/stage02_xyz.mp4',
+  './assets/videos/learning/stage03_z_tool.mp4',
+  './assets/videos/learning/stage04_program.mp4',
+  './assets/videos/learning/stage05_g90_g91.mp4',
+  './assets/videos/learning/stage06_g00_g01.mp4',
+  './assets/videos/learning/stage07_sf.mp4',
+  './assets/videos/learning/stage08_g02_g03.mp4',
+  './assets/videos/learning/stage09_milling_direction.mp4',
+  './assets/videos/learning/stage10_g41_g42.mp4',
+  './assets/videos/learning/stage11_g81_g83.mp4',
+  './assets/videos/learning/stage12_first_part.mp4'
+];
+const EXACT_CORE = [...BASE_CORE, ...VIDEO_CORE];
+const PREVIOUS_PUBLIC_CORE_PATHS = BASE_CORE;
 
 const LEARNING_DEPTH_CORE_PATHS = new Set([
   './learning-sublesson-catalog.js',
@@ -100,7 +114,7 @@ function assertPlacement(text, label) {
 function assertServiceWorker(text, label, build) {
   const cache = expectedCache(build, label);
   requireTokens(text, label, [`const BUILD = '${build}'`,`const CACHE_REVISION = '${cache}'`,"const STATIC_CACHE = `cnc-static-${CACHE_REVISION}`","const RUNTIME_CACHE = `cnc-runtime-${CACHE_REVISION}`","name.startsWith('cnc-') && name !== STATIC_CACHE && name !== RUNTIME_CACHE","'./beginner-placement.html'","'./training-camp.html'","'./course-safety-foundation.html'","'./course-coordinate-axes.html'","'./course-g00-g01-basics.html'","'./ai-teacher.html'","'./ai-teacher-intake.html'","'./ai-teacher-explainability.html'"]);
-  if (build === branchTargetPwaBuild) requireTokens(text, label, ["'./training-practice.js'", "'./training-profile.js'"]);
+  if (build === branchTargetPwaBuild) requireTokens(text, label, ["'./training-practice.js'", "'./training-profile.js'", ...VIDEO_CORE.map(item => `'${item}'`)]);
   const block = text.match(/const REQUIRED_CORE_PATHS = \[([\s\S]*?)\];/)?.[1] || '';
   const core = [...block.matchAll(/'([^']+)'/g)].map(match => match[1]);
   const expectedCore = expectedCoreForBuild(build, label);
@@ -180,9 +194,9 @@ async function waitForMainPagesMatch() {
     const branchDeploymentPending = !localMatchesMain;
     if (eventName !== 'pull_request' && branchDeploymentPending) throw new Error('main正式验收不允许当前分支与main/Pages仍不一致');
     if (!branchDeploymentPending && publicPwaBuild !== branchTargetPwaBuild) throw new Error('分支与main一致时公网必须已经是目标PWA构建');
-    report.verified = { publicReachable: true, mainPagesExactBytesMatch: true, mainPagesExactSha256Match: true, localMatchesMain, branchDeploymentPending, branchSiteBuild: expectedSiteBuild, branchPwaBuild: branchTargetPwaBuild, branchCacheRevision: cacheRevisionByBuild[branchTargetPwaBuild], publicSiteBuild: mainBuild.build, publicPwaBuild, publicCacheRevision: cacheRevisionByBuild[publicPwaBuild], beginnerPlacementPublic: true, trainingPracticeInCoreCache: true, trainingProfileInCoreCache: true, beginnerPlacementInCoreCache: true, trainingCampInCoreCache: true, placementFirstStepCoursesInCoreCache: true, coreResourceCount: EXACT_CORE.length, criticalSafetyGatePresent: true, explainableRecommendationPresent: true, oneTimeRouteHandoffPresent: true, recommendationBoundaryVisible: true, manualBoundaryVisible: true, authorizedPersonBoundaryVisible: true, noLongTermLearningWrite: true };
+    report.verified = { publicReachable: true, mainPagesExactBytesMatch: true, mainPagesExactSha256Match: true, localMatchesMain, branchDeploymentPending, branchSiteBuild: expectedSiteBuild, branchPwaBuild: branchTargetPwaBuild, branchCacheRevision: cacheRevisionByBuild[branchTargetPwaBuild], publicSiteBuild: mainBuild.build, publicPwaBuild, publicCacheRevision: cacheRevisionByBuild[publicPwaBuild], beginnerPlacementPublic: true, trainingPracticeInCoreCache: true, trainingProfileInCoreCache: true, beginnerPlacementInCoreCache: true, trainingCampInCoreCache: true, placementFirstStepCoursesInCoreCache: true, localVideoCoreCount: VIDEO_CORE.length, coreResourceCount: EXACT_CORE.length, criticalSafetyGatePresent: true, explainableRecommendationPresent: true, oneTimeRouteHandoffPresent: true, recommendationBoundaryVisible: true, manualBoundaryVisible: true, authorizedPersonBoundaryVisible: true, noLongTermLearningWrite: true };
     fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
-    fs.writeFileSync(findingsPath, ['起点测评Pages公网可达：是','main与Pages三项资源逐字节一致：是',`当前分支站点/PWA构建/缓存修订：${expectedSiteBuild}/${branchTargetPwaBuild}/${cacheRevisionByBuild[branchTargetPwaBuild]}`,`main与Pages公网站点/PWA构建/缓存修订：${mainBuild.build}/${publicPwaBuild}/${cacheRevisionByBuild[publicPwaBuild]}`,`分支待合并或待部署：${branchDeploymentPending ? '是' : '否'}`,`当前分支训练题库、成长档案、起点测评、训练营、三类首步课程及AI老师资源进入${EXACT_CORE.length}项核心预缓存：是`,'关键安全项高分不能抵消危险答案：已验证','一次性路线交接、中文判断依据、原厂手册与授权人员边界：可见',...findings].join('\n') + '\n');
+    fs.writeFileSync(findingsPath, ['起点测评Pages公网可达：是','main与Pages三项资源逐字节一致：是',`当前分支站点/PWA构建/缓存修订：${expectedSiteBuild}/${branchTargetPwaBuild}/${cacheRevisionByBuild[branchTargetPwaBuild]}`,`main与Pages公网站点/PWA构建/缓存修订：${mainBuild.build}/${publicPwaBuild}/${cacheRevisionByBuild[publicPwaBuild]}`,`分支待合并或待部署：${branchDeploymentPending ? '是' : '否'}`,`当前分支训练题库、成长档案、起点测评、训练营、三类首步课程、AI老师及${VIDEO_CORE.length}个本地课程视频进入${EXACT_CORE.length}项核心预缓存：是`,'关键安全项高分不能抵消危险答案：已验证','一次性路线交接、中文判断依据、原厂手册与授权人员边界：可见',...findings].join('\n') + '\n');
     console.log(`CNC beginner placement offline Pages verified: branch ${branchTargetPwaBuild} / public ${publicPwaBuild} / pending=${branchDeploymentPending}`);
   } catch (error) {
     report.error = String(error && error.stack || error);
