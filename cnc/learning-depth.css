@@ -73,7 +73,7 @@
   #view-study .study-card{grid-template-columns:98px minmax(0,1fr)!important;gap:3px 9px!important;padding:7px!important}
   #view-study .study-card-thumb{width:98px!important;min-width:98px!important;max-width:98px!important;height:78px!important;min-height:78px!important}
   #view-study .study-card>h4{font-size:14px!important}
-  #view-study .study-card>p{font-size:11.5px!important;-webkit-line-clamp:2}
+  #view-study .study-card>p{font-size:12.5px!important;-webkit-line-clamp:2}
   #view-study .section-head h3::after{display:block;margin-top:3px;font-size:.58em}
   #view-study .cnc-sublesson-panel>summary::before{display:none}
 }
