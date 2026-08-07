@@ -27,19 +27,19 @@
       <h2>版本一致性</h2>
       <p id="status" class="warn" role="status" aria-live="polite">正在检查版本。</p>
       <ul class="details">
-        <li>页面期望构建：<strong id="expected">20260807-pwa19</strong></li>
+        <li>页面期望构建：<strong id="expected">20260808-pwa20</strong></li>
         <li>静态缓存：<span id="static-cache">检测中</span></li>
         <li>运行时缓存：<span id="runtime-cache">检测中</span></li>
         <li>最近检查：<span id="checked-at">尚未完成</span></li>
       </ul>
       <div class="actions"><button class="btn" id="check" type="button">检查更新</button><button class="btn alt" id="refresh" type="button">重新核对状态</button><button class="btn alt" id="apply" type="button" disabled>应用新版本</button></div>
-      <p class="notice">当前核心离线资源包含带关键安全项硬门禁的新手起点测评、可一次性显示推荐路线的训练营、三类推荐路线首步课程（安全基础、坐标轴与回零、G00/G01基础）、训练题库、成长档案、12关本地教学视频、AI CNC老师、现场问诊单和“为什么被阻断”判断说明页。PWA19在继续缓存训练题库与成长档案的基础上，将12关本地教学视频纳入版本化静态核心缓存，并保持手机首页运行构建标记与build-info声明一致，避免运行态与部署标记漂移；同时保留80个图文小课的主题化现场动作与高风险错误、紧凑学习目录及AI老师学习档案异常保护。若页面期望构建、Service Worker构建和缓存版本不一致，请先联网检查更新，再由你明确点击应用。离线内容可能不是最新版本；测评只用于推荐学习路线，报警、参数、刀补和现场操作仍须核对机床原厂手册、企业制度和现场条件。</p>
+      <p class="notice">当前核心离线资源包含带关键安全项硬门禁的新手起点测评、可一次性显示推荐路线的训练营、三类推荐路线首步课程（安全基础、坐标轴与回零、G00/G01基础）、训练题库、成长档案、12关本地教学视频、AI CNC老师、现场问诊单和“为什么被阻断”判断说明页。PWA20在PWA19的12关本地视频离线核心基础上，同步固定12关能力映射与“优先补真实已练薄弱课”的每日训练推荐逻辑，确保离线打开时成长档案与在线逻辑一致；同时继续保持手机首页运行构建标记、80个图文小课、训练题库、起点测评、训练营、AI老师和12关视频的版本化核心缓存。若页面期望构建、Service Worker构建和缓存版本不一致，请先联网检查更新，再由你明确点击应用。离线内容可能不是最新版本；测评只用于推荐学习路线，报警、参数、刀补和现场操作仍须核对机床原厂手册、企业制度和现场条件。</p>
     </section>
   </main>
   <nav class="bottom" aria-label="平台主导航"><a href="./index.html">首页</a><a href="./training-camp.html">训练营</a><a href="./practice.html">练习</a><a href="./index.html#workspace">查代码</a><a href="./profile.html">我的</a></nav>
   <script>
-    const EXPECTED='20260807-pwa19';
-    const EXPECTED_CACHE='20260807-learning19';
+    const EXPECTED='20260808-pwa20';
+    const EXPECTED_CACHE='20260808-learning20';
     const network=document.querySelector('#network');
     const worker=document.querySelector('#worker');
     const buildElement=document.querySelector('#build');

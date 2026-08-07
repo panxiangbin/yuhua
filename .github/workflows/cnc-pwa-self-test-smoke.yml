@@ -53,8 +53,8 @@ jobs:
           if (swBuild !== info.pwaBuild || swCache !== info.cacheRevision || !html.includes(`const EXPECTED='${info.pwaBuild}'`) || !html.includes(`const EXPECTED_CACHE='${info.cacheRevision}'`)) {
             throw new Error('PWA self-test/build-info/Service Worker build or cache revision mismatch');
           }
-          if (info.pwaBuild !== '20260807-pwa19') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
-          if (info.cacheRevision !== '20260807-learning19') throw new Error(`unexpected cache revision: ${info.cacheRevision}`);
+          if (info.pwaBuild !== '20260808-pwa20') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
+          if (info.cacheRevision !== '20260808-learning20') throw new Error(`unexpected cache revision: ${info.cacheRevision}`);
           for (const token of [
             'Service Worker已注册',
             '当前页面已被接管',
@@ -95,13 +95,13 @@ jobs:
             './assets/videos/learning/stage12_first_part.mp4',
             '关键安全门禁',
             '三类测评首步课程',
-            'PWA19在继续缓存训练题库与成长档案的基础上，将12关本地教学视频纳入版本化静态核心缓存，并保持手机运行构建标记与build-info声明一致'
+            'PWA20在PWA19的12关本地视频离线核心基础上，同步固定12关能力映射与“优先补真实已练薄弱课”的每日训练推荐逻辑'
           ]) {
             if (!html.includes(token)) throw new Error(`self-test contract missing: ${token}`);
           }
           if (!placement.includes('criticalFailures') || !placement.includes("decision:'critical-safety'")) throw new Error('beginner placement critical safety gate missing');
           if (!placement.includes('cnc_beginner_placement_route_handoff_v1') || !camp.includes('cnc_beginner_placement_route_handoff_v1')) throw new Error('placement route handoff producer or consumer missing');
-          for (const stage of ['起点测评关键安全门禁','训练营路线离线核心','测评首步课程离线核心','正式课程开发占位清零','AI老师学习档案异常保护','80个图文小课','学习目录紧凑布局','80课现场动作与风险针对性','训练题库与成长档案离线核心','手机构建标记一致性']) {
+          for (const stage of ['起点测评关键安全门禁','训练营路线离线核心','测评首步课程离线核心','正式课程开发占位清零','AI老师学习档案异常保护','80个图文小课','学习目录紧凑布局','80课现场动作与风险针对性','训练题库与成长档案离线核心','手机构建标记一致性','固定12关能力映射与真实薄弱课推荐']) {
             if (!String(info.contentStage || '').includes(stage)) throw new Error(`build marker missing: ${stage}`);
           }
           NODE

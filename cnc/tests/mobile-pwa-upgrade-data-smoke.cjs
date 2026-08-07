@@ -8,10 +8,10 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const CURRENT_PWA_BUILD = '20260807-pwa19';
-const PREVIOUS_PWA_BUILD = '20260807-pwa18';
-const CURRENT_CACHE_REVISION = '20260807-learning19';
-const PREVIOUS_CACHE_REVISION = '20260807-learning18';
+const CURRENT_PWA_BUILD = '20260808-pwa20';
+const PREVIOUS_PWA_BUILD = '20260807-pwa19';
+const CURRENT_CACHE_REVISION = '20260808-learning20';
+const PREVIOUS_CACHE_REVISION = '20260807-learning19';
 const CURRENT_STATIC_CACHE = `cnc-static-${CURRENT_CACHE_REVISION}`;
 const CURRENT_RUNTIME_CACHE = `cnc-runtime-${CURRENT_CACHE_REVISION}`;
 const PREVIOUS_STATIC_CACHE = `cnc-static-${PREVIOUS_CACHE_REVISION}`;
@@ -203,7 +203,7 @@ async function verifyColdOfflineCourse(page, course) {
         request.onsuccess = () => {
           const db = request.result;
           const transaction = db.transaction('records', 'readwrite');
-          transaction.objectStore('records').put({ xp: 680, streak: 12, source: 'pwa18' }, 'growth');
+          transaction.objectStore('records').put({ xp: 680, streak: 12, source: 'pwa19' }, 'growth');
           transaction.onerror = () => reject(transaction.error);
           transaction.oncomplete = () => {
             db.close();

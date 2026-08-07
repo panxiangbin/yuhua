@@ -1,7 +1,7 @@
 const { chromium } = require('playwright');
 const assert = require('node:assert/strict');
 
-// This smoke test intentionally pins the public training-profile build contract.
+// This smoke test pins the fixed-12-lesson semantic ability contract and real mobile route.
 (async () => {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
@@ -35,17 +35,47 @@ const assert = require('node:assert/strict');
 
   const data = await page.evaluate(() => window.CNC_TRAINING_PROFILE.snapshot());
   assert.equal(data.abilities.length, 6);
-  assert.equal(data.abilities.find(item => item.id === 'coordinates').score, 85);
-  assert.equal(data.abilities.find(item => item.id === 'setup').score, 30);
-  assert.equal(data.weakest.id, 'verification');
+
+  // 六维能力必须与真实固定12关课程语义对齐，并且每关恰好出现一次。
+  const expectedAbilityLessons = {
+    safety: [1],
+    coordinates: [2, 3, 5],
+    setup: [6, 8],
+    programming: [4, 9, 10, 11],
+    process: [7],
+    verification: [12]
+  };
+  for (const [id, lessons] of Object.entries(expectedAbilityLessons)) {
+    assert.deepEqual(data.abilities.find(item => item.id === id)?.lessons, lessons, `${id}能力映射必须与固定12关真实课程语义一致`);
+  }
+  const mappedLessons = data.abilities.flatMap(item => item.lessons).sort((a, b) => a - b);
+  assert.deepEqual(mappedLessons, Array.from({ length: 12 }, (_, index) => index + 1));
+  assert.equal(new Set(mappedLessons).size, 12);
+
+  // 当前样例里第5关20分是已经暴露的最低分薄弱课，应优先推荐它，
+  // 不能再让“尚未训练=0分”的后续能力抢走推荐。
+  assert.equal(data.abilities.find(item => item.id === 'safety').score, 100);
+  assert.equal(data.abilities.find(item => item.id === 'coordinates').score, 65);
+  assert.equal(data.abilities.find(item => item.id === 'setup').score, 40);
+  assert.equal(data.abilities.find(item => item.id === 'programming').score, 35);
+  assert.equal(data.abilities.find(item => item.id === 'process').score, 60);
+  assert.equal(data.abilities.find(item => item.id === 'verification').score, 0);
+  assert.equal(data.weakest.id, 'coordinates');
+  assert.equal(data.weakest.weakLesson, 5);
+  assert.equal(data.dailyPlan.lesson, 5);
+  assert.equal(data.dailyPlan.ability, '机床与坐标');
 
   const cards = page.locator('.xp-ability-card');
   assert.equal(await cards.count(), 6);
   const text = await page.locator('.xp-ability-section').textContent();
   assert.match(text, /安全操作/);
-  assert.match(text, /坐标基础/);
-  assert.match(text, /对刀装夹/);
+  assert.match(text, /机床与坐标/);
+  assert.match(text, /装夹与对刀/);
+  assert.match(text, /编程与读图/);
+  assert.match(text, /刀具与工艺/);
+  assert.match(text, /首件验证/);
   assert.match(text, /当前最需要加强/);
+  assert.match(text, /机床与坐标 · 65 分/);
 
   // 成长档案样式表由运行时插入。先确认样式表、390px媒体查询和字体全部就绪，
   // 再执行连续帧测量，避免把“样式表尚未应用”的过渡状态误判为生产布局失败。
@@ -105,9 +135,9 @@ const assert = require('node:assert/strict');
   assert.ok(layout.minButtonHeight >= 44, `阶段能力按钮小于44px：${JSON.stringify(layout)}`);
   assert.ok(layout.stableFrames >= 5, `阶段能力布局未连续稳定5帧：${JSON.stringify(layout)}`);
 
-  await page.locator('[data-ability-train="11"]').first().click();
-  await page.waitForSelector('#view-study.active #study-detail-content .lesson-detail-v2[data-level="11"]', { state: 'visible', timeout: 15000 });
+  await page.locator('[data-ability-train="5"]').first().click();
+  await page.waitForSelector('#view-study.active #study-detail-content .lesson-detail-v2[data-level="5"]', { state: 'visible', timeout: 15000 });
   assert.deepEqual(errors, []);
-  console.log('单层首页真实底栏、六维阶段能力、薄弱项识别与针对训练入口通过', { abilities: data.abilities, weakest: data.weakest, layout });
+  console.log('固定12关真实课程语义、六维能力映射、真实薄弱课识别、手机单列布局与针对训练入口通过', { abilities: data.abilities, weakest: data.weakest, dailyPlan: data.dailyPlan, layout });
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });

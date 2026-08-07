@@ -8,13 +8,13 @@ fs.mkdirSync(resultsDir, { recursive: true });
 
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
-const branchTargetPwaBuild = '20260807-pwa19';
-const previousPublicPwaBuild = '20260807-pwa18';
+const branchTargetPwaBuild = '20260808-pwa20';
+const previousPublicPwaBuild = '20260807-pwa19';
 const expectedSiteBuild = '20260806-learning-depth1';
 const previousPublicSiteBuild = '20260806-learning-depth1';
 const cacheRevisionByBuild = {
-  [branchTargetPwaBuild]: '20260807-learning19',
-  [previousPublicPwaBuild]: '20260807-learning18'
+  [branchTargetPwaBuild]: '20260808-learning20',
+  [previousPublicPwaBuild]: '20260807-learning19'
 };
 const attempts = Number(process.env.CNC_PAGES_VERIFY_ATTEMPTS || 18);
 const intervalMs = Number(process.env.CNC_PAGES_VERIFY_INTERVAL_MS || 10000);
@@ -84,7 +84,7 @@ const VIDEO_CORE_PATHS = [
   './assets/videos/learning/stage12_first_part.mp4'
 ];
 const EXACT_CORE_PATHS = [...BASE_CORE_PATHS, ...VIDEO_CORE_PATHS];
-const PREVIOUS_PUBLIC_CORE_PATHS = BASE_CORE_PATHS;
+const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE_PATHS;
 
 const LEARNING_DEPTH_CORE_PATHS = new Set([
   './learning-sublesson-catalog.js',
@@ -98,7 +98,7 @@ function expectedCoreForBuild(build, label) {
   throw new Error(`${label}出现未受控核心资源构建：${build}`);
 }
 
-const LEGACY_PUBLIC_SELF_TEST_PATHS = PREVIOUS_PUBLIC_CORE_PATHS;
+const PREVIOUS_PUBLIC_SELF_TEST_PATHS = PREVIOUS_PUBLIC_CORE_PATHS;
 
 const diagnostics = {
   checkedAt: new Date().toISOString(),
@@ -249,7 +249,7 @@ function assertBuildInfo(text, label, expectedBuild) {
   const stage = String(data.contentStage || '');
   requireTokens(stage, label, ['课程12关', '起点测评', '手机首页一屏化', 'AI CNC老师基础版', 'PWA可靠性']);
   if (expectedBuild === branchTargetPwaBuild) {
-    requireTokens(stage, label, ['起点测评关键安全门禁', '起点测评离线核心', '测评路线一次性交接', '训练营路线离线核心', '测评首步课程离线核心', '正式课程开发占位清零', 'AI老师现场问诊单', 'AI老师判断说明', 'AI老师离线核心', 'AI老师学习档案异常保护', '80个图文小课', '学习目录紧凑布局', '80课现场动作与风险针对性', '训练题库与成长档案离线核心', '手机构建标记一致性']);
+    requireTokens(stage, label, ['起点测评关键安全门禁', '起点测评离线核心', '测评路线一次性交接', '训练营路线离线核心', '测评首步课程离线核心', '正式课程开发占位清零', 'AI老师现场问诊单', 'AI老师判断说明', 'AI老师离线核心', 'AI老师学习档案异常保护', '80个图文小课', '学习目录紧凑布局', '80课现场动作与风险针对性', '训练题库与成长档案离线核心', '手机构建标记一致性', '固定12关能力映射与真实薄弱课推荐']);
   }
   return { build: data.build, pwaBuild: data.pwaBuild, cacheRevision: data.cacheRevision, scope: data.scope };
 }
@@ -271,17 +271,17 @@ function assertStatusPage(text, label, expectedBuild) {
     'pageshow',
     'visibilitychange'
   ];
-  let legacyCacheContract = false;
+  let previousCacheContract = false;
   if (expectedBuild === branchTargetPwaBuild) {
-    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'PWA19在继续缓存训练题库与成长档案的基础上，将12关本地教学视频纳入版本化静态核心缓存，并保持手机首页运行构建标记与build-info声明一致');
+    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'PWA20在PWA19的12关本地视频离线核心基础上，同步固定12关能力映射与“优先补真实已练薄弱课”的每日训练推荐逻辑');
   } else {
     required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'const cacheBuildOk=staticName.includes(EXPECTED_CACHE)&&runtimeName.includes(EXPECTED_CACHE)');
-    legacyCacheContract = true;
+    previousCacheContract = true;
   }
   requireTokens(text, label, required);
   const visible = visibleBody(text);
   requireTokens(visible, label, ['离线、缓存与更新状态', '离线内容可能不是最新版本', '测评只用于推荐学习路线', '原厂手册、企业制度和现场条件']);
-  return { build: expectedBuild, cacheRevision: expectedCache, legacyCacheContract, visibleSafetyBoundary: true };
+  return { build: expectedBuild, cacheRevision: expectedCache, previousCacheContract, visibleSafetyBoundary: true };
 }
 
 function assertSelfTest(text, label, expectedBuild) {
@@ -298,21 +298,21 @@ function assertSelfTest(text, label, expectedBuild) {
     'MAX_AUTO_RETRIES=20'
   ];
   let expectedPaths;
-  let legacyCacheContract = false;
+  let previousCacheContract = false;
   if (expectedBuild === branchTargetPwaBuild) {
-    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'marker.cacheRevision===EXPECTED_CACHE', 'PWA19在继续缓存训练题库与成长档案的基础上，将12关本地教学视频纳入版本化静态核心缓存，并保持手机运行构建标记与build-info声明一致', './training-practice.js', './training-profile.js', ...VIDEO_CORE_PATHS);
+    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'marker.cacheRevision===EXPECTED_CACHE', 'PWA20在PWA19的12关本地视频离线核心基础上，同步固定12关能力映射与“优先补真实已练薄弱课”的每日训练推荐逻辑', './training-practice.js', './training-profile.js', ...VIDEO_CORE_PATHS);
     expectedPaths = EXACT_CORE_PATHS;
   } else {
     required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'const staticName=keys.find(name=>name===`cnc-static-${EXPECTED_CACHE}`)', 'const runtimeName=keys.find(name=>name===`cnc-runtime-${EXPECTED_CACHE}`)', 'marker.cacheRevision===EXPECTED_CACHE');
     expectedPaths = expectedCoreForBuild(expectedBuild, label);
-    legacyCacheContract = true;
+    previousCacheContract = true;
   }
   requireTokens(text, label, required);
   const actual = parseQuotedArray(text, /const REQUIRED=\[([\s\S]*?)\];/, `${label}自检核心资源`);
   assertExactArray(actual, expectedPaths, `${label}自检核心资源`);
   const visible = visibleBody(text);
   requireTokens(visible, label, ['只读检查', '不修改学习记录', '不清空缓存', '不发放XP', '起点测评只推荐学习路线', '高风险操作须现场师傅或授权人员指导']);
-  return { build: expectedBuild, cacheRevision: expectedCache, requiredCount: actual.length, legacyCacheContract, readOnly: true };
+  return { build: expectedBuild, cacheRevision: expectedCache, requiredCount: actual.length, previousCacheContract, readOnly: true };
 }
 
 function assertContract(kind, text, label, expectedBuild) {
@@ -435,7 +435,7 @@ async function waitForMainPagesMatch() {
       `分支待合并或待部署：${branchDeploymentPending ? '是' : '否'}`,
       `当前分支手机首页、训练题库、成长档案、12关图片、${VIDEO_CORE_PATHS.length}个本地课程视频、起点测评、训练营路线、三类测评首步课程、80课目录、AI老师、现场问诊单、判断说明页核心预缓存：完整`,
       `当前分支PWA自检核心资源：${EXACT_CORE_PATHS.length}项且无重复`,
-      `当前公网PWA自检核心资源：${publicPwaBuild === previousPublicPwaBuild ? LEGACY_PUBLIC_SELF_TEST_PATHS.length : EXACT_CORE_PATHS.length}项且无重复`,
+      `当前公网PWA自检核心资源：${publicPwaBuild === previousPublicPwaBuild ? PREVIOUS_PUBLIC_SELF_TEST_PATHS.length : EXACT_CORE_PATHS.length}项且无重复`,
       '测评安全硬门禁、路线隐私、固定值、原厂手册与授权人员边界：可见',
       ...findings
     ].join('\n') + '\n');

@@ -7,22 +7,74 @@ on:
       - '.github/workflows/cnc-ability-analysis-smoke.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   ability-analysis:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - name: Record exact tested head
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p cnc/test-artifacts/ability-analysis
+          tested_head="$(git rev-parse HEAD)"
+          expected_head="${{ github.event.pull_request.head.sha || github.sha }}"
+          if [ "$tested_head" != "$expected_head" ]; then
+            echo "阶段能力实际检出提交与预期最新头不一致：tested=$tested_head expected=$expected_head" >&2
+            exit 1
+          fi
+          TESTED_HEAD="$tested_head" EVENT_SHA="$GITHUB_SHA" node - <<'NODE'
+          const fs = require('fs');
+          fs.writeFileSync('cnc/test-artifacts/ability-analysis/workflow-bootstrap.json', JSON.stringify({
+            stage: 'workflow-bootstrap',
+            runId: process.env.GITHUB_RUN_ID,
+            eventName: process.env.GITHUB_EVENT_NAME,
+            testedHead: process.env.TESTED_HEAD,
+            eventSha: process.env.EVENT_SHA,
+            initializedAt: new Date().toISOString()
+          }, null, 2));
+          NODE
       - run: npm install --no-save playwright@1.52.0
       - run: npx playwright install --with-deps chromium
       - name: JavaScript syntax
         run: |
           node --check cnc/training-profile.js
           node --check cnc/tests/mobile-training-ability-smoke.cjs
-      - name: Start static server
-        run: python3 -m http.server 4173 --directory . > /tmp/cnc-server.log 2>&1 &
+      - name: Start static server and wait until ready
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4173 --directory . > /tmp/cnc-server.log 2>&1 &
+          for attempt in $(seq 1 40); do
+            if curl --fail --silent --show-error http://127.0.0.1:4173/cnc/ >/dev/null; then
+              cp /tmp/cnc-server.log cnc/test-artifacts/ability-analysis/server.log
+              exit 0
+            fi
+            sleep 0.25
+          done
+          cp /tmp/cnc-server.log cnc/test-artifacts/ability-analysis/server.log || true
+          echo 'CNC静态服务器未在10秒内就绪' >&2
+          exit 1
       - name: Chromium 390x844 ability analysis
-        run: node cnc/tests/mobile-training-ability-smoke.cjs
+        shell: bash
+        run: |
+          set -o pipefail
+          node cnc/tests/mobile-training-ability-smoke.cjs 2>&1 | tee cnc/test-artifacts/ability-analysis/test.log
+      - name: Upload ability analysis diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-ability-analysis-${{ github.run_id }}
+          path: cnc/test-artifacts/ability-analysis/**
+          if-no-files-found: error
+          retention-days: 14
