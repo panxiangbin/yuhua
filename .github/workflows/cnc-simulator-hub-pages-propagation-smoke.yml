@@ -3,7 +3,6 @@ name: CNC simulator hub Pages propagation smoke
 on:
   pull_request:
     paths:
-      - 'cnc/simulator-hub.html'
       - 'cnc/tests/pages-exact-resource-deployment-smoke.cjs'
       - '.github/workflows/cnc-simulator-hub-pages-propagation-smoke.yml'
   push:
