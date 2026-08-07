@@ -74,6 +74,24 @@ jobs:
             if (!test.includes(file)) throw new Error(`${file} missing from offline browser verification`);
             if (!selfTest.includes(file)) throw new Error(`${file} missing from PWA self-test required resources`);
           }
+          for (const video of [
+            './assets/videos/learning/stage01_safety.mp4',
+            './assets/videos/learning/stage02_xyz.mp4',
+            './assets/videos/learning/stage03_z_tool.mp4',
+            './assets/videos/learning/stage04_program.mp4',
+            './assets/videos/learning/stage05_g90_g91.mp4',
+            './assets/videos/learning/stage06_g00_g01.mp4',
+            './assets/videos/learning/stage07_sf.mp4',
+            './assets/videos/learning/stage08_g02_g03.mp4',
+            './assets/videos/learning/stage09_milling_direction.mp4',
+            './assets/videos/learning/stage10_g41_g42.mp4',
+            './assets/videos/learning/stage11_g81_g83.mp4',
+            './assets/videos/learning/stage12_first_part.mp4'
+          ]) {
+            if (!sw.includes(`'${video}'`)) throw new Error(`${video} missing from Service Worker core cache`);
+            if (!test.includes(video)) throw new Error(`${video} missing from offline browser verification`);
+            if (!selfTest.includes(video)) throw new Error(`${video} missing from PWA self-test required resources`);
+          }
           if (!placement.includes('criticalFailures') || !placement.includes("decision:'critical-safety'")) throw new Error('beginner placement critical safety gate missing');
           if (!placement.includes('cnc_beginner_placement_route_handoff_v1') || !camp.includes('cnc_beginner_placement_route_handoff_v1')) throw new Error('placement route handoff producer or consumer missing');
           for (const token of [
@@ -86,6 +104,12 @@ jobs:
             'placementFirstStepCoursesColdOffline: true',
             'trainingPracticeColdOfflineCore: true',
             'trainingProfileColdOfflineCore: true',
+            'learningVideosColdOfflineCore: true',
+            'learningVideoCorePaths: VIDEO_CORE_PATHS',
+            'learningVideoCoreResponses: offlineVideoCore',
+            "stage = 'cold-offline-video-core'",
+            "'.mp4': 'video/mp4'",
+            'item.bytes <= 0',
             'explainabilityColdOffline: true'
           ]) if (!test.includes(token)) throw new Error(`offline diagnostics missing: ${token}`);
           for (const stage of ['起点测评关键安全门禁','起点测评离线核心','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','AI老师离线核心','正式课程开发占位清零','AI老师学习档案异常保护','80个图文小课','学习目录紧凑布局','80课现场动作与风险针对性','训练题库与成长档案离线核心','手机构建标记一致性']) {
