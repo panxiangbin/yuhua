@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { execFileSync } = require('child_process');
 
 const ROOT = path.resolve(__dirname, '..', '..');
 const OUT = path.join(ROOT, 'cnc', 'test-results', 'mobile-build-consistency');
@@ -46,9 +47,13 @@ function main() {
 
   const values = { declared, bodyDataset, refactorBuild, browserExpected };
   const mismatches = Object.entries(values).filter(([, value]) => value !== declared);
+  const testedSha = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT, encoding: 'utf8' }).trim();
+  const eventSha = process.env.GITHUB_SHA || null;
   const report = {
     generatedAt: new Date().toISOString(),
-    commitSha: process.env.GITHUB_SHA || null,
+    testedSha,
+    eventSha,
+    commitSha: testedSha,
     values,
     mismatchCount: mismatches.length,
     mismatches: mismatches.map(([name, value]) => ({ name, value, expected: declared })),
@@ -59,7 +64,7 @@ function main() {
   if (mismatches.length) {
     throw new Error(`手机构建标记漂移：${mismatches.map(([name, value]) => `${name}=${value}，期望${declared}`).join('；')}`);
   }
-  console.log(`CNC手机构建标记一致性通过：${declared}`);
+  console.log(`CNC手机构建标记一致性通过：${declared}；测试提交：${testedSha}`);
 }
 
 try {
