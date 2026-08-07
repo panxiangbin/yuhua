@@ -27,24 +27,32 @@ jobs:
     timeout-minutes: 6
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
       - name: 验证恢复流程范围、权限与防绕过规则
         run: |
-          node - <<'NODE'
+          mkdir -p cnc/test-results/pages-build-recovery-pr-baseline
+          set +e
+          node - <<'NODE' 2>&1 | tee cnc/test-results/pages-build-recovery-pr-baseline/contract-audit.log
           const fs = require('fs');
           const workflow = fs.readFileSync('.github/workflows/cnc-pages-build-recovery.yml', 'utf8');
           const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8').replace(/^\uFEFF/, ''));
           const publicTest = fs.readFileSync('cnc/tests/mobile-pages-deployment-status-smoke.cjs', 'utf8');
+          // 拆开“$”与“{{”以避免GitHub在run脚本生成阶段把契约字符串本身提前展开成SHA。
+          const exactHeadRef = 'ref: $' + '{{ github.event.pull_request.head.sha || github.sha }}';
           for (const token of [
             "branches: [main]",
             "- 'cnc/**'",
+            exactHeadRef,
+            "if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'",
             'pages: write',
             '/pages/builds/latest',
             '/pages/builds',
-            'github.event.pull_request.head.repo.full_name == github.repository',
-            'github.event.pull_request.user.login == github.repository_owner',
+            'PR仅只读核验main与Pages公网基线',
+            'publicBaselineMatchesMain: true',
             "cache: 'no-store'",
             'CNC_PAGES_RECOVERY_ATTEMPTS || 40',
             'mobile-pages-deployment-status-smoke.cjs',
@@ -58,10 +66,11 @@ jobs:
             'git push --' + 'force',
             'force:' + ' true',
             'process.' + 'exit(0)',
-            'test.' + 'skip('
+            'test.' + 'skip(',
+            'github.event.pull_request.head.repo.full_name' + ' == github.repository'
           ];
           for (const forbidden of workflowForbidden) {
-            if (workflow.includes(forbidden)) throw new Error(`发现恢复流程绕过项：${forbidden}`);
+            if (workflow.includes(forbidden)) throw new Error(`发现恢复流程绕过或PR写入旧逻辑：${forbidden}`);
           }
           if (info.app !== 'cnc-training-platform') throw new Error('CNC构建标记无效');
           if (!/^\d{8}-pwa\d+$/.test(String(info.pwaBuild || ''))) throw new Error('PWA构建号格式无效');
@@ -74,10 +83,70 @@ jobs:
           }
           console.log(`CNC Pages恢复契约通过：${info.build}/${info.pwaBuild}/${info.cacheRevision}`);
           NODE
+          contract_status=${PIPESTATUS[0]}
+          set -e
+          exit "$contract_status"
+      - name: PR仅只读核验main与Pages公网基线
+        if: github.event_name == 'pull_request'
+        env:
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
+          const out = path.resolve('cnc/test-results/pages-build-recovery-pr-baseline');
+          fs.mkdirSync(out, { recursive: true });
+          const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
+          const mainUrl = `https://raw.githubusercontent.com/${owner}/${repo}/main/cnc/build-info.json`;
+          const publicUrl = `https://${owner}.github.io/${repo}/cnc/build-info.json`;
+          const keys = ['app','build','pwaBuild','cacheRevision','contentStage'];
+          async function marker(url) {
+            const target = new URL(url);
+            target.searchParams.set('verify-pr-baseline', `${Date.now()}-${Math.random().toString(16).slice(2)}`);
+            const response = await fetch(target, {
+              cache: 'no-store',
+              headers: { 'Cache-Control': 'no-cache, no-store, max-age=0', Pragma: 'no-cache', 'User-Agent': 'cnc-pages-build-recovery-pr-baseline' }
+            });
+            const text = await response.text();
+            if (!response.ok) throw new Error(`HTTP ${response.status}: ${text.slice(0, 180)}`);
+            return JSON.parse(text.replace(/^\uFEFF/, ''));
+          }
+          (async () => {
+            const main = await marker(mainUrl);
+            const pages = await marker(publicUrl);
+            const publicBaselineMatchesMain = keys.every(key => main?.[key] === pages?.[key]);
+            const report = {
+              checkedAt: new Date().toISOString(),
+              eventName: process.env.GITHUB_EVENT_NAME,
+              prHeadSha: process.env.PR_HEAD_SHA,
+              mainUrl,
+              publicUrl,
+              main,
+              pages,
+              publicBaselineMatchesMain
+            };
+            fs.writeFileSync(path.join(out, 'pr-public-baseline-result.json'), JSON.stringify(report, null, 2));
+            if (!publicBaselineMatchesMain) {
+              throw new Error(`PR只读基线发现main与Pages不一致：main=${main?.pwaBuild || '未读取'}，Pages=${pages?.pwaBuild || '未读取'}`);
+            }
+            console.log(`PR只读Pages基线通过：${main.build}/${main.pwaBuild}/${main.cacheRevision}`);
+          })().catch(error => {
+            fs.writeFileSync(path.join(out, 'pr-public-baseline-error.txt'), `${error.stack || error}\n`);
+            throw error;
+          });
+          NODE
+      - name: 上传PR只读Pages基线诊断
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-pages-build-recovery-pr-baseline-${{ github.run_id }}
+          path: cnc/test-results/pages-build-recovery-pr-baseline/
+          if-no-files-found: error
+          retention-days: 14
 
   recover:
     name: 恢复并验收CNC Pages公网版本
-    if: github.event_name != 'pull_request' || (github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.user.login == github.repository_owner)
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     needs: contract
     runs-on: ubuntu-latest
     timeout-minutes: 18
@@ -86,6 +155,8 @@ jobs:
       pages: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
@@ -96,11 +167,12 @@ jobs:
           node - <<'NODE'
           const fs = require('fs');
           const path = require('path');
+          const { execFileSync } = require('child_process');
           const out = path.resolve('cnc/test-results/pages-build-recovery');
           fs.mkdirSync(out, { recursive: true });
           const expected = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8').replace(/^\uFEFF/, ''));
           const repository = process.env.GITHUB_REPOSITORY;
-          const sha = process.env.GITHUB_SHA;
+          const sha = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
           const token = process.env.GH_TOKEN;
           const [owner, repo] = repository.split('/');
           const publicUrl = `https://${owner}.github.io/${repo}/cnc/build-info.json`;
@@ -199,7 +271,7 @@ jobs:
                 row.mainMatchesExpected = same(row.main);
                 row.pagesMatchesExpected = same(row.pages);
                 report.attempts.push(row);
-                if (!row.mainMatchesExpected) throw new Error('raw main构建标记与当前检出提交不一致');
+                if (!row.mainMatchesExpected) throw new Error('raw main构建标记与当前main检出提交不一致');
                 if (row.pagesMatchesExpected) {
                   report.completedAt = new Date().toISOString();
                   report.verified = true;

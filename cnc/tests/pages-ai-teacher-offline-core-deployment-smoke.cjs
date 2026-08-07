@@ -8,13 +8,13 @@ fs.mkdirSync(resultsDir, { recursive: true });
 
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
-const branchTargetPwaBuild = '20260806-pwa16';
-const previousPublicPwaBuild = '20260806-pwa15';
+const branchTargetPwaBuild = '20260807-pwa17';
+const previousPublicPwaBuild = '20260806-pwa16';
 const expectedSiteBuild = '20260806-learning-depth1';
 const previousPublicSiteBuild = '20260806-learning-depth1';
 const cacheRevisionByBuild = {
-  [branchTargetPwaBuild]: '20260806-learning16',
-  [previousPublicPwaBuild]: '20260806-learning15'
+  [branchTargetPwaBuild]: '20260807-learning17',
+  [previousPublicPwaBuild]: '20260806-learning16'
 };
 const attempts = Number(process.env.CNC_PAGES_VERIFY_ATTEMPTS || 18);
 const intervalMs = Number(process.env.CNC_PAGES_VERIFY_INTERVAL_MS || 10000);
@@ -36,6 +36,8 @@ const EXACT_CORE_PATHS = [
   './homepage-refresh-desktop-legacy.css',
   './mobile-home-refactor.css',
   './personal-home.js',
+  './training-practice.js',
+  './training-profile.js',
   './learning-sublesson-catalog.js','./learning-sublesson-specificity.js',
   './learning-depth.css',
   './learning-detail.html',
@@ -68,7 +70,7 @@ const EXACT_CORE_PATHS = [
   './assets/images/batch05_alarm_drawing_material/first-piece-inspection-001.webp'
 ];
 
-const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE_PATHS.filter(path => path !== './learning-sublesson-specificity.js');
+const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE_PATHS.filter(path => !['./training-practice.js', './training-profile.js'].includes(path));
 
 const LEARNING_DEPTH_CORE_PATHS = new Set([
   './learning-sublesson-catalog.js',
@@ -82,22 +84,7 @@ function expectedCoreForBuild(build, label) {
   throw new Error(`${label}出现未受控核心资源构建：${build}`);
 }
 
-const LEGACY_PUBLIC_SELF_TEST_PATHS = [
-  './index.html',
-  './offline.html',
-  './pwa-status.html',
-  './pwa-self-test.html',
-  './pages-status.html',
-  './beginner-placement.html',
-  './training-camp.html',
-  './course-safety-foundation.html',
-  './course-coordinate-axes.html',
-  './course-g00-g01-basics.html',
-  './ai-teacher.html',
-  './ai-teacher-intake.html',
-  './ai-teacher-explainability.html',
-  './build-info.json'
-];
+const LEGACY_PUBLIC_SELF_TEST_PATHS = PREVIOUS_PUBLIC_CORE_PATHS;
 
 const diagnostics = {
   checkedAt: new Date().toISOString(),
@@ -222,6 +209,7 @@ function assertServiceWorker(text, label, expectedBuild) {
     'cacheRevision: CACHE_REVISION',
     "event.data.type === 'ENSURE_CACHES'"
   ]);
+  if (expectedBuild === branchTargetPwaBuild) requireTokens(text, label, ["'./training-practice.js'", "'./training-profile.js'"]);
   forbidTokens(text, label, [/test\.skip\(/, /describe\.skip\(/, /it\.skip\(/, /allowOperationalUse\s*:\s*true/]);
   const actual = parseQuotedArray(text, /const REQUIRED_CORE_PATHS = \[([\s\S]*?)\];/, `${label}核心缓存`);
   assertExactArray(actual, expectedCoreForBuild(expectedBuild, label), `${label}核心缓存`);
@@ -247,7 +235,7 @@ function assertBuildInfo(text, label, expectedBuild) {
   const stage = String(data.contentStage || '');
   requireTokens(stage, label, ['课程12关', '起点测评', '手机首页一屏化', 'AI CNC老师基础版', 'PWA可靠性']);
   if (expectedBuild === branchTargetPwaBuild) {
-    requireTokens(stage, label, ['起点测评关键安全门禁', '起点测评离线核心', '测评路线一次性交接', '训练营路线离线核心', '测评首步课程离线核心', '正式课程开发占位清零', 'AI老师现场问诊单', 'AI老师判断说明', 'AI老师离线核心', 'AI老师学习档案异常保护', '80个图文小课', '学习目录紧凑布局', '80课现场动作与风险针对性']);
+    requireTokens(stage, label, ['起点测评关键安全门禁', '起点测评离线核心', '测评路线一次性交接', '训练营路线离线核心', '测评首步课程离线核心', '正式课程开发占位清零', 'AI老师现场问诊单', 'AI老师判断说明', 'AI老师离线核心', 'AI老师学习档案异常保护', '80个图文小课', '学习目录紧凑布局', '80课现场动作与风险针对性', '训练题库与成长档案离线核心']);
   }
   return { build: data.build, pwaBuild: data.pwaBuild, cacheRevision: data.cacheRevision, scope: data.scope };
 }
@@ -271,7 +259,7 @@ function assertStatusPage(text, label, expectedBuild) {
   ];
   let legacyCacheContract = false;
   if (expectedBuild === branchTargetPwaBuild) {
-    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'PWA16会刷新80个图文小课的主题化现场动作与高风险错误、紧凑学习目录及AI老师学习档案异常保护');
+    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'PWA17会把训练题库与成长档案脚本纳入版本化静态核心缓存');
   } else {
     required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'const cacheBuildOk=staticName.includes(EXPECTED_CACHE)&&runtimeName.includes(EXPECTED_CACHE)');
     legacyCacheContract = true;
@@ -298,7 +286,7 @@ function assertSelfTest(text, label, expectedBuild) {
   let expectedPaths;
   let legacyCacheContract = false;
   if (expectedBuild === branchTargetPwaBuild) {
-    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'marker.cacheRevision===EXPECTED_CACHE', 'PWA16用于刷新80课针对性内容、紧凑学习目录与AI老师学习档案异常保护');
+    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'marker.cacheRevision===EXPECTED_CACHE', 'PWA17把训练题库与成长档案脚本纳入版本化核心缓存', './training-practice.js', './training-profile.js');
     expectedPaths = EXACT_CORE_PATHS;
   } else {
     required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'const staticName=keys.find(name=>name===`cnc-static-${EXPECTED_CACHE}`)', 'const runtimeName=keys.find(name=>name===`cnc-runtime-${EXPECTED_CACHE}`)', 'marker.cacheRevision===EXPECTED_CACHE');
@@ -407,6 +395,8 @@ async function waitForMainPagesMatch() {
       publicPwaBuild,
       publicCacheRevision: cacheRevisionByBuild[publicPwaBuild],
       siteBuild: expectedSiteBuild,
+      trainingPracticeInCoreCache: true,
+      trainingProfileInCoreCache: true,
       beginnerPlacementInCoreCache: true,
       trainingCampInCoreCache: true,
       placementFirstStepCoursesInCoreCache: true,
@@ -428,7 +418,7 @@ async function waitForMainPagesMatch() {
       `当前分支站点/PWA构建/缓存修订：${expectedSiteBuild}/${branchTargetPwaBuild}/${cacheRevisionByBuild[branchTargetPwaBuild]}`,
       `main与Pages公网站点/PWA构建/缓存修订：${mainBuildData.build}/${publicPwaBuild}/${cacheRevisionByBuild[publicPwaBuild]}`,
       `分支待合并或待部署：${branchDeploymentPending ? '是' : '否'}`,
-      '当前分支手机首页、12关图片、起点测评、训练营路线、三类测评首步课程、80课目录、AI老师、现场问诊单、判断说明页核心预缓存：完整',
+      '当前分支手机首页、训练题库、成长档案、12关图片、起点测评、训练营路线、三类测评首步课程、80课目录、AI老师、现场问诊单、判断说明页核心预缓存：完整',
       `当前分支PWA自检核心资源：${EXACT_CORE_PATHS.length}项且无重复`,
       `当前公网PWA自检核心资源：${publicPwaBuild === previousPublicPwaBuild ? LEGACY_PUBLIC_SELF_TEST_PATHS.length : EXACT_CORE_PATHS.length}项且无重复`,
       '测评安全硬门禁、路线隐私、固定值、原厂手册与授权人员边界：可见',

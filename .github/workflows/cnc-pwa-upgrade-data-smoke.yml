@@ -47,13 +47,15 @@ jobs:
           const swCacheRevision = sw.match(/const CACHE_REVISION = '([^']+)'/)?.[1];
           if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
           if (swCacheRevision !== info.cacheRevision) throw new Error(`Service Worker/build-info cache mismatch: ${swCacheRevision} / ${info.cacheRevision}`);
-          if (info.pwaBuild !== '20260806-pwa16') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
-          if (info.cacheRevision !== '20260806-learning16') throw new Error(`unexpected cache revision: ${info.cacheRevision}`);
+          if (info.pwaBuild !== '20260807-pwa17') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
+          if (info.cacheRevision !== '20260807-learning17') throw new Error(`unexpected cache revision: ${info.cacheRevision}`);
           if (!test.includes(`const CURRENT_PWA_BUILD = '${info.pwaBuild}'`)) throw new Error('upgrade test current PWA build mismatch');
           if (!test.includes(`const CURRENT_CACHE_REVISION = '${info.cacheRevision}'`)) throw new Error('upgrade test current cache revision mismatch');
           for (const required of [
-            "const PREVIOUS_PWA_BUILD = '20260806-pwa15'",
-            "const PREVIOUS_CACHE_REVISION = '20260806-learning15'",
+            "const PREVIOUS_PWA_BUILD = '20260806-pwa16'",
+            "const PREVIOUS_CACHE_REVISION = '20260806-learning16'",
+            "const TRAINING_CORE_PATHS = ['./training-practice.js', './training-profile.js']",
+            'trainingCoreStaticCacheReady: true',
             'cnc_training_profile_v1',
             'cnc_training_practice_v1',
             'cnc_training_simulator_v1',
@@ -80,16 +82,15 @@ jobs:
           }
           if (!placement.includes('criticalFailures') || !placement.includes("decision:'critical-safety'")) throw new Error('beginner placement critical safety gate missing');
           if (!placement.includes('cnc_beginner_placement_route_handoff_v1') || !camp.includes('cnc_beginner_placement_route_handoff_v1')) throw new Error('placement route handoff producer or consumer missing');
-          for (const file of ['./training-camp.html','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html']) {
+          for (const file of ['./training-practice.js','./training-profile.js','./training-camp.html','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html']) {
             if (!sw.includes(`'${file}'`)) throw new Error(`PWA core missing: ${file}`);
           }
           if (!sw.includes("name.startsWith('cnc-')") || !sw.includes('name !== STATIC_CACHE && name !== RUNTIME_CACHE')) {
             throw new Error('Service Worker old CNC cache cleanup contract missing');
           }
-          if (!String(info.contentStage || '').includes('测评首步课程离线核心')) throw new Error('build marker missing placement first-step offline core');
-          if (!String(info.contentStage || '').includes('正式课程开发占位清零')) throw new Error('build marker missing formal course content refresh');
-          if (!String(info.contentStage || '').includes('AI老师学习档案异常保护')) throw new Error('build marker missing AI teacher data integrity protection');
-          if (!String(info.contentStage || '').includes('80个图文小课')) throw new Error('build marker missing learning depth content');
+          for (const stage of ['测评首步课程离线核心','正式课程开发占位清零','AI老师学习档案异常保护','80个图文小课','训练题库与成长档案离线核心']) {
+            if (!String(info.contentStage || '').includes(stage)) throw new Error(`build marker missing: ${stage}`);
+          }
           for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)']) {
             if (test.includes(forbidden)) throw new Error(`upgrade test bypass found: ${forbidden}`);
           }

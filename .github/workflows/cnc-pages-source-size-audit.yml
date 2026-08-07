@@ -24,13 +24,31 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
-      - name: 核对审计范围与禁止绕过项
+      - name: 初始化源站审计诊断
+        run: |
+          set -euo pipefail
+          out='cnc/test-results/pages-source-size-audit'
+          mkdir -p "$out"
+          node - <<'NODE'
+          const fs = require('fs');
+          fs.writeFileSync('cnc/test-results/pages-source-size-audit/workflow-bootstrap.json', JSON.stringify({
+            stage: 'workflow-bootstrap',
+            runId: process.env.GITHUB_RUN_ID,
+            testedSha: process.env.GITHUB_SHA,
+            eventName: process.env.GITHUB_EVENT_NAME,
+            initializedAt: new Date().toISOString()
+          }, null, 2));
+          NODE
+      - name: 核对审计范围、构建一致性与禁止绕过项
         run: |
           set -euo pipefail
           node - <<'NODE'
           const fs = require('fs');
           const workflow = fs.readFileSync('.github/workflows/cnc-pages-source-size-audit.yml', 'utf8');
           const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8').replace(/^\uFEFF/, ''));
+          const sw = fs.readFileSync('cnc/sw.js', 'utf8');
+          const status = fs.readFileSync('cnc/pwa-status.html', 'utf8');
+          const selfTest = fs.readFileSync('cnc/pwa-self-test.html', 'utf8');
           for (const token of [
             "- 'cnc/**'",
             'contents: read',
@@ -39,15 +57,27 @@ jobs:
             'repositoryApiSizeKiB',
             'pagesPublishedLimitBytes',
             'pagesDeploymentTimeoutSeconds',
-            'actions/upload-artifact@v4'
+            'actions/upload-artifact@v4',
+            'workflow-bootstrap.json'
           ]) {
             if (!workflow.includes(token)) throw new Error(`缺少Pages源站审计契约：${token}`);
           }
           for (const forbidden of ['continue-on-error:' + ' true', 'cancel-in-progress:' + ' true', 'git push --' + 'force', 'process.' + 'exit(0)', 'test.' + 'skip(']) {
             if (workflow.includes(forbidden)) throw new Error(`发现源站审计绕过项：${forbidden}`);
           }
-          if (info.app !== 'cnc-training-platform' || info.pwaBuild !== '20260806-pwa16' || info.cacheRevision !== '20260806-learning16') {
-            throw new Error('CNC构建标记不是当前PWA16/learning16');
+          if (info.app !== 'cnc-training-platform') throw new Error(`CNC应用标记错误：${info.app}`);
+          if (!/^\d{8}-pwa\d+$/.test(String(info.pwaBuild || ''))) throw new Error(`PWA构建标记格式错误：${info.pwaBuild}`);
+          if (!/^\d{8}-learning\d+$/.test(String(info.cacheRevision || ''))) throw new Error(`缓存修订标记格式错误：${info.cacheRevision}`);
+          const swBuild = sw.match(/const BUILD = '([^']+)'/)?.[1] || '';
+          const swCache = sw.match(/const CACHE_REVISION = '([^']+)'/)?.[1] || '';
+          if (swBuild !== info.pwaBuild || swCache !== info.cacheRevision) {
+            throw new Error(`Service Worker/build-info构建不一致：${swBuild}/${swCache} vs ${info.pwaBuild}/${info.cacheRevision}`);
+          }
+          if (!status.includes(`const EXPECTED='${info.pwaBuild}'`) || !status.includes(`const EXPECTED_CACHE='${info.cacheRevision}'`)) {
+            throw new Error('PWA状态页与build-info构建标记不一致');
+          }
+          if (!selfTest.includes(`const EXPECTED='${info.pwaBuild}'`) || !selfTest.includes(`const EXPECTED_CACHE='${info.cacheRevision}'`)) {
+            throw new Error('PWA自检页与build-info构建标记不一致');
           }
           NODE
       - name: 生成Pages源站体积与文件分布诊断

@@ -8,16 +8,17 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const CURRENT_PWA_BUILD = '20260806-pwa16';
-const PREVIOUS_PWA_BUILD = '20260806-pwa15';
-const CURRENT_CACHE_REVISION = '20260806-learning16';
-const PREVIOUS_CACHE_REVISION = '20260806-learning15';
+const CURRENT_PWA_BUILD = '20260807-pwa17';
+const PREVIOUS_PWA_BUILD = '20260806-pwa16';
+const CURRENT_CACHE_REVISION = '20260807-learning17';
+const PREVIOUS_CACHE_REVISION = '20260806-learning16';
 const CURRENT_STATIC_CACHE = `cnc-static-${CURRENT_CACHE_REVISION}`;
 const CURRENT_RUNTIME_CACHE = `cnc-runtime-${CURRENT_CACHE_REVISION}`;
 const PREVIOUS_STATIC_CACHE = `cnc-static-${PREVIOUS_CACHE_REVISION}`;
 const PREVIOUS_RUNTIME_CACHE = `cnc-runtime-${PREVIOUS_CACHE_REVISION}`;
 const UNRELATED_CACHE = 'other-app-cache-v1';
 const PLACEMENT_HANDOFF_KEY = 'cnc_beginner_placement_route_handoff_v1';
+const TRAINING_CORE_PATHS = ['./training-practice.js', './training-profile.js'];
 const PLACEMENT_FIRST_STEP_COURSES = [
   { path: 'course-safety-foundation.html', title: '第1关 安全基础', required: ['先学会停，再学会动', '原厂手册', '授权人员'] },
   { path: 'course-coordinate-axes.html', title: '第3关 坐标轴与运动方向', required: ['坐标轴与运动方向', '原厂手册', '现场条件'] },
@@ -202,7 +203,7 @@ async function verifyColdOfflineCourse(page, course) {
         request.onsuccess = () => {
           const db = request.result;
           const transaction = db.transaction('records', 'readwrite');
-          transaction.objectStore('records').put({ xp: 680, streak: 12, source: 'pwa12' }, 'growth');
+          transaction.objectStore('records').put({ xp: 680, streak: 12, source: 'pwa16' }, 'growth');
           transaction.onerror = () => reject(transaction.error);
           transaction.oncomplete = () => {
             db.close();
@@ -288,6 +289,14 @@ async function verifyColdOfflineCourse(page, course) {
     assert(cachesAfter.includes(CURRENT_RUNTIME_CACHE), `新运行时缓存缺失: ${JSON.stringify(cachesAfter)}`);
     assert(cachesAfter.includes(UNRELATED_CACHE), `升级错误删除无关缓存: ${JSON.stringify(cachesAfter)}`);
 
+    const trainingCoreMissing = await page.evaluate(async ({ cacheName, paths }) => {
+      const cache = await caches.open(cacheName);
+      const missing = [];
+      for (const item of paths) if (!await cache.match(new URL(item, location.href))) missing.push(item);
+      return missing;
+    }, { cacheName: CURRENT_STATIC_CACHE, paths: TRAINING_CORE_PATHS });
+    assert.deepStrictEqual(trainingCoreMissing, [], `升级后训练核心静态缓存缺失: ${JSON.stringify(trainingCoreMissing)}`);
+
     const after = await readOriginState(page);
     assert.deepStrictEqual(after.local, before.local, `LocalStorage在PWA升级中发生变化: ${JSON.stringify({ before, after })}`);
     assert.equal(after.session, before.session, 'SessionStorage在同一标签页升级中发生变化');
@@ -361,6 +370,8 @@ async function verifyColdOfflineCourse(page, course) {
       currentCacheRevision: CURRENT_CACHE_REVISION,
       oldCachesRemoved: true,
       currentCachesReady: true,
+      trainingCoreStaticCacheReady: true,
+      trainingCorePaths: TRAINING_CORE_PATHS,
       unrelatedCachePreserved: true,
       singleScopedRegistration: true,
       localStoragePreserved: true,

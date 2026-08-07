@@ -16,9 +16,26 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+      - name: Prepare BFCache contract diagnostics
+        run: |
+          mkdir -p cnc/test-results
+          node - <<'NODE'
+          const fs = require('fs');
+          const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
+          const sw = fs.readFileSync('cnc/sw.js', 'utf8');
+          const swBuild = sw.match(/const BUILD = '([^']+)'/)?.[1] || null;
+          fs.writeFileSync('cnc/test-results/pwa-profile-bfcache-contract-input.json', JSON.stringify({
+            checkedHead: process.env.GITHUB_SHA,
+            buildInfoPwaBuild: info.pwaBuild,
+            buildInfoCacheRevision: info.cacheRevision,
+            serviceWorkerBuild: swBuild
+          }, null, 2));
+          NODE
       - name: Validate BFCache build contract
         run: |
           node --check cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs
@@ -27,18 +44,56 @@ jobs:
           const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
           const sw = fs.readFileSync('cnc/sw.js', 'utf8');
           const test = fs.readFileSync('cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs', 'utf8');
+          const executableSource = test
+            .split('\n')
+            .filter(line => !line.trimStart().startsWith('//'))
+            .join('\n');
           const swBuild = sw.match(/const BUILD = '([^']+)'/)?.[1];
           if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
           if (!test.includes(`const PWA_BUILD = '${info.pwaBuild}'`)) throw new Error('BFCache test PWA build mismatch');
-          for (const required of ['history-return', 'cache-mismatch', 'cache-recovery', 'bfcacheRestore: true']) {
+          if (!test.includes(`const CACHE_REVISION = '${info.cacheRevision}'`)) throw new Error('BFCache test cache revision mismatch');
+          for (const required of [
+            "ignoreDefaultArgs: ['--disable-back-forward-cache']",
+            "'--enable-bfcache'",
+            "'--enable-features=BackForwardCache:enable_same_site/true'",
+            "Page.backForwardCacheNotUsed",
+            "event.persisted",
+            "page.goBack({ waitUntil: 'commit', timeout: 5000 })",
+            "page.url()",
+            "headlessDelegateBfcacheEnabled: true",
+            "sameSiteBfcacheEnabled: true",
+            "pageshowPersisted: true",
+            "chromiumBfcacheEnabled: true",
+            "history-return-real-bfcache",
+            "cache-mismatch",
+            "cache-recovery",
+            "bfcacheRestore: true"
+          ]) {
             if (!test.includes(required)) throw new Error(`BFCache contract missing: ${required}`);
           }
+          for (const forbidden of [
+            'test.skip(',
+            'describe.skip(',
+            'it.skip(',
+            'process.exit(0)',
+            "page.evaluate(() => history.back())",
+            "page.goBack({ waitUntil: 'domcontentloaded' })"
+          ]) {
+            if (executableSource.includes(forbidden)) throw new Error(`BFCache gate bypass found in executable source: ${forbidden}`);
+          }
+          fs.writeFileSync('cnc/test-results/pwa-profile-bfcache-contract-result.json', JSON.stringify({
+            passed: true,
+            pwaBuild: info.pwaBuild,
+            cacheRevision: info.cacheRevision,
+            serviceWorkerBuild: swBuild,
+            forbiddenScanScope: 'non-comment executable source lines'
+          }, null, 2));
           NODE
       - name: Install Playwright test runtime
         run: npm install --no-save playwright@1.52.0
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Run 390x844 profile and BFCache smoke
+      - name: Run 390x844 real profile BFCache smoke
         env:
           DEBUG: pw:browser
         run: node cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs
@@ -48,5 +103,5 @@ jobs:
         with:
           name: cnc-pwa-profile-bfcache-${{ github.run_id }}
           path: cnc/test-results/pwa-profile-bfcache-*
-          if-no-files-found: warn
+          if-no-files-found: error
           retention-days: 14
