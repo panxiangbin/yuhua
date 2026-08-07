@@ -26,11 +26,14 @@ jobs:
           mkdir -p cnc/test-results
           node - <<'NODE'
           const fs = require('fs');
+          const { execFileSync } = require('child_process');
           const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
           const sw = fs.readFileSync('cnc/sw.js', 'utf8');
           const swBuild = sw.match(/const BUILD = '([^']+)'/)?.[1] || null;
+          const testedHead = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
           fs.writeFileSync('cnc/test-results/pwa-profile-bfcache-contract-input.json', JSON.stringify({
-            checkedHead: process.env.GITHUB_SHA,
+            testedHead,
+            eventSha: process.env.GITHUB_SHA,
             buildInfoPwaBuild: info.pwaBuild,
             buildInfoCacheRevision: info.cacheRevision,
             serviceWorkerBuild: swBuild
@@ -41,6 +44,7 @@ jobs:
           node --check cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs
           node - <<'NODE'
           const fs = require('fs');
+          const { execFileSync } = require('child_process');
           const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
           const sw = fs.readFileSync('cnc/sw.js', 'utf8');
           const test = fs.readFileSync('cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs', 'utf8');
@@ -49,6 +53,7 @@ jobs:
             .filter(line => !line.trimStart().startsWith('//'))
             .join('\n');
           const swBuild = sw.match(/const BUILD = '([^']+)'/)?.[1];
+          const testedHead = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
           if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
           if (!test.includes(`const PWA_BUILD = '${info.pwaBuild}'`)) throw new Error('BFCache test PWA build mismatch');
           if (!test.includes(`const CACHE_REVISION = '${info.cacheRevision}'`)) throw new Error('BFCache test cache revision mismatch');
@@ -83,6 +88,8 @@ jobs:
           }
           fs.writeFileSync('cnc/test-results/pwa-profile-bfcache-contract-result.json', JSON.stringify({
             passed: true,
+            testedHead,
+            eventSha: process.env.GITHUB_SHA,
             pwaBuild: info.pwaBuild,
             cacheRevision: info.cacheRevision,
             serviceWorkerBuild: swBuild,
