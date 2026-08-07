@@ -235,7 +235,6 @@ async function verifyColdOfflineCourse(page, course) {
     await page.goto('http://127.0.0.1:4173/cnc/ai-teacher-intake.html', { waitUntil: 'domcontentloaded' });
     if (!(await page.title()).includes('现场问诊单')) throw new Error('现场问诊单首次安装后离线打开失败');
     const intakeBody = await page.locator('body').innerText();
-    if (!intakeBody.includes('不需要APIKey') && !intakeBody.includes('不需要API Key')) {}
     if (!intakeBody.includes('不需要API Key') || !intakeBody.includes('不会替你修改参数')) {
       throw new Error('现场问诊单离线页丢失安全边界');
     }
