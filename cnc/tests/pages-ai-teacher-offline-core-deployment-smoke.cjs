@@ -8,13 +8,13 @@ fs.mkdirSync(resultsDir, { recursive: true });
 
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
-const branchTargetPwaBuild = '20260807-pwa18';
-const previousPublicPwaBuild = '20260807-pwa17';
+const branchTargetPwaBuild = '20260807-pwa19';
+const previousPublicPwaBuild = '20260807-pwa18';
 const expectedSiteBuild = '20260806-learning-depth1';
 const previousPublicSiteBuild = '20260806-learning-depth1';
 const cacheRevisionByBuild = {
-  [branchTargetPwaBuild]: '20260807-learning18',
-  [previousPublicPwaBuild]: '20260807-learning17'
+  [branchTargetPwaBuild]: '20260807-learning19',
+  [previousPublicPwaBuild]: '20260807-learning18'
 };
 const attempts = Number(process.env.CNC_PAGES_VERIFY_ATTEMPTS || 18);
 const intervalMs = Number(process.env.CNC_PAGES_VERIFY_INTERVAL_MS || 10000);
@@ -30,7 +30,7 @@ const resources = [
   { path: 'cnc/pwa-self-test.html', kind: 'pwa-self-test' }
 ];
 
-const EXACT_CORE_PATHS = [
+const BASE_CORE_PATHS = [
   './index.html',
   './homepage-refresh.css',
   './homepage-refresh-desktop-legacy.css',
@@ -69,8 +69,22 @@ const EXACT_CORE_PATHS = [
   './assets/images/batch02_operation_basics/canned-cycle-overview-001.webp',
   './assets/images/batch05_alarm_drawing_material/first-piece-inspection-001.webp'
 ];
-
-const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE_PATHS;
+const VIDEO_CORE_PATHS = [
+  './assets/videos/learning/stage01_safety.mp4',
+  './assets/videos/learning/stage02_xyz.mp4',
+  './assets/videos/learning/stage03_z_tool.mp4',
+  './assets/videos/learning/stage04_program.mp4',
+  './assets/videos/learning/stage05_g90_g91.mp4',
+  './assets/videos/learning/stage06_g00_g01.mp4',
+  './assets/videos/learning/stage07_sf.mp4',
+  './assets/videos/learning/stage08_g02_g03.mp4',
+  './assets/videos/learning/stage09_milling_direction.mp4',
+  './assets/videos/learning/stage10_g41_g42.mp4',
+  './assets/videos/learning/stage11_g81_g83.mp4',
+  './assets/videos/learning/stage12_first_part.mp4'
+];
+const EXACT_CORE_PATHS = [...BASE_CORE_PATHS, ...VIDEO_CORE_PATHS];
+const PREVIOUS_PUBLIC_CORE_PATHS = BASE_CORE_PATHS;
 
 const LEARNING_DEPTH_CORE_PATHS = new Set([
   './learning-sublesson-catalog.js',
@@ -209,7 +223,7 @@ function assertServiceWorker(text, label, expectedBuild) {
     'cacheRevision: CACHE_REVISION',
     "event.data.type === 'ENSURE_CACHES'"
   ]);
-  if (expectedBuild === branchTargetPwaBuild) requireTokens(text, label, ["'./training-practice.js'", "'./training-profile.js'"]);
+  if (expectedBuild === branchTargetPwaBuild) requireTokens(text, label, ["'./training-practice.js'", "'./training-profile.js'", ...VIDEO_CORE_PATHS.map(item => `'${item}'`)]);
   forbidTokens(text, label, [/test\.skip\(/, /describe\.skip\(/, /it\.skip\(/, /allowOperationalUse\s*:\s*true/]);
   const actual = parseQuotedArray(text, /const REQUIRED_CORE_PATHS = \[([\s\S]*?)\];/, `${label}核心缓存`);
   assertExactArray(actual, expectedCoreForBuild(expectedBuild, label), `${label}核心缓存`);
@@ -259,7 +273,7 @@ function assertStatusPage(text, label, expectedBuild) {
   ];
   let legacyCacheContract = false;
   if (expectedBuild === branchTargetPwaBuild) {
-    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'PWA18继续把训练题库与成长档案脚本纳入版本化静态核心缓存，并统一手机首页运行构建标记与build-info声明');
+    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'PWA19在继续缓存训练题库与成长档案的基础上，将12关本地教学视频纳入版本化静态核心缓存，并保持手机首页运行构建标记与build-info声明一致');
   } else {
     required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'const cacheBuildOk=staticName.includes(EXPECTED_CACHE)&&runtimeName.includes(EXPECTED_CACHE)');
     legacyCacheContract = true;
@@ -286,7 +300,7 @@ function assertSelfTest(text, label, expectedBuild) {
   let expectedPaths;
   let legacyCacheContract = false;
   if (expectedBuild === branchTargetPwaBuild) {
-    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'marker.cacheRevision===EXPECTED_CACHE', 'PWA18继续缓存训练题库与成长档案，并将手机运行构建标记与build-info声明统一', './training-practice.js', './training-profile.js');
+    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'marker.cacheRevision===EXPECTED_CACHE', 'PWA19在继续缓存训练题库与成长档案的基础上，将12关本地教学视频纳入版本化静态核心缓存，并保持手机运行构建标记与build-info声明一致', './training-practice.js', './training-profile.js', ...VIDEO_CORE_PATHS);
     expectedPaths = EXACT_CORE_PATHS;
   } else {
     required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'const staticName=keys.find(name=>name===`cnc-static-${EXPECTED_CACHE}`)', 'const runtimeName=keys.find(name=>name===`cnc-runtime-${EXPECTED_CACHE}`)', 'marker.cacheRevision===EXPECTED_CACHE');
@@ -405,6 +419,7 @@ async function waitForMainPagesMatch() {
       explainabilityInCoreCache: true,
       aiTeacherInCoreCache: true,
       intakeInCoreCache: true,
+      localVideoCoreCount: VIDEO_CORE_PATHS.length,
       coreResourceCount: EXACT_CORE_PATHS.length,
       publicCoreResourcesVerified: true,
       upgradeBoundaryVisible: true,
@@ -418,7 +433,7 @@ async function waitForMainPagesMatch() {
       `当前分支站点/PWA构建/缓存修订：${expectedSiteBuild}/${branchTargetPwaBuild}/${cacheRevisionByBuild[branchTargetPwaBuild]}`,
       `main与Pages公网站点/PWA构建/缓存修订：${mainBuildData.build}/${publicPwaBuild}/${cacheRevisionByBuild[publicPwaBuild]}`,
       `分支待合并或待部署：${branchDeploymentPending ? '是' : '否'}`,
-      '当前分支手机首页、训练题库、成长档案、12关图片、起点测评、训练营路线、三类测评首步课程、80课目录、AI老师、现场问诊单、判断说明页核心预缓存：完整',
+      `当前分支手机首页、训练题库、成长档案、12关图片、${VIDEO_CORE_PATHS.length}个本地课程视频、起点测评、训练营路线、三类测评首步课程、80课目录、AI老师、现场问诊单、判断说明页核心预缓存：完整`,
       `当前分支PWA自检核心资源：${EXACT_CORE_PATHS.length}项且无重复`,
       `当前公网PWA自检核心资源：${publicPwaBuild === previousPublicPwaBuild ? LEGACY_PUBLIC_SELF_TEST_PATHS.length : EXACT_CORE_PATHS.length}项且无重复`,
       '测评安全硬门禁、路线隐私、固定值、原厂手册与授权人员边界：可见',
