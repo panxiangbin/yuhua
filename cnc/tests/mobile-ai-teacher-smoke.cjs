@@ -26,12 +26,14 @@ fs.mkdirSync(OUT, { recursive: true });
     await page.evaluate(() => {
       localStorage.setItem('cnc_training_profile_v1', JSON.stringify({
         version: 1,
-        completed: [1, 2, 3, 4],
-        lessonScores: { 1: 92, 2: 88, 3: 85, 4: 82 },
-        abilities: { safety: 86, coordinate: 72, drawing: 80, programVerification: 76, measurementDiagnosis: 68, troubleshooting: 55 }
+        completedStages: ['stage-1', 'stage-2', 'stage-3', 'stage-4'],
+        courseScores: { 'stage-1': 92, 'stage-2': 88, 'stage-3': 85, 'stage-4': 82, 'stage-5': 20 },
+        // 故意保留一份旧能力字段：AI老师不得再让旧字段覆盖固定12关真实课程语义。
+        abilities: { safety: 99, coordinate: 99, drawing: 99, programVerification: 99, measurementDiagnosis: 99, troubleshooting: 1 }
       }));
       localStorage.setItem('cnc_training_practice_v1', JSON.stringify({
         version: 1,
+        lessonScores: { 1: 92, 2: 88, 3: 85, 4: 82, 5: 20 },
         wrongQuestions: [
           { id: 'alarm-1', ability: '故障排查', risk: '高', title: '报警后连续复位' },
           { id: 'alarm-2', ability: '故障排查', risk: '高', title: '未记录报警原文' }
@@ -41,7 +43,7 @@ fs.mkdirSync(OUT, { recursive: true });
         version: 1,
         simulators: {
           homing: { passed: true, bestScore: 100 },
-          workholding: { passed: true, bestScore: 100 },
+          workholding: { passed: false, bestScore: 85 },
           alarm: { passed: false, bestScore: 75 }
         }
       }));
@@ -53,7 +55,7 @@ fs.mkdirSync(OUT, { recursive: true });
     assert.equal(await page.locator('#course-progress').textContent(), '4/12');
     assert.equal(await page.locator('#wrong-count').textContent(), '2');
     assert.equal(await page.locator('#sim-progress').textContent(), '2/13');
-    assert.equal(await page.locator('#weakest').textContent(), '故障排查');
+    assert.equal(await page.locator('#weakest').textContent(), '机床与坐标');
 
     const api = await page.evaluate(() => ({
       build: window.CNC_AI_TEACHER.build,
@@ -71,7 +73,10 @@ fs.mkdirSync(OUT, { recursive: true });
     }));
     assert.equal(api.localOnly, true);
     assert.equal(api.externalModel, false);
-    assert.equal(api.summary.weakest, '故障排查');
+    assert.equal(api.summary.weakest, '机床与坐标');
+    assert.equal(api.summary.weakestScore, 64);
+    assert.equal(api.summary.nextCourse, 5);
+    assert.deepEqual(api.summary.abilityNames, ['安全操作', '机床与坐标', '装夹与对刀', '编程与读图', '刀具与工艺', '首件验证']);
     assert.match(api.alarmIntake, /ai-teacher-intake\.html\?source=ai-teacher&category=alarm$/);
     assert.match(api.unknownIntake, /category=other$/);
     assert.equal(api.normalG54.blocked, false);
@@ -95,9 +100,32 @@ fs.mkdirSync(OUT, { recursive: true });
     await page.locator('#answer.show').waitFor();
     assert.match(await page.locator('#answer-title').textContent(), /高风险错题/);
     assert.match(await page.locator('#answer-copy').textContent(), /主线完成 4\/12/);
-    assert.match(await page.locator('#answer-copy').textContent(), /优先补强“故障排查”/);
+    assert.match(await page.locator('#answer-copy').textContent(), /优先补强“机床与坐标”/);
     assert.match(await page.locator('#answer-routes a').first().getAttribute('href'), /practice-wrong-review\.html/);
     assert.equal(await page.locator('#answer-sources .source-item').count(), 3);
+
+    // 清掉错题后，AI老师必须沿当前固定12关数据模型继续真实最低未达标第5关，不能退回旧 completed/lessonScores 语义。
+    await page.evaluate(() => {
+      const practice = JSON.parse(localStorage.getItem('cnc_training_practice_v1'));
+      practice.wrongQuestions = [];
+      localStorage.setItem('cnc_training_practice_v1', JSON.stringify(practice));
+    });
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.locator('[data-intent="next"]').click();
+    assert.match(await page.locator('#answer-title').textContent(), /继续第 5 关主线课程/);
+    const nextHref = await page.locator('#answer-routes a').first().getAttribute('href');
+    assert.equal(nextHref, './course-machine-work-offset.html');
+
+    // 恢复两道错题，继续覆盖原有受控问答与高风险阻断回归。
+    await page.evaluate(() => {
+      const practice = JSON.parse(localStorage.getItem('cnc_training_practice_v1'));
+      practice.wrongQuestions = [
+        { id: 'alarm-1', ability: '故障排查', risk: '高', title: '报警后连续复位' },
+        { id: 'alarm-2', ability: '故障排查', risk: '高', title: '未记录报警原文' }
+      ];
+      localStorage.setItem('cnc_training_practice_v1', JSON.stringify(practice));
+    });
+    await page.reload({ waitUntil: 'domcontentloaded' });
 
     await page.locator('[data-intent="alarm"]').click();
     assert.match(await page.locator('#answer-title').textContent(), /报警后第一步/);
@@ -159,8 +187,8 @@ fs.mkdirSync(OUT, { recursive: true });
     assert.equal(errors.length, 0, errors.join(' | '));
 
     await page.screenshot({ path: `${OUT}/ai-teacher-390x844.png`, fullPage: true });
-    fs.writeFileSync(`${OUT}/result.json`, JSON.stringify({ api, alarmRoutes, alarmSourceHrefs, g54Hrefs, blockedRoutes, touchTargets, requests, errors }, null, 2));
-    console.log('CNC AI teacher trust boundary smoke passed');
+    fs.writeFileSync(`${OUT}/result.json`, JSON.stringify({ api, alarmRoutes, alarmSourceHrefs, g54Hrefs, blockedRoutes, nextHref, touchTargets, requests, errors }, null, 2));
+    console.log('CNC AI teacher current profile semantics and trust boundary smoke passed');
   } finally {
     await browser.close();
   }
