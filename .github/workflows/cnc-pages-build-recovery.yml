@@ -34,7 +34,9 @@ jobs:
           node-version: '24'
       - name: 验证恢复流程范围、权限与防绕过规则
         run: |
-          node - <<'NODE'
+          mkdir -p cnc/test-results/pages-build-recovery-pr-baseline
+          set +e
+          node - <<'NODE' 2>&1 | tee cnc/test-results/pages-build-recovery-pr-baseline/contract-audit.log
           const fs = require('fs');
           const workflow = fs.readFileSync('.github/workflows/cnc-pages-build-recovery.yml', 'utf8');
           const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8').replace(/^\uFEFF/, ''));
@@ -65,7 +67,7 @@ jobs:
             'force:' + ' true',
             'process.' + 'exit(0)',
             'test.' + 'skip(',
-            'github.event.pull_request.head.repo.full_name == github.repository'
+            'github.event.pull_request.head.repo.full_name' + ' == github.repository'
           ];
           for (const forbidden of workflowForbidden) {
             if (workflow.includes(forbidden)) throw new Error(`发现恢复流程绕过或PR写入旧逻辑：${forbidden}`);
@@ -81,6 +83,9 @@ jobs:
           }
           console.log(`CNC Pages恢复契约通过：${info.build}/${info.pwaBuild}/${info.cacheRevision}`);
           NODE
+          contract_status=${PIPESTATUS[0]}
+          set -e
+          exit "$contract_status"
       - name: PR仅只读核验main与Pages公网基线
         if: github.event_name == 'pull_request'
         env:
