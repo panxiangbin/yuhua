@@ -27,6 +27,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - uses: actions/setup-node@v4
         with:
@@ -36,10 +37,20 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path 'cnc/test-results/mobile-home-final-v2' | Out-Null
+          $testedHead = (git rev-parse HEAD).Trim()
+          if ($env:GITHUB_EVENT_NAME -eq 'pull_request') {
+            $eventPayload = Get-Content -Raw $env:GITHUB_EVENT_PATH | ConvertFrom-Json
+            $expectedHead = [string]$eventPayload.pull_request.head.sha
+            if ($testedHead -ne $expectedHead) {
+              throw "实际检出提交与PR最新头不一致：tested=$testedHead expected=$expectedHead"
+            }
+          }
           @{
             stage = 'workflow-bootstrap'
             runId = $env:GITHUB_RUN_ID
-            headSha = $env:GITHUB_SHA
+            testedHead = $testedHead
+            headSha = $testedHead
+            eventSha = $env:GITHUB_SHA
             eventName = $env:GITHUB_EVENT_NAME
             initializedAt = (Get-Date).ToUniversalTime().ToString('o')
           } | ConvertTo-Json | Set-Content -Encoding utf8 'cnc/test-results/mobile-home-final-v2/workflow-bootstrap.json'
