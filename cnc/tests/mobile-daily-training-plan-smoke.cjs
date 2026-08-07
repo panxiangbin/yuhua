@@ -27,8 +27,20 @@ let page;
   }, null, { timeout: 10000 });
   assert.equal(await page.locator('.view.active').getAttribute('id'), 'view-dashboard');
 
-  // 零记录新手必须从固定12关第1关开始，不能因为“未训练=0分”跳到后面的高优先级能力。
+  const expectedAbilityLessons = {
+    safety: [1],
+    coordinates: [2, 3, 5],
+    setup: [6, 8],
+    programming: [4, 9, 10, 11],
+    process: [7],
+    verification: [12]
+  };
+
+  // 零记录新手必须从固定12关第1关开始，不能因为“未训练=0分”跳到后面的能力。
   const zeroState = await page.evaluate(() => window.CNC_TRAINING_PROFILE.snapshot());
+  for (const [id, lessons] of Object.entries(expectedAbilityLessons)) {
+    assert.deepEqual(zeroState.abilities.find(item => item.id === id)?.lessons, lessons, `${id}能力映射必须与固定12关真实课程语义一致`);
+  }
   const zeroMappedLevels = zeroState.abilities.flatMap(item => item.lessons).slice().sort((a, b) => a - b);
   assert.deepEqual(zeroMappedLevels, Array.from({ length: 12 }, (_, index) => index + 1), '六项能力必须完整覆盖固定12关');
   assert.equal(new Set(zeroMappedLevels).size, 12, '固定12关在能力映射中必须恰好出现一次');
@@ -94,13 +106,16 @@ let page;
   }, null, { timeout: 10000 });
 
   const data = await page.evaluate(() => window.CNC_TRAINING_PROFILE.snapshot());
+  for (const [id, lessons] of Object.entries(expectedAbilityLessons)) {
+    assert.deepEqual(data.abilities.find(item => item.id === id)?.lessons, lessons, `${id}运行态能力映射必须与固定12关真实课程语义一致`);
+  }
   const mappedLevels = data.abilities.flatMap(item => item.lessons).slice().sort((a, b) => a - b);
   assert.deepEqual(mappedLevels, Array.from({ length: 12 }, (_, index) => index + 1), '运行态能力映射必须完整覆盖固定12关');
   assert.equal(new Set(mappedLevels).size, 12, '运行态固定12关不得跨能力重复映射');
   assert.equal(data.dailyPlan.steps.length, 3);
   assert.equal(data.dailyPlan.lesson, 5, '有已练低分课程时必须优先补真实薄弱课，不能跳到未训练课程');
-  assert.equal(data.dailyPlan.ability, '坐标基础');
-  assert.equal(data.dailyPlan.score, 55);
+  assert.equal(data.dailyPlan.ability, '机床与坐标');
+  assert.equal(data.dailyPlan.score, 65);
   assert.equal(data.weakest.weakLesson, 5);
   assert.match(data.dailyPlan.reason, /已练课程中分数最低/);
   assert.match(data.dailyPlan.target, /80 分以上/);
@@ -114,6 +129,7 @@ let page;
   assert.equal(await plan.count(), 1, '活跃成长档案中必须只有一份每日计划');
   assert.match(await plan.textContent(), /今天先练什么/);
   assert.match(await plan.textContent(), /今日目标/);
+  assert.match(await plan.textContent(), /机床与坐标/);
   assert.match(await plan.textContent(), /重做当前 2 道错题/);
   assert.match(await plan.textContent(), /第 5 关/);
 
@@ -176,6 +192,7 @@ let page;
       reason: zeroState.dailyPlan.reason,
       mappedLevels: zeroMappedLevels
     },
+    abilityMapping: expectedAbilityLessons,
     dailyPlan: data.dailyPlan,
     weakest: data.weakest,
     mappedLevels,
@@ -185,7 +202,7 @@ let page;
   };
   fs.writeFileSync(path.join(artifactDir, 'report.json'), JSON.stringify(report, null, 2));
   await page.screenshot({ path: path.join(artifactDir, 'daily-training-plan-390x844.png'), fullPage: true });
-  console.log('单层首页真实底栏、固定12关能力映射、零记录顺序起步、真实薄弱课优先、错题优先、80分目标和手机单列布局通过', report);
+  console.log('单层首页真实底栏、固定12关真实课程语义、零记录顺序起步、真实薄弱课优先、错题优先、80分目标和手机单列布局通过', report);
   await browser.close();
 })().catch(async error => {
   const stack = error && error.stack ? error.stack : String(error);
