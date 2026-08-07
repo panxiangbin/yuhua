@@ -18,6 +18,14 @@ function assert(v,msg){if(!v)throw new Error(msg)}
 (async()=>{
   let browser;
   const errors=[];
+  const failedResponses=[];
+  const failedRequests=[];
+  const observePage=page=>{
+    page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
+    page.on('pageerror',e=>errors.push(e.message));
+    page.on('response',r=>{if(r.status()>=400)failedResponses.push(`${r.status()} ${r.url()}`)});
+    page.on('requestfailed',r=>failedRequests.push(`${r.url()} :: ${r.failure()?.errorText||'request failed'}`));
+  };
   try{
     await waitServer();
     const launchOptions={headless:true};
@@ -27,8 +35,7 @@ function assert(v,msg){if(!v)throw new Error(msg)}
     const browserVersion=browser.version();
     for(const [w,h] of [[360,800],[390,844]]){
       const page=await browser.newPage({viewport:{width:w,height:h}});
-      page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
-      page.on('pageerror',e=>errors.push(e.message));
+      observePage(page);
       await page.goto('http://127.0.0.1:4177/cnc/index.html#study',{waitUntil:'networkidle'});
       await page.waitForSelector('#view-study.active .study-card');
       const layout=await page.evaluate(()=>({innerWidth,scrollWidth:document.documentElement.scrollWidth,cards:[...document.querySelectorAll('#view-study .study-card')].filter(e=>e.getClientRects().length).length,titleSize:parseFloat(getComputedStyle(document.querySelector('#view-study .study-card>h4')).fontSize),descSize:parseFloat(getComputedStyle(document.querySelector('#view-study .study-card>p')).fontSize)}));
@@ -40,8 +47,7 @@ function assert(v,msg){if(!v)throw new Error(msg)}
       await page.close();
     }
     const page=await browser.newPage({viewport:{width:390,height:844}});
-    page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
-    page.on('pageerror',e=>errors.push(e.message));
+    observePage(page);
     await page.goto('http://127.0.0.1:4177/cnc/learning-detail.html?stage=10&lesson=10-1',{waitUntil:'networkidle'});
     await page.waitForFunction(()=>document.body.dataset.cncLearningMedia==='20260807-media1');
     const media=await page.evaluate(async()=>{
@@ -63,8 +69,10 @@ function assert(v,msg){if(!v)throw new Error(msg)}
     assert(media.demo&&media.toggle,'dynamic SVG demo controls missing');
     assert(media.scrollWidth<=media.innerWidth,'detail horizontal overflow');
     await page.screenshot({path:path.join(out,'detail-stage10-390x844.png'),fullPage:true});
+    assert(failedResponses.length===0,`HTTP resource failures: ${failedResponses.join(' | ')}`);
+    assert(failedRequests.length===0,`network request failures: ${failedRequests.join(' | ')}`);
     assert(errors.length===0,`browser errors: ${errors.join(' | ')}`);
-    fs.writeFileSync(path.join(out,'report.json'),JSON.stringify({passed:true,browserChannel:browserPath?'custom-path':browserChannel,browserVersion,media,errors},null,2));
+    fs.writeFileSync(path.join(out,'report.json'),JSON.stringify({passed:true,browserChannel:browserPath?'custom-path':browserChannel,browserVersion,media,errors,failedResponses,failedRequests},null,2));
     console.log(JSON.stringify({passed:true,browserChannel:browserPath?'custom-path':browserChannel,browserVersion,media}));
   } finally {
     if(browser)await browser.close().catch(()=>{});
