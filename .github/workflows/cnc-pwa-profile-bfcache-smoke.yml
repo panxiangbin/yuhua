@@ -21,6 +21,21 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+      - name: Prepare BFCache contract diagnostics
+        run: |
+          mkdir -p cnc/test-results
+          node - <<'NODE'
+          const fs = require('fs');
+          const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
+          const sw = fs.readFileSync('cnc/sw.js', 'utf8');
+          const swBuild = sw.match(/const BUILD = '([^']+)'/)?.[1] || null;
+          fs.writeFileSync('cnc/test-results/pwa-profile-bfcache-contract-input.json', JSON.stringify({
+            checkedHead: process.env.GITHUB_SHA,
+            buildInfoPwaBuild: info.pwaBuild,
+            buildInfoCacheRevision: info.cacheRevision,
+            serviceWorkerBuild: swBuild
+          }, null, 2));
+          NODE
       - name: Validate BFCache build contract
         run: |
           node --check cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs
@@ -29,6 +44,10 @@ jobs:
           const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
           const sw = fs.readFileSync('cnc/sw.js', 'utf8');
           const test = fs.readFileSync('cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs', 'utf8');
+          const executableSource = test
+            .split('\n')
+            .filter(line => !line.trimStart().startsWith('//'))
+            .join('\n');
           const swBuild = sw.match(/const BUILD = '([^']+)'/)?.[1];
           if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
           if (!test.includes(`const PWA_BUILD = '${info.pwaBuild}'`)) throw new Error('BFCache test PWA build mismatch');
@@ -60,8 +79,15 @@ jobs:
             "page.evaluate(() => history.back())",
             "page.goBack({ waitUntil: 'domcontentloaded' })"
           ]) {
-            if (test.includes(forbidden)) throw new Error(`BFCache gate bypass found: ${forbidden}`);
+            if (executableSource.includes(forbidden)) throw new Error(`BFCache gate bypass found in executable source: ${forbidden}`);
           }
+          fs.writeFileSync('cnc/test-results/pwa-profile-bfcache-contract-result.json', JSON.stringify({
+            passed: true,
+            pwaBuild: info.pwaBuild,
+            cacheRevision: info.cacheRevision,
+            serviceWorkerBuild: swBuild,
+            forbiddenScanScope: 'non-comment executable source lines'
+          }, null, 2));
           NODE
       - name: Install Playwright test runtime
         run: npm install --no-save playwright@1.52.0
