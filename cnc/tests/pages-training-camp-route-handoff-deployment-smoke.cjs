@@ -9,12 +9,12 @@ fs.mkdirSync(out, { recursive: true });
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
 const expectedSiteBuild = '20260806-learning-depth1';
-const expectedPwaBuild = '20260808-pwa20';
+const expectedPwaBuild = '20260808-pwa21';
 const previousPublicSiteBuild = '20260806-learning-depth1';
-const previousPublicPwaBuild = '20260807-pwa19';
+const previousPublicPwaBuild = '20260808-pwa20';
 const cacheRevisionByBuild = {
-  [expectedPwaBuild]: '20260808-learning20',
-  [previousPublicPwaBuild]: '20260807-learning19'
+  [expectedPwaBuild]: '20260808-learning21',
+  [previousPublicPwaBuild]: '20260808-learning20'
 };
 const siteBuildByPwaBuild = {
   [expectedPwaBuild]: expectedSiteBuild,
@@ -258,7 +258,8 @@ function parseBuildInfo(text, label) {
       '80个图文小课',
       '训练题库与成长档案离线核心',
       '手机构建标记一致性',
-      '固定12关能力映射与真实薄弱课推荐'
+      '固定12关能力映射与真实薄弱课推荐',
+      'AI老师与固定12关成长档案语义一致'
     ]);
   }
   return data;
