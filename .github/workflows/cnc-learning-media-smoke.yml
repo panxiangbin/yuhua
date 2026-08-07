@@ -190,9 +190,15 @@ jobs:
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
         run: npm install --no-save playwright@1.54.2
-      - name: Install Chromium
-        run: npx playwright install --with-deps chromium
+      - name: Verify hosted Chrome for H.264 browser playback
+        shell: bash
+        run: |
+          set -euo pipefail
+          command -v google-chrome
+          google-chrome --version
       - name: Run real mobile media browser smoke
+        env:
+          CNC_BROWSER_CHANNEL: chrome
         run: node cnc/tests/mobile-learning-media-smoke.cjs
 
       - name: Commit validated PWA19 media bundle
