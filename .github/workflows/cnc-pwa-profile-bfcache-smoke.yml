@@ -39,8 +39,8 @@ jobs:
             "'--enable-features=BackForwardCache:enable_same_site/true'",
             "Page.backForwardCacheNotUsed",
             "event.persisted",
-            "history.back()",
-            "waitUntil: 'commit'",
+            "page.goBack({ waitUntil: 'commit', timeout: 5000 })",
+            "page.url()",
             "headlessDelegateBfcacheEnabled: true",
             "sameSiteBfcacheEnabled: true",
             "pageshowPersisted: true",
@@ -57,6 +57,7 @@ jobs:
             'describe.skip(',
             'it.skip(',
             'process.exit(0)',
+            "page.evaluate(() => history.back())",
             "page.goBack({ waitUntil: 'domcontentloaded' })"
           ]) {
             if (test.includes(forbidden)) throw new Error(`BFCache gate bypass found: ${forbidden}`);
