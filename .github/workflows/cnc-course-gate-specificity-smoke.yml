@@ -1,0 +1,71 @@
+name: CNC course gate specificity smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/training-practice.js'
+      - 'cnc/tools/apply-course-gates.cjs'
+      - 'cnc/tests/course-gate-specificity-smoke.cjs'
+      - 'cnc/tests/mobile-training-practice-smoke.cjs'
+      - 'cnc/tests/mobile-training-advanced-practice-smoke.cjs'
+      - 'cnc/tests/mobile-training-course-gates-smoke.cjs'
+      - 'cnc/docs/course-gate-specificity-audit.md'
+      - '.github/workflows/cnc-course-gate-specificity-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cnc-course-gate-specificity-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  course-gate-specificity:
+    name: fixed 12-course gate specificity
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact tested head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Reject one-time generator residue
+        run: test ! -e cnc/tools/apply-course-gates.cjs
+
+      - name: Check syntax and regression contracts
+        shell: bash
+        run: |
+          node --check cnc/training-practice.js
+          node --check cnc/tests/course-gate-specificity-smoke.cjs
+          node --check cnc/tests/mobile-training-practice-smoke.cjs
+          node --check cnc/tests/mobile-training-advanced-practice-smoke.cjs
+          node --check cnc/tests/mobile-training-course-gates-smoke.cjs
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git diff --check "${{ github.event.pull_request.base.sha }}...HEAD"
+          else
+            git diff --check HEAD^
+          fi
+
+      - name: Audit fixed 12-course gate questions
+        env:
+          CNC_GATE_REPORT: artifacts/course-gate-specificity.json
+        run: node cnc/tests/course-gate-specificity-smoke.cjs
+
+      - name: Upload course gate specificity diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-course-gate-specificity-${{ github.run_id }}
+          path: |
+            artifacts/course-gate-specificity.json
+            cnc/training-practice.js
+            cnc/tests/course-gate-specificity-smoke.cjs
+            cnc/tests/mobile-training-practice-smoke.cjs
+            cnc/tests/mobile-training-advanced-practice-smoke.cjs
+            cnc/tests/mobile-training-course-gates-smoke.cjs
+            cnc/docs/course-gate-specificity-audit.md
+          if-no-files-found: error
+          retention-days: 14

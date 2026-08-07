@@ -69,7 +69,7 @@ const assert = require('node:assert/strict');
   const api = await page.evaluate(() => window.CNC_TRAINING_PRACTICE.runCheck());
   assert.equal(api.build, buildConsistency.build, '高级练习检查结果与页面构建标识必须一致');
   assert.equal(api.passed, true, `advanced practice readiness failed: ${JSON.stringify(api)}`);
-  assert.equal(api.questions, 9);
+  assert.equal(api.questions, 26);
   assert.equal(api.lessonGates, 12);
   assert.equal(api.passScore, 80);
   assert.ok(api.types.includes('fill'));
