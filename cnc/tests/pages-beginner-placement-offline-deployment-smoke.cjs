@@ -8,13 +8,13 @@ fs.mkdirSync(out, { recursive: true });
 
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
-const branchTargetPwaBuild = '20260807-pwa17';
-const previousPublicPwaBuild = '20260806-pwa16';
+const branchTargetPwaBuild = '20260807-pwa18';
+const previousPublicPwaBuild = '20260807-pwa17';
 const expectedSiteBuild = '20260806-learning-depth1';
 const previousPublicSiteBuild = '20260806-learning-depth1';
 const cacheRevisionByBuild = {
-  [branchTargetPwaBuild]: '20260807-learning17',
-  [previousPublicPwaBuild]: '20260806-learning16'
+  [branchTargetPwaBuild]: '20260807-learning18',
+  [previousPublicPwaBuild]: '20260807-learning17'
 };
 const siteBuildByPwaBuild = {
   [branchTargetPwaBuild]: expectedSiteBuild,
@@ -28,7 +28,7 @@ const EXACT_CORE = [
   './index.html','./homepage-refresh.css','./homepage-refresh-desktop-legacy.css','./mobile-home-refactor.css','./personal-home.js','./training-practice.js','./training-profile.js','./learning-sublesson-catalog.js','./learning-sublesson-specificity.js','./learning-depth.css','./learning-detail.html','./mobile-trust-nav.js','./featured-images-supplement.js','./offline.html','./pwa-status.html','./pwa-self-test.html','./pages-status.html','./beginner-placement.html','./training-camp.html','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html','./ai-teacher.html','./ai-teacher-intake.html','./ai-teacher-explainability.html','./build-info.json','./assets/images/batch01_core/beginner-machine-zero-vs-work-zero-001.webp','./assets/images/batch02_operation_basics/machine-init-flow-001.webp','./assets/images/batch04_milling_tooling/milling-process-overview-001.webp','./assets/images/batch01_core/measure-reading-set-001.webp','./assets/images/batch05_alarm_drawing_material/dial-indicator-detail-001.webp','./assets/images/batch04_milling_tooling/vise-clamping-basic-001.webp','./assets/images/batch04_milling_tooling/tool-selection-beginner-001.webp','./assets/images/batch04_milling_tooling/bt-er-holder-overview-001.webp','./assets/images/batch02_operation_basics/single-block-dry-run-001.webp','./assets/images/batch04_milling_tooling/milling-contour-001.webp','./assets/images/batch02_operation_basics/canned-cycle-overview-001.webp','./assets/images/batch05_alarm_drawing_material/first-piece-inspection-001.webp'
 ];
 
-const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE.filter(path => !['./training-practice.js', './training-profile.js'].includes(path));
+const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE;
 
 const LEARNING_DEPTH_CORE_PATHS = new Set([
   './learning-sublesson-catalog.js',
@@ -112,7 +112,7 @@ function assertBuildInfo(text, label, build) {
   if (data.pwaBuild !== build) throw new Error(`${label}PWA构建错误：${data.pwaBuild}，期望${build}`);
   const stage = String(data.contentStage || '');
   requireTokens(stage, label, ['课程12关','起点测评','手机首页一屏化','AI CNC老师基础版','PWA可靠性']);
-  if (build === branchTargetPwaBuild) requireTokens(stage, label, ['起点测评关键安全门禁','起点测评离线核心','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','正式课程开发占位清零','AI老师现场问诊单','AI老师判断说明','AI老师离线核心','AI老师学习档案异常保护','80个图文小课','训练题库与成长档案离线核心']);
+  if (build === branchTargetPwaBuild) requireTokens(stage, label, ['起点测评关键安全门禁','起点测评离线核心','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','正式课程开发占位清零','AI老师现场问诊单','AI老师判断说明','AI老师离线核心','AI老师学习档案异常保护','80个图文小课','训练题库与成长档案离线核心','手机构建标记一致性']);
 }
 
 function assertContract(resource, text, label, build) {
@@ -177,7 +177,6 @@ async function waitForMainPagesMatch() {
       report.resources[resource] = { local: { bytes: local.bytes, sha256: local.sha256 }, main: summary(pair.main), pages: summary(pair.pages), mainPagesExactBytesMatch: true, mainPagesExactSha256Match: true, localMatchesMain: localMatch };
       findings.push(`${resource}｜Pages ${pair.pages.bytes} bytes｜${pair.pages.sha256}｜分支与main一致=${localMatch}`);
     }
-
     const branchDeploymentPending = !localMatchesMain;
     if (eventName !== 'pull_request' && branchDeploymentPending) throw new Error('main正式验收不允许当前分支与main/Pages仍不一致');
     if (!branchDeploymentPending && publicPwaBuild !== branchTargetPwaBuild) throw new Error('分支与main一致时公网必须已经是目标PWA构建');
