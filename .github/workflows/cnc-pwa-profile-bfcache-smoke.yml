@@ -16,6 +16,8 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -33,8 +35,12 @@ jobs:
           if (!test.includes(`const CACHE_REVISION = '${info.cacheRevision}'`)) throw new Error('BFCache test cache revision mismatch');
           for (const required of [
             "ignoreDefaultArgs: ['--disable-back-forward-cache']",
+            "'--enable-bfcache'",
+            "'--enable-features=BackForwardCache:enable_same_site/true'",
             "Page.backForwardCacheNotUsed",
             "event.persisted",
+            "headlessDelegateBfcacheEnabled: true",
+            "sameSiteBfcacheEnabled: true",
             "pageshowPersisted: true",
             "chromiumBfcacheEnabled: true",
             "history-return-real-bfcache",
