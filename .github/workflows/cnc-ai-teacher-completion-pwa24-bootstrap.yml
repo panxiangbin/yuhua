@@ -18,8 +18,12 @@ jobs:
           fetch-depth: 0
 
       - name: Apply scoped CNC patch once
+        id: patch
+        continue-on-error: true
         shell: bash
         run: |
+          mkdir -p cnc/test-results/pwa24-bootstrap
+          exec > >(tee cnc/test-results/pwa24-bootstrap/patch.log) 2>&1
           if [ "$(git log -1 --pretty=%s)" = "fix(cnc-ai): 校正课程完成语义并升级PWA24" ]; then
             echo "PWA24 patch already applied."
             exit 0
@@ -43,3 +47,17 @@ jobs:
           fi
           git commit -m "fix(cnc-ai): 校正课程完成语义并升级PWA24"
           git push origin HEAD:codex/cnc-ai-teacher-completion-pwa24
+
+      - name: Upload bootstrap diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-pwa24-bootstrap-${{ github.run_id }}
+          path: cnc/test-results/pwa24-bootstrap
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Enforce bootstrap result
+        if: steps.patch.outcome != 'success'
+        shell: bash
+        run: exit 1
