@@ -12,11 +12,11 @@ var ABILITIES=[
 ];
 function read(key,fallback){try{var value=JSON.parse(localStorage.getItem(key));return value==null?fallback:value;}catch(error){return fallback;}}
 function write(key,value){localStorage.setItem(key,JSON.stringify(value));}
-function esc(value){return String(value==null?'':value).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function esc(value){return String(value==null?'':value).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c];});}
 function dateKey(date){var d=date||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function dayDiff(a,b){var start=new Date(a+'T00:00:00'),end=new Date(b+'T00:00:00');return Math.round((end-start)/86400000);}
 function lessonTitle(level){var card=document.querySelector('#view-study .study-card[data-level="'+level+'"]');var title=card&&card.querySelector('h4');return title?title.textContent.trim():'第 '+level+' 关';}
-function practice(){var value=read(PRACTICE_KEY,null);return value&&value.version===1?value:{version:1,attempts:{},wrong:[],correct:[],lessonScores:{}};}
+function practice(){var value=read(PRACTICE_KEY,null);return value&&(value.version===1||value.version===2)?value:{version:2,gateVersion:2,attempts:{},wrong:[],correct:[],lessonScores:{},legacyLessonScores:{}};}
 function profile(){var value=read(PROFILE_KEY,null);return value&&value.version===1?value:{version:1,xp:0,badges:[],completed:[],trainingDays:[],currentStreak:0,bestStreak:0,lastTrainingDate:null};}
 function normalizeProfile(user){user=user||profile();user.badges=Array.isArray(user.badges)?user.badges:[];user.completed=Array.isArray(user.completed)?user.completed:[];user.trainingDays=Array.isArray(user.trainingDays)?user.trainingDays:[];user.currentStreak=Number(user.currentStreak)||0;user.bestStreak=Number(user.bestStreak)||0;return user;}
 function abilityState(lessons,done,scores){var attempted=lessons.filter(function(level){return Number(scores[level]||0)>0||done.indexOf(level)!==-1;});var total=lessons.reduce(function(sum,level){return sum+Math.max(Number(scores[level]||0),done.indexOf(level)!==-1?80:0);},0);var score=Math.round(total/lessons.length);var status=score>=80?'已掌握':score>=60?'接近达标':score>0?'需要加强':'尚未训练';var weakCandidates=attempted.filter(function(level){return Number(scores[level]||0)<80;});var candidates=weakCandidates.length?weakCandidates:attempted.length?attempted:lessons;var weakLesson=candidates.slice().sort(function(a,b){var diff=Number(scores[a]||0)-Number(scores[b]||0);return diff||a-b;})[0];return{score:score,status:status,attempted:attempted.length,total:lessons.length,weakLesson:weakLesson};}
