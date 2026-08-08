@@ -5,18 +5,32 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>成长成果｜数控小潘 CNC新手训练平台</title>
   <style>
-    :root{color-scheme:light;--bg:#f1efe9;--surface:#fffdf9;--ink:#292c2f;--muted:#687078;--blue:#3f6179;--line:#d8d3c8;--ok:#466b55;--warn:#9a6518}
-    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}.shell{width:min(100%,760px);margin:auto;padding:18px 14px 34px}.back,.action{display:inline-flex;min-height:44px;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);text-decoration:none;font-weight:900;box-shadow:0 2px 0 rgba(41,44,47,.08)}.back{padding:0 14px}.hero,.summary,.today,.milestone,.tool,.notice{margin-top:14px;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:0 6px 16px rgba(48,44,36,.07)}.hero{padding:18px}.hero small{color:var(--blue);font-weight:900;letter-spacing:.08em}.hero h1{margin:6px 0 0;font-size:30px}.hero p,.tool p,.notice,.today p,.milestone p{color:var(--muted);line-height:1.65}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px}.metric{padding:12px;border:1px solid var(--line);border-radius:10px;background:#f7f4ee}.metric strong{display:block;font-size:28px}.metric span{font-size:12px;color:var(--muted);font-weight:800}.today,.milestone{padding:16px}.status-line{display:flex;align-items:center;justify-content:space-between;gap:12px}.status-line small{font-weight:900;color:var(--blue)}.status-line strong{font-size:22px}.today.is-done .status-line strong{color:var(--ok)}.today.is-pending .status-line strong{color:var(--warn)}.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:12px}.day{min-width:0;padding:9px 4px;border:1px solid var(--line);border-radius:9px;text-align:center;background:#f7f4ee}.day strong,.day span{display:block}.day strong{font-size:12px}.day span{margin-top:5px;font-size:11px;color:var(--muted)}.day.is-done{border-color:#a8b8aa;background:#edf3ee}.day.is-today{outline:2px solid #71899b;outline-offset:1px}.milestone strong{display:block;font-size:24px;margin-top:4px}.milestone progress{width:100%;height:12px;margin-top:12px;accent-color:var(--blue)}.tools{display:grid;gap:12px}.tool{padding:16px}.tool h2{margin:0;font-size:21px}.tool p{margin:7px 0 14px}.action{width:100%;padding:11px 14px;background:#3f6179;color:white;border-color:#29485f}.notice{padding:14px}.notice strong{display:block;color:var(--ink);margin-bottom:5px}@media(max-width:520px){.summary{grid-template-columns:1fr}.hero h1{font-size:27px}.week{gap:4px}.day{padding:8px 2px}.status-line{align-items:flex-start;flex-direction:column}}
+    :root{color-scheme:light;--bg:#f1efe9;--surface:#fffdf9;--ink:#292c2f;--muted:#687078;--blue:#3f6179;--line:#d8d3c8;--ok:#466b55;--warn:#9a6518;--bad:#8a4034}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}.shell{width:min(100%,760px);margin:auto;padding:18px 14px 34px}.back,.action{display:inline-flex;min-height:44px;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);text-decoration:none;font-weight:900;box-shadow:0 2px 0 rgba(41,44,47,.08)}.back{padding:0 14px}.hero,.summary,.today,.milestone,.tool,.notice,.integrity{margin-top:14px;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:0 6px 16px rgba(48,44,36,.07)}.hero{padding:18px}.hero small{color:var(--blue);font-weight:900;letter-spacing:.08em}.hero h1{margin:6px 0 0;font-size:30px}.hero p,.tool p,.notice,.today p,.milestone p,.integrity p{color:var(--muted);line-height:1.65}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px}.metric{padding:12px;border:1px solid var(--line);border-radius:10px;background:#f7f4ee}.metric strong{display:block;font-size:28px}.metric span{font-size:12px;color:var(--muted);font-weight:800}.today,.milestone,.integrity{padding:16px}.status-line{display:flex;align-items:center;justify-content:space-between;gap:12px}.status-line small{font-weight:900;color:var(--blue)}.status-line strong{font-size:22px}.today.is-done .status-line strong{color:var(--ok)}.today.is-pending .status-line strong{color:var(--warn)}.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:12px}.day{min-width:0;padding:9px 4px;border:1px solid var(--line);border-radius:9px;text-align:center;background:#f7f4ee}.day strong,.day span{display:block}.day strong{font-size:12px}.day span{margin-top:5px;font-size:11px;color:var(--muted)}.day.is-done{border-color:#a8b8aa;background:#edf3ee}.day.is-today{outline:2px solid #71899b;outline-offset:1px}.milestone strong{display:block;font-size:24px;margin-top:4px}.milestone progress{width:100%;height:12px;margin-top:12px;accent-color:var(--blue)}.tools{display:grid;gap:12px}.tool{padding:16px}.tool h2{margin:0;font-size:21px}.tool p{margin:7px 0 14px}.action{width:100%;padding:11px 14px;background:#3f6179;color:white;border-color:#29485f}.notice{padding:14px}.notice strong,.integrity strong{display:block;color:var(--ink);margin-bottom:5px}.integrity{border-left:4px solid var(--bad)}.integrity strong{color:var(--bad)}.next-action{margin-top:12px}.next-action .action{margin-top:10px}@media(max-width:520px){.summary{grid-template-columns:repeat(2,1fr)}.hero h1{font-size:27px}.week{gap:4px}.day{padding:8px 2px}.status-line{align-items:flex-start;flex-direction:column}}
   </style>
 </head>
 <body>
   <main class="shell">
     <a class="back" href="./">← 返回训练平台</a>
-    <section class="hero"><small>CNC 新手训练营</small><h1>我的成长成果</h1><p>把连续训练、最近7天记录、阶段徽章和阶段证书集中到一个入口，帮助新手看清自己已经坚持多久、真正掌握了多少。</p></section>
+    <section class="hero"><small>CNC 新手训练营</small><h1>我的成长成果</h1><p>把主线课程、错题、模拟、连续训练、最近7天记录和阶段徽章集中到一个入口，帮助新手看清自己已经坚持多久、下一步最该补哪里。</p></section>
     <section class="summary" aria-label="成长成果统计">
+      <div class="metric"><strong id="courses">0/12</strong><span>主线课程</span></div>
+      <div class="metric"><strong id="wrong">0</strong><span>当前错题</span></div>
+      <div class="metric"><strong id="simulations">0/13</strong><span>模拟通过</span></div>
       <div class="metric"><strong id="streak">0</strong><span>当前连续天数</span></div>
       <div class="metric"><strong id="days">0</strong><span>累计训练天数</span></div>
       <div class="metric"><strong id="badges">0</strong><span>已获得徽章</span></div>
+    </section>
+    <section class="integrity" id="data-integrity" role="alert" aria-live="assertive" hidden>
+      <strong>学习数据异常，未把异常记录当成零进度</strong>
+      <p id="data-integrity-copy">请先检查本机学习数据，再继续依据成长成果安排训练。</p>
+      <a class="action" href="./data-health.html">检查学习数据</a>
+    </section>
+    <section class="milestone next-action" aria-labelledby="next-title">
+      <small>当前训练闭环</small>
+      <strong id="next-title">从第1关开始</strong>
+      <p id="next-copy">先完成主线课程，再用专项练习和模拟训练把知识变成稳定动作。</p>
+      <a class="action" id="next-link" href="./training-camp.html">继续训练</a>
     </section>
     <section class="today" id="today-card" aria-labelledby="today-title">
       <div class="status-line"><div><small>今日训练状态</small><strong id="today-title">尚未记录</strong></div><span id="today-date"></span></div>
@@ -34,10 +48,47 @@
       <article class="tool"><h2>最近7天训练日历</h2><p>逐日查看已完成、今天待完成和未记录状态，确认训练节奏有没有中断。</p><a class="action" href="./training-calendar.html">查看训练日历</a></article>
       <article class="tool"><h2>阶段徽章柜</h2><p>查看课程通关、成绩达标和连续训练里程碑；徽章只代表本站训练进度。</p><a class="action" href="./training-badges.html">查看训练徽章</a></article>
     </section>
-    <section class="notice"><strong>安全说明</strong>成长记录和阶段证书不等于职业资格或独立上机能力。真实机床操作必须在合格人员指导下进行，并以原厂手册、企业制度和现场条件为准。</section>
+    <section class="notice"><strong>安全说明</strong>成长记录和阶段证书不等于职业资格或独立上机能力。真实机床操作必须在合格人员指导下进行，并以原厂手册、企业制度和现场条件为准；报警、参数、刀补和安全步骤必须核对对应系统与机床资料。</section>
   </main>
   <script>
-  (function(){'use strict';var BUILD='20260724b';function read(k,f){try{var v=JSON.parse(localStorage.getItem(k));return v==null?f:v;}catch(e){return f;}}function key(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}var p=read('cnc_training_profile_v1',{trainingDays:[],currentStreak:0,badges:[]}),days=Array.isArray(p.trainingDays)?p.trainingDays:[],badges=Array.isArray(p.badges)?p.badges:[],streak=Number(p.currentStreak)||0,today=new Date(),todayKey=key(today),trained=days.indexOf(todayKey)!==-1;document.getElementById('streak').textContent=streak;document.getElementById('days').textContent=days.length;document.getElementById('badges').textContent=badges.length;document.getElementById('today-date').textContent=todayKey;document.getElementById('today-title').textContent=trained?'今日已完成':'今日待完成';document.getElementById('today-copy').textContent=trained?'今天的有效训练已经记录，继续保持节奏。':'完成今日推荐课程并达到80分后，可在成长档案记录当天训练。';document.getElementById('today-card').classList.add(trained?'is-done':'is-pending');var week=[];for(var i=6;i>=0;i--){var d=new Date(today);d.setDate(today.getDate()-i);var k=key(d),done=days.indexOf(k)!==-1;week.push('<div class="day '+(done?'is-done ':'')+(k===todayKey?'is-today':'')+'" role="listitem"><strong>'+['日','一','二','三','四','五','六'][d.getDay()]+'</strong><span>'+String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0')+'</span><span>'+(done?'完成':'—')+'</span></div>');}document.getElementById('week-preview').innerHTML=week.join('');var targets=[3,7,30],target=targets.find(function(n){return streak<n;})||30,remaining=Math.max(0,target-streak);document.getElementById('milestone-title').textContent='连续训练'+target+'天';document.getElementById('milestone-copy').textContent=remaining?'再完成 '+remaining+' 天有效训练即可达到该里程碑。':'已达到30天里程碑，继续保持稳定训练。';var progress=document.getElementById('milestone-progress');progress.max=target;progress.value=Math.min(streak,target);progress.setAttribute('aria-label','连续训练 '+streak+' 天，目标 '+target+' 天');document.body.dataset.trainingAchievements='ready';window.CNC_TRAINING_ACHIEVEMENTS={build:BUILD,snapshot:function(){return{streak:streak,days:days.length,badges:badges.length,trainedToday:trained,target:target,remaining:remaining};}};})();
+  (function(){
+    'use strict';
+    var BUILD='20260808a';
+    var invalid=[];
+    function raw(k){return localStorage.getItem(k);}
+    function readObject(k){var text=raw(k);if(text===null)return{present:false,valid:true,value:{}};try{var v=JSON.parse(text);if(v&&typeof v==='object'&&!Array.isArray(v))return{present:true,valid:true,value:v};}catch(e){}invalid.push(k);return{present:true,valid:false,value:{}};}
+    function readArray(k){var text=raw(k);if(text===null)return{present:false,valid:true,value:[]};try{var v=JSON.parse(text);if(Array.isArray(v))return{present:true,valid:true,value:v};}catch(e){}invalid.push(k);return{present:true,valid:false,value:[]};}
+    function key(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+    function stageLevel(value){var match=String(value==null?'':value).match(/(?:stage-)?(\d{1,2})$/i),level=Number(match&&match[1]);return level>=1&&level<=12?level:null;}
+    function completedCourses(study,profile){var set=new Set();if(study.valid&&study.present){study.value.forEach(function(v){var n=Number(v);if(n>=1&&n<=12)set.add(n);});return set;}if(!study.present&&profile.valid){[].concat(Array.isArray(profile.value.completed)?profile.value.completed:[],Array.isArray(profile.value.completedStages)?profile.value.completedStages:[]).forEach(function(v){var n=stageLevel(v)||Number(v);if(n>=1&&n<=12)set.add(n);});}return set;}
+    function wrongCount(practice){if(!practice.valid)return null;var value=practice.value.wrongQuestions!==undefined?practice.value.wrongQuestions:practice.value.wrong;if(value===undefined)return 0;if(Array.isArray(value))return value.length;if(value&&typeof value==='object')return Object.keys(value).length;invalid.push('cnc_training_practice_v1.wrong');return null;}
+    function simulatorPass(simulator){if(!simulator.valid)return null;var root=simulator.value.simulators&&typeof simulator.value.simulators==='object'?simulator.value.simulators:simulator.value;return Object.values(root||{}).filter(function(v){return v&&typeof v==='object'&&(v.passed===true||Number(v.bestScore||v.score||0)>=80);}).length;}
+    function setMetric(id,value,suffix){document.getElementById(id).textContent=value==null?'—':String(value)+(suffix||'');}
+    function nextPlan(completed,wrong,simPass,integrity){
+      if(!integrity)return{title:'先检查学习数据',copy:'检测到学习记录结构异常，当前页面不会把异常数据当成0进度继续推荐。请先检查或恢复数据。',href:'./data-health.html',label:'检查学习数据',kind:'integrity',nextLevel:null};
+      var next=Array.from({length:12},function(_,i){return i+1;}).find(function(level){return !completed.has(level);});
+      if(next)return{title:'继续第 '+next+' 关主线课程',copy:'主线还没有完成，先按固定12关顺序补齐课程，再做对应专项练习和模拟。',href:'./training-camp.html',label:'继续12关训练',kind:'course',nextLevel:next};
+      if(wrong>0)return{title:'先把 '+wrong+' 道错题闭环',copy:'主线已完成，但仍有已暴露错误。先重做错题并读懂解析，再继续堆新内容。',href:'./practice-wrong-review.html',label:'重做错题',kind:'wrong',nextLevel:null};
+      if(simPass<13)return{title:'把会答题推进到会按流程检查',copy:'主线和错题已完成，继续补模拟训练，重点复盘错误路径和停止条件。',href:'./simulator-hub.html',label:'进入模拟训练',kind:'simulation',nextLevel:null};
+      return{title:'进入综合复习与现场带教阶段',copy:'主线、错题与模拟闭环已经完成。下一步以受监督的现场复述、首件验证和跨模块复盘为主。',href:'./profile.html',label:'查看能力画像',kind:'review',nextLevel:null};
+    }
+    var profile=readObject('cnc_training_profile_v1'),study=readArray('cnc_study_completed_v1'),practice=readObject('cnc_training_practice_v1'),simulator=readObject('cnc_training_simulator_v1');
+    var p=profile.value,days=Array.isArray(p.trainingDays)?p.trainingDays:[],badges=Array.isArray(p.badges)?p.badges:[],streak=Number(p.currentStreak)||0,today=new Date(),todayKey=key(today),trained=days.indexOf(todayKey)!==-1;
+    var completed=completedCourses(study,profile),wrong=wrongCount(practice),simPass=simulatorPass(simulator),integrity=invalid.length===0,plan=nextPlan(completed,wrong,simPass,integrity);
+    setMetric('courses',study.valid?completed.size:null,study.valid?'/12':'');
+    setMetric('wrong',wrong,'');
+    setMetric('simulations',simPass,simPass==null?'':'/13');
+    setMetric('streak',profile.valid?streak:null,'');
+    setMetric('days',profile.valid?days.length:null,'');
+    setMetric('badges',profile.valid?badges.length:null,'');
+    document.getElementById('next-title').textContent=plan.title;document.getElementById('next-copy').textContent=plan.copy;document.getElementById('next-link').href=plan.href;document.getElementById('next-link').textContent=plan.label;
+    if(!integrity){var alert=document.getElementById('data-integrity');alert.hidden=false;document.getElementById('data-integrity-copy').textContent='异常数据源：'+Array.from(new Set(invalid)).join('、')+'。请先检查本机学习数据，再继续依据成长成果安排训练。';}
+    document.getElementById('today-date').textContent=todayKey;document.getElementById('today-title').textContent=trained?'今日已完成':'今日待完成';document.getElementById('today-copy').textContent=trained?'今天的有效训练已经记录，继续保持节奏。':'完成今日推荐课程并达到80分后，可在成长档案记录当天训练。';document.getElementById('today-card').classList.add(trained?'is-done':'is-pending');
+    var week=[];for(var i=6;i>=0;i--){var d=new Date(today);d.setDate(today.getDate()-i);var k=key(d),done=days.indexOf(k)!==-1;week.push('<div class="day '+(done?'is-done ':'')+(k===todayKey?'is-today':'')+'" role="listitem"><strong>'+['日','一','二','三','四','五','六'][d.getDay()]+'</strong><span>'+String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0')+'</span><span>'+(done?'完成':'—')+'</span></div>');}document.getElementById('week-preview').innerHTML=week.join('');
+    var targets=[3,7,30],target=targets.find(function(n){return streak<n;})||30,remaining=Math.max(0,target-streak);document.getElementById('milestone-title').textContent='连续训练'+target+'天';document.getElementById('milestone-copy').textContent=remaining?'再完成 '+remaining+' 天有效训练即可达到该里程碑。':'已达到30天里程碑，继续保持稳定训练。';var progress=document.getElementById('milestone-progress');progress.max=target;progress.value=Math.min(streak,target);progress.setAttribute('aria-label','连续训练 '+streak+' 天，目标 '+target+' 天');
+    document.body.dataset.trainingAchievements=integrity?'ready':'data-error';
+    window.CNC_TRAINING_ACHIEVEMENTS={build:BUILD,snapshot:function(){return{streak:profile.valid?streak:null,days:profile.valid?days.length:null,badges:profile.valid?badges.length:null,trainedToday:trained,target:target,remaining:remaining,courses:study.valid?completed.size:null,wrong:wrong,simulations:simPass,integrity:integrity,invalid:Array.from(new Set(invalid)),nextKind:plan.kind,nextLevel:plan.nextLevel};}};
+  })();
   </script>
 </body>
 </html>
