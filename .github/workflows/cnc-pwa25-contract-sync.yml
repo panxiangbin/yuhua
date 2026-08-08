@@ -1,0 +1,70 @@
+name: CNC PWA25 contract sync
+
+on:
+  push:
+    branches:
+      - codex/cnc-daily-training-real-completion
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/cnc-daily-training-real-completion
+          fetch-depth: 0
+      - name: Sync exact PWA25/PWA24 contracts
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          files = [
+              Path('cnc/tests/mobile-pwa-offline-cache-smoke.cjs'),
+              Path('cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs'),
+              Path('cnc/tests/mobile-pwa-upgrade-data-smoke.cjs'),
+              Path('cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs'),
+              Path('cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs'),
+              Path('cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs'),
+          ]
+          replacements = [
+              ('20260808-pwa24', '20260809-pwa25'),
+              ('20260808-learning24', '20260809-learning25'),
+              ('20260808-pwa23', '20260808-pwa24'),
+              ('20260808-learning23', '20260808-learning24'),
+          ]
+          changed = []
+          for path in files:
+              text = path.read_text(encoding='utf-8')
+              updated = text
+              for old, new in replacements:
+                  updated = updated.replace(old, new)
+              if updated != text:
+                  path.write_text(updated, encoding='utf-8', newline='\n')
+                  changed.append(str(path))
+          print('changed:', ', '.join(changed) if changed else 'none')
+          PY
+          node cnc/tests/pwa-build-reference-audit-smoke.cjs
+          git diff --check
+          git diff -- cnc/tests/mobile-pwa-offline-cache-smoke.cjs cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs cnc/tests/mobile-pwa-upgrade-data-smoke.cjs cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs
+      - name: Commit synced contracts
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo 'No contract changes needed.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add cnc/tests/mobile-pwa-offline-cache-smoke.cjs \
+                  cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs \
+                  cnc/tests/mobile-pwa-upgrade-data-smoke.cjs \
+                  cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs \
+                  cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs \
+                  cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs
+          git commit -m 'test(cnc-pwa): 对齐PWA25及上一公网PWA24门禁'
+          git push origin HEAD:codex/cnc-daily-training-real-completion
