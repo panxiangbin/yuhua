@@ -15,6 +15,10 @@ const assert = require('node:assert/strict');
   assert.equal(await page.locator('.view.active').getAttribute('id'), 'view-dashboard');
 
   await page.evaluate(() => {
+    // PWA25 会在首次渲染时生成并持久化“今日训练目标”。本测试是在页面启动后注入一组
+    // 独立的能力样例，因此必须先清掉启动阶段生成的目标，让后续 snapshot 按这组样例
+    // 重新生成当天目标；连续训练专门门禁另行验证“同一自然日目标保持稳定”。
+    localStorage.removeItem('cnc_daily_training_plan_v1');
     localStorage.setItem('cnc_study_completed_v1', JSON.stringify([1, 2, 3]));
     localStorage.setItem('cnc_training_profile_v1', JSON.stringify({ version: 1, xp: 360, badges: ['迈出第一步'], completed: [1, 2, 3] }));
     localStorage.setItem('cnc_training_practice_v1', JSON.stringify({
