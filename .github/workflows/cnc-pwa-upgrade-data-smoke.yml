@@ -52,15 +52,17 @@ jobs:
           const swCacheRevision = sw.match(/const CACHE_REVISION = '([^']+)'/)?.[1];
           if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
           if (swCacheRevision !== info.cacheRevision) throw new Error(`Service Worker/build-info cache mismatch: ${swCacheRevision} / ${info.cacheRevision}`);
-          if (info.pwaBuild !== '20260809-pwa25') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
-          if (info.cacheRevision !== '20260809-learning25') throw new Error(`unexpected cache revision: ${info.cacheRevision}`);
+          if (info.pwaBuild !== '20260809-pwa26') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
+          if (info.cacheRevision !== '20260809-learning26') throw new Error(`unexpected cache revision: ${info.cacheRevision}`);
           if (!test.includes(`const CURRENT_PWA_BUILD = '${info.pwaBuild}'`)) throw new Error('upgrade test current PWA build mismatch');
           if (!test.includes(`const CURRENT_CACHE_REVISION = '${info.cacheRevision}'`)) throw new Error('upgrade test current cache revision mismatch');
           for (const required of [
-            "const PREVIOUS_PWA_BUILD = '20260808-pwa24'",
-            "const PREVIOUS_CACHE_REVISION = '20260808-learning24'",
-            "const TRAINING_CORE_PATHS = ['./training-practice.js', './training-profile.js']",
+            "const PREVIOUS_PWA_BUILD = '20260809-pwa25'",
+            "const PREVIOUS_CACHE_REVISION = '20260809-learning25'",
+            "const TRAINING_CORE_PATHS = ['./training-practice.js', './training-profile.js', './learning-content-data.js']",
             'trainingCoreStaticCacheReady: true',
+            'mainLearningContentColdOfflineAfterUpgrade: true',
+            "stage = 'cold-offline-main-learning-content-after-upgrade'",
             'cnc_training_profile_v1',
             'cnc_training_practice_v1',
             'cnc_training_simulator_v1',
@@ -81,19 +83,21 @@ jobs:
             'ai-teacher.html',
             'ai-teacher-intake.html',
             'ai-teacher-explainability.html',
-            'explainabilityColdOfflineAfterUpgrade: true'
+            'explainabilityColdOfflineAfterUpgrade: true',
+            '不能把“先Z后XY”当成所有机床通用规则',
+            '固定直线或固定折线'
           ]) {
             if (!test.includes(required)) throw new Error(`upgrade contract missing: ${required}`);
           }
           if (!placement.includes('criticalFailures') || !placement.includes("decision:'critical-safety'")) throw new Error('beginner placement critical safety gate missing');
           if (!placement.includes('cnc_beginner_placement_route_handoff_v1') || !camp.includes('cnc_beginner_placement_route_handoff_v1')) throw new Error('placement route handoff producer or consumer missing');
-          for (const file of ['./training-practice.js','./training-profile.js','./training-camp.html','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html']) {
+          for (const file of ['./training-practice.js','./training-profile.js','./learning-content-data.js','./training-camp.html','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html']) {
             if (!sw.includes(`'${file}'`)) throw new Error(`PWA core missing: ${file}`);
           }
           if (!sw.includes("name.startsWith('cnc-')") || !sw.includes('name !== STATIC_CACHE && name !== RUNTIME_CACHE')) {
             throw new Error('Service Worker old CNC cache cleanup contract missing');
           }
-          for (const stage of ['测评首步课程离线核心','正式课程开发占位清零','AI老师学习档案异常保护','80个图文小课','训练题库与成长档案离线核心','手机构建标记一致性','固定12关能力映射与真实薄弱课推荐','AI老师与固定12关成长档案语义一致','每日训练薄弱课错题精准回流','固定12关60题真实80分与关键题硬门禁','AI老师课程完成以真实完成记录为准']) {
+          for (const stage of ['测评首步课程离线核心','正式课程开发占位清零','AI老师学习档案异常保护','80个图文小课','训练题库与成长档案离线核心','手机构建标记一致性','固定12关能力映射与真实薄弱课推荐','AI老师与固定12关成长档案语义一致','每日训练薄弱课错题精准回流','固定12关60题真实80分与关键题硬门禁','AI老师课程完成以真实完成记录为准','成长档案今日训练奖励以真实课程完成记录为准','G00快速定位与安全撤离适用范围','12关主课程数据首次安装离线核心']) {
             if (!String(info.contentStage || '').includes(stage)) throw new Error(`build marker missing: ${stage}`);
           }
           for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)']) {
