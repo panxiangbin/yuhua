@@ -53,12 +53,15 @@ let page;
     localStorage.setItem('cnc_study_completed_v1', JSON.stringify([1, 2, 3]));
     localStorage.setItem('cnc_training_profile_v1', JSON.stringify({ version: 1, xp: 360, badges: ['迈出第一步'], completed: [1, 2, 3] }));
     localStorage.setItem('cnc_training_practice_v1', JSON.stringify({
-      version: 1,
+      version: 2,
+      gateVersion: 2,
       attempts: {},
       // 两道错题分别属于第9关和第1关；推荐薄弱课是第5关，不能把全局错题硬塞进第5关训练步骤。
       wrong: ['g00-cutting', 'safe-stop-first'],
       correct: ['axis-z-direction'],
-      lessonScores: { 1: 100, 2: 90, 3: 85, 4: 40, 5: 20, 6: 80, 7: 60, 8: 0, 9: 50, 10: 50, 11: 0, 12: 0 }
+      // 新版5题门禁只能形成20分粒度，fixture必须使用真实可达成绩，不能继续伪造旧版90/85/50分。
+      lessonScores: { 1: 100, 2: 100, 3: 80, 4: 60, 5: 20, 6: 80, 7: 60, 8: 0, 9: 40, 10: 40, 11: 0, 12: 0 },
+      legacyLessonScores: {}
     }));
   });
 
@@ -116,7 +119,7 @@ let page;
   assert.equal(data.dailyPlan.steps.length, 3);
   assert.equal(data.dailyPlan.lesson, 5, '有已练低分课程时必须优先补真实薄弱课，不能跳到未训练课程');
   assert.equal(data.dailyPlan.ability, '机床与坐标');
-  assert.equal(data.dailyPlan.score, 65);
+  assert.equal(data.dailyPlan.score, 67);
   assert.equal(data.weakest.weakLesson, 5);
   assert.match(data.dailyPlan.reason, /已练课程中分数最低/);
   assert.match(data.dailyPlan.target, /80 分以上/);
