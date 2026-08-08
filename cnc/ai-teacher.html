@@ -64,7 +64,7 @@
 
   <section class="panel privacy">
     <strong>隐私与可解释性</strong>
-    <p>本页不调用外部模型、不请求云端接口。主线课程完成状态以本机 <code>cnc_study_completed_v1</code> 为当前主数据源，并兼容旧 <code>cnc_training_profile_v1</code> 完成字段；同时读取 <code>cnc_training_practice_v1</code>、<code>cnc_training_simulator_v1</code> 和 <code>cnc_training_exam_v1</code>。每条建议都由公开的关键词规则和学习记录生成，并显示课程、模拟、可信度状态或证据台账入口。</p>
+    <p>本页不调用外部模型、不请求云端接口。主线课程完成状态以本机 <code>cnc_study_completed_v1</code> 为当前主数据源，并仅兼容旧 <code>cnc_training_profile_v1</code> 中明确记录完成的 <code>completed</code>/<code>completedStages</code> 字段；课程分数只用于能力分析和下一步建议，不能自行冒充课程完成，也不能绕过新版关键安全题门禁。同时读取 <code>cnc_training_practice_v1</code>、<code>cnc_training_simulator_v1</code> 和 <code>cnc_training_exam_v1</code>。每条建议都由公开的关键词规则和学习记录生成，并显示课程、模拟、可信度状态或证据台账入口。</p>
   </section>
   <section class="panel notice">
     <strong>安全边界</strong>
@@ -135,13 +135,7 @@
     ].map(normalizedScore).filter(value=>value!==null);
     return candidates.length?Math.max(...candidates):0;
   }
-  function completedCourses(study,profile,practice){
-    const completed=new Set(asArray(study).map(stageLevel).filter(Boolean));
-    asArray(profile.completed).map(stageLevel).filter(Boolean).forEach(level=>completed.add(level));
-    asArray(profile.completedStages).map(stageLevel).filter(Boolean).forEach(level=>completed.add(level));
-    for(let level=1;level<=12;level+=1){if(lessonScore(level,profile,practice)>=80)completed.add(level)}
-    return completed;
-  }
+  function completedCourses(study,profile){const completed=new Set(asArray(study).map(stageLevel).filter(Boolean));asArray(profile.completed).map(stageLevel).filter(Boolean).forEach(level=>completed.add(level));asArray(profile.completedStages).map(stageLevel).filter(Boolean).forEach(level=>completed.add(level));return completed;}
   function abilitySnapshot(profile,practice,completed){
     return ABILITY_DEFS.map(def=>{
       const rows=def.lessons.map(level=>({level,score:Math.max(lessonScore(level,profile,practice),completed.has(level)?80:0)}));

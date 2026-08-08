@@ -34,7 +34,8 @@ fs.mkdirSync(OUT, { recursive: true });
         abilities: { safety: 99, coordinate: 99, drawing: 99, programVerification: 99, measurementDiagnosis: 99, troubleshooting: 1 }
       }));
       localStorage.setItem('cnc_training_practice_v1', JSON.stringify({
-        version: 1,
+        version: 2,
+        gateVersion: 2,
         lessonScores: { 5: 20 },
         wrongQuestions: [
           { id: 'alarm-1', ability: '故障排查', risk: '高', title: '报警后连续复位' },
@@ -125,6 +126,49 @@ fs.mkdirSync(OUT, { recursive: true });
     assert.match(await page.locator('#answer-title').textContent(), /继续第 5 关主线课程/);
     const nextHref = await page.locator('#answer-routes a').first().getAttribute('href');
     assert.equal(nextHref, './course-machine-work-offset.html');
+
+    // PWA23真实80分语义：第5关即使当前有效分数达到80，或旧profile仍残留100分，只要真实完成主记录只有1-4关，AI老师就必须保持4/12并继续推荐第5关。
+    await page.evaluate(() => {
+      localStorage.setItem('cnc_study_completed_v1', JSON.stringify([1, 2, 3, 4]));
+      const profile = JSON.parse(localStorage.getItem('cnc_training_profile_v1'));
+      profile.courseScores = { 'stage-5': 100 };
+      profile.lessonScores = { 5: 100 };
+      localStorage.setItem('cnc_training_profile_v1', JSON.stringify(profile));
+      const practice = JSON.parse(localStorage.getItem('cnc_training_practice_v1'));
+      practice.version = 2;
+      practice.gateVersion = 2;
+      practice.lessonScores = { 5: 80 };
+      practice.wrongQuestions = [];
+      localStorage.setItem('cnc_training_practice_v1', JSON.stringify(practice));
+    });
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    assert.equal(await page.locator('#course-progress').textContent(), '4/12', '80分或旧100分不得冒充真实课程完成');
+    const scoreOnlySummary = await page.evaluate(() => window.CNC_AI_TEACHER.getSummary());
+    assert.equal(scoreOnlySummary.courses, 4);
+    assert.equal(scoreOnlySummary.nextCourse, 5, '真实完成仍为1-4关时必须继续推荐第5关');
+
+    // 只有真实完成主记录写入第5关后，AI老师才允许把主线推进为5/12并推荐第6关。
+    await page.evaluate(() => localStorage.setItem('cnc_study_completed_v1', JSON.stringify([1, 2, 3, 4, 5])));
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    assert.equal(await page.locator('#course-progress').textContent(), '5/12');
+    const realCompletionSummary = await page.evaluate(() => window.CNC_AI_TEACHER.getSummary());
+    assert.equal(realCompletionSummary.courses, 5);
+    assert.equal(realCompletionSummary.nextCourse, 6);
+
+    // 恢复1-4关真实完成基线，后续继续覆盖旧completedStages兼容、完整性保护与安全问答。
+    await page.evaluate(() => {
+      localStorage.setItem('cnc_study_completed_v1', JSON.stringify([1, 2, 3, 4]));
+      const profile = JSON.parse(localStorage.getItem('cnc_training_profile_v1'));
+      profile.courseScores = { 'stage-5': 20 };
+      delete profile.lessonScores;
+      localStorage.setItem('cnc_training_profile_v1', JSON.stringify(profile));
+      const practice = JSON.parse(localStorage.getItem('cnc_training_practice_v1'));
+      practice.version = 2;
+      practice.gateVersion = 2;
+      practice.lessonScores = { 5: 20 };
+      localStorage.setItem('cnc_training_practice_v1', JSON.stringify(practice));
+    });
+    await page.reload({ waitUntil: 'domcontentloaded' });
 
     // 旧 completedStages 仍作为兼容数据读取，但它只能是兼容路径，不能替代当前主数据源。
     await page.evaluate(() => {
