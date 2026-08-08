@@ -12,7 +12,7 @@ var ABILITIES=[
 ];
 function read(key,fallback){try{var value=JSON.parse(localStorage.getItem(key));return value==null?fallback:value;}catch(error){return fallback;}}
 function write(key,value){localStorage.setItem(key,JSON.stringify(value));}
-function esc(value){return String(value==null?'':value).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c];});}
+function esc(value){return String(value==null?'':value).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function dateKey(date){var d=date||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function dayDiff(a,b){var start=new Date(a+'T00:00:00'),end=new Date(b+'T00:00:00');return Math.round((end-start)/86400000);}
 function lessonTitle(level){var card=document.querySelector('#view-study .study-card[data-level="'+level+'"]');var title=card&&card.querySelector('h4');return title?title.textContent.trim():'第 '+level+' 关';}
