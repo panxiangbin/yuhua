@@ -11,7 +11,7 @@ NEXT_CACHE = '20260808-learning24'
 
 ai = Path('cnc/ai-teacher.html')
 text = ai.read_text(encoding='utf-8')
-pattern = re.compile(r"function completedCourses\(study,profile,practice\)\{[^\n]*?return completed;\}")
+pattern = re.compile(r"function completedCourses\(study,profile,practice\)\{.*?return completed;\s*\}", re.S)
 replacement = "function completedCourses(study,profile){const completed=new Set(asArray(study).map(stageLevel).filter(Boolean));asArray(profile.completed).map(stageLevel).filter(Boolean).forEach(level=>completed.add(level));asArray(profile.completedStages).map(stageLevel).filter(Boolean).forEach(level=>completed.add(level));return completed;}"
 text, count = pattern.subn(replacement, text, count=1)
 if count != 1:
