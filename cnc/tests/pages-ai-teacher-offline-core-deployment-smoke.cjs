@@ -282,7 +282,7 @@ function assertStatusPage(text, label, expectedBuild) {
   const visible = visibleBody(text);
   const visibleTokens = ['离线、缓存与更新状态', '离线内容可能不是最新版本', '原厂手册、企业制度和现场条件'];
   if (expectedBuild === branchTargetPwaBuild) visibleTokens.push('测评和AI老师只用于学习训练');
-  else visibleTokens.push('测评只用于推荐学习路线');
+  else visibleTokens.push('测评和AI老师只用于学习训练');
   requireTokens(visible, label, visibleTokens);
   return { build: expectedBuild, cacheRevision: expectedCache, previousCacheContract, visibleSafetyBoundary: true };
 }
