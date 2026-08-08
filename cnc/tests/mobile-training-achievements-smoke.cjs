@@ -127,7 +127,24 @@ function dateKey(value) {
   assert.ok((await page.locator('#data-integrity .action').evaluate(node => node.getBoundingClientRect().height)) >= 44);
   assert.deepEqual(errors, []);
 
-  const report = { passed: true, valid: validReport, invalidSnapshot, errors };
+  // 当前主完成状态缺失、只能依赖旧档案兼容时，如果旧档案本身损坏，同样不得显示成0/12。
+  await page.evaluate(() => {
+    localStorage.removeItem('cnc_study_completed_v1');
+    localStorage.setItem('cnc_training_profile_v1', JSON.stringify([]));
+    location.reload();
+  });
+  await page.waitForFunction(() => window.CNC_TRAINING_ACHIEVEMENTS?.build === '20260808a', null, { timeout: 15000 });
+  await page.locator('#data-integrity').waitFor({ state: 'visible', timeout: 10000 });
+  const fallbackInvalidSnapshot = await page.evaluate(() => window.CNC_TRAINING_ACHIEVEMENTS.snapshot());
+  assert.equal(fallbackInvalidSnapshot.integrity, false);
+  assert.equal(fallbackInvalidSnapshot.courses, null);
+  assert.equal(fallbackInvalidSnapshot.nextKind, 'integrity');
+  assert.ok(fallbackInvalidSnapshot.invalid.includes('cnc_training_profile_v1'));
+  assert.equal(await page.locator('#courses').textContent(), '—');
+  assert.match(await page.locator('#data-integrity-copy').textContent(), /cnc_training_profile_v1/);
+  assert.deepEqual(errors, []);
+
+  const report = { passed: true, valid: validReport, invalidSnapshot, fallbackInvalidSnapshot, errors };
   fs.writeFileSync(path.join(artifactDir, 'report.json'), JSON.stringify(report, null, 2));
   await page.screenshot({ path: path.join(artifactDir, 'training-achievements-invalid-390x844.png'), fullPage: true });
   console.log('成长成果主线/错题/模拟闭环、固定12关主完成状态、异常数据阻断、7天预览和安全边界通过', report);
