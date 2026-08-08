@@ -22,9 +22,11 @@ const assert = require('node:assert/strict');
     const d1 = new Date(now); d1.setDate(now.getDate()-2);
     const d2 = new Date(now); d2.setDate(now.getDate()-1);
     const lessonScores = Object.fromEntries(Array.from({ length: 12 }, (_, index) => [index + 1, 100]));
+    // 第4关已有80分以上练习成绩，但故意不写入真实课程完成记录。
+    // 今日训练奖励必须继续阻断，避免“分数=完成”绕过新版课程门禁。
     localStorage.setItem('cnc_study_completed_v1', JSON.stringify([1,2,3,11]));
     localStorage.setItem('cnc_training_profile_v1', JSON.stringify({ version:1, xp:400, badges:['迈出第一步'], completed:[1,2,3,11], trainingDays:[fmt(d1),fmt(d2)], currentStreak:2, bestStreak:2, lastTrainingDate:fmt(d2) }));
-    localStorage.setItem('cnc_training_practice_v1', JSON.stringify({ version:1, attempts:{}, wrong:[], correct:['first-piece-check'], lessonScores }));
+    localStorage.setItem('cnc_training_practice_v1', JSON.stringify({ version:2, gateVersion:2, attempts:{}, wrong:[], correct:['first-piece-check'], lessonScores, legacyLessonScores:{} }));
   });
 
   // 手机首页已取消第二套旧首页；直接使用当前真实可见底栏进入“我的”，
@@ -40,9 +42,30 @@ const assert = require('node:assert/strict');
   const before = await page.evaluate(() => window.CNC_TRAINING_PROFILE.snapshot());
   assert.equal(before.streak.current, 2);
   assert.equal(before.streak.trainedToday, false);
-  assert.equal(before.dailyPlan.passed, true);
+  assert.equal(before.dailyPlan.lesson, 4);
+  assert.equal(before.lessons.find(item => item.level === 4).score, 100);
+  assert.equal(before.lessons.find(item => item.level === 4).completed, false);
+  assert.equal(before.dailyPlan.passed, false, '只有练习分数但没有真实课程完成记录时不得完成今日训练');
 
   const button = page.locator('[data-complete-today]');
+  assert.equal(await button.isDisabled(), true);
+  assert.match(await button.textContent(), /80分并通关后可完成/);
+
+  const blocked = await page.evaluate(() => window.CNC_TRAINING_PROFILE.completeToday());
+  assert.equal(blocked.ok, false);
+  assert.match(blocked.reason, /80分.*完成课程通关记录/);
+  const blockedStored = await page.evaluate(() => JSON.parse(localStorage.getItem('cnc_training_profile_v1')));
+  assert.equal(blockedStored.xp, 400);
+  assert.equal(blockedStored.trainingDays.length, 2);
+  assert.equal(blockedStored.currentStreak, 2);
+  assert.equal(blockedStored.bestStreak, 2);
+
+  // 只有真实完成第4关后，今日训练按钮才解锁并允许领取一次奖励。
+  await page.evaluate(() => {
+    localStorage.setItem('cnc_study_completed_v1', JSON.stringify([1,2,3,4,11]));
+    window.CNC_TRAINING_PROFILE.render();
+  });
+  await page.waitForFunction(() => window.CNC_TRAINING_PROFILE?.snapshot().dailyPlan.passed === true, null, { timeout: 10000 });
   assert.ok(await button.isEnabled());
   await page.waitForFunction(() => {
     const node = document.querySelector('[data-complete-today]');
@@ -72,6 +95,6 @@ const assert = require('node:assert/strict');
   assert.equal(stored.xp, 420);
   assert.equal(stored.trainingDays.length, 3);
   assert.deepEqual(errors, []);
-  console.log('单层首页真实底栏、每日训练记录、连续天数、20XP、防重复与3天徽章通过', { before: before.streak, after: after.streak, badges: after.badges, buttonHeight });
+  console.log('80分未通关阻断、真实通关后每日训练记录、连续天数、20XP、防重复与3天徽章通过', { before: before.streak, after: after.streak, badges: after.badges, buttonHeight });
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });
