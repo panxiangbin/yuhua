@@ -30,12 +30,18 @@ jobs:
               Path('cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs'),
               Path('cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs'),
               Path('cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs'),
+              Path('.github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml'),
+              Path('.github/workflows/cnc-beginner-placement-offline-pages-smoke.yml'),
+              Path('.github/workflows/cnc-pwa-upgrade-data-smoke.yml'),
+              Path('.github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml'),
           ]
+          previous_pwa = '20260808-' + 'pwa23'
+          previous_cache = '20260808-' + 'learning23'
           replacements = [
               ('20260808-pwa24', '20260809-pwa25'),
               ('20260808-learning24', '20260809-learning25'),
-              ('20260808-pwa23', '20260808-pwa24'),
-              ('20260808-learning23', '20260808-learning24'),
+              (previous_pwa, '20260808-pwa24'),
+              (previous_cache, '20260808-learning24'),
           ]
           changed = []
           for path in files:
@@ -50,7 +56,17 @@ jobs:
           PY
           node cnc/tests/pwa-build-reference-audit-smoke.cjs
           git diff --check
-          git diff -- cnc/tests/mobile-pwa-offline-cache-smoke.cjs cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs cnc/tests/mobile-pwa-upgrade-data-smoke.cjs cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs
+          git diff -- \
+            cnc/tests/mobile-pwa-offline-cache-smoke.cjs \
+            cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs \
+            cnc/tests/mobile-pwa-upgrade-data-smoke.cjs \
+            cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs \
+            cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs \
+            cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs \
+            .github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml \
+            .github/workflows/cnc-beginner-placement-offline-pages-smoke.yml \
+            .github/workflows/cnc-pwa-upgrade-data-smoke.yml \
+            .github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml
       - name: Commit synced contracts
         shell: bash
         run: |
@@ -60,11 +76,16 @@ jobs:
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add cnc/tests/mobile-pwa-offline-cache-smoke.cjs \
-                  cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs \
-                  cnc/tests/mobile-pwa-upgrade-data-smoke.cjs \
-                  cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs \
-                  cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs \
-                  cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs
+          git add \
+            cnc/tests/mobile-pwa-offline-cache-smoke.cjs \
+            cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs \
+            cnc/tests/mobile-pwa-upgrade-data-smoke.cjs \
+            cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs \
+            cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs \
+            cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs \
+            .github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml \
+            .github/workflows/cnc-beginner-placement-offline-pages-smoke.yml \
+            .github/workflows/cnc-pwa-upgrade-data-smoke.yml \
+            .github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml
           git commit -m 'test(cnc-pwa): 对齐PWA25及上一公网PWA24门禁'
           git push origin HEAD:codex/cnc-daily-training-real-completion
