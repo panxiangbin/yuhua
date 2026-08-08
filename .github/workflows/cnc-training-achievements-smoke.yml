@@ -7,20 +7,101 @@ on:
       - '.github/workflows/cnc-training-achievements-smoke.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   training-achievements:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout exact tested head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Record exact tested head
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p cnc/test-artifacts/training-achievements
+          tested_head="$(git rev-parse HEAD)"
+          expected_head="${{ github.event.pull_request.head.sha || github.sha }}"
+          if [ "$tested_head" != "$expected_head" ]; then
+            echo "成长成果实际检出提交与预期最新头不一致：tested=$tested_head expected=$expected_head" >&2
+            exit 1
+          fi
+          TESTED_HEAD="$tested_head" EVENT_SHA="$GITHUB_SHA" node - <<'NODE'
+          const fs = require('fs');
+          fs.writeFileSync('cnc/test-artifacts/training-achievements/workflow-bootstrap.json', JSON.stringify({
+            stage: 'workflow-bootstrap',
+            runId: process.env.GITHUB_RUN_ID,
+            eventName: process.env.GITHUB_EVENT_NAME,
+            testedHead: process.env.TESTED_HEAD,
+            eventSha: process.env.EVENT_SHA,
+            initializedAt: new Date().toISOString()
+          }, null, 2));
+          NODE
+
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+
       - run: npm install --no-save playwright@1.52.0
       - run: npx playwright install --with-deps chromium
+
       - name: JavaScript syntax
-        run: node --check cnc/tests/mobile-training-achievements-smoke.cjs
-      - name: Start static server
-        run: python3 -m http.server 4173 --directory . > /tmp/cnc-server.log 2>&1 &
+        run: |
+          node --check cnc/tests/mobile-training-achievements-smoke.cjs
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          html = Path('cnc/training-achievements.html').read_text(encoding='utf-8')
+          scripts = re.findall(r'<script>(.*?)</script>', html, re.S)
+          if len(scripts) != 1:
+              raise SystemExit(f'成长成果页内联脚本数量异常：{len(scripts)}')
+          Path('/tmp/cnc-training-achievements-inline.js').write_text(scripts[0], encoding='utf-8')
+          PY
+          node --check /tmp/cnc-training-achievements-inline.js
+
+      - name: Start static server and wait until ready
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4173 --directory . > /tmp/cnc-server.log 2>&1 &
+          for attempt in $(seq 1 40); do
+            if curl --fail --silent --show-error http://127.0.0.1:4173/cnc/training-achievements.html >/dev/null; then
+              cp /tmp/cnc-server.log cnc/test-artifacts/training-achievements/server.log
+              exit 0
+            fi
+            sleep 0.25
+          done
+          cp /tmp/cnc-server.log cnc/test-artifacts/training-achievements/server.log || true
+          echo 'CNC成长成果静态服务器未在10秒内就绪' >&2
+          exit 1
+
       - name: Chromium 390x844 training achievements
-        run: node cnc/tests/mobile-training-achievements-smoke.cjs
+        shell: bash
+        run: |
+          set -o pipefail
+          node cnc/tests/mobile-training-achievements-smoke.cjs 2>&1 | tee cnc/test-artifacts/training-achievements/test.log
+
+      - name: Prove gate is read-only for tracked CNC sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -n "$(git status --porcelain --untracked-files=no)" ]; then
+            echo '成长成果门禁修改了受版本控制文件：' >&2
+            git status --short --untracked-files=no >&2
+            exit 1
+          fi
+
+      - name: Upload training achievements diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-training-achievements-${{ github.run_id }}
+          path: cnc/test-artifacts/training-achievements/*
+          if-no-files-found: error
+          retention-days: 14
