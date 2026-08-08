@@ -44,12 +44,17 @@ const assert = require('node:assert/strict');
   assert.equal(data.weak.some(item => item.level === 9 && item.score === 50), true);
   assert.equal(data.next.level, 3);
   assert.equal(data.streak.current, 0);
+  assert.equal(data.dailyPlan.lesson, 9, '真实薄弱课应锁定第9关');
+  assert.deepEqual(data.dailyPlan.lessonWrong, ['g00-cutting'], '第9关必须只回流其映射错题');
+  assert.equal(data.dailyPlan.steps[1].type, 'wrong');
+  assert.equal(data.dailyPlan.steps[1].questionId, 'g00-cutting');
 
   const text = (await page.locator('#xp-training-profile').textContent()) || '';
   assert.match(text, /2\/12/);
   assert.match(text, /第 9 关 50 分/);
   assert.match(text, /第 3 关/);
-  assert.match(text, /重做错题/);
+  assert.match(text, /重做本关 1 道错题/);
+  assert.match(text, /重做本关错题/);
   assert.match(text, /查看成长成果/);
 
   const layout = await page.locator('#xp-training-profile').evaluate(panel => {
@@ -57,13 +62,15 @@ const assert = require('node:assert/strict');
     const rects = cards.map(card => card.getBoundingClientRect());
     const button = panel.querySelector('[data-profile-continue]');
     const achievements = panel.querySelector('[data-training-achievements]');
+    const wrongButton = panel.querySelector('[data-profile-wrong="g00-cutting"]');
     return {
       panelWidth: panel.getBoundingClientRect().width,
       cards: cards.length,
       singleColumn: rects.slice(1).every((rect, i) => Math.abs(rect.left - rects[i].left) < 2 && rect.top > rects[i].top),
       buttonHeight: button?.getBoundingClientRect().height || 0,
       achievementsHeight: achievements?.getBoundingClientRect().height || 0,
-      achievementsHref: achievements?.getAttribute('href') || ''
+      achievementsHref: achievements?.getAttribute('href') || '',
+      wrongButtonHeight: wrongButton?.getBoundingClientRect().height || 0
     };
   });
   assert.ok(layout.panelWidth > 330, '成长档案应铺满手机内容区');
@@ -71,6 +78,7 @@ const assert = require('node:assert/strict');
   assert.equal(layout.singleColumn, true, '手机课程成绩必须保持单列');
   assert.ok(layout.buttonHeight >= 44, '继续训练按钮点击区不得小于44px');
   assert.ok(layout.achievementsHeight >= 44, '成长成果入口点击区不得小于44px');
+  assert.ok(layout.wrongButtonHeight >= 44, '本关错题按钮点击区不得小于44px');
   assert.match(layout.achievementsHref, /training-achievements\.html/);
 
   await page.locator('[data-training-achievements]').click();
@@ -78,6 +86,6 @@ const assert = require('node:assert/strict');
   await page.waitForSelector('h1', { state: 'visible' });
   assert.match(await page.locator('h1').textContent(), /成长成果/);
   assert.deepEqual(errors, []);
-  console.log('新版单层首页真实底栏、成长档案、课程成绩、阶段能力、连续训练与成长成果入口通过', { data, layout });
+  console.log('新版单层首页真实底栏、成长档案、本关错题精准回流、课程成绩、阶段能力、连续训练与成长成果入口通过', { data, layout });
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });
