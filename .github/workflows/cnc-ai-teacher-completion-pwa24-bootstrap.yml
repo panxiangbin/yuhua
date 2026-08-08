@@ -2,19 +2,13 @@ name: CNC AI teacher completion PWA24 bootstrap
 
 on:
   push:
-    branches:
-      - codex/cnc-ai-teacher-completion-pwa24
+    branches: ["codex/cnc-ai-teacher-completion-pwa24"]
 
 permissions:
   contents: write
 
-concurrency:
-  group: cnc-ai-teacher-completion-pwa24-bootstrap
-  cancel-in-progress: true
-
 jobs:
   apply:
-    if: github.event.head_commit.message != 'fix(cnc-ai): 校正课程完成语义并升级PWA24'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout exact branch head
@@ -23,139 +17,23 @@ jobs:
           ref: codex/cnc-ai-teacher-completion-pwa24
           fetch-depth: 0
 
-      - name: Apply scoped CNC production and regression patch
+      - name: Apply scoped CNC patch once
         shell: bash
         run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import json
-
-          def replace_once(path, old, new, label):
-              text = path.read_text(encoding='utf-8')
-              count = text.count(old)
-              if count != 1:
-                  raise SystemExit(f'{label}: expected exactly one match in {path}, got {count}')
-              path.write_text(text.replace(old, new, 1), encoding='utf-8')
-
-          ai = Path('cnc/ai-teacher.html')
-          old_completed = "function completedCourses(study,profile,practice){const completed=new Set(asArray(study).map(stageLevel).filter(Boolean));asArray(profile.completed).map(stageLevel).filter(Boolean).forEach(level=>completed.add(level));asArray(profile.completedStages).map(stageLevel).filter(Boolean).forEach(level=>completed.add(level));for(let level=1;level<=12;level+=1){if(lessonScore(level,profile,practice)>=80)completed.add(level)}return completed;}"
-          new_completed = "function completedCourses(study,profile){const completed=new Set(asArray(study).map(stageLevel).filter(Boolean));asArray(profile.completed).map(stageLevel).filter(Boolean).forEach(level=>completed.add(level));asArray(profile.completedStages).map(stageLevel).filter(Boolean).forEach(level=>completed.add(level));return completed;}"
-          replace_once(ai, old_completed, new_completed, 'AI teacher completion semantics')
-
-          old_privacy = "主线课程完成状态以本机 <code>cnc_study_completed_v1</code> 为当前主数据源，并兼容旧 <code>cnc_training_profile_v1</code> 完成字段；同时读取 <code>cnc_training_practice_v1</code>、<code>cnc_training_simulator_v1</code> 和 <code>cnc_training_exam_v1</code>。每条建议都由公开的关键词规则和学习记录生成，并显示课程、模拟、可信度状态或证据台账入口。"
-          new_privacy = "主线课程完成状态以本机 <code>cnc_study_completed_v1</code> 为当前主数据源，并仅兼容旧 <code>cnc_training_profile_v1</code> 中明确记录完成的 <code>completed</code>/<code>completedStages</code> 字段；课程分数只用于能力分析和下一步建议，不能自行冒充课程完成，也不能绕过新版关键安全题门禁。同时读取 <code>cnc_training_practice_v1</code>、<code>cnc_training_simulator_v1</code> 和 <code>cnc_training_exam_v1</code>。每条建议都由公开的关键词规则和学习记录生成，并显示课程、模拟、可信度状态或证据台账入口。"
-          replace_once(ai, old_privacy, new_privacy, 'AI teacher privacy semantics')
-
-          test = Path('cnc/tests/mobile-ai-teacher-smoke.cjs')
-          source = test.read_text(encoding='utf-8')
-          source = source.replace("version: 1,\n        lessonScores: { 5: 20 },", "version: 2,\n        gateVersion: 2,\n        lessonScores: { 5: 20 },", 1)
-          marker = "    assert.equal(nextHref, './course-machine-work-offset.html');\n\n"
-          if source.count(marker) != 1:
-              raise SystemExit('mobile AI teacher insertion marker missing or duplicated')
-          block = r'''    // PWA23真实80分语义：第5关即使当前有效分数达到80，或旧profile仍残留100分，只要真实完成主记录只有1-4关，AI老师就必须保持4/12并继续推荐第5关。
-    await page.evaluate(() => {
-      localStorage.setItem('cnc_study_completed_v1', JSON.stringify([1, 2, 3, 4]));
-      const profile = JSON.parse(localStorage.getItem('cnc_training_profile_v1'));
-      profile.courseScores = { 'stage-5': 100 };
-      profile.lessonScores = { 5: 100 };
-      localStorage.setItem('cnc_training_profile_v1', JSON.stringify(profile));
-      const practice = JSON.parse(localStorage.getItem('cnc_training_practice_v1'));
-      practice.version = 2;
-      practice.gateVersion = 2;
-      practice.lessonScores = { 5: 80 };
-      practice.wrongQuestions = [];
-      localStorage.setItem('cnc_training_practice_v1', JSON.stringify(practice));
-    });
-    await page.reload({ waitUntil: 'domcontentloaded' });
-    assert.equal(await page.locator('#course-progress').textContent(), '4/12', '80分或旧100分不得冒充真实课程完成');
-    const scoreOnlySummary = await page.evaluate(() => window.CNC_AI_TEACHER.getSummary());
-    assert.equal(scoreOnlySummary.courses, 4);
-    assert.equal(scoreOnlySummary.nextCourse, 5, '真实完成仍为1-4关时必须继续推荐第5关');
-
-    // 只有真实完成主记录写入第5关后，AI老师才允许把主线推进为5/12并推荐第6关。
-    await page.evaluate(() => localStorage.setItem('cnc_study_completed_v1', JSON.stringify([1, 2, 3, 4, 5])));
-    await page.reload({ waitUntil: 'domcontentloaded' });
-    assert.equal(await page.locator('#course-progress').textContent(), '5/12');
-    const realCompletionSummary = await page.evaluate(() => window.CNC_AI_TEACHER.getSummary());
-    assert.equal(realCompletionSummary.courses, 5);
-    assert.equal(realCompletionSummary.nextCourse, 6);
-
-    // 恢复1-4关真实完成基线，后续继续覆盖旧completedStages兼容、完整性保护与安全问答。
-    await page.evaluate(() => {
-      localStorage.setItem('cnc_study_completed_v1', JSON.stringify([1, 2, 3, 4]));
-      const profile = JSON.parse(localStorage.getItem('cnc_training_profile_v1'));
-      profile.courseScores = { 'stage-5': 20 };
-      delete profile.lessonScores;
-      localStorage.setItem('cnc_training_profile_v1', JSON.stringify(profile));
-      const practice = JSON.parse(localStorage.getItem('cnc_training_practice_v1'));
-      practice.version = 2;
-      practice.gateVersion = 2;
-      practice.lessonScores = { 5: 20 };
-      localStorage.setItem('cnc_training_practice_v1', JSON.stringify(practice));
-    });
-    await page.reload({ waitUntil: 'domcontentloaded' });
-
-'''
-          test.write_text(source.replace(marker, marker + block, 1), encoding='utf-8')
-
-          # PWA24：仅迁移运行代码、测试和当前媒体进度；历史审计文档不改写。
-          runtime_files = []
-          for path in Path('cnc').rglob('*'):
-              if not path.is_file():
-                  continue
-              if 'docs' in path.parts or 'test-results' in path.parts:
-                  continue
-              if path.suffix.lower() not in {'.js', '.cjs', '.html', '.json'}:
-                  continue
-              runtime_files.append(path)
-          runtime_files.append(Path('cnc/MOBILE_LEARNING_MEDIA_PROGRESS.md'))
-
-          for path in runtime_files:
-              text = path.read_text(encoding='utf-8')
-              if '20260808-pwa23' not in text and '20260808-pwa22' not in text and '20260808-learning23' not in text and '20260808-learning22' not in text:
-                  continue
-              text = text.replace('20260808-pwa23', '__CNC_CURRENT_PWA__')
-              text = text.replace('20260808-learning23', '__CNC_CURRENT_CACHE__')
-              text = text.replace('20260808-pwa22', '20260808-pwa23')
-              text = text.replace('20260808-learning22', '20260808-learning23')
-              text = text.replace('__CNC_CURRENT_PWA__', '20260808-pwa24')
-              text = text.replace('__CNC_CURRENT_CACHE__', '20260808-learning24')
-              path.write_text(text, encoding='utf-8')
-
-          info_path = Path('cnc/build-info.json')
-          info = json.loads(info_path.read_text(encoding='utf-8'))
-          stage = 'AI老师课程完成以真实完成记录为准'
-          if stage not in info['contentStage']:
-              info['contentStage'] += f' · {stage}'
-          info['generatedAt'] = '2026-08-08T14:32:00Z'
-          info_path.write_text(json.dumps(info, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
-
-          # 版本迁移必须得到明确的当前/上一版本对，不能产生占位符残留。
-          bad = []
-          for path in runtime_files:
-              text = path.read_text(encoding='utf-8')
-              if '__CNC_CURRENT_' in text:
-                  bad.append(str(path))
-          if bad:
-              raise SystemExit(f'PWA version placeholder leaked: {bad}')
-
-          changed = [str(path) for path in runtime_files if path.exists()]
-          print('Scoped CNC PWA24 patch prepared; runtime/test candidates:', len(changed))
-          PY
-
-      - name: Verify patch invariants before commit
-        shell: bash
-        run: |
+          if [ "$(git log -1 --pretty=%s)" = "fix(cnc-ai): 校正课程完成语义并升级PWA24" ]; then
+            echo "PWA24 patch already applied."
+            exit 0
+          fi
+          python3 cnc/tools/apply-ai-teacher-completion-pwa24.py
           grep -F "function completedCourses(study,profile){" cnc/ai-teacher.html
-          ! grep -F "lessonScore(level,profile,practice)>=80)completed.add(level)" cnc/ai-teacher.html
+          if grep -F "lessonScore(level,profile,practice)>=80)completed.add(level)" cnc/ai-teacher.html; then
+            echo "score-to-completion inference still exists"
+            exit 1
+          fi
           grep -F "80分或旧100分不得冒充真实课程完成" cnc/tests/mobile-ai-teacher-smoke.cjs
           grep -F '"pwaBuild": "20260808-pwa24"' cnc/build-info.json
           grep -F "const BUILD = '20260808-pwa24';" cnc/sw.js
           grep -F "const CACHE_REVISION = '20260808-learning24';" cnc/sw.js
-
-      - name: Commit scoped branch changes
-        shell: bash
-        run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add cnc
