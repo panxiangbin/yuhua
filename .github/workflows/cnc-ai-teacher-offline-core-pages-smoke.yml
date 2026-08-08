@@ -103,10 +103,15 @@ jobs:
           if (!placement.includes('cnc_beginner_placement_route_handoff_v1') || !camp.includes('cnc_beginner_placement_route_handoff_v1')) throw new Error('placement route handoff producer or consumer missing');
           if (!status.includes(`const EXPECTED='${info.pwaBuild}'`) || !status.includes(`const EXPECTED_CACHE='${info.cacheRevision}'`)) throw new Error('PWA status build/cache mismatch');
           if (!selfTest.includes(`const EXPECTED='${info.pwaBuild}'`) || !selfTest.includes(`const EXPECTED_CACHE='${info.cacheRevision}'`)) throw new Error('PWA self-test build/cache mismatch');
-          const pwa23Message = 'PWA23在PWA22薄弱课错题精准回流基础上，把固定12关闯关题扩展为每关5道专属题、共60题，使4/5可以真实形成80分';
-          if (!status.includes(pwa23Message)) throw new Error('PWA status PWA23 real-80 explanation missing');
-          if (!selfTest.includes(pwa23Message)) throw new Error('PWA self-test PWA23 real-80 explanation missing');
-          for (const stage of ['起点测评关键安全门禁','起点测评离线核心','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','正式课程开发占位清零','AI老师现场问诊单','AI老师判断说明','AI老师离线核心','AI老师学习档案异常保护','80个图文小课','80课现场动作与风险针对性','训练题库与成长档案离线核心','手机构建标记一致性','固定12关能力映射与真实薄弱课推荐','AI老师与固定12关成长档案语义一致','每日训练薄弱课错题精准回流','固定12关60题真实80分与关键题硬门禁','AI老师课程完成以真实完成记录为准']) {
+          for (const token of [
+            '练习达到80分只能作为能力证据',
+            '必须同时完成当天目标课程的真实通关记录',
+            '才能增加训练天数、连续训练和20 XP'
+          ]) {
+            if (!status.includes(token)) throw new Error(`PWA status PWA25 daily-reward explanation missing: ${token}`);
+            if (!selfTest.includes(token)) throw new Error(`PWA self-test PWA25 daily-reward explanation missing: ${token}`);
+          }
+          for (const stage of ['起点测评关键安全门禁','起点测评离线核心','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','正式课程开发占位清零','AI老师现场问诊单','AI老师判断说明','AI老师离线核心','AI老师学习档案异常保护','80个图文小课','80课现场动作与风险针对性','训练题库与成长档案离线核心','手机构建标记一致性','固定12关能力映射与真实薄弱课推荐','AI老师与固定12关成长档案语义一致','每日训练薄弱课错题精准回流','固定12关60题真实80分与关键题硬门禁','AI老师课程完成以真实完成记录为准','成长档案今日训练奖励以真实课程完成记录为准']) {
             if (!String(info.contentStage || '').includes(stage)) throw new Error(`build marker missing: ${stage}`);
           }
           for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)', 'CNC_PAGES_VERIFY_ATTEMPTS || 0']) {

@@ -14,6 +14,9 @@ const assert = require('node:assert/strict');
   assert.equal(await page.locator('.view.active').getAttribute('id'), 'view-dashboard');
 
   await page.evaluate(() => {
+    // PWA25 首次渲染会固定当天训练目标。本测试随后注入独立的第9关薄弱课样例，
+    // 因此先移除启动阶段目标，避免跨场景状态污染；同日目标稳定性由专门 streak 门禁验证。
+    localStorage.removeItem('cnc_daily_training_plan_v1');
     localStorage.setItem('cnc_study_completed_v1', JSON.stringify([1, 2]));
     localStorage.setItem('cnc_training_profile_v1', JSON.stringify({ version: 1, xp: 260, badges: ['迈出第一步'], completed: [1, 2] }));
     localStorage.setItem('cnc_training_practice_v1', JSON.stringify({

@@ -95,8 +95,9 @@ jobs:
             './assets/videos/learning/stage12_first_part.mp4',
             '关键安全门禁',
             '三类测评首步课程',
-            'PWA23在PWA22薄弱课错题精准回流基础上，把固定12关闯关题扩展为每关5道专属题、共60题，使4/5可以真实形成80分',
+            '练习达到80分只能作为能力证据',
             '必须同时完成当天目标课程的真实通关记录',
+            '才能增加训练天数、连续训练和20 XP',
             '当天训练目标在完成前后保持稳定'
           ]) {
             if (!html.includes(token)) throw new Error(`self-test contract missing: ${token}`);
