@@ -121,6 +121,22 @@ const learning = readText('cnc/learning-content-data.js');
 for (const token of ['适用范围', 'FANUC 立式加工中心', '机床说明书', '现场要求']) {
   if (!learning.includes(token)) errors.push(`12 关课程缺少可信度范围标记：${token}`);
 }
+for (const token of [
+  '不能把“先Z后XY”当成所有机床通用规则',
+  '不能把实际轨迹教成固定直线或固定折线',
+  '完整计划运动空间',
+  '原厂手册、现场工艺和授权操作规程'
+]) {
+  if (!learning.includes(token)) errors.push(`第8关 G00 安全边界缺少：${token}`);
+}
+for (const forbidden of [
+  '安全移动常用三步：先抬 Z，再走 X/Y，最后慢慢接近。',
+  '掌握“Z 抬高—X/Y 移动—Z 接近”的安全思路',
+  '先抬 Z，再平移 X/Y，最后接近工件。',
+  "options: ['保持低位快速移动', '先把 Z 抬到高于障碍的安全位置'"
+]) {
+  if (learning.includes(forbidden)) errors.push(`第8关仍残留无适用范围的绝对教学：${forbidden}`);
+}
 
 const alarm = readText('cnc/alarm-data.js');
 const diagnosis = readText('cnc/diagnosis-data.js');
