@@ -1,0 +1,117 @@
+name: CNC Pages exact head public propagation smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-pages-exact-head-propagation-smoke.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-pages-exact-head-propagation-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cnc-pages-exact-head-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact tested head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Prove tested commit identity
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          EVENT_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          tested_head="$(git rev-parse HEAD)"
+          if [ "$tested_head" != "$EXPECTED_HEAD" ]; then
+            echo "实际检出提交与预期最新头不一致：tested=$tested_head expected=$EXPECTED_HEAD" >&2
+            exit 1
+          fi
+          mkdir -p cnc/test-results
+          TESTED_HEAD="$tested_head" node - <<'NODE'
+          const fs = require('fs');
+          const report = {
+            testedHead: process.env.TESTED_HEAD,
+            expectedHead: process.env.EXPECTED_HEAD,
+            eventSha: process.env.EVENT_SHA,
+            eventName: process.env.GITHUB_EVENT_NAME,
+            ref: process.env.GITHUB_REF,
+            verifiedAt: new Date().toISOString()
+          };
+          fs.writeFileSync('cnc/test-results/pages-exact-head-bootstrap.json', JSON.stringify(report, null, 2));
+          console.log(JSON.stringify(report, null, 2));
+          NODE
+
+      - name: Validate public propagation gate contract
+        run: |
+          node --check cnc/tests/mobile-pages-deployment-status-smoke.cjs
+          node - <<'NODE'
+          const fs = require('fs');
+          const text = fs.readFileSync('cnc/tests/mobile-pages-deployment-status-smoke.cjs', 'utf8');
+          for (const token of [
+            'waitForPagesToMatchMain',
+            'publicReachable',
+            'mainMatchesPages',
+            'statusPageMatchesMarker',
+            'CNC_PAGES_VERIFY_ATTEMPTS || 18',
+            'cache: \'no-store\'',
+            'process.exit(1)'
+          ]) {
+            if (!text.includes(token)) throw new Error(`Pages公网传播门禁缺少关键契约：${token}`);
+          }
+          for (const forbidden of [
+            'process.exit(0)',
+            'CNC_PAGES_VERIFY_ATTEMPTS || 0',
+            'test.skip(',
+            'continue-on-error: true'
+          ]) {
+            if (text.includes(forbidden)) throw new Error(`Pages公网传播门禁发现绕过：${forbidden}`);
+          }
+          NODE
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install Playwright runtime
+        run: npm install --no-save playwright@1.52.0
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Verify current main to Pages public propagation
+        run: node cnc/tests/mobile-pages-deployment-status-smoke.cjs
+
+      - name: Prove gate is read-only for tracked sources
+        run: |
+          set -euo pipefail
+          if [ -n "$(git status --porcelain --untracked-files=no)" ]; then
+            echo 'Pages公网传播门禁修改了受版本控制文件：' >&2
+            git status --short --untracked-files=no >&2
+            exit 1
+          fi
+
+      - name: Upload exact-head public propagation diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-pages-exact-head-${{ github.run_id }}
+          path: |
+            cnc/test-results/pages-exact-head-bootstrap.json
+            cnc/test-results/pages-deployment-status-*
+          if-no-files-found: error
+          retention-days: 14
