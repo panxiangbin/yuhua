@@ -16,7 +16,7 @@ let page;
   page.on('pageerror', error => errors.push(error.message));
 
   await page.goto('http://127.0.0.1:4173/cnc/?smoke=daily-plan', { waitUntil: 'domcontentloaded', timeout: 60000 });
-  await page.waitForFunction(() => window.CNC_TRAINING_PROFILE?.build === '20260724a', null, { timeout: 20000 });
+  await page.waitForFunction(() => window.CNC_TRAINING_PROFILE?.build === '20260808b', null, { timeout: 20000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-startup-home') === 'stable', null, { timeout: 15000 });
   await page.waitForFunction(() => window.CNC_GAME_QUERY_NAV?.build === '20260731d', null, { timeout: 15000 });
   // 成长档案样式由脚本动态挂载，并有一次启动补渲染。
@@ -55,7 +55,8 @@ let page;
     localStorage.setItem('cnc_training_practice_v1', JSON.stringify({
       version: 1,
       attempts: {},
-      wrong: ['g00-cutting', 'first-piece-check'],
+      // 两道错题分别属于第9关和第1关；推荐薄弱课是第5关，不能把全局错题硬塞进第5关训练步骤。
+      wrong: ['g00-cutting', 'safe-stop-first'],
       correct: ['axis-z-direction'],
       lessonScores: { 1: 100, 2: 90, 3: 85, 4: 40, 5: 20, 6: 80, 7: 60, 8: 0, 9: 50, 10: 50, 11: 0, 12: 0 }
     }));
@@ -121,7 +122,11 @@ let page;
   assert.match(data.dailyPlan.target, /80 分以上/);
   assert.equal(data.dailyPlan.steps[0].level, 5);
   assert.match(data.dailyPlan.steps[0].title, /第 5 关/);
-  assert.equal(data.dailyPlan.steps[1].type, 'wrong');
+  assert.equal(data.dailyPlan.steps[1].type, 'practice', '其它课程的错题不得劫持第5关的立即练习步骤');
+  assert.deepEqual(data.dailyPlan.lessonWrong, [], '第5关没有真实错题时，课程错题集合必须为空');
+  assert.equal(data.dailyPlan.globalWrong, 2);
+  assert.equal(data.dailyPlan.steps[1].otherWrong, 2);
+  assert.match(data.dailyPlan.steps[1].detail, /其它课程还有 2 道错题/);
   assert.equal(data.dailyPlan.passed, false);
 
   const plan = activeProfile.locator('.xp-daily-plan');
@@ -130,8 +135,10 @@ let page;
   assert.match(await plan.textContent(), /今天先练什么/);
   assert.match(await plan.textContent(), /今日目标/);
   assert.match(await plan.textContent(), /机床与坐标/);
-  assert.match(await plan.textContent(), /重做当前 2 道错题/);
+  assert.match(await plan.textContent(), /其它课程还有 2 道错题/);
+  assert.doesNotMatch(await plan.textContent(), /重做当前 2 道错题/);
   assert.match(await plan.textContent(), /第 5 关/);
+  assert.equal(await plan.locator('[data-profile-wrong]').count(), 0, '当前薄弱课无错题时，每日计划不得生成全局错题按钮');
 
   // 要求活跃视图内同一份计划连续稳定 5 帧，并同时满足：
   // CSS 计算为单列、三个卡片垂直排列、左边缘对齐、按钮触控高度不小于44px。
@@ -180,8 +187,40 @@ let page;
   assert.ok(layout.minButtonHeight >= 44, `每日计划按钮触控高度不得小于44px：${layout.minButtonHeight}`);
   assert.ok(layout.stableFrames >= 5, `每日计划布局未连续稳定5帧：${JSON.stringify(layout)}`);
 
-  await plan.locator('[data-ability-train="5"]').click();
+  // 原有第5关课程跳转必须继续通过，不能因修错题回流而降低既有断言。
+  await plan.locator('[data-ability-train="5"]').first().click();
   await page.waitForSelector('#view-study.active #study-detail-content .lesson-detail-v2[data-level="5"]', { state: 'visible', timeout: 15000 });
+
+  // 再加入一题真正属于第5关的错题。每日计划必须只点开这题，而不是排在全局第一位的第9关错题。
+  await page.evaluate(() => {
+    const state = JSON.parse(localStorage.getItem('cnc_training_practice_v1'));
+    state.wrong = ['g00-cutting', 'g54-independent-check'];
+    localStorage.setItem('cnc_training_practice_v1', JSON.stringify(state));
+    window.CNC_TRAINING_PROFILE.render();
+  });
+  await profileNav.click();
+  await activeProfile.waitFor({ state: 'visible', timeout: 10000 });
+  await page.evaluate(() => window.CNC_TRAINING_PROFILE.render());
+
+  const contextual = await page.evaluate(() => window.CNC_TRAINING_PROFILE.snapshot());
+  assert.equal(contextual.dailyPlan.lesson, 5);
+  assert.deepEqual(contextual.dailyPlan.lessonWrong, ['g54-independent-check']);
+  assert.equal(contextual.dailyPlan.steps[1].type, 'wrong');
+  assert.equal(contextual.dailyPlan.steps[1].questionId, 'g54-independent-check');
+  assert.equal(contextual.dailyPlan.steps[1].lessonWrong, 1);
+  assert.equal(contextual.dailyPlan.steps[1].otherWrong, 1);
+  assert.match(contextual.dailyPlan.steps[1].title, /重做本关 1 道错题/);
+
+  const contextualButton = activeProfile.locator('[data-profile-wrong="g54-independent-check"]');
+  await contextualButton.waitFor({ state: 'visible', timeout: 10000 });
+  assert.ok((await contextualButton.evaluate(node => node.getBoundingClientRect().height)) >= 44);
+  await contextualButton.click();
+  await page.waitForFunction(() => {
+    const panel = document.querySelector('#xp-practice-panel');
+    return panel && !panel.hidden && panel.dataset.questionId === 'g54-independent-check';
+  }, null, { timeout: 15000 });
+  assert.equal(await page.locator('#xp-practice-panel').getAttribute('data-question-id'), 'g54-independent-check');
+  assert.match(await page.locator('#xp-practice-panel').textContent(), /G54/);
   assert.deepEqual(errors, []);
 
   const report = {
@@ -193,7 +232,9 @@ let page;
       mappedLevels: zeroMappedLevels
     },
     abilityMapping: expectedAbilityLessons,
-    dailyPlan: data.dailyPlan,
+    unrelatedWrongPlan: data.dailyPlan,
+    contextualWrongPlan: contextual.dailyPlan,
+    targetedQuestionId: await page.locator('#xp-practice-panel').getAttribute('data-question-id'),
     weakest: data.weakest,
     mappedLevels,
     layout,
@@ -202,7 +243,7 @@ let page;
   };
   fs.writeFileSync(path.join(artifactDir, 'report.json'), JSON.stringify(report, null, 2));
   await page.screenshot({ path: path.join(artifactDir, 'daily-training-plan-390x844.png'), fullPage: true });
-  console.log('单层首页真实底栏、固定12关真实课程语义、零记录顺序起步、真实薄弱课优先、错题优先、80分目标和手机单列布局通过', report);
+  console.log('固定12关真实课程语义、薄弱课优先、同课错题精准回流、其它课错题不劫持训练、80分目标和手机单列布局通过', report);
   await browser.close();
 })().catch(async error => {
   const stack = error && error.stack ? error.stack : String(error);
