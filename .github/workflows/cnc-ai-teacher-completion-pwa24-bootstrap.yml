@@ -24,7 +24,7 @@ jobs:
             echo "PWA24 patch already applied."
             exit 0
           fi
-          python3 cnc/tools/apply-ai-teacher-completion-pwa24.py
+          python3 cnc/tools/apply-ai-teacher-completion-pwa24-v2.py
           grep -F "function completedCourses(study,profile){" cnc/ai-teacher.html
           if grep -F "lessonScore(level,profile,practice)>=80)completed.add(level)" cnc/ai-teacher.html; then
             echo "score-to-completion inference still exists"
