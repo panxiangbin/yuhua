@@ -50,6 +50,9 @@ let page;
   assert.equal(zeroState.dailyPlan.passed, false);
 
   await page.evaluate(() => {
+    // PWA25 首次渲染会先固定当天目标。本测试在零记录场景之后切换到独立的第5关薄弱课样例，
+    // 必须清除前一场景的当日目标；同一自然日目标稳定性由 training streak 专门门禁独立验证。
+    localStorage.removeItem('cnc_daily_training_plan_v1');
     localStorage.setItem('cnc_study_completed_v1', JSON.stringify([1, 2, 3]));
     localStorage.setItem('cnc_training_profile_v1', JSON.stringify({ version: 1, xp: 360, badges: ['迈出第一步'], completed: [1, 2, 3] }));
     localStorage.setItem('cnc_training_practice_v1', JSON.stringify({
