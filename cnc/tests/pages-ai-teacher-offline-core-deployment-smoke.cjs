@@ -8,13 +8,13 @@ fs.mkdirSync(resultsDir, { recursive: true });
 
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
-const branchTargetPwaBuild = '20260808-pwa22';
-const previousPublicPwaBuild = '20260808-pwa21';
+const branchTargetPwaBuild = '20260808-pwa23';
+const previousPublicPwaBuild = '20260808-pwa22';
 const expectedSiteBuild = '20260806-learning-depth1';
 const previousPublicSiteBuild = '20260806-learning-depth1';
 const cacheRevisionByBuild = {
-  [branchTargetPwaBuild]: '20260808-learning22',
-  [previousPublicPwaBuild]: '20260808-learning21'
+  [branchTargetPwaBuild]: '20260808-learning23',
+  [previousPublicPwaBuild]: '20260808-learning22'
 };
 const attempts = Number(process.env.CNC_PAGES_VERIFY_ATTEMPTS || 18);
 const intervalMs = Number(process.env.CNC_PAGES_VERIFY_INTERVAL_MS || 10000);
@@ -249,7 +249,7 @@ function assertBuildInfo(text, label, expectedBuild) {
   const stage = String(data.contentStage || '');
   requireTokens(stage, label, ['课程12关', '起点测评', '手机首页一屏化', 'AI CNC老师基础版', 'PWA可靠性']);
   if (expectedBuild === branchTargetPwaBuild) {
-    requireTokens(stage, label, ['起点测评关键安全门禁', '起点测评离线核心', '测评路线一次性交接', '训练营路线离线核心', '测评首步课程离线核心', '正式课程开发占位清零', 'AI老师现场问诊单', 'AI老师判断说明', 'AI老师离线核心', 'AI老师学习档案异常保护', '80个图文小课', '学习目录紧凑布局', '80课现场动作与风险针对性', '训练题库与成长档案离线核心', '手机构建标记一致性', '固定12关能力映射与真实薄弱课推荐', 'AI老师与固定12关成长档案语义一致', '每日训练薄弱课错题精准回流']);
+    requireTokens(stage, label, ['起点测评关键安全门禁', '起点测评离线核心', '测评路线一次性交接', '训练营路线离线核心', '测评首步课程离线核心', '正式课程开发占位清零', 'AI老师现场问诊单', 'AI老师判断说明', 'AI老师离线核心', 'AI老师学习档案异常保护', '80个图文小课', '学习目录紧凑布局', '80课现场动作与风险针对性', '训练题库与成长档案离线核心', '手机构建标记一致性', '固定12关能力映射与真实薄弱课推荐', 'AI老师与固定12关成长档案语义一致', '每日训练薄弱课错题精准回流', '固定12关60题真实80分与关键题硬门禁']);
   }
   return { build: data.build, pwaBuild: data.pwaBuild, cacheRevision: data.cacheRevision, scope: data.scope };
 }
@@ -273,16 +273,14 @@ function assertStatusPage(text, label, expectedBuild) {
   ];
   let previousCacheContract = false;
   if (expectedBuild === branchTargetPwaBuild) {
-    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'PWA22在PWA21统一成长档案语义基础上，进一步让每日训练只回流当前推荐薄弱课程对应的错题');
+    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'PWA23在PWA22薄弱课错题精准回流基础上，把固定12关闯关题扩展为每关5道专属题、共60题，使4/5可以真实形成80分');
   } else {
     required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'const cacheBuildOk=staticName.includes(EXPECTED_CACHE)&&runtimeName.includes(EXPECTED_CACHE)');
     previousCacheContract = true;
   }
   requireTokens(text, label, required);
   const visible = visibleBody(text);
-  const visibleTokens = ['离线、缓存与更新状态', '离线内容可能不是最新版本', '原厂手册、企业制度和现场条件'];
-  if (expectedBuild === branchTargetPwaBuild) visibleTokens.push('测评和AI老师只用于学习训练');
-  else visibleTokens.push('测评和AI老师只用于学习训练');
+  const visibleTokens = ['离线、缓存与更新状态', '离线内容可能不是最新版本', '原厂手册、企业制度和现场条件', '测评和AI老师只用于学习训练'];
   requireTokens(visible, label, visibleTokens);
   return { build: expectedBuild, cacheRevision: expectedCache, previousCacheContract, visibleSafetyBoundary: true };
 }
@@ -303,7 +301,7 @@ function assertSelfTest(text, label, expectedBuild) {
   let expectedPaths;
   let previousCacheContract = false;
   if (expectedBuild === branchTargetPwaBuild) {
-    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'marker.cacheRevision===EXPECTED_CACHE', 'PWA22在PWA21统一成长档案语义基础上，让每日训练只回流当前推荐薄弱课程对应的错题', './training-practice.js', './training-profile.js', ...VIDEO_CORE_PATHS);
+    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'marker.cacheRevision===EXPECTED_CACHE', 'PWA23在PWA22薄弱课错题精准回流基础上，把固定12关闯关题扩展为每关5道专属题、共60题，使4/5可以真实形成80分', './training-practice.js', './training-profile.js', ...VIDEO_CORE_PATHS);
     expectedPaths = EXACT_CORE_PATHS;
   } else {
     required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'const staticName=keys.find(name=>name===`cnc-static-${EXPECTED_CACHE}`)', 'const runtimeName=keys.find(name=>name===`cnc-runtime-${EXPECTED_CACHE}`)', 'marker.cacheRevision===EXPECTED_CACHE');
