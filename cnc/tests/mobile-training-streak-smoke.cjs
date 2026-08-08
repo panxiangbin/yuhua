@@ -24,6 +24,7 @@ const assert = require('node:assert/strict');
     const lessonScores = Object.fromEntries(Array.from({ length: 12 }, (_, index) => [index + 1, 100]));
     // 第4关已有80分以上练习成绩，但故意不写入真实课程完成记录。
     // 今日训练奖励必须继续阻断，避免“分数=完成”绕过新版课程门禁。
+    localStorage.removeItem('cnc_daily_training_plan_v1');
     localStorage.setItem('cnc_study_completed_v1', JSON.stringify([1,2,3,11]));
     localStorage.setItem('cnc_training_profile_v1', JSON.stringify({ version:1, xp:400, badges:['迈出第一步'], completed:[1,2,3,11], trainingDays:[fmt(d1),fmt(d2)], currentStreak:2, bestStreak:2, lastTrainingDate:fmt(d2) }));
     localStorage.setItem('cnc_training_practice_v1', JSON.stringify({ version:2, gateVersion:2, attempts:{}, wrong:[], correct:['first-piece-check'], lessonScores, legacyLessonScores:{} }));
@@ -60,12 +61,15 @@ const assert = require('node:assert/strict');
   assert.equal(blockedStored.currentStreak, 2);
   assert.equal(blockedStored.bestStreak, 2);
 
-  // 只有真实完成第4关后，今日训练按钮才解锁并允许领取一次奖励。
+  // 只有真实完成第4关后，今日目标仍固定为第4关，不会瞬间漂移到第5关；此时才允许领取一次奖励。
   await page.evaluate(() => {
     localStorage.setItem('cnc_study_completed_v1', JSON.stringify([1,2,3,4,11]));
     window.CNC_TRAINING_PROFILE.render();
   });
   await page.waitForFunction(() => window.CNC_TRAINING_PROFILE?.snapshot().dailyPlan.passed === true, null, { timeout: 10000 });
+  const unlocked = await page.evaluate(() => window.CNC_TRAINING_PROFILE.snapshot());
+  assert.equal(unlocked.dailyPlan.lesson, 4, '真实完成当日目标后，今日训练目标不得漂移到下一关');
+  assert.equal(unlocked.lessons.find(item => item.level === 4).completed, true);
   assert.ok(await button.isEnabled());
   await page.waitForFunction(() => {
     const node = document.querySelector('[data-complete-today]');
@@ -95,6 +99,6 @@ const assert = require('node:assert/strict');
   assert.equal(stored.xp, 420);
   assert.equal(stored.trainingDays.length, 3);
   assert.deepEqual(errors, []);
-  console.log('80分未通关阻断、真实通关后每日训练记录、连续天数、20XP、防重复与3天徽章通过', { before: before.streak, after: after.streak, badges: after.badges, buttonHeight });
+  console.log('80分未通关阻断、当日目标稳定、真实通关后每日训练记录、连续天数、20XP、防重复与3天徽章通过', { before: before.streak, after: after.streak, badges: after.badges, buttonHeight });
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });
