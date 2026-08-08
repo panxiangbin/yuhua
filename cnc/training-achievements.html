@@ -74,8 +74,8 @@
     }
     var profile=readObject('cnc_training_profile_v1'),study=readArray('cnc_study_completed_v1'),practice=readObject('cnc_training_practice_v1'),simulator=readObject('cnc_training_simulator_v1');
     var p=profile.value,days=Array.isArray(p.trainingDays)?p.trainingDays:[],badges=Array.isArray(p.badges)?p.badges:[],streak=Number(p.currentStreak)||0,today=new Date(),todayKey=key(today),trained=days.indexOf(todayKey)!==-1;
-    var completed=completedCourses(study,profile),wrong=wrongCount(practice),simPass=simulatorPass(simulator),integrity=invalid.length===0,plan=nextPlan(completed,wrong,simPass,integrity);
-    setMetric('courses',study.valid?completed.size:null,study.valid?'/12':'');
+    var completed=completedCourses(study,profile),wrong=wrongCount(practice),simPass=simulatorPass(simulator),completionValid=study.valid&&(study.present||profile.valid),integrity=invalid.length===0,plan=nextPlan(completed,wrong,simPass,integrity);
+    setMetric('courses',completionValid?completed.size:null,completionValid?'/12':'');
     setMetric('wrong',wrong,'');
     setMetric('simulations',simPass,simPass==null?'':'/13');
     setMetric('streak',profile.valid?streak:null,'');
@@ -87,7 +87,7 @@
     var week=[];for(var i=6;i>=0;i--){var d=new Date(today);d.setDate(today.getDate()-i);var k=key(d),done=days.indexOf(k)!==-1;week.push('<div class="day '+(done?'is-done ':'')+(k===todayKey?'is-today':'')+'" role="listitem"><strong>'+['日','一','二','三','四','五','六'][d.getDay()]+'</strong><span>'+String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0')+'</span><span>'+(done?'完成':'—')+'</span></div>');}document.getElementById('week-preview').innerHTML=week.join('');
     var targets=[3,7,30],target=targets.find(function(n){return streak<n;})||30,remaining=Math.max(0,target-streak);document.getElementById('milestone-title').textContent='连续训练'+target+'天';document.getElementById('milestone-copy').textContent=remaining?'再完成 '+remaining+' 天有效训练即可达到该里程碑。':'已达到30天里程碑，继续保持稳定训练。';var progress=document.getElementById('milestone-progress');progress.max=target;progress.value=Math.min(streak,target);progress.setAttribute('aria-label','连续训练 '+streak+' 天，目标 '+target+' 天');
     document.body.dataset.trainingAchievements=integrity?'ready':'data-error';
-    window.CNC_TRAINING_ACHIEVEMENTS={build:BUILD,snapshot:function(){return{streak:profile.valid?streak:null,days:profile.valid?days.length:null,badges:profile.valid?badges.length:null,trainedToday:trained,target:target,remaining:remaining,courses:study.valid?completed.size:null,wrong:wrong,simulations:simPass,integrity:integrity,invalid:Array.from(new Set(invalid)),nextKind:plan.kind,nextLevel:plan.nextLevel};}};
+    window.CNC_TRAINING_ACHIEVEMENTS={build:BUILD,snapshot:function(){return{streak:profile.valid?streak:null,days:profile.valid?days.length:null,badges:profile.valid?badges.length:null,trainedToday:trained,target:target,remaining:remaining,courses:completionValid?completed.size:null,wrong:wrong,simulations:simPass,integrity:integrity,invalid:Array.from(new Set(invalid)),nextKind:plan.kind,nextLevel:plan.nextLevel};}};
   })();
   </script>
 </body>
