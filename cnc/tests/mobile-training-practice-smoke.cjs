@@ -61,14 +61,16 @@ const assert = require('node:assert/strict');
 
   const api = await page.evaluate(() => window.CNC_TRAINING_PRACTICE.runCheck());
   assert.equal(api.passed, true);
-  assert.equal(api.questions, 26);
+  assert.equal(api.questions, 60, '固定12关新版题库必须保持60道专属题');
   assert.equal(api.lessonGates, 12);
   assert.equal(api.passScore, 80);
-  assert.equal(api.state.version, 1);
+  assert.equal(api.gateVersion, 2, '真实80分与关键题硬门禁必须使用gateVersion=2');
+  assert.equal(api.state.version, 2, '练习状态必须迁移到新版version=2');
+  assert.equal(api.state.gateVersion, 2, '持久化练习状态必须记录gateVersion=2');
   assert.equal(api.build, buildConsistency.build, '运行自检构建号必须与初始化构建号一致');
 
   const entry = page.locator('#xp-practice-entry');
-  assert.match((await entry.locator('h4').textContent()) || '', /达到80分才算掌握/);
+  assert.match((await entry.locator('h4').textContent()) || '', /80分.*关键安全题必须全对/);
   const entryLayout = await entry.evaluate(node => ({ buttonHeight: node.querySelector('[data-practice-open]').getBoundingClientRect().height }));
   assert.ok(entryLayout.buttonHeight >= 48, '手机端练习入口点击区不得小于48px');
 
@@ -94,8 +96,10 @@ const assert = require('node:assert/strict');
     practice: JSON.parse(localStorage.getItem('cnc_training_practice_v1')),
     profile: JSON.parse(localStorage.getItem('cnc_training_profile_v1'))
   }));
-  assert.equal(saved.practice.version, 1);
+  assert.equal(saved.practice.version, 2, '保存后的练习状态必须保持新版version=2');
+  assert.equal(saved.practice.gateVersion, 2, '保存后的练习状态必须保持gateVersion=2');
   assert.ok(saved.practice.lessonScores && typeof saved.practice.lessonScores === 'object');
+  assert.ok(saved.practice.legacyLessonScores && typeof saved.practice.legacyLessonScores === 'object', '旧成绩迁移审计容器必须保留');
   assert.ok(saved.profile.xp >= 10, '首次答对必须增加经验值');
   assert.equal(saved.profile.practiceXp['safe-stop-first'], 10, '同题经验值必须有防重复记录');
   await panel.locator('[data-practice-submit]').click();
@@ -109,9 +113,10 @@ const assert = require('node:assert/strict');
   assert.equal(optionLayout.singleColumn, true, '手机端答案必须单列显示');
   assert.ok(optionLayout.minHeight >= 54, '答案点击区不得过小');
   assert.deepEqual(errors, []);
-  console.log('CNC真实学习底栏、新手在线练习、解析、错题记录、80分课程门槛、构建一致性与XP防重复通过', {
+  console.log('CNC真实学习底栏、新手在线练习、60题真实80分门禁、解析、错题记录、构建一致性与XP防重复通过', {
     build: api.build,
     questions: api.questions,
+    gateVersion: api.gateVersion,
     xp: saved.profile.xp,
     studyTarget
   });

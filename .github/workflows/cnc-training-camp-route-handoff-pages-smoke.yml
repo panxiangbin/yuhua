@@ -54,14 +54,14 @@ jobs:
           const sw = fs.readFileSync('cnc/sw.js', 'utf8');
           const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
           if (info.build !== '20260806-learning-depth1') throw new Error(`unexpected site build: ${info.build}`);
-          if (info.pwaBuild !== '20260808-pwa22' || info.cacheRevision !== '20260808-learning22') throw new Error(`unexpected PWA/cache build: ${info.pwaBuild}/${info.cacheRevision}`);
-          if (!sw.includes("const BUILD = '20260808-pwa22'") || !sw.includes("const CACHE_REVISION = '20260808-learning22'")) throw new Error('Service Worker build/cache mismatch');
+          if (info.pwaBuild !== '20260808-pwa23' || info.cacheRevision !== '20260808-learning23') throw new Error(`unexpected PWA/cache build: ${info.pwaBuild}/${info.cacheRevision}`);
+          if (!sw.includes("const BUILD = '20260808-pwa23'") || !sw.includes("const CACHE_REVISION = '20260808-learning23'")) throw new Error('Service Worker build/cache mismatch');
           for (const token of [
             "const expectedSiteBuild = '20260806-learning-depth1'",
-            "const expectedPwaBuild = '20260808-pwa22'",
-            "const previousPublicPwaBuild = '20260808-pwa21'",
-            "[expectedPwaBuild]: '20260808-learning22'",
-            "[previousPublicPwaBuild]: '20260808-learning21'",
+            "const expectedPwaBuild = '20260808-pwa23'",
+            "const previousPublicPwaBuild = '20260808-pwa22'",
+            "[expectedPwaBuild]: '20260808-learning23'",
+            "[previousPublicPwaBuild]: '20260808-learning22'",
             'const VIDEO_CORE = [',
             'const EXACT_CORE = [...BASE_CORE, ...VIDEO_CORE]',
             'const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE',
@@ -108,7 +108,7 @@ jobs:
           ]) {
             if (!sw.includes(`'${video}'`)) throw new Error(`PWA video core missing: ${video}`);
           }
-          for (const stage of ['起点测评关键安全门禁','起点测评离线核心','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','正式课程开发占位清零','AI老师学习档案异常保护','80个图文小课','80课现场动作与风险针对性','训练题库与成长档案离线核心','手机构建标记一致性','固定12关能力映射与真实薄弱课推荐','AI老师与固定12关成长档案语义一致','每日训练薄弱课错题精准回流']) {
+          for (const stage of ['起点测评关键安全门禁','起点测评离线核心','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','正式课程开发占位清零','AI老师学习档案异常保护','80个图文小课','80课现场动作与风险针对性','训练题库与成长档案离线核心','手机构建标记一致性','固定12关能力映射与真实薄弱课推荐','AI老师与固定12关成长档案语义一致','每日训练薄弱课错题精准回流','固定12关60题真实80分与关键题硬门禁']) {
             if (!String(info.contentStage || '').includes(stage)) throw new Error(`build marker missing: ${stage}`);
           }
           for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)', 'CNC_PAGES_VERIFY_ATTEMPTS || 0']) {

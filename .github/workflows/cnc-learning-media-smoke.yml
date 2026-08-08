@@ -59,7 +59,7 @@ jobs:
           },null,2));
           NODE
 
-      - name: Validate committed PWA22 media contract
+      - name: Validate committed PWA23 media contract
         shell: bash
         run: |
           set -euo pipefail
@@ -67,18 +67,18 @@ jobs:
           for name in "${files[@]}"; do
             test -s "cnc/assets/videos/learning/$name"
           done
-          grep -q '20260808-pwa22' cnc/build-info.json
-          grep -q '20260808-learning22' cnc/build-info.json
-          grep -q '20260808-pwa22' cnc/sw.js
-          grep -q '20260808-learning22' cnc/sw.js
-          grep -q '20260808-pwa22' cnc/pwa-status.html
-          grep -q '20260808-pwa22' cnc/pwa-self-test.html
+          grep -q '20260808-pwa23' cnc/build-info.json
+          grep -q '20260808-learning23' cnc/build-info.json
+          grep -q '20260808-pwa23' cnc/sw.js
+          grep -q '20260808-learning23' cnc/sw.js
+          grep -q '20260808-pwa23' cnc/pwa-status.html
+          grep -q '20260808-pwa23' cnc/pwa-self-test.html
           grep -q 'data-cnc-learning-depth="true"' cnc/index.html
           grep -q '<link rel="icon" href="./icon-192.svg" type="image/svg+xml">' cnc/learning-detail.html
           grep -q 'const videoNames=' cnc/learning-detail.html
           test "$(grep -o "assets/videos/learning/stage[0-9][0-9]_[a-z0-9_]*.mp4" cnc/sw.js | sort -u | wc -l)" -eq 12
           test "$(grep -o "assets/videos/learning/stage[0-9][0-9]_[a-z0-9_]*.mp4" cnc/pwa-self-test.html | sort -u | wc -l)" -eq 12
-          echo 'Committed PWA22 media contract passed.'
+          echo 'Committed PWA23 media contract passed.'
 
       - name: Install ffmpeg runtime
         shell: bash
