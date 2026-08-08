@@ -15,8 +15,20 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
-      - name: Checkout
+      - name: Checkout actual PR head
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+      - name: Verify tested commit is actual PR head
+        shell: bash
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          tested="$(git rev-parse HEAD)"
+          test "$tested" = "$EXPECTED_HEAD" || { echo "tested head mismatch: $tested != $EXPECTED_HEAD"; exit 1; }
+          printf '{"testedHead":"%s","expectedHead":"%s","eventSha":"%s"}\n' "$tested" "$EXPECTED_HEAD" "$GITHUB_SHA" > cnc-training-profile-identity.json
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -43,11 +55,13 @@ jobs:
         run: |
           set -o pipefail
           node cnc/tests/mobile-training-profile-smoke.cjs 2>&1 | tee cnc-training-profile.log
-      - name: Upload learner profile log
+      - name: Upload learner profile log and identity
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: cnc-training-profile-log
-          path: cnc-training-profile.log
+          name: cnc-training-profile-log-${{ github.run_id }}
+          path: |
+            cnc-training-profile.log
+            cnc-training-profile-identity.json
           retention-days: 7
           if-no-files-found: warn
