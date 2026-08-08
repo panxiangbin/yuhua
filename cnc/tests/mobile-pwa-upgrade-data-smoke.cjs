@@ -91,6 +91,37 @@ async function readOriginState(page) {
   }, DATA_KEYS);
 }
 
+function assertControlledPracticeMigration(beforeLocal, afterLocal) {
+  for (const key of DATA_KEYS.filter(item => item !== 'cnc_training_practice_v1')) {
+    assert.equal(afterLocal[key], beforeLocal[key], `离线导航错误修改非练习LocalStorage：${key}`);
+  }
+
+  const previous = JSON.parse(beforeLocal.cnc_training_practice_v1 || 'null');
+  const current = JSON.parse(afterLocal.cnc_training_practice_v1 || 'null');
+  assert(previous && previous.version === 1, `测试前练习状态必须是旧版v1：${JSON.stringify(previous)}`);
+  assert(current && current.version === 2, `离线加载主学习页后练习状态必须受控迁移到v2：${JSON.stringify(current)}`);
+  assert.equal(current.gateVersion, 2, `练习状态门禁版本错误：${JSON.stringify(current)}`);
+  assert.deepStrictEqual(current.history, previous.history, '练习状态迁移丢失历史成绩');
+  assert.deepStrictEqual(current.wrongQuestions, previous.wrongQuestions, '练习状态迁移丢失旧错题记录');
+  assert.deepStrictEqual(current.legacyLessonScores, {}, '旧版样例不应凭空产生历史课程分数');
+  assert.deepStrictEqual(current.lessonScores, {}, '旧版样例不应凭空产生新版课程分数');
+  assert.deepStrictEqual(current.attempts, {}, '旧版样例不应凭空产生答题尝试');
+  assert.deepStrictEqual(current.wrong, [], '旧版样例不应凭空产生新版错题ID');
+  assert.deepStrictEqual(current.correct, [], '旧版样例不应凭空产生新版正确题ID');
+  const allowedKeys = ['attempts','correct','gateVersion','history','legacyLessonScores','lessonScores','updatedAt','version','wrong','wrongQuestions'].sort();
+  assert.deepStrictEqual(Object.keys(current).sort(), allowedKeys, `练习状态迁移出现未授权字段：${JSON.stringify(current)}`);
+  assert(Number.isFinite(Date.parse(current.updatedAt)), `练习状态迁移缺少合法更新时间：${current.updatedAt}`);
+
+  return {
+    previousVersion: previous.version,
+    currentVersion: current.version,
+    gateVersion: current.gateVersion,
+    historyCount: current.history.length,
+    wrongQuestionCount: current.wrongQuestions.length,
+    updatedAt: current.updatedAt
+  };
+}
+
 async function captureDiagnostics(page, context, stage, errors) {
   const diagnostic = {
     stage,
@@ -365,7 +396,7 @@ async function verifyColdOfflineCourse(page, course) {
     assert(explainabilityBody.includes('未逐条复核内容不可直接上机'), '升级后判断说明页丢失可信度边界');
 
     const afterOfflineNavigation = await readOriginState(page);
-    assert.deepStrictEqual(afterOfflineNavigation.local, before.local, '离线导航后LocalStorage发生变化');
+    const practiceMigration = assertControlledPracticeMigration(before.local, afterOfflineNavigation.local);
     assert.equal(afterOfflineNavigation.session, before.session, '离线导航后SessionStorage探针发生变化');
     assert.deepStrictEqual(afterOfflineNavigation.indexedDb, before.indexedDb, '离线导航后IndexedDB发生变化');
 
@@ -385,6 +416,10 @@ async function verifyColdOfflineCourse(page, course) {
       unrelatedCachePreserved: true,
       singleScopedRegistration: true,
       localStoragePreserved: true,
+      localStorageByteExactImmediatelyAfterWorkerUpgrade: true,
+      nonPracticeLocalStorageByteExactAfterOfflineNavigation: true,
+      practiceSchemaMigrationVerified: true,
+      practiceSchemaMigration: practiceMigration,
       sessionStoragePreserved: true,
       indexedDbPreserved: true,
       beginnerPlacementColdOfflineAfterUpgrade: true,
