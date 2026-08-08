@@ -85,7 +85,14 @@ jobs:
             'ai-teacher-explainability.html',
             'explainabilityColdOfflineAfterUpgrade: true',
             '不能把“先Z后XY”当成所有机床通用规则',
-            '固定直线或固定折线'
+            '固定直线或固定折线',
+            'function assertControlledPracticeMigration',
+            'localStorageByteExactImmediatelyAfterWorkerUpgrade: true',
+            'nonPracticeLocalStorageByteExactAfterOfflineNavigation: true',
+            'practiceSchemaMigrationVerified: true',
+            '练习状态迁移丢失历史成绩',
+            '练习状态迁移丢失旧错题记录',
+            '练习状态迁移出现未授权字段'
           ]) {
             if (!test.includes(required)) throw new Error(`upgrade contract missing: ${required}`);
           }
