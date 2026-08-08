@@ -8,17 +8,17 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const CURRENT_PWA_BUILD = '20260809-pwa25';
-const PREVIOUS_PWA_BUILD = '20260808-pwa24';
-const CURRENT_CACHE_REVISION = '20260809-learning25';
-const PREVIOUS_CACHE_REVISION = '20260808-learning24';
+const CURRENT_PWA_BUILD = '20260809-pwa26';
+const PREVIOUS_PWA_BUILD = '20260809-pwa25';
+const CURRENT_CACHE_REVISION = '20260809-learning26';
+const PREVIOUS_CACHE_REVISION = '20260809-learning25';
 const CURRENT_STATIC_CACHE = `cnc-static-${CURRENT_CACHE_REVISION}`;
 const CURRENT_RUNTIME_CACHE = `cnc-runtime-${CURRENT_CACHE_REVISION}`;
 const PREVIOUS_STATIC_CACHE = `cnc-static-${PREVIOUS_CACHE_REVISION}`;
 const PREVIOUS_RUNTIME_CACHE = `cnc-runtime-${PREVIOUS_CACHE_REVISION}`;
 const UNRELATED_CACHE = 'other-app-cache-v1';
 const PLACEMENT_HANDOFF_KEY = 'cnc_beginner_placement_route_handoff_v1';
-const TRAINING_CORE_PATHS = ['./training-practice.js', './training-profile.js'];
+const TRAINING_CORE_PATHS = ['./training-practice.js', './training-profile.js', './learning-content-data.js'];
 const PLACEMENT_FIRST_STEP_COURSES = [
   { path: 'course-safety-foundation.html', title: '第1关 安全基础', required: ['先学会停，再学会动', '原厂手册', '授权人员'] },
   { path: 'course-coordinate-axes.html', title: '第3关 坐标轴与运动方向', required: ['坐标轴与运动方向', '原厂手册', '现场条件'] },
@@ -89,6 +89,37 @@ async function readOriginState(page) {
     });
     return { local, session, indexedDb };
   }, DATA_KEYS);
+}
+
+function assertControlledPracticeMigration(beforeLocal, afterLocal) {
+  for (const key of DATA_KEYS.filter(item => item !== 'cnc_training_practice_v1')) {
+    assert.equal(afterLocal[key], beforeLocal[key], `离线导航错误修改非练习LocalStorage：${key}`);
+  }
+
+  const previous = JSON.parse(beforeLocal.cnc_training_practice_v1 || 'null');
+  const current = JSON.parse(afterLocal.cnc_training_practice_v1 || 'null');
+  assert(previous && previous.version === 1, `测试前练习状态必须是旧版v1：${JSON.stringify(previous)}`);
+  assert(current && current.version === 2, `离线加载主学习页后练习状态必须受控迁移到v2：${JSON.stringify(current)}`);
+  assert.equal(current.gateVersion, 2, `练习状态门禁版本错误：${JSON.stringify(current)}`);
+  assert.deepStrictEqual(current.history, previous.history, '练习状态迁移丢失历史成绩');
+  assert.deepStrictEqual(current.wrongQuestions, previous.wrongQuestions, '练习状态迁移丢失旧错题记录');
+  assert.deepStrictEqual(current.legacyLessonScores, {}, '旧版样例不应凭空产生历史课程分数');
+  assert.deepStrictEqual(current.lessonScores, {}, '旧版样例不应凭空产生新版课程分数');
+  assert.deepStrictEqual(current.attempts, {}, '旧版样例不应凭空产生答题尝试');
+  assert.deepStrictEqual(current.wrong, [], '旧版样例不应凭空产生新版错题ID');
+  assert.deepStrictEqual(current.correct, [], '旧版样例不应凭空产生新版正确题ID');
+  const allowedKeys = ['attempts','correct','gateVersion','history','legacyLessonScores','lessonScores','updatedAt','version','wrong','wrongQuestions'].sort();
+  assert.deepStrictEqual(Object.keys(current).sort(), allowedKeys, `练习状态迁移出现未授权字段：${JSON.stringify(current)}`);
+  assert(Number.isFinite(Date.parse(current.updatedAt)), `练习状态迁移缺少合法更新时间：${current.updatedAt}`);
+
+  return {
+    previousVersion: previous.version,
+    currentVersion: current.version,
+    gateVersion: current.gateVersion,
+    historyCount: current.history.length,
+    wrongQuestionCount: current.wrongQuestions.length,
+    updatedAt: current.updatedAt
+  };
 }
 
 async function captureDiagnostics(page, context, stage, errors) {
@@ -203,7 +234,7 @@ async function verifyColdOfflineCourse(page, course) {
         request.onsuccess = () => {
           const db = request.result;
           const transaction = db.transaction('records', 'readwrite');
-          transaction.objectStore('records').put({ xp: 680, streak: 12, source: 'pwa22' }, 'growth');
+          transaction.objectStore('records').put({ xp: 680, streak: 12, source: 'pwa25' }, 'growth');
           transaction.onerror = () => reject(transaction.error);
           transaction.oncomplete = () => {
             db.close();
@@ -345,6 +376,15 @@ async function verifyColdOfflineCourse(page, course) {
       await verifyColdOfflineCourse(page, course);
     }
 
+    stage = 'cold-offline-main-learning-content-after-upgrade';
+    await page.goto('http://127.0.0.1:4173/cnc/index.html#view-study', { waitUntil: 'domcontentloaded' });
+    const lesson8 = await page.evaluate(() => window.CNC_LEARNING_CONTENT?.lessons?.[8] || null);
+    assert(lesson8, '升级后12关主课程数据冷离线加载失败');
+    const lesson8Text = JSON.stringify(lesson8);
+    assert(lesson8Text.includes('不能把“先Z后XY”当成所有机床通用规则'), '升级后第8关丢失安全撤离适用范围');
+    assert(lesson8Text.includes('固定直线或固定折线'), '升级后第8关丢失G00轨迹适用范围');
+    assert(lesson8Text.includes('原厂手册'), '升级后第8关丢失原厂手册核对边界');
+
     await page.goto('http://127.0.0.1:4173/cnc/ai-teacher.html', { waitUntil: 'domcontentloaded' });
     assert((await page.title()).includes('AI CNC老师'), '升级后AI CNC老师冷离线打开失败');
     await page.goto('http://127.0.0.1:4173/cnc/ai-teacher-intake.html', { waitUntil: 'domcontentloaded' });
@@ -356,7 +396,7 @@ async function verifyColdOfflineCourse(page, course) {
     assert(explainabilityBody.includes('未逐条复核内容不可直接上机'), '升级后判断说明页丢失可信度边界');
 
     const afterOfflineNavigation = await readOriginState(page);
-    assert.deepStrictEqual(afterOfflineNavigation.local, before.local, '离线导航后LocalStorage发生变化');
+    const practiceMigration = assertControlledPracticeMigration(before.local, afterOfflineNavigation.local);
     assert.equal(afterOfflineNavigation.session, before.session, '离线导航后SessionStorage探针发生变化');
     assert.deepStrictEqual(afterOfflineNavigation.indexedDb, before.indexedDb, '离线导航后IndexedDB发生变化');
 
@@ -372,9 +412,14 @@ async function verifyColdOfflineCourse(page, course) {
       currentCachesReady: true,
       trainingCoreStaticCacheReady: true,
       trainingCorePaths: TRAINING_CORE_PATHS,
+      mainLearningContentColdOfflineAfterUpgrade: true,
       unrelatedCachePreserved: true,
       singleScopedRegistration: true,
       localStoragePreserved: true,
+      localStorageByteExactImmediatelyAfterWorkerUpgrade: true,
+      nonPracticeLocalStorageByteExactAfterOfflineNavigation: true,
+      practiceSchemaMigrationVerified: true,
+      practiceSchemaMigration: practiceMigration,
       sessionStoragePreserved: true,
       indexedDbPreserved: true,
       beginnerPlacementColdOfflineAfterUpgrade: true,

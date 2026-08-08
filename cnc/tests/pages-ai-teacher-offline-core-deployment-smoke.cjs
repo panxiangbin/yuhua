@@ -8,13 +8,13 @@ fs.mkdirSync(resultsDir, { recursive: true });
 
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
-const branchTargetPwaBuild = '20260809-pwa25';
-const previousPublicPwaBuild = '20260808-pwa24';
+const branchTargetPwaBuild = '20260809-pwa26';
+const previousPublicPwaBuild = '20260809-pwa25';
 const expectedSiteBuild = '20260806-learning-depth1';
 const previousPublicSiteBuild = '20260806-learning-depth1';
 const cacheRevisionByBuild = {
-  [branchTargetPwaBuild]: '20260809-learning25',
-  [previousPublicPwaBuild]: '20260808-learning24'
+  [branchTargetPwaBuild]: '20260809-learning26',
+  [previousPublicPwaBuild]: '20260809-learning25'
 };
 const attempts = Number(process.env.CNC_PAGES_VERIFY_ATTEMPTS || 18);
 const intervalMs = Number(process.env.CNC_PAGES_VERIFY_INTERVAL_MS || 10000);
@@ -38,6 +38,7 @@ const BASE_CORE_PATHS = [
   './personal-home.js',
   './training-practice.js',
   './training-profile.js',
+  './learning-content-data.js',
   './learning-sublesson-catalog.js','./learning-sublesson-specificity.js',
   './learning-depth.css',
   './learning-detail.html',
@@ -84,7 +85,7 @@ const VIDEO_CORE_PATHS = [
   './assets/videos/learning/stage12_first_part.mp4'
 ];
 const EXACT_CORE_PATHS = [...BASE_CORE_PATHS, ...VIDEO_CORE_PATHS];
-const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE_PATHS;
+const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE_PATHS.filter(item => item !== './learning-content-data.js');
 
 const LEARNING_DEPTH_CORE_PATHS = new Set([
   './learning-sublesson-catalog.js',
@@ -223,7 +224,7 @@ function assertServiceWorker(text, label, expectedBuild) {
     'cacheRevision: CACHE_REVISION',
     "event.data.type === 'ENSURE_CACHES'"
   ]);
-  if (expectedBuild === branchTargetPwaBuild) requireTokens(text, label, ["'./training-practice.js'", "'./training-profile.js'", ...VIDEO_CORE_PATHS.map(item => `'${item}'`)]);
+  if (expectedBuild === branchTargetPwaBuild) requireTokens(text, label, ["'./training-practice.js'", "'./training-profile.js'", "'./learning-content-data.js'", ...VIDEO_CORE_PATHS.map(item => `'${item}'`)]);
   forbidTokens(text, label, [/test\.skip\(/, /describe\.skip\(/, /it\.skip\(/, /allowOperationalUse\s*:\s*true/]);
   const actual = parseQuotedArray(text, /const REQUIRED_CORE_PATHS = \[([\s\S]*?)\];/, `${label}核心缓存`);
   assertExactArray(actual, expectedCoreForBuild(expectedBuild, label), `${label}核心缓存`);
@@ -249,7 +250,7 @@ function assertBuildInfo(text, label, expectedBuild) {
   const stage = String(data.contentStage || '');
   requireTokens(stage, label, ['课程12关', '起点测评', '手机首页一屏化', 'AI CNC老师基础版', 'PWA可靠性']);
   if (expectedBuild === branchTargetPwaBuild) {
-    requireTokens(stage, label, ['起点测评关键安全门禁', '起点测评离线核心', '测评路线一次性交接', '训练营路线离线核心', '测评首步课程离线核心', '正式课程开发占位清零', 'AI老师现场问诊单', 'AI老师判断说明', 'AI老师离线核心', 'AI老师学习档案异常保护', '80个图文小课', '学习目录紧凑布局', '80课现场动作与风险针对性', '训练题库与成长档案离线核心', '手机构建标记一致性', '固定12关能力映射与真实薄弱课推荐', 'AI老师与固定12关成长档案语义一致', '每日训练薄弱课错题精准回流', '固定12关60题真实80分与关键题硬门禁']);
+    requireTokens(stage, label, ['起点测评关键安全门禁', '起点测评离线核心', '测评路线一次性交接', '训练营路线离线核心', '测评首步课程离线核心', '正式课程开发占位清零', 'AI老师现场问诊单', 'AI老师判断说明', 'AI老师离线核心', 'AI老师学习档案异常保护', '80个图文小课', '学习目录紧凑布局', '80课现场动作与风险针对性', '训练题库与成长档案离线核心', '手机构建标记一致性', '固定12关能力映射与真实薄弱课推荐', 'AI老师与固定12关成长档案语义一致', '每日训练薄弱课错题精准回流', '固定12关60题真实80分与关键题硬门禁', 'AI老师课程完成以真实完成记录为准', '成长档案今日训练奖励以真实课程完成记录为准', 'G00快速定位与安全撤离适用范围', '12关主课程数据首次安装离线核心']);
   }
   return { build: data.build, pwaBuild: data.pwaBuild, cacheRevision: data.cacheRevision, scope: data.scope };
 }
@@ -273,7 +274,7 @@ function assertStatusPage(text, label, expectedBuild) {
   ];
   let previousCacheContract = false;
   if (expectedBuild === branchTargetPwaBuild) {
-    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'PWA23在PWA22薄弱课错题精准回流基础上，把固定12关闯关题扩展为每关5道专属题、共60题，使4/5可以真实形成80分');
+    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'PWA23在PWA22薄弱课错题精准回流基础上，把固定12关闯关题扩展为每关5道专属题、共60题，使4/5可以真实形成80分', '不能假定轨迹必然为固定直线或固定折线', '不能把“先Z后XY”教成所有机床通用规则', '12关主课程数据');
   } else {
     required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'const cacheBuildOk=staticName.includes(EXPECTED_CACHE)&&runtimeName.includes(EXPECTED_CACHE)');
     previousCacheContract = true;
@@ -301,7 +302,7 @@ function assertSelfTest(text, label, expectedBuild) {
   let expectedPaths;
   let previousCacheContract = false;
   if (expectedBuild === branchTargetPwaBuild) {
-    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'marker.cacheRevision===EXPECTED_CACHE', 'PWA23在PWA22薄弱课错题精准回流基础上，把固定12关闯关题扩展为每关5道专属题、共60题，使4/5可以真实形成80分', './training-practice.js', './training-profile.js', ...VIDEO_CORE_PATHS);
+    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'marker.cacheRevision===EXPECTED_CACHE', 'PWA23在PWA22薄弱课错题精准回流基础上，把固定12关闯关题扩展为每关5道专属题、共60题，使4/5可以真实形成80分', './training-practice.js', './training-profile.js', './learning-content-data.js', '不能假定轨迹必然为固定直线或固定折线', '不能把“先Z后XY”教成所有机床通用规则', ...VIDEO_CORE_PATHS);
     expectedPaths = EXACT_CORE_PATHS;
   } else {
     required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'const staticName=keys.find(name=>name===`cnc-static-${EXPECTED_CACHE}`)', 'const runtimeName=keys.find(name=>name===`cnc-runtime-${EXPECTED_CACHE}`)', 'marker.cacheRevision===EXPECTED_CACHE');
@@ -412,6 +413,7 @@ async function waitForMainPagesMatch() {
       siteBuild: expectedSiteBuild,
       trainingPracticeInCoreCache: true,
       trainingProfileInCoreCache: true,
+      mainLearningContentInCoreCache: true,
       beginnerPlacementInCoreCache: true,
       trainingCampInCoreCache: true,
       placementFirstStepCoursesInCoreCache: true,
@@ -434,10 +436,10 @@ async function waitForMainPagesMatch() {
       `当前分支站点/PWA构建/缓存修订：${expectedSiteBuild}/${branchTargetPwaBuild}/${cacheRevisionByBuild[branchTargetPwaBuild]}`,
       `main与Pages公网站点/PWA构建/缓存修订：${mainBuildData.build}/${publicPwaBuild}/${cacheRevisionByBuild[publicPwaBuild]}`,
       `分支待合并或待部署：${branchDeploymentPending ? '是' : '否'}`,
-      `当前分支手机首页、训练题库、成长档案、12关图片、${VIDEO_CORE_PATHS.length}个本地课程视频、起点测评、训练营路线、三类测评首步课程、80课目录、AI老师、现场问诊单、判断说明页核心预缓存：完整`,
+      `当前分支手机首页、训练题库、成长档案、12关主课程数据、12关图片、${VIDEO_CORE_PATHS.length}个本地课程视频、起点测评、训练营路线、三类测评首步课程、80课目录、AI老师、现场问诊单、判断说明页核心预缓存：完整`,
       `当前分支PWA自检核心资源：${EXACT_CORE_PATHS.length}项且无重复`,
       `当前公网PWA自检核心资源：${publicPwaBuild === previousPublicPwaBuild ? PREVIOUS_PUBLIC_SELF_TEST_PATHS.length : EXACT_CORE_PATHS.length}项且无重复`,
-      '测评安全硬门禁、路线隐私、固定值、原厂手册与授权人员边界：可见',
+      '测评安全硬门禁、G00快速定位适用范围、路线隐私、固定值、原厂手册与授权人员边界：可见',
       ...findings
     ].join('\n') + '\n');
     console.log(`CNC PWA offline core Pages verified: branch ${branchTargetPwaBuild} / public ${publicPwaBuild} / pending=${branchDeploymentPending}`);

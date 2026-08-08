@@ -9,12 +9,12 @@ fs.mkdirSync(out, { recursive: true });
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
 const expectedSiteBuild = '20260806-learning-depth1';
-const expectedPwaBuild = '20260809-pwa25';
+const expectedPwaBuild = '20260809-pwa26';
 const previousPublicSiteBuild = '20260806-learning-depth1';
-const previousPublicPwaBuild = '20260808-pwa24';
+const previousPublicPwaBuild = '20260809-pwa25';
 const cacheRevisionByBuild = {
-  [expectedPwaBuild]: '20260809-learning25',
-  [previousPublicPwaBuild]: '20260808-learning24'
+  [expectedPwaBuild]: '20260809-learning26',
+  [previousPublicPwaBuild]: '20260809-learning25'
 };
 const siteBuildByPwaBuild = {
   [expectedPwaBuild]: expectedSiteBuild,
@@ -25,7 +25,7 @@ const intervalMs = Number(process.env.CNC_PAGES_VERIFY_INTERVAL_MS || 10000);
 const eventName = process.env.GITHUB_EVENT_NAME || '';
 const resources = ['cnc/training-camp.html', 'cnc/sw.js', 'cnc/build-info.json'];
 const BASE_CORE = [
-  './index.html','./homepage-refresh.css','./homepage-refresh-desktop-legacy.css','./mobile-home-refactor.css','./personal-home.js','./training-practice.js','./training-profile.js','./learning-sublesson-catalog.js','./learning-sublesson-specificity.js','./learning-depth.css','./learning-detail.html','./mobile-trust-nav.js','./featured-images-supplement.js','./offline.html','./pwa-status.html','./pwa-self-test.html','./pages-status.html','./beginner-placement.html','./training-camp.html','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html','./ai-teacher.html','./ai-teacher-intake.html','./ai-teacher-explainability.html','./build-info.json','./assets/images/batch01_core/beginner-machine-zero-vs-work-zero-001.webp','./assets/images/batch02_operation_basics/machine-init-flow-001.webp','./assets/images/batch04_milling_tooling/milling-process-overview-001.webp','./assets/images/batch01_core/measure-reading-set-001.webp','./assets/images/batch05_alarm_drawing_material/dial-indicator-detail-001.webp','./assets/images/batch04_milling_tooling/vise-clamping-basic-001.webp','./assets/images/batch04_milling_tooling/tool-selection-beginner-001.webp','./assets/images/batch04_milling_tooling/bt-er-holder-overview-001.webp','./assets/images/batch02_operation_basics/single-block-dry-run-001.webp','./assets/images/batch04_milling_tooling/milling-contour-001.webp','./assets/images/batch02_operation_basics/canned-cycle-overview-001.webp','./assets/images/batch05_alarm_drawing_material/first-piece-inspection-001.webp'
+  './index.html','./homepage-refresh.css','./homepage-refresh-desktop-legacy.css','./mobile-home-refactor.css','./personal-home.js','./training-practice.js','./training-profile.js','./learning-content-data.js','./learning-sublesson-catalog.js','./learning-sublesson-specificity.js','./learning-depth.css','./learning-detail.html','./mobile-trust-nav.js','./featured-images-supplement.js','./offline.html','./pwa-status.html','./pwa-self-test.html','./pages-status.html','./beginner-placement.html','./training-camp.html','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html','./ai-teacher.html','./ai-teacher-intake.html','./ai-teacher-explainability.html','./build-info.json','./assets/images/batch01_core/beginner-machine-zero-vs-work-zero-001.webp','./assets/images/batch02_operation_basics/machine-init-flow-001.webp','./assets/images/batch04_milling_tooling/milling-process-overview-001.webp','./assets/images/batch01_core/measure-reading-set-001.webp','./assets/images/batch05_alarm_drawing_material/dial-indicator-detail-001.webp','./assets/images/batch04_milling_tooling/vise-clamping-basic-001.webp','./assets/images/batch04_milling_tooling/tool-selection-beginner-001.webp','./assets/images/batch04_milling_tooling/bt-er-holder-overview-001.webp','./assets/images/batch02_operation_basics/single-block-dry-run-001.webp','./assets/images/batch04_milling_tooling/milling-contour-001.webp','./assets/images/batch02_operation_basics/canned-cycle-overview-001.webp','./assets/images/batch05_alarm_drawing_material/first-piece-inspection-001.webp'
 ];
 const VIDEO_CORE = [
   './assets/videos/learning/stage01_safety.mp4',
@@ -42,7 +42,7 @@ const VIDEO_CORE = [
   './assets/videos/learning/stage12_first_part.mp4'
 ];
 const EXACT_CORE = [...BASE_CORE, ...VIDEO_CORE];
-const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE;
+const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE.filter(item => item !== './learning-content-data.js');
 
 const LEARNING_DEPTH_CORE_PATHS = new Set([
   './learning-sublesson-catalog.js',
@@ -221,7 +221,7 @@ function assertServiceWorker(text, label, build) {
     "event.data.type === 'GET_BUILD'",
     'cacheRevision: CACHE_REVISION'
   ]);
-  if (build === expectedPwaBuild) requireTokens(text, label, ["'./training-practice.js'", "'./training-profile.js'", ...VIDEO_CORE.map(item => `'${item}'`)]);
+  if (build === expectedPwaBuild) requireTokens(text, label, ["'./training-practice.js'", "'./training-profile.js'", "'./learning-content-data.js'", ...VIDEO_CORE.map(item => `'${item}'`)]);
   const block = text.match(/const REQUIRED_CORE_PATHS = \[([\s\S]*?)\];/)?.[1] || '';
   const core = [...block.matchAll(/'([^']+)'/g)].map(match => match[1]);
   const expectedCore = expectedCoreForBuild(build, label);
@@ -261,7 +261,11 @@ function parseBuildInfo(text, label) {
       '固定12关能力映射与真实薄弱课推荐',
       'AI老师与固定12关成长档案语义一致',
       '每日训练薄弱课错题精准回流',
-      '固定12关60题真实80分与关键题硬门禁'
+      '固定12关60题真实80分与关键题硬门禁',
+      'AI老师课程完成以真实完成记录为准',
+      '成长档案今日训练奖励以真实课程完成记录为准',
+      'G00快速定位与安全撤离适用范围',
+      '12关主课程数据首次安装离线核心'
     ]);
   }
   return data;
@@ -373,6 +377,7 @@ async function waitForMainPagesMatch() {
       trainingCampPublic: true,
       trainingPracticeInCoreCache: true,
       trainingProfileInCoreCache: true,
+      mainLearningContentInCoreCache: true,
       oneTimeRouteConsumerPresent: true,
       consumeBeforeParsePresent: true,
       canonicalRouteIntegrityPresent: true,
@@ -400,7 +405,7 @@ async function waitForMainPagesMatch() {
       '四种分类与唯一受控路线完整匹配：已验证',
       '临时路线纯文本渲染、无innerHTML：已验证',
       'BFCache返回清理与SessionStorage-only：已验证',
-      `训练题库、成长档案、训练营、三类测评首步课程与${VIDEO_CORE.length}个本地课程视频进入${EXACT_CORE.length}项核心预缓存：已验证`,
+      `训练题库、成长档案、12关主课程数据、训练营、三类测评首步课程与${VIDEO_CORE.length}个本地课程视频进入${EXACT_CORE.length}项核心预缓存：已验证`,
       '原厂手册、上机授权与现场监护边界：可见',
       ...findings
     ].join('\n') + '\n');

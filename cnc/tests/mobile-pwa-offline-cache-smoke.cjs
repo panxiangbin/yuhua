@@ -7,8 +7,8 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const PWA_BUILD = '20260809-pwa25';
-const CACHE_REVISION = '20260809-learning25';
+const PWA_BUILD = '20260809-pwa26';
+const CACHE_REVISION = '20260809-learning26';
 const PLACEMENT_FIRST_STEP_COURSES = [
   {
     path: './course-safety-foundation.html',
@@ -43,6 +43,7 @@ const VIDEO_CORE_PATHS = [
 const CORE_OFFLINE_PATHS = [
   './training-practice.js',
   './training-profile.js',
+  './learning-content-data.js',
   './learning-sublesson-specificity.js',
   './beginner-placement.html',
   './training-camp.html',
@@ -223,6 +224,7 @@ async function verifyColdOfflineCourse(page, course) {
     const badOfflineVideos = offlineVideoCore.filter(item => !item.present || item.bytes <= 0 || !item.contentType.toLowerCase().includes('video/mp4'));
     if (badOfflineVideos.length) throw new Error(`12关视频冷离线核心不完整: ${JSON.stringify(badOfflineVideos)}`);
 
+    stage = 'cold-offline-beginner-placement';
     await page.goto('http://127.0.0.1:4173/cnc/beginner-placement.html', { waitUntil: 'domcontentloaded' });
     if (!(await page.title()).includes('CNC新手起点测评')) throw new Error('起点测评首次安装后离线打开失败');
     const placementBody = await page.locator('body').innerText();
@@ -257,6 +259,16 @@ async function verifyColdOfflineCourse(page, course) {
     stage = 'cold-offline-placement-first-step-courses';
     for (const course of PLACEMENT_FIRST_STEP_COURSES.slice(1)) {
       await verifyColdOfflineCourse(page, course);
+    }
+
+    stage = 'cold-offline-main-learning-content';
+    await page.goto('http://127.0.0.1:4173/cnc/index.html#view-study', { waitUntil: 'domcontentloaded' });
+    const learningLoaded = await page.evaluate(() => Boolean(window.CNC_LEARNING_CONTENT?.lessons?.[8]));
+    if (!learningLoaded) throw new Error('12关主课程数据首次安装后离线加载失败');
+    const lesson8 = await page.evaluate(() => window.CNC_LEARNING_CONTENT.lessons[8]);
+    const lesson8Text = JSON.stringify(lesson8);
+    if (!lesson8Text.includes('不能把“先Z后XY”当成所有机床通用规则') || !lesson8Text.includes('固定直线或固定折线') || !lesson8Text.includes('原厂手册')) {
+      throw new Error('第8关G00安全适用范围未随主课程数据进入冷离线核心');
     }
 
     stage = 'cold-offline-ai-teacher';
@@ -320,6 +332,7 @@ async function verifyColdOfflineCourse(page, course) {
       placementFirstStepCoursePaths: PLACEMENT_FIRST_STEP_COURSES.map(item => item.path),
       trainingPracticeColdOfflineCore: true,
       trainingProfileColdOfflineCore: true,
+      mainLearningContentColdOfflineCore: true,
       learningVideosColdOfflineCore: true,
       learningVideoCorePaths: VIDEO_CORE_PATHS,
       learningVideoCoreResponses: offlineVideoCore,
