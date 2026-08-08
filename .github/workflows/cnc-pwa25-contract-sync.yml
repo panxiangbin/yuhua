@@ -17,7 +17,7 @@ jobs:
         with:
           ref: codex/cnc-daily-training-real-completion
           fetch-depth: 0
-      - name: Sync exact PWA25/PWA24 contracts
+      - name: Sync exact PWA25/PWA24 test contracts
         shell: bash
         run: |
           python3 - <<'PY'
@@ -30,10 +30,6 @@ jobs:
               Path('cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs'),
               Path('cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs'),
               Path('cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs'),
-              Path('.github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml'),
-              Path('.github/workflows/cnc-beginner-placement-offline-pages-smoke.yml'),
-              Path('.github/workflows/cnc-pwa-upgrade-data-smoke.yml'),
-              Path('.github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml'),
           ]
           previous_pwa = '20260808-' + 'pwa23'
           previous_cache = '20260808-' + 'learning23'
@@ -62,16 +58,12 @@ jobs:
             cnc/tests/mobile-pwa-upgrade-data-smoke.cjs \
             cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs \
             cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs \
-            cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs \
-            .github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml \
-            .github/workflows/cnc-beginner-placement-offline-pages-smoke.yml \
-            .github/workflows/cnc-pwa-upgrade-data-smoke.yml \
-            .github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml
-      - name: Commit synced contracts
+            cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs
+      - name: Commit synced test contracts
         shell: bash
         run: |
           if git diff --quiet; then
-            echo 'No contract changes needed.'
+            echo 'No test contract changes needed.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
@@ -82,10 +74,6 @@ jobs:
             cnc/tests/mobile-pwa-upgrade-data-smoke.cjs \
             cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs \
             cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs \
-            cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs \
-            .github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml \
-            .github/workflows/cnc-beginner-placement-offline-pages-smoke.yml \
-            .github/workflows/cnc-pwa-upgrade-data-smoke.yml \
-            .github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml
-          git commit -m 'test(cnc-pwa): 对齐PWA25及上一公网PWA24门禁'
+            cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs
+          git commit -m 'test(cnc-pwa): 对齐PWA25及上一公网PWA24测试门禁'
           git push origin HEAD:codex/cnc-daily-training-real-completion
