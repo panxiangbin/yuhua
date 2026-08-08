@@ -8,17 +8,17 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const CURRENT_PWA_BUILD = '20260809-pwa25';
-const PREVIOUS_PWA_BUILD = '20260808-pwa24';
-const CURRENT_CACHE_REVISION = '20260809-learning25';
-const PREVIOUS_CACHE_REVISION = '20260808-learning24';
+const CURRENT_PWA_BUILD = '20260809-pwa26';
+const PREVIOUS_PWA_BUILD = '20260809-pwa25';
+const CURRENT_CACHE_REVISION = '20260809-learning26';
+const PREVIOUS_CACHE_REVISION = '20260809-learning25';
 const CURRENT_STATIC_CACHE = `cnc-static-${CURRENT_CACHE_REVISION}`;
 const CURRENT_RUNTIME_CACHE = `cnc-runtime-${CURRENT_CACHE_REVISION}`;
 const PREVIOUS_STATIC_CACHE = `cnc-static-${PREVIOUS_CACHE_REVISION}`;
 const PREVIOUS_RUNTIME_CACHE = `cnc-runtime-${PREVIOUS_CACHE_REVISION}`;
 const UNRELATED_CACHE = 'other-app-cache-v1';
 const PLACEMENT_HANDOFF_KEY = 'cnc_beginner_placement_route_handoff_v1';
-const TRAINING_CORE_PATHS = ['./training-practice.js', './training-profile.js'];
+const TRAINING_CORE_PATHS = ['./training-practice.js', './training-profile.js', './learning-content-data.js'];
 const PLACEMENT_FIRST_STEP_COURSES = [
   { path: 'course-safety-foundation.html', title: '第1关 安全基础', required: ['先学会停，再学会动', '原厂手册', '授权人员'] },
   { path: 'course-coordinate-axes.html', title: '第3关 坐标轴与运动方向', required: ['坐标轴与运动方向', '原厂手册', '现场条件'] },
@@ -203,7 +203,7 @@ async function verifyColdOfflineCourse(page, course) {
         request.onsuccess = () => {
           const db = request.result;
           const transaction = db.transaction('records', 'readwrite');
-          transaction.objectStore('records').put({ xp: 680, streak: 12, source: 'pwa22' }, 'growth');
+          transaction.objectStore('records').put({ xp: 680, streak: 12, source: 'pwa25' }, 'growth');
           transaction.onerror = () => reject(transaction.error);
           transaction.oncomplete = () => {
             db.close();
@@ -345,6 +345,15 @@ async function verifyColdOfflineCourse(page, course) {
       await verifyColdOfflineCourse(page, course);
     }
 
+    stage = 'cold-offline-main-learning-content-after-upgrade';
+    await page.goto('http://127.0.0.1:4173/cnc/index.html#view-study', { waitUntil: 'domcontentloaded' });
+    const lesson8 = await page.evaluate(() => window.CNC_LEARNING_CONTENT?.lessons?.[8] || null);
+    assert(lesson8, '升级后12关主课程数据冷离线加载失败');
+    const lesson8Text = JSON.stringify(lesson8);
+    assert(lesson8Text.includes('不能把“先Z后XY”当成所有机床通用规则'), '升级后第8关丢失安全撤离适用范围');
+    assert(lesson8Text.includes('固定直线或固定折线'), '升级后第8关丢失G00轨迹适用范围');
+    assert(lesson8Text.includes('原厂手册'), '升级后第8关丢失原厂手册核对边界');
+
     await page.goto('http://127.0.0.1:4173/cnc/ai-teacher.html', { waitUntil: 'domcontentloaded' });
     assert((await page.title()).includes('AI CNC老师'), '升级后AI CNC老师冷离线打开失败');
     await page.goto('http://127.0.0.1:4173/cnc/ai-teacher-intake.html', { waitUntil: 'domcontentloaded' });
@@ -372,6 +381,7 @@ async function verifyColdOfflineCourse(page, course) {
       currentCachesReady: true,
       trainingCoreStaticCacheReady: true,
       trainingCorePaths: TRAINING_CORE_PATHS,
+      mainLearningContentColdOfflineAfterUpgrade: true,
       unrelatedCachePreserved: true,
       singleScopedRegistration: true,
       localStoragePreserved: true,
