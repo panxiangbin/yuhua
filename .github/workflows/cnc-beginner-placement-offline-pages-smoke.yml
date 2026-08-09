@@ -52,11 +52,11 @@ jobs:
           const placement = fs.readFileSync('cnc/beginner-placement.html', 'utf8');
           const camp = fs.readFileSync('cnc/training-camp.html', 'utf8');
           if (info.build !== '20260806-learning-depth1') throw new Error(`unexpected site build: ${info.build}`);
-          if (info.pwaBuild !== '20260809-pwa31' || info.cacheRevision !== '20260809-learning31') throw new Error(`unexpected PWA/cache build: ${info.pwaBuild}/${info.cacheRevision}`);
-          if (!sw.includes("const BUILD = '20260809-pwa31'") || !sw.includes("const CACHE_REVISION = '20260809-learning31'")) throw new Error('Service Worker build/cache mismatch');
+          if (info.pwaBuild !== '20260810-pwa32' || info.cacheRevision !== '20260810-learning32') throw new Error(`unexpected PWA/cache build: ${info.pwaBuild}/${info.cacheRevision}`);
+          if (!sw.includes("const BUILD = '20260810-pwa32'") || !sw.includes("const CACHE_REVISION = '20260810-learning32'")) throw new Error('Service Worker build/cache mismatch');
           for (const token of [
-            "const branchTargetPwaBuild = '20260809-pwa31'", "const previousPublicPwaBuild = '20260809-pwa30'",
-            "[branchTargetPwaBuild]: '20260809-learning31'", "[previousPublicPwaBuild]: '20260809-learning30'",
+            "const branchTargetPwaBuild = '20260810-pwa32'", "const previousPublicPwaBuild = '20260809-pwa31'",
+            "[branchTargetPwaBuild]: '20260810-learning32'", "[previousPublicPwaBuild]: '20260809-learning31'",
             "const expectedSiteBuild = '20260806-learning-depth1'", 'const VIDEO_CORE = [',
             'const EXACT_CORE = [...BASE_CORE, ...VIDEO_CORE]', 'const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE',
             'CNC_PAGES_VERIFY_ATTEMPTS || 18', "cache: 'no-store'", 'cnc/beginner-placement.html',
@@ -70,7 +70,7 @@ jobs:
           if (!placement.includes('cnc_beginner_placement_route_handoff_v1') || !camp.includes('cnc_beginner_placement_route_handoff_v1')) throw new Error('placement route handoff producer or consumer missing');
           for (const file of ['./training-practice.js','./training-profile.js','./search-aliases.js','./gm-code-complete.js','./learning-content-data.js','./training-camp.html','./learning-sublesson-specificity.js','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html','./ai-teacher.html','./ai-teacher-intake.html','./ai-teacher-explainability.html']) if (!sw.includes(`'${file}'`)) throw new Error(`PWA core missing: ${file}`);
           for (const video of ['./assets/videos/learning/stage01_safety.mp4','./assets/videos/learning/stage02_xyz.mp4','./assets/videos/learning/stage03_z_tool.mp4','./assets/videos/learning/stage04_program.mp4','./assets/videos/learning/stage05_g90_g91.mp4','./assets/videos/learning/stage06_g00_g01.mp4','./assets/videos/learning/stage07_sf.mp4','./assets/videos/learning/stage08_g02_g03.mp4','./assets/videos/learning/stage09_milling_direction.mp4','./assets/videos/learning/stage10_g41_g42.mp4','./assets/videos/learning/stage11_g81_g83.mp4','./assets/videos/learning/stage12_first_part.mp4']) if (!sw.includes(`'${video}'`)) throw new Error(`PWA video core missing: ${video}`);
-          for (const stage of ['起点测评关键安全门禁','起点测评离线核心','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','正式课程开发占位清零','AI老师学习档案异常保护','80个图文小课','80课现场动作与风险针对性','训练题库与成长档案离线核心','手机构建标记一致性','固定12关能力映射与真实薄弱课推荐','AI老师与固定12关成长档案语义一致','每日训练薄弱课错题精准回流','固定12关60题真实80分与关键题硬门禁','AI老师课程完成以真实完成记录为准','成长档案今日训练奖励以真实课程完成记录为准','G00快速定位与安全撤离适用范围','12关主课程数据首次安装离线核心','T/H刀长补偿映射适用范围','G10可编程数据写入适用范围','G/M代码首次安装离线核心','G28参考点返回适用范围','G53机床坐标定位适用范围','G92车铣双语义适用范围']) if (!String(info.contentStage || '').includes(stage)) throw new Error(`build marker missing: ${stage}`);
+          for (const stage of ['起点测评关键安全门禁','起点测评离线核心','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','正式课程开发占位清零','AI老师学习档案异常保护','80个图文小课','80课现场动作与风险针对性','训练题库与成长档案离线核心','手机构建标记一致性','固定12关能力映射与真实薄弱课推荐','AI老师与固定12关成长档案语义一致','每日训练薄弱课错题精准回流','固定12关60题真实80分与关键题硬门禁','AI老师课程完成以真实完成记录为准','成长档案今日训练奖励以真实课程完成记录为准','G00快速定位与安全撤离适用范围','12关主课程数据首次安装离线核心','T/H刀长补偿映射适用范围','G10可编程数据写入适用范围','G/M代码首次安装离线核心','G28参考点返回适用范围','G53机床坐标定位适用范围','G92车铣双语义适用范围','G94车铣双语义适用范围']) if (!String(info.contentStage || '').includes(stage)) throw new Error(`build marker missing: ${stage}`);
           for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)', 'CNC_PAGES_VERIFY_ATTEMPTS || 0']) if (test.includes(forbidden)) throw new Error(`deployment gate bypass found: ${forbidden}`);
           NODE
       - name: Verify main and Pages exact deployment
