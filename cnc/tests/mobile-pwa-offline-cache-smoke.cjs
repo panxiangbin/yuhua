@@ -7,8 +7,8 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const PWA_BUILD = '20260809-pwa26';
-const CACHE_REVISION = '20260809-learning26';
+const PWA_BUILD = '20260809-pwa27';
+const CACHE_REVISION = '20260809-learning27';
 const PLACEMENT_FIRST_STEP_COURSES = [
   {
     path: './course-safety-foundation.html',
@@ -263,13 +263,19 @@ async function verifyColdOfflineCourse(page, course) {
 
     stage = 'cold-offline-main-learning-content';
     await page.goto('http://127.0.0.1:4173/cnc/index.html#view-study', { waitUntil: 'domcontentloaded' });
-    const learningLoaded = await page.evaluate(() => Boolean(window.CNC_LEARNING_CONTENT?.lessons?.[8]));
+    const learningLoaded = await page.evaluate(() => Boolean(window.CNC_LEARNING_CONTENT?.lessons?.[8]) && Boolean(window.CNC_LEARNING_CONTENT?.lessons?.[5]));
     if (!learningLoaded) throw new Error('12关主课程数据首次安装后离线加载失败');
     const lesson8 = await page.evaluate(() => window.CNC_LEARNING_CONTENT.lessons[8]);
     const lesson8Text = JSON.stringify(lesson8);
     if (!lesson8Text.includes('不能把“先Z后XY”当成所有机床通用规则') || !lesson8Text.includes('固定直线或固定折线') || !lesson8Text.includes('原厂手册')) {
       throw new Error('第8关G00安全适用范围未随主课程数据进入冷离线核心');
     }
+    const lesson5 = await page.evaluate(() => window.CNC_LEARNING_CONTENT.lessons[5]);
+    const lesson5Text = JSON.stringify(lesson5);
+    if (!lesson5Text.includes('T/H 数字相同是常见约定') || !lesson5Text.includes('不能仅凭 T01 M06 后使用 G43 H02 就直接判错') || !lesson5Text.includes('工具表/刀补表') || !lesson5Text.includes('原厂手册')) {
+      throw new Error('第5关T/H刀长补偿映射适用范围未随主课程数据进入冷离线核心');
+    }
+    if (lesson5Text.includes("T01 调刀却使用 H02")) throw new Error('第5关冷离线内容仍残留T01/H02绝对判错表述');
 
     stage = 'cold-offline-ai-teacher';
     await page.goto('http://127.0.0.1:4173/cnc/ai-teacher.html', { waitUntil: 'domcontentloaded' });
@@ -333,6 +339,7 @@ async function verifyColdOfflineCourse(page, course) {
       trainingPracticeColdOfflineCore: true,
       trainingProfileColdOfflineCore: true,
       mainLearningContentColdOfflineCore: true,
+      toolOffsetMappingTrustColdOffline: true,
       learningVideosColdOfflineCore: true,
       learningVideoCorePaths: VIDEO_CORE_PATHS,
       learningVideoCoreResponses: offlineVideoCore,
