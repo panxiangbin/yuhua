@@ -15,7 +15,7 @@
     <section class="card">
       <small>PWA · 离线能力确定性诊断</small>
       <h1>离线自检与诊断报告</h1>
-      <p class="notice">一次核对浏览器支持、Service Worker注册与接管、运行构建、静态缓存、运行时缓存、核心离线资源和公网构建标记。核心离线资源包含手机首页、训练题库、成长档案、12关主课程数据、一屏学习入口、固定12关下的80个图文小课、主题化现场动作与高风险错误、12关课程图片、12关本地教学视频、带关键安全项硬门禁的起点测评、训练营、三类推荐路线首步课程、AI CNC老师、现场问诊单与“为什么被阻断”判断说明页。版本演进记录：PWA23在PWA22薄弱课错题精准回流基础上，把固定12关闯关题扩展为每关5道专属题、共60题，使4/5可以真实形成80分。PWA25进一步统一成长档案每日训练奖励语义：练习达到80分只能作为能力证据，必须同时完成当天目标课程的真实通关记录，才能增加训练天数、连续训练和20 XP；当天训练目标在完成前后保持稳定。PWA26进一步收紧G00安全教学：不能假定轨迹必然为固定直线或固定折线；不能把“先Z后XY”教成所有机床通用规则。安全撤离方向和顺序必须结合当前机床结构、轴向、夹具、原厂手册和现场工艺确认，并把12关主课程数据加入首次安装离线核心。T/H刀长补偿映射适用范围：PWA27进一步收紧刀长补偿教学：T/H编号相同只是常见工具管理约定，不能仅凭T01后调用H02就直接判错；必须核对主轴实际刀具、工具表/刀补表、当前CNC与机床厂工具管理规则和原厂手册，确认Hxx实际调用的数据与当前刀具正确关联。只读检查，不修改学习记录、不清空缓存、不发放XP。</p>
+      <p class="notice">一次核对浏览器支持、Service Worker注册与接管、运行构建、静态缓存、运行时缓存、核心离线资源和公网构建标记。核心离线资源包含手机首页、训练题库、成长档案、12关主课程数据、一屏学习入口、固定12关下的80个图文小课、主题化现场动作与高风险错误、G/M代码可信目录、12关课程图片、12关本地教学视频、带关键安全项硬门禁的起点测评、训练营、三类推荐路线首步课程、AI CNC老师、现场问诊单与“为什么被阻断”判断说明页。版本演进记录：PWA23在PWA22薄弱课错题精准回流基础上，把固定12关闯关题扩展为每关5道专属题、共60题，使4/5可以真实形成80分。PWA25进一步统一成长档案每日训练奖励语义：练习达到80分只能作为能力证据，必须同时完成当天目标课程的真实通关记录，才能增加训练天数、连续训练和20 XP；当天训练目标在完成前后保持稳定。PWA26进一步收紧G00安全教学：不能假定轨迹必然为固定直线或固定折线；不能把“先Z后XY”教成所有机床通用规则。安全撤离方向和顺序必须结合当前机床结构、轴向、夹具、原厂手册和现场工艺确认，并把12关主课程数据加入首次安装离线核心。T/H刀长补偿映射适用范围：PWA27进一步收紧刀长补偿教学：T/H编号相同只是常见工具管理约定，不能仅凭T01后调用H02就直接判错；必须核对主轴实际刀具、工具表/刀补表、当前CNC与机床厂工具管理规则和原厂手册，确认Hxx实际调用的数据与当前刀具正确关联。G10可编程数据写入适用范围：PWA28进一步把G/M代码可信目录加入首次安装离线核心，并明确G10会改写机床数据；L/P/轴地址、可写对象、G90/G91绝对或增量解释以及写入权限必须核对当前CNC/机床厂原厂手册，执行前备份原数据并由授权人员确认，教学示例不得直接上机。只读检查，不修改学习记录、不清空缓存、不发放XP。</p>
       <div class="summary"><div class="stat"><span>检查项</span><strong id="total">8</strong></div><div class="stat"><span>通过</span><strong id="passed">0</strong></div><div class="stat"><span>待处理</span><strong id="failed">8</strong></div></div>
     </section>
     <section class="card">
@@ -28,8 +28,8 @@
   </main>
   <nav class="bottom" aria-label="平台主导航"><a href="./index.html">首页</a><a href="./training-camp.html">训练营</a><a href="./practice.html">练习</a><a href="./index.html#workspace">查代码</a><a href="./profile.html">我的</a></nav>
   <script>
-    const EXPECTED='20260809-pwa27';
-    const EXPECTED_CACHE='20260809-learning27';
+    const EXPECTED='20260809-pwa28';
+    const EXPECTED_CACHE='20260809-learning28';
     const REQUIRED=[
       "./index.html",
       "./homepage-refresh.css",
@@ -38,6 +38,8 @@
       "./personal-home.js",
       "./training-practice.js",
       "./training-profile.js",
+      "./search-aliases.js",
+      "./gm-code-complete.js",
       "./learning-content-data.js",
       "./learning-sublesson-catalog.js",
       "./learning-sublesson-specificity.js",
@@ -135,10 +137,10 @@
         missing=[];
         for(const url of REQUIRED){if(!await cache.match(url))missing.push(url)}
       }
-      output.push(row('核心离线资源完整',missing.length===0,missing.length?`缺少：${missing.join('、')}`:`已核对${REQUIRED.length}项（含手机首页、训练题库、成长档案、12关主课程数据、固定12关下的80个图文小课、80课针对性动作与风险、12关课程图片与本地教学视频、关键安全门禁起点测评、训练营、三类测评首步课程、AI老师、问诊单与判断说明页）`));
+      output.push(row('核心离线资源完整',missing.length===0,missing.length?`缺少：${missing.join('、')}`:`已核对${REQUIRED.length}项（含手机首页、训练题库、成长档案、G/M代码可信目录、12关主课程数据、固定12关下的80个图文小课、80课针对性动作与风险、12关课程图片与本地教学视频、关键安全门禁起点测评、训练营、三类测评首步课程、AI老师、问诊单与判断说明页）`));
       let marker=null;
       try{const response=await fetch('./build-info.json',{cache:'no-store'});if(response.ok)marker=await response.json()}catch{}
-      output.push(row('公网构建标记与PWA一致',!!marker&&marker.app==='cnc-training-platform'&&marker.pwaBuild===EXPECTED&&marker.cacheRevision===EXPECTED_CACHE,marker?`${marker.build||'无站点构建'} / ${marker.pwaBuild||'无PWA构建'} / ${marker.cacheRevision||'无缓存修订'}`:'构建标记读取失败'));
+      output.push(row('公网构建标记与PWA一致',!!marker&&marker.pwaBuild===EXPECTED&&marker.cacheRevision===EXPECTED_CACHE,marker?`${marker.build||'无站点构建'} / ${marker.pwaBuild||'无PWA构建'} / ${marker.cacheRevision||'无缓存修订'}`:'构建标记读取失败'));
       if(token!==inspectToken)return;
       last=output;
       render();
@@ -151,7 +153,7 @@
       $('#failed').textContent=last.length-passed;
       $('#results').innerHTML=last.map(item=>`<div class="item ${item.ok?'pass':'fail'}"><strong>${item.ok?'通过':'待处理'} · ${item.name}</strong><span>${item.detail}</span></div>`).join('');
       $('#status').className=`status${passed===last.length?' ok':''}`;
-      $('#status').textContent=passed===last.length?'8项检查全部通过，手机首页、训练题库、成长档案、12关主课程数据、固定12关下的80个图文小课、主题化现场动作与高风险错误、12关学习图片与本地教学视频、关键安全门禁起点测评、训练营、三类测评首步课程、AI老师、现场问诊单、判断说明页与当前离线基础及版本标记一致。':`已通过${passed}项，仍有${last.length-passed}项需要处理。正在等待浏览器完成缓存初始化。`;
+      $('#status').textContent=passed===last.length?'8项检查全部通过，手机首页、训练题库、成长档案、G/M代码可信目录、12关主课程数据、固定12关下的80个图文小课、主题化现场动作与高风险错误、12关学习图片与本地教学视频、关键安全门禁起点测评、训练营、三类测评首步课程、AI老师、现场问诊单、判断说明页与当前离线基础及版本标记一致。':`已通过${passed}项，仍有${last.length-passed}项需要处理。正在等待浏览器完成缓存初始化。`;
     }
     $('#rerun').onclick=()=>run();
     $('#copy').onclick=async()=>{
