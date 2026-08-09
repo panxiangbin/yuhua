@@ -30,16 +30,22 @@ const newBlock = `    "summary": "G10可在程序中写入工件坐标、刀具�
       "授权操作"
     ]`;
 
+const g10Ids = (text.match(/"id": "kb-gcode-g10"/g) || []).length;
+if (g10Ids !== 1) {
+  throw new Error(`G10源目录条目数量异常：${g10Ids}，拒绝自动修改。`);
+}
+
 if (text.includes(newBlock)) {
   console.log('G10源目录已经是安全版本，无需再次修改。');
   process.exit(0);
 }
-if (!text.includes(oldBlock)) {
-  throw new Error('未找到预期的旧G10源目录块，拒绝模糊替换。');
+const oldOccurrences = text.split(oldBlock).length - 1;
+if (oldOccurrences !== 1) {
+  throw new Error(`预期旧G10块出现次数应为1，实际为${oldOccurrences}，拒绝模糊替换。`);
 }
 text = text.replace(oldBlock, newBlock);
 if (text.includes('G10 L2 P1 X100. Y50. 表示写入G54坐标偏置。')) {
   throw new Error('旧的无适用范围G10示例仍然存在。');
 }
 fs.writeFileSync(file, text, 'utf8');
-console.log('已直接修正gm-code-complete.js中的G10源目录。');
+console.log('已直接修正gm-code-complete.js中的唯一G10源目录。');
