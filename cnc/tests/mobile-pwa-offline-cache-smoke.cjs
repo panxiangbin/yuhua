@@ -7,8 +7,8 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const PWA_BUILD = '20260809-pwa27';
-const CACHE_REVISION = '20260809-learning27';
+const PWA_BUILD = '20260809-pwa28';
+const CACHE_REVISION = '20260809-learning28';
 const PLACEMENT_FIRST_STEP_COURSES = [
   {
     path: './course-safety-foundation.html',
@@ -43,6 +43,8 @@ const VIDEO_CORE_PATHS = [
 const CORE_OFFLINE_PATHS = [
   './training-practice.js',
   './training-profile.js',
+  './search-aliases.js',
+  './gm-code-complete.js',
   './learning-content-data.js',
   './learning-sublesson-specificity.js',
   './beginner-placement.html',
@@ -204,6 +206,26 @@ async function verifyColdOfflineCourse(page, course) {
 
     stage = 'cold-offline-beginner-placement';
     await context.setOffline(true);
+
+    stage = 'cold-offline-g10-directory';
+    const offlineGmTrust = await page.evaluate(async () => {
+      const [aliasResponse, gmResponse] = await Promise.all([
+        fetch('./search-aliases.js'),
+        fetch('./gm-code-complete.js')
+      ]);
+      return {
+        aliasesOk: aliasResponse.ok,
+        gmOk: gmResponse.ok,
+        aliasesText: await aliasResponse.text(),
+        gmText: await gmResponse.text()
+      };
+    });
+    if (!offlineGmTrust.aliasesOk || !offlineGmTrust.gmOk) throw new Error('G/M可信目录首次安装后冷离线读取失败');
+    for (const token of ['取决于CNC系统和机床厂配置', 'G90/G91下的绝对或增量解释', '原厂手册', '备份原数据', '授权人员确认', '未确认前不要上机执行']) {
+      if (!offlineGmTrust.gmText.includes(token)) throw new Error(`G10冷离线源目录缺少安全边界：${token}`);
+    }
+    if (offlineGmTrust.gmText.includes('G10 L2 P1 X100. Y50. 表示写入G54坐标偏置。')) throw new Error('G10冷离线源目录仍含无适用范围旧示例');
+    if (!offlineGmTrust.aliasesText.includes('CNC_SEARCH_ALIASES')) throw new Error('冷离线搜索别名目录内容异常');
 
     stage = 'cold-offline-video-core';
     const offlineVideoCore = await page.evaluate(async ({ build, paths }) => {

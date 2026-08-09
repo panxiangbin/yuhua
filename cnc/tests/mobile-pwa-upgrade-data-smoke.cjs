@@ -8,17 +8,17 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const CURRENT_PWA_BUILD = '20260809-pwa27';
-const PREVIOUS_PWA_BUILD = '20260809-pwa26';
-const CURRENT_CACHE_REVISION = '20260809-learning27';
-const PREVIOUS_CACHE_REVISION = '20260809-learning26';
+const CURRENT_PWA_BUILD = '20260809-pwa28';
+const PREVIOUS_PWA_BUILD = '20260809-pwa27';
+const CURRENT_CACHE_REVISION = '20260809-learning28';
+const PREVIOUS_CACHE_REVISION = '20260809-learning27';
 const CURRENT_STATIC_CACHE = `cnc-static-${CURRENT_CACHE_REVISION}`;
 const CURRENT_RUNTIME_CACHE = `cnc-runtime-${CURRENT_CACHE_REVISION}`;
 const PREVIOUS_STATIC_CACHE = `cnc-static-${PREVIOUS_CACHE_REVISION}`;
 const PREVIOUS_RUNTIME_CACHE = `cnc-runtime-${PREVIOUS_CACHE_REVISION}`;
 const UNRELATED_CACHE = 'other-app-cache-v1';
 const PLACEMENT_HANDOFF_KEY = 'cnc_beginner_placement_route_handoff_v1';
-const TRAINING_CORE_PATHS = ['./training-practice.js', './training-profile.js', './learning-content-data.js'];
+const TRAINING_CORE_PATHS = ['./training-practice.js', './training-profile.js', './search-aliases.js', './gm-code-complete.js', './learning-content-data.js'];
 const PLACEMENT_FIRST_STEP_COURSES = [
   { path: 'course-safety-foundation.html', title: '第1关 安全基础', required: ['先学会停，再学会动', '原厂手册', '授权人员'] },
   { path: 'course-coordinate-axes.html', title: '第3关 坐标轴与运动方向', required: ['坐标轴与运动方向', '原厂手册', '现场条件'] },
@@ -234,7 +234,7 @@ async function verifyColdOfflineCourse(page, course) {
         request.onsuccess = () => {
           const db = request.result;
           const transaction = db.transaction('records', 'readwrite');
-          transaction.objectStore('records').put({ xp: 680, streak: 12, source: 'pwa26' }, 'growth');
+          transaction.objectStore('records').put({ xp: 680, streak: 12, source: 'pwa27' }, 'growth');
           transaction.onerror = () => reject(transaction.error);
           transaction.oncomplete = () => {
             db.close();
