@@ -54,14 +54,14 @@ jobs:
           const sw = fs.readFileSync('cnc/sw.js', 'utf8');
           const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
           if (info.build !== '20260806-learning-depth1') throw new Error(`unexpected site build: ${info.build}`);
-          if (info.pwaBuild !== '20260809-pwa28' || info.cacheRevision !== '20260809-learning28') throw new Error(`unexpected PWA/cache build: ${info.pwaBuild}/${info.cacheRevision}`);
-          if (!sw.includes("const BUILD = '20260809-pwa28'") || !sw.includes("const CACHE_REVISION = '20260809-learning28'")) throw new Error('Service Worker build/cache mismatch');
+          if (info.pwaBuild !== '20260809-pwa29' || info.cacheRevision !== '20260809-learning29') throw new Error(`unexpected PWA/cache build: ${info.pwaBuild}/${info.cacheRevision}`);
+          if (!sw.includes("const BUILD = '20260809-pwa29'") || !sw.includes("const CACHE_REVISION = '20260809-learning29'")) throw new Error('Service Worker build/cache mismatch');
           for (const token of [
             "const expectedSiteBuild = '20260806-learning-depth1'",
-            "const expectedPwaBuild = '20260809-pwa28'",
-            "const previousPublicPwaBuild = '20260809-pwa27'",
-            "[expectedPwaBuild]: '20260809-learning28'",
-            "[previousPublicPwaBuild]: '20260809-learning27'",
+            "const expectedPwaBuild = '20260809-pwa29'",
+            "const previousPublicPwaBuild = '20260809-pwa28'",
+            "[expectedPwaBuild]: '20260809-learning29'",
+            "[previousPublicPwaBuild]: '20260809-learning28'",
             'const VIDEO_CORE = [',
             'const EXACT_CORE = [...BASE_CORE, ...VIDEO_CORE]',
             "const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE.filter(item => !['./search-aliases.js', './gm-code-complete.js'].includes(item))",
@@ -109,7 +109,7 @@ jobs:
           ]) {
             if (!sw.includes(`'${video}'`)) throw new Error(`PWA video core missing: ${video}`);
           }
-          for (const stage of ['起点测评关键安全门禁','起点测评离线核心','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','正式课程开发占位清零','AI老师学习档案异常保护','80个图文小课','80课现场动作与风险针对性','训练题库与成长档案离线核心','手机构建标记一致性','固定12关能力映射与真实薄弱课推荐','AI老师与固定12关成长档案语义一致','每日训练薄弱课错题精准回流','固定12关60题真实80分与关键题硬门禁','AI老师课程完成以真实完成记录为准','成长档案今日训练奖励以真实课程完成记录为准','G00快速定位与安全撤离适用范围','12关主课程数据首次安装离线核心','T/H刀长补偿映射适用范围','G10可编程数据写入适用范围','G/M代码首次安装离线核心']) {
+          for (const stage of ['起点测评关键安全门禁','起点测评离线核心','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','正式课程开发占位清零','AI老师学习档案异常保护','80个图文小课','80课现场动作与风险针对性','训练题库与成长档案离线核心','手机构建标记一致性','固定12关能力映射与真实薄弱课推荐','AI老师与固定12关成长档案语义一致','每日训练薄弱课错题精准回流','固定12关60题真实80分与关键题硬门禁','AI老师课程完成以真实完成记录为准','成长档案今日训练奖励以真实课程完成记录为准','G00快速定位与安全撤离适用范围','12关主课程数据首次安装离线核心','T/H刀长补偿映射适用范围','G10可编程数据写入适用范围','G/M代码首次安装离线核心','G28参考点返回适用范围']) {
             if (!String(info.contentStage || '').includes(stage)) throw new Error(`build marker missing: ${stage}`);
           }
           for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)', 'CNC_PAGES_VERIFY_ATTEMPTS || 0']) {
