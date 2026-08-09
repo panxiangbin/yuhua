@@ -111,7 +111,8 @@ jobs:
             '不能假定轨迹必然为固定直线或固定折线',
             '不能把“先Z后XY”教成所有机床通用规则',
             '12关主课程数据',
-            'T/H刀长补偿映射适用范围'
+            'T/H编号相同只是常见工具管理约定',
+            '不能仅凭T01后调用H02就直接判错'
           ]) {
             if (!status.includes(token)) throw new Error(`PWA status PWA27 explanation missing: ${token}`);
             if (!selfTest.includes(token)) throw new Error(`PWA self-test PWA27 explanation missing: ${token}`);
