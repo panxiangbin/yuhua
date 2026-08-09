@@ -45,6 +45,29 @@ for (const token of ['G10可编程数据写入适用范围', 'G/M代码首次安
   if (!String(buildInfo.contentStage || '').includes(token)) errors.push(`build-info缺少阶段标记：${token}`);
 }
 
+// 第一层：基础G/M目录本身必须已经是安全表述，不能依赖运行时覆盖去掩盖旧的危险文本。
+if (!gmText.includes('"id": "kb-gcode-g10"')) errors.push('基础G/M目录缺少G10条目');
+for (const token of [
+  '取决于CNC系统和机床厂配置',
+  'G90/G91下的绝对或增量解释',
+  '当前CNC/机床厂原厂手册',
+  '备份原数据',
+  '授权人员确认',
+  '教学示例不能直接拿到真实机床执行',
+  '未确认前不要上机执行'
+]) {
+  if (!gmText.includes(token)) errors.push(`基础G10源目录缺少安全边界：${token}`);
+}
+for (const forbidden of [
+  'G10 L2 P1 X100. Y50. 表示写入G54坐标偏置。',
+  'G10 L2 P1一定表示G54',
+  '所有FANUC都可直接使用G10 L2 P1',
+  '不需要核对原厂手册'
+]) {
+  if (gmText.includes(forbidden)) errors.push(`基础G10源目录仍含无适用范围表述：${forbidden}`);
+}
+
+// 第二层：标准页面运行时仍需保持同一安全语义，归一化器只作为防御性保护，不能成为唯一真相源。
 const sandbox = { window: {}, console: { log() {}, warn() {}, error() {} } };
 vm.createContext(sandbox);
 try {
@@ -87,14 +110,10 @@ if (!g10) {
   if (g10.risk !== '高') errors.push(`G10风险等级被降低：${g10.risk}`);
 }
 
-// 基础目录目前仍保留历史生成文本，因此门禁同时锁定：标准页面必须先加载安全归一化器，
-// 且最终暴露给用户的运行时条目不得保留旧的无适用范围结论。
-if (!gmText.includes('"id": "kb-gcode-g10"')) errors.push('基础G/M目录缺少G10条目');
-
 if (errors.length) {
   console.error('CNC G10可编程数据写入可信度门禁失败：');
   errors.forEach(error => console.error(`- ${error}`));
   process.exit(1);
 }
 
-console.log('CNC G10可编程数据写入可信度门禁通过：G10被明确限定为控制器相关的高风险数据写入，真实机床必须核对原厂手册、备份并由授权人员确认；G/M可信目录已进入PWA28首次安装核心。');
+console.log('CNC G10可编程数据写入可信度门禁通过：基础源目录与运行时条目都把G10限定为控制器相关的高风险数据写入，真实机床必须核对原厂手册、备份并由授权人员确认；G/M可信目录已进入PWA28首次安装核心。');
