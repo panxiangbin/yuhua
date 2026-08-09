@@ -17,29 +17,47 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Checkout exact branch
+      - name: Checkout current CNC branch
         uses: actions/checkout@v4
         with:
           ref: codex/cnc-g10-safe-write-boundary
           fetch-depth: 0
 
-      - name: Apply exact G10 source fix
+      - name: Apply exact G10 and PWA28 migration
         run: node cnc/tests/_tmp-g10-source-fix.cjs
 
-      - name: Commit only the intended CNC source file
+      - name: Commit only the intended CNC files
         shell: bash
         run: |
           set -euo pipefail
-          if git diff --quiet -- cnc/gm-code-complete.js; then
-            echo 'source already normalized'
+          mapfile -t changed < <(git diff --name-only)
+          if [ "${#changed[@]}" -eq 0 ]; then
+            echo 'sources already normalized'
             exit 0
           fi
-          git diff --exit-code -- . ':(exclude)cnc/gm-code-complete.js' || {
-            echo 'unexpected files changed' >&2
-            exit 1
-          }
+
+          allowed=(
+            'cnc/gm-code-complete.js'
+            'cnc/tests/mobile-pwa-offline-cache-smoke.cjs'
+            'cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs'
+            'cnc/tests/mobile-pwa-upgrade-data-smoke.cjs'
+            'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs'
+            'cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs'
+            'cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs'
+          )
+          for file in "${changed[@]}"; do
+            ok=false
+            for permitted in "${allowed[@]}"; do
+              if [ "$file" = "$permitted" ]; then ok=true; break; fi
+            done
+            if [ "$ok" != true ]; then
+              echo "unexpected file changed: $file" >&2
+              exit 1
+            fi
+          done
+
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add cnc/gm-code-complete.js
-          git commit -m 'fix(cnc-trust): 直接修正G10基础目录边界'
+          git add "${allowed[@]}"
+          git commit -m 'fix(cnc-pwa): 对齐PWA28可信目录与升级门禁'
           git push origin HEAD:codex/cnc-g10-safe-write-boundary
