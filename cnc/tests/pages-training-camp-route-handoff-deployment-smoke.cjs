@@ -9,12 +9,12 @@ fs.mkdirSync(out, { recursive: true });
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
 const expectedSiteBuild = '20260806-learning-depth1';
-const expectedPwaBuild = '20260809-pwa30';
+const expectedPwaBuild = '20260809-pwa31';
 const previousPublicSiteBuild = '20260806-learning-depth1';
-const previousPublicPwaBuild = '20260809-pwa29';
+const previousPublicPwaBuild = '20260809-pwa30';
 const cacheRevisionByBuild = {
-  [expectedPwaBuild]: '20260809-learning30',
-  [previousPublicPwaBuild]: '20260809-learning29'
+  [expectedPwaBuild]: '20260809-learning31',
+  [previousPublicPwaBuild]: '20260809-learning30'
 };
 const siteBuildByPwaBuild = {
   [expectedPwaBuild]: expectedSiteBuild,
@@ -266,7 +266,7 @@ function parseBuildInfo(text, label) {
       '成长档案今日训练奖励以真实课程完成记录为准',
       'G00快速定位与安全撤离适用范围',
       '12关主课程数据首次安装离线核心',
-      'T/H刀长补偿映射适用范围','G10可编程数据写入适用范围','G/M代码首次安装离线核心','G28参考点返回适用范围'
+      'T/H刀长补偿映射适用范围','G10可编程数据写入适用范围','G/M代码首次安装离线核心','G28参考点返回适用范围','G53机床坐标定位适用范围','G92车铣双语义适用范围'
     ]);
   }
   return data;
