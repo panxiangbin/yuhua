@@ -36,9 +36,9 @@ if (aliasPos < 0 || gmPos < 0 || aliasPos >= gmPos) {
 for (const core of ["'./search-aliases.js'", "'./gm-code-complete.js'"]) {
   if (!swText.includes(core)) errors.push(`PWA首次安装核心缺少G10可信目录依赖：${core}`);
 }
-if (!swText.includes("const BUILD = '20260809-pwa28'")) errors.push('Service Worker未升级到20260809-pwa28');
-if (!swText.includes("const CACHE_REVISION = '20260809-learning28'")) errors.push('Service Worker缓存修订未升级到20260809-learning28');
-if (buildInfo.pwaBuild !== '20260809-pwa28' || buildInfo.cacheRevision !== '20260809-learning28') {
+if (!swText.includes("const BUILD = '20260809-pwa29'")) errors.push('Service Worker未升级到20260809-pwa29');
+if (!swText.includes("const CACHE_REVISION = '20260809-learning29'")) errors.push('Service Worker缓存修订未升级到20260809-learning29');
+if (buildInfo.pwaBuild !== '20260809-pwa29' || buildInfo.cacheRevision !== '20260809-learning29') {
   errors.push(`build-info与PWA28不一致：${buildInfo.pwaBuild} / ${buildInfo.cacheRevision}`);
 }
 for (const token of ['G10可编程数据写入适用范围', 'G/M代码首次安装离线核心']) {
@@ -78,7 +78,7 @@ try {
 }
 
 const guard = sandbox.window.CNC_GM_CONTENT_SAFETY;
-if (!guard || guard.version !== 'g10-boundary-1') errors.push('G10内容安全归一化器未安装或版本异常');
+if (!guard || guard.version !== 'g10-g28-boundary-2') errors.push('G10内容安全归一化器未安装或版本异常');
 const catalog = sandbox.window.CNC_GM_CODES;
 const g10 = Array.isArray(catalog) ? catalog.find(item => item && item.id === 'kb-gcode-g10') : null;
 if (!g10) {

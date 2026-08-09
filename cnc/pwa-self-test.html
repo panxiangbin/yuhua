@@ -25,11 +25,12 @@
       <div class="actions" style="margin-top:12px"><button class="btn" id="rerun" type="button">重新运行自检</button><button class="btn alt" id="copy" type="button">复制诊断报告</button></div>
       <p class="notice">离线内容可能不是最新版本。起点测评只推荐学习路线，关键安全项高分不能抵消危险答案，也不是现场放行结论；报警、参数、刀补和现场操作仍须核对机床原厂手册、企业安全制度和现场条件，高风险操作须现场师傅或授权人员指导。</p>
     </section>
-  </main>
+  <p class="pwa-note" data-contract="g28-reference-return-boundary"><strong>G28参考点返回适用范围：</strong>G28属于高风险自动运动；G90/G91下中间位置的绝对或增量解释、参考点状态、轴方向与顺序及安全路径必须核对当前CNC和机床厂原厂手册，并确认刀具、刀柄、工件、夹具在完整计划运动空间内都有安全间隙，按现场工艺和授权操作规程验证。不要把G91 G28 Z0或固定“先Z后XY”当成通用防撞规则。</p>
+</main>
   <nav class="bottom" aria-label="平台主导航"><a href="./index.html">首页</a><a href="./training-camp.html">训练营</a><a href="./practice.html">练习</a><a href="./index.html#workspace">查代码</a><a href="./profile.html">我的</a></nav>
   <script>
-    const EXPECTED='20260809-pwa28';
-    const EXPECTED_CACHE='20260809-learning28';
+    const EXPECTED='20260809-pwa29';
+    const EXPECTED_CACHE='20260809-learning29';
     const REQUIRED=[
       "./index.html",
       "./homepage-refresh.css",

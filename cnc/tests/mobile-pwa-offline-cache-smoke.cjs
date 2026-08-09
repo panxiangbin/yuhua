@@ -7,8 +7,8 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const PWA_BUILD = '20260809-pwa28';
-const CACHE_REVISION = '20260809-learning28';
+const PWA_BUILD = '20260809-pwa29';
+const CACHE_REVISION = '20260809-learning29';
 const PLACEMENT_FIRST_STEP_COURSES = [
   {
     path: './course-safety-foundation.html',
@@ -225,6 +225,12 @@ async function verifyColdOfflineCourse(page, course) {
       if (!offlineGmTrust.gmText.includes(token)) throw new Error(`G10冷离线源目录缺少安全边界：${token}`);
     }
     if (offlineGmTrust.gmText.includes('G10 L2 P1 X100. Y50. 表示写入G54坐标偏置。')) throw new Error('G10冷离线源目录仍含无适用范围旧示例');
+    for (const token of ['高风险自动运动', 'G90/G91', '绝对或增量解释', '当前CNC和机床厂原厂手册', '刀具', '刀柄', '工件', '夹具', '完整计划运动空间', '授权操作规程']) {
+      if (!offlineGmTrust.gmText.includes(token)) throw new Error(`G28冷离线源目录缺少安全边界：${token}`);
+    }
+    for (const forbidden of ['G28常配合G91 Z0先回Z，减少撞机。', '必须先Z后XY', 'G91 G28 Z0一定安全']) {
+      if (offlineGmTrust.gmText.includes(forbidden)) throw new Error(`G28冷离线源目录仍含无适用范围防撞表述：${forbidden}`);
+    }
     if (!offlineGmTrust.aliasesText.includes('CNC_SEARCH_ALIASES')) throw new Error('冷离线搜索别名目录内容异常');
 
     stage = 'cold-offline-video-core';
