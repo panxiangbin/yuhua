@@ -17,7 +17,8 @@ const errors = [];
 
 for (const token of [
   'G/M 代码目录来自大批量生成的基础表',
-  '只修正会直接改写机床数据的 G10 教学边界',
+  '作为第二层防御保持G10/G28/G53/G92边界一致',
+  'function normalizeG10(entry)',
   '当前CNC/机床厂原厂手册',
   '备份原数据',
   '授权人员确认',
@@ -36,10 +37,10 @@ if (aliasPos < 0 || gmPos < 0 || aliasPos >= gmPos) {
 for (const core of ["'./search-aliases.js'", "'./gm-code-complete.js'"]) {
   if (!swText.includes(core)) errors.push(`PWA首次安装核心缺少G10可信目录依赖：${core}`);
 }
-if (!swText.includes("const BUILD = '20260809-pwa30'")) errors.push('Service Worker未升级到20260809-pwa30');
-if (!swText.includes("const CACHE_REVISION = '20260809-learning30'")) errors.push('Service Worker缓存修订未升级到20260809-learning30');
-if (buildInfo.pwaBuild !== '20260809-pwa30' || buildInfo.cacheRevision !== '20260809-learning30') {
-  errors.push(`build-info与PWA28不一致：${buildInfo.pwaBuild} / ${buildInfo.cacheRevision}`);
+if (!swText.includes("const BUILD = '20260809-pwa31'")) errors.push('Service Worker未升级到20260809-pwa31');
+if (!swText.includes("const CACHE_REVISION = '20260809-learning31'")) errors.push('Service Worker缓存修订未升级到20260809-learning31');
+if (buildInfo.pwaBuild !== '20260809-pwa31' || buildInfo.cacheRevision !== '20260809-learning31') {
+  errors.push(`build-info与PWA31不一致：${buildInfo.pwaBuild} / ${buildInfo.cacheRevision}`);
 }
 for (const token of ['G10可编程数据写入适用范围', 'G/M代码首次安装离线核心']) {
   if (!String(buildInfo.contentStage || '').includes(token)) errors.push(`build-info缺少阶段标记：${token}`);
@@ -78,7 +79,9 @@ try {
 }
 
 const guard = sandbox.window.CNC_GM_CONTENT_SAFETY;
-if (!guard || guard.version !== 'g10-g28-g53-boundary-3') errors.push('G10内容安全归一化器未安装或版本异常');
+if (!guard || guard.version !== 'g10-g28-g53-g92-boundary-4' || typeof guard.normalizeG10 !== 'function') {
+  errors.push('G10/G28/G53/G92内容安全归一化器未安装、版本异常或缺少normalizeG10');
+}
 const catalog = sandbox.window.CNC_GM_CODES;
 const g10 = Array.isArray(catalog) ? catalog.find(item => item && item.id === 'kb-gcode-g10') : null;
 if (!g10) {
@@ -116,4 +119,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log('CNC G10可编程数据写入可信度门禁通过：基础源目录与运行时条目都把G10限定为控制器相关的高风险数据写入，真实机床必须核对原厂手册、备份并由授权人员确认；G/M可信目录已进入PWA28首次安装核心。');
+console.log('CNC G10可编程数据写入可信度门禁通过：基础源目录与运行时条目都把G10限定为控制器相关的高风险数据写入，真实机床必须核对原厂手册、备份并由授权人员确认；G/M可信目录在PWA31首次安装离线核心中继续受保护。');
