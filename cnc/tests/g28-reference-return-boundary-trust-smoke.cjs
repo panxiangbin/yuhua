@@ -24,10 +24,10 @@ if (aliasPos < 0 || gmPos < 0 || aliasPos >= gmPos) {
 for (const core of ["'./search-aliases.js'", "'./gm-code-complete.js'"]) {
   if (!swText.includes(core)) errors.push(`PWA首次安装核心缺少G28可信目录依赖：${core}`);
 }
-if (!swText.includes("const BUILD = '20260809-pwa30'")) errors.push('Service Worker未升级到20260809-pwa30');
-if (!swText.includes("const CACHE_REVISION = '20260809-learning30'")) errors.push('Service Worker缓存修订未升级到20260809-learning30');
-if (buildInfo.pwaBuild !== '20260809-pwa30' || buildInfo.cacheRevision !== '20260809-learning30') {
-  errors.push(`build-info与PWA29不一致：${buildInfo.pwaBuild} / ${buildInfo.cacheRevision}`);
+if (!swText.includes("const BUILD = '20260809-pwa31'")) errors.push('Service Worker未升级到20260809-pwa31');
+if (!swText.includes("const CACHE_REVISION = '20260809-learning31'")) errors.push('Service Worker缓存修订未升级到20260809-learning31');
+if (buildInfo.pwaBuild !== '20260809-pwa31' || buildInfo.cacheRevision !== '20260809-learning31') {
+  errors.push(`build-info与PWA31不一致：${buildInfo.pwaBuild} / ${buildInfo.cacheRevision}`);
 }
 if (!String(buildInfo.contentStage || '').includes('G28参考点返回适用范围')) {
   errors.push('build-info缺少G28参考点返回适用范围阶段标记');
@@ -74,8 +74,8 @@ try {
 }
 
 const guard = sandbox.window.CNC_GM_CONTENT_SAFETY;
-if (!guard || guard.version !== 'g10-g28-g53-boundary-3' || typeof guard.normalizeG28 !== 'function') {
-  errors.push('G10/G28内容安全归一化器未安装、版本异常或缺少normalizeG28');
+if (!guard || guard.version !== 'g10-g28-g53-g92-boundary-4' || typeof guard.normalizeG28 !== 'function') {
+  errors.push('G10/G28/G53/G92内容安全归一化器未安装、版本异常或缺少normalizeG28');
 }
 const catalog = sandbox.window.CNC_GM_CODES;
 const g28 = Array.isArray(catalog) ? catalog.find(item => item && item.id === 'kb-gcode-g28') : null;
@@ -115,4 +115,4 @@ if (errors.length) {
   errors.forEach(error => console.error(`- ${error}`));
   process.exit(1);
 }
-console.log('CNC G28参考点返回可信度门禁通过：G28被限定为控制器/机床相关的高风险自动运动；G90/G91、中间位置、轴向与完整运动空间必须按本机原厂手册和现场授权规程核对，G91 G28 Z0或先Z后XY不得作为通用防撞保证。');
+console.log('CNC G28参考点返回可信度门禁通过：G28被限定为控制器/机床相关的高风险自动运动；G90/G91、中间位置、轴向与完整运动空间必须按本机原厂手册和现场授权规程核对，G91 G28 Z0或先Z后XY不得作为通用防撞保证；当前PWA31仍保留该边界。');
