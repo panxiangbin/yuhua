@@ -47,8 +47,8 @@ window.CNC_SEARCH_ALIASES = [
   { term: '为什么要回零', expands: ['回零意义', '参考点', '开机流程'], category: '新手' }
 ];
 
-// G/M 代码目录来自大批量生成的基础表。这里在目录载入前安装一个高风险内容归一化器，
-// 只修正会直接改写机床数据的 G10 教学边界，避免把某一种控制器格式教成跨机床通用规则。
+// G/M 代码目录来自大批量生成的基础表。这里在目录载入前安装高风险内容归一化器，
+// 作为第二层防御保持G10/G28/G53/G92边界一致；基础源本身仍必须通过独立可信度门禁。
 (function installGmContentSafetyGuard() {
   var gmCodesValue;
 
@@ -90,9 +90,23 @@ window.CNC_SEARCH_ALIASES = [
     });
   }
 
+  function normalizeG92(entry) {
+    if (!entry || entry.id !== 'kb-gcode-g92') return entry;
+    return Object.assign({}, entry, {
+      title: 'G92 坐标偏移/车床螺纹循环',
+      summary: 'G92不是跨机型同一含义：在部分铣床/加工中心控制器中用于工作坐标系偏移或坐标设定相关功能；在部分车床控制器中则是螺纹车削循环。具体语义、模态状态和地址格式必须按当前CNC与机床厂原厂手册确认。',
+      usage: '只有先确认当前机型、控制器和G92组别后再使用。铣削坐标类用法需核对当前工件坐标系、已有G52/G54-G59等偏移以及设定/清除规则；车床螺纹循环需核对起始位置、X/Z或U/W、I/Q/F等地址解释、主轴与进给同步、退刀或倒角设置及完整运动空间。',
+      beginner: '看到G92先问：这是哪台机床、哪种控制器，当前是铣削坐标功能还是车床螺纹循环？两类程序不能直接互抄。',
+      warning: 'G92在不同CNC上可能改变后续坐标解释，也可能直接进入螺纹切削循环；组别、模态性、清除方式和地址含义并不统一。上机前必须核对当前CNC和机床厂原厂手册，确认坐标偏移、刀补与现有G52/G54-G59状态，或确认螺纹参数、起始位置、主轴同步和安全退刀空间；先在仿真、图形检查或受控单段条件下验证，教学示例不得直接作为真实机床参数。',
+      example: '教学格式示意：部分车床系统中G92 X... Z... F...可表示简单螺纹循环；部分铣床/加工中心系统中G92 X...则用于坐标偏移或设定相关功能。两者语义不同，X/Z/U/W/I/Q/F、模态状态和清除方式必须逐项以本机原厂手册为准。',
+      risk: '高',
+      tags: ['G92','车铣差异','坐标偏移','螺纹循环','原厂手册','主轴同步']
+    });
+  }
+
   function normalizeCatalog(value) {
     if (!Array.isArray(value)) return value;
-    return value.map(function (entry) { return normalizeG53(normalizeG28(normalizeG10(entry))); });
+    return value.map(function (entry) { return normalizeG92(normalizeG53(normalizeG28(normalizeG10(entry)))); });
   }
 
   Object.defineProperty(window, 'CNC_GM_CODES', {
@@ -103,10 +117,11 @@ window.CNC_SEARCH_ALIASES = [
   });
 
   window.CNC_GM_CONTENT_SAFETY = {
-    version: 'g10-g28-g53-boundary-3',
+    version: 'g10-g28-g53-g92-boundary-4',
     normalizeG10: normalizeG10,
     normalizeG28: normalizeG28,
     normalizeG53: normalizeG53,
+    normalizeG92: normalizeG92,
     normalizeCatalog: normalizeCatalog
   };
 })();
