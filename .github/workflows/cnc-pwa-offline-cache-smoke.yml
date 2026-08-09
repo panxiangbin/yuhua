@@ -53,10 +53,10 @@ jobs:
           const swCacheRevision = sw.match(/const CACHE_REVISION = '([^']+)'/)?.[1];
           if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
           if (swCacheRevision !== info.cacheRevision) throw new Error(`Service Worker/build-info cache mismatch: ${swCacheRevision} / ${info.cacheRevision}`);
-          if (info.pwaBuild !== '20260809-pwa30') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
-          if (info.cacheRevision !== '20260809-learning30') throw new Error(`unexpected cache revision: ${info.cacheRevision}`);
-          if (!test.includes("const PWA_BUILD = '20260809-pwa30'")) throw new Error('offline browser PWA build mismatch');
-          if (!test.includes("const CACHE_REVISION = '20260809-learning30'")) throw new Error('offline browser cache revision mismatch');
+          if (info.pwaBuild !== '20260809-pwa31') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
+          if (info.cacheRevision !== '20260809-learning31') throw new Error(`unexpected cache revision: ${info.cacheRevision}`);
+          if (!test.includes("const PWA_BUILD = '20260809-pwa31'")) throw new Error('offline browser PWA build mismatch');
+          if (!test.includes("const CACHE_REVISION = '20260809-learning31'")) throw new Error('offline browser cache revision mismatch');
           for (const file of [
             './training-practice.js',
             './training-profile.js',
@@ -109,6 +109,7 @@ jobs:
             'trainingProfileColdOfflineCore: true',
             'mainLearningContentColdOfflineCore: true',
             'toolOffsetMappingTrustColdOffline: true',
+            'g92DualSemanticTrustColdOffline: true',
             'learningVideosColdOfflineCore: true',
             'learningVideoCorePaths: VIDEO_CORE_PATHS',
             'learningVideoCoreResponses: offlineVideoCore',
@@ -124,6 +125,17 @@ jobs:
             '当前CNC和机床厂原厂手册',
             '完整计划运动空间',
             'G28冷离线源目录缺少安全边界',
+            "stage = 'cold-offline-g92-directory'",
+            'G92冷离线源目录缺少双语义安全边界',
+            '车铣差异',
+            '部分铣床/加工中心',
+            '部分车床',
+            'G52/G54-G59',
+            'X/Z或U/W',
+            'I/Q/F',
+            '主轴同步',
+            '安全退刀空间',
+            '两类程序不能直接互抄',
             "stage = 'cold-offline-main-learning-content'",
             "stage = 'cold-offline-video-core'",
             "'.mp4': 'video/mp4'",
@@ -133,7 +145,7 @@ jobs:
             '工具表/刀补表',
             'explainabilityColdOffline: true'
           ]) if (!test.includes(token)) throw new Error(`offline diagnostics missing: ${token}`);
-          for (const stage of ['起点测评关键安全门禁','起点测评离线核心','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','AI老师离线核心','正式课程开发占位清零','AI老师学习档案异常保护','80个图文小课','学习目录紧凑布局','80课现场动作与风险针对性','训练题库与成长档案离线核心','手机构建标记一致性','固定12关能力映射与真实薄弱课推荐','AI老师与固定12关成长档案语义一致','每日训练薄弱课错题精准回流','固定12关60题真实80分与关键题硬门禁','AI老师课程完成以真实完成记录为准','成长档案今日训练奖励以真实课程完成记录为准','G00快速定位与安全撤离适用范围','12关主课程数据首次安装离线核心','T/H刀长补偿映射适用范围','G10可编程数据写入适用范围','G/M代码首次安装离线核心','G28参考点返回适用范围','G53机床坐标定位适用范围']) {
+          for (const stage of ['起点测评关键安全门禁','起点测评离线核心','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','AI老师离线核心','正式课程开发占位清零','AI老师学习档案异常保护','80个图文小课','学习目录紧凑布局','80课现场动作与风险针对性','训练题库与成长档案离线核心','手机构建标记一致性','固定12关能力映射与真实薄弱课推荐','AI老师与固定12关成长档案语义一致','每日训练薄弱课错题精准回流','固定12关60题真实80分与关键题硬门禁','AI老师课程完成以真实完成记录为准','成长档案今日训练奖励以真实课程完成记录为准','G00快速定位与安全撤离适用范围','12关主课程数据首次安装离线核心','T/H刀长补偿映射适用范围','G10可编程数据写入适用范围','G/M代码首次安装离线核心','G28参考点返回适用范围','G53机床坐标定位适用范围','G92车铣双语义适用范围']) {
             if (!String(info.contentStage || '').includes(stage)) throw new Error(`build marker missing: ${stage}`);
           }
           NODE
