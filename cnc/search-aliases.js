@@ -15,34 +15,70 @@ window.CNC_SEARCH_ALIASES = [
   { term: '刀长', expands: ['G43', 'G44', '刀长补偿', 'H代码'], category: 'G代码' },
   { term: '钻孔', expands: ['G81', 'G83', '钻孔循环', '啄钻'], category: 'G代码' },
   { term: '攻丝', expands: ['G84', '攻牙', '螺纹加工'], category: 'G代码' },
-  
+
   // M代码类
   { term: 'M3', expands: ['M03', '主轴正转', '顺时针'], category: 'M代码' },
   { term: 'M5', expands: ['M05', '主轴停止'], category: 'M代码' },
   { term: 'M6', expands: ['M06', '换刀', 'ATC'], category: 'M代码' },
   { term: '主轴', expands: ['M03', 'M04', 'M05', '主轴控制'], category: 'M代码' },
-  
+
   // 报警/故障类
   { term: '撞机', expands: ['撞刀', '碰撞', '安全路径', 'G00风险'], category: '故障' },
   { term: '撞刀', expands: ['防撞', '刀具碰撞', '安全高度'], category: '故障' },
   { term: '伺服报警', expands: ['伺服故障', '轴报警', 'SV报警'], category: '报警' },
   { term: '超程', expands: ['超程报警', '限位', 'OT报警', '释放'], category: '报警' },
-  
+
   // 对刀/坐标类
   { term: '对刀', expands: ['对刀流程', '寻边器', '试切法', 'G54'], category: '操作' },
   { term: '工件零点', expands: ['G54', '工件坐标系', '对刀'], category: '操作' },
   { term: '回零', expands: ['参考点', 'G28', '开机回零'], category: '操作' },
   { term: '分中', expands: ['寻边器', '对刀', '工件中心'], category: '操作' },
-  
+
   // 工艺/刀具类
   { term: '攻丝底孔', expands: ['底孔直径', '螺纹底孔', '攻牙参数'], category: '工艺' },
   { term: '底孔', expands: ['攻丝底孔', '螺纹底孔直径'], category: '工艺' },
   { term: '顺铣', expands: ['顺铣逆铣', '铣削方向', '切削力'], category: '工艺' },
   { term: '逆铣', expands: ['顺铣逆铣', '铣削方向'], category: '工艺' },
   { term: '铝件', expands: ['铝合金', '6061', '7075', '高速加工'], category: '材料' },
-  
+
   // 新手口语问法
   { term: '主轴转速怎么算', expands: ['转速计算', 'Vc', 'RPM', '公式'], category: '新手' },
   { term: '怎么对刀', expands: ['对刀流程', '寻边器', '试切法'], category: '新手' },
   { term: '为什么要回零', expands: ['回零意义', '参考点', '开机流程'], category: '新手' }
 ];
+
+// G/M 代码目录来自大批量生成的基础表。这里在目录载入前安装一个高风险内容归一化器，
+// 只修正会直接改写机床数据的 G10 教学边界，避免把某一种控制器格式教成跨机床通用规则。
+(function installGmContentSafetyGuard() {
+  var gmCodesValue;
+
+  function normalizeG10(entry) {
+    if (!entry || entry.id !== 'kb-gcode-g10') return entry;
+    return Object.assign({}, entry, {
+      summary: 'G10可在程序中写入工件坐标、刀具补偿或其它受当前控制器支持的数据；可写对象与格式取决于CNC系统和机床厂配置。',
+      usage: '仅在已经确认本机支持的G10格式、目标数据区、写入方式与权限后，用于受控设置或批量初始化。',
+      beginner: '把G10理解成“会改机床数据的写入指令”。先确认写什么、写到哪里、当前是绝对还是增量解释，再考虑是否允许执行。',
+      warning: 'L/P/轴地址、可写对象、G90/G91下的绝对或增量解释以及写入权限会因控制系统和机床厂配置不同而变化。执行前必须核对当前CNC/机床厂原厂手册和现场工艺，备份原数据，并由授权人员确认；教学示例不能直接拿到真实机床执行。',
+      example: '教学示例：在部分明确支持该格式的控制系统中，G10 L2 P1 ... 可用于工件坐标相关数据写入；L2、P1、轴地址以及G90/G91下的解释必须逐项以本机原厂手册为准。未确认前不要上机执行。',
+      tags: ['G10', '可编程数据输入', '坐标写入', '刀补', '原厂手册', '授权操作']
+    });
+  }
+
+  function normalizeCatalog(value) {
+    if (!Array.isArray(value)) return value;
+    return value.map(normalizeG10);
+  }
+
+  Object.defineProperty(window, 'CNC_GM_CODES', {
+    configurable: true,
+    enumerable: true,
+    get: function () { return gmCodesValue; },
+    set: function (value) { gmCodesValue = normalizeCatalog(value); }
+  });
+
+  window.CNC_GM_CONTENT_SAFETY = {
+    version: 'g10-boundary-1',
+    normalizeG10: normalizeG10,
+    normalizeCatalog: normalizeCatalog
+  };
+})();
