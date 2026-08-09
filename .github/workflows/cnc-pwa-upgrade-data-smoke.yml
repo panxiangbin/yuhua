@@ -52,16 +52,17 @@ jobs:
           const swCacheRevision = sw.match(/const CACHE_REVISION = '([^']+)'/)?.[1];
           if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
           if (swCacheRevision !== info.cacheRevision) throw new Error(`Service Worker/build-info cache mismatch: ${swCacheRevision} / ${info.cacheRevision}`);
-          if (info.pwaBuild !== '20260809-pwa26') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
-          if (info.cacheRevision !== '20260809-learning26') throw new Error(`unexpected cache revision: ${info.cacheRevision}`);
+          if (info.pwaBuild !== '20260809-pwa27') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
+          if (info.cacheRevision !== '20260809-learning27') throw new Error(`unexpected cache revision: ${info.cacheRevision}`);
           if (!test.includes(`const CURRENT_PWA_BUILD = '${info.pwaBuild}'`)) throw new Error('upgrade test current PWA build mismatch');
           if (!test.includes(`const CURRENT_CACHE_REVISION = '${info.cacheRevision}'`)) throw new Error('upgrade test current cache revision mismatch');
           for (const required of [
-            "const PREVIOUS_PWA_BUILD = '20260809-pwa25'",
-            "const PREVIOUS_CACHE_REVISION = '20260809-learning25'",
+            "const PREVIOUS_PWA_BUILD = '20260809-pwa26'",
+            "const PREVIOUS_CACHE_REVISION = '20260809-learning26'",
             "const TRAINING_CORE_PATHS = ['./training-practice.js', './training-profile.js', './learning-content-data.js']",
             'trainingCoreStaticCacheReady: true',
             'mainLearningContentColdOfflineAfterUpgrade: true',
+            'toolOffsetMappingColdOfflineAfterUpgrade: true',
             "stage = 'cold-offline-main-learning-content-after-upgrade'",
             'cnc_training_profile_v1',
             'cnc_training_practice_v1',
@@ -86,6 +87,8 @@ jobs:
             'explainabilityColdOfflineAfterUpgrade: true',
             '不能把“先Z后XY”当成所有机床通用规则',
             '固定直线或固定折线',
+            'T/H 数字相同是常见约定，不是所有机床都必须遵守的硬规则',
+            '不能仅凭 T01 M06 后使用 G43 H02 就直接判错',
             'function assertControlledPracticeMigration',
             'localStorageByteExactImmediatelyAfterWorkerUpgrade: true',
             'nonPracticeLocalStorageByteExactAfterOfflineNavigation: true',
@@ -104,7 +107,7 @@ jobs:
           if (!sw.includes("name.startsWith('cnc-')") || !sw.includes('name !== STATIC_CACHE && name !== RUNTIME_CACHE')) {
             throw new Error('Service Worker old CNC cache cleanup contract missing');
           }
-          for (const stage of ['测评首步课程离线核心','正式课程开发占位清零','AI老师学习档案异常保护','80个图文小课','训练题库与成长档案离线核心','手机构建标记一致性','固定12关能力映射与真实薄弱课推荐','AI老师与固定12关成长档案语义一致','每日训练薄弱课错题精准回流','固定12关60题真实80分与关键题硬门禁','AI老师课程完成以真实完成记录为准','成长档案今日训练奖励以真实课程完成记录为准','G00快速定位与安全撤离适用范围','12关主课程数据首次安装离线核心']) {
+          for (const stage of ['测评首步课程离线核心','正式课程开发占位清零','AI老师学习档案异常保护','80个图文小课','训练题库与成长档案离线核心','手机构建标记一致性','固定12关能力映射与真实薄弱课推荐','AI老师与固定12关成长档案语义一致','每日训练薄弱课错题精准回流','固定12关60题真实80分与关键题硬门禁','AI老师课程完成以真实完成记录为准','成长档案今日训练奖励以真实课程完成记录为准','G00快速定位与安全撤离适用范围','12关主课程数据首次安装离线核心','T/H刀长补偿映射适用范围']) {
             if (!String(info.contentStage || '').includes(stage)) throw new Error(`build marker missing: ${stage}`);
           }
           for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)']) {
