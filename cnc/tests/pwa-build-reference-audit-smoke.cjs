@@ -8,11 +8,13 @@ const OUTPUT_DIR = path.join(ROOT, 'cnc', 'test-results', 'pwa-build-reference-a
 const OUTPUT_PATH = path.join(OUTPUT_DIR, 'report.json');
 const PWA_VERSION_RE = /\b2026\d{4}-pwa\d+\b/g;
 const PWA_VERSION_FORMAT = /^2026\d{4}-pwa\d+$/;
+const CACHE_REVISION_FORMAT = /^2026\d{4}-learning\d+$/;
 
 const CURRENT_PIN_SPECS = [
   { file: 'cnc/sw.js', label: 'Service Worker缓存构建', pattern: /\bconst\s+BUILD\s*=\s*['"](2026\d{4}-pwa\d+)['"]/ },
   { file: 'cnc/pwa-status.html', label: 'PWA状态页期望构建', pattern: /\bconst\s+EXPECTED\s*=\s*['"](2026\d{4}-pwa\d+)['"]/ },
   { file: 'cnc/pwa-self-test.html', label: 'PWA自检页期望构建', pattern: /\bconst\s+EXPECTED\s*=\s*['"](2026\d{4}-pwa\d+)['"]/ },
+  { file: 'cnc/MOBILE_LEARNING_MEDIA_PROGRESS.md', label: '学习媒体进度受控目标', pattern: /当前受控目标版本\s+`(2026\d{4}-pwa\d+)\s*\/\s*2026\d{4}-learning\d+`/ },
   { file: 'cnc/tests/mobile-pwa-offline-cache-smoke.cjs', label: '冷离线浏览器门禁', pattern: /\bconst\s+PWA_BUILD\s*=\s*['"](2026\d{4}-pwa\d+)['"]/ },
   { file: 'cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs', label: 'BFCache浏览器门禁', pattern: /\bconst\s+PWA_BUILD\s*=\s*['"](2026\d{4}-pwa\d+)['"]/ },
   { file: 'cnc/tests/mobile-pwa-upgrade-data-smoke.cjs', label: '升级数据保护当前构建', pattern: /\bconst\s+CURRENT_PWA_BUILD\s*=\s*['"](2026\d{4}-pwa\d+)['"]/ },
@@ -20,6 +22,11 @@ const CURRENT_PIN_SPECS = [
   { file: 'cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs', label: '起点测评离线Pages目标', pattern: /\bconst\s+branchTargetPwaBuild\s*=\s*['"](2026\d{4}-pwa\d+)['"]/ },
   { file: 'cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs', label: '训练营路线Pages目标', pattern: /\bconst\s+expectedPwaBuild\s*=\s*['"](2026\d{4}-pwa\d+)['"]/ }
 ];
+
+const MEDIA_PROGRESS_SPEC = {
+  file: 'cnc/MOBILE_LEARNING_MEDIA_PROGRESS.md',
+  pattern: /当前受控目标版本\s+`(2026\d{4}-pwa\d+)\s*\/\s*(2026\d{4}-learning\d+)`/
+};
 
 const DECLARED_LEGACY_REFERENCES = [
   {
@@ -94,7 +101,17 @@ function referenceScope(file) {
 function main() {
   const info = JSON.parse(readText('cnc/build-info.json'));
   const current = String(info.pwaBuild || '');
+  const currentCacheRevision = String(info.cacheRevision || '');
   if (!PWA_VERSION_FORMAT.test(current)) fail(`build-info PWA构建格式无效：${current}`);
+  if (!CACHE_REVISION_FORMAT.test(currentCacheRevision)) fail(`build-info缓存修订格式无效：${currentCacheRevision}`);
+
+  const mediaProgressSource = readText(MEDIA_PROGRESS_SPEC.file);
+  const mediaTargetMatch = mediaProgressSource.match(MEDIA_PROGRESS_SPEC.pattern);
+  if (!mediaTargetMatch) fail('学习媒体进度文档缺少“当前受控目标版本 PWA / learning”声明');
+  const mediaTarget = { file: MEDIA_PROGRESS_SPEC.file, pwaBuild: mediaTargetMatch[1], cacheRevision: mediaTargetMatch[2] };
+  if (mediaTarget.pwaBuild !== current || mediaTarget.cacheRevision !== currentCacheRevision) {
+    fail(`学习媒体进度目标漂移：${mediaTarget.pwaBuild}/${mediaTarget.cacheRevision}，期望${current}/${currentCacheRevision}`);
+  }
 
   const previousPin = readPin(PREVIOUS_PIN_SPEC);
   const previous = previousPin.version;
@@ -140,7 +157,9 @@ function main() {
     generatedAt: new Date().toISOString(),
     commitSha: process.env.GITHUB_SHA || null,
     currentPwaBuild: current,
+    currentCacheRevision,
     previousPwaBuild: previous,
+    mediaTarget,
     allowedVersions: [...allowedVersions],
     scannedFileCount: scanFiles.length,
     referenceCount: references.length,
@@ -174,7 +193,7 @@ function main() {
     fail(`发现未声明的运行中PWA构建引用：${unexpectedReferences.map(item => `${item.file}:${item.line}=${item.version}`).join('、')}`);
   }
 
-  console.log(`CNC PWA构建引用审计通过：${currentPins.length}处当前构建针=${current}，上一版本=${previous}，运行引用${operationalReferences.length}处，受控历史引用${legacyReferences.length}处。`);
+  console.log(`CNC PWA构建引用审计通过：${currentPins.length}处当前构建针=${current}，缓存修订=${currentCacheRevision}，上一版本=${previous}，运行引用${operationalReferences.length}处，受控历史引用${legacyReferences.length}处。`);
 }
 
 try {
