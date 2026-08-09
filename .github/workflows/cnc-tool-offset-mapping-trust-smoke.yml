@@ -1,0 +1,57 @@
+name: CNC tool offset mapping trust smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/learning-content-data.js'
+      - 'cnc/gm-code-complete.js'
+      - 'cnc/tests/tool-offset-mapping-trust-smoke.cjs'
+      - '.github/workflows/cnc-tool-offset-mapping-trust-smoke.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'cnc/learning-content-data.js'
+      - 'cnc/gm-code-complete.js'
+      - 'cnc/tests/tool-offset-mapping-trust-smoke.cjs'
+      - '.github/workflows/cnc-tool-offset-mapping-trust-smoke.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  trust:
+    name: Verify T/H tool length mapping scope
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Verify exact checked-out SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "testedHead=$(git rev-parse HEAD)"
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "eventHead=${{ github.event.pull_request.head.sha }}"
+          else
+            echo "eventHead=${{ github.sha }}"
+          fi
+
+      - name: Run T/H mapping trust gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          node cnc/tests/tool-offset-mapping-trust-smoke.cjs
+
+      - name: Reject disabled trust checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -nE 'test\.skip\(|describe\.skip\(|it\.skip\(|process\.exit\(0\)' cnc/tests/tool-offset-mapping-trust-smoke.cjs; then
+            echo 'Dedicated trust gate contains disabled/bypass pattern.' >&2
+            exit 1
+          fi

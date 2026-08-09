@@ -9,12 +9,12 @@ fs.mkdirSync(out, { recursive: true });
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
 const expectedSiteBuild = '20260806-learning-depth1';
-const expectedPwaBuild = '20260809-pwa26';
+const expectedPwaBuild = '20260809-pwa27';
 const previousPublicSiteBuild = '20260806-learning-depth1';
-const previousPublicPwaBuild = '20260809-pwa25';
+const previousPublicPwaBuild = '20260809-pwa26';
 const cacheRevisionByBuild = {
-  [expectedPwaBuild]: '20260809-learning26',
-  [previousPublicPwaBuild]: '20260809-learning25'
+  [expectedPwaBuild]: '20260809-learning27',
+  [previousPublicPwaBuild]: '20260809-learning26'
 };
 const siteBuildByPwaBuild = {
   [expectedPwaBuild]: expectedSiteBuild,
@@ -42,7 +42,7 @@ const VIDEO_CORE = [
   './assets/videos/learning/stage12_first_part.mp4'
 ];
 const EXACT_CORE = [...BASE_CORE, ...VIDEO_CORE];
-const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE.filter(item => item !== './learning-content-data.js');
+const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE;
 
 const LEARNING_DEPTH_CORE_PATHS = new Set([
   './learning-sublesson-catalog.js',
@@ -265,7 +265,8 @@ function parseBuildInfo(text, label) {
       'AI老师课程完成以真实完成记录为准',
       '成长档案今日训练奖励以真实课程完成记录为准',
       'G00快速定位与安全撤离适用范围',
-      '12关主课程数据首次安装离线核心'
+      '12关主课程数据首次安装离线核心',
+      'T/H刀长补偿映射适用范围'
     ]);
   }
   return data;

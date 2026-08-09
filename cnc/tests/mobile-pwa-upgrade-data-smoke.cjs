@@ -8,10 +8,10 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const CURRENT_PWA_BUILD = '20260809-pwa26';
-const PREVIOUS_PWA_BUILD = '20260809-pwa25';
-const CURRENT_CACHE_REVISION = '20260809-learning26';
-const PREVIOUS_CACHE_REVISION = '20260809-learning25';
+const CURRENT_PWA_BUILD = '20260809-pwa27';
+const PREVIOUS_PWA_BUILD = '20260809-pwa26';
+const CURRENT_CACHE_REVISION = '20260809-learning27';
+const PREVIOUS_CACHE_REVISION = '20260809-learning26';
 const CURRENT_STATIC_CACHE = `cnc-static-${CURRENT_CACHE_REVISION}`;
 const CURRENT_RUNTIME_CACHE = `cnc-runtime-${CURRENT_CACHE_REVISION}`;
 const PREVIOUS_STATIC_CACHE = `cnc-static-${PREVIOUS_CACHE_REVISION}`;
@@ -234,7 +234,7 @@ async function verifyColdOfflineCourse(page, course) {
         request.onsuccess = () => {
           const db = request.result;
           const transaction = db.transaction('records', 'readwrite');
-          transaction.objectStore('records').put({ xp: 680, streak: 12, source: 'pwa25' }, 'growth');
+          transaction.objectStore('records').put({ xp: 680, streak: 12, source: 'pwa26' }, 'growth');
           transaction.onerror = () => reject(transaction.error);
           transaction.oncomplete = () => {
             db.close();
@@ -384,6 +384,12 @@ async function verifyColdOfflineCourse(page, course) {
     assert(lesson8Text.includes('不能把“先Z后XY”当成所有机床通用规则'), '升级后第8关丢失安全撤离适用范围');
     assert(lesson8Text.includes('固定直线或固定折线'), '升级后第8关丢失G00轨迹适用范围');
     assert(lesson8Text.includes('原厂手册'), '升级后第8关丢失原厂手册核对边界');
+    const lesson5 = await page.evaluate(() => window.CNC_LEARNING_CONTENT?.lessons?.[5] || null);
+    assert(lesson5, '升级后第5关刀长补偿主课程数据冷离线加载失败');
+    const lesson5Text = JSON.stringify(lesson5);
+    assert(lesson5Text.includes('T/H 数字相同是常见约定，不是所有机床都必须遵守的硬规则'), '升级后第5关丢失T/H同号适用范围');
+    assert(lesson5Text.includes('不能仅凭 T01 M06 后使用 G43 H02 就直接判错'), '升级后第5关仍可能把T01+H02无条件判错');
+    assert(lesson5Text.includes('原厂手册'), '升级后第5关丢失T/H映射原厂手册核对边界');
 
     await page.goto('http://127.0.0.1:4173/cnc/ai-teacher.html', { waitUntil: 'domcontentloaded' });
     assert((await page.title()).includes('AI CNC老师'), '升级后AI CNC老师冷离线打开失败');
@@ -413,6 +419,7 @@ async function verifyColdOfflineCourse(page, course) {
       trainingCoreStaticCacheReady: true,
       trainingCorePaths: TRAINING_CORE_PATHS,
       mainLearningContentColdOfflineAfterUpgrade: true,
+      toolOffsetMappingColdOfflineAfterUpgrade: true,
       unrelatedCachePreserved: true,
       singleScopedRegistration: true,
       localStoragePreserved: true,
