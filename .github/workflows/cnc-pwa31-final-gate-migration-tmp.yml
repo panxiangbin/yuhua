@@ -1,0 +1,47 @@
+name: CNC PWA31 final gate migration tmp
+on:
+  push:
+    branches:
+      - codex/cnc-g92-dual-semantic-boundary
+    paths:
+      - 'cnc/tests/_tmp-pwa31-final-gate-migration.py'
+      - '.github/workflows/cnc-pwa31-final-gate-migration-tmp.yml'
+permissions:
+  contents: write
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Migrate exact remaining PWA31 gate contracts
+        run: python cnc/tests/_tmp-pwa31-final-gate-migration.py
+      - name: Validate JavaScript syntax
+        run: |
+          node --check cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs
+          node --check cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs
+      - name: Audit exact write scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t changed < <(git diff --name-only)
+          allowed='cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs'
+          for file in "${changed[@]}"; do
+            case " $allowed " in *" $file "*) ;; *) echo "白名单外改动: $file" >&2; exit 1 ;; esac
+          done
+      - name: Commit exact migration result
+        shell: bash
+        run: |
+          set -euo pipefail
+          targets='cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs'
+          if git diff --quiet -- $targets; then echo '已处于目标状态'; exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add $targets
+          git commit -m 'fix(cnc-pwa): 对齐PWA31 BFCache与起点测评Pages测试'
+          git push origin "HEAD:${GITHUB_REF_NAME}"
