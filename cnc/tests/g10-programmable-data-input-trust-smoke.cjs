@@ -6,9 +6,13 @@ const root = path.resolve(__dirname, '../..');
 const aliasesPath = path.join(root, 'cnc/search-aliases.js');
 const gmPath = path.join(root, 'cnc/gm-code-complete.js');
 const indexPath = path.join(root, 'cnc/index.html');
+const swPath = path.join(root, 'cnc/sw.js');
+const buildInfoPath = path.join(root, 'cnc/build-info.json');
 const aliasesText = fs.readFileSync(aliasesPath, 'utf8');
 const gmText = fs.readFileSync(gmPath, 'utf8');
 const indexText = fs.readFileSync(indexPath, 'utf8');
+const swText = fs.readFileSync(swPath, 'utf8');
+const buildInfo = JSON.parse(fs.readFileSync(buildInfoPath, 'utf8'));
 const errors = [];
 
 for (const token of [
@@ -27,6 +31,18 @@ const aliasPos = indexText.indexOf('<script src="./search-aliases.js"></script>'
 const gmPos = indexText.indexOf('<script src="./gm-code-complete.js"></script>');
 if (aliasPos < 0 || gmPos < 0 || aliasPos >= gmPos) {
   errors.push('首页脚本顺序异常：G10安全归一化器必须在gm-code-complete.js之前加载');
+}
+
+for (const core of ["'./search-aliases.js'", "'./gm-code-complete.js'"]) {
+  if (!swText.includes(core)) errors.push(`PWA首次安装核心缺少G10可信目录依赖：${core}`);
+}
+if (!swText.includes("const BUILD = '20260809-pwa28'")) errors.push('Service Worker未升级到20260809-pwa28');
+if (!swText.includes("const CACHE_REVISION = '20260809-learning28'")) errors.push('Service Worker缓存修订未升级到20260809-learning28');
+if (buildInfo.pwaBuild !== '20260809-pwa28' || buildInfo.cacheRevision !== '20260809-learning28') {
+  errors.push(`build-info与PWA28不一致：${buildInfo.pwaBuild} / ${buildInfo.cacheRevision}`);
+}
+for (const token of ['G10可编程数据写入适用范围', 'G/M代码首次安装离线核心']) {
+  if (!String(buildInfo.contentStage || '').includes(token)) errors.push(`build-info缺少阶段标记：${token}`);
 }
 
 const sandbox = { window: {}, console: { log() {}, warn() {}, error() {} } };
@@ -81,4 +97,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log('CNC G10可编程数据写入可信度门禁通过：G10被明确限定为控制器相关的高风险数据写入，真实机床必须核对原厂手册、备份并由授权人员确认。');
+console.log('CNC G10可编程数据写入可信度门禁通过：G10被明确限定为控制器相关的高风险数据写入，真实机床必须核对原厂手册、备份并由授权人员确认；G/M可信目录已进入PWA28首次安装核心。');
