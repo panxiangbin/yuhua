@@ -24,16 +24,15 @@ if (aliasPos < 0 || gmPos < 0 || aliasPos >= gmPos) {
 for (const core of ["'./search-aliases.js'", "'./gm-code-complete.js'"]) {
   if (!swText.includes(core)) errors.push(`PWA首次安装核心缺少G53可信目录依赖：${core}`);
 }
-if (!swText.includes("const BUILD = '20260809-pwa31'")) errors.push('Service Worker未升级到20260809-pwa31');
-if (!swText.includes("const CACHE_REVISION = '20260809-learning31'")) errors.push('Service Worker缓存修订未升级到20260809-learning31');
-if (buildInfo.pwaBuild !== '20260809-pwa31' || buildInfo.cacheRevision !== '20260809-learning31') {
-  errors.push(`build-info与PWA31不一致：${buildInfo.pwaBuild} / ${buildInfo.cacheRevision}`);
+if (!swText.includes("const BUILD = '20260810-pwa32'")) errors.push('Service Worker未升级到20260810-pwa32');
+if (!swText.includes("const CACHE_REVISION = '20260810-learning32'")) errors.push('Service Worker缓存修订未升级到20260810-learning32');
+if (buildInfo.pwaBuild !== '20260810-pwa32' || buildInfo.cacheRevision !== '20260810-learning32') {
+  errors.push(`build-info与PWA32不一致：${buildInfo.pwaBuild} / ${buildInfo.cacheRevision}`);
 }
 if (!String(buildInfo.contentStage || '').includes('G53机床坐标定位适用范围')) {
   errors.push('build-info缺少G53机床坐标定位适用范围阶段标记');
 }
 
-// 第一层：基础G/M目录本身必须去掉“G53=通用安全回退”“Z0=安全点”等危险简化。
 if (!gmText.includes('"id": "kb-gcode-g53"')) errors.push('基础G/M目录缺少G53条目');
 for (const token of [
   '高风险运动',
@@ -61,7 +60,6 @@ for (const forbidden of [
   if (gmText.includes(forbidden)) errors.push(`基础G53源目录仍含无适用范围表述：${forbidden}`);
 }
 
-// 第二层：标准页面运行时必须维持同一安全边界；运行时保护不能成为掩盖基础源错误的唯一真相源。
 const sandbox = { window: {}, console: { log() {}, warn() {}, error() {} } };
 vm.createContext(sandbox);
 try {
@@ -72,8 +70,8 @@ try {
 }
 
 const guard = sandbox.window.CNC_GM_CONTENT_SAFETY;
-if (!guard || guard.version !== 'g10-g28-g53-g92-boundary-4' || typeof guard.normalizeG53 !== 'function') {
-  errors.push('G10/G28/G53/G92内容安全归一化器未安装、版本异常或缺少normalizeG53');
+if (!guard || guard.version !== 'g10-g28-g53-g92-g94-boundary-5' || typeof guard.normalizeG53 !== 'function') {
+  errors.push('G10/G28/G53/G92/G94内容安全归一化器未安装、版本异常或缺少normalizeG53');
 }
 const catalog = sandbox.window.CNC_GM_CODES;
 const g53 = Array.isArray(catalog) ? catalog.find(item => item && item.id === 'kb-gcode-g53') : null;
@@ -114,4 +112,4 @@ if (errors.length) {
   errors.forEach(error => console.error(`- ${error}`));
   process.exit(1);
 }
-console.log('CNC G53机床坐标定位可信度门禁通过：G53被限定为控制器/机床相关的高风险非模态机床坐标运动；机床坐标零点、刀补影响、目标位置与完整运动空间必须按本机原厂手册核对并先做受控空运行，Z0或换刀位置不得作为跨机床通用安全点；当前PWA31仍保留该边界。');
+console.log('CNC G53机床坐标定位可信度门禁通过：G53被限定为控制器/机床相关的高风险非模态机床坐标运动；机床坐标零点、刀补影响、目标位置与完整运动空间必须按本机原厂手册核对并先做受控空运行，Z0或换刀位置不得作为跨机床通用安全点；当前PWA32仍保留该边界。');

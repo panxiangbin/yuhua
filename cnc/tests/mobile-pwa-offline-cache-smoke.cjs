@@ -7,8 +7,8 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const PWA_BUILD = '20260809-pwa31';
-const CACHE_REVISION = '20260809-learning31';
+const PWA_BUILD = '20260810-pwa32';
+const CACHE_REVISION = '20260810-learning32';
 const PLACEMENT_FIRST_STEP_COURSES = [
   {
     path: './course-safety-foundation.html',
@@ -300,6 +300,19 @@ async function verifyColdOfflineCourse(page, course) {
     }
     for (const forbidden of ['加工中心/旧系统可用于坐标设定，车床常用于简单螺纹循环。', '车床：G92 X20. Z-30. F1.5 表示螺纹循环。', 'G92就是螺纹循环', 'G92就是坐标设定']) {
       if (offlineG92Trust.text.includes(forbidden)) throw new Error(`G92冷离线源目录仍含无适用范围表述：${forbidden}`);
+    }
+
+    stage = 'cold-offline-g94-directory';
+    const offlineG94Trust = await page.evaluate(async () => {
+      const response = await fetch('./gm-code-complete.js');
+      return { ok: response.ok, text: await response.text() };
+    });
+    if (!offlineG94Trust.ok) throw new Error('G94可信目录首次安装后冷离线读取失败');
+    for (const token of ['车铣差异', '部分铣床/加工中心', '部分车床', '当前CNC与机床厂原厂手册', 'G93/G94/G95', '公制/英制', 'F的单位', 'X/Z或U/W', 'K/F', '起始位置', '返回/退刀路径', '完整计划运动空间', '两类程序不能直接互抄']) {
+      if (!offlineG94Trust.text.includes(token)) throw new Error(`G94冷离线源目录缺少双语义安全边界：${token}`);
+    }
+    for (const forbidden of ['铣床：G94（配合F）；车床示例：G94 X... Z... F...（系统相关）', 'G94 X30.0 Z-10.0 F0.2', 'G94就是每分钟进给', 'G94就是端面车削循环']) {
+      if (offlineG94Trust.text.includes(forbidden)) throw new Error(`G94冷离线源目录仍含无适用范围或可直接照抄表述：${forbidden}`);
     }
 
     stage = 'cold-offline-main-learning-content';
