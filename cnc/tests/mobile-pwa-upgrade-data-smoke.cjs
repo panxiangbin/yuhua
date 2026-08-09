@@ -8,10 +8,10 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const CURRENT_PWA_BUILD = '20260809-pwa30';
-const PREVIOUS_PWA_BUILD = '20260809-pwa29';
-const CURRENT_CACHE_REVISION = '20260809-learning30';
-const PREVIOUS_CACHE_REVISION = '20260809-learning29';
+const CURRENT_PWA_BUILD = '20260809-pwa31';
+const PREVIOUS_PWA_BUILD = '20260809-pwa30';
+const CURRENT_CACHE_REVISION = '20260809-learning31';
+const PREVIOUS_CACHE_REVISION = '20260809-learning30';
 const CURRENT_STATIC_CACHE = `cnc-static-${CURRENT_CACHE_REVISION}`;
 const CURRENT_RUNTIME_CACHE = `cnc-runtime-${CURRENT_CACHE_REVISION}`;
 const PREVIOUS_STATIC_CACHE = `cnc-static-${PREVIOUS_CACHE_REVISION}`;
@@ -387,6 +387,19 @@ async function verifyColdOfflineCourse(page, course) {
     }
     for (const forbidden of ['G28常配合G91 Z0先回Z，减少撞机。', '必须先Z后XY', 'G91 G28 Z0一定安全']) {
       assert(!offlineG28Trust.text.includes(forbidden), `G28冷离线源目录仍含无适用范围防撞表述：${forbidden}`);
+    }
+
+    stage = 'cold-offline-g92-directory-after-upgrade';
+    const offlineG92Trust = await page.evaluate(async () => {
+      const response = await fetch('./gm-code-complete.js');
+      return { ok: response.ok, text: await response.text() };
+    });
+    assert(offlineG92Trust.ok, '升级后G92可信目录冷离线读取失败');
+    for (const token of ['车铣差异', '部分铣床/加工中心', '部分车床', '当前CNC与机床厂原厂手册', 'G52/G54-G59', 'X/Z或U/W', 'I/Q/F', '主轴同步', '安全退刀空间', '两类程序不能直接互抄']) {
+      assert(offlineG92Trust.text.includes(token), `G92冷离线源目录缺少双语义安全边界：${token}`);
+    }
+    for (const forbidden of ['加工中心/旧系统可用于坐标设定，车床常用于简单螺纹循环。', '车床：G92 X20. Z-30. F1.5 表示螺纹循环。', 'G92就是螺纹循环', 'G92就是坐标设定']) {
+      assert(!offlineG92Trust.text.includes(forbidden), `G92冷离线源目录仍含无适用范围表述：${forbidden}`);
     }
 
     stage = 'cold-offline-main-learning-content-after-upgrade';

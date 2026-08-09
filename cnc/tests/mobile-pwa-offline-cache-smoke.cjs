@@ -7,8 +7,8 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const PWA_BUILD = '20260809-pwa30';
-const CACHE_REVISION = '20260809-learning30';
+const PWA_BUILD = '20260809-pwa31';
+const CACHE_REVISION = '20260809-learning31';
 const PLACEMENT_FIRST_STEP_COURSES = [
   {
     path: './course-safety-foundation.html',
@@ -289,6 +289,19 @@ async function verifyColdOfflineCourse(page, course) {
       await verifyColdOfflineCourse(page, course);
     }
 
+    stage = 'cold-offline-g92-directory';
+    const offlineG92Trust = await page.evaluate(async () => {
+      const response = await fetch('./gm-code-complete.js');
+      return { ok: response.ok, text: await response.text() };
+    });
+    if (!offlineG92Trust.ok) throw new Error('G92可信目录首次安装后冷离线读取失败');
+    for (const token of ['车铣差异', '部分铣床/加工中心', '部分车床', '当前CNC与机床厂原厂手册', 'G52/G54-G59', 'X/Z或U/W', 'I/Q/F', '主轴同步', '安全退刀空间', '两类程序不能直接互抄']) {
+      if (!offlineG92Trust.text.includes(token)) throw new Error(`G92冷离线源目录缺少双语义安全边界：${token}`);
+    }
+    for (const forbidden of ['加工中心/旧系统可用于坐标设定，车床常用于简单螺纹循环。', '车床：G92 X20. Z-30. F1.5 表示螺纹循环。', 'G92就是螺纹循环', 'G92就是坐标设定']) {
+      if (offlineG92Trust.text.includes(forbidden)) throw new Error(`G92冷离线源目录仍含无适用范围表述：${forbidden}`);
+    }
+
     stage = 'cold-offline-main-learning-content';
     await page.goto('http://127.0.0.1:4173/cnc/index.html#view-study', { waitUntil: 'domcontentloaded' });
     const learningLoaded = await page.evaluate(() => Boolean(window.CNC_LEARNING_CONTENT?.lessons?.[8]) && Boolean(window.CNC_LEARNING_CONTENT?.lessons?.[5]));
@@ -368,6 +381,7 @@ async function verifyColdOfflineCourse(page, course) {
       trainingProfileColdOfflineCore: true,
       mainLearningContentColdOfflineCore: true,
       toolOffsetMappingTrustColdOffline: true,
+      g92DualSemanticTrustColdOffline: true,
       learningVideosColdOfflineCore: true,
       learningVideoCorePaths: VIDEO_CORE_PATHS,
       learningVideoCoreResponses: offlineVideoCore,

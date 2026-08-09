@@ -61,13 +61,13 @@ jobs:
           if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
           if (swCache !== info.cacheRevision) throw new Error(`Service Worker/build-info cache mismatch: ${swCache} / ${info.cacheRevision}`);
           if (info.build !== '20260806-learning-depth1') throw new Error(`unexpected site build: ${info.build}`);
-          if (info.pwaBuild !== '20260809-pwa30' || info.cacheRevision !== '20260809-learning30') throw new Error(`unexpected branch build: ${info.pwaBuild}/${info.cacheRevision}`);
+          if (info.pwaBuild !== '20260809-pwa31' || info.cacheRevision !== '20260809-learning31') throw new Error(`unexpected branch build: ${info.pwaBuild}/${info.cacheRevision}`);
           for (const token of [
-            "const branchTargetPwaBuild = '20260809-pwa30'",
-            "const previousPublicPwaBuild = '20260809-pwa29'",
+            "const branchTargetPwaBuild = '20260809-pwa31'",
+            "const previousPublicPwaBuild = '20260809-pwa30'",
             "const expectedSiteBuild = '20260806-learning-depth1'",
-            "[branchTargetPwaBuild]: '20260809-learning30'",
-            "[previousPublicPwaBuild]: '20260809-learning29'",
+            "[branchTargetPwaBuild]: '20260809-learning31'",
+            "[previousPublicPwaBuild]: '20260809-learning30'",
             'const VIDEO_CORE_PATHS = [',
             'const EXACT_CORE_PATHS = [...BASE_CORE_PATHS, ...VIDEO_CORE_PATHS]',
             'const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE_PATHS',
@@ -121,14 +121,21 @@ jobs:
             'G53机床坐标定位适用范围',
             '机床坐标零点',
             '完整计划运动空间',
-            '不能把Z0、换刀点或固定机械坐标当成跨机床通用安全点'
+            '不能把Z0、换刀点或固定机械坐标当成跨机床通用安全点',
+            'G92车铣双语义适用范围',
+            '两类程序不能直接互抄',
+            'G52/G54-G59',
+            'X/Z或U/W',
+            'I/Q/F',
+            '主轴同步',
+            '教学格式示意不得直接作为真实机床参数'
           ]) {
-            if (!status.includes(token)) throw new Error(`PWA status PWA30 explanation missing: ${token}`);
-            if (!selfTest.includes(token)) throw new Error(`PWA self-test PWA30 explanation missing: ${token}`);
+            if (!status.includes(token)) throw new Error(`PWA status PWA31 explanation missing: ${token}`);
+            if (!selfTest.includes(token)) throw new Error(`PWA self-test PWA31 explanation missing: ${token}`);
           }
           if (!status.includes('G90/G91下的绝对或增量解释')) throw new Error('PWA status缺少G10在G90/G91下的解释边界');
           if (!selfTest.includes('G90/G91绝对或增量解释')) throw new Error('PWA self-test缺少G10在G90/G91下的解释边界');
-          for (const stage of ['起点测评关键安全门禁','起点测评离线核心','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','正式课程开发占位清零','AI老师现场问诊单','AI老师判断说明','AI老师离线核心','AI老师学习档案异常保护','80个图文小课','80课现场动作与风险针对性','训练题库与成长档案离线核心','手机构建标记一致性','固定12关能力映射与真实薄弱课推荐','AI老师与固定12关成长档案语义一致','每日训练薄弱课错题精准回流','固定12关60题真实80分与关键题硬门禁','AI老师课程完成以真实完成记录为准','成长档案今日训练奖励以真实课程完成记录为准','G00快速定位与安全撤离适用范围','12关主课程数据首次安装离线核心','T/H刀长补偿映射适用范围','G10可编程数据写入适用范围','G/M代码首次安装离线核心','G28参考点返回适用范围','G53机床坐标定位适用范围']) {
+          for (const stage of ['起点测评关键安全门禁','起点测评离线核心','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','正式课程开发占位清零','AI老师现场问诊单','AI老师判断说明','AI老师离线核心','AI老师学习档案异常保护','80个图文小课','80课现场动作与风险针对性','训练题库与成长档案离线核心','手机构建标记一致性','固定12关能力映射与真实薄弱课推荐','AI老师与固定12关成长档案语义一致','每日训练薄弱课错题精准回流','固定12关60题真实80分与关键题硬门禁','AI老师课程完成以真实完成记录为准','成长档案今日训练奖励以真实课程完成记录为准','G00快速定位与安全撤离适用范围','12关主课程数据首次安装离线核心','T/H刀长补偿映射适用范围','G10可编程数据写入适用范围','G/M代码首次安装离线核心','G28参考点返回适用范围','G53机床坐标定位适用范围','G92车铣双语义适用范围']) {
             if (!String(info.contentStage || '').includes(stage)) throw new Error(`build marker missing: ${stage}`);
           }
           for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)', 'CNC_PAGES_VERIFY_ATTEMPTS || 0']) {
