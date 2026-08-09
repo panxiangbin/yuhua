@@ -158,8 +158,7 @@
     }
     $('#rerun').onclick=()=>run();
     $('#copy').onclick=async()=>{
-      const text=['数控小潘 PWA离线自检',`检查时间：${new Date().toLocaleString('zh-CN',{hour12:false})}`,...last.map(item=>`${item.ok?'通过':'待处理'}｜${item.name}｜${item.detail}`)].join('\
-');
+      const text=['数控小潘 PWA离线自检',`检查时间：${new Date().toLocaleString('zh-CN',{hour12:false})}`,...last.map(item=>`${item.ok?'通过':'待处理'}｜${item.name}｜${item.detail}`)].join('\n');
       try{await navigator.clipboard.writeText(text);$('#status').textContent='诊断报告已复制。'}catch{$('#status').textContent='复制失败，请使用浏览器允许剪贴板权限后重试。'}
     };
     addEventListener('pageshow',()=>run());
