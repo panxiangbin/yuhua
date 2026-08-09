@@ -42,7 +42,7 @@ const VIDEO_CORE = [
   './assets/videos/learning/stage12_first_part.mp4'
 ];
 const EXACT_CORE = [...BASE_CORE, ...VIDEO_CORE];
-const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE.filter(item => !['./search-aliases.js', './gm-code-complete.js'].includes(item));
+const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE;
 
 const LEARNING_DEPTH_CORE_PATHS = new Set([
   './learning-sublesson-catalog.js',
@@ -126,7 +126,7 @@ function assertBuildInfo(text, label, build) {
   if (data.pwaBuild !== build) throw new Error(`${label}PWA构建错误：${data.pwaBuild}，期望${build}`);
   const stage = String(data.contentStage || '');
   requireTokens(stage, label, ['课程12关','起点测评','手机首页一屏化','AI CNC老师基础版','PWA可靠性']);
-  if (build === branchTargetPwaBuild) requireTokens(stage, label, ['起点测评关键安全门禁','起点测评离线核心','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','正式课程开发占位清零','AI老师现场问诊单','AI老师判断说明','AI老师离线核心','AI老师学习档案异常保护','80个图文小课','训练题库与成长档案离线核心','手机构建标记一致性','固定12关能力映射与真实薄弱课推荐','AI老师与固定12关成长档案语义一致','每日训练薄弱课错题精准回流','固定12关60题真实80分与关键题硬门禁','AI老师课程完成以真实完成记录为准','成长档案今日训练奖励以真实课程完成记录为准','G00快速定位与安全撤离适用范围','12关主课程数据首次安装离线核心','T/H刀长补偿映射适用范围']);
+  if (build === branchTargetPwaBuild) requireTokens(stage, label, ['起点测评关键安全门禁','起点测评离线核心','测评路线一次性交接','训练营路线离线核心','测评首步课程离线核心','正式课程开发占位清零','AI老师现场问诊单','AI老师判断说明','AI老师离线核心','AI老师学习档案异常保护','80个图文小课','训练题库与成长档案离线核心','手机构建标记一致性','固定12关能力映射与真实薄弱课推荐','AI老师与固定12关成长档案语义一致','每日训练薄弱课错题精准回流','固定12关60题真实80分与关键题硬门禁','AI老师课程完成以真实完成记录为准','成长档案今日训练奖励以真实课程完成记录为准','G00快速定位与安全撤离适用范围','12关主课程数据首次安装离线核心','T/H刀长补偿映射适用范围','G10可编程数据写入适用范围','G/M代码首次安装离线核心','G28参考点返回适用范围']);
 }
 
 function assertContract(resource, text, label, build) {

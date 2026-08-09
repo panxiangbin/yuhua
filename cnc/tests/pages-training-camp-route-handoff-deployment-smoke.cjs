@@ -42,7 +42,7 @@ const VIDEO_CORE = [
   './assets/videos/learning/stage12_first_part.mp4'
 ];
 const EXACT_CORE = [...BASE_CORE, ...VIDEO_CORE];
-const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE.filter(item => !['./search-aliases.js', './gm-code-complete.js'].includes(item));
+const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE;
 
 const LEARNING_DEPTH_CORE_PATHS = new Set([
   './learning-sublesson-catalog.js',
@@ -266,7 +266,7 @@ function parseBuildInfo(text, label) {
       '成长档案今日训练奖励以真实课程完成记录为准',
       'G00快速定位与安全撤离适用范围',
       '12关主课程数据首次安装离线核心',
-      'T/H刀长补偿映射适用范围'
+      'T/H刀长补偿映射适用范围','G10可编程数据写入适用范围','G/M代码首次安装离线核心','G28参考点返回适用范围'
     ]);
   }
   return data;

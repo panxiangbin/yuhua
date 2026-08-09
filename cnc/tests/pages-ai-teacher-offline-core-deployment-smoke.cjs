@@ -87,7 +87,7 @@ const VIDEO_CORE_PATHS = [
   './assets/videos/learning/stage12_first_part.mp4'
 ];
 const EXACT_CORE_PATHS = [...BASE_CORE_PATHS, ...VIDEO_CORE_PATHS];
-const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE_PATHS.filter(item => !['./search-aliases.js', './gm-code-complete.js'].includes(item));
+const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE_PATHS;
 
 const LEARNING_DEPTH_CORE_PATHS = new Set([
   './learning-sublesson-catalog.js',
@@ -252,7 +252,7 @@ function assertBuildInfo(text, label, expectedBuild) {
   const stage = String(data.contentStage || '');
   requireTokens(stage, label, ['课程12关', '起点测评', '手机首页一屏化', 'AI CNC老师基础版', 'PWA可靠性']);
   if (expectedBuild === branchTargetPwaBuild) {
-    requireTokens(stage, label, ['起点测评关键安全门禁', '起点测评离线核心', '测评路线一次性交接', '训练营路线离线核心', '测评首步课程离线核心', '正式课程开发占位清零', 'AI老师现场问诊单', 'AI老师判断说明', 'AI老师离线核心', 'AI老师学习档案异常保护', '80个图文小课', '学习目录紧凑布局', '80课现场动作与风险针对性', '训练题库与成长档案离线核心', '手机构建标记一致性', '固定12关能力映射与真实薄弱课推荐', 'AI老师与固定12关成长档案语义一致', '每日训练薄弱课错题精准回流', '固定12关60题真实80分与关键题硬门禁', 'AI老师课程完成以真实完成记录为准', '成长档案今日训练奖励以真实课程完成记录为准', 'G00快速定位与安全撤离适用范围', '12关主课程数据首次安装离线核心', 'T/H刀长补偿映射适用范围']);
+    requireTokens(stage, label, ['起点测评关键安全门禁', '起点测评离线核心', '测评路线一次性交接', '训练营路线离线核心', '测评首步课程离线核心', '正式课程开发占位清零', 'AI老师现场问诊单', 'AI老师判断说明', 'AI老师离线核心', 'AI老师学习档案异常保护', '80个图文小课', '学习目录紧凑布局', '80课现场动作与风险针对性', '训练题库与成长档案离线核心', '手机构建标记一致性', '固定12关能力映射与真实薄弱课推荐', 'AI老师与固定12关成长档案语义一致', '每日训练薄弱课错题精准回流', '固定12关60题真实80分与关键题硬门禁', 'AI老师课程完成以真实完成记录为准', '成长档案今日训练奖励以真实课程完成记录为准', 'G00快速定位与安全撤离适用范围', '12关主课程数据首次安装离线核心', 'T/H刀长补偿映射适用范围','G10可编程数据写入适用范围','G/M代码首次安装离线核心','G28参考点返回适用范围']);
   }
   return { build: data.build, pwaBuild: data.pwaBuild, cacheRevision: data.cacheRevision, scope: data.scope };
 }
@@ -276,7 +276,7 @@ function assertStatusPage(text, label, expectedBuild) {
   ];
   let previousCacheContract = false;
   if (expectedBuild === branchTargetPwaBuild) {
-    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'PWA23在PWA22薄弱课错题精准回流基础上，把固定12关闯关题扩展为每关5道专属题、共60题，使4/5可以真实形成80分', '不能假定轨迹必然为固定直线或固定折线', '不能把“先Z后XY”教成所有机床通用规则', '12关主课程数据', 'T/H刀长补偿映射适用范围');
+    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'PWA23在PWA22薄弱课错题精准回流基础上，把固定12关闯关题扩展为每关5道专属题、共60题，使4/5可以真实形成80分', '不能假定轨迹必然为固定直线或固定折线', '不能把“先Z后XY”教成所有机床通用规则', '12关主课程数据', 'T/H刀长补偿映射适用范围','G10可编程数据写入适用范围','G/M代码首次安装离线核心','G28参考点返回适用范围');
   } else {
     required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'const cacheBuildOk=staticName.includes(EXPECTED_CACHE)&&runtimeName.includes(EXPECTED_CACHE)');
     previousCacheContract = true;
@@ -304,7 +304,7 @@ function assertSelfTest(text, label, expectedBuild) {
   let expectedPaths;
   let previousCacheContract = false;
   if (expectedBuild === branchTargetPwaBuild) {
-    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'marker.cacheRevision===EXPECTED_CACHE', 'PWA23在PWA22薄弱课错题精准回流基础上，把固定12关闯关题扩展为每关5道专属题、共60题，使4/5可以真实形成80分', './training-practice.js', './training-profile.js', './learning-content-data.js', '不能假定轨迹必然为固定直线或固定折线', '不能把“先Z后XY”教成所有机床通用规则', 'T/H刀长补偿映射适用范围', ...VIDEO_CORE_PATHS);
+    required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'marker.cacheRevision===EXPECTED_CACHE', 'PWA23在PWA22薄弱课错题精准回流基础上，把固定12关闯关题扩展为每关5道专属题、共60题，使4/5可以真实形成80分', './training-practice.js', './training-profile.js', './learning-content-data.js', '不能假定轨迹必然为固定直线或固定折线', '不能把“先Z后XY”教成所有机床通用规则', 'T/H刀长补偿映射适用范围','G10可编程数据写入适用范围','G/M代码首次安装离线核心','G28参考点返回适用范围', ...VIDEO_CORE_PATHS);
     expectedPaths = EXACT_CORE_PATHS;
   } else {
     required.push(`const EXPECTED_CACHE='${expectedCache}'`, 'const staticName=keys.find(name=>name===`cnc-static-${EXPECTED_CACHE}`)', 'const runtimeName=keys.find(name=>name===`cnc-runtime-${EXPECTED_CACHE}`)', 'marker.cacheRevision===EXPECTED_CACHE');
