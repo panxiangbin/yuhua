@@ -17,7 +17,7 @@ const errors = [];
 
 for (const token of [
   'G/M 代码目录来自大批量生成的基础表',
-  '作为第二层防御保持G10/G28/G53/G92边界一致',
+  '作为第二层防御保持G10/G28/G53/G92/G94边界一致',
   'function normalizeG10(entry)',
   '当前CNC/机床厂原厂手册',
   '备份原数据',
@@ -37,16 +37,15 @@ if (aliasPos < 0 || gmPos < 0 || aliasPos >= gmPos) {
 for (const core of ["'./search-aliases.js'", "'./gm-code-complete.js'"]) {
   if (!swText.includes(core)) errors.push(`PWA首次安装核心缺少G10可信目录依赖：${core}`);
 }
-if (!swText.includes("const BUILD = '20260809-pwa31'")) errors.push('Service Worker未升级到20260809-pwa31');
-if (!swText.includes("const CACHE_REVISION = '20260809-learning31'")) errors.push('Service Worker缓存修订未升级到20260809-learning31');
-if (buildInfo.pwaBuild !== '20260809-pwa31' || buildInfo.cacheRevision !== '20260809-learning31') {
-  errors.push(`build-info与PWA31不一致：${buildInfo.pwaBuild} / ${buildInfo.cacheRevision}`);
+if (!swText.includes("const BUILD = '20260810-pwa32'")) errors.push('Service Worker未升级到20260810-pwa32');
+if (!swText.includes("const CACHE_REVISION = '20260810-learning32'")) errors.push('Service Worker缓存修订未升级到20260810-learning32');
+if (buildInfo.pwaBuild !== '20260810-pwa32' || buildInfo.cacheRevision !== '20260810-learning32') {
+  errors.push(`build-info与PWA32不一致：${buildInfo.pwaBuild} / ${buildInfo.cacheRevision}`);
 }
 for (const token of ['G10可编程数据写入适用范围', 'G/M代码首次安装离线核心']) {
   if (!String(buildInfo.contentStage || '').includes(token)) errors.push(`build-info缺少阶段标记：${token}`);
 }
 
-// 第一层：基础G/M目录本身必须已经是安全表述，不能依赖运行时覆盖去掩盖旧的危险文本。
 if (!gmText.includes('"id": "kb-gcode-g10"')) errors.push('基础G/M目录缺少G10条目');
 for (const token of [
   '取决于CNC系统和机床厂配置',
@@ -68,7 +67,6 @@ for (const forbidden of [
   if (gmText.includes(forbidden)) errors.push(`基础G10源目录仍含无适用范围表述：${forbidden}`);
 }
 
-// 第二层：标准页面运行时仍需保持同一安全语义，归一化器只作为防御性保护，不能成为唯一真相源。
 const sandbox = { window: {}, console: { log() {}, warn() {}, error() {} } };
 vm.createContext(sandbox);
 try {
@@ -79,8 +77,8 @@ try {
 }
 
 const guard = sandbox.window.CNC_GM_CONTENT_SAFETY;
-if (!guard || guard.version !== 'g10-g28-g53-g92-boundary-4' || typeof guard.normalizeG10 !== 'function') {
-  errors.push('G10/G28/G53/G92内容安全归一化器未安装、版本异常或缺少normalizeG10');
+if (!guard || guard.version !== 'g10-g28-g53-g92-g94-boundary-5' || typeof guard.normalizeG10 !== 'function') {
+  errors.push('G10/G28/G53/G92/G94内容安全归一化器未安装、版本异常或缺少normalizeG10');
 }
 const catalog = sandbox.window.CNC_GM_CODES;
 const g10 = Array.isArray(catalog) ? catalog.find(item => item && item.id === 'kb-gcode-g10') : null;
@@ -119,4 +117,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log('CNC G10可编程数据写入可信度门禁通过：基础源目录与运行时条目都把G10限定为控制器相关的高风险数据写入，真实机床必须核对原厂手册、备份并由授权人员确认；G/M可信目录在PWA31首次安装离线核心中继续受保护。');
+console.log('CNC G10可编程数据写入可信度门禁通过：基础源目录与运行时条目都把G10限定为控制器相关的高风险数据写入，真实机床必须核对原厂手册、备份并由授权人员确认；G/M可信目录在PWA32首次安装离线核心中继续受保护。');
