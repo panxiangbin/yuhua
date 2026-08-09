@@ -1,0 +1,73 @@
+name: CNC G28 reference return boundary trust smoke
+
+on:
+  push:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-g28-reference-return-boundary-trust-smoke.yml'
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-g28-reference-return-boundary-trust-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  g28-reference-return-boundary-trust:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact revision
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 1
+
+      - name: Verify exact checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='${{ github.event.pull_request.head.sha || github.sha }}'
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+          echo "exact head: $actual"
+
+      - name: Reject bypass patterns
+        shell: bash
+        run: |
+          set -euo pipefail
+          test_file='cnc/tests/g28-reference-return-boundary-trust-smoke.cjs'
+          test -f "$test_file"
+          if grep -nE 'test\.skip|describe\.skip|it\.skip|process\.exit\(0\)' "$test_file"; then
+            echo '发现会绕过G28可信度门禁的跳过模式' >&2
+            exit 1
+          fi
+
+      - name: Run G28 reference return boundary trust smoke
+        run: node cnc/tests/g28-reference-return-boundary-trust-smoke.cjs
+
+      - name: Preserve G28 trust diagnosis on failure
+        if: failure()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifact-g28-trust
+          {
+            echo "requested_sha=${{ github.event.pull_request.head.sha || github.sha }}"
+            echo "actual_sha=$(git rev-parse HEAD)"
+            echo '--- build-info.json ---'
+            cat cnc/build-info.json || true
+            echo '--- G28 source matches ---'
+            grep -nE 'G28|参考点|先Z|G91|原厂手册|高风险自动运动' cnc/gm-code-complete.js | head -n 120 || true
+          } > artifact-g28-trust/diagnosis.txt
+
+      - name: Upload G28 trust diagnosis
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-g28-reference-return-trust-${{ github.run_id }}
+          path: artifact-g28-trust
+          if-no-files-found: error
+          retention-days: 14
