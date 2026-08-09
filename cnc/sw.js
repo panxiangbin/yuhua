@@ -1,6 +1,6 @@
 /* CNC PWA：版本化缓存、离线回退与安全更新。 */
-const BUILD = '20260809-pwa27';
-const CACHE_REVISION = '20260809-learning27';
+const BUILD = '20260809-pwa28';
+const CACHE_REVISION = '20260809-learning28';
 const STATIC_CACHE = `cnc-static-${CACHE_REVISION}`;
 const RUNTIME_CACHE = `cnc-runtime-${CACHE_REVISION}`;
 const INSTALL_DIAGNOSTIC_PATH = './pwa-install-diagnostics.json';
@@ -13,6 +13,8 @@ const REQUIRED_CORE_PATHS = [
   './personal-home.js',
   './training-practice.js',
   './training-profile.js',
+  './search-aliases.js',
+  './gm-code-complete.js',
   './learning-content-data.js',
   './learning-sublesson-catalog.js',
   './learning-sublesson-specificity.js',
