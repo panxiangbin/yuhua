@@ -22,20 +22,19 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Migrate exact PWA31 content contracts
+      - name: Migrate exact PWA31 Pages test contracts
         run: python cnc/tests/_tmp-pwa31-content-migration.py
       - name: Validate JavaScript syntax
         run: |
-          node --check cnc/tests/mobile-pwa-upgrade-data-smoke.cjs
-          node --check cnc/tests/mobile-pwa-offline-cache-smoke.cjs
-          node --check cnc/sw.js
+          node --check cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs
+          node --check cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs
       - name: Audit exact write scope
         shell: bash
         run: |
           set -euo pipefail
           mapfile -t changed < <(git diff --name-only)
           printf '%s\n' "${changed[@]}"
-          allowed='cnc/pwa-self-test.html cnc/pwa-status.html cnc/tests/mobile-pwa-upgrade-data-smoke.cjs cnc/tests/mobile-pwa-offline-cache-smoke.cjs'
+          allowed='cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs'
           for file in "${changed[@]}"; do
             case " $allowed " in
               *" $file "*) ;;
@@ -46,12 +45,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if git diff --quiet -- cnc/pwa-self-test.html cnc/pwa-status.html cnc/tests/mobile-pwa-upgrade-data-smoke.cjs cnc/tests/mobile-pwa-offline-cache-smoke.cjs; then
-            echo 'PWA31内容已经处于目标状态'
+          targets='cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs'
+          if git diff --quiet -- $targets; then
+            echo 'PWA31 Pages测试已经处于目标状态'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add cnc/pwa-self-test.html cnc/pwa-status.html cnc/tests/mobile-pwa-upgrade-data-smoke.cjs cnc/tests/mobile-pwa-offline-cache-smoke.cjs
-          git commit -m 'fix(cnc-pwa): 对齐PWA31状态与冷离线升级门禁'
+          git add $targets
+          git commit -m 'fix(cnc-pwa): 对齐PWA31 Pages exact-deployment测试'
           git push origin "HEAD:${GITHUB_REF_NAME}"
