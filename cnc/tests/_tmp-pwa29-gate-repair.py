@@ -10,12 +10,11 @@ def replace_exact(path, old, new, count=1):
     p.write_text(text.replace(old, new), encoding='utf-8')
 
 
-page_tests = [
+standard_page_tests = [
     'cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs',
     'cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs',
-    'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs',
 ]
-for path in page_tests:
+for path in standard_page_tests:
     replace_exact(
         path,
         "const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE.filter(item => !['./search-aliases.js', './gm-code-complete.js'].includes(item));",
@@ -27,17 +26,35 @@ for path in page_tests:
         "'T/H刀长补偿映射适用范围','G10可编程数据写入适用范围','G/M代码首次安装离线核心','G28参考点返回适用范围'"
     )
 
-page_workflows = [
+ai_page_test = 'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs'
+replace_exact(
+    ai_page_test,
+    "const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE_PATHS.filter(item => !['./search-aliases.js', './gm-code-complete.js'].includes(item));",
+    'const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE_PATHS;'
+)
+replace_exact(
+    ai_page_test,
+    "'T/H刀长补偿映射适用范围'",
+    "'T/H刀长补偿映射适用范围','G10可编程数据写入适用范围','G/M代码首次安装离线核心','G28参考点返回适用范围'"
+)
+
+standard_page_workflows = [
     '.github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml',
     '.github/workflows/cnc-beginner-placement-offline-pages-smoke.yml',
-    '.github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml',
 ]
-for path in page_workflows:
+for path in standard_page_workflows:
     replace_exact(
         path,
         '"const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE.filter(item => ![\'./search-aliases.js\', \'./gm-code-complete.js\'].includes(item))"',
         "'const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE'"
     )
+
+ai_page_workflow = '.github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml'
+replace_exact(
+    ai_page_workflow,
+    '"const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE_PATHS.filter(item => ![\'./search-aliases.js\', \'./gm-code-complete.js\'].includes(item))"',
+    "'const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE_PATHS'"
+)
 
 self_workflow = '.github/workflows/cnc-pwa-self-test-smoke.yml'
 replace_exact(self_workflow, "'20260809-pwa28'", "'20260809-pwa29'")
