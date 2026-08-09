@@ -8,13 +8,13 @@ fs.mkdirSync(resultsDir, { recursive: true });
 
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
-const branchTargetPwaBuild = '20260809-pwa27';
-const previousPublicPwaBuild = '20260809-pwa26';
+const branchTargetPwaBuild = '20260809-pwa28';
+const previousPublicPwaBuild = '20260809-pwa27';
 const expectedSiteBuild = '20260806-learning-depth1';
 const previousPublicSiteBuild = '20260806-learning-depth1';
 const cacheRevisionByBuild = {
-  [branchTargetPwaBuild]: '20260809-learning27',
-  [previousPublicPwaBuild]: '20260809-learning26'
+  [branchTargetPwaBuild]: '20260809-learning28',
+  [previousPublicPwaBuild]: '20260809-learning27'
 };
 const attempts = Number(process.env.CNC_PAGES_VERIFY_ATTEMPTS || 18);
 const intervalMs = Number(process.env.CNC_PAGES_VERIFY_INTERVAL_MS || 10000);
@@ -38,6 +38,8 @@ const BASE_CORE_PATHS = [
   './personal-home.js',
   './training-practice.js',
   './training-profile.js',
+  './search-aliases.js',
+  './gm-code-complete.js',
   './learning-content-data.js',
   './learning-sublesson-catalog.js','./learning-sublesson-specificity.js',
   './learning-depth.css',
@@ -85,7 +87,7 @@ const VIDEO_CORE_PATHS = [
   './assets/videos/learning/stage12_first_part.mp4'
 ];
 const EXACT_CORE_PATHS = [...BASE_CORE_PATHS, ...VIDEO_CORE_PATHS];
-const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE_PATHS;
+const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE_PATHS.filter(item => !['./search-aliases.js', './gm-code-complete.js'].includes(item));
 
 const LEARNING_DEPTH_CORE_PATHS = new Set([
   './learning-sublesson-catalog.js',
