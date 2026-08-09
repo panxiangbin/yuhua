@@ -27,7 +27,7 @@
       <h2>版本一致性</h2>
       <p id="status" class="warn" role="status" aria-live="polite">正在检查版本。</p>
       <ul class="details">
-        <li>页面期望构建：<strong id="expected">20260809-pwa31</strong></li>
+        <li>页面期望构建：<strong id="expected">20260810-pwa32</strong></li>
         <li>静态缓存：<span id="static-cache">检测中</span></li>
         <li>运行时缓存：<span id="runtime-cache">检测中</span></li>
         <li>最近检查：<span id="checked-at">尚未完成</span></li>
@@ -38,11 +38,12 @@
   <p class="pwa-note" data-contract="g28-reference-return-boundary"><strong>G28参考点返回适用范围：</strong>G28属于高风险自动运动；G90/G91下中间位置的绝对或增量解释、参考点状态、轴方向与顺序及安全路径必须核对当前CNC和机床厂原厂手册，并确认刀具、刀柄、工件、夹具在完整计划运动空间内都有安全间隙，按现场工艺和授权操作规程验证。不要把G91 G28 Z0或固定“先Z后XY”当成通用防撞规则。</p>
   <p class="pwa-note" data-contract="g53-machine-coordinate-boundary"><strong>G53机床坐标定位适用范围：</strong>G53通常属于当前段非模态的高风险机床坐标运动，不是通用安全退刀。机床坐标零点、刀补及其它补偿影响、目标机械坐标和轴行程必须核对当前CNC与机床厂原厂手册；执行前确认刀具、刀柄、工件、夹具在完整计划运动空间内有安全间隙，并按现场规程先做单段、低倍率或空运行验证。不能把Z0、换刀点或固定机械坐标当成跨机床通用安全点。</p>
   <p class="pwa-note" data-contract="g92-dual-semantic-boundary"><strong>G92车铣双语义适用范围：</strong>G92不是跨机型同一含义。部分铣床/加工中心控制器用于工作坐标系偏移或坐标设定相关功能，部分车床控制器则用于螺纹车削循环；两类程序不能直接互抄。坐标类用法须核对当前工件坐标系、G52/G54-G59等偏移、模态状态及设定/清除规则；车床螺纹循环须核对X/Z或U/W、I/Q/F等地址解释、起始位置、主轴同步、退刀或倒角设置和完整运动空间。必须以当前CNC和机床厂原厂手册、现场工艺及受控验证为准，教学格式示意不得直接作为真实机床参数。</p>
+  <p class="pwa-note" data-contract="g94-dual-semantic-boundary"><strong>G94车铣双语义适用范围：</strong>G94不是跨机型同一含义。部分铣床/加工中心控制器把它作为每分钟进给模式，需结合G93/G94/G95、当前公制/英制状态核对F的单位与含义；部分车床控制器则可能把G94作为端面/直线车削循环，X/Z或U/W、K/F等地址、起始位置、返回/退刀路径和模态行为没有跨系统统一保证。两类程序不能直接互抄；必须核对当前CNC与机床厂原厂手册、刀补和主轴状态，并确认刀具、刀柄、工件、夹具在完整计划运动空间内有安全间隙，教学示意不得直接作为真实机床参数。</p>
 </main>
   <nav class="bottom" aria-label="平台主导航"><a href="./index.html">首页</a><a href="./training-camp.html">训练营</a><a href="./practice.html">练习</a><a href="./index.html#workspace">查代码</a><a href="./profile.html">我的</a></nav>
   <script>
-    const EXPECTED='20260809-pwa31';
-    const EXPECTED_CACHE='20260809-learning31';
+    const EXPECTED='20260810-pwa32';
+    const EXPECTED_CACHE='20260810-learning32';
     const network=document.querySelector('#network');
     const worker=document.querySelector('#worker');
     const buildElement=document.querySelector('#build');
