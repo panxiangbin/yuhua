@@ -6,15 +6,30 @@ const root = path.resolve(__dirname, '../..');
 const aliasesPath = path.join(root, 'cnc/search-aliases.js');
 const gmPath = path.join(root, 'cnc/gm-code-complete.js');
 const indexPath = path.join(root, 'cnc/index.html');
+const swPath = path.join(root, 'cnc/sw.js');
+const buildInfoPath = path.join(root, 'cnc/build-info.json');
 const aliasesText = fs.readFileSync(aliasesPath, 'utf8');
 const gmText = fs.readFileSync(gmPath, 'utf8');
 const indexText = fs.readFileSync(indexPath, 'utf8');
+const swText = fs.readFileSync(swPath, 'utf8');
+const buildInfo = JSON.parse(fs.readFileSync(buildInfoPath, 'utf8'));
 const errors = [];
 
 const aliasPos = indexText.indexOf('<script src="./search-aliases.js"></script>');
 const gmPos = indexText.indexOf('<script src="./gm-code-complete.js"></script>');
 if (aliasPos < 0 || gmPos < 0 || aliasPos >= gmPos) {
   errors.push('首页脚本顺序异常：G92安全归一化器必须在gm-code-complete.js之前加载');
+}
+for (const core of ["'./search-aliases.js'", "'./gm-code-complete.js'"]) {
+  if (!swText.includes(core)) errors.push(`PWA首次安装核心缺少G92可信目录依赖：${core}`);
+}
+if (!swText.includes("const BUILD = '20260809-pwa31'")) errors.push('Service Worker未升级到20260809-pwa31');
+if (!swText.includes("const CACHE_REVISION = '20260809-learning31'")) errors.push('Service Worker缓存修订未升级到20260809-learning31');
+if (buildInfo.pwaBuild !== '20260809-pwa31' || buildInfo.cacheRevision !== '20260809-learning31') {
+  errors.push(`build-info与PWA31不一致：${buildInfo.pwaBuild} / ${buildInfo.cacheRevision}`);
+}
+if (!String(buildInfo.contentStage || '').includes('G92车铣双语义适用范围')) {
+  errors.push('build-info缺少G92车铣双语义适用范围阶段标记');
 }
 
 // 第一层：基础源必须直接区分铣削坐标语义与车床螺纹循环，不能靠运行时覆盖掩盖错误。
@@ -93,4 +108,4 @@ if (errors.length) {
   errors.forEach(error => console.error(`- ${error}`));
   process.exit(1);
 }
-console.log('CNC G92车铣双语义可信度门禁通过：铣削坐标偏移/设定语义与车床螺纹循环语义被明确分开，地址、模态状态、清除方式、主轴同步与安全退刀空间必须按当前CNC和机床厂原厂手册核对。');
+console.log('CNC G92车铣双语义可信度门禁通过：铣削坐标偏移/设定语义与车床螺纹循环语义被明确分开，地址、模态状态、清除方式、主轴同步与安全退刀空间必须按当前CNC和机床厂原厂手册核对；G/M离线核心已正规升级到PWA31。');
