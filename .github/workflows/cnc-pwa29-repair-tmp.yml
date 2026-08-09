@@ -1,4 +1,4 @@
-# one-shot repair trigger v3
+# one-shot repair: test files only; workflow cleanup is done through the repository API after success
 name: CNC PWA29 gate repair temporary
 on:
   push:
@@ -25,26 +25,19 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-      - name: Apply exact repairs
+      - name: Apply exact test repairs
         run: |
           python3 cnc/tests/_tmp-pwa29-gate-repair.py
           node --check cnc/tests/mobile-pwa-upgrade-data-smoke.cjs
-          node --check cnc/tests/mobile-pwa-offline-cache-smoke.cjs
           node --check cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs
           node --check cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs
           node --check cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs
           git diff --check
-      - name: Audit scope, clean temporary files and commit
+      - name: Audit test-only scope, clean helper and commit
         run: |
           python3 - <<'PY'
           import subprocess
           allowed = {
-            '.github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml',
-            '.github/workflows/cnc-beginner-placement-offline-pages-smoke.yml',
-            '.github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml',
-            '.github/workflows/cnc-pwa-self-test-smoke.yml',
-            '.github/workflows/cnc-pwa-offline-cache-smoke.yml',
-            '.github/workflows/cnc-pwa-upgrade-data-smoke.yml',
             'cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs',
             'cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs',
             'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs',
@@ -54,10 +47,10 @@ jobs:
           if changed != allowed:
             raise SystemExit('unexpected repaired file set: ' + ', '.join(sorted(changed)))
           PY
-          git rm .github/workflows/cnc-pwa29-repair-tmp.yml cnc/tests/_tmp-pwa29-gate-repair.py
+          git rm cnc/tests/_tmp-pwa29-gate-repair.py
           git config user.name 'CNC automation'
           git config user.email 'actions@users.noreply.github.com'
-          git add .github/workflows/cnc-*.yml cnc/tests/*.cjs
+          git add cnc/tests/*.cjs
           git diff --cached --check
-          git commit -m 'fix(cnc-pwa): 修复PWA29升级与Pages门禁真实根因'
+          git commit -m 'fix(cnc-pwa): 修复PWA29升级与Pages测试真实根因'
           git push origin HEAD:codex/cnc-g28-reference-return-boundary
