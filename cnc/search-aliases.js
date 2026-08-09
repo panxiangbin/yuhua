@@ -77,9 +77,22 @@ window.CNC_SEARCH_ALIASES = [
     });
   }
 
+  function normalizeG53(entry) {
+    if (!entry || entry.id !== 'kb-gcode-g53') return entry;
+    return Object.assign({}, entry, {
+      summary: 'G53常用于在当前程序段按机床坐标解释定位，通常属于非模态的高风险运动；具体对工件坐标偏置、刀补或其它补偿的影响取决于当前CNC和机床厂实现。',
+      usage: '只有在已经核对本机原厂手册、机床坐标零点、目标机械坐标、刀补状态、轴行程和完整计划运动空间后，才可按现场工艺受控使用。',
+      beginner: '把G53理解成“按本机规定使用机床坐标的高风险定位”，不是自动安全退刀。不能把Z0、换刀点或任何固定机械坐标当成跨机床通用安全点。',
+      warning: '机床坐标零点、G53是否忽略或取消刀补/其它补偿以及各轴可达范围会因控制器和机床配置不同而变化。执行前必须核对当前CNC和机床厂原厂手册，确认刀具、刀柄、工件、夹具在完整计划运动空间内都有安全间隙，并按现场规程先做单段、低倍率或空运行验证。',
+      example: '教学格式示意：部分控制器程序中可见G53 G00 Z...按机床坐标定位；实际目标值、运动方式和刀补影响必须逐项以本机原厂手册为准，不能把Z0直接当成安全位置复制到真实机床。',
+      risk: '高',
+      tags: ['G53','机械坐标','高风险运动','机床坐标零点','原厂手册','空运行']
+    });
+  }
+
   function normalizeCatalog(value) {
     if (!Array.isArray(value)) return value;
-    return value.map(function (entry) { return normalizeG28(normalizeG10(entry)); });
+    return value.map(function (entry) { return normalizeG53(normalizeG28(normalizeG10(entry))); });
   }
 
   Object.defineProperty(window, 'CNC_GM_CODES', {
@@ -90,9 +103,10 @@ window.CNC_SEARCH_ALIASES = [
   });
 
   window.CNC_GM_CONTENT_SAFETY = {
-    version: 'g10-g28-boundary-2',
+    version: 'g10-g28-g53-boundary-3',
     normalizeG10: normalizeG10,
     normalizeG28: normalizeG28,
+    normalizeG53: normalizeG53,
     normalizeCatalog: normalizeCatalog
   };
 })();
