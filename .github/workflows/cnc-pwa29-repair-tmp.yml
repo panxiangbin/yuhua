@@ -1,3 +1,4 @@
+# one-shot repair trigger v2
 name: CNC PWA29 gate repair temporary
 on:
   push:
