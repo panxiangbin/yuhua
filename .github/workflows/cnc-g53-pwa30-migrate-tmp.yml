@@ -21,7 +21,19 @@ jobs:
           ref: codex/cnc-g53-machine-coordinate-boundary
           fetch-depth: 0
       - name: Apply exact G53 and PWA30 migration
-        run: python cnc/tests/_tmp-g53-pwa30-migrate.py
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('cnc/tests/_tmp-g53-pwa30-migrate.py')
+          text = path.read_text(encoding='utf-8')
+          old = "'cnc/gm-code-complete.js': ['G53通常属于', '不能把Z0', '空运行验证']"
+          new = "'cnc/gm-code-complete.js': ['通常属于非模态的高风险运动', '不能把Z0', '空运行验证']"
+          if text.count(old) != 1:
+              raise SystemExit(f'G53 migration verification anchor count={text.count(old)}')
+          path.write_text(text.replace(old, new, 1), encoding='utf-8')
+          PY
+          python cnc/tests/_tmp-g53-pwa30-migrate.py
+          git checkout -- cnc/tests/_tmp-g53-pwa30-migrate.py
       - name: Verify allowed migration scope
         run: |
           python - <<'PY'
