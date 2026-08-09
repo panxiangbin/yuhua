@@ -64,9 +64,22 @@ window.CNC_SEARCH_ALIASES = [
     });
   }
 
+  function normalizeG28(entry) {
+    if (!entry || entry.id !== 'kb-gcode-g28') return entry;
+    return Object.assign({}, entry, {
+      summary: 'G28用于自动返回机床参考点，属于高风险自动运动；中间位置、轴向、顺序和参考点状态的处理取决于当前CNC和机床厂配置。',
+      usage: '只有在已经按本机原厂手册确认G90/G91解释、参考点状态、安全撤离方向和完整运动路径后，才可按现场工艺与授权操作规程受控使用。',
+      beginner: '把G28理解成“会让机床自动运动到参考点的高风险指令”，不要把G91 G28 Z0或固定先Z后XY当成防撞口诀。',
+      warning: 'G90/G91会影响中间位置的绝对或增量解释；各轴方向与顺序、参考点状态和安全路径还会受控制系统与机床厂配置影响。执行前必须核对当前CNC和机床厂原厂手册、现场工艺和授权操作规程，并确认刀具、刀柄、工件、夹具在完整计划运动空间内都有安全间隙。',
+      example: '教学格式示意：某些常见控制配置可见G91 G28 Z0，但这不能作为防撞保证；真实格式、中间位置与安全路径必须逐项以本机原厂手册为准，并先做受控验证。',
+      risk: '高',
+      tags: ['G28','参考点返回','高风险自动运动','G90/G91','原厂手册','授权操作']
+    });
+  }
+
   function normalizeCatalog(value) {
     if (!Array.isArray(value)) return value;
-    return value.map(normalizeG10);
+    return value.map(function (entry) { return normalizeG28(normalizeG10(entry)); });
   }
 
   Object.defineProperty(window, 'CNC_GM_CODES', {
@@ -77,8 +90,9 @@ window.CNC_SEARCH_ALIASES = [
   });
 
   window.CNC_GM_CONTENT_SAFETY = {
-    version: 'g10-boundary-1',
+    version: 'g10-g28-boundary-2',
     normalizeG10: normalizeG10,
+    normalizeG28: normalizeG28,
     normalizeCatalog: normalizeCatalog
   };
 })();

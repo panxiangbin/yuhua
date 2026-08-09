@@ -8,10 +8,10 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const CURRENT_PWA_BUILD = '20260809-pwa28';
-const PREVIOUS_PWA_BUILD = '20260809-pwa27';
-const CURRENT_CACHE_REVISION = '20260809-learning28';
-const PREVIOUS_CACHE_REVISION = '20260809-learning27';
+const CURRENT_PWA_BUILD = '20260809-pwa29';
+const PREVIOUS_PWA_BUILD = '20260809-pwa28';
+const CURRENT_CACHE_REVISION = '20260809-learning29';
+const PREVIOUS_CACHE_REVISION = '20260809-learning28';
 const CURRENT_STATIC_CACHE = `cnc-static-${CURRENT_CACHE_REVISION}`;
 const CURRENT_RUNTIME_CACHE = `cnc-runtime-${CURRENT_CACHE_REVISION}`;
 const PREVIOUS_STATIC_CACHE = `cnc-static-${PREVIOUS_CACHE_REVISION}`;
@@ -376,6 +376,19 @@ async function verifyColdOfflineCourse(page, course) {
       await verifyColdOfflineCourse(page, course);
     }
 
+    stage = 'cold-offline-g28-directory-after-upgrade';
+    const offlineG28Trust = await page.evaluate(async () => {
+      const response = await fetch('./gm-code-complete.js');
+      return { ok: response.ok, text: await response.text() };
+    });
+    assert(offlineG28Trust.ok, '升级后G/M可信目录冷离线读取失败');
+    for (const token of ['高风险自动运动', 'G90/G91', '绝对或增量解释', '当前CNC和机床厂原厂手册', '刀具', '刀柄', '工件', '夹具', '完整计划运动空间', '授权操作规程']) {
+      assert(offlineG28Trust.text.includes(token), `G28冷离线源目录缺少安全边界：${token}`);
+    }
+    for (const forbidden of ['G28常配合G91 Z0先回Z，减少撞机。', '必须先Z后XY', 'G91 G28 Z0一定安全']) {
+      assert(!offlineG28Trust.text.includes(forbidden), `G28冷离线源目录仍含无适用范围防撞表述：${forbidden}`);
+    }
+
     stage = 'cold-offline-main-learning-content-after-upgrade';
     await page.goto('http://127.0.0.1:4173/cnc/index.html#view-study', { waitUntil: 'domcontentloaded' });
     const lesson8 = await page.evaluate(() => window.CNC_LEARNING_CONTENT?.lessons?.[8] || null);
@@ -420,6 +433,7 @@ async function verifyColdOfflineCourse(page, course) {
       trainingCorePaths: TRAINING_CORE_PATHS,
       mainLearningContentColdOfflineAfterUpgrade: true,
       toolOffsetMappingColdOfflineAfterUpgrade: true,
+      g28ReferenceReturnColdOfflineAfterUpgrade: true,
       unrelatedCachePreserved: true,
       singleScopedRegistration: true,
       localStoragePreserved: true,

@@ -29,11 +29,8 @@ jobs:
           const { execFileSync } = require('child_process');
           const testedHead = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
           fs.writeFileSync('cnc/test-results/pwa-upgrade-data/workflow-bootstrap.json', JSON.stringify({
-            stage: 'workflow-bootstrap',
-            runId: process.env.GITHUB_RUN_ID,
-            testedHead,
-            eventSha: process.env.GITHUB_SHA,
-            eventName: process.env.GITHUB_EVENT_NAME,
+            stage: 'workflow-bootstrap', runId: process.env.GITHUB_RUN_ID, testedHead,
+            eventSha: process.env.GITHUB_SHA, eventName: process.env.GITHUB_EVENT_NAME,
             initializedAt: new Date().toISOString()
           }, null, 2));
           NODE
@@ -52,67 +49,47 @@ jobs:
           const swCacheRevision = sw.match(/const CACHE_REVISION = '([^']+)'/)?.[1];
           if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
           if (swCacheRevision !== info.cacheRevision) throw new Error(`Service Worker/build-info cache mismatch: ${swCacheRevision} / ${info.cacheRevision}`);
-          if (info.pwaBuild !== '20260809-pwa28') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
-          if (info.cacheRevision !== '20260809-learning28') throw new Error(`unexpected cache revision: ${info.cacheRevision}`);
+          if (info.pwaBuild !== '20260809-pwa29') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
+          if (info.cacheRevision !== '20260809-learning29') throw new Error(`unexpected cache revision: ${info.cacheRevision}`);
           if (!test.includes(`const CURRENT_PWA_BUILD = '${info.pwaBuild}'`)) throw new Error('upgrade test current PWA build mismatch');
           if (!test.includes(`const CURRENT_CACHE_REVISION = '${info.cacheRevision}'`)) throw new Error('upgrade test current cache revision mismatch');
           for (const required of [
-            "const PREVIOUS_PWA_BUILD = '20260809-pwa27'",
-            "const PREVIOUS_CACHE_REVISION = '20260809-learning27'",
+            "const PREVIOUS_PWA_BUILD = '20260809-pwa28'",
+            "const PREVIOUS_CACHE_REVISION = '20260809-learning28'",
             "const TRAINING_CORE_PATHS = ['./training-practice.js', './training-profile.js', './search-aliases.js', './gm-code-complete.js', './learning-content-data.js']",
             'trainingCoreStaticCacheReady: true',
             'mainLearningContentColdOfflineAfterUpgrade: true',
             'toolOffsetMappingColdOfflineAfterUpgrade: true',
+            "stage = 'cold-offline-g28-directory-after-upgrade'",
+            'g28ReferenceReturnColdOfflineAfterUpgrade: true',
+            '高风险自动运动',
+            'G90/G91',
+            '当前CNC和机床厂原厂手册',
+            '完整计划运动空间',
+            'G28冷离线源目录缺少安全边界',
+            'G28常配合G91 Z0先回Z，减少撞机。',
             "stage = 'cold-offline-main-learning-content-after-upgrade'",
-            'cnc_training_profile_v1',
-            'cnc_training_practice_v1',
-            'cnc_training_simulator_v1',
-            'indexedDB.open',
-            'other-app-cache-v1',
-            'beginner-placement.html',
-            'training-camp\\.html',
-            'beginnerPlacementColdOfflineAfterUpgrade: true',
-            'beginnerPlacementCriticalSafetyGateAfterUpgrade: true',
-            'trainingCampColdOfflineAfterUpgrade: true',
-            'placementRouteHandoffColdOfflineAfterUpgrade: true',
-            'placementRouteHandoffImmediateCleanup: true',
-            'placementFirstStepClickColdOfflineAfterUpgrade: true',
-            'placementFirstStepCoursesColdOfflineAfterUpgrade: true',
-            'course-safety-foundation.html',
-            'course-coordinate-axes.html',
-            'course-g00-g01-basics.html',
-            'ai-teacher.html',
-            'ai-teacher-intake.html',
-            'ai-teacher-explainability.html',
-            'explainabilityColdOfflineAfterUpgrade: true',
-            '不能把“先Z后XY”当成所有机床通用规则',
-            '固定直线或固定折线',
+            'cnc_training_profile_v1', 'cnc_training_practice_v1', 'cnc_training_simulator_v1',
+            'indexedDB.open', 'other-app-cache-v1', 'beginner-placement.html', 'training-camp\\.html',
+            'beginnerPlacementColdOfflineAfterUpgrade: true', 'beginnerPlacementCriticalSafetyGateAfterUpgrade: true',
+            'trainingCampColdOfflineAfterUpgrade: true', 'placementRouteHandoffColdOfflineAfterUpgrade: true',
+            'placementRouteHandoffImmediateCleanup: true', 'placementFirstStepClickColdOfflineAfterUpgrade: true',
+            'placementFirstStepCoursesColdOfflineAfterUpgrade: true', 'course-safety-foundation.html',
+            'course-coordinate-axes.html', 'course-g00-g01-basics.html', 'ai-teacher.html', 'ai-teacher-intake.html',
+            'ai-teacher-explainability.html', 'explainabilityColdOfflineAfterUpgrade: true',
+            '不能把“先Z后XY”当成所有机床通用规则', '固定直线或固定折线',
             'T/H 数字相同是常见约定，不是所有机床都必须遵守的硬规则',
-            '不能仅凭 T01 M06 后使用 G43 H02 就直接判错',
-            'function assertControlledPracticeMigration',
-            'localStorageByteExactImmediatelyAfterWorkerUpgrade: true',
-            'nonPracticeLocalStorageByteExactAfterOfflineNavigation: true',
-            'practiceSchemaMigrationVerified: true',
-            '练习状态迁移丢失历史成绩',
-            '练习状态迁移丢失旧错题记录',
-            '练习状态迁移出现未授权字段'
-          ]) {
-            if (!test.includes(required)) throw new Error(`upgrade contract missing: ${required}`);
-          }
+            '不能仅凭 T01 M06 后使用 G43 H02 就直接判错', '原厂手册',
+            'function assertControlledPracticeMigration', 'localStorageByteExactImmediatelyAfterWorkerUpgrade: true',
+            'nonPracticeLocalStorageByteExactAfterOfflineNavigation: true', 'practiceSchemaMigrationVerified: true',
+            '练习状态迁移丢失历史成绩', '练习状态迁移丢失旧错题记录', '练习状态迁移出现未授权字段'
+          ]) if (!test.includes(required)) throw new Error(`upgrade contract missing: ${required}`);
           if (!placement.includes('criticalFailures') || !placement.includes("decision:'critical-safety'")) throw new Error('beginner placement critical safety gate missing');
           if (!placement.includes('cnc_beginner_placement_route_handoff_v1') || !camp.includes('cnc_beginner_placement_route_handoff_v1')) throw new Error('placement route handoff producer or consumer missing');
-          for (const file of ['./training-practice.js','./training-profile.js','./search-aliases.js','./gm-code-complete.js','./learning-content-data.js','./training-camp.html','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html']) {
-            if (!sw.includes(`'${file}'`)) throw new Error(`PWA core missing: ${file}`);
-          }
-          if (!sw.includes("name.startsWith('cnc-')") || !sw.includes('name !== STATIC_CACHE && name !== RUNTIME_CACHE')) {
-            throw new Error('Service Worker old CNC cache cleanup contract missing');
-          }
-          for (const stage of ['测评首步课程离线核心','正式课程开发占位清零','AI老师学习档案异常保护','80个图文小课','训练题库与成长档案离线核心','手机构建标记一致性','固定12关能力映射与真实薄弱课推荐','AI老师与固定12关成长档案语义一致','每日训练薄弱课错题精准回流','固定12关60题真实80分与关键题硬门禁','AI老师课程完成以真实完成记录为准','成长档案今日训练奖励以真实课程完成记录为准','G00快速定位与安全撤离适用范围','12关主课程数据首次安装离线核心','T/H刀长补偿映射适用范围','G10可编程数据写入适用范围','G/M代码首次安装离线核心']) {
-            if (!String(info.contentStage || '').includes(stage)) throw new Error(`build marker missing: ${stage}`);
-          }
-          for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)']) {
-            if (test.includes(forbidden)) throw new Error(`upgrade test bypass found: ${forbidden}`);
-          }
+          for (const file of ['./training-practice.js','./training-profile.js','./search-aliases.js','./gm-code-complete.js','./learning-content-data.js','./training-camp.html','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html']) if (!sw.includes(`'${file}'`)) throw new Error(`PWA core missing: ${file}`);
+          if (!sw.includes("name.startsWith('cnc-')") || !sw.includes('name !== STATIC_CACHE && name !== RUNTIME_CACHE')) throw new Error('Service Worker old CNC cache cleanup contract missing');
+          for (const stage of ['测评首步课程离线核心','正式课程开发占位清零','AI老师学习档案异常保护','80个图文小课','训练题库与成长档案离线核心','手机构建标记一致性','固定12关能力映射与真实薄弱课推荐','AI老师与固定12关成长档案语义一致','每日训练薄弱课错题精准回流','固定12关60题真实80分与关键题硬门禁','AI老师课程完成以真实完成记录为准','成长档案今日训练奖励以真实课程完成记录为准','G00快速定位与安全撤离适用范围','12关主课程数据首次安装离线核心','T/H刀长补偿映射适用范围','G10可编程数据写入适用范围','G/M代码首次安装离线核心','G28参考点返回适用范围']) if (!String(info.contentStage || '').includes(stage)) throw new Error(`build marker missing: ${stage}`);
+          for (const forbidden of ['test.skip(', 'describe.skip(', 'it.skip(', 'process.exit(0)']) if (test.includes(forbidden)) throw new Error(`upgrade test bypass found: ${forbidden}`);
           NODE
       - name: Install Playwright test runtime
         run: npm install --no-save playwright@1.52.0

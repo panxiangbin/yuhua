@@ -53,8 +53,8 @@ jobs:
           if (swBuild !== info.pwaBuild || swCache !== info.cacheRevision || !html.includes(`const EXPECTED='${info.pwaBuild}'`) || !html.includes(`const EXPECTED_CACHE='${info.cacheRevision}'`)) {
             throw new Error('PWA self-test/build-info/Service Worker build or cache revision mismatch');
           }
-          if (info.pwaBuild !== '20260809-pwa28') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
-          if (info.cacheRevision !== '20260809-learning28') throw new Error(`unexpected cache revision: ${info.cacheRevision}`);
+          if (info.pwaBuild !== '20260809-pwa29') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
+          if (info.cacheRevision !== '20260809-learning29') throw new Error(`unexpected cache revision: ${info.cacheRevision}`);
           for (const token of [
             'Service Worker已注册',
             '当前页面已被接管',
@@ -110,13 +110,19 @@ jobs:
             'G10可编程数据写入适用范围',
             'G90/G91绝对或增量解释',
             '备份原数据',
-            '授权人员确认'
+            '授权人员确认',
+            'G28参考点返回适用范围',
+            '高风险自动运动',
+            'G90/G91下中间位置的绝对或增量解释',
+            '当前CNC和机床厂原厂手册',
+            '完整计划运动空间',
+            '不要把G91 G28 Z0或固定“先Z后XY”当成通用防撞规则'
           ]) {
             if (!html.includes(token)) throw new Error(`self-test contract missing: ${token}`);
           }
           if (!placement.includes('criticalFailures') || !placement.includes("decision:'critical-safety'")) throw new Error('beginner placement critical safety gate missing');
           if (!placement.includes('cnc_beginner_placement_route_handoff_v1') || !camp.includes('cnc_beginner_placement_route_handoff_v1')) throw new Error('placement route handoff producer or consumer missing');
-          for (const stage of ['起点测评关键安全门禁','训练营路线离线核心','测评首步课程离线核心','正式课程开发占位清零','AI老师学习档案异常保护','80个图文小课','学习目录紧凑布局','80课现场动作与风险针对性','训练题库与成长档案离线核心','手机构建标记一致性','固定12关能力映射与真实薄弱课推荐','AI老师与固定12关成长档案语义一致','每日训练薄弱课错题精准回流','固定12关60题真实80分与关键题硬门禁','AI老师课程完成以真实完成记录为准','成长档案今日训练奖励以真实课程完成记录为准','G00快速定位与安全撤离适用范围','12关主课程数据首次安装离线核心','T/H刀长补偿映射适用范围','G10可编程数据写入适用范围','G/M代码首次安装离线核心']) {
+          for (const stage of ['起点测评关键安全门禁','训练营路线离线核心','测评首步课程离线核心','正式课程开发占位清零','AI老师学习档案异常保护','80个图文小课','学习目录紧凑布局','80课现场动作与风险针对性','训练题库与成长档案离线核心','手机构建标记一致性','固定12关能力映射与真实薄弱课推荐','AI老师与固定12关成长档案语义一致','每日训练薄弱课错题精准回流','固定12关60题真实80分与关键题硬门禁','AI老师课程完成以真实完成记录为准','成长档案今日训练奖励以真实课程完成记录为准','G00快速定位与安全撤离适用范围','12关主课程数据首次安装离线核心','T/H刀长补偿映射适用范围','G10可编程数据写入适用范围','G/M代码首次安装离线核心','G28参考点返回适用范围']) {
             if (!String(info.contentStage || '').includes(stage)) throw new Error(`build marker missing: ${stage}`);
           }
           NODE
