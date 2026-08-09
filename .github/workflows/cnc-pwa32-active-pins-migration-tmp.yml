@@ -1,0 +1,92 @@
+name: CNC PWA32 active pins migration tmp
+
+on:
+  push:
+    branches:
+      - codex/cnc-g94-dual-semantic-boundary
+    paths:
+      - 'cnc/tests/_tmp-pwa32-active-pins-migration.py'
+      - '.github/workflows/cnc-pwa32-active-pins-migration-tmp.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  migrate-active-pins:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/cnc-g94-dual-semantic-boundary
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Run controlled PWA active-pin migration
+        run: python cnc/tests/_tmp-pwa32-active-pins-migration.py
+      - name: Validate exact changed-file whitelist
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t changed < <(git diff --name-only)
+          expected=(
+            cnc/pwa-self-test.html
+            cnc/pwa-status.html
+            cnc/tests/mobile-pwa-offline-cache-smoke.cjs
+            cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs
+            cnc/tests/mobile-pwa-upgrade-data-smoke.cjs
+            cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs
+            cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs
+            cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs
+          )
+          if [[ ${#changed[@]} -ne ${#expected[@]} ]]; then
+            printf 'unexpected changes:\n%s\n' "${changed[*]}" >&2
+            exit 1
+          fi
+          for path in "${expected[@]}"; do
+            printf '%s\n' "${changed[@]}" | grep -Fx -- "$path" >/dev/null || { echo "missing expected change: $path" >&2; exit 1; }
+          done
+          for path in "${changed[@]}"; do
+            case "$path" in
+              cnc/pwa-self-test.html|cnc/pwa-status.html|cnc/tests/mobile-pwa-offline-cache-smoke.cjs|cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs|cnc/tests/mobile-pwa-upgrade-data-smoke.cjs|cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs|cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs|cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs) ;;
+              *) echo "migration escaped whitelist: $path" >&2; exit 1 ;;
+            esac
+          done
+      - name: Validate syntax and no bypass
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check cnc/tests/mobile-pwa-offline-cache-smoke.cjs
+          node --check cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs
+          node --check cnc/tests/mobile-pwa-upgrade-data-smoke.cjs
+          node --check cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs
+          node --check cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs
+          node --check cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs
+          grep -F 'g94-dual-semantic-boundary' cnc/pwa-status.html >/dev/null
+          grep -F 'g94-dual-semantic-boundary' cnc/pwa-self-test.html >/dev/null
+          grep -F "stage = 'cold-offline-g94-directory';" cnc/tests/mobile-pwa-offline-cache-smoke.cjs >/dev/null
+          for path in cnc/tests/mobile-pwa-offline-cache-smoke.cjs cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs cnc/tests/mobile-pwa-upgrade-data-smoke.cjs cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs; do
+            ! grep -F 'test.skip(' "$path"
+            ! grep -F 'describe.skip(' "$path"
+            ! grep -F 'it.skip(' "$path"
+            ! grep -F 'process.exit(0)' "$path"
+          done
+      - name: Commit controlled active-pin migration
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- \
+            cnc/pwa-self-test.html \
+            cnc/pwa-status.html \
+            cnc/tests/mobile-pwa-offline-cache-smoke.cjs \
+            cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs \
+            cnc/tests/mobile-pwa-upgrade-data-smoke.cjs \
+            cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs \
+            cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs \
+            cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs
+          git diff --cached --quiet && { echo 'no active-pin migration changes to commit' >&2; exit 1; }
+          git commit -m 'fix(cnc-pwa): 对齐PWA32主动构建针与冷离线G94验证'
+          git push origin HEAD:codex/cnc-g94-dual-semantic-boundary
