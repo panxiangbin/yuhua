@@ -39,52 +39,6 @@ replace_exact(
     3
 )
 
-standard_page_workflows = [
-    '.github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml',
-    '.github/workflows/cnc-beginner-placement-offline-pages-smoke.yml',
-]
-for path in standard_page_workflows:
-    replace_exact(
-        path,
-        '"const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE.filter(item => ![\'./search-aliases.js\', \'./gm-code-complete.js\'].includes(item))"',
-        "'const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE'"
-    )
-
-ai_page_workflow = '.github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml'
-replace_exact(
-    ai_page_workflow,
-    '"const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE_PATHS.filter(item => ![\'./search-aliases.js\', \'./gm-code-complete.js\'].includes(item))"',
-    "'const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE_PATHS'"
-)
-
-self_workflow = '.github/workflows/cnc-pwa-self-test-smoke.yml'
-replace_exact(self_workflow, "'20260809-pwa28'", "'20260809-pwa29'")
-replace_exact(self_workflow, "'20260809-learning28'", "'20260809-learning29'")
-replace_exact(
-    self_workflow,
-    "            '授权人员确认'\n",
-    "            '授权人员确认',\n            'G28参考点返回适用范围',\n            '高风险自动运动',\n            'G90/G91下中间位置的绝对或增量解释',\n            '当前CNC和机床厂原厂手册',\n            '完整计划运动空间',\n            '不要把G91 G28 Z0或固定“先Z后XY”当成通用防撞规则'\n"
-)
-replace_exact(
-    self_workflow,
-    "'G/M代码首次安装离线核心'])",
-    "'G/M代码首次安装离线核心','G28参考点返回适用范围'])"
-)
-
-offline_workflow = '.github/workflows/cnc-pwa-offline-cache-smoke.yml'
-replace_exact(offline_workflow, "'20260809-pwa28'", "'20260809-pwa29'", 2)
-replace_exact(offline_workflow, "'20260809-learning28'", "'20260809-learning29'", 2)
-replace_exact(
-    offline_workflow,
-    "            '未确认前不要上机执行',\n",
-    "            '未确认前不要上机执行',\n            '高风险自动运动',\n            'G90/G91',\n            '当前CNC和机床厂原厂手册',\n            '完整计划运动空间',\n            'G28冷离线源目录缺少安全边界',\n"
-)
-replace_exact(
-    offline_workflow,
-    "'G/M代码首次安装离线核心'])",
-    "'G/M代码首次安装离线核心','G28参考点返回适用范围'])"
-)
-
 upgrade_test = 'cnc/tests/mobile-pwa-upgrade-data-smoke.cjs'
 insert_before = "    stage = 'cold-offline-main-learning-content-after-upgrade';\n"
 g28_block = """    stage = 'cold-offline-g28-directory-after-upgrade';
@@ -106,11 +60,4 @@ replace_exact(
     upgrade_test,
     '      toolOffsetMappingColdOfflineAfterUpgrade: true,\n',
     '      toolOffsetMappingColdOfflineAfterUpgrade: true,\n      g28ReferenceReturnColdOfflineAfterUpgrade: true,\n'
-)
-
-upgrade_workflow = '.github/workflows/cnc-pwa-upgrade-data-smoke.yml'
-replace_exact(
-    upgrade_workflow,
-    "            'G28',\n",
-    "            \"stage = 'cold-offline-g28-directory-after-upgrade'\",\n            'g28ReferenceReturnColdOfflineAfterUpgrade: true',\n            '高风险自动运动',\n            'G90/G91',\n            '当前CNC和机床厂原厂手册',\n            '完整计划运动空间',\n            'G28冷离线源目录缺少安全边界',\n            'G28常配合G91 Z0先回Z，减少撞机。',\n"
 )
