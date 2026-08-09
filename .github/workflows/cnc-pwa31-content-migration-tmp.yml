@@ -27,6 +27,7 @@ jobs:
       - name: Validate JavaScript syntax
         run: |
           node --check cnc/tests/mobile-pwa-upgrade-data-smoke.cjs
+          node --check cnc/tests/mobile-pwa-offline-cache-smoke.cjs
           node --check cnc/sw.js
       - name: Audit exact write scope
         shell: bash
@@ -34,7 +35,7 @@ jobs:
           set -euo pipefail
           mapfile -t changed < <(git diff --name-only)
           printf '%s\n' "${changed[@]}"
-          allowed='cnc/pwa-self-test.html cnc/pwa-status.html cnc/tests/mobile-pwa-upgrade-data-smoke.cjs'
+          allowed='cnc/pwa-self-test.html cnc/pwa-status.html cnc/tests/mobile-pwa-upgrade-data-smoke.cjs cnc/tests/mobile-pwa-offline-cache-smoke.cjs'
           for file in "${changed[@]}"; do
             case " $allowed " in
               *" $file "*) ;;
@@ -45,12 +46,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if git diff --quiet -- cnc/pwa-self-test.html cnc/pwa-status.html cnc/tests/mobile-pwa-upgrade-data-smoke.cjs; then
+          if git diff --quiet -- cnc/pwa-self-test.html cnc/pwa-status.html cnc/tests/mobile-pwa-upgrade-data-smoke.cjs cnc/tests/mobile-pwa-offline-cache-smoke.cjs; then
             echo 'PWA31内容已经处于目标状态'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add cnc/pwa-self-test.html cnc/pwa-status.html cnc/tests/mobile-pwa-upgrade-data-smoke.cjs
-          git commit -m 'fix(cnc-pwa): 对齐PWA31状态与升级数据门禁'
+          git add cnc/pwa-self-test.html cnc/pwa-status.html cnc/tests/mobile-pwa-upgrade-data-smoke.cjs cnc/tests/mobile-pwa-offline-cache-smoke.cjs
+          git commit -m 'fix(cnc-pwa): 对齐PWA31状态与冷离线升级门禁'
           git push origin "HEAD:${GITHUB_REF_NAME}"
