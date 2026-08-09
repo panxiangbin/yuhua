@@ -1,0 +1,90 @@
+name: CNC PWA32 G94 migration tmp
+
+on:
+  push:
+    branches:
+      - codex/cnc-g94-dual-semantic-boundary
+    paths:
+      - 'cnc/tests/_tmp-pwa32-g94-migration.py'
+      - '.github/workflows/cnc-pwa32-g94-migration-tmp.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  migrate-g94-pwa32:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/cnc-g94-dual-semantic-boundary
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Run controlled G94 migration
+        run: python cnc/tests/_tmp-pwa32-g94-migration.py
+      - name: Validate changed-file whitelist
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t changed < <(git diff --name-only)
+          printf '%s\n' "${changed[@]}"
+          expected=(
+            cnc/MOBILE_LEARNING_MEDIA_PROGRESS.md
+            cnc/build-info.json
+            cnc/gm-code-complete.js
+            cnc/search-aliases.js
+            cnc/sw.js
+          )
+          if [[ ${#changed[@]} -ne ${#expected[@]} ]]; then
+            echo "unexpected changed file count: ${#changed[@]}" >&2
+            exit 1
+          fi
+          for path in "${expected[@]}"; do
+            printf '%s\n' "${changed[@]}" | grep -Fx -- "$path" >/dev/null || {
+              echo "missing expected change: $path" >&2
+              exit 1
+            }
+          done
+          for path in "${changed[@]}"; do
+            case "$path" in
+              cnc/MOBILE_LEARNING_MEDIA_PROGRESS.md|cnc/build-info.json|cnc/gm-code-complete.js|cnc/search-aliases.js|cnc/sw.js) ;;
+              *) echo "migration escaped whitelist: $path" >&2; exit 1 ;;
+            esac
+          done
+      - name: Validate syntax and PWA32 markers
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check cnc/search-aliases.js
+          node --check cnc/gm-code-complete.js
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          info = json.loads(Path('cnc/build-info.json').read_text(encoding='utf-8'))
+          assert info['pwaBuild'] == '20260810-pwa32'
+          assert info['cacheRevision'] == '20260810-learning32'
+          assert 'G94车铣双语义适用范围' in info.get('contentStage', '')
+          PY
+          grep -F "const BUILD = '20260810-pwa32';" cnc/sw.js
+          grep -F "const CACHE_REVISION = '20260810-learning32';" cnc/sw.js
+          grep -F 'G94不是跨机型同一含义' cnc/gm-code-complete.js
+          grep -F "version: 'g10-g28-g53-g92-g94-boundary-5'" cnc/search-aliases.js
+          grep -F '20260810-pwa32 / 20260810-learning32' cnc/MOBILE_LEARNING_MEDIA_PROGRESS.md
+      - name: Commit controlled migration result
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- \
+            cnc/MOBILE_LEARNING_MEDIA_PROGRESS.md \
+            cnc/build-info.json \
+            cnc/gm-code-complete.js \
+            cnc/search-aliases.js \
+            cnc/sw.js
+          git diff --cached --quiet && { echo 'no migration changes to commit' >&2; exit 1; }
+          git commit -m 'fix(cnc-trust): 区分G94车铣语义并升级PWA32'
+          git push origin HEAD:codex/cnc-g94-dual-semantic-boundary
