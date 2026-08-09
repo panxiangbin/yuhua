@@ -23,16 +23,15 @@ if (aliasPos < 0 || gmPos < 0 || aliasPos >= gmPos) {
 for (const core of ["'./search-aliases.js'", "'./gm-code-complete.js'"]) {
   if (!swText.includes(core)) errors.push(`PWA首次安装核心缺少G92可信目录依赖：${core}`);
 }
-if (!swText.includes("const BUILD = '20260809-pwa31'")) errors.push('Service Worker未升级到20260809-pwa31');
-if (!swText.includes("const CACHE_REVISION = '20260809-learning31'")) errors.push('Service Worker缓存修订未升级到20260809-learning31');
-if (buildInfo.pwaBuild !== '20260809-pwa31' || buildInfo.cacheRevision !== '20260809-learning31') {
-  errors.push(`build-info与PWA31不一致：${buildInfo.pwaBuild} / ${buildInfo.cacheRevision}`);
+if (!swText.includes("const BUILD = '20260810-pwa32'")) errors.push('Service Worker未升级到20260810-pwa32');
+if (!swText.includes("const CACHE_REVISION = '20260810-learning32'")) errors.push('Service Worker缓存修订未升级到20260810-learning32');
+if (buildInfo.pwaBuild !== '20260810-pwa32' || buildInfo.cacheRevision !== '20260810-learning32') {
+  errors.push(`build-info与PWA32不一致：${buildInfo.pwaBuild} / ${buildInfo.cacheRevision}`);
 }
 if (!String(buildInfo.contentStage || '').includes('G92车铣双语义适用范围')) {
   errors.push('build-info缺少G92车铣双语义适用范围阶段标记');
 }
 
-// 第一层：基础源必须直接区分铣削坐标语义与车床螺纹循环，不能靠运行时覆盖掩盖错误。
 if (!gmText.includes('"id": "kb-gcode-g92"')) errors.push('基础G/M目录缺少G92条目');
 for (const token of [
   '车铣差异',
@@ -60,7 +59,6 @@ for (const forbidden of [
   if (gmText.includes(forbidden)) errors.push(`基础G92源目录仍含无适用范围表述：${forbidden}`);
 }
 
-// 第二层：运行时目录维持相同边界；两层必须同时成立。
 const sandbox = { window: {}, console: { log() {}, warn() {}, error() {} } };
 vm.createContext(sandbox);
 try {
@@ -71,8 +69,8 @@ try {
 }
 
 const guard = sandbox.window.CNC_GM_CONTENT_SAFETY;
-if (!guard || guard.version !== 'g10-g28-g53-g92-boundary-4' || typeof guard.normalizeG92 !== 'function') {
-  errors.push('G10/G28/G53/G92内容安全归一化器未安装、版本异常或缺少normalizeG92');
+if (!guard || guard.version !== 'g10-g28-g53-g92-g94-boundary-5' || typeof guard.normalizeG92 !== 'function') {
+  errors.push('G10/G28/G53/G92/G94内容安全归一化器未安装、版本异常或缺少normalizeG92');
 }
 const catalog = sandbox.window.CNC_GM_CODES;
 const g92 = Array.isArray(catalog) ? catalog.find(item => item && item.id === 'kb-gcode-g92') : null;
@@ -108,4 +106,4 @@ if (errors.length) {
   errors.forEach(error => console.error(`- ${error}`));
   process.exit(1);
 }
-console.log('CNC G92车铣双语义可信度门禁通过：铣削坐标偏移/设定语义与车床螺纹循环语义被明确分开，地址、模态状态、清除方式、主轴同步与安全退刀空间必须按当前CNC和机床厂原厂手册核对；G/M离线核心已正规升级到PWA31。');
+console.log('CNC G92车铣双语义可信度门禁通过：铣削坐标偏移/设定语义与车床螺纹循环语义被明确分开，地址、模态状态、清除方式、主轴同步与安全退刀空间必须按当前CNC和机床厂原厂手册核对；G/M离线核心已正规升级到PWA32。');
