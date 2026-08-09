@@ -70,7 +70,7 @@ jobs:
             "[previousPublicPwaBuild]: '20260809-learning28'",
             'const VIDEO_CORE_PATHS = [',
             'const EXACT_CORE_PATHS = [...BASE_CORE_PATHS, ...VIDEO_CORE_PATHS]',
-            "const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE_PATHS.filter(item => !['./search-aliases.js', './gm-code-complete.js'].includes(item))",
+            'const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE_PATHS',
             'CNC_PAGES_VERIFY_ATTEMPTS || 18',
             "cache: 'no-store'",
             'mainPagesExactBytesMatch: true',
