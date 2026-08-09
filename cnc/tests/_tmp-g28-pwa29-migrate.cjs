@@ -18,7 +18,6 @@ function migrateBuildPins(text) {
     .split('__PREV_LEARN__').join('20260809-learning28');
 }
 
-// 1. 直接修正基础G28条目。真实基线是结构化目录，不把一种写法当通用防撞口诀。
 {
   const rel = 'cnc/gm-code-complete.js';
   let text = read(rel);
@@ -39,7 +38,6 @@ function migrateBuildPins(text) {
   write(rel, text);
 }
 
-// 2. 运行时第二层安全归一化：保留G10保护并加入G28，不用运行时覆盖掩盖基础源错误。
 {
   const rel = 'cnc/search-aliases.js';
   let text = read(rel);
@@ -54,7 +52,6 @@ function migrateBuildPins(text) {
   write(rel, text);
 }
 
-// 3. build-info仅升级PWA/cache修订，保留站点build、mobileBuild、scope、learningBuild等全部既有元数据。
 {
   const rel = 'cnc/build-info.json';
   const info = JSON.parse(read(rel));
@@ -68,7 +65,6 @@ function migrateBuildPins(text) {
   write(rel, JSON.stringify(info, null, 2) + '\n');
 }
 
-// 4. 当前主动构建针迁移PWA28→PWA29，上一正式版本PWA27→PWA28；只扫描CNC测试和CNC工作流。
 for (const rel of ['cnc/sw.js','cnc/pwa-status.html','cnc/pwa-self-test.html','cnc/MOBILE_LEARNING_MEDIA_PROGRESS.md']) write(rel, migrateBuildPins(read(rel)));
 function walk(dir, filter) {
   const abs = path.join(root, dir);
@@ -76,15 +72,11 @@ function walk(dir, filter) {
     const rel = path.posix.join(dir, name);
     const stat = fs.statSync(path.join(root, rel));
     if (stat.isDirectory()) walk(rel, filter);
-    else if (filter(rel)) {
-      const before = read(rel); const after = migrateBuildPins(before); if (after !== before) write(rel, after);
-    }
+    else if (filter(rel)) { const before = read(rel); const after = migrateBuildPins(before); if (after !== before) write(rel, after); }
   }
 }
 walk('cnc/tests', rel => rel.endsWith('.cjs') && !rel.endsWith('_tmp-g28-pwa29-migrate.cjs'));
-walk('.github/workflows', rel => /^\.github\/workflows\/cnc-.*\.ya?ml$/.test(rel) && !rel.endsWith('cnc-g28-pwa29-migrate-tmp.yml'));
 
-// G10旧门禁继续完整存在，只把安全归一化器能力版本提升为G10+G28。
 {
   const rel = 'cnc/tests/g10-programmable-data-input-trust-smoke.cjs';
   let text = read(rel);
@@ -93,7 +85,6 @@ walk('.github/workflows', rel => /^\.github\/workflows\/cnc-.*\.ya?ml$/.test(rel
   write(rel, text);
 }
 
-// 5. 状态页/自检页/进度文档加入可见G28适用范围，不篡改PWA27/PWA28历史说明。
 for (const rel of ['cnc/pwa-status.html','cnc/pwa-self-test.html']) {
   let text = read(rel);
   if (!text.includes('G28参考点返回适用范围')) {
@@ -108,7 +99,6 @@ for (const rel of ['cnc/pwa-status.html','cnc/pwa-self-test.html']) {
   write(rel, text);
 }
 
-// 6. 真正冷离线以后读取G/M核心，并在既有G10断言之后增加G28可信边界；不删除任何旧断言。
 {
   const rel = 'cnc/tests/mobile-pwa-offline-cache-smoke.cjs';
   let text = read(rel);
@@ -121,19 +111,6 @@ for (const rel of ['cnc/pwa-status.html','cnc/pwa-self-test.html']) {
   write(rel, text);
 }
 
-// 7. Pages主动契约继续检查新阶段；只给已经验证G10阶段的CNC工作流追加G28阶段，不降低其它断言。
-for (const name of fs.readdirSync(path.join(root, '.github/workflows'))) {
-  if (!/^cnc-.*\.ya?ml$/.test(name)) continue;
-  const rel = `.github/workflows/${name}`; let text = read(rel);
-  if (text.includes("'G10可编程数据写入适用范围'") && text.includes("'G/M代码首次安装离线核心'") && !text.includes("'G28参考点返回适用范围'")) {
-    text = text.replaceAll("'G10可编程数据写入适用范围','G/M代码首次安装离线核心'", "'G10可编程数据写入适用范围','G/M代码首次安装离线核心','G28参考点返回适用范围'");
-    text = text.replaceAll("'G10可编程数据写入适用范围', 'G/M代码首次安装离线核心'", "'G10可编程数据写入适用范围', 'G/M代码首次安装离线核心', 'G28参考点返回适用范围'");
-    write(rel, text);
-  }
-}
-
-for (const rel of [...changed]) {
-  if (!(rel.startsWith('cnc/') || /^\.github\/workflows\/cnc-.*\.ya?ml$/.test(rel))) throw new Error(`越界修改：${rel}`);
-}
+for (const rel of [...changed]) if (!rel.startsWith('cnc/')) throw new Error(`本次自动迁移只允许cnc/**，发现：${rel}`);
 for (const required of ['cnc/gm-code-complete.js','cnc/search-aliases.js','cnc/build-info.json','cnc/sw.js','cnc/pwa-status.html','cnc/pwa-self-test.html','cnc/tests/mobile-pwa-offline-cache-smoke.cjs']) if (!changed.has(required)) throw new Error(`未形成必要改动：${required}`);
-console.log('G28/PWA29迁移完成：'); [...changed].sort().forEach(rel => console.log(rel));
+console.log('G28/PWA29生产与测试迁移完成：'); [...changed].sort().forEach(rel => console.log(rel));
