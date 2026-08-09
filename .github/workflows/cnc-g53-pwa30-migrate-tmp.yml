@@ -1,0 +1,61 @@
+name: CNC G53 PWA30 one-time migration
+
+on:
+  push:
+    branches:
+      - codex/cnc-g53-machine-coordinate-boundary
+    paths:
+      - '.github/workflows/cnc-g53-pwa30-migrate-tmp.yml'
+      - 'cnc/tests/_tmp-g53-pwa30-migrate.py'
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/cnc-g53-machine-coordinate-boundary
+          fetch-depth: 0
+      - name: Apply exact G53 and PWA30 migration
+        run: python cnc/tests/_tmp-g53-pwa30-migrate.py
+      - name: Verify allowed migration scope
+        run: |
+          python - <<'PY'
+          import subprocess
+          allowed = {
+            'cnc/gm-code-complete.js',
+            'cnc/search-aliases.js',
+            'cnc/sw.js',
+            'cnc/build-info.json',
+            'cnc/pwa-status.html',
+            'cnc/pwa-self-test.html',
+            'cnc/MOBILE_LEARNING_MEDIA_PROGRESS.md',
+            'cnc/tests/mobile-pwa-offline-cache-smoke.cjs',
+            'cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs',
+            'cnc/tests/mobile-pwa-upgrade-data-smoke.cjs',
+            'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs',
+            'cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs',
+            'cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs',
+            'cnc/tests/g10-programmable-data-input-trust-smoke.cjs',
+            'cnc/tests/g28-reference-return-boundary-trust-smoke.cjs',
+          }
+          changed = {line.strip() for line in subprocess.check_output(['git','diff','--name-only'], text=True).splitlines() if line.strip()}
+          extra = changed - allowed
+          missing = allowed - changed
+          if extra:
+              raise SystemExit('unexpected files: ' + ', '.join(sorted(extra)))
+          if missing:
+              raise SystemExit('expected migration files unchanged: ' + ', '.join(sorted(missing)))
+          print('migration scope verified:', len(changed), 'files')
+          PY
+      - name: Commit migration result
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add cnc/gm-code-complete.js cnc/search-aliases.js cnc/sw.js cnc/build-info.json cnc/pwa-status.html cnc/pwa-self-test.html cnc/MOBILE_LEARNING_MEDIA_PROGRESS.md cnc/tests/mobile-pwa-offline-cache-smoke.cjs cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs cnc/tests/mobile-pwa-upgrade-data-smoke.cjs cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs cnc/tests/g10-programmable-data-input-trust-smoke.cjs cnc/tests/g28-reference-return-boundary-trust-smoke.cjs
+          git commit -m "fix(cnc): 收紧G53机床坐标边界并升级PWA30"
+          git push origin HEAD:codex/cnc-g53-machine-coordinate-boundary
