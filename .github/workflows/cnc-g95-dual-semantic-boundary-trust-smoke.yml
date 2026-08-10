@@ -36,6 +36,6 @@ jobs:
         run: |
           ! grep -F '.skip(' cnc/tests/g95-dual-semantic-boundary-trust-smoke.cjs
           ! grep -F 'process.exit(0)' cnc/tests/g95-dual-semantic-boundary-trust-smoke.cjs
-          ! grep -F 'continue-on-error:' .github/workflows/cnc-g95-dual-semantic-boundary-trust-smoke.yml
+          ! grep -Eq '^[[:space:]]*continue-on-error[[:space:]]*:' .github/workflows/cnc-g95-dual-semantic-boundary-trust-smoke.yml
       - name: Validate G95 mill-lathe semantic boundary
         run: node cnc/tests/g95-dual-semantic-boundary-trust-smoke.cjs

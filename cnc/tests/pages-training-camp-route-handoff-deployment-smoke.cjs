@@ -11,10 +11,10 @@ const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubuserconten
 const expectedSiteBuild = '20260806-learning-depth1';
 const expectedPwaBuild = '20260810-pwa35';
 const previousPublicSiteBuild = '20260806-learning-depth1';
-const previousPublicPwaBuild = '20260810-pwa33';
+const previousPublicPwaBuild = '20260810-pwa34';
 const cacheRevisionByBuild = {
   [expectedPwaBuild]: '20260810-learning35',
-  [previousPublicPwaBuild]: '20260810-learning33'
+  [previousPublicPwaBuild]: '20260810-learning34'
 };
 const siteBuildByPwaBuild = {
   [expectedPwaBuild]: expectedSiteBuild,

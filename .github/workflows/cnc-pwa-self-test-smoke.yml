@@ -53,8 +53,8 @@ jobs:
           if (swBuild !== info.pwaBuild || swCache !== info.cacheRevision || !html.includes(`const EXPECTED='${info.pwaBuild}'`) || !html.includes(`const EXPECTED_CACHE='${info.cacheRevision}'`)) {
             throw new Error('PWA self-test/build-info/Service Worker build or cache revision mismatch');
           }
-          if (info.pwaBuild !== '20260810-pwa34') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
-          if (info.cacheRevision !== '20260810-learning34') throw new Error(`unexpected cache revision: ${info.cacheRevision}`);
+          if (info.pwaBuild !== '20260810-pwa35') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
+          if (info.cacheRevision !== '20260810-learning35') throw new Error(`unexpected cache revision: ${info.cacheRevision}`);
           for (const token of [
             'Service Worker已注册',
             '当前页面已被接管',

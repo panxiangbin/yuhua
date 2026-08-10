@@ -189,11 +189,22 @@ async function writeDiagnostics(page, stage, errors, extra = {}) {
       '当前CNC', 'G代码组别', '机床厂原厂手册', '单位制', 'F地址单位', '同步攻丝',
       '两类程序不能互抄', '不提供可直接照抄的固定参数'
     ];
+    let gmCatalog;
+    try {
+      gmCatalog = JSON.parse(sourceEvidence.gmText
+        .replace(/^\s*window\.CNC_GM_CODES\s*=\s*/, '')
+        .replace(/;\s*$/, ''));
+    } catch (error) {
+      throw new Error(`G95冷离线基础源无法解析：${error.message}`);
+    }
+    const g95SourceEntry = Array.isArray(gmCatalog) ? gmCatalog.find(item => item && item.id === 'kb-gcode-g95') : null;
+    if (!g95SourceEntry) throw new Error('G95冷离线基础源条目缺失');
+    const g95SourceText = JSON.stringify(g95SourceEntry);
     for (const token of gmRequired) {
-      if (!sourceEvidence.gmText.includes(token)) throw new Error(`G95冷离线基础源缺少安全边界：${token}`);
+      if (!g95SourceText.includes(token)) throw new Error(`G95冷离线基础源缺少安全边界：${token}`);
     }
     for (const forbidden of ['G95 F0.2', 'F0.2', '车床常用G95配合', 'G95就是每转进给', 'G95就是刚性攻丝']) {
-      if (sourceEvidence.gmText.includes(forbidden)) throw new Error(`G95冷离线基础源仍含可直接照抄或跨机型口诀：${forbidden}`);
+      if (g95SourceText.includes(forbidden)) throw new Error(`G95冷离线基础源仍含可直接照抄或跨机型口诀：${forbidden}`);
     }
     for (const token of [GUARD_VERSION, 'function normalizeG95(entry)', 'normalizeG95']) {
       if (!sourceEvidence.aliasesText.includes(token)) throw new Error(`G95冷离线归一化源缺少：${token}`);

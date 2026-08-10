@@ -33,16 +33,24 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Verify exact tested commit
+        shell: bash
+        run: |
+          expected='${{ github.event.pull_request.head.sha || github.sha }}'
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected" || { echo "exact-head mismatch: expected=$expected actual=$actual" >&2; exit 1; }
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Validate PWA34 and anti-bypass contract
+      - name: Validate PWA35 and anti-bypass contract
         run: |
           node <<'NODE'
           const fs = require('fs');
           const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
           const test = fs.readFileSync('cnc/tests/g96-g97-cold-offline-source-trust-smoke.cjs', 'utf8');
-          if (info.pwaBuild !== '20260810-pwa34' || info.cacheRevision !== '20260810-learning34') {
+          if (info.pwaBuild !== '20260810-pwa35' || info.cacheRevision !== '20260810-learning35') {
             throw new Error(`unexpected build: ${info.pwaBuild}/${info.cacheRevision}`);
           }
           for (const token of [

@@ -51,12 +51,12 @@ jobs:
           const sw = fs.readFileSync('cnc/sw.js', 'utf8');
           const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
           if (info.build !== '20260806-learning-depth1') throw new Error(`unexpected site build: ${info.build}`);
-          if (info.pwaBuild !== '20260810-pwa34' || info.cacheRevision !== '20260810-learning34') throw new Error(`unexpected PWA/cache build: ${info.pwaBuild}/${info.cacheRevision}`);
-          if (!sw.includes("const BUILD = '20260810-pwa34'") || !sw.includes("const CACHE_REVISION = '20260810-learning34'")) throw new Error('Service Worker build/cache mismatch');
+          if (info.pwaBuild !== '20260810-pwa35' || info.cacheRevision !== '20260810-learning35') throw new Error(`unexpected PWA/cache build: ${info.pwaBuild}/${info.cacheRevision}`);
+          if (!sw.includes("const BUILD = '20260810-pwa35'") || !sw.includes("const CACHE_REVISION = '20260810-learning35'")) throw new Error('Service Worker build/cache mismatch');
           for (const token of [
-            "const expectedSiteBuild = '20260806-learning-depth1'", "const expectedPwaBuild = '20260810-pwa34'",
-            "const previousPublicPwaBuild = '20260810-pwa33'", "[expectedPwaBuild]: '20260810-learning34'",
-            "[previousPublicPwaBuild]: '20260810-learning33'", 'const VIDEO_CORE = [',
+            "const expectedSiteBuild = '20260806-learning-depth1'", "const expectedPwaBuild = '20260810-pwa35'",
+            "const previousPublicPwaBuild = '20260810-pwa34'", "[expectedPwaBuild]: '20260810-learning35'",
+            "[previousPublicPwaBuild]: '20260810-learning34'", 'const VIDEO_CORE = [',
             'const EXACT_CORE = [...BASE_CORE, ...VIDEO_CORE]', 'const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE',
             'CNC_PAGES_VERIFY_ATTEMPTS || 18', "cache: 'no-store'", "const resources = ['cnc/training-camp.html', 'cnc/sw.js', 'cnc/build-info.json']",
             'mainPagesExactBytesMatch: true', 'mainPagesExactSha256Match: true', 'branchDeploymentPending',
