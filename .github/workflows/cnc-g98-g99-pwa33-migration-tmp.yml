@@ -55,13 +55,14 @@ jobs:
           grep -q 'G98/G99车铣双语义适用范围' cnc/build-info.json
           ! grep -q 'G98比G99退得更高' cnc/gm-code-complete.js
           ! grep -q 'G99效率高，但要求R平面绝对安全' cnc/gm-code-complete.js
-      - name: Commit migration result
+      - name: Commit CNC code and tests only
         shell: bash
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add cnc .github/workflows/cnc-*.yml
-          git diff --cached --quiet && { echo '没有可提交迁移结果' >&2; exit 1; }
+          git add cnc
+          git diff --cached --name-only
+          git diff --cached --quiet && { echo '没有可提交CNC迁移结果' >&2; exit 1; }
           git commit -m 'feat(cnc): 收紧G98/G99车铣双语义并升级PWA33'
           git push origin HEAD:cnc/g98-g99-pwa33
