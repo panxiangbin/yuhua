@@ -79,9 +79,9 @@ try {
   const workflowSource = fs.readFileSync(workflowPath, 'utf8');
 
   const forbiddenChecks = [
-    { re: /\.skip\s*\(/, label: '.skip(' },
-    { re: /process\.exit\s*\(\s*0\s*\)/, label: 'process exit zero' },
-    { re: /continue-on-error\s*:/, label: 'continue-on-error' }
+    { re: /\.skip\s*\(/, label: 'test skip invocation' },
+    { re: /process\.exit\s*\(\s*0\s*\)/, label: 'successful process-exit bypass' },
+    { re: /continue-on-error\s*:/, label: 'continue-on-error directive' }
   ];
   for (const item of forbiddenChecks) {
     check(!item.re.test(selfSource), `测试自身不得包含绕过：${item.label}`);
