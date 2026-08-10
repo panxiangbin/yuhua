@@ -103,7 +103,11 @@ text_suffixes = {'.js','.cjs','.html','.json','.md','.css','.txt'}
 for path in root.rglob('*'):
     if not path.is_file() or path.suffix.lower() not in text_suffixes:
         continue
-    text = path.read_text(encoding='utf-8')
+    try:
+        text = path.read_text(encoding='utf-8')
+    except UnicodeDecodeError:
+        # 仓库中存在少量 UTF-16/BOM 诊断产物；它们不是运行时构建针，保持字节不动。
+        continue
     updated = text.replace('20260810-pwa35', '20260811-pwa36').replace('20260810-learning35', '20260811-learning36')
     if updated != text:
         path.write_text(updated, encoding='utf-8')
