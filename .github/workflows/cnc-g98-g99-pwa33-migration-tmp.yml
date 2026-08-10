@@ -1,0 +1,63 @@
+name: CNC G98 G99 PWA33 controlled migration tmp
+
+on:
+  push:
+    branches:
+      - cnc/g98-g99-pwa33
+    paths:
+      - 'cnc/tests/_tmp-g98-g99-pwa33-migration.py'
+      - '.github/workflows/cnc-g98-g99-pwa33-migration-tmp.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: cnc/g98-g99-pwa33
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Run strict CNC-only migration
+        run: python cnc/tests/_tmp-g98-g99-pwa33-migration.py
+      - name: Verify changed scope and permanent trust gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t changed < <(git diff --name-only)
+          test ${#changed[@]} -gt 0
+          printf '%s\n' "${changed[@]}"
+          for path in "${changed[@]}"; do
+            case "$path" in
+              cnc/*|.github/workflows/cnc-*.yml) ;;
+              *) echo "越界修改：$path" >&2; exit 1 ;;
+            esac
+          done
+          node --check cnc/search-aliases.js
+          node --check cnc/gm-code-complete.js
+          node --check cnc/tests/g98-g99-dual-semantic-boundary-trust-smoke.cjs
+          node cnc/tests/g98-g99-dual-semantic-boundary-trust-smoke.cjs
+          grep -q '20260810-pwa33' cnc/build-info.json
+          grep -q '20260810-learning33' cnc/build-info.json
+          grep -q 'G98/G99车铣双语义适用范围' cnc/build-info.json
+          ! grep -q 'G98比G99退得更高' cnc/gm-code-complete.js
+          ! grep -q 'G99效率高，但要求R平面绝对安全' cnc/gm-code-complete.js
+      - name: Commit migration result
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add cnc .github/workflows/cnc-*.yml
+          git diff --cached --quiet && { echo '没有可提交迁移结果' >&2; exit 1; }
+          git commit -m 'feat(cnc): 收紧G98/G99车铣双语义并升级PWA33'
+          git push origin HEAD:cnc/g98-g99-pwa33
