@@ -28,7 +28,11 @@ jobs:
         with:
           node-version: '20'
       - name: Run strict CNC-only migration
-        run: python cnc/tests/_tmp-g98-g99-pwa33-migration.py
+        shell: bash
+        run: |
+          set -euo pipefail
+          sed -i 's#cnc/tests/mobile-pwa-offline-smoke.cjs#cnc/tests/mobile-pwa-offline-cache-smoke.cjs#' cnc/tests/_tmp-g98-g99-pwa33-migration.py
+          python cnc/tests/_tmp-g98-g99-pwa33-migration.py
       - name: Verify changed scope and permanent trust gate
         shell: bash
         run: |
