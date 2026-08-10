@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: codex/cnc-g96-g97-safety-audit
-          fetch-depth: 0
+          fetch-depth: 1
       - name: Repair PWA34 active references and previous-build pins
         shell: bash
         run: |
@@ -40,22 +40,15 @@ jobs:
                   continue
               text = path.read_text(encoding='utf-8')
               original = text
-              # PWA33/learning33 was the active production target on main.
-              # PWA34 migration requires all operational active checks to follow the new build.
               text = text.replace('20260810-pwa33', '20260810-pwa34')
               text = text.replace('20260810-learning33', '20260810-learning34')
-
-              # PWA34 upgrade/deployment tests still need the immediately previous build.
-              # Only lines that explicitly declare/check a previous build may move PWA32 -> PWA33.
               repaired_lines = []
               for line in text.splitlines(keepends=True):
-                  lower = line.lower()
-                  if 'previous' in lower:
+                  if 'previous' in line.lower():
                       line = line.replace('20260810-pwa32', '20260810-pwa33')
                       line = line.replace('20260810-learning32', '20260810-learning33')
                   repaired_lines.append(line)
               text = ''.join(repaired_lines)
-
               if text != original:
                   path.write_text(text, encoding='utf-8')
                   changed.append(str(path))
@@ -75,11 +68,13 @@ jobs:
               media_text = media_text.replace(needle, addition + needle, 1)
           media.write_text(media_text, encoding='utf-8')
           changed.append(str(media))
-
           print('PWA34 reference repair changed files:')
           for item in sorted(set(changed)):
               print('-', item)
           PY
+
+          # 临时工作流本身含有迁移脚本里的旧版本字面量；先删除自身，再让正式审计扫描运行中源码。
+          rm -f .github/workflows/cnc-pwa34-reference-repair.yml
 
           node cnc/tests/pwa-build-reference-audit-smoke.cjs
           node cnc/tests/g10-programmable-data-input-trust-smoke.cjs
@@ -90,7 +85,6 @@ jobs:
           node cnc/tests/g96-g97-spindle-mode-boundary-trust-smoke.cjs
           node cnc/tests/g98-g99-dual-semantic-boundary-trust-smoke.cjs
 
-          rm -f .github/workflows/cnc-pwa34-reference-repair.yml
           git config user.name 'CNC automation'
           git config user.email 'actions@users.noreply.github.com'
           git add cnc .github/workflows/cnc-*.yml .github/workflows/cnc-*.yaml 2>/dev/null || true
