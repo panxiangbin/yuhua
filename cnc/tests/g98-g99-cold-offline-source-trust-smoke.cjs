@@ -240,7 +240,7 @@ async function writeDiagnostics(page, stage, errors, extra = {}) {
       if (sourceEvidence.gmText.includes(forbidden)) throw new Error(`G98/G99冷离线源仍含误导性通用口诀：${forbidden}`);
     }
     for (const token of [
-      'g10-g28-g53-g92-g94-g98-g99-boundary-6',
+      'g10-g28-g53-g92-g94-g96-g97-g98-g99-boundary-7',
       'normalizeG98',
       'normalizeG99'
     ]) {
@@ -270,7 +270,7 @@ async function writeDiagnostics(page, stage, errors, extra = {}) {
         })
       };
     });
-    if (runtimeEvidence.guardVersion !== 'g10-g28-g53-g92-g94-g98-g99-boundary-6') {
+    if (runtimeEvidence.guardVersion !== 'g10-g28-g53-g92-g94-g96-g97-g98-g99-boundary-7') {
       throw new Error(`冷离线运行时安全守卫版本错误：${runtimeEvidence.guardVersion}`);
     }
     if (runtimeEvidence.normalizeG98 !== 'function' || runtimeEvidence.normalizeG99 !== 'function') {

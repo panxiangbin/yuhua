@@ -74,7 +74,7 @@ try {
 }
 
 const guard = sandbox.window.CNC_GM_CONTENT_SAFETY;
-if (!guard || guard.version !== 'g10-g28-g53-g92-g94-g98-g99-boundary-6' || typeof guard.normalizeG28 !== 'function') {
+if (!guard || guard.version !== 'g10-g28-g53-g92-g94-g96-g97-g98-g99-boundary-7' || typeof guard.normalizeG28 !== 'function') {
   errors.push('G10/G28/G53/G92/G94内容安全归一化器未安装、版本异常或缺少normalizeG28');
 }
 const catalog = sandbox.window.CNC_GM_CODES;

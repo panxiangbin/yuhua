@@ -40,7 +40,7 @@ try {
   errors.push(`G/M代码运行时目录无法加载：${error.message}`);
 }
 const guard = sandbox.window.CNC_GM_CONTENT_SAFETY;
-if (!guard || guard.version !== 'g10-g28-g53-g92-g94-g98-g99-boundary-6') errors.push(`运行时安全守卫版本错误：${guard?.version}`);
+if (!guard || guard.version !== 'g10-g28-g53-g92-g94-g96-g97-g98-g99-boundary-7') errors.push(`运行时安全守卫版本错误：${guard?.version}`);
 if (typeof guard?.normalizeG98 !== 'function' || typeof guard?.normalizeG99 !== 'function') errors.push('运行时缺少normalizeG98/normalizeG99');
 for (const code of ['G98', 'G99']) {
   const entry = (sandbox.window.CNC_GM_CODES || []).find(item => item.code === code);
