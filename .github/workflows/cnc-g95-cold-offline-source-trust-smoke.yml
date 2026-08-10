@@ -1,0 +1,104 @@
+name: CNC G95 cold offline source trust smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/search-aliases.js'
+      - 'cnc/gm-code-complete.js'
+      - 'cnc/sw.js'
+      - 'cnc/build-info.json'
+      - 'cnc/pwa-status.html'
+      - 'cnc/pwa-self-test.html'
+      - 'cnc/tests/g95-cold-offline-source-trust-smoke.cjs'
+      - '.github/workflows/cnc-g95-cold-offline-source-trust-smoke.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'cnc/search-aliases.js'
+      - 'cnc/gm-code-complete.js'
+      - 'cnc/sw.js'
+      - 'cnc/build-info.json'
+      - 'cnc/pwa-status.html'
+      - 'cnc/pwa-self-test.html'
+      - 'cnc/tests/g95-cold-offline-source-trust-smoke.cjs'
+      - '.github/workflows/cnc-g95-cold-offline-source-trust-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  g95-cold-offline-source-trust:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify exact tested commit
+        shell: bash
+        run: |
+          expected='${{ github.event.pull_request.head.sha || github.sha }}'
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected" || { echo "exact-head mismatch: expected=$expected actual=$actual" >&2; exit 1; }
+      - name: Validate PWA35 and anti-bypass contract
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
+          const test = fs.readFileSync('cnc/tests/g95-cold-offline-source-trust-smoke.cjs', 'utf8');
+          if (info.pwaBuild !== '20260810-pwa35' || info.cacheRevision !== '20260810-learning35') {
+            throw new Error(`unexpected build: ${info.pwaBuild}/${info.cacheRevision}`);
+          }
+          for (const token of [
+            'context.setOffline(true)',
+            'stopOriginServerForOfflineProof',
+            'server.closeAllConnections',
+            'originServerStopped',
+            '__g95_offline_probe__',
+            'offlineNetworkBlocked',
+            'CRITICAL_OFFLINE_PATHS',
+            'normalizeG95',
+            '部分铣床/加工中心CNC',
+            '部分车床CNC',
+            '动力刀具端面刚性攻丝',
+            '当前CNC',
+            'G代码组别',
+            '机床厂原厂手册',
+            '单位制',
+            'F地址单位',
+            '同步攻丝'
+          ]) {
+            if (!test.includes(token)) throw new Error(`anti-bypass token missing: ${token}`);
+          }
+          for (const requiredForbiddenExample of [
+            'G95 F0.2',
+            'F0.2',
+            'G95就是每转进给',
+            'G95就是刚性攻丝'
+          ]) {
+            if (!test.includes(requiredForbiddenExample)) throw new Error(`fixed-example rejection missing: ${requiredForbiddenExample}`);
+          }
+          for (const bypass of ['.skip(', 'process.exit(0)']) {
+            if (test.includes(bypass)) throw new Error(`forbidden bypass in test: ${bypass}`);
+          }
+          NODE
+      - name: Check JavaScript syntax
+        run: node --check cnc/tests/g95-cold-offline-source-trust-smoke.cjs
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save playwright@1.54.1
+          npx playwright install --with-deps chromium
+      - name: Run 390x844 real cold offline trust
+        run: node cnc/tests/g95-cold-offline-source-trust-smoke.cjs
+      - name: Upload G95 cold offline evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-g95-cold-offline-${{ github.run_id }}
+          path: cnc/test-results/g95-cold-offline-source-trust/
+          if-no-files-found: warn
+          retention-days: 14
