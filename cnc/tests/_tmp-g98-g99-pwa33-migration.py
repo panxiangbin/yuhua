@@ -29,7 +29,7 @@ ACTIVE_PIN_FILES = [
     'cnc/tests/g53-machine-coordinate-boundary-trust-smoke.cjs',
     'cnc/tests/g92-dual-semantic-boundary-trust-smoke.cjs',
     'cnc/tests/g94-dual-semantic-boundary-trust-smoke.cjs',
-    'cnc/tests/mobile-pwa-offline-smoke.cjs',
+    'cnc/tests/mobile-pwa-offline-cache-smoke.cjs',
     'cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs',
     'cnc/tests/mobile-pwa-upgrade-data-smoke.cjs',
     'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs',

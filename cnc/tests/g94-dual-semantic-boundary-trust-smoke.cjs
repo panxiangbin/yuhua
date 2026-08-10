@@ -23,9 +23,9 @@ if (aliasPos < 0 || gmPos < 0 || aliasPos >= gmPos) {
 for (const core of ["'./search-aliases.js'", "'./gm-code-complete.js'"]) {
   if (!swText.includes(core)) errors.push(`PWA首次安装核心缺少G94可信目录依赖：${core}`);
 }
-if (!swText.includes("const BUILD = '20260810-pwa32'")) errors.push('Service Worker未升级到20260810-pwa32');
-if (!swText.includes("const CACHE_REVISION = '20260810-learning32'")) errors.push('Service Worker缓存修订未升级到20260810-learning32');
-if (buildInfo.pwaBuild !== '20260810-pwa32' || buildInfo.cacheRevision !== '20260810-learning32') {
+if (!swText.includes("const BUILD = '20260810-pwa33'")) errors.push('Service Worker未升级到20260810-pwa33');
+if (!swText.includes("const CACHE_REVISION = '20260810-learning33'")) errors.push('Service Worker缓存修订未升级到20260810-learning33');
+if (buildInfo.pwaBuild !== '20260810-pwa33' || buildInfo.cacheRevision !== '20260810-learning33') {
   errors.push(`build-info与PWA32不一致：${buildInfo.pwaBuild} / ${buildInfo.cacheRevision}`);
 }
 if (!String(buildInfo.contentStage || '').includes('G94车铣双语义适用范围')) {
@@ -72,7 +72,7 @@ try {
 }
 
 const guard = sandbox.window.CNC_GM_CONTENT_SAFETY;
-if (!guard || guard.version !== 'g10-g28-g53-g92-g94-boundary-5' || typeof guard.normalizeG94 !== 'function') {
+if (!guard || guard.version !== 'g10-g28-g53-g92-g94-g98-g99-boundary-6' || typeof guard.normalizeG94 !== 'function') {
   errors.push('G10/G28/G53/G92/G94内容安全归一化器未安装、版本异常或缺少normalizeG94');
 }
 const catalog = sandbox.window.CNC_GM_CODES;

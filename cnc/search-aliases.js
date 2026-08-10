@@ -48,7 +48,7 @@ window.CNC_SEARCH_ALIASES = [
 ];
 
 // G/M 代码目录来自大批量生成的基础表。这里在目录载入前安装高风险内容归一化器，
-// 作为第二层防御保持G10/G28/G53/G92/G94边界一致；基础源本身仍必须通过独立可信度门禁。
+// 作为第二层防御保持G10/G28/G53/G92/G94/G98/G99边界一致；基础源本身仍必须通过独立可信度门禁。
 (function installGmContentSafetyGuard() {
   var gmCodesValue;
 
@@ -118,9 +118,37 @@ window.CNC_SEARCH_ALIASES = [
     });
   }
 
+  function normalizeG98(entry) {
+    if (!entry || entry.id !== 'kb-gcode-g98') return entry;
+    return Object.assign({}, entry, {
+      title: 'G98 固定循环初始平面返回/车床每分钟进给',
+      summary: 'G98不是跨机型同一含义：部分铣床/加工中心在固定循环语境用于返回循环开始前的初始Z平面；部分车床则用于每分钟进给模式。具体组别、模态性与F地址解释必须按当前CNC和机床厂原厂手册确认。',
+      usage: '先确认机型、控制器、G代码组别和固定循环状态。铣削侧核对初始Z位置、R平面、障碍物与完整计划运动空间；车削侧核对单位制、F的单位与含义、主轴和其它进给模式状态。',
+      beginner: 'G98先分清机床和语境：铣削固定循环返回方式与车床每分钟进给不是一回事；不要记成“G98一定退得更高”。',
+      warning: '初始平面与R平面的实际高低不能脱离当前程序状态和本机规则判断；车床侧G98会改变F地址解释。必须核对当前CNC和机床厂原厂手册，并结合完整运动空间做图形检查、仿真、单段或其它受控验证。',
+      example: '教学语义示意：部分铣床/加工中心中G98表示固定循环返回初始平面；部分车床中G98表示每分钟进给。实际坐标、单位与进给值必须以本机原厂手册为准。',
+      risk: '高',
+      tags: ['G98','车铣差异','固定循环','初始平面','每分钟进给','原厂手册']
+    });
+  }
+
+  function normalizeG99(entry) {
+    if (!entry || entry.id !== 'kb-gcode-g99') return entry;
+    return Object.assign({}, entry, {
+      title: 'G99 固定循环R平面返回/车床每转进给',
+      summary: 'G99不是跨机型同一含义：部分铣床/加工中心在固定循环语境用于返回R平面；部分车床则用于每转进给模式。具体组别、模态性与F地址解释必须按当前CNC和机床厂原厂手册确认。',
+      usage: '先确认机型、控制器、G代码组别和固定循环状态。铣削侧核对R平面、初始Z位置、孔间路径、障碍物与完整计划运动空间；车削侧核对单位制、F的每转单位与含义、主轴和其它进给模式状态。',
+      beginner: 'G99先分清机床和语境：铣削固定循环R平面返回与车床每转进给不是一回事；不要记成“G99一定更低、更快或绝对安全”。',
+      warning: 'R平面是否适合作为孔间返回高度必须结合当前程序状态、障碍物和本机规则判断；车床侧G99会改变F地址解释。必须核对当前CNC和机床厂原厂手册，并按现场工艺做受控验证。',
+      example: '教学语义示意：部分铣床/加工中心中G99表示固定循环返回R平面；部分车床中G99表示每转进给。实际R平面、单位与进给值必须以本机原厂手册为准。',
+      risk: '高',
+      tags: ['G99','车铣差异','固定循环','R平面','每转进给','原厂手册']
+    });
+  }
+
   function normalizeCatalog(value) {
     if (!Array.isArray(value)) return value;
-    return value.map(function (entry) { return normalizeG94(normalizeG92(normalizeG53(normalizeG28(normalizeG10(entry))))); });
+    return value.map(function (entry) { return normalizeG99(normalizeG98(normalizeG94(normalizeG92(normalizeG53(normalizeG28(normalizeG10(entry))))))); });
   }
 
   Object.defineProperty(window, 'CNC_GM_CODES', {
@@ -131,12 +159,14 @@ window.CNC_SEARCH_ALIASES = [
   });
 
   window.CNC_GM_CONTENT_SAFETY = {
-    version: 'g10-g28-g53-g92-g94-boundary-5',
+    version: 'g10-g28-g53-g92-g94-g98-g99-boundary-6',
     normalizeG10: normalizeG10,
     normalizeG28: normalizeG28,
     normalizeG53: normalizeG53,
     normalizeG92: normalizeG92,
     normalizeG94: normalizeG94,
+    normalizeG98: normalizeG98,
+    normalizeG99: normalizeG99,
     normalizeCatalog: normalizeCatalog
   };
 })();
