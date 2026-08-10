@@ -1,0 +1,191 @@
+name: CNC PWA35 G95 real root repair
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-*.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.ref == 'codex/cnc-g95-dual-semantics-pwa35'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+      - name: Prove exact starting head
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='${{ github.event.pull_request.head.sha || github.sha }}'
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+          echo "starting_head=$actual"
+      - name: Repair PWA35 migration and trust gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs = require('fs');
+
+          function read(path) {
+            if (!fs.existsSync(path)) throw new Error(`missing repair target: ${path}`);
+            return fs.readFileSync(path, 'utf8');
+          }
+          function write(path, text) { fs.writeFileSync(path, text); }
+          function replaceRequired(text, from, to, label) {
+            if (!text.includes(from)) throw new Error(`required repair marker missing: ${label}`);
+            return text.replaceAll(from, to);
+          }
+
+          const staleCurrentWorkflows = [
+            '.github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml',
+            '.github/workflows/cnc-beginner-placement-offline-pages-smoke.yml',
+            '.github/workflows/cnc-pwa-upgrade-data-smoke.yml',
+            '.github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml',
+            '.github/workflows/cnc-pwa-offline-cache-smoke.yml',
+            '.github/workflows/cnc-pwa-self-test-smoke.yml',
+            '.github/workflows/cnc-g98-g99-cold-offline-source-trust-smoke.yml',
+            '.github/workflows/cnc-g96-g97-cold-offline-source-trust-smoke.yml',
+            '.github/workflows/cnc-learning-media-smoke.yml'
+          ];
+
+          for (const path of staleCurrentWorkflows) {
+            let text = read(path);
+            if (!text.includes('20260810-pwa35')) {
+              text = replaceRequired(text, '20260810-pwa34', '20260810-pwa35', `${path} current pwa34`);
+              text = replaceRequired(text, '20260810-learning34', '20260810-learning35', `${path} current learning34`);
+            }
+            text = text.replaceAll('20260810-pwa33', '20260810-pwa34');
+            text = text.replaceAll('20260810-learning33', '20260810-learning34');
+            text = text.replaceAll('Validate PWA34 and anti-bypass contract', 'Validate PWA35 and anti-bypass contract');
+            text = text.replaceAll('Validate committed PWA33 media contract', 'Validate committed PWA35 media contract');
+            text = text.replaceAll('Committed PWA33 media contract passed.', 'Committed PWA35 media contract passed.');
+            write(path, text);
+          }
+
+          const previousBuildTests = [
+            'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs',
+            'cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs',
+            'cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs'
+          ];
+          for (const path of previousBuildTests) {
+            let text = read(path);
+            text = replaceRequired(text, '20260810-pwa33', '20260810-pwa34', `${path} previous pwa33`);
+            text = replaceRequired(text, '20260810-learning33', '20260810-learning34', `${path} previous learning33`);
+            write(path, text);
+          }
+
+          {
+            const path = '.github/workflows/cnc-g95-dual-semantic-boundary-trust-smoke.yml';
+            let text = read(path);
+            text = replaceRequired(
+              text,
+              "! grep -F 'continue-on-error:' .github/workflows/cnc-g95-dual-semantic-boundary-trust-smoke.yml",
+              "! grep -Eq '^[[:space:]]*continue-on-error[[:space:]]*:' .github/workflows/cnc-g95-dual-semantic-boundary-trust-smoke.yml",
+              'G95 anti-bypass self-match'
+            );
+            write(path, text);
+          }
+
+          {
+            const path = 'cnc/tests/g10-programmable-data-input-trust-smoke.cjs';
+            let text = read(path);
+            text = replaceRequired(
+              text,
+              '作为第二层防御保持G10/G28/G53/G92/G94/G96/G97/G98/G99边界一致',
+              '作为第二层防御保持G10/G28/G53/G92/G94/G95/G96/G97/G98/G99边界一致',
+              'G10 safety chain includes G95'
+            );
+            text = text.replaceAll('G10/G28/G53/G92/G94/G98/G99内容安全归一化器', 'G10/G28/G53/G92/G94/G95/G96/G97/G98/G99内容安全归一化器');
+            text = text.replaceAll('PWA33首次安装离线核心', 'PWA35首次安装离线核心');
+            text = text.replaceAll('build-info与PWA33不一致', 'build-info与PWA35不一致');
+            write(path, text);
+          }
+
+          {
+            const path = '.github/workflows/cnc-g98-g99-cold-offline-source-trust-smoke.yml';
+            let text = read(path);
+            text = replaceRequired(
+              text,
+              'g10-g28-g53-g92-g94-g96-g97-g98-g99-boundary-7',
+              'g10-g28-g53-g92-g94-g95-g96-g97-g98-g99-boundary-8',
+              'G98/G99 guard boundary-8'
+            );
+            write(path, text);
+          }
+
+          {
+            const path = '.github/workflows/cnc-g96-g97-cold-offline-source-trust-smoke.yml';
+            let text = read(path);
+            const checkoutOld = "      - uses: actions/checkout@v4\n      - uses: actions/setup-node@v4";
+            if (text.includes(checkoutOld)) {
+              const expr = '$' + '{{ github.event.pull_request.head.sha || github.sha }}';
+              const checkoutNew = [
+                '      - uses: actions/checkout@v4',
+                '        with:',
+                `          ref: ${expr}`,
+                '      - name: Verify exact tested commit',
+                '        shell: bash',
+                '        run: |',
+                `          expected='${expr}'`,
+                '          actual="$(git rev-parse HEAD)"',
+                '          test "$actual" = "$expected" || { echo "exact-head mismatch: expected=$expected actual=$actual" >&2; exit 1; }',
+                '      - uses: actions/setup-node@v4'
+              ].join('\n');
+              text = text.replace(checkoutOld, checkoutNew);
+            }
+            write(path, text);
+          }
+
+          {
+            const path = 'cnc/tests/g95-cold-offline-source-trust-smoke.cjs';
+            let text = read(path);
+            const oldBlock = `    const gmRequired = [\n      '部分铣床/加工中心CNC', '部分车床CNC', '每转进给', '动力刀具端面刚性攻丝',\n      '当前CNC', 'G代码组别', '机床厂原厂手册', '单位制', 'F地址单位', '同步攻丝',\n      '两类程序不能互抄', '不提供可直接照抄的固定参数'\n    ];\n    for (const token of gmRequired) {\n      if (!sourceEvidence.gmText.includes(token)) throw new Error(\`G95冷离线基础源缺少安全边界：\${token}\`);\n    }\n    for (const forbidden of ['G95 F0.2', 'F0.2', '车床常用G95配合', 'G95就是每转进给', 'G95就是刚性攻丝']) {\n      if (sourceEvidence.gmText.includes(forbidden)) throw new Error(\`G95冷离线基础源仍含可直接照抄或跨机型口诀：\${forbidden}\`);\n    }`;
+            const newBlock = `    const gmRequired = [\n      '部分铣床/加工中心CNC', '部分车床CNC', '每转进给', '动力刀具端面刚性攻丝',\n      '当前CNC', 'G代码组别', '机床厂原厂手册', '单位制', 'F地址单位', '同步攻丝',\n      '两类程序不能互抄', '不提供可直接照抄的固定参数'\n    ];\n    let gmCatalog;\n    try {\n      gmCatalog = JSON.parse(sourceEvidence.gmText\n        .replace(/^\\s*window\\.CNC_GM_CODES\\s*=\\s*/, '')\n        .replace(/;\\s*$/, ''));\n    } catch (error) {\n      throw new Error(\`G95冷离线基础源无法解析：\${error.message}\`);\n    }\n    const g95SourceEntry = Array.isArray(gmCatalog) ? gmCatalog.find(item => item && item.id === 'kb-gcode-g95') : null;\n    if (!g95SourceEntry) throw new Error('G95冷离线基础源条目缺失');\n    const g95SourceText = JSON.stringify(g95SourceEntry);\n    for (const token of gmRequired) {\n      if (!g95SourceText.includes(token)) throw new Error(\`G95冷离线基础源缺少安全边界：\${token}\`);\n    }\n    for (const forbidden of ['G95 F0.2', 'F0.2', '车床常用G95配合', 'G95就是每转进给', 'G95就是刚性攻丝']) {\n      if (g95SourceText.includes(forbidden)) throw new Error(\`G95冷离线基础源仍含可直接照抄或跨机型口诀：\${forbidden}\`);\n    }`;
+            if (!text.includes(oldBlock)) throw new Error('G95 cold-offline source scope block not found');
+            text = text.replace(oldBlock, newBlock);
+            write(path, text);
+          }
+
+          console.log('PWA35/G95 real-root repairs applied.');
+          NODE
+      - name: Validate repaired contracts before commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --check
+          node --check cnc/tests/g95-cold-offline-source-trust-smoke.cjs
+          node --check cnc/tests/g10-programmable-data-input-trust-smoke.cjs
+          node cnc/tests/pwa-build-reference-audit-smoke.cjs
+          node cnc/tests/g10-programmable-data-input-trust-smoke.cjs
+          node cnc/tests/g95-dual-semantic-boundary-trust-smoke.cjs
+          node --check cnc/tests/g96-g97-cold-offline-source-trust-smoke.cjs
+          node --check cnc/tests/g98-g99-cold-offline-source-trust-smoke.cjs
+          bad="$(git diff --name-only | grep -Ev '^(cnc/|\.github/workflows/cnc-)' || true)"
+          test -z "$bad" || { echo "out-of-scope changes:"; echo "$bad"; exit 1; }
+          echo 'Repaired static contracts passed without lowering gates.'
+      - name: Commit repaired CNC-only files
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'CNC repair automation'
+          git config user.email 'actions@users.noreply.github.com'
+          git add cnc .github/workflows/cnc-*.yml
+          git diff --cached --quiet && { echo 'No repair changes found'; exit 1; }
+          git commit -m 'fix(cnc): 修复PWA35门禁迁移与G95冷离线根因'
+          echo "REPAIR_COMMIT=$(git rev-parse HEAD)"
+          git show --stat --oneline --no-renames HEAD
+      - name: Push repaired commit without force
+        shell: bash
+        run: |
+          set -euo pipefail
+          git push origin HEAD:codex/cnc-g95-dual-semantics-pwa35
