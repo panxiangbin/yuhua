@@ -18,6 +18,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Harden migration reader for non-UTF8 assets
+        shell: bash
+        run: >-
+          python3 -c "from pathlib import Path; p=Path('cnc/tools/g95-runtime-migrate.py'); s=p.read_text(encoding='utf-8'); old=\"    text = path.read_text(encoding='utf-8')\"; new=\"    try:\\n        text = path.read_text(encoding='utf-8')\\n    except UnicodeDecodeError:\\n        print('skip non-UTF8 text candidate:', path)\\n        continue\"; assert old in s; p.write_text(s.replace(old,new,1),encoding='utf-8')"
+
       - name: Apply CNC-only G95 migration
         run: python3 cnc/tools/g95-runtime-migrate.py
 
