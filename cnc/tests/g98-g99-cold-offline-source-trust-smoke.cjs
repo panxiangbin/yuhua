@@ -9,6 +9,7 @@ const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
 const PWA_BUILD = '20260810-pwa33';
 const CACHE_REVISION = '20260810-learning33';
+let offlineProbeHits = 0;
 fs.mkdirSync(out, { recursive: true });
 
 const types = {
@@ -23,6 +24,12 @@ const types = {
 
 const server = http.createServer((req, res) => {
   let requestPath = decodeURIComponent(req.url.split('?')[0]);
+  if (requestPath === '/cnc/__g98_g99_offline_probe__') {
+    offlineProbeHits += 1;
+    res.writeHead(204, { 'Cache-Control': 'no-store' });
+    res.end();
+    return;
+  }
   if (requestPath === '/' || requestPath === '/cnc/') requestPath = '/cnc/index.html';
   const file = path.normalize(path.join(root, requestPath));
   if (!file.startsWith(root) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) {
@@ -43,19 +50,17 @@ function observePage(page, errors) {
   page.on('pageerror', error => errors.push(error.message));
 }
 
-async function writeDiagnostics(page, context, stage, errors, extra = {}) {
+async function writeDiagnostics(page, stage, errors, extra = {}) {
   const diagnostic = {
     stage,
     url: page ? page.url() : '',
     title: '',
-    offline: null,
     controller: null,
     caches: [],
     consoleErrors: errors,
     ...extra
   };
   try { diagnostic.title = await page.title(); } catch {}
-  try { diagnostic.offline = await context.isOffline(); } catch {}
   try {
     diagnostic.controller = await page.evaluate(() => navigator.serviceWorker.controller ? {
       scriptURL: navigator.serviceWorker.controller.scriptURL,
@@ -75,6 +80,8 @@ async function writeDiagnostics(page, context, stage, errors, extra = {}) {
   const errors = [];
   let sourceEvidence = null;
   let runtimeEvidence = null;
+  let offlineNetworkBlocked = false;
+  let probeEvidence = null;
   try {
     await new Promise((resolve, reject) => {
       server.once('error', reject);
@@ -120,8 +127,36 @@ async function writeDiagnostics(page, context, stage, errors, extra = {}) {
       if (!evidence?.present || evidence.bytes <= 0) throw new Error(`G98/G99冷离线核心缺少：${item}`);
     }
 
-    stage = 'cold-offline-g98-g99-source';
+    stage = 'prove-online-network-probe';
+    const onlineHitsBefore = offlineProbeHits;
+    await page.evaluate(async () => {
+      const response = await fetch(`./__g98_g99_offline_probe__?phase=online&nonce=${Date.now()}`, { cache: 'no-store' });
+      if (response.status !== 204) throw new Error(`在线网络探针状态异常：${response.status}`);
+    });
+    if (offlineProbeHits !== onlineHitsBefore + 1) {
+      throw new Error(`在线网络探针未实际到达HTTP服务器：before=${onlineHitsBefore}, after=${offlineProbeHits}`);
+    }
+
+    stage = 'cold-offline-network-proof';
     await context.setOffline(true);
+    const offlineHitsBefore = offlineProbeHits;
+    const offlineProbeResult = await page.evaluate(async () => {
+      try {
+        const response = await fetch(`./__g98_g99_offline_probe__?phase=offline&nonce=${Date.now()}`, { cache: 'no-store' });
+        return { resolved: true, status: response.status, type: response.type };
+      } catch (error) {
+        return { resolved: false, error: String(error && error.message ? error.message : error) };
+      }
+    });
+    await new Promise(resolve => setTimeout(resolve, 100));
+    const offlineHitsAfter = offlineProbeHits;
+    if (offlineHitsAfter !== offlineHitsBefore) {
+      throw new Error(`切换离线后网络探针仍到达HTTP服务器：before=${offlineHitsBefore}, after=${offlineHitsAfter}`);
+    }
+    offlineNetworkBlocked = true;
+    probeEvidence = { onlineHitsBefore, offlineHitsBefore, offlineHitsAfter, offlineProbeResult };
+
+    stage = 'cold-offline-g98-g99-source';
     sourceEvidence = await page.evaluate(async () => {
       const [aliasResponse, gmResponse] = await Promise.all([
         fetch('./search-aliases.js'),
@@ -167,8 +202,8 @@ async function writeDiagnostics(page, context, stage, errors, extra = {}) {
     }
 
     stage = 'cold-offline-g98-g99-reload';
+    if (!offlineNetworkBlocked) throw new Error('离线网络阻断证据缺失');
     await page.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded' });
-    if (!(await context.isOffline())) throw new Error('浏览器未保持离线状态');
     if (!(await page.title()).includes('CNC')) throw new Error('PWA33冷离线重载首页失败');
 
     runtimeEvidence = await page.evaluate(() => {
@@ -210,6 +245,8 @@ async function writeDiagnostics(page, context, stage, errors, extra = {}) {
       pwaBuild: PWA_BUILD,
       cacheRevision: CACHE_REVISION,
       viewport: { width: 390, height: 844 },
+      offlineNetworkBlocked,
+      probeEvidence,
       g98G99ColdOfflineSourceTrust: true,
       g98G99ColdOfflineRuntimeTrust: true,
       g98G99ColdOfflineReload: true,
@@ -219,10 +256,10 @@ async function writeDiagnostics(page, context, stage, errors, extra = {}) {
     };
     fs.writeFileSync(path.join(out, 'g98-g99-cold-offline-source-trust-result.json'), JSON.stringify(result, null, 2));
     await page.screenshot({ path: path.join(out, 'g98-g99-cold-offline-source-trust.png'), fullPage: true });
-    console.log('CNC G98/G99冷离线源可信度门禁通过：PWA33首次安装后，安全归一化源与G/M基础目录可从静态缓存冷离线读取；离线重载后G98/G99仍保持车铣双语义边界、高风险标记和原厂手册核对要求。');
+    console.log('CNC G98/G99冷离线源可信度门禁通过：PWA33首次安装后，安全归一化源与G/M基础目录可从静态缓存冷离线读取；独立网络探针确认浏览器离线后无法到达HTTP服务器，离线重载后G98/G99仍保持车铣双语义边界、高风险标记和原厂手册核对要求。');
   } catch (error) {
     errors.push(error.message);
-    if (context && page) await writeDiagnostics(page, context, stage, errors, { sourceEvidence, runtimeEvidence });
+    if (context && page) await writeDiagnostics(page, stage, errors, { sourceEvidence, runtimeEvidence, offlineNetworkBlocked, probeEvidence, offlineProbeHits });
     console.error(error.stack || error.message);
     process.exitCode = 1;
   } finally {
