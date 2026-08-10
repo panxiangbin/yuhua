@@ -26,7 +26,7 @@ for (const core of ["'./search-aliases.js'", "'./gm-code-complete.js'"]) {
 if (!swText.includes("const BUILD = '20260811-pwa36'")) errors.push('Service Worker未升级到20260811-pwa36');
 if (!swText.includes("const CACHE_REVISION = '20260811-learning36'")) errors.push('Service Worker缓存修订未升级到20260811-learning36');
 if (buildInfo.pwaBuild !== '20260811-pwa36' || buildInfo.cacheRevision !== '20260811-learning36') {
-  errors.push(`build-info与PWA35不一致：${buildInfo.pwaBuild} / ${buildInfo.cacheRevision}`);
+  errors.push(`build-info与PWA36不一致：${buildInfo.pwaBuild} / ${buildInfo.cacheRevision}`);
 }
 if (!String(buildInfo.contentStage || '').includes('G95车铣双语义适用范围')) {
   errors.push('build-info缺少G95车铣双语义适用范围阶段标记');
@@ -83,7 +83,7 @@ try {
 }
 
 const guard = sandbox.window.CNC_GM_CONTENT_SAFETY;
-if (!guard || guard.version !== 'g10-g28-g53-g92-g94-g95-g96-g97-g98-g99-boundary-8' || typeof guard.normalizeG95 !== 'function') {
+if (!guard || guard.version !== 'g10-g28-g53-g92-g93-g94-g95-g96-g97-g98-g99-boundary-9' || typeof guard.normalizeG95 !== 'function') {
   errors.push('G95内容安全归一化器未安装、版本异常或缺少normalizeG95');
 }
 const catalog = sandbox.window.CNC_GM_CODES;
@@ -125,4 +125,4 @@ if (errors.length) {
   errors.forEach(error => console.error(`- ${error}`));
   process.exit(1);
 }
-console.log('CNC G95车铣双语义可信度门禁通过：部分铣床/加工中心的每转进给语义与部分车床的动力刀具端面刚性攻丝语义已明确分开；机床类型、当前CNC、G代码组别、单位制、F/S及循环地址必须按机床厂原厂手册和现场安全规程核对，离线核心正规升级到PWA35/learning35。');
+console.log('CNC G95车铣双语义可信度门禁通过：部分铣床/加工中心的每转进给语义与部分车床的动力刀具端面刚性攻丝语义已明确分开；机床类型、当前CNC、G代码组别、单位制、F/S及循环地址必须按机床厂原厂手册和现场安全规程核对，离线核心正规升级到PWA36/learning36。');
