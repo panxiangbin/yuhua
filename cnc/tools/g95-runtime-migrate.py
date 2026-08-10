@@ -73,7 +73,11 @@ suffixes = {'.js', '.cjs', '.json', '.html', '.css', '.txt'}
 for path in Path('cnc').rglob('*'):
     if not path.is_file() or path.suffix.lower() not in suffixes or 'docs' in path.parts:
         continue
-    text = path.read_text(encoding='utf-8')
+    try:
+        text = path.read_text(encoding='utf-8')
+    except UnicodeDecodeError:
+        print('skip non-UTF8 text candidate:', path)
+        continue
     if '20260810-pwa34' not in text and '20260810-learning34' not in text:
         continue
     shifted = text

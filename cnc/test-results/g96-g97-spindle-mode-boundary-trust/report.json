@@ -1,13 +1,13 @@
 {
   "testedAt": "2026-08-10T09:51:30.888Z",
   "expected": {
-    "pwaBuild": "20260810-pwa34",
-    "cacheRevision": "20260810-learning34",
+    "pwaBuild": "20260810-pwa35",
+    "cacheRevision": "20260810-learning35",
     "guard": "g10-g28-g53-g92-g94-g96-g97-g98-g99-boundary-7"
   },
   "actual": {
-    "pwaBuild": "20260810-pwa34",
-    "cacheRevision": "20260810-learning34",
+    "pwaBuild": "20260810-pwa35",
+    "cacheRevision": "20260810-learning35",
     "guard": "g10-g28-g53-g92-g94-g96-g97-g98-g99-boundary-7"
   },
   "checks": {
