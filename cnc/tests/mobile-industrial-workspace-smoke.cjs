@@ -38,14 +38,29 @@ const path = require('node:path');
 
   async function goHome() {
     await closeSidebarIfOpen();
-    const homeNav = page.locator('body > .xp-bottom-nav button[data-xp-route="dashboard"]');
-    await homeNav.waitFor({ state: 'visible', timeout: 15000 });
-    await homeNav.click();
-    await page.waitForSelector('#view-dashboard.active', { state: 'visible', timeout: 15000 });
+    const homeReady = await page.evaluate(() => {
+      const check = window.CNC_PERSONAL_HOME?.runCheck?.();
+      const nav = document.querySelector('body > .xp-bottom-nav');
+      return Boolean(
+        document.querySelector('#view-dashboard.active')
+        && check?.legacyHomeRemoved === true
+        && check?.bottomNavReady === true
+        && nav?.getClientRects().length > 0
+        && nav.getAttribute('aria-hidden') === 'false'
+        && !nav.hasAttribute('inert')
+      );
+    });
+    if (!homeReady) {
+      const homeNav = page.locator('body > .xp-bottom-nav button[data-xp-route="dashboard"]');
+      await homeNav.waitFor({ state: 'visible', timeout: 15000 });
+      await homeNav.click();
+      await page.waitForSelector('#view-dashboard.active', { state: 'visible', timeout: 15000 });
+    }
     await page.waitForFunction(() => {
       const check = window.CNC_PERSONAL_HOME?.runCheck?.();
       const nav = document.querySelector('body > .xp-bottom-nav');
-      return check?.legacyHomeRemoved === true
+      return Boolean(document.querySelector('#view-dashboard.active'))
+        && check?.legacyHomeRemoved === true
         && check?.bottomNavReady === true
         && nav?.getClientRects().length > 0
         && nav.getAttribute('aria-hidden') === 'false'
