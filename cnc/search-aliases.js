@@ -104,6 +104,20 @@ window.CNC_SEARCH_ALIASES = [
     });
   }
 
+  function normalizeG93(entry) {
+    if (!entry || entry.id !== 'kb-gcode-g93') return entry;
+    return Object.assign({}, entry, {
+      title: 'G93 反时间进给（按当前CNC确认）',
+      summary: '在部分铣床/加工中心CNC中，G93用于反时间进给模式；F地址按该控制器规定描述当前插补段的时间关系。不同CNC的组别、单位和逐段要求可能不同，必须核对当前CNC与机床厂原厂手册。',
+      usage: '常见于4/5轴联动和CAM后处理输出。使用前先确认本机是否支持G93、G93/G94/G95的模式或组别关系、F地址单位与逐段要求，并验证CAM后处理、机床运动学、轴行程、刀具/刀柄/工件/夹具及完整碰撞空间。',
+      beginner: '把G93理解成一种会改变F地址解释方式的高风险进给模式，不要背固定F值或固定轴位置。看到G93先确认机床类型、当前CNC、单位制和原厂手册，再判断这一段程序。',
+      warning: 'G93、G94、G95的含义、模态关系、F地址单位以及每个插补段是否必须重新给F，必须以当前CNC与机床厂原厂手册为准。4/5轴程序还受CAM后处理和本机运动学影响；真实机床执行前必须检查全部轴运动与碰撞空间，并按现场规程进行图形检查、仿真、单段、低倍率或其它受控验证。',
+      example: '教学语义示意：部分铣床/加工中心CNC中G93表示反时间进给模式；具体F地址单位、逐段要求、轴位置和切换回G94/G95的规则必须逐项以当前CNC和机床厂原厂手册为准，不提供可直接照抄的固定F或轴位置。',
+      risk: '高',
+      tags: ['G93','反时间进给','4/5轴','CAM','运动学','碰撞空间','当前CNC','原厂手册']
+    });
+  }
+
   function normalizeG94(entry) {
     if (!entry || entry.id !== 'kb-gcode-g94') return entry;
     return Object.assign({}, entry, {
@@ -190,7 +204,7 @@ window.CNC_SEARCH_ALIASES = [
 
   function normalizeCatalog(value) {
     if (!Array.isArray(value)) return value;
-    return value.map(function (entry) { return normalizeG99(normalizeG98(normalizeG97(normalizeG96(normalizeG95(normalizeG94(normalizeG92(normalizeG53(normalizeG28(normalizeG10(entry)))))))))); });
+    return value.map(function (entry) { return normalizeG99(normalizeG98(normalizeG97(normalizeG96(normalizeG95(normalizeG94(normalizeG93(normalizeG92(normalizeG53(normalizeG28(normalizeG10(entry))))))))))); });
   }
 
   Object.defineProperty(window, 'CNC_GM_CODES', {
@@ -201,11 +215,12 @@ window.CNC_SEARCH_ALIASES = [
   });
 
   window.CNC_GM_CONTENT_SAFETY = {
-    version: 'g10-g28-g53-g92-g94-g95-g96-g97-g98-g99-boundary-8',
+    version: 'g10-g28-g53-g92-g93-g94-g95-g96-g97-g98-g99-boundary-9',
     normalizeG10: normalizeG10,
     normalizeG28: normalizeG28,
     normalizeG53: normalizeG53,
     normalizeG92: normalizeG92,
+    normalizeG93: normalizeG93,
     normalizeG94: normalizeG94,
     normalizeG95: normalizeG95,
     normalizeG96: normalizeG96,

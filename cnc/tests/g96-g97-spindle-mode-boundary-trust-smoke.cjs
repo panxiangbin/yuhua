@@ -21,9 +21,9 @@ function check(name, condition, message) {
   if (!condition) errors.push(message);
 }
 
-check('pwa34Build', info.pwaBuild === '20260810-pwa35' && info.cacheRevision === '20260810-learning35', `构建版本错误：${info.pwaBuild}/${info.cacheRevision}`);
+check('pwa34Build', info.pwaBuild === '20260811-pwa36' && info.cacheRevision === '20260811-learning36', `构建版本错误：${info.pwaBuild}/${info.cacheRevision}`);
 check('contentStage', String(info.contentStage || '').includes('G96/G97恒线速/恒转速适用范围'), 'build-info缺少G96/G97内容可信度阶段');
-check('swBuild', swText.includes("const BUILD = '20260810-pwa35'") && swText.includes("const CACHE_REVISION = '20260810-learning35'"), 'Service Worker未对齐PWA34/learning34');
+check('swBuild', swText.includes("const BUILD = '20260811-pwa36'") && swText.includes("const CACHE_REVISION = '20260811-learning36'"), 'Service Worker未对齐PWA34/learning34');
 for (const core of ["'./search-aliases.js'", "'./gm-code-complete.js'"]) {
   check(`core:${core}`, swText.includes(core), `首次安装离线核心缺少：${core}`);
 }
@@ -102,7 +102,7 @@ for (const code of ['G96', 'G97']) {
 
 const report = {
   testedAt: new Date().toISOString(),
-  expected: { pwaBuild: '20260810-pwa35', cacheRevision: '20260810-learning35', guard: 'g10-g28-g53-g92-g94-g95-g96-g97-g98-g99-boundary-8' },
+  expected: { pwaBuild: '20260811-pwa36', cacheRevision: '20260811-learning36', guard: 'g10-g28-g53-g92-g94-g95-g96-g97-g98-g99-boundary-8' },
   actual: { pwaBuild: info.pwaBuild, cacheRevision: info.cacheRevision, guard: guard?.version || null },
   checks,
   errors
