@@ -16,7 +16,10 @@ jobs:
           node-version: 20
       - run: npm install --no-save playwright@1.52.0
       - run: npx playwright install --with-deps chromium
-      - run: node cnc/tests/mobile-data-health-smoke.cjs
+      - name: Run mobile data health smoke
+        run: node cnc/tests/mobile-data-health-smoke.cjs
+      - name: Run transaction fault injection smoke
+        run: node cnc/tests/data-health-transaction-smoke.cjs
       - name: Upload diagnostics
         if: always()
         uses: actions/upload-artifact@v4
