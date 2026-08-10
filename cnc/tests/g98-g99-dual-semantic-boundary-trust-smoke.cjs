@@ -12,9 +12,9 @@ const selfTest = fs.readFileSync(path.join(root, 'pwa-self-test.html'), 'utf8');
 const index = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const errors = [];
 
-if (info.pwaBuild !== '20260810-pwa33' || info.cacheRevision !== '20260810-learning33') errors.push(`构建版本错误：${info.pwaBuild}/${info.cacheRevision}`);
+if (info.pwaBuild !== '20260810-pwa34' || info.cacheRevision !== '20260810-learning34') errors.push(`构建版本错误：${info.pwaBuild}/${info.cacheRevision}`);
 if (!String(info.contentStage || '').includes('G98/G99车铣双语义适用范围')) errors.push('build-info缺少G98/G99内容可信度阶段');
-if (!swText.includes("const BUILD = '20260810-pwa33'") || !swText.includes("const CACHE_REVISION = '20260810-learning33'")) errors.push('Service Worker未对齐PWA33/learning33');
+if (!swText.includes("const BUILD = '20260810-pwa34'") || !swText.includes("const CACHE_REVISION = '20260810-learning34'")) errors.push('Service Worker未对齐PWA33/learning33');
 for (const core of ["'./search-aliases.js'", "'./gm-code-complete.js'"]) if (!swText.includes(core)) errors.push(`首次安装离线核心缺少：${core}`);
 const aliasPos = index.indexOf('search-aliases.js');
 const gmPos = index.indexOf('gm-code-complete.js');
@@ -40,7 +40,7 @@ try {
   errors.push(`G/M代码运行时目录无法加载：${error.message}`);
 }
 const guard = sandbox.window.CNC_GM_CONTENT_SAFETY;
-if (!guard || guard.version !== 'g10-g28-g53-g92-g94-g98-g99-boundary-6') errors.push(`运行时安全守卫版本错误：${guard?.version}`);
+if (!guard || guard.version !== 'g10-g28-g53-g92-g94-g96-g97-g98-g99-boundary-7') errors.push(`运行时安全守卫版本错误：${guard?.version}`);
 if (typeof guard?.normalizeG98 !== 'function' || typeof guard?.normalizeG99 !== 'function') errors.push('运行时缺少normalizeG98/normalizeG99');
 for (const code of ['G98', 'G99']) {
   const entry = (sandbox.window.CNC_GM_CODES || []).find(item => item.code === code);

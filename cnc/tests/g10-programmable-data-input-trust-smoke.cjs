@@ -17,7 +17,7 @@ const errors = [];
 
 for (const token of [
   'G/M 代码目录来自大批量生成的基础表',
-  '作为第二层防御保持G10/G28/G53/G92/G94/G98/G99边界一致',
+  '作为第二层防御保持G10/G28/G53/G92/G94/G96/G97/G98/G99边界一致',
   'function normalizeG10(entry)',
   '当前CNC/机床厂原厂手册',
   '备份原数据',
@@ -37,9 +37,9 @@ if (aliasPos < 0 || gmPos < 0 || aliasPos >= gmPos) {
 for (const core of ["'./search-aliases.js'", "'./gm-code-complete.js'"]) {
   if (!swText.includes(core)) errors.push(`PWA首次安装核心缺少G10可信目录依赖：${core}`);
 }
-if (!swText.includes("const BUILD = '20260810-pwa33'")) errors.push('Service Worker未升级到20260810-pwa33');
-if (!swText.includes("const CACHE_REVISION = '20260810-learning33'")) errors.push('Service Worker缓存修订未升级到20260810-learning33');
-if (buildInfo.pwaBuild !== '20260810-pwa33' || buildInfo.cacheRevision !== '20260810-learning33') {
+if (!swText.includes("const BUILD = '20260810-pwa34'")) errors.push('Service Worker未升级到20260810-pwa34');
+if (!swText.includes("const CACHE_REVISION = '20260810-learning34'")) errors.push('Service Worker缓存修订未升级到20260810-learning34');
+if (buildInfo.pwaBuild !== '20260810-pwa34' || buildInfo.cacheRevision !== '20260810-learning34') {
   errors.push(`build-info与PWA33不一致：${buildInfo.pwaBuild} / ${buildInfo.cacheRevision}`);
 }
 for (const token of ['G10可编程数据写入适用范围', 'G/M代码首次安装离线核心']) {
@@ -77,7 +77,7 @@ try {
 }
 
 const guard = sandbox.window.CNC_GM_CONTENT_SAFETY;
-if (!guard || guard.version !== 'g10-g28-g53-g92-g94-g98-g99-boundary-6' || typeof guard.normalizeG10 !== 'function') {
+if (!guard || guard.version !== 'g10-g28-g53-g92-g94-g96-g97-g98-g99-boundary-7' || typeof guard.normalizeG10 !== 'function') {
   errors.push('G10/G28/G53/G92/G94/G98/G99内容安全归一化器未安装、版本异常或缺少normalizeG10');
 }
 const catalog = sandbox.window.CNC_GM_CODES;
