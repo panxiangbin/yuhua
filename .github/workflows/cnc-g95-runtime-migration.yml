@@ -8,41 +8,26 @@ on:
 permissions:
   contents: write
 
-# 迁移逻辑放在 cnc/tools 中，避免大段 here-doc 破坏 YAML 缩进。
 jobs:
-  migrate:
+  finalize:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Checkout exact branch head
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Harden migration reader for non-UTF8 assets
-        shell: bash
-        run: >-
-          python3 -c "from pathlib import Path; p=Path('cnc/tools/g95-runtime-migrate.py'); s=p.read_text(encoding='utf-8'); old=\"    text = path.read_text(encoding='utf-8')\"; new=\"    try:\\n        text = path.read_text(encoding='utf-8')\\n    except UnicodeDecodeError:\\n        print('skip non-UTF8 text candidate:', path)\\n        continue\"; assert old in s; p.write_text(s.replace(old,new,1),encoding='utf-8')"
-
-      - name: Apply CNC-only G95 migration
-        run: python3 cnc/tools/g95-runtime-migrate.py
-
-      - name: Run G95 trust smoke before commit
-        run: node cnc/tests/g95-dual-semantics-trust-smoke.cjs
-
-      - name: Show remaining workflow build references
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Finalize CNC-only PWA35 contracts and G95 gates
+        run: python3 cnc/tools/g95-finalize-migration.py
+      - name: Commit final CNC-only migration state
         shell: bash
         run: |
-          grep -RInE '20260810-(pwa34|learning34|pwa33|learning33)' .github/workflows/cnc-*.yml || true
-
-      - name: Commit CNC-only runtime changes if needed
-        shell: bash
-        run: |
-          if git diff --quiet -- cnc; then
-            echo 'No CNC runtime migration changes to commit.'
-            exit 0
-          fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add cnc
-          git commit -m 'feat(cnc): 收紧G95车铣双语义并升级PWA35'
+          git add cnc .github/workflows/cnc-*.yml
+          git status --short
+          git commit -m 'test(cnc): 固化G95 PWA35可信度与冷离线门禁'
           git push origin HEAD:chatgpt/cnc-g95-runtime-safety
