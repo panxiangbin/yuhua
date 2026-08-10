@@ -1,0 +1,41 @@
+name: CNC G95 dual semantic boundary trust smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-g95-dual-semantic-boundary-trust-smoke.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-g95-dual-semantic-boundary-trust-smoke.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  g95-dual-semantic-boundary-trust:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Verify exact tested commit
+        shell: bash
+        run: |
+          expected='${{ github.event.pull_request.head.sha || github.sha }}'
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected" || { echo "exact-head mismatch: expected=$expected actual=$actual" >&2; exit 1; }
+      - name: Reject trust-gate bypass markers
+        shell: bash
+        run: |
+          ! grep -F '.skip(' cnc/tests/g95-dual-semantic-boundary-trust-smoke.cjs
+          ! grep -F 'process.exit(0)' cnc/tests/g95-dual-semantic-boundary-trust-smoke.cjs
+          ! grep -F 'continue-on-error:' .github/workflows/cnc-g95-dual-semantic-boundary-trust-smoke.yml
+      - name: Validate G95 mill-lathe semantic boundary
+        run: node cnc/tests/g95-dual-semantic-boundary-trust-smoke.cjs
