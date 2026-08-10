@@ -1,0 +1,110 @@
+name: CNC PWA34 reference repair
+
+on:
+  push:
+    branches:
+      - codex/cnc-g96-g97-safety-audit
+    paths:
+      - '.github/workflows/cnc-pwa34-reference-repair.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout CNC branch
+        uses: actions/checkout@v4
+        with:
+          ref: codex/cnc-g96-g97-safety-audit
+          fetch-depth: 0
+      - name: Repair PWA34 active references and previous-build pins
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          root = Path('.')
+          self_path = root / '.github/workflows/cnc-pwa34-reference-repair.yml'
+          operational = []
+          operational.extend((root / 'cnc/tests').glob('*.cjs'))
+          operational.extend((root / '.github/workflows').glob('cnc-*.yml'))
+          operational.extend((root / '.github/workflows').glob('cnc-*.yaml'))
+
+          changed = []
+          for path in operational:
+              if path == self_path or not path.is_file():
+                  continue
+              text = path.read_text(encoding='utf-8')
+              original = text
+              # PWA33/learning33 was the active production target on main.
+              # PWA34 migration requires all operational active checks to follow the new build.
+              text = text.replace('20260810-pwa33', '20260810-pwa34')
+              text = text.replace('20260810-learning33', '20260810-learning34')
+
+              # PWA34 upgrade/deployment tests still need the immediately previous build.
+              # Only lines that explicitly declare/check a previous build may move PWA32 -> PWA33.
+              repaired_lines = []
+              for line in text.splitlines(keepends=True):
+                  lower = line.lower()
+                  if 'previous' in lower:
+                      line = line.replace('20260810-pwa32', '20260810-pwa33')
+                      line = line.replace('20260810-learning32', '20260810-learning33')
+                  repaired_lines.append(line)
+              text = ''.join(repaired_lines)
+
+              if text != original:
+                  path.write_text(text, encoding='utf-8')
+                  changed.append(str(path))
+
+          media = root / 'cnc/MOBILE_LEARNING_MEDIA_PROGRESS.md'
+          media_text = media.read_text(encoding='utf-8')
+          old_target = '当前受控目标版本 `20260810-pwa33 / 20260810-learning33`'
+          new_target = '当前受控目标版本 `20260810-pwa34 / 20260810-learning34`'
+          if old_target not in media_text and new_target not in media_text:
+              raise SystemExit('学习媒体进度文档缺少可识别的PWA33/PWA34受控目标')
+          media_text = media_text.replace(old_target, new_target, 1)
+          if 'G96/G97恒线速/恒转速适用范围' not in media_text:
+              needle = '核心资源变化不通过移出缓存来规避版本门禁。'
+              addition = '新增G96/G97安全边界：仅在当前CNC与机床厂原厂手册明确支持相应车床语义时，才按恒线速度/固定主轴转速解释；必须确认单位制、S地址含义、本机最高转速限制方式，以及主轴、卡盘、装夹、工件和刀具限制，不得把“G96前必写G50”、固定S数值或“G97后S一定就是转/分”当成跨系统口诀。'
+              if needle not in media_text:
+                  raise SystemExit('学习媒体进度文档缺少核心资源版本门禁锚点')
+              media_text = media_text.replace(needle, addition + needle, 1)
+          media.write_text(media_text, encoding='utf-8')
+          changed.append(str(media))
+
+          print('PWA34 reference repair changed files:')
+          for item in sorted(set(changed)):
+              print('-', item)
+          PY
+
+          node cnc/tests/pwa-build-reference-audit-smoke.cjs
+          node cnc/tests/g10-programmable-data-input-trust-smoke.cjs
+          node cnc/tests/g28-reference-return-boundary-trust-smoke.cjs
+          node cnc/tests/g53-machine-coordinate-boundary-trust-smoke.cjs
+          node cnc/tests/g92-dual-semantic-boundary-trust-smoke.cjs
+          node cnc/tests/g94-dual-semantic-boundary-trust-smoke.cjs
+          node cnc/tests/g96-g97-spindle-mode-boundary-trust-smoke.cjs
+          node cnc/tests/g98-g99-dual-semantic-boundary-trust-smoke.cjs
+
+          rm -f .github/workflows/cnc-pwa34-reference-repair.yml
+          git config user.name 'CNC automation'
+          git config user.email 'actions@users.noreply.github.com'
+          git add cnc .github/workflows/cnc-*.yml .github/workflows/cnc-*.yaml 2>/dev/null || true
+          bad="$(git diff --cached --name-only | grep -Ev '^(cnc/|\.github/workflows/cnc-[^/]+\.ya?ml$)' || true)"
+          if [[ -n "$bad" ]]; then
+            echo 'refusing out-of-scope changes:' >&2
+            echo "$bad" >&2
+            exit 1
+          fi
+          git diff --cached --check
+          git diff --cached --name-only
+          if git diff --cached --quiet; then
+            echo 'No CNC reference changes to commit.'
+            exit 0
+          fi
+          git commit -m 'fix(cnc): 对齐PWA34运行引用与上一版本门禁'
+          git push origin HEAD:codex/cnc-g96-g97-safety-audit
