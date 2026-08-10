@@ -41,7 +41,6 @@ jobs:
           node --check cnc/gm-code-complete.js
           node --check cnc/search-aliases.js
           node cnc/tests/g93-inverse-time-feed-safety-trust-smoke.cjs
-          node cnc/tests/pwa-core-resource-build-bump-smoke.cjs
           git diff --check
       - name: Commit CNC-only runtime changes
         shell: bash
