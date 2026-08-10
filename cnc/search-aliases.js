@@ -48,7 +48,7 @@ window.CNC_SEARCH_ALIASES = [
 ];
 
 // G/M 代码目录来自大批量生成的基础表。这里在目录载入前安装高风险内容归一化器，
-// 作为第二层防御保持G10/G28/G53/G92/G94/G96/G97/G98/G99边界一致；基础源本身仍必须通过独立可信度门禁。
+// 作为第二层防御保持G10/G28/G53/G92/G94/G95/G96/G97/G98/G99边界一致；基础源本身仍必须通过独立可信度门禁。
 (function installGmContentSafetyGuard() {
   var gmCodesValue;
 
@@ -118,6 +118,20 @@ window.CNC_SEARCH_ALIASES = [
     });
   }
 
+  function normalizeG95(entry) {
+  if (!entry || entry.id !== 'kb-gcode-g95') return entry;
+  return Object.assign({}, entry, {
+    title: 'G95 每转进给/动力刀具端面刚性攻丝（按当前CNC确认）',
+    summary: 'G95不是跨机型同一含义：部分铣床/加工中心CNC把它作为每转进给模式；部分车床CNC可把它用于动力刀具端面刚性攻丝循环。必须先确认机床类型、当前CNC、G代码组别并核对机床厂原厂手册。',
+    usage: '若本机将G95定义为每转进给，先确认单位制、主轴状态、F地址单位和当前进给模式；若本机将G95定义为动力刀具端面刚性攻丝循环，先确认机床具备相应动力刀具与同步攻丝能力，并按原厂手册逐项核对主轴/动力刀具、C轴或夹紧条件、进给同步以及F/S/R/Z/X/Y/C/Q等地址是否适用及其含义。',
+    beginner: '看到G95先问：这是哪台机床、哪种CNC、哪个G代码组别？不要把铣床的每转进给写法直接照搬到车床，也不要把某款车床的刚性攻丝循环格式反套到其它系统。',
+    warning: 'G95的语义、所属组、地址含义和前置条件会随机床类型与CNC变化。任何F/S/螺距/深度/位置等数值都必须由本机参数、刀具、工件、装夹和工艺条件确定；真实机床执行前必须核对当前CNC与机床厂原厂手册和现场安全规程，并按本机允许的图形检查、仿真、单段、低倍率或空运行等受控方式验证。',
+    example: '教学语义示意：部分铣床/加工中心CNC中G95表示每转进给；部分车床CNC中G95可能表示动力刀具端面刚性攻丝。两类程序不能互抄，具体格式以及F/S/R/Z/X/Y/C/Q等地址含义必须以当前CNC和机床厂原厂手册为准，不提供可直接照抄的固定参数。',
+    risk: '高',
+    tags: ['G95','车铣差异','每转进给','动力刀具','刚性攻丝','当前CNC','原厂手册']
+  });
+}
+
   function normalizeG96(entry) {
     if (!entry || entry.id !== 'kb-gcode-g96') return entry;
     return Object.assign({}, entry, {
@@ -176,7 +190,7 @@ window.CNC_SEARCH_ALIASES = [
 
   function normalizeCatalog(value) {
     if (!Array.isArray(value)) return value;
-    return value.map(function (entry) { return normalizeG99(normalizeG98(normalizeG97(normalizeG96(normalizeG94(normalizeG92(normalizeG53(normalizeG28(normalizeG10(entry))))))))); });
+    return value.map(function (entry) { return normalizeG99(normalizeG98(normalizeG97(normalizeG96(normalizeG95(normalizeG94(normalizeG92(normalizeG53(normalizeG28(normalizeG10(entry)))))))))); });
   }
 
   Object.defineProperty(window, 'CNC_GM_CODES', {
@@ -187,12 +201,13 @@ window.CNC_SEARCH_ALIASES = [
   });
 
   window.CNC_GM_CONTENT_SAFETY = {
-    version: 'g10-g28-g53-g92-g94-g96-g97-g98-g99-boundary-7',
+    version: 'g10-g28-g53-g92-g94-g95-g96-g97-g98-g99-boundary-8',
     normalizeG10: normalizeG10,
     normalizeG28: normalizeG28,
     normalizeG53: normalizeG53,
     normalizeG92: normalizeG92,
     normalizeG94: normalizeG94,
+    normalizeG95: normalizeG95,
     normalizeG96: normalizeG96,
     normalizeG97: normalizeG97,
     normalizeG98: normalizeG98,
