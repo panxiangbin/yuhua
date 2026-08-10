@@ -11,6 +11,9 @@ const PWA_BUILD = '20260810-pwa33';
 const CACHE_REVISION = '20260810-learning33';
 let offlineProbeHits = 0;
 let serverStoppedForOffline = false;
+let coldOfflineConsoleWindow = false;
+const expectedOfflineConsoleErrors = [];
+const offline504Responses = [];
 fs.mkdirSync(out, { recursive: true });
 
 const types = {
@@ -22,6 +25,14 @@ const types = {
   '.svg': 'image/svg+xml',
   '.mp4': 'video/mp4'
 };
+
+const EXPECTED_OFFLINE_CONSOLE_ERROR = /^Failed to load resource: the server responded with a status of 504 \(Offline\)$/;
+const CRITICAL_OFFLINE_PATHS = new Set([
+  '/cnc/index.html',
+  '/cnc/search-aliases.js',
+  '/cnc/gm-code-complete.js',
+  '/cnc/sw.js'
+]);
 
 const server = http.createServer((req, res) => {
   let requestPath = decodeURIComponent(req.url.split('?')[0]);
@@ -58,9 +69,20 @@ function observePage(page, errors) {
   page.setDefaultTimeout(30000);
   page.setDefaultNavigationTimeout(30000);
   page.on('console', message => {
-    if (message.type() === 'error') errors.push(message.text());
+    if (message.type() !== 'error') return;
+    const text = message.text();
+    if (coldOfflineConsoleWindow && EXPECTED_OFFLINE_CONSOLE_ERROR.test(text)) {
+      expectedOfflineConsoleErrors.push(text);
+      return;
+    }
+    errors.push(text);
   });
   page.on('pageerror', error => errors.push(error.message));
+  page.on('response', response => {
+    if (coldOfflineConsoleWindow && response.status() === 504) {
+      offline504Responses.push({ url: response.url(), status: response.status() });
+    }
+  });
 }
 
 async function writeDiagnostics(page, stage, errors, extra = {}) {
@@ -71,6 +93,8 @@ async function writeDiagnostics(page, stage, errors, extra = {}) {
     controller: null,
     caches: [],
     consoleErrors: errors,
+    expectedOfflineConsoleErrors,
+    offline504Responses,
     ...extra
   };
   try { diagnostic.title = await page.title(); } catch {}
@@ -149,8 +173,10 @@ async function writeDiagnostics(page, stage, errors, extra = {}) {
     if (offlineProbeHits !== onlineHitsBefore + 1) {
       throw new Error(`在线网络探针未实际到达HTTP服务器：before=${onlineHitsBefore}, after=${offlineProbeHits}`);
     }
+    if (errors.length) throw new Error(`联网安装阶段浏览器控制台出现错误：${errors.join(' | ')}`);
 
     stage = 'cold-offline-network-proof';
+    coldOfflineConsoleWindow = true;
     await context.setOffline(true);
     await stopOriginServerForOfflineProof();
     if (!serverStoppedForOffline || server.listening) {
@@ -259,7 +285,14 @@ async function writeDiagnostics(page, stage, errors, extra = {}) {
       if (!entry.summary.includes('不是跨机型同一含义')) throw new Error(`${entry.code}冷离线摘要未区分车铣语义`);
       if (!entry.warning.includes('原厂手册')) throw new Error(`${entry.code}冷离线警告未要求核对原厂手册`);
     }
-    if (errors.length) throw new Error(`浏览器控制台出现错误：${errors.join(' | ')}`);
+
+    const criticalOffline504 = offline504Responses.filter(item => {
+      try { return CRITICAL_OFFLINE_PATHS.has(new URL(item.url).pathname); } catch { return true; }
+    });
+    if (criticalOffline504.length) {
+      throw new Error(`冷离线关键资源返回504：${criticalOffline504.map(item => item.url).join(' | ')}`);
+    }
+    if (errors.length) throw new Error(`浏览器出现非预期错误：${errors.join(' | ')}`);
 
     const result = {
       pwaBuild: PWA_BUILD,
@@ -273,11 +306,15 @@ async function writeDiagnostics(page, stage, errors, extra = {}) {
       g98G99ColdOfflineReload: true,
       cacheEvidence,
       runtimeEvidence,
+      expectedOfflineConsoleErrorCount: expectedOfflineConsoleErrors.length,
+      expectedOfflineConsoleErrors,
+      offline504Responses,
+      criticalOffline504,
       consoleErrors: errors
     };
     fs.writeFileSync(path.join(out, 'g98-g99-cold-offline-source-trust-result.json'), JSON.stringify(result, null, 2));
     await page.screenshot({ path: path.join(out, 'g98-g99-cold-offline-source-trust.png'), fullPage: true });
-    console.log('CNC G98/G99冷离线源可信度门禁通过：PWA33首次安装后，安全归一化源与G/M基础目录可从静态缓存冷离线读取；关闭本地HTTP源站后网络探针不再到达服务器，离线重载仍保持G98/G99车铣双语义边界、高风险标记和原厂手册核对要求。');
+    console.log('CNC G98/G99冷离线源可信度门禁通过：PWA33首次安装后，安全归一化源与G/M基础目录可从静态缓存冷离线读取；关闭本地HTTP源站后网络探针不再到达服务器，离线重载仍保持G98/G99车铣双语义边界、高风险标记和原厂手册核对要求；仅记录冷离线阶段浏览器预期的504(Offline)资源噪声，任何其它控制台错误或关键资源504仍会失败。');
   } catch (error) {
     errors.push(error.message);
     if (context && page) await writeDiagnostics(page, stage, errors, { sourceEvidence, runtimeEvidence, offlineNetworkBlocked, probeEvidence, offlineProbeHits, serverStoppedForOffline });
