@@ -7,8 +7,8 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const outDir = path.join(root, 'cnc/test-results/g96-g97-cold-offline-source-trust');
-const PWA_BUILD = '20260810-pwa34';
-const CACHE_REVISION = '20260810-learning34';
+const PWA_BUILD = '20260810-pwa35';
+const CACHE_REVISION = '20260810-learning35';
 let offlineProbeHits = 0;
 let originServerStopped = false;
 let coldOfflineConsoleWindow = false;
@@ -238,7 +238,7 @@ async function writeDiagnostics(page, stage, errors, extra = {}) {
       if (sourceEvidence.gmText.includes(forbidden)) throw new Error(`G96/G97冷离线基础源仍含可直接照抄或跨系统口诀：${forbidden}`);
     }
     for (const token of [
-      'g10-g28-g53-g92-g94-g96-g97-g98-g99-boundary-7',
+      'g10-g28-g53-g92-g94-g95-g96-g97-g98-g99-boundary-8',
       'normalizeG96',
       'normalizeG97'
     ]) {
@@ -267,7 +267,7 @@ async function writeDiagnostics(page, stage, errors, extra = {}) {
         })
       };
     });
-    if (runtimeEvidence.guardVersion !== 'g10-g28-g53-g92-g94-g96-g97-g98-g99-boundary-7') {
+    if (runtimeEvidence.guardVersion !== 'g10-g28-g53-g92-g94-g95-g96-g97-g98-g99-boundary-8') {
       throw new Error(`冷离线运行时安全守卫版本错误：${runtimeEvidence.guardVersion}`);
     }
     if (runtimeEvidence.normalizeG96 !== 'function' || runtimeEvidence.normalizeG97 !== 'function') {
