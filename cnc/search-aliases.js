@@ -48,7 +48,7 @@ window.CNC_SEARCH_ALIASES = [
 ];
 
 // G/M 代码目录来自大批量生成的基础表。这里在目录载入前安装高风险内容归一化器，
-// 作为第二层防御保持G10/G28/G53/G92/G94/G98/G99边界一致；基础源本身仍必须通过独立可信度门禁。
+// 作为第二层防御保持G10/G28/G53/G92/G94/G96/G97/G98/G99边界一致；基础源本身仍必须通过独立可信度门禁。
 (function installGmContentSafetyGuard() {
   var gmCodesValue;
 
@@ -118,6 +118,34 @@ window.CNC_SEARCH_ALIASES = [
     });
   }
 
+  function normalizeG96(entry) {
+    if (!entry || entry.id !== 'kb-gcode-g96') return entry;
+    return Object.assign({}, entry, {
+      title: 'G96 恒线速度模式（部分车床CNC）',
+      summary: '在部分明确支持该车床语义的CNC中，G96用于恒线速度控制，主轴转速会随当前加工直径变化；其它机床或控制器上G96可能具有不同含义，必须先核对当前CNC和机床厂原厂手册。',
+      usage: '仅在确认机床类型、当前CNC、G96组别、单位制与S地址含义后使用；同时确认本机最高允许主轴转速及限制方式，并核对主轴、卡盘、装夹、工件和刀具各自允许的转速与安全限制。',
+      beginner: '不要把“G96前必写G50”或任何固定S数值记成跨系统口诀；先确认本机如何设置最高主轴转速限制、S的单位以及当前加工直径解释。',
+      warning: '恒线速度下随着有效加工直径减小，主轴转速可能升高。最高允许主轴转速不是只由程序一个数值决定，还受主轴、卡盘、装夹、工件、刀具和机床配置限制。上机前必须按当前CNC和机床厂原厂手册确认限制方式、单位制、S含义与全部转速上限，并按现场规程做仿真、图形检查、单段或其它受控验证。',
+      example: '教学语义示意：部分车床CNC中G96表示恒线速度模式，S表示该模式规定的线速度值；具体单位、最高转速限制指令与可用范围必须逐项以本机原厂手册为准，不提供可直接照抄的固定转速或线速度数值。',
+      risk: '高',
+      tags: ['G96','恒线速度','车床适用范围','当前CNC','原厂手册','最高允许主轴转速','卡盘','装夹','工件','刀具']
+    });
+  }
+
+  function normalizeG97(entry) {
+    if (!entry || entry.id !== 'kb-gcode-g97') return entry;
+    return Object.assign({}, entry, {
+      title: 'G97 恒线速度取消/固定转速模式（部分车床CNC）',
+      summary: '在部分明确支持该车床语义的CNC中，G97用于取消恒线速度并进入固定主轴转速模式；其它机床或控制器上G97可能具有不同含义，必须先核对当前CNC和机床厂原厂手册。',
+      usage: '仅在确认机床类型、当前CNC、G97组别、单位制与S地址含义后使用；同时确认本机最高允许主轴转速，以及主轴、卡盘、装夹、工件和刀具的全部转速与安全限制。',
+      beginner: '不要把“G97后S一定就是转/分”当成跨系统口诀；只有本机原厂手册明确该车床语义时，才能按其规定解释S和固定转速模式。',
+      warning: '切换到固定转速并不会自动证明该转速安全。S地址解释、单位和最大允许值必须按当前CNC与机床配置确认，并同时受主轴、卡盘、装夹、工件和刀具限制；上机前核对原厂手册并按现场规程做受控验证。',
+      example: '教学语义示意：部分车床CNC中G97取消恒线速度并按本机规定使用S设置固定主轴转速；具体S单位、允许范围和主轴方向控制必须以本机原厂手册为准，不提供可直接照抄的固定转速数值。',
+      risk: '高',
+      tags: ['G97','恒线速度取消','固定转速','车床适用范围','当前CNC','原厂手册','最高允许主轴转速','卡盘','装夹','工件','刀具']
+    });
+  }
+
   function normalizeG98(entry) {
     if (!entry || entry.id !== 'kb-gcode-g98') return entry;
     return Object.assign({}, entry, {
@@ -148,7 +176,7 @@ window.CNC_SEARCH_ALIASES = [
 
   function normalizeCatalog(value) {
     if (!Array.isArray(value)) return value;
-    return value.map(function (entry) { return normalizeG99(normalizeG98(normalizeG94(normalizeG92(normalizeG53(normalizeG28(normalizeG10(entry))))))); });
+    return value.map(function (entry) { return normalizeG99(normalizeG98(normalizeG97(normalizeG96(normalizeG94(normalizeG92(normalizeG53(normalizeG28(normalizeG10(entry))))))))); });
   }
 
   Object.defineProperty(window, 'CNC_GM_CODES', {
@@ -159,12 +187,14 @@ window.CNC_SEARCH_ALIASES = [
   });
 
   window.CNC_GM_CONTENT_SAFETY = {
-    version: 'g10-g28-g53-g92-g94-g98-g99-boundary-6',
+    version: 'g10-g28-g53-g92-g94-g96-g97-g98-g99-boundary-7',
     normalizeG10: normalizeG10,
     normalizeG28: normalizeG28,
     normalizeG53: normalizeG53,
     normalizeG92: normalizeG92,
     normalizeG94: normalizeG94,
+    normalizeG96: normalizeG96,
+    normalizeG97: normalizeG97,
     normalizeG98: normalizeG98,
     normalizeG99: normalizeG99,
     normalizeCatalog: normalizeCatalog
