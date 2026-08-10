@@ -10,6 +10,7 @@
   var retryTimer = null;
   var restoringQuery = false;
   var restoreGeneration = 0;
+  var mobilePanelGeneration = 0;
   var userQueryCaptured = false;
   var lastUserQuery = '';
 
@@ -158,7 +159,8 @@
     });
   }
 
-  function openMobilePanel(entryId) {
+  function openMobilePanel(entryId, generation) {
+    if (typeof generation === 'number' && generation !== mobilePanelGeneration) return false;
     var panel = document.getElementById('detail-panel');
     if (!panel || !document.body || window.innerWidth > 768) return false;
     ensureStateStyle();
@@ -167,11 +169,16 @@
     document.body.classList.add('cnc-detail-open');
     document.body.setAttribute('data-cnc-detail-open', 'true');
     syncIndustrialSample(entryId);
-    window.setTimeout(function () { syncIndustrialSample(entryId); }, 80);
+    window.setTimeout(function () {
+      if (typeof generation === 'number' && generation !== mobilePanelGeneration) return;
+      syncIndustrialSample(entryId);
+    }, 80);
     return true;
   }
 
   function closeMobilePanel() {
+    /* 先使所有旧的延迟打开任务失效，避免关闭后旧定时器再次写回详情状态。 */
+    mobilePanelGeneration += 1;
     var panel = document.getElementById('detail-panel');
     if (panel) panel.classList.remove('mobile-open', 'show-secondary');
     if (window.CNC_INDUSTRIAL_SAMPLE && typeof window.CNC_INDUSTRIAL_SAMPLE.clearEntry === 'function') {
@@ -188,9 +195,10 @@
   }
 
   function confirmMobilePanel(entryId) {
-    openMobilePanel(entryId);
-    window.setTimeout(function () { openMobilePanel(entryId); }, 50);
-    window.setTimeout(function () { openMobilePanel(entryId); }, 200);
+    var generation = ++mobilePanelGeneration;
+    openMobilePanel(entryId, generation);
+    window.setTimeout(function () { openMobilePanel(entryId, generation); }, 50);
+    window.setTimeout(function () { openMobilePanel(entryId, generation); }, 200);
   }
 
   function normalizedLabelText(node) {
