@@ -10,6 +10,7 @@ const out = path.join(root, 'cnc/test-results');
 const PWA_BUILD = '20260810-pwa33';
 const CACHE_REVISION = '20260810-learning33';
 let offlineProbeHits = 0;
+let serverStoppedForOffline = false;
 fs.mkdirSync(out, { recursive: true });
 
 const types = {
@@ -40,6 +41,18 @@ const server = http.createServer((req, res) => {
   res.setHeader('Content-Type', types[path.extname(file)] || 'application/octet-stream');
   fs.createReadStream(file).pipe(res);
 });
+
+async function stopOriginServerForOfflineProof() {
+  if (!server.listening) {
+    serverStoppedForOffline = true;
+    return;
+  }
+  await new Promise((resolve, reject) => {
+    server.close(error => error ? reject(error) : resolve());
+    if (typeof server.closeAllConnections === 'function') server.closeAllConnections();
+  });
+  serverStoppedForOffline = true;
+}
 
 function observePage(page, errors) {
   page.setDefaultTimeout(30000);
@@ -139,6 +152,10 @@ async function writeDiagnostics(page, stage, errors, extra = {}) {
 
     stage = 'cold-offline-network-proof';
     await context.setOffline(true);
+    await stopOriginServerForOfflineProof();
+    if (!serverStoppedForOffline || server.listening) {
+      throw new Error('冷离线验证前未真正关闭HTTP源站');
+    }
     const offlineHitsBefore = offlineProbeHits;
     const offlineProbeResult = await page.evaluate(async () => {
       try {
@@ -151,10 +168,13 @@ async function writeDiagnostics(page, stage, errors, extra = {}) {
     await new Promise(resolve => setTimeout(resolve, 100));
     const offlineHitsAfter = offlineProbeHits;
     if (offlineHitsAfter !== offlineHitsBefore) {
-      throw new Error(`切换离线后网络探针仍到达HTTP服务器：before=${offlineHitsBefore}, after=${offlineHitsAfter}`);
+      throw new Error(`关闭源站后离线网络探针仍到达HTTP服务器：before=${offlineHitsBefore}, after=${offlineHitsAfter}`);
+    }
+    if (offlineProbeResult.resolved && offlineProbeResult.status === 204) {
+      throw new Error('关闭源站后离线网络探针仍返回在线204响应');
     }
     offlineNetworkBlocked = true;
-    probeEvidence = { onlineHitsBefore, offlineHitsBefore, offlineHitsAfter, offlineProbeResult };
+    probeEvidence = { onlineHitsBefore, offlineHitsBefore, offlineHitsAfter, offlineProbeResult, serverStoppedForOffline };
 
     stage = 'cold-offline-g98-g99-source';
     sourceEvidence = await page.evaluate(async () => {
@@ -202,7 +222,7 @@ async function writeDiagnostics(page, stage, errors, extra = {}) {
     }
 
     stage = 'cold-offline-g98-g99-reload';
-    if (!offlineNetworkBlocked) throw new Error('离线网络阻断证据缺失');
+    if (!offlineNetworkBlocked || !serverStoppedForOffline) throw new Error('真实冷离线网络阻断证据缺失');
     await page.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded' });
     if (!(await page.title()).includes('CNC')) throw new Error('PWA33冷离线重载首页失败');
 
@@ -246,6 +266,7 @@ async function writeDiagnostics(page, stage, errors, extra = {}) {
       cacheRevision: CACHE_REVISION,
       viewport: { width: 390, height: 844 },
       offlineNetworkBlocked,
+      originServerStopped: serverStoppedForOffline,
       probeEvidence,
       g98G99ColdOfflineSourceTrust: true,
       g98G99ColdOfflineRuntimeTrust: true,
@@ -256,15 +277,15 @@ async function writeDiagnostics(page, stage, errors, extra = {}) {
     };
     fs.writeFileSync(path.join(out, 'g98-g99-cold-offline-source-trust-result.json'), JSON.stringify(result, null, 2));
     await page.screenshot({ path: path.join(out, 'g98-g99-cold-offline-source-trust.png'), fullPage: true });
-    console.log('CNC G98/G99冷离线源可信度门禁通过：PWA33首次安装后，安全归一化源与G/M基础目录可从静态缓存冷离线读取；独立网络探针确认浏览器离线后无法到达HTTP服务器，离线重载后G98/G99仍保持车铣双语义边界、高风险标记和原厂手册核对要求。');
+    console.log('CNC G98/G99冷离线源可信度门禁通过：PWA33首次安装后，安全归一化源与G/M基础目录可从静态缓存冷离线读取；关闭本地HTTP源站后网络探针不再到达服务器，离线重载仍保持G98/G99车铣双语义边界、高风险标记和原厂手册核对要求。');
   } catch (error) {
     errors.push(error.message);
-    if (context && page) await writeDiagnostics(page, stage, errors, { sourceEvidence, runtimeEvidence, offlineNetworkBlocked, probeEvidence, offlineProbeHits });
+    if (context && page) await writeDiagnostics(page, stage, errors, { sourceEvidence, runtimeEvidence, offlineNetworkBlocked, probeEvidence, offlineProbeHits, serverStoppedForOffline });
     console.error(error.stack || error.message);
     process.exitCode = 1;
   } finally {
     if (context) await context.close().catch(() => {});
     if (userDataDir) fs.rmSync(userDataDir, { recursive: true, force: true });
-    server.close();
+    if (server.listening) server.close();
   }
 })();
