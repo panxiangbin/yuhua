@@ -8,6 +8,7 @@ on:
 permissions:
   contents: write
 
+# 迁移逻辑放在 cnc/tools 中，避免大段 here-doc 破坏 YAML 缩进。
 jobs:
   migrate:
     runs-on: ubuntu-latest
