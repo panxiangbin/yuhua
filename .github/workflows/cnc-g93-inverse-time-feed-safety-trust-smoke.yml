@@ -8,60 +8,16 @@ on:
   push:
     branches:
       - main
-      - codex/cnc-g93-runtime-trust-gate
     paths:
       - 'cnc/**'
       - '.github/workflows/cnc-g93-inverse-time-feed-safety-trust-smoke.yml'
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  repair:
-    if: github.event_name == 'push' && github.ref_name == 'codex/cnc-g93-runtime-trust-gate' && github.actor != 'github-actions[bot]'
-    runs-on: windows-latest
-    timeout-minutes: 10
-    steps:
-      - name: Checkout feature branch
-        uses: actions/checkout@v4
-        with:
-          ref: codex/cnc-g93-runtime-trust-gate
-          fetch-depth: 2
-      - name: Verify exact checkout
-        shell: bash
-        run: |
-          set -euo pipefail
-          test "$(git rev-parse HEAD)" = "${{ github.sha }}"
-      - name: Apply G93 runtime repair
-        shell: bash
-        run: |
-          set -euo pipefail
-          python cnc/tests/g93-runtime-repair.py
-          node --check cnc/gm-code-complete.js
-          node --check cnc/search-aliases.js
-          node cnc/tests/g93-inverse-time-feed-safety-trust-smoke.cjs
-          git diff --check
-      - name: Commit CNC-only runtime changes
-        shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add cnc
-          if git diff --cached --quiet; then
-            echo 'No CNC runtime changes produced' >&2
-            exit 1
-          fi
-          if git diff --cached --name-only | grep -Ev '^cnc/' ; then
-            echo 'Out-of-scope staged file detected' >&2
-            exit 1
-          fi
-          git commit -m 'CNC：修复 G93 运行时边界并升级 PWA36'
-          git push origin HEAD:codex/cnc-g93-runtime-trust-gate
-
   trust:
-    if: github.event_name != 'push' || github.ref_name == 'main'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
