@@ -24,9 +24,9 @@ if (aliasPos < 0 || gmPos < 0 || aliasPos >= gmPos) {
 for (const core of ["'./search-aliases.js'", "'./gm-code-complete.js'"]) {
   if (!swText.includes(core)) errors.push(`PWA首次安装核心缺少G53可信目录依赖：${core}`);
 }
-if (!swText.includes("const BUILD = '20260810-pwa33'")) errors.push('Service Worker未升级到20260810-pwa33');
-if (!swText.includes("const CACHE_REVISION = '20260810-learning33'")) errors.push('Service Worker缓存修订未升级到20260810-learning33');
-if (buildInfo.pwaBuild !== '20260810-pwa33' || buildInfo.cacheRevision !== '20260810-learning33') {
+if (!swText.includes("const BUILD = '20260810-pwa34'")) errors.push('Service Worker未升级到20260810-pwa34');
+if (!swText.includes("const CACHE_REVISION = '20260810-learning34'")) errors.push('Service Worker缓存修订未升级到20260810-learning34');
+if (buildInfo.pwaBuild !== '20260810-pwa34' || buildInfo.cacheRevision !== '20260810-learning34') {
   errors.push(`build-info与PWA32不一致：${buildInfo.pwaBuild} / ${buildInfo.cacheRevision}`);
 }
 if (!String(buildInfo.contentStage || '').includes('G53机床坐标定位适用范围')) {
