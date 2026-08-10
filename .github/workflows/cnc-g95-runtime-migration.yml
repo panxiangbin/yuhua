@@ -1,0 +1,228 @@
+name: CNC G95 runtime safety migration
+
+on:
+  push:
+    branches:
+      - chatgpt/cnc-g95-runtime-safety
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact branch head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply G95 dual-semantics safety and PWA35 migration
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, re
+          from datetime import datetime, timezone, timedelta
+
+          branch = 'chatgpt/cnc-g95-runtime-safety'
+          gm_path = Path('cnc/gm-code-complete.js')
+          search_path = Path('cnc/search-aliases.js')
+          build_path = Path('cnc/build-info.json')
+
+          gm = gm_path.read_text(encoding='utf-8')
+          pattern = re.compile(r'''  \{\n    "id": "kb-gcode-g95",.*?\n  \},\n  \{\n  "id": "kb-gcode-g96"''', re.S)
+          replacement = '''  {
+    "id": "kb-gcode-g95",
+    "category": "G代码",
+    "title": "G95 铣床每转进给/部分车床动力刀具刚性攻丝",
+    "code": "G95",
+    "aliases": [
+      "每转进给",
+      "Feed per revolution",
+      "动力刀具刚性攻丝",
+      "车铣差异"
+    ],
+    "summary": "G95不是跨机型同一含义：在部分铣床/加工中心控制器中用于每转进给模式；在部分带动力刀具的车床控制器中则可能用于端面刚性攻丝循环。具体语义、G代码组别、地址格式和可用选项必须按当前CNC与机床厂原厂手册确认。",
+    "usage": "先确认机床类型、当前CNC和G95组别。铣削每转进给模式需核对单位制、F的单位与含义、主轴状态及与其它进给模式的关系；车床动力刀具刚性攻丝需核对机床是否具备对应选项、动力刀具/主轴同步、刀具与螺纹规格、起始位置、孔深、退刀路径以及F/S等地址的本机解释。",
+    "beginner": "看到G95先问：这是哪台机床、哪种控制器？是铣床/加工中心的每转进给模式，还是带动力刀具车床上的刚性攻丝功能？不能只背“G95=每转进给”，也不能把某台车床的攻丝格式照搬到别的机床。",
+    "warning": "把不同机型上的G95语义混用，可能让F地址含义、进给模式或攻丝循环动作完全改变。真实机床执行前必须核对当前CNC和机床厂原厂手册，确认G代码组别、单位制、F/S与位置地址、主轴或动力刀具同步、刀具工件夹具间隙及完整计划运动空间，并按现场规程先做仿真、图形检查、单段或其它受控验证。教学内容不提供可直接照抄的固定进给、转速或位置数值。",
+    "example": "教学语义示意：部分铣床/加工中心中G95表示每转进给；部分带动力刀具的车床中G95可能表示端面刚性攻丝循环。两类语义不能互抄，实际F/S、位置地址、螺纹参数、同步条件和退刀规则必须逐项以本机原厂手册为准。",
+    "risk": "高",
+    "tags": [
+      "G95",
+      "车铣差异",
+      "每转进给",
+      "动力刀具",
+      "刚性攻丝",
+      "当前CNC",
+      "原厂手册"
+    ]
+  },
+  {
+  "id": "kb-gcode-g96"'''
+          gm2, count = pattern.subn(replacement, gm, count=1)
+          if count != 1:
+              raise SystemExit(f'G95 block replacement count={count}, expected 1')
+          if 'G95 F0.2' in gm2 or 'F0.2这类每转进给' in gm2:
+              raise SystemExit('unsafe fixed G95 teaching value remains in gm-code-complete.js')
+          gm_path.write_text(gm2, encoding='utf-8')
+
+          s = search_path.read_text(encoding='utf-8')
+          s = s.replace('作为第二层防御保持G10/G28/G53/G92/G94/G96/G97/G98/G99边界一致；',
+                        '作为第二层防御保持G10/G28/G53/G92/G94/G95/G96/G97/G98/G99边界一致；')
+          if 'function normalizeG95(entry)' not in s:
+              anchor = '  function normalizeG96(entry) {'
+              if anchor not in s:
+                  raise SystemExit('normalizeG96 anchor missing')
+              g95_guard = '''  function normalizeG95(entry) {
+    if (!entry || entry.id !== 'kb-gcode-g95') return entry;
+    return Object.assign({}, entry, {
+      title: 'G95 铣床每转进给/部分车床动力刀具刚性攻丝',
+      summary: 'G95不是跨机型同一含义：在部分铣床/加工中心控制器中用于每转进给模式；在部分带动力刀具的车床控制器中则可能用于端面刚性攻丝循环。具体语义、G代码组别、地址格式和可用选项必须按当前CNC与机床厂原厂手册确认。',
+      usage: '先确认机床类型、当前CNC和G95组别。铣削每转进给模式需核对单位制、F的单位与含义、主轴状态及与其它进给模式的关系；车床动力刀具刚性攻丝需核对机床是否具备对应选项、动力刀具/主轴同步、刀具与螺纹规格、起始位置、孔深、退刀路径以及F/S等地址的本机解释。',
+      beginner: '看到G95先问：这是哪台机床、哪种控制器？是铣床/加工中心的每转进给模式，还是带动力刀具车床上的刚性攻丝功能？不能只背“G95=每转进给”，也不能把某台车床的攻丝格式照搬到别的机床。',
+      warning: '把不同机型上的G95语义混用，可能让F地址含义、进给模式或攻丝循环动作完全改变。真实机床执行前必须核对当前CNC和机床厂原厂手册，确认G代码组别、单位制、F/S与位置地址、主轴或动力刀具同步、刀具工件夹具间隙及完整计划运动空间，并按现场规程先做仿真、图形检查、单段或其它受控验证。教学内容不提供可直接照抄的固定进给、转速或位置数值。',
+      example: '教学语义示意：部分铣床/加工中心中G95表示每转进给；部分带动力刀具的车床中G95可能表示端面刚性攻丝循环。两类语义不能互抄，实际F/S、位置地址、螺纹参数、同步条件和退刀规则必须逐项以本机原厂手册为准。',
+      risk: '高',
+      tags: ['G95','车铣差异','每转进给','动力刀具','刚性攻丝','当前CNC','原厂手册']
+    });
+  }
+
+'''
+              s = s.replace(anchor, g95_guard + anchor, 1)
+          old_chain = 'return value.map(function (entry) { return normalizeG99(normalizeG98(normalizeG97(normalizeG96(normalizeG94(normalizeG92(normalizeG53(normalizeG28(normalizeG10(entry))))))))); });'
+          new_chain = 'return value.map(function (entry) { return normalizeG99(normalizeG98(normalizeG97(normalizeG96(normalizeG95(normalizeG94(normalizeG92(normalizeG53(normalizeG28(normalizeG10(entry)))))))))); });'
+          if old_chain in s:
+              s = s.replace(old_chain, new_chain, 1)
+          elif new_chain not in s:
+              raise SystemExit('normalizeCatalog chain not recognized')
+          s = s.replace("version: 'g10-g28-g53-g92-g94-g96-g97-g98-g99-boundary-7'",
+                        "version: 'g10-g28-g53-g92-g94-g95-g96-g97-g98-g99-boundary-8'")
+          exposure_anchor = '    normalizeG94: normalizeG94,\n    normalizeG96: normalizeG96,'
+          exposure_new = '    normalizeG94: normalizeG94,\n    normalizeG95: normalizeG95,\n    normalizeG96: normalizeG96,'
+          if exposure_anchor in s:
+              s = s.replace(exposure_anchor, exposure_new, 1)
+          elif 'normalizeG95: normalizeG95' not in s:
+              raise SystemExit('G95 safety exposure anchor missing')
+          search_path.write_text(s, encoding='utf-8')
+
+          # Shift current operational/test references from PWA34/learning34 to PWA35/learning35.
+          # Historical audit docs are deliberately excluded. If a file also names the previous
+          # PWA33/learning33 build, shift that previous pair to PWA34/learning34.
+          text_suffixes = {'.js', '.cjs', '.json', '.html', '.css', '.txt'}
+          for path in Path('cnc').rglob('*'):
+              if not path.is_file() or path.suffix.lower() not in text_suffixes:
+                  continue
+              if 'docs' in path.parts:
+                  continue
+              text = path.read_text(encoding='utf-8')
+              if '20260810-pwa34' not in text and '20260810-learning34' not in text:
+                  continue
+              shifted = text
+              if '20260810-pwa33' in shifted:
+                  shifted = shifted.replace('20260810-pwa33', '__CNC_PREVIOUS_PWA__')
+              if '20260810-learning33' in shifted:
+                  shifted = shifted.replace('20260810-learning33', '__CNC_PREVIOUS_LEARNING__')
+              shifted = shifted.replace('20260810-pwa34', '20260810-pwa35')
+              shifted = shifted.replace('20260810-learning34', '20260810-learning35')
+              shifted = shifted.replace('__CNC_PREVIOUS_PWA__', '20260810-pwa34')
+              shifted = shifted.replace('__CNC_PREVIOUS_LEARNING__', '20260810-learning34')
+              if shifted != text:
+                  path.write_text(shifted, encoding='utf-8')
+                  print('shifted CNC build refs:', path)
+
+          info = json.loads(build_path.read_text(encoding='utf-8'))
+          info['pwaBuild'] = '20260810-pwa35'
+          info['cacheRevision'] = '20260810-learning35'
+          stage = info.get('contentStage', '')
+          if 'G95车铣双语义适用范围' not in stage:
+              info['contentStage'] = stage + '，G95车铣双语义适用范围'
+          info['generatedAt'] = datetime.now(timezone(timedelta(hours=8))).isoformat(timespec='seconds')
+          build_path.write_text(json.dumps(info, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+          test_path = Path('cnc/tests/g95-dual-semantics-trust-smoke.cjs')
+          test_path.write_text(r'''const fs = require('fs');
+const vm = require('vm');
+const assert = require('assert');
+
+const gmSource = fs.readFileSync('cnc/gm-code-complete.js', 'utf8');
+const safetySource = fs.readFileSync('cnc/search-aliases.js', 'utf8');
+const buildInfo = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
+const swSource = fs.readFileSync('cnc/sw.js', 'utf8');
+
+const g95Start = gmSource.indexOf('"id": "kb-gcode-g95"');
+const g96Start = gmSource.indexOf('"id": "kb-gcode-g96"');
+assert(g95Start >= 0 && g96Start > g95Start, '必须存在独立G95基础条目');
+const g95Block = gmSource.slice(g95Start, g96Start);
+for (const token of ['车铣差异', '铣床/加工中心', '动力刀具', '刚性攻丝', '当前CNC', '原厂手册', '"risk": "高"']) {
+  assert(g95Block.includes(token), `G95基础源缺少安全边界：${token}`);
+}
+for (const forbidden of ['G95 F0.2', 'F0.2这类每转进给']) {
+  assert(!g95Block.includes(forbidden), `G95基础源仍含可直接照抄固定值：${forbidden}`);
+}
+
+const context = { window: {} };
+vm.createContext(context);
+vm.runInContext(safetySource, context, { filename: 'search-aliases.js' });
+vm.runInContext(gmSource, context, { filename: 'gm-code-complete.js' });
+const safety = context.window.CNC_GM_CONTENT_SAFETY;
+assert(safety, '缺少G/M内容安全归一化器');
+assert.strictEqual(typeof safety.normalizeG95, 'function', '缺少normalizeG95');
+assert(String(safety.version).includes('g95') && String(safety.version).includes('boundary-8'), '安全归一化版本未升级到G95 boundary-8');
+const g95 = context.window.CNC_GM_CODES.find((entry) => entry && entry.id === 'kb-gcode-g95');
+assert(g95, '运行时缺少G95条目');
+assert.strictEqual(g95.risk, '高', '运行时G95必须保持高风险');
+const runtimeText = [g95.title, g95.summary, g95.usage, g95.beginner, g95.warning, g95.example, ...(g95.tags || [])].join('\n');
+for (const token of ['车铣差异', '铣床/加工中心', '动力刀具', '刚性攻丝', '当前CNC', '原厂手册']) {
+  assert(runtimeText.includes(token), `运行时G95缺少安全边界：${token}`);
+}
+assert(!runtimeText.includes('F0.2'), '运行时G95不得恢复固定F0.2教学值');
+
+assert.strictEqual(buildInfo.pwaBuild, '20260810-pwa35', 'build-info必须升级PWA35');
+assert.strictEqual(buildInfo.cacheRevision, '20260810-learning35', 'build-info必须升级learning35');
+assert(buildInfo.contentStage.includes('G95车铣双语义适用范围'), 'contentStage必须登记G95整改');
+assert(swSource.includes("const BUILD = '20260810-pwa35'"), 'Service Worker BUILD必须为PWA35');
+assert(swSource.includes("const CACHE_REVISION = '20260810-learning35'"), 'Service Worker缓存版本必须为learning35');
+assert(swSource.includes("'./search-aliases.js'") && swSource.includes("'./gm-code-complete.js'"), 'G95安全源必须继续属于首次安装离线核心');
+
+console.log(JSON.stringify({
+  ok: true,
+  safetyVersion: safety.version,
+  pwaBuild: buildInfo.pwaBuild,
+  cacheRevision: buildInfo.cacheRevision,
+  g95Title: g95.title,
+  risk: g95.risk
+}, null, 2));
+''', encoding='utf-8')
+
+          # Post-migration hard checks.
+          gm_final = gm_path.read_text(encoding='utf-8')
+          search_final = search_path.read_text(encoding='utf-8')
+          sw_final = Path('cnc/sw.js').read_text(encoding='utf-8')
+          if 'G95 F0.2' in gm_final or 'F0.2这类每转进给' in gm_final:
+              raise SystemExit('unsafe G95 fixed value survived')
+          for token in ['normalizeG95', 'boundary-8', '动力刀具', '刚性攻丝', '原厂手册']:
+              if token not in search_final:
+                  raise SystemExit(f'search safety guard missing {token}')
+          if "const BUILD = '20260810-pwa35'" not in sw_final or "const CACHE_REVISION = '20260810-learning35'" not in sw_final:
+              raise SystemExit('Service Worker build/cache migration incomplete')
+          PY
+
+          node cnc/tests/g95-dual-semantics-trust-smoke.cjs
+
+          echo '--- Remaining PWA34/learning34 references in CNC-only workflows (for explicit review) ---'
+          grep -RInE '20260810-(pwa34|learning34|pwa33|learning33)' .github/workflows/cnc-*.yml || true
+
+      - name: Commit CNC-only migration if changed
+        shell: bash
+        run: |
+          if git diff --quiet -- cnc; then
+            echo 'No CNC runtime migration changes to commit.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add cnc
+          git commit -m 'feat(cnc): 收紧G95车铣双语义并升级PWA35'
+          git push origin HEAD:chatgpt/cnc-g95-runtime-safety
