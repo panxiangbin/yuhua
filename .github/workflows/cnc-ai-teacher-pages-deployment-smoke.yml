@@ -44,6 +44,9 @@ jobs:
             'cnc/sw.js',
             'cnc/build-info.json',
             'requireLocalMainMatch',
+            'localMatchesMain',
+            '!requireLocalMainMatch || localMatchesMain',
+            '当前 main 提交及 Pages 公网逐字节一致',
             'branchDeploymentPending',
             'exactBytesMatch',
             'exactSha256Match',
@@ -65,7 +68,8 @@ jobs:
             'it.skip(',
             'process.exit(0)',
             'CNC_PAGES_VERIFY_ATTEMPTS || 0',
-            'allowOperationalUse: true'
+            'allowOperationalUse: true',
+            'if (matched) return { main: lastMain, pages: lastPages };'
           ]) {
             if (text.includes(forbidden)) throw new Error(`检测到门禁绕过或危险声明：${forbidden}`);
           }

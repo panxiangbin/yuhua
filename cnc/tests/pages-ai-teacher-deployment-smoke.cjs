@@ -226,7 +226,7 @@ function setSummaries(set) {
   return Object.fromEntries(resources.map(resource => [resource.path, summary(set[resource.path])]));
 }
 
-async function waitForMainAndPages() {
+async function waitForMainAndPages(local) {
   let lastMain;
   let lastPages;
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
@@ -234,18 +234,23 @@ async function waitForMainAndPages() {
       lastMain = await fetchResourceSet(mainRoot, 'main');
       lastPages = await fetchResourceSet(publicRoot, 'Pages公网');
       const matched = exactSetMatch(lastMain, lastPages);
+      const localMatchesMain = exactSetMatch(local, lastMain);
       diagnostics.attempts.push({
         attempt,
         at: new Date().toISOString(),
         matched,
+        localMatchesMain,
         main: setSummaries(lastMain),
         pages: setSummaries(lastPages)
       });
-      if (matched) return { main: lastMain, pages: lastPages };
+      if (matched && (!requireLocalMainMatch || localMatchesMain)) return { main: lastMain, pages: lastPages };
     } catch (error) {
       diagnostics.attempts.push({ attempt, at: new Date().toISOString(), error: error.message });
     }
     if (attempt < attempts) await new Promise(resolve => setTimeout(resolve, intervalMs));
+  }
+  if (requireLocalMainMatch) {
+    throw new Error('AI老师页面、Service Worker 或构建信息尚未与当前 main 提交及 Pages 公网逐字节一致');
   }
   throw new Error('AI老师页面、Service Worker 或构建信息尚未与 main 在 Pages 公网逐字节一致');
 }
@@ -256,7 +261,7 @@ async function waitForMainAndPages() {
   try {
     const local = readLocalResources();
     const localContracts = assertContracts(local, '当前分支');
-    const published = await waitForMainAndPages();
+    const published = await waitForMainAndPages(local);
     const allowPublishedLegacySiteBuild = eventName === 'pull_request' && !exactSetMatch(local, published.main);
     const mainContracts = assertContracts(published.main, 'main', { allowPublishedLegacySiteBuild });
     const pagesContracts = assertContracts(published.pages, 'Pages公网', { allowPublishedLegacySiteBuild });
