@@ -1,0 +1,27 @@
+name: CNC G98 G99 dual semantic boundary trust smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-g98-g99-dual-semantic-boundary-trust-smoke.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-g98-g99-dual-semantic-boundary-trust-smoke.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  g98-g99-dual-semantic-boundary-trust:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Validate G98 G99 mill-lathe semantic boundary
+        run: node cnc/tests/g98-g99-dual-semantic-boundary-trust-smoke.cjs
