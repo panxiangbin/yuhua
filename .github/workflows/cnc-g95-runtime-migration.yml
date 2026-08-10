@@ -8,6 +8,7 @@ on:
 permissions:
   contents: write
 
+# 一次性收尾：生成永久G95门禁、迁移CNC工作流版本引用后自删除。
 jobs:
   finalize:
     runs-on: ubuntu-latest
