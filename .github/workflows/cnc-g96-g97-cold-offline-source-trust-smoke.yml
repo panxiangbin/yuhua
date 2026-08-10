@@ -63,8 +63,16 @@ jobs:
           ]) {
             if (!test.includes(token)) throw new Error(`anti-bypass token missing: ${token}`);
           }
-          for (const forbidden of ['.skip(', 'process.exit(0)', 'G50 S2000；G96 S180', 'G97 S800 M03']) {
-            if (test.includes(forbidden)) throw new Error(`forbidden bypass or fixed example in test: ${forbidden}`);
+          for (const requiredForbiddenExample of [
+            'G50 S2000；G96 S180',
+            'G97 S800 M03',
+            '用G96前先用G50限制最高转速',
+            'G97后S就是转/分'
+          ]) {
+            if (!test.includes(requiredForbiddenExample)) throw new Error(`fixed-example rejection missing: ${requiredForbiddenExample}`);
+          }
+          for (const bypass of ['.skip(', 'process.exit(0)']) {
+            if (test.includes(bypass)) throw new Error(`forbidden bypass in test: ${bypass}`);
           }
           NODE
       - name: Check JavaScript syntax
