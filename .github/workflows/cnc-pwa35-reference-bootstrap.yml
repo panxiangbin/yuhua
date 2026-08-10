@@ -1,0 +1,93 @@
+name: CNC PWA35 reference bootstrap
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - '.github/workflows/cnc-pwa35-reference-bootstrap.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  migrate-cnc-references:
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'codex/cnc-g95-dual-semantics-pwa35'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Migrate CNC runtime and test references to PWA35
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          old_pwa = '20260810-' + 'pwa34'
+          new_pwa = '20260810-pwa35'
+          old_learning = '20260810-' + 'learning34'
+          new_learning = '20260810-learning35'
+          previous_pwa = '20260810-' + 'pwa33'
+          previous_learning = '20260810-' + 'learning33'
+          guard_old = 'g10-g28-g53-g92-g94-g96-g97-g98-g99-boundary-7'
+          guard_new = 'g10-g28-g53-g92-g94-g95-g96-g97-g98-g99-boundary-8'
+
+          targets = []
+          targets.extend(Path('cnc/tests').glob('*.cjs'))
+          targets.extend([
+              Path('cnc/pwa-self-test.html'),
+              Path('cnc/pwa-status.html'),
+              Path('cnc/MOBILE_LEARNING_MEDIA_PROGRESS.md')
+          ])
+
+          changed = []
+          for path in targets:
+              text = path.read_text(encoding='utf-8')
+              updated = text.replace(old_pwa, new_pwa).replace(old_learning, new_learning).replace(guard_old, guard_new)
+              if path.name == 'mobile-pwa-upgrade-data-smoke.cjs':
+                  updated = updated.replace(previous_pwa, old_pwa).replace(previous_learning, old_learning)
+              if updated != text:
+                  path.write_text(updated, encoding='utf-8')
+                  changed.append(str(path))
+
+          required_current = {
+              'cnc/pwa-self-test.html': new_pwa,
+              'cnc/pwa-status.html': new_pwa,
+              'cnc/MOBILE_LEARNING_MEDIA_PROGRESS.md': new_pwa,
+              'cnc/tests/mobile-pwa-offline-cache-smoke.cjs': new_pwa,
+              'cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs': new_pwa,
+              'cnc/tests/mobile-pwa-upgrade-data-smoke.cjs': new_pwa,
+              'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs': new_pwa,
+              'cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs': new_pwa,
+              'cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs': new_pwa,
+          }
+          for file, token in required_current.items():
+              text = Path(file).read_text(encoding='utf-8')
+              if token not in text:
+                  raise SystemExit(f'当前构建引用迁移缺失：{file} -> {token}')
+
+          upgrade = Path('cnc/tests/mobile-pwa-upgrade-data-smoke.cjs').read_text(encoding='utf-8')
+          for token in [old_pwa, old_learning, new_pwa, new_learning]:
+              if token not in upgrade:
+                  raise SystemExit(f'升级数据门禁缺少当前/上一版本证据：{token}')
+
+          print('已迁移CNC运行时/测试引用：')
+          for item in changed:
+              print('-', item)
+          PY
+
+          if git diff --quiet -- cnc; then
+            echo 'CNC PWA35引用已迁移，无需重复提交。'
+            exit 0
+          fi
+          git diff --check -- cnc
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add cnc
+          git commit -m 'test(cnc): 迁移 PWA35 运行与回归引用'
+          git push origin HEAD:${{ github.head_ref }}
