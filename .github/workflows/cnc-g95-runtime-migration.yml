@@ -31,4 +31,5 @@ jobs:
           git add cnc .github/workflows/cnc-*.yml
           git status --short
           git commit -m 'test(cnc): 固化G95 PWA35可信度与冷离线门禁'
+          echo "FINAL_COMMIT_SHA=$(git rev-parse HEAD)"
           git push origin HEAD:chatgpt/cnc-g95-runtime-safety
