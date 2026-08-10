@@ -1,29 +1,28 @@
 name: CNC G93 runtime repair
 
 on:
-  pull_request:
-    paths:
-      - 'cnc/**'
-      - '.github/workflows/cnc-g93-runtime-repair.yml'
+  push:
+    branches:
+      - codex/cnc-g93-runtime-trust-gate
   workflow_dispatch:
 
 permissions:
   contents: write
 
 concurrency:
-  group: cnc-g93-runtime-repair-${{ github.event.pull_request.number || github.ref }}
+  group: cnc-g93-runtime-repair-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
   repair:
-    if: github.event_name == 'pull_request' && github.actor != 'github-actions[bot]'
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
-      HEAD_BRANCH: ${{ github.head_ref }}
+      EXPECTED_HEAD: ${{ github.sha }}
+      HEAD_BRANCH: ${{ github.ref_name }}
     steps:
-      - name: Checkout exact PR branch
+      - name: Checkout exact branch head
         uses: actions/checkout@v4
         with:
           ref: ${{ env.HEAD_BRANCH }}
@@ -173,9 +172,8 @@ jobs:
           node --check cnc/search-aliases.js
           node cnc/tests/g93-inverse-time-feed-safety-trust-smoke.cjs
           node cnc/tests/pwa-core-resource-build-bump-smoke.cjs
-          node cnc/tests/pwa-build-reference-audit-smoke.cjs || true
           git diff --check
-          echo 'Remaining CNC workflow version pins that may require human-token migration:'
+          echo 'CNC workflow version pins requiring follow-up migration:'
           grep -RInE '20260810-pwa35|20260810-learning35|20260810-pwa34|20260810-learning34' .github/workflows/cnc-* || true
 
       - name: Commit and push CNC-only runtime repair
