@@ -9,12 +9,12 @@ fs.mkdirSync(out, { recursive: true });
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
 const expectedSiteBuild = '20260806-learning-depth1';
-const expectedPwaBuild = '20260810-pwa32';
+const expectedPwaBuild = '20260810-pwa33';
 const previousPublicSiteBuild = '20260806-learning-depth1';
-const previousPublicPwaBuild = '20260809-pwa31';
+const previousPublicPwaBuild = '20260810-pwa32';
 const cacheRevisionByBuild = {
-  [expectedPwaBuild]: '20260810-learning32',
-  [previousPublicPwaBuild]: '20260809-learning31'
+  [expectedPwaBuild]: '20260810-learning33',
+  [previousPublicPwaBuild]: '20260810-learning32'
 };
 const siteBuildByPwaBuild = {
   [expectedPwaBuild]: expectedSiteBuild,
