@@ -17,7 +17,7 @@ const errors = [];
 
 for (const token of [
   'G/M 代码目录来自大批量生成的基础表',
-  '作为第二层防御保持G10/G28/G50/G53/G92/G93/G94/G95/G96/G97/G98/G99边界一致',
+  '作为第二层防御保持G10/G28/G50/G51/G53/G92/G93/G94/G95/G96/G97/G98/G99边界一致',
   'function normalizeG10(entry)',
   '当前CNC/机床厂原厂手册',
   '备份原数据',
@@ -77,8 +77,8 @@ try {
 }
 
 const guard = sandbox.window.CNC_GM_CONTENT_SAFETY;
-if (!guard || guard.version !== 'g10-g28-g50-g53-g92-g93-g94-g95-g96-g97-g98-g99-boundary-10' || typeof guard.normalizeG10 !== 'function') {
-  errors.push('G10/G28/G50/G53/G92/G93/G94/G95/G96/G97/G98/G99内容安全归一化器未安装、版本异常或缺少normalizeG10');
+if (!guard || guard.version !== 'g10-g28-g50-g51-g53-g92-g93-g94-g95-g96-g97-g98-g99-boundary-11' || typeof guard.normalizeG10 !== 'function') {
+  errors.push('G10/G28/G50/G51/G53/G92/G93/G94/G95/G96/G97/G98/G99内容安全归一化器未安装、版本异常或缺少normalizeG10');
 }
 const catalog = sandbox.window.CNC_GM_CODES;
 const g10 = Array.isArray(catalog) ? catalog.find(item => item && item.id === 'kb-gcode-g10') : null;
@@ -117,4 +117,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log('CNC G10可编程数据写入可信度门禁通过：基础源目录与运行时条目都把G10限定为控制器相关的高风险数据写入，真实机床必须核对原厂手册、备份并由授权人员确认；G/M可信目录在PWA37首次安装离线核心中继续受保护。');
+console.log('CNC G10可编程数据写入可信度门禁通过：基础源目录与运行时条目都把G10限定为控制器相关的高风险数据写入，真实机床必须核对原厂手册、备份并由授权人员确认；G/M可信目录在PWA37首次安装离线核心中继续受包含G51的boundary-11保护。');

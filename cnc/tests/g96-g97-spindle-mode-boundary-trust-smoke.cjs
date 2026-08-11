@@ -79,7 +79,7 @@ try {
 }
 
 const guard = sandbox.window.CNC_GM_CONTENT_SAFETY;
-check('guardVersion', guard && guard.version === 'g10-g28-g50-g53-g92-g93-g94-g95-g96-g97-g98-g99-boundary-10', `运行时安全守卫版本错误：${guard?.version}`);
+check('guardVersion', guard && guard.version === 'g10-g28-g50-g51-g53-g92-g93-g94-g95-g96-g97-g98-g99-boundary-11', `运行时安全守卫版本错误：${guard?.version}`);
 check('normalizeG96', typeof guard?.normalizeG96 === 'function', '运行时缺少normalizeG96');
 check('normalizeG97', typeof guard?.normalizeG97 === 'function', '运行时缺少normalizeG97');
 
@@ -102,7 +102,7 @@ for (const code of ['G96', 'G97']) {
 
 const report = {
   testedAt: new Date().toISOString(),
-  expected: { pwaBuild: '20260811-pwa37', cacheRevision: '20260811-learning37', guard: 'g10-g28-g50-g53-g92-g93-g94-g95-g96-g97-g98-g99-boundary-10' },
+  expected: { pwaBuild: '20260811-pwa37', cacheRevision: '20260811-learning37', guard: 'g10-g28-g50-g51-g53-g92-g93-g94-g95-g96-g97-g98-g99-boundary-11' },
   actual: { pwaBuild: info.pwaBuild, cacheRevision: info.cacheRevision, guard: guard?.version || null },
   checks,
   errors
@@ -113,4 +113,4 @@ if (errors.length) {
   console.error(errors.join('\n'));
   process.exit(1);
 }
-console.log('CNC G96/G97恒线速与恒转速可信度门禁通过：只在明确支持相应车床语义的CNC范围内解释G96/G97；单位制、S含义、最高允许主轴转速及主轴/卡盘/装夹/工件/刀具限制必须按当前CNC与机床厂原厂手册确认；固定教学数值不得直接照抄上机；PWA37首次安装离线核心继续保护该边界。');
+console.log('CNC G96/G97恒线速与恒转速可信度门禁通过：只在明确支持相应车床语义的CNC范围内解释G96/G97；单位制、S含义、最高允许主轴转速及主轴/卡盘/装夹/工件/刀具限制必须按当前CNC与机床厂原厂手册确认；固定教学数值不得直接照抄上机；PWA37首次安装离线核心继续受包含G51的boundary-11保护。');

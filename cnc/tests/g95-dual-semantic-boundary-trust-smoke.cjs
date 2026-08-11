@@ -69,8 +69,8 @@ for (const forbidden of [
 for (const normalizer of ['normalizeG94', 'normalizeG95', 'normalizeG96', 'normalizeG97', 'normalizeG98', 'normalizeG99']) {
   if (!aliasesText.includes(`function ${normalizer}(entry)`)) errors.push(`高风险归一化链缺少${normalizer}`);
 }
-if (!aliasesText.includes('G10/G28/G50/G53/G92/G93/G94/G95/G96/G97/G98/G99')) {
-  errors.push('高风险归一化器说明未纳入G95');
+if (!aliasesText.includes('G10/G28/G50/G51/G53/G92/G93/G94/G95/G96/G97/G98/G99')) {
+  errors.push('高风险归一化器说明未纳入G95/G51');
 }
 
 const sandbox = { window: {}, console: { log() {}, warn() {}, error() {} } };
@@ -83,7 +83,7 @@ try {
 }
 
 const guard = sandbox.window.CNC_GM_CONTENT_SAFETY;
-if (!guard || guard.version !== 'g10-g28-g50-g53-g92-g93-g94-g95-g96-g97-g98-g99-boundary-10' || typeof guard.normalizeG95 !== 'function') {
+if (!guard || guard.version !== 'g10-g28-g50-g51-g53-g92-g93-g94-g95-g96-g97-g98-g99-boundary-11' || typeof guard.normalizeG95 !== 'function') {
   errors.push('G95内容安全归一化器未安装、版本异常或缺少normalizeG95');
 }
 const catalog = sandbox.window.CNC_GM_CODES;
@@ -125,4 +125,4 @@ if (errors.length) {
   errors.forEach(error => console.error(`- ${error}`));
   process.exit(1);
 }
-console.log('CNC G95车铣双语义可信度门禁通过：部分铣床/加工中心的每转进给语义与部分车床的动力刀具端面刚性攻丝语义已明确分开；机床类型、当前CNC、G代码组别、单位制、F/S及循环地址必须按机床厂原厂手册和现场安全规程核对，离线核心正规升级到PWA37/learning37。');
+console.log('CNC G95车铣双语义可信度门禁通过：部分铣床/加工中心的每转进给语义与部分车床的动力刀具端面刚性攻丝语义已明确分开；机床类型、当前CNC、G代码组别、单位制、F/S及循环地址必须按机床厂原厂手册和现场安全规程核对，离线核心继续受包含G51的boundary-11保护。');
