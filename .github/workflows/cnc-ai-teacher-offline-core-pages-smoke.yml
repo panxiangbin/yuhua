@@ -61,13 +61,13 @@ jobs:
           if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
           if (swCache !== info.cacheRevision) throw new Error(`Service Worker/build-info cache mismatch: ${swCache} / ${info.cacheRevision}`);
           if (info.build !== '20260806-learning-depth1') throw new Error(`unexpected site build: ${info.build}`);
-          if (info.pwaBuild !== '20260811-pwa37' || info.cacheRevision !== '20260811-learning37') throw new Error(`unexpected branch build: ${info.pwaBuild}/${info.cacheRevision}`);
+          if (info.pwaBuild !== '20260811-pwa38' || info.cacheRevision !== '20260811-learning38') throw new Error(`unexpected branch build: ${info.pwaBuild}/${info.cacheRevision}`);
           for (const token of [
-            "const branchTargetPwaBuild = '20260811-pwa37'",
-            "const controlledPublicPwaBuild = '20260811-pwa36'",
+            "const branchTargetPwaBuild = '20260811-pwa38'",
+            "const controlledPublicPwaBuild = '20260811-pwa37'",
             "const expectedSiteBuild = '20260806-learning-depth1'",
-            "[branchTargetPwaBuild]: '20260811-learning37'",
-            "[controlledPublicPwaBuild]: '20260811-learning36'",
+            "[branchTargetPwaBuild]: '20260811-learning38'",
+            "[controlledPublicPwaBuild]: '20260811-learning37'",
             'const VIDEO_CORE_PATHS = [',
             'const EXACT_CORE_PATHS = [...BASE_CORE_PATHS, ...VIDEO_CORE_PATHS]',
             'const CONTROLLED_PUBLIC_CORE_PATHS = EXACT_CORE_PATHS',
