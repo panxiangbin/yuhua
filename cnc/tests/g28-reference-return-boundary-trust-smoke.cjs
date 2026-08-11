@@ -24,10 +24,10 @@ if (aliasPos < 0 || gmPos < 0 || aliasPos >= gmPos) {
 for (const core of ["'./search-aliases.js'", "'./gm-code-complete.js'"]) {
   if (!swText.includes(core)) errors.push(`PWA首次安装核心缺少G28可信目录依赖：${core}`);
 }
-if (!swText.includes("const BUILD = '20260811-pwa37'")) errors.push('Service Worker未升级到20260811-pwa37');
-if (!swText.includes("const CACHE_REVISION = '20260811-learning37'")) errors.push('Service Worker缓存修订未升级到20260811-learning37');
-if (buildInfo.pwaBuild !== '20260811-pwa37' || buildInfo.cacheRevision !== '20260811-learning37') {
-  errors.push(`build-info与PWA37不一致：${buildInfo.pwaBuild} / ${buildInfo.cacheRevision}`);
+if (!swText.includes("const BUILD = '20260811-pwa38'")) errors.push('Service Worker未升级到20260811-pwa38');
+if (!swText.includes("const CACHE_REVISION = '20260811-learning38'")) errors.push('Service Worker缓存修订未升级到20260811-learning38');
+if (buildInfo.pwaBuild !== '20260811-pwa38' || buildInfo.cacheRevision !== '20260811-learning38') {
+  errors.push(`build-info与PWA38不一致：${buildInfo.pwaBuild} / ${buildInfo.cacheRevision}`);
 }
 if (!String(buildInfo.contentStage || '').includes('G28参考点返回适用范围')) {
   errors.push('build-info缺少G28参考点返回适用范围阶段标记');
@@ -115,4 +115,4 @@ if (errors.length) {
   errors.forEach(error => console.error(`- ${error}`));
   process.exit(1);
 }
-console.log('CNC G28参考点返回可信度门禁通过：G28被限定为控制器/机床相关的高风险自动运动；G90/G91、中间位置、轴向与完整运动空间必须按本机原厂手册和现场授权规程核对，G91 G28 Z0或先Z后XY不得作为通用防撞保证；当前PWA37仍保留包含G51的boundary-11安全边界。');
+console.log('CNC G28参考点返回可信度门禁通过：G28被限定为控制器/机床相关的高风险自动运动；G90/G91、中间位置、轴向与完整运动空间必须按本机原厂手册和现场授权规程核对，G91 G28 Z0或先Z后XY不得作为通用防撞保证；当前PWA38仍保留包含G51的boundary-11安全边界。');
