@@ -55,10 +55,10 @@ jobs:
           if (info.pwaBuild !== '20260811-pwa37' || info.cacheRevision !== '20260811-learning37') throw new Error(`unexpected PWA/cache build: ${info.pwaBuild}/${info.cacheRevision}`);
           if (!sw.includes("const BUILD = '20260811-pwa37'") || !sw.includes("const CACHE_REVISION = '20260811-learning37'")) throw new Error('Service Worker build/cache mismatch');
           for (const token of [
-            "const branchTargetPwaBuild = '20260811-pwa37'", "const previousPublicPwaBuild = '20260810-pwa35'",
-            "[branchTargetPwaBuild]: '20260811-learning37'", "[previousPublicPwaBuild]: '20260810-learning35'",
+            "const branchTargetPwaBuild = '20260811-pwa37'", "const controlledPublicPwaBuild = '20260811-pwa36'",
+            "[branchTargetPwaBuild]: '20260811-learning37'", "[controlledPublicPwaBuild]: '20260811-learning36'",
             "const expectedSiteBuild = '20260806-learning-depth1'", 'const VIDEO_CORE = [',
-            'const EXACT_CORE = [...BASE_CORE, ...VIDEO_CORE]', 'const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE',
+            'const EXACT_CORE = [...BASE_CORE, ...VIDEO_CORE]', 'const CONTROLLED_PUBLIC_CORE_PATHS = EXACT_CORE',
             'CNC_PAGES_VERIFY_ATTEMPTS || 18', "cache: 'no-store'", 'cnc/beginner-placement.html',
             'trainingPracticeInCoreCache: true', 'trainingProfileInCoreCache: true', 'mainLearningContentInCoreCache: true',
             'beginnerPlacementPublic: true', 'beginnerPlacementInCoreCache: true', 'trainingCampInCoreCache: true',

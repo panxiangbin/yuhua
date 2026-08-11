@@ -23,6 +23,12 @@ const CURRENT_PIN_SPECS = [
   { file: 'cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs', label: '训练营路线Pages目标', pattern: /\bconst\s+expectedPwaBuild\s*=\s*['"](2026\d{4}-pwa\d+)['"]/ }
 ];
 
+const CONTROLLED_PUBLIC_PIN_SPECS = [
+  { file: 'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs', label: 'AI老师离线核心Pages受控公网基线', pattern: /\bconst\s+controlledPublicPwaBuild\s*=\s*['"](2026\d{4}-pwa\d+)['"]/ },
+  { file: 'cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs', label: '起点测评离线Pages受控公网基线', pattern: /\bconst\s+controlledPublicPwaBuild\s*=\s*['"](2026\d{4}-pwa\d+)['"]/ },
+  { file: 'cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs', label: '训练营路线Pages受控公网基线', pattern: /\bconst\s+controlledPublicPwaBuild\s*=\s*['"](2026\d{4}-pwa\d+)['"]/ }
+];
+
 const MEDIA_PROGRESS_SPEC = {
   file: 'cnc/MOBILE_LEARNING_MEDIA_PROGRESS.md',
   pattern: /当前受控目标版本\s+`(2026\d{4}-pwa\d+)\s*\/\s*(2026\d{4}-learning\d+)`/
@@ -89,6 +95,12 @@ function readPin(spec) {
   return { file: spec.file, label: spec.label, version: match[1] };
 }
 
+function pwaOrder(version) {
+  const match = String(version).match(/^(2026\d{4})-pwa(\d+)$/);
+  if (!match) fail(`PWA构建无法排序：${version}`);
+  return Number(match[1]) * 100000 + Number(match[2]);
+}
+
 function referenceScope(file) {
   if (file === 'cnc/tests/pwa-build-reference-audit-smoke.cjs') return 'audit-governance';
   if (file === 'cnc/MOBILE_HOME_REFACTOR_PROGRESS.md') return 'documentation-history';
@@ -118,6 +130,16 @@ function main() {
   if (!PWA_VERSION_FORMAT.test(previous)) fail(`上一PWA构建格式无效：${previous}`);
   if (previous === current) fail(`上一PWA构建不能等于当前构建：${previous}`);
 
+  const controlledPublicPins = CONTROLLED_PUBLIC_PIN_SPECS.map(readPin);
+  const controlledPublicVersions = [...new Set(controlledPublicPins.map(item => item.version))];
+  if (controlledPublicVersions.length !== 1) fail(`受控公网PWA基线不一致：${controlledPublicPins.map(item => `${item.file}=${item.version}`).join('、')}`);
+  const controlledPublic = controlledPublicVersions[0];
+  if (!PWA_VERSION_FORMAT.test(controlledPublic)) fail(`受控公网PWA构建格式无效：${controlledPublic}`);
+  if (controlledPublic === current || controlledPublic === previous) fail(`受控公网PWA基线必须独立于当前和历史升级构建：${controlledPublic}`);
+  if (!(pwaOrder(current) > pwaOrder(controlledPublic) && pwaOrder(controlledPublic) > pwaOrder(previous))) {
+    fail(`PWA三代构建顺序异常：当前${current}、受控公网${controlledPublic}、历史升级${previous}`);
+  }
+
   const currentPins = CURRENT_PIN_SPECS.map(readPin);
   const staleActivePins = currentPins.filter(item => item.version !== current);
 
@@ -140,7 +162,7 @@ function main() {
     }
   }
 
-  const allowedVersions = new Set([current, previous]);
+  const allowedVersions = new Set([current, controlledPublic, previous]);
   const operationalReferences = references.filter(item => !['documentation-history', 'audit-governance'].includes(item.scope));
   const historicalReferences = references.filter(item => item.scope === 'documentation-history');
   const governanceReferences = references.filter(item => item.scope === 'audit-governance');
@@ -151,6 +173,7 @@ function main() {
     return !DECLARED_LEGACY_REFERENCES.some(legacy => legacy.file === item.file && legacy.version === item.version);
   });
   const currentReferenceCount = operationalReferences.filter(item => item.version === current).length;
+  const controlledPublicReferenceCount = operationalReferences.filter(item => item.version === controlledPublic).length;
   const previousReferenceCount = operationalReferences.filter(item => item.version === previous).length;
 
   const report = {
@@ -158,6 +181,7 @@ function main() {
     commitSha: process.env.GITHUB_SHA || null,
     currentPwaBuild: current,
     currentCacheRevision,
+    controlledPublicPwaBuild: controlledPublic,
     previousPwaBuild: previous,
     mediaTarget,
     allowedVersions: [...allowedVersions],
@@ -168,7 +192,10 @@ function main() {
     governanceReferenceCount: governanceReferences.length,
     legacyReferenceCount: legacyReferences.length,
     currentReferenceCount,
+    controlledPublicReferenceCount,
     previousReferenceCount,
+    controlledPublicPinCount: controlledPublicPins.length,
+    controlledPublicPins,
     activePinCount: currentPins.length,
     currentPins,
     previousPin,
@@ -193,7 +220,7 @@ function main() {
     fail(`发现未声明的运行中PWA构建引用：${unexpectedReferences.map(item => `${item.file}:${item.line}=${item.version}`).join('、')}`);
   }
 
-  console.log(`CNC PWA构建引用审计通过：${currentPins.length}处当前构建针=${current}，缓存修订=${currentCacheRevision}，上一版本=${previous}，运行引用${operationalReferences.length}处，受控历史引用${legacyReferences.length}处。`);
+  console.log(`CNC PWA构建引用审计通过：${currentPins.length}处当前构建针=${current}，缓存修订=${currentCacheRevision}，受控公网基线=${controlledPublic}，历史升级版本=${previous}，运行引用${operationalReferences.length}处，受控历史引用${legacyReferences.length}处。`);
 }
 
 try {
