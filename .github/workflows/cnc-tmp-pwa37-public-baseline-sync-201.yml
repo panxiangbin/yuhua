@@ -1,0 +1,123 @@
+name: CNC temporary PWA37 controlled public baseline sync for PR201
+
+on:
+  push:
+    branches:
+      - cnc-tmp-pwa37-baseline-sync-201
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact temporary branch
+        uses: actions/checkout@v4
+        with:
+          ref: cnc-tmp-pwa37-baseline-sync-201
+          fetch-depth: 0
+
+      - name: Model PWA37 branch, PWA36 controlled public baseline, PWA35 upgrade baseline
+        shell: python
+        run: |
+          from pathlib import Path
+
+          page_tests = [
+              'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs',
+              'cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs',
+              'cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs',
+          ]
+          page_workflows = [
+              '.github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml',
+              '.github/workflows/cnc-beginner-placement-offline-pages-smoke.yml',
+              '.github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml',
+          ]
+
+          for name in page_tests + page_workflows:
+              path = Path(name)
+              text = path.read_text(encoding='utf-8')
+              before = text
+              text = text.replace('previousPublicPwaBuild', 'controlledPublicPwaBuild')
+              text = text.replace('previousPublicSiteBuild', 'controlledPublicSiteBuild')
+              text = text.replace('PREVIOUS_PUBLIC_CORE_PATHS', 'CONTROLLED_PUBLIC_CORE_PATHS')
+              text = text.replace('PREVIOUS_PUBLIC_SELF_TEST_PATHS', 'CONTROLLED_PUBLIC_SELF_TEST_PATHS')
+              text = text.replace("20260810-pwa35", "20260811-pwa36")
+              text = text.replace("20260810-learning35", "20260811-learning36")
+              if text == before:
+                  raise SystemExit(f'No controlled-public-baseline change produced for {name}')
+              path.write_text(text, encoding='utf-8')
+
+          audit_path = Path('cnc/tests/pwa-build-reference-audit-smoke.cjs')
+          audit = audit_path.read_text(encoding='utf-8')
+
+          current_anchor = "];\n\nconst MEDIA_PROGRESS_SPEC = {"
+          public_block = "];\n\nconst CONTROLLED_PUBLIC_PIN_SPECS = [\n  { file: 'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs', label: 'AI老师离线核心Pages受控公网基线', pattern: /\\bconst\\s+controlledPublicPwaBuild\\s*=\\s*['\"](2026\\d{4}-pwa\\d+)['\"]/ },\n  { file: 'cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs', label: '起点测评离线Pages受控公网基线', pattern: /\\bconst\\s+controlledPublicPwaBuild\\s*=\\s*['\"](2026\\d{4}-pwa\\d+)['\"]/ },\n  { file: 'cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs', label: '训练营路线Pages受控公网基线', pattern: /\\bconst\\s+controlledPublicPwaBuild\\s*=\\s*['\"](2026\\d{4}-pwa\\d+)['\"]/ }\n];\n\nconst MEDIA_PROGRESS_SPEC = {"
+          if current_anchor not in audit:
+              raise SystemExit('Audit insertion anchor missing')
+          audit = audit.replace(current_anchor, public_block, 1)
+
+          helper_anchor = "function readPin(spec) {\n  const source = readText(spec.file);\n  const match = source.match(spec.pattern);\n  if (!match) fail(`缺少PWA构建针：${spec.file}（${spec.label}）`);\n  return { file: spec.file, label: spec.label, version: match[1] };\n}\n"
+          helper_replacement = helper_anchor + "\nfunction pwaOrder(version) {\n  const match = String(version).match(/^(2026\\d{4})-pwa(\\d+)$/);\n  if (!match) fail(`PWA构建无法排序：${version}`);\n  return Number(match[1]) * 100000 + Number(match[2]);\n}\n"
+          if helper_anchor not in audit:
+              raise SystemExit('Audit helper anchor missing')
+          audit = audit.replace(helper_anchor, helper_replacement, 1)
+
+          prev_anchor = "  const previousPin = readPin(PREVIOUS_PIN_SPEC);\n  const previous = previousPin.version;\n  if (!PWA_VERSION_FORMAT.test(previous)) fail(`上一PWA构建格式无效：${previous}`);\n  if (previous === current) fail(`上一PWA构建不能等于当前构建：${previous}`);\n\n  const currentPins = CURRENT_PIN_SPECS.map(readPin);"
+          prev_replacement = "  const previousPin = readPin(PREVIOUS_PIN_SPEC);\n  const previous = previousPin.version;\n  if (!PWA_VERSION_FORMAT.test(previous)) fail(`上一PWA构建格式无效：${previous}`);\n  if (previous === current) fail(`上一PWA构建不能等于当前构建：${previous}`);\n\n  const controlledPublicPins = CONTROLLED_PUBLIC_PIN_SPECS.map(readPin);\n  const controlledPublicVersions = [...new Set(controlledPublicPins.map(item => item.version))];\n  if (controlledPublicVersions.length !== 1) fail(`受控公网PWA基线不一致：${controlledPublicPins.map(item => `${item.file}=${item.version}`).join('、')}`);\n  const controlledPublic = controlledPublicVersions[0];\n  if (!PWA_VERSION_FORMAT.test(controlledPublic)) fail(`受控公网PWA构建格式无效：${controlledPublic}`);\n  if (controlledPublic === current || controlledPublic === previous) fail(`受控公网PWA基线必须独立于当前和历史升级构建：${controlledPublic}`);\n  if (!(pwaOrder(current) > pwaOrder(controlledPublic) && pwaOrder(controlledPublic) > pwaOrder(previous))) {\n    fail(`PWA三代构建顺序异常：当前${current}、受控公网${controlledPublic}、历史升级${previous}`);\n  }\n\n  const currentPins = CURRENT_PIN_SPECS.map(readPin);"
+          if prev_anchor not in audit:
+              raise SystemExit('Audit previous-pin anchor missing')
+          audit = audit.replace(prev_anchor, prev_replacement, 1)
+
+          audit = audit.replace("const allowedVersions = new Set([current, previous]);", "const allowedVersions = new Set([current, controlledPublic, previous]);", 1)
+          audit = audit.replace("  const previousReferenceCount = operationalReferences.filter(item => item.version === previous).length;", "  const controlledPublicReferenceCount = operationalReferences.filter(item => item.version === controlledPublic).length;\n  const previousReferenceCount = operationalReferences.filter(item => item.version === previous).length;", 1)
+          audit = audit.replace("    previousPwaBuild: previous,\n    mediaTarget,", "    controlledPublicPwaBuild: controlledPublic,\n    previousPwaBuild: previous,\n    mediaTarget,", 1)
+          audit = audit.replace("    previousReferenceCount,\n    activePinCount", "    controlledPublicReferenceCount,\n    previousReferenceCount,\n    controlledPublicPinCount: controlledPublicPins.length,\n    controlledPublicPins,\n    activePinCount", 1)
+          audit = audit.replace("缓存修订=${currentCacheRevision}，上一版本=${previous}", "缓存修订=${currentCacheRevision}，受控公网基线=${controlledPublic}，历史升级版本=${previous}", 1)
+          audit_path.write_text(audit, encoding='utf-8')
+
+          workflow_path = Path('.github/workflows/cnc-pwa-build-reference-audit-smoke.yml')
+          workflow = workflow_path.read_text(encoding='utf-8')
+          workflow = workflow.replace("            'CURRENT_PIN_SPECS',\n            'PREVIOUS_PIN_SPEC',", "            'CURRENT_PIN_SPECS',\n            'CONTROLLED_PUBLIC_PIN_SPECS',\n            'PREVIOUS_PIN_SPEC',", 1)
+          workflow = workflow.replace("          if (!report.currentPwaBuild || !report.currentCacheRevision || !report.previousPwaBuild) {\n            throw new Error(`PWA引用审计缺少当前构建、缓存修订或上一构建：${JSON.stringify(report)}`);\n          }\n          if (report.currentPwaBuild === report.previousPwaBuild) {\n            throw new Error(`当前与上一PWA构建不得相同：${report.currentPwaBuild}`);\n          }", "          if (!report.currentPwaBuild || !report.currentCacheRevision || !report.controlledPublicPwaBuild || !report.previousPwaBuild) {\n            throw new Error(`PWA引用审计缺少当前构建、缓存修订、受控公网基线或历史升级构建：${JSON.stringify(report)}`);\n          }\n          if (new Set([report.currentPwaBuild, report.controlledPublicPwaBuild, report.previousPwaBuild]).size !== 3) {\n            throw new Error(`PWA三代构建必须互不相同：${report.currentPwaBuild}/${report.controlledPublicPwaBuild}/${report.previousPwaBuild}`);\n          }", 1)
+          workflow = workflow.replace("          if (!report.previousPin || report.previousPin.file !== 'cnc/tests/mobile-pwa-upgrade-data-smoke.cjs') {", "          const controlledPublicFiles = new Set((report.controlledPublicPins || []).map(item => item.file));\n          for (const file of ['cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs','cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs','cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs']) {\n            if (!controlledPublicFiles.has(file)) throw new Error(`PWA受控公网基线针缺失：${file}`);\n          }\n          if ((report.controlledPublicPins || []).some(item => item.version !== report.controlledPublicPwaBuild)) {\n            throw new Error(`PWA受控公网基线针漂移：${JSON.stringify(report.controlledPublicPins)}`);\n          }\n          if (!report.previousPin || report.previousPin.file !== 'cnc/tests/mobile-pwa-upgrade-data-smoke.cjs') {", 1)
+          workflow_path.write_text(workflow, encoding='utf-8')
+
+          # Strong postconditions: branch=PWA37, controlled public=PWA36, upgrade baseline=PWA35.
+          for name in page_tests:
+              text = Path(name).read_text(encoding='utf-8')
+              for token in ["20260811-pwa37", "controlledPublicPwaBuild = '20260811-pwa36'", "20260811-learning36"]:
+                  if token not in text:
+                      raise SystemExit(f'Missing three-generation token in {name}: {token}')
+              if '20260810-pwa35' in text or '20260810-learning35' in text:
+                  raise SystemExit(f'Pages deployment test still conflates PWA35 historical upgrade baseline: {name}')
+
+          audit = audit_path.read_text(encoding='utf-8')
+          for token in ['CONTROLLED_PUBLIC_PIN_SPECS', 'controlledPublicPwaBuild', 'controlledPublicPins', 'pwaOrder(current) > pwaOrder(controlledPublic)', 'new Set([current, controlledPublic, previous])']:
+              if token not in audit:
+                  raise SystemExit(f'Audit missing controlled public governance: {token}')
+
+      - name: Validate syntax, governance and anti-bypass
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs
+          node --check cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs
+          node --check cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs
+          node --check cnc/tests/pwa-build-reference-audit-smoke.cjs
+          node cnc/tests/pwa-build-reference-audit-smoke.cjs
+          git diff --check
+          ! git diff | grep -E '^\+.*(continue-on-error:[[:space:]]*true|\.skip\(|process\.exit\(0\))'
+          test "$(git diff --name-only | grep -Ev '^(cnc/|\.github/workflows/cnc-)' | wc -l)" -eq 0
+
+      - name: Commit synchronized CNC-only tree and remove temporary helper
+        shell: bash
+        run: |
+          set -euo pipefail
+          git rm .github/workflows/cnc-tmp-pwa37-public-baseline-sync-201.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add cnc .github/workflows
+          git commit -m 'CNC：修正PWA三代部署基线模型'
+          git push origin HEAD:cnc-tmp-pwa37-baseline-sync-201
