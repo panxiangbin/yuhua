@@ -7,8 +7,8 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const PWA_BUILD = '20260811-pwa37';
-const CACHE_REVISION = '20260811-learning37';
+const PWA_BUILD = '20260811-pwa38';
+const CACHE_REVISION = '20260811-learning38';
 let offlineProbeHits = 0;
 let serverStoppedForOffline = false;
 let coldOfflineConsoleWindow = false;
@@ -141,7 +141,7 @@ async function writeDiagnostics(page, stage, errors, extra = {}) {
 
     const cachesBefore = await page.evaluate(() => caches.keys());
     if (!cachesBefore.includes(`cnc-static-${CACHE_REVISION}`)) {
-      throw new Error(`PWA37静态缓存缺失：${JSON.stringify(cachesBefore)}`);
+      throw new Error(`PWA38静态缓存缺失：${JSON.stringify(cachesBefore)}`);
     }
 
     stage = 'verify-g98-g99-core-cache';
@@ -250,7 +250,7 @@ async function writeDiagnostics(page, stage, errors, extra = {}) {
     stage = 'cold-offline-g98-g99-reload';
     if (!offlineNetworkBlocked || !serverStoppedForOffline) throw new Error('真实冷离线网络阻断证据缺失');
     await page.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded' });
-    if (!(await page.title()).includes('CNC')) throw new Error('PWA37冷离线重载首页失败');
+    if (!(await page.title()).includes('CNC')) throw new Error('PWA38冷离线重载首页失败');
 
     runtimeEvidence = await page.evaluate(() => {
       const guard = window.CNC_GM_CONTENT_SAFETY;
@@ -314,7 +314,7 @@ async function writeDiagnostics(page, stage, errors, extra = {}) {
     };
     fs.writeFileSync(path.join(out, 'g98-g99-cold-offline-source-trust-result.json'), JSON.stringify(result, null, 2));
     await page.screenshot({ path: path.join(out, 'g98-g99-cold-offline-source-trust.png'), fullPage: true });
-    console.log('CNC G98/G99冷离线源可信度门禁通过：PWA37首次安装后，安全归一化源与G/M基础目录可从静态缓存冷离线读取；关闭本地HTTP源站后网络探针不再到达服务器，离线重载仍保持G98/G99车铣双语义边界、高风险标记和原厂手册核对要求；仅记录冷离线阶段浏览器预期的504(Offline)资源噪声，任何其它控制台错误或关键资源504仍会失败。');
+    console.log('CNC G98/G99冷离线源可信度门禁通过：PWA38首次安装后，安全归一化源与G/M基础目录可从静态缓存冷离线读取；关闭本地HTTP源站后网络探针不再到达服务器，离线重载仍保持G98/G99车铣双语义边界、高风险标记和原厂手册核对要求；仅记录冷离线阶段浏览器预期的504(Offline)资源噪声，任何其它控制台错误或关键资源504仍会失败。');
   } catch (error) {
     errors.push(error.message);
     if (context && page) await writeDiagnostics(page, stage, errors, { sourceEvidence, runtimeEvidence, offlineNetworkBlocked, probeEvidence, offlineProbeHits, serverStoppedForOffline });

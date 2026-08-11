@@ -7,8 +7,8 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const outDir = path.join(root, 'cnc/test-results/g96-g97-cold-offline-source-trust');
-const PWA_BUILD = '20260811-pwa37';
-const CACHE_REVISION = '20260811-learning37';
+const PWA_BUILD = '20260811-pwa38';
+const CACHE_REVISION = '20260811-learning38';
 let offlineProbeHits = 0;
 let originServerStopped = false;
 let coldOfflineConsoleWindow = false;
@@ -141,7 +141,7 @@ async function writeDiagnostics(page, stage, errors, extra = {}) {
 
     const cachesBefore = await page.evaluate(() => caches.keys());
     if (!cachesBefore.includes(`cnc-static-${CACHE_REVISION}`)) {
-      throw new Error(`PWA37静态缓存缺失：${JSON.stringify(cachesBefore)}`);
+      throw new Error(`PWA38静态缓存缺失：${JSON.stringify(cachesBefore)}`);
     }
 
     stage = 'verify-g96-g97-core-cache';
@@ -248,7 +248,7 @@ async function writeDiagnostics(page, stage, errors, extra = {}) {
     stage = 'cold-offline-g96-g97-reload';
     if (!offlineNetworkBlocked || !originServerStopped) throw new Error('真实冷离线网络阻断证据缺失');
     await page.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded' });
-    if (!(await page.title()).includes('CNC')) throw new Error('PWA37冷离线重载首页失败');
+    if (!(await page.title()).includes('CNC')) throw new Error('PWA38冷离线重载首页失败');
 
     runtimeEvidence = await page.evaluate(() => {
       const guard = window.CNC_GM_CONTENT_SAFETY;
@@ -311,7 +311,7 @@ async function writeDiagnostics(page, stage, errors, extra = {}) {
     };
     fs.writeFileSync(path.join(outDir, 'report.json'), JSON.stringify(result, null, 2));
     await page.screenshot({ path: path.join(outDir, 'g96-g97-cold-offline-source-trust.png'), fullPage: true });
-    console.log('CNC G96/G97真实冷离线源可信度门禁通过：PWA37首次安装后，关闭本地HTTP源站并进入离线模式，G96/G97安全归一化源与G/M基础目录仍可从静态缓存读取；冷离线重载继续保留当前CNC、原厂手册、单位制、S含义、最高允许主轴转速及卡盘/装夹/工件/刀具限制，固定教学数值不得直接照抄上机。');
+    console.log('CNC G96/G97真实冷离线源可信度门禁通过：PWA38首次安装后，关闭本地HTTP源站并进入离线模式，G96/G97安全归一化源与G/M基础目录仍可从静态缓存读取；冷离线重载继续保留当前CNC、原厂手册、单位制、S含义、最高允许主轴转速及卡盘/装夹/工件/刀具限制，固定教学数值不得直接照抄上机。');
   } catch (error) {
     errors.push(error.message);
     if (context && page) await writeDiagnostics(page, stage, errors, { sourceEvidence, runtimeEvidence, offlineNetworkBlocked, probeEvidence, offlineProbeHits, originServerStopped });
