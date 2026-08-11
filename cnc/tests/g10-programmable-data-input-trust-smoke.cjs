@@ -37,10 +37,10 @@ if (aliasPos < 0 || gmPos < 0 || aliasPos >= gmPos) {
 for (const core of ["'./search-aliases.js'", "'./gm-code-complete.js'"]) {
   if (!swText.includes(core)) errors.push(`PWA首次安装核心缺少G10可信目录依赖：${core}`);
 }
-if (!swText.includes("const BUILD = '20260811-pwa37'")) errors.push('Service Worker未升级到20260811-pwa37');
-if (!swText.includes("const CACHE_REVISION = '20260811-learning37'")) errors.push('Service Worker缓存修订未升级到20260811-learning37');
-if (buildInfo.pwaBuild !== '20260811-pwa37' || buildInfo.cacheRevision !== '20260811-learning37') {
-  errors.push(`build-info与PWA37不一致：${buildInfo.pwaBuild} / ${buildInfo.cacheRevision}`);
+if (!swText.includes("const BUILD = '20260811-pwa38'")) errors.push('Service Worker未升级到20260811-pwa38');
+if (!swText.includes("const CACHE_REVISION = '20260811-learning38'")) errors.push('Service Worker缓存修订未升级到20260811-learning38');
+if (buildInfo.pwaBuild !== '20260811-pwa38' || buildInfo.cacheRevision !== '20260811-learning38') {
+  errors.push(`build-info与PWA38不一致：${buildInfo.pwaBuild} / ${buildInfo.cacheRevision}`);
 }
 for (const token of ['G10可编程数据写入适用范围', 'G/M代码首次安装离线核心']) {
   if (!String(buildInfo.contentStage || '').includes(token)) errors.push(`build-info缺少阶段标记：${token}`);
@@ -117,4 +117,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log('CNC G10可编程数据写入可信度门禁通过：基础源目录与运行时条目都把G10限定为控制器相关的高风险数据写入，真实机床必须核对原厂手册、备份并由授权人员确认；G/M可信目录在PWA37首次安装离线核心中继续受包含G51的boundary-11保护。');
+console.log('CNC G10可编程数据写入可信度门禁通过：基础源目录与运行时条目都把G10限定为控制器相关的高风险数据写入，真实机床必须核对原厂手册、备份并由授权人员确认；G/M可信目录在PWA38首次安装离线核心中继续受包含G51的boundary-11保护。');
