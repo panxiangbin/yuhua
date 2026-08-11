@@ -21,6 +21,9 @@ function fail(message) {
   page.on('pageerror', error => pageErrors.push(String(error && error.stack || error)));
 
   await page.addInitScript(() => {
+    const seedKey = 'cnc_simulator_hub_test_seeded';
+    if (sessionStorage.getItem(seedKey) === '1') return;
+    sessionStorage.setItem(seedKey, '1');
     const homing = { bestScore: 100, lastScore: 100, attempts: 2, passed: true, lastCompletedAt: '2026-08-07T10:00:00.000Z' };
     const cutter = { bestScore: 100, lastScore: 100, attempts: 3, passed: true, lastCompletedAt: '2026-08-07T11:00:00.000Z' };
     const hole = { bestScore: 75, lastScore: 75, attempts: 2, passed: false, lastCompletedAt: '2026-08-07T12:00:00.000Z' };
