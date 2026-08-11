@@ -62,8 +62,7 @@
     function validCount(value){const n=Number(value);return Number.isFinite(n)&&n>=0?Math.floor(n):0}
     function recordSignature(record){return [record.lastCompletedAt||record.updatedAt||'',record.bestScore??record.best??'',record.lastScore??'',record.attempts??'',record.passed??''].join('|')}
     function item(data,id){
-      const records=asRecord(data.records),simulators=asRecord(data.simulators);
-      const candidates=[asRecord(records&&records[id]),asRecord(simulators&&simulators[id]),asRecord(data[id])].filter(Boolean);
+      const candidates=[asRecord(data.records&&data.records[id]),asRecord(data.simulators&&data.simulators[id]),asRecord(data[id])].filter(Boolean);
       const unique=[];const seen=new Set();
       candidates.forEach(record=>{const signature=recordSignature(record);if(!seen.has(signature)){seen.add(signature);unique.push(record)}});
       if(!unique.length)return{bestScore:0,attempts:0,passed:false,sources:0};
