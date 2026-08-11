@@ -24,10 +24,10 @@ if (aliasPos < 0 || gmPos < 0 || aliasPos >= gmPos) {
 for (const core of ["'./search-aliases.js'", "'./gm-code-complete.js'"]) {
   if (!swText.includes(core)) errors.push(`PWA首次安装核心缺少G53可信目录依赖：${core}`);
 }
-if (!swText.includes("const BUILD = '20260811-pwa37'")) errors.push('Service Worker未升级到20260811-pwa37');
-if (!swText.includes("const CACHE_REVISION = '20260811-learning37'")) errors.push('Service Worker缓存修订未升级到20260811-learning37');
-if (buildInfo.pwaBuild !== '20260811-pwa37' || buildInfo.cacheRevision !== '20260811-learning37') {
-  errors.push(`build-info与PWA37不一致：${buildInfo.pwaBuild} / ${buildInfo.cacheRevision}`);
+if (!swText.includes("const BUILD = '20260811-pwa38'")) errors.push('Service Worker未升级到20260811-pwa38');
+if (!swText.includes("const CACHE_REVISION = '20260811-learning38'")) errors.push('Service Worker缓存修订未升级到20260811-learning38');
+if (buildInfo.pwaBuild !== '20260811-pwa38' || buildInfo.cacheRevision !== '20260811-learning38') {
+  errors.push(`build-info与PWA38不一致：${buildInfo.pwaBuild} / ${buildInfo.cacheRevision}`);
 }
 if (!String(buildInfo.contentStage || '').includes('G53机床坐标定位适用范围')) {
   errors.push('build-info缺少G53机床坐标定位适用范围阶段标记');
@@ -70,8 +70,8 @@ try {
 }
 
 const guard = sandbox.window.CNC_GM_CONTENT_SAFETY;
-if (!guard || guard.version !== 'g10-g28-g50-g53-g92-g93-g94-g95-g96-g97-g98-g99-boundary-10' || typeof guard.normalizeG53 !== 'function') {
-  errors.push('G10/G28/G50/G53/G92/G93/G94内容安全归一化器未安装、版本异常或缺少normalizeG53');
+if (!guard || guard.version !== 'g10-g28-g50-g51-g53-g92-g93-g94-g95-g96-g97-g98-g99-boundary-11' || typeof guard.normalizeG53 !== 'function') {
+  errors.push('G10/G28/G50/G51/G53/G92/G93/G94内容安全归一化器未安装、版本异常或缺少normalizeG53');
 }
 const catalog = sandbox.window.CNC_GM_CODES;
 const g53 = Array.isArray(catalog) ? catalog.find(item => item && item.id === 'kb-gcode-g53') : null;
@@ -112,4 +112,4 @@ if (errors.length) {
   errors.forEach(error => console.error(`- ${error}`));
   process.exit(1);
 }
-console.log('CNC G53机床坐标定位可信度门禁通过：G53被限定为控制器/机床相关的高风险非模态机床坐标运动；机床坐标零点、刀补影响、目标位置与完整运动空间必须按本机原厂手册核对并先做受控空运行，Z0或换刀位置不得作为跨机床通用安全点；当前PWA37仍保留该边界。');
+console.log('CNC G53机床坐标定位可信度门禁通过：G53被限定为控制器/机床相关的高风险非模态机床坐标运动；机床坐标零点、刀补影响、目标位置与完整运动空间必须按本机原厂手册核对并先做受控空运行，Z0或换刀位置不得作为跨机床通用安全点；当前PWA38仍保留包含G51的boundary-11边界。');
