@@ -9,16 +9,16 @@ fs.mkdirSync(out, { recursive: true });
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
 const expectedSiteBuild = '20260806-learning-depth1';
-const expectedPwaBuild = '20260811-pwa36';
-const previousPublicSiteBuild = '20260806-learning-depth1';
-const previousPublicPwaBuild = '20260810-pwa35';
+const expectedPwaBuild = '20260811-pwa37';
+const controlledPublicSiteBuild = '20260806-learning-depth1';
+const controlledPublicPwaBuild = '20260811-pwa36';
 const cacheRevisionByBuild = {
-  [expectedPwaBuild]: '20260811-learning36',
-  [previousPublicPwaBuild]: '20260810-learning35'
+  [expectedPwaBuild]: '20260811-learning37',
+  [controlledPublicPwaBuild]: '20260811-learning36'
 };
 const siteBuildByPwaBuild = {
   [expectedPwaBuild]: expectedSiteBuild,
-  [previousPublicPwaBuild]: previousPublicSiteBuild
+  [controlledPublicPwaBuild]: controlledPublicSiteBuild
 };
 const attempts = Number(process.env.CNC_PAGES_VERIFY_ATTEMPTS || 18);
 const intervalMs = Number(process.env.CNC_PAGES_VERIFY_INTERVAL_MS || 10000);
@@ -42,7 +42,7 @@ const VIDEO_CORE = [
   './assets/videos/learning/stage12_first_part.mp4'
 ];
 const EXACT_CORE = [...BASE_CORE, ...VIDEO_CORE];
-const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE;
+const CONTROLLED_PUBLIC_CORE_PATHS = EXACT_CORE;
 
 const LEARNING_DEPTH_CORE_PATHS = new Set([
   './learning-sublesson-catalog.js',
@@ -52,7 +52,7 @@ const LEARNING_DEPTH_CORE_PATHS = new Set([
 
 function expectedCoreForBuild(build, label) {
   if (build === expectedPwaBuild) return EXACT_CORE;
-  if (build === previousPublicPwaBuild) return PREVIOUS_PUBLIC_CORE_PATHS;
+  if (build === controlledPublicPwaBuild) return CONTROLLED_PUBLIC_CORE_PATHS;
   throw new Error(`${label}出现未受控核心资源构建：${build}`);
 }
 
@@ -65,8 +65,8 @@ const report = {
   mainRoot,
   expectedSiteBuild,
   expectedPwaBuild,
-  previousPublicSiteBuild,
-  previousPublicPwaBuild,
+  controlledPublicSiteBuild,
+  controlledPublicPwaBuild,
   eventName,
   attempts: [],
   resources: {}

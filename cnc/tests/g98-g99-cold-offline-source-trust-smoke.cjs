@@ -7,8 +7,8 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const PWA_BUILD = '20260811-pwa36';
-const CACHE_REVISION = '20260811-learning36';
+const PWA_BUILD = '20260811-pwa37';
+const CACHE_REVISION = '20260811-learning37';
 let offlineProbeHits = 0;
 let serverStoppedForOffline = false;
 let coldOfflineConsoleWindow = false;
@@ -240,7 +240,7 @@ async function writeDiagnostics(page, stage, errors, extra = {}) {
       if (sourceEvidence.gmText.includes(forbidden)) throw new Error(`G98/G99冷离线源仍含误导性通用口诀：${forbidden}`);
     }
     for (const token of [
-      'g10-g28-g53-g92-g93-g94-g95-g96-g97-g98-g99-boundary-9',
+      'g10-g28-g50-g53-g92-g93-g94-g95-g96-g97-g98-g99-boundary-10',
       'normalizeG98',
       'normalizeG99'
     ]) {
@@ -270,7 +270,7 @@ async function writeDiagnostics(page, stage, errors, extra = {}) {
         })
       };
     });
-    if (runtimeEvidence.guardVersion !== 'g10-g28-g53-g92-g93-g94-g95-g96-g97-g98-g99-boundary-9') {
+    if (runtimeEvidence.guardVersion !== 'g10-g28-g50-g53-g92-g93-g94-g95-g96-g97-g98-g99-boundary-10') {
       throw new Error(`冷离线运行时安全守卫版本错误：${runtimeEvidence.guardVersion}`);
     }
     if (runtimeEvidence.normalizeG98 !== 'function' || runtimeEvidence.normalizeG99 !== 'function') {

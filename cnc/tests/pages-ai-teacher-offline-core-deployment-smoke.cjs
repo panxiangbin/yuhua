@@ -8,13 +8,13 @@ fs.mkdirSync(resultsDir, { recursive: true });
 
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
-const branchTargetPwaBuild = '20260811-pwa36';
-const previousPublicPwaBuild = '20260810-pwa35';
+const branchTargetPwaBuild = '20260811-pwa37';
+const controlledPublicPwaBuild = '20260811-pwa36';
 const expectedSiteBuild = '20260806-learning-depth1';
-const previousPublicSiteBuild = '20260806-learning-depth1';
+const controlledPublicSiteBuild = '20260806-learning-depth1';
 const cacheRevisionByBuild = {
-  [branchTargetPwaBuild]: '20260811-learning36',
-  [previousPublicPwaBuild]: '20260810-learning35'
+  [branchTargetPwaBuild]: '20260811-learning37',
+  [controlledPublicPwaBuild]: '20260811-learning36'
 };
 const attempts = Number(process.env.CNC_PAGES_VERIFY_ATTEMPTS || 18);
 const intervalMs = Number(process.env.CNC_PAGES_VERIFY_INTERVAL_MS || 10000);
@@ -87,7 +87,7 @@ const VIDEO_CORE_PATHS = [
   './assets/videos/learning/stage12_first_part.mp4'
 ];
 const EXACT_CORE_PATHS = [...BASE_CORE_PATHS, ...VIDEO_CORE_PATHS];
-const PREVIOUS_PUBLIC_CORE_PATHS = EXACT_CORE_PATHS;
+const CONTROLLED_PUBLIC_CORE_PATHS = EXACT_CORE_PATHS;
 
 const LEARNING_DEPTH_CORE_PATHS = new Set([
   './learning-sublesson-catalog.js',
@@ -97,20 +97,20 @@ const LEARNING_DEPTH_CORE_PATHS = new Set([
 
 function expectedCoreForBuild(build, label) {
   if (build === branchTargetPwaBuild) return EXACT_CORE_PATHS;
-  if (build === previousPublicPwaBuild) return PREVIOUS_PUBLIC_CORE_PATHS;
+  if (build === controlledPublicPwaBuild) return CONTROLLED_PUBLIC_CORE_PATHS;
   throw new Error(`${label}出现未受控核心资源构建：${build}`);
 }
 
-const PREVIOUS_PUBLIC_SELF_TEST_PATHS = PREVIOUS_PUBLIC_CORE_PATHS;
+const CONTROLLED_PUBLIC_SELF_TEST_PATHS = CONTROLLED_PUBLIC_CORE_PATHS;
 
 const diagnostics = {
   checkedAt: new Date().toISOString(),
   publicRoot,
   mainRoot,
   branchTargetPwaBuild,
-  previousPublicPwaBuild,
+  controlledPublicPwaBuild,
   expectedSiteBuild,
-  previousPublicSiteBuild,
+  controlledPublicSiteBuild,
   eventName,
   resources: {},
   attempts: []
@@ -179,7 +179,7 @@ function forbidTokens(text, label, patterns) {
 }
 
 function assertAllowedBuild(build, label) {
-  if (![previousPublicPwaBuild, branchTargetPwaBuild].includes(build)) throw new Error(`${label}出现未受控PWA构建：${build}`);
+  if (![controlledPublicPwaBuild, branchTargetPwaBuild].includes(build)) throw new Error(`${label}出现未受控PWA构建：${build}`);
 }
 
 function expectedCacheRevision(build, label) {
@@ -190,7 +190,7 @@ function expectedCacheRevision(build, label) {
 
 function expectedSiteBuildFor(build, label) {
   if (build === branchTargetPwaBuild) return expectedSiteBuild;
-  if (build === previousPublicPwaBuild) return previousPublicSiteBuild;
+  if (build === controlledPublicPwaBuild) return controlledPublicSiteBuild;
   throw new Error(`${label}出现未受控站点/PWA构建组合：${build}`);
 }
 
@@ -440,7 +440,7 @@ async function waitForMainPagesMatch() {
       `分支待合并或待部署：${branchDeploymentPending ? '是' : '否'}`,
       `当前分支手机首页、训练题库、成长档案、12关主课程数据、12关图片、${VIDEO_CORE_PATHS.length}个本地课程视频、起点测评、训练营路线、三类测评首步课程、80课目录、AI老师、现场问诊单、判断说明页核心预缓存：完整`,
       `当前分支PWA自检核心资源：${EXACT_CORE_PATHS.length}项且无重复`,
-      `当前公网PWA自检核心资源：${publicPwaBuild === previousPublicPwaBuild ? PREVIOUS_PUBLIC_SELF_TEST_PATHS.length : EXACT_CORE_PATHS.length}项且无重复`,
+      `当前公网PWA自检核心资源：${publicPwaBuild === controlledPublicPwaBuild ? CONTROLLED_PUBLIC_SELF_TEST_PATHS.length : EXACT_CORE_PATHS.length}项且无重复`,
       '测评安全硬门禁、G00快速定位适用范围、T/H刀长补偿映射适用范围、路线隐私、固定值、原厂手册与授权人员边界：可见',
       ...findings
     ].join('\n') + '\n');
