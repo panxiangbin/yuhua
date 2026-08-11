@@ -24,10 +24,10 @@ if (aliasPos < 0 || gmPos < 0 || aliasPos >= gmPos) {
 for (const core of ["'./search-aliases.js'", "'./gm-code-complete.js'"]) {
   if (!swText.includes(core)) errors.push(`PWA首次安装核心缺少G53可信目录依赖：${core}`);
 }
-if (!swText.includes("const BUILD = '20260811-pwa37'")) errors.push('Service Worker未升级到20260811-pwa37');
-if (!swText.includes("const CACHE_REVISION = '20260811-learning37'")) errors.push('Service Worker缓存修订未升级到20260811-learning37');
-if (buildInfo.pwaBuild !== '20260811-pwa37' || buildInfo.cacheRevision !== '20260811-learning37') {
-  errors.push(`build-info与PWA37不一致：${buildInfo.pwaBuild} / ${buildInfo.cacheRevision}`);
+if (!swText.includes("const BUILD = '20260811-pwa38'")) errors.push('Service Worker未升级到20260811-pwa38');
+if (!swText.includes("const CACHE_REVISION = '20260811-learning38'")) errors.push('Service Worker缓存修订未升级到20260811-learning38');
+if (buildInfo.pwaBuild !== '20260811-pwa38' || buildInfo.cacheRevision !== '20260811-learning38') {
+  errors.push(`build-info与PWA38不一致：${buildInfo.pwaBuild} / ${buildInfo.cacheRevision}`);
 }
 if (!String(buildInfo.contentStage || '').includes('G53机床坐标定位适用范围')) {
   errors.push('build-info缺少G53机床坐标定位适用范围阶段标记');
@@ -112,4 +112,4 @@ if (errors.length) {
   errors.forEach(error => console.error(`- ${error}`));
   process.exit(1);
 }
-console.log('CNC G53机床坐标定位可信度门禁通过：G53被限定为控制器/机床相关的高风险非模态机床坐标运动；机床坐标零点、刀补影响、目标位置与完整运动空间必须按本机原厂手册核对并先做受控空运行，Z0或换刀位置不得作为跨机床通用安全点；当前PWA37仍保留包含G51的boundary-11边界。');
+console.log('CNC G53机床坐标定位可信度门禁通过：G53被限定为控制器/机床相关的高风险非模态机床坐标运动；机床坐标零点、刀补影响、目标位置与完整运动空间必须按本机原厂手册核对并先做受控空运行，Z0或换刀位置不得作为跨机床通用安全点；当前PWA38仍保留包含G51的boundary-11边界。');
