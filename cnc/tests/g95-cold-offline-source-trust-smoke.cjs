@@ -7,9 +7,9 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const outDir = path.join(root, 'cnc/test-results/g95-cold-offline-source-trust');
-const PWA_BUILD = '20260810-pwa35';
-const CACHE_REVISION = '20260810-learning35';
-const GUARD_VERSION = 'g10-g28-g53-g92-g94-g95-g96-g97-g98-g99-boundary-8';
+const PWA_BUILD = '20260811-pwa36';
+const CACHE_REVISION = '20260811-learning36';
+const GUARD_VERSION = 'g10-g28-g53-g92-g93-g94-g95-g96-g97-g98-g99-boundary-9';
 let offlineProbeHits = 0;
 let originServerStopped = false;
 let coldOfflineConsoleWindow = false;
@@ -120,7 +120,7 @@ async function writeDiagnostics(page, stage, errors, extra = {}) {
 
     const cachesBefore = await page.evaluate(() => caches.keys());
     if (!cachesBefore.includes(`cnc-static-${CACHE_REVISION}`)) {
-      throw new Error(`PWA35静态缓存缺失：${JSON.stringify(cachesBefore)}`);
+      throw new Error(`PWA36静态缓存缺失：${JSON.stringify(cachesBefore)}`);
     }
 
     stage = 'verify-g95-core-cache';
@@ -213,7 +213,7 @@ async function writeDiagnostics(page, stage, errors, extra = {}) {
     stage = 'cold-offline-g95-reload';
     if (!offlineNetworkBlocked || !originServerStopped) throw new Error('真实冷离线网络阻断证据缺失');
     await page.goto('http://127.0.0.1:4173/cnc/index.html', { waitUntil: 'domcontentloaded' });
-    if (!(await page.title()).includes('CNC')) throw new Error('PWA35冷离线重载首页失败');
+    if (!(await page.title()).includes('CNC')) throw new Error('PWA36冷离线重载首页失败');
 
     runtimeEvidence = await page.evaluate(() => {
       const guard = window.CNC_GM_CONTENT_SAFETY;
@@ -253,7 +253,7 @@ async function writeDiagnostics(page, stage, errors, extra = {}) {
     };
     fs.writeFileSync(path.join(outDir, 'report.json'), JSON.stringify(result, null, 2));
     await page.screenshot({ path: path.join(outDir, 'g95-cold-offline-source-trust.png'), fullPage: true });
-    console.log('CNC G95真实断源冷离线可信度门禁通过：PWA35首次安装后关闭本地HTTP源站并进入离线模式，G95双语义安全源仍从静态缓存读取；冷离线重载继续保留车铣差异、当前CNC、G代码组别、原厂手册、单位制、F地址单位与同步攻丝边界，固定参数不得直接照抄上机。');
+    console.log('CNC G95真实断源冷离线可信度门禁通过：PWA36首次安装后关闭本地HTTP源站并进入离线模式，G95双语义安全源仍从静态缓存读取；冷离线重载继续保留车铣差异、当前CNC、G代码组别、原厂手册、单位制、F地址单位与同步攻丝边界，固定参数不得直接照抄上机。');
   } catch (error) {
     errors.push(error.message);
     if (page) await writeDiagnostics(page, stage, errors, { offlineNetworkBlocked, originServerStopped, probeEvidence, sourceEvidence, runtimeEvidence });

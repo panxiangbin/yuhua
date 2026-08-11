@@ -108,6 +108,6 @@ const days = Math.floor((Date.now() - Date.parse(m.lastExportAt)) / 86400000)
 
 ## PWA / 缓存边界
 
-本审计文件本身不修改离线核心运行时资源，因此不要求提升当前 `20260810-pwa35 / 20260810-learning35`。
+本审计文件本身不修改离线核心运行时资源，因此不要求提升当前 `20260811-pwa36 / 20260811-learning36`。
 
 如果后续实际修改 `data-health.html`，必须先检查其当前 Service Worker 缓存策略和构建引用门禁；若改动进入受保护离线核心或现有门禁要求构建递增，则正规提升构建版本并完整重跑 Service Worker、离线缓存、PWA 自检、BFCache、升级数据、手机首页、起点测评、完整 CNC 回归、性能、无障碍、Pages 与公网 exact-head。

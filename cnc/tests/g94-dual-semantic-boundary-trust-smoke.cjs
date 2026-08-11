@@ -23,10 +23,10 @@ if (aliasPos < 0 || gmPos < 0 || aliasPos >= gmPos) {
 for (const core of ["'./search-aliases.js'", "'./gm-code-complete.js'"]) {
   if (!swText.includes(core)) errors.push(`PWA首次安装核心缺少G94可信目录依赖：${core}`);
 }
-if (!swText.includes("const BUILD = '20260810-pwa35'")) errors.push('Service Worker未升级到20260810-pwa35');
-if (!swText.includes("const CACHE_REVISION = '20260810-learning35'")) errors.push('Service Worker缓存修订未升级到20260810-learning35');
-if (buildInfo.pwaBuild !== '20260810-pwa35' || buildInfo.cacheRevision !== '20260810-learning35') {
-  errors.push(`build-info与PWA32不一致：${buildInfo.pwaBuild} / ${buildInfo.cacheRevision}`);
+if (!swText.includes("const BUILD = '20260811-pwa36'")) errors.push('Service Worker未升级到20260811-pwa36');
+if (!swText.includes("const CACHE_REVISION = '20260811-learning36'")) errors.push('Service Worker缓存修订未升级到20260811-learning36');
+if (buildInfo.pwaBuild !== '20260811-pwa36' || buildInfo.cacheRevision !== '20260811-learning36') {
+  errors.push(`build-info与PWA36不一致：${buildInfo.pwaBuild} / ${buildInfo.cacheRevision}`);
 }
 if (!String(buildInfo.contentStage || '').includes('G94车铣双语义适用范围')) {
   errors.push('build-info缺少G94车铣双语义适用范围阶段标记');
@@ -72,8 +72,8 @@ try {
 }
 
 const guard = sandbox.window.CNC_GM_CONTENT_SAFETY;
-if (!guard || guard.version !== 'g10-g28-g53-g92-g94-g95-g96-g97-g98-g99-boundary-8' || typeof guard.normalizeG94 !== 'function') {
-  errors.push('G10/G28/G53/G92/G94内容安全归一化器未安装、版本异常或缺少normalizeG94');
+if (!guard || guard.version !== 'g10-g28-g53-g92-g93-g94-g95-g96-g97-g98-g99-boundary-9' || typeof guard.normalizeG94 !== 'function') {
+  errors.push('G10/G28/G53/G92/G93/G94内容安全归一化器未安装、版本异常或缺少normalizeG94');
 }
 const catalog = sandbox.window.CNC_GM_CODES;
 const g94 = Array.isArray(catalog) ? catalog.find(item => item && item.id === 'kb-gcode-g94') : null;
@@ -112,4 +112,4 @@ if (errors.length) {
   errors.forEach(error => console.error(`- ${error}`));
   process.exit(1);
 }
-console.log('CNC G94车铣双语义可信度门禁通过：铣床/加工中心每分钟进给模式与部分车床端面循环被明确分开；G93/G94/G95、单位制、F含义、循环地址、起始位置与返回路径必须按当前CNC和机床厂原厂手册核对，G/M离线核心正规升级到PWA32。');
+console.log('CNC G94车铣双语义可信度门禁通过：铣床/加工中心每分钟进给模式与部分车床端面循环被明确分开；G93/G94/G95、单位制、F含义、循环地址、起始位置与返回路径必须按当前CNC和机床厂原厂手册核对，G/M离线核心正规升级到PWA36。');
