@@ -48,7 +48,7 @@ window.CNC_SEARCH_ALIASES = [
 ];
 
 // G/M 代码目录来自大批量生成的基础表。这里在目录载入前安装高风险内容归一化器，
-// 作为第二层防御保持G10/G28/G50/G53/G92/G93/G94/G95/G96/G97/G98/G99边界一致；基础源本身仍必须通过独立可信度门禁。
+// 作为第二层防御保持G10/G28/G50/G51/G53/G92/G93/G94/G95/G96/G97/G98/G99边界一致；基础源本身仍必须通过独立可信度门禁。
 (function installGmContentSafetyGuard() {
   var gmCodesValue;
 
@@ -90,6 +90,20 @@ window.CNC_SEARCH_ALIASES = [
       tags: ['G50','车铣差异','主轴最高转速限制','取消缩放','坐标设定','当前CNC','原厂手册','卡盘','工件','刀具']
     });
   }
+
+  function normalizeG51(entry) {
+  if (!entry || entry.id !== 'kb-gcode-g51') return entry;
+  return Object.assign({}, entry, {
+    title: 'G51 缩放功能（按当前CNC确认）',
+    summary: '在部分明确支持缩放功能的铣床/加工中心CNC中，G51会按本机定义改变后续坐标或轨迹的缩放解释；是否为选项功能、所属组别或模式、参与轴、缩放中心与倍率表达方式都会因当前CNC和机床厂配置不同，必须核对原厂手册。',
+    usage: '仅在确认当前CNC支持G51且已逐项核对选项、组别或模式、缩放中心、倍率表达、参与缩放的轴，以及圆弧、固定循环、刀具补偿等相关解释后受控使用；同时检查刀具、刀柄、工件、夹具和全部后续程序段的完整运动空间。',
+    beginner: '把G51理解成会改变后续坐标解释的高风险缩放状态，不要背固定P值、固定缩放中心或固定轴地址。看到G51先确认这台机床当前CNC和原厂手册，再判断它影响哪些轴、哪些后续程序段以及如何取消。',
+    warning: 'G51的可用性、组别或模式、倍率格式、默认或指定缩放中心、参与轴，以及对快速、直线、圆弧、固定循环和补偿的影响必须以当前CNC和机床厂原厂手册为准。部分明确支持该关系的控制实现可能将G50用于取消缩放，但不能推广为所有CNC的通用规则。真实机床执行前必须检查完整计划运动空间，并按现场规程做图形检查、仿真、单段、低倍率、空运行或其它受控验证。',
+    example: '教学语义示意：部分明确支持该功能的铣床或加工中心CNC中，G51用于启用缩放；具体缩放中心、倍率表达、参与轴、圆弧、固定循环、补偿影响以及取消方式必须逐项以当前CNC和机床厂原厂手册为准，不提供可直接照抄的固定P值、轴位置或缩放倍率。',
+    risk: '高',
+    tags: ['G51','缩放','高风险状态','当前CNC','原厂手册','缩放中心','参与轴','圆弧','固定循环','补偿']
+  });
+}
 
   function normalizeG53(entry) {
     if (!entry || entry.id !== 'kb-gcode-g53') return entry;
@@ -218,7 +232,7 @@ window.CNC_SEARCH_ALIASES = [
 
   function normalizeCatalog(value) {
     if (!Array.isArray(value)) return value;
-    return value.map(function (entry) { return normalizeG99(normalizeG98(normalizeG97(normalizeG96(normalizeG95(normalizeG94(normalizeG93(normalizeG92(normalizeG53(normalizeG50(normalizeG28(normalizeG10(entry)))))))))))); });
+    return value.map(function (entry) { return normalizeG99(normalizeG98(normalizeG97(normalizeG96(normalizeG95(normalizeG94(normalizeG93(normalizeG92(normalizeG53(normalizeG51(normalizeG50(normalizeG28(normalizeG10(entry))))))))))))); });
   }
 
   Object.defineProperty(window, 'CNC_GM_CODES', {
@@ -229,10 +243,11 @@ window.CNC_SEARCH_ALIASES = [
   });
 
   window.CNC_GM_CONTENT_SAFETY = {
-    version: 'g10-g28-g50-g53-g92-g93-g94-g95-g96-g97-g98-g99-boundary-10',
+    version: 'g10-g28-g50-g51-g53-g92-g93-g94-g95-g96-g97-g98-g99-boundary-11',
     normalizeG10: normalizeG10,
     normalizeG28: normalizeG28,
     normalizeG50: normalizeG50,
+    normalizeG51: normalizeG51,
     normalizeG53: normalizeG53,
     normalizeG92: normalizeG92,
     normalizeG93: normalizeG93,
