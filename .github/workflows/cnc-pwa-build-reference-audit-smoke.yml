@@ -41,6 +41,7 @@ jobs:
 
           const requiredScriptTokens = [
             'CURRENT_PIN_SPECS',
+            'CONTROLLED_PUBLIC_PIN_SPECS',
             'PREVIOUS_PIN_SPEC',
             'MEDIA_PROGRESS_SPEC',
             'currentCacheRevision',
@@ -78,11 +79,11 @@ jobs:
             'cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs'
           ];
 
-          if (!report.currentPwaBuild || !report.currentCacheRevision || !report.previousPwaBuild) {
-            throw new Error(`PWA引用审计缺少当前构建、缓存修订或上一构建：${JSON.stringify(report)}`);
+          if (!report.currentPwaBuild || !report.currentCacheRevision || !report.controlledPublicPwaBuild || !report.previousPwaBuild) {
+            throw new Error(`PWA引用审计缺少当前构建、缓存修订、受控公网基线或历史升级构建：${JSON.stringify(report)}`);
           }
-          if (report.currentPwaBuild === report.previousPwaBuild) {
-            throw new Error(`当前与上一PWA构建不得相同：${report.currentPwaBuild}`);
+          if (new Set([report.currentPwaBuild, report.controlledPublicPwaBuild, report.previousPwaBuild]).size !== 3) {
+            throw new Error(`PWA三代构建必须互不相同：${report.currentPwaBuild}/${report.controlledPublicPwaBuild}/${report.previousPwaBuild}`);
           }
           if (!report.mediaTarget || report.mediaTarget.file !== 'cnc/MOBILE_LEARNING_MEDIA_PROGRESS.md') {
             throw new Error(`学习媒体进度目标证据缺失：${JSON.stringify(report.mediaTarget)}`);
@@ -110,6 +111,13 @@ jobs:
             if (pin.version !== report.currentPwaBuild) {
               throw new Error(`PWA当前构建针漂移：${file}=${pin.version}，期望${report.currentPwaBuild}`);
             }
+          }
+          const controlledPublicFiles = new Set((report.controlledPublicPins || []).map(item => item.file));
+          for (const file of ['cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs','cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs','cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs']) {
+            if (!controlledPublicFiles.has(file)) throw new Error(`PWA受控公网基线针缺失：${file}`);
+          }
+          if ((report.controlledPublicPins || []).some(item => item.version !== report.controlledPublicPwaBuild)) {
+            throw new Error(`PWA受控公网基线针漂移：${JSON.stringify(report.controlledPublicPins)}`);
           }
           if (!report.previousPin || report.previousPin.file !== 'cnc/tests/mobile-pwa-upgrade-data-smoke.cjs') {
             throw new Error(`PWA上一构建针来源无效：${JSON.stringify(report.previousPin)}`);
