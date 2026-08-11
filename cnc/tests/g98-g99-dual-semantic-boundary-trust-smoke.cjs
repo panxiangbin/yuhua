@@ -12,9 +12,9 @@ const selfTest = fs.readFileSync(path.join(root, 'pwa-self-test.html'), 'utf8');
 const index = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const errors = [];
 
-if (info.pwaBuild !== '20260811-pwa36' || info.cacheRevision !== '20260811-learning36') errors.push(`构建版本错误：${info.pwaBuild}/${info.cacheRevision}`);
+if (info.pwaBuild !== '20260811-pwa37' || info.cacheRevision !== '20260811-learning37') errors.push(`构建版本错误：${info.pwaBuild}/${info.cacheRevision}`);
 if (!String(info.contentStage || '').includes('G98/G99车铣双语义适用范围')) errors.push('build-info缺少G98/G99内容可信度阶段');
-if (!swText.includes("const BUILD = '20260811-pwa36'") || !swText.includes("const CACHE_REVISION = '20260811-learning36'")) errors.push('Service Worker未对齐PWA36/learning36');
+if (!swText.includes("const BUILD = '20260811-pwa37'") || !swText.includes("const CACHE_REVISION = '20260811-learning37'")) errors.push('Service Worker未对齐PWA37/learning37');
 for (const core of ["'./search-aliases.js'", "'./gm-code-complete.js'"]) if (!swText.includes(core)) errors.push(`首次安装离线核心缺少：${core}`);
 const aliasPos = index.indexOf('search-aliases.js');
 const gmPos = index.indexOf('gm-code-complete.js');
@@ -40,7 +40,7 @@ try {
   errors.push(`G/M代码运行时目录无法加载：${error.message}`);
 }
 const guard = sandbox.window.CNC_GM_CONTENT_SAFETY;
-if (!guard || guard.version !== 'g10-g28-g53-g92-g93-g94-g95-g96-g97-g98-g99-boundary-9') errors.push(`运行时安全守卫版本错误：${guard?.version}`);
+if (!guard || guard.version !== 'g10-g28-g50-g53-g92-g93-g94-g95-g96-g97-g98-g99-boundary-10') errors.push(`运行时安全守卫版本错误：${guard?.version}`);
 if (typeof guard?.normalizeG98 !== 'function' || typeof guard?.normalizeG99 !== 'function') errors.push('运行时缺少normalizeG98/normalizeG99');
 for (const code of ['G98', 'G99']) {
   const entry = (sandbox.window.CNC_GM_CODES || []).find(item => item.code === code);
@@ -55,4 +55,4 @@ if (errors.length) {
   console.error(errors.join('\n'));
   process.exit(1);
 }
-console.log('CNC G98/G99车铣双语义可信度门禁通过：铣削固定循环返回初始平面/R平面与车床每分钟/每转进给被明确分开，不再使用“G98一定更高、G99一定更低或绝对安全”的通用口诀；真实机床须核对当前CNC和机床厂原厂手册并做受控验证；PWA36首次安装离线核心继续保护该边界。');
+console.log('CNC G98/G99车铣双语义可信度门禁通过：铣削固定循环返回初始平面/R平面与车床每分钟/每转进给被明确分开，不再使用“G98一定更高、G99一定更低或绝对安全”的通用口诀；真实机床须核对当前CNC和机床厂原厂手册并做受控验证；PWA37首次安装离线核心继续保护该边界。');
