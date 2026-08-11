@@ -21,9 +21,9 @@ function check(name, condition, message) {
   if (!condition) errors.push(message);
 }
 
-check('pwa37Build', info.pwaBuild === '20260811-pwa37' && info.cacheRevision === '20260811-learning37', `构建版本错误：${info.pwaBuild}/${info.cacheRevision}`);
+check('pwa38Build', info.pwaBuild === '20260811-pwa38' && info.cacheRevision === '20260811-learning38', `构建版本错误：${info.pwaBuild}/${info.cacheRevision}`);
 check('contentStage', String(info.contentStage || '').includes('G96/G97恒线速/恒转速适用范围'), 'build-info缺少G96/G97内容可信度阶段');
-check('swBuild', swText.includes("const BUILD = '20260811-pwa37'") && swText.includes("const CACHE_REVISION = '20260811-learning37'"), 'Service Worker未对齐PWA37/learning37');
+check('swBuild', swText.includes("const BUILD = '20260811-pwa38'") && swText.includes("const CACHE_REVISION = '20260811-learning38'"), 'Service Worker未对齐PWA38/learning38');
 for (const core of ["'./search-aliases.js'", "'./gm-code-complete.js'"]) {
   check(`core:${core}`, swText.includes(core), `首次安装离线核心缺少：${core}`);
 }
@@ -102,7 +102,7 @@ for (const code of ['G96', 'G97']) {
 
 const report = {
   testedAt: new Date().toISOString(),
-  expected: { pwaBuild: '20260811-pwa37', cacheRevision: '20260811-learning37', guard: 'g10-g28-g50-g51-g53-g92-g93-g94-g95-g96-g97-g98-g99-boundary-11' },
+  expected: { pwaBuild: '20260811-pwa38', cacheRevision: '20260811-learning38', guard: 'g10-g28-g50-g51-g53-g92-g93-g94-g95-g96-g97-g98-g99-boundary-11' },
   actual: { pwaBuild: info.pwaBuild, cacheRevision: info.cacheRevision, guard: guard?.version || null },
   checks,
   errors
@@ -113,4 +113,4 @@ if (errors.length) {
   console.error(errors.join('\n'));
   process.exit(1);
 }
-console.log('CNC G96/G97恒线速与恒转速可信度门禁通过：只在明确支持相应车床语义的CNC范围内解释G96/G97；单位制、S含义、最高允许主轴转速及主轴/卡盘/装夹/工件/刀具限制必须按当前CNC与机床厂原厂手册确认；固定教学数值不得直接照抄上机；PWA37首次安装离线核心继续受包含G51的boundary-11保护。');
+console.log('CNC G96/G97恒线速与恒转速可信度门禁通过：只在明确支持相应车床语义的CNC范围内解释G96/G97；单位制、S含义、最高允许主轴转速及主轴/卡盘/装夹/工件/刀具限制必须按当前CNC与机床厂原厂手册确认；固定教学数值不得直接照抄上机；PWA38首次安装离线核心继续受包含G51的boundary-11保护。');
