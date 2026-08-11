@@ -74,8 +74,8 @@ try {
 }
 
 const guard = sandbox.window.CNC_GM_CONTENT_SAFETY;
-if (!guard || guard.version !== 'g10-g28-g50-g53-g92-g93-g94-g95-g96-g97-g98-g99-boundary-10' || typeof guard.normalizeG28 !== 'function') {
-  errors.push('G10/G28/G50/G53/G92/G93/G94内容安全归一化器未安装、版本异常或缺少normalizeG28');
+if (!guard || guard.version !== 'g10-g28-g50-g51-g53-g92-g93-g94-g95-g96-g97-g98-g99-boundary-11' || typeof guard.normalizeG28 !== 'function') {
+  errors.push('G10/G28/G50/G51/G53/G92/G93/G94内容安全归一化器未安装、版本异常或缺少normalizeG28');
 }
 const catalog = sandbox.window.CNC_GM_CODES;
 const g28 = Array.isArray(catalog) ? catalog.find(item => item && item.id === 'kb-gcode-g28') : null;
@@ -115,4 +115,4 @@ if (errors.length) {
   errors.forEach(error => console.error(`- ${error}`));
   process.exit(1);
 }
-console.log('CNC G28参考点返回可信度门禁通过：G28被限定为控制器/机床相关的高风险自动运动；G90/G91、中间位置、轴向与完整运动空间必须按本机原厂手册和现场授权规程核对，G91 G28 Z0或先Z后XY不得作为通用防撞保证；当前PWA37仍保留该边界。');
+console.log('CNC G28参考点返回可信度门禁通过：G28被限定为控制器/机床相关的高风险自动运动；G90/G91、中间位置、轴向与完整运动空间必须按本机原厂手册和现场授权规程核对，G91 G28 Z0或先Z后XY不得作为通用防撞保证；当前PWA37仍保留包含G51的boundary-11安全边界。');
