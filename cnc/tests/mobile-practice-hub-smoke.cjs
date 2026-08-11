@@ -27,7 +27,7 @@ fs.mkdirSync(OUT, { recursive: true });
       {id:'advanced-verification-q1',practiceId:'advanced-verification',ability:'程序检查'},
       {id:'advanced-verification-q2',practiceId:'advanced-verification',ability:'程序检查'},
       {id:'drawing-setup-process-q1',practiceId:'drawing-setup-process',ability:'图纸识读'}
-    ]}))); 
+    ]})));
     await page.reload({waitUntil:'networkidle'});
     assert.equal(await page.locator('#passed-count').textContent(),'2','100和87应算2项通过');
     assert.equal(await page.locator('#wrong-count').textContent(),'3');
@@ -48,11 +48,40 @@ fs.mkdirSync(OUT, { recursive: true });
     await page.selectOption('#status-filter','retry');
     assert.equal(await page.locator('.practice').count(),1,'未通过或有错题筛选应显示1项');
 
+    const malformedRaw = JSON.stringify({version:1,history:[
+      null,'损坏记录',
+      {practiceId:'safety-coordinate',score:'not-a-number'},
+      {practiceId:'safety-coordinate',score:120},
+      {practiceId:'advanced-verification',score:-5}
+    ],wrongQuestions:[
+      null,'损坏错题',
+      {practiceId:'safety-coordinate',ability:'安全与坐标'},
+      {practiceId:'advanced-verification',ability:'程序验证'}
+    ]});
+    await page.evaluate(raw=>localStorage.setItem('cnc_training_practice_v1',raw),malformedRaw);
+    await page.reload({waitUntil:'networkidle'});
+    assert.equal(await page.locator('#passed-count').textContent(),'1','超范围120分应按100分上限显示并通过');
+    assert.equal(await page.locator('#wrong-count').textContent(),'2','损坏错题项应忽略，只统计有效对象');
+    assert.equal(await page.locator('#avg-score').textContent(),'100','非法分数与负分应安全归零，超范围分数应封顶100');
+    assert.equal(await page.locator('.weak').count(),2,'损坏错题不应破坏薄弱项分析');
+    const malformedText=await page.locator('body').innerText();
+    assert(!/NaN|Infinity/.test(malformedText),'损坏数据不得在页面显示NaN或Infinity');
+    assert.equal(await page.evaluate(()=>localStorage.getItem('cnc_training_practice_v1')),malformedRaw,'练习中心只读，不得静默改写损坏数据');
+
+    const arrayRootRaw=JSON.stringify([{practiceId:'safety-coordinate',score:100}]);
+    await page.evaluate(raw=>localStorage.setItem('cnc_training_practice_v1',raw),arrayRootRaw);
+    await page.reload({waitUntil:'networkidle'});
+    assert.equal(await page.locator('#passed-count').textContent(),'0','数组根数据应安全降级为空状态');
+    assert.equal(await page.locator('#wrong-count').textContent(),'0');
+    assert.equal(await page.locator('#avg-score').textContent(),'0');
+    assert.equal(await page.locator('.practice').count(),5,'数组根数据降级后仍应完整显示5个专项');
+    assert.equal(await page.evaluate(()=>localStorage.getItem('cnc_training_practice_v1')),arrayRootRaw,'数组根数据不得被页面静默改写');
+
     const small = await page.locator('a:visible,button:visible,select:visible').evaluateAll(nodes=>nodes.filter(n=>{const r=n.getBoundingClientRect();return r.width>0&&r.height>0&&r.height<44}).map(n=>({text:n.textContent.trim(),height:n.getBoundingClientRect().height})));
     assert.deepEqual(small,[],'可见交互控件高度不得小于44px');
     assert.deepEqual(errors,[],'控制台不应报错');
     await page.screenshot({path:path.join(OUT,'practice-hub-390x844.png'),fullPage:true});
-    fs.writeFileSync(path.join(OUT,'result.json'),JSON.stringify({passed:true,viewport:'390x844',practices:5,filters:3,wrong:3},null,2));
+    fs.writeFileSync(path.join(OUT,'result.json'),JSON.stringify({passed:true,viewport:'390x844',practices:5,filters:3,normalWrong:3,malformedReadOnly:true,arrayRootReadOnly:true,noNaNInfinity:true},null,2));
   }catch(err){
     await page.screenshot({path:path.join(OUT,'failure.png'),fullPage:true}).catch(()=>{});
     fs.writeFileSync(path.join(OUT,'error.txt'),String(err.stack||err));
