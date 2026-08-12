@@ -27,6 +27,13 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
 
+          old_pwa = '20260812-' + 'pwa39'
+          old_cache = '20260812-' + 'learning39'
+          older_pwa = '20260811-' + 'pwa38'
+          older_cache = '20260811-' + 'learning38'
+          new_pwa = '20260812-pwa40'
+          new_cache = '20260812-learning40'
+
           ordinary = [
             '.github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml',
             '.github/workflows/cnc-beginner-placement-offline-pages-smoke.yml',
@@ -68,26 +75,26 @@ jobs:
             path = Path(file)
             text = path.read_text(encoding='utf-8')
             before = text
-            text = text.replace('20260812-pwa39', '20260812-pwa40')
-            text = text.replace('20260812-learning39', '20260812-learning40')
+            text = text.replace(old_pwa, new_pwa)
+            text = text.replace(old_cache, new_cache)
             if text == before:
-              raise SystemExit(f'未找到待同步PWA39构建针：{file}')
+              raise SystemExit(f'未找到待同步旧构建针：{file}')
             path.write_text(text, encoding='utf-8')
 
           for file in transition:
             path = Path(file)
             text = path.read_text(encoding='utf-8')
             before = text
-            text = text.replace('20260811-pwa38', '__CNC_MAIN_PWA__')
-            text = text.replace('20260811-learning38', '__CNC_MAIN_CACHE__')
-            text = text.replace('20260812-pwa39', '20260812-pwa40')
-            text = text.replace('20260812-learning39', '20260812-learning40')
-            text = text.replace('__CNC_MAIN_PWA__', '20260812-pwa39')
-            text = text.replace('__CNC_MAIN_CACHE__', '20260812-learning39')
+            text = text.replace(older_pwa, '__CNC_MAIN_PWA__')
+            text = text.replace(older_cache, '__CNC_MAIN_CACHE__')
+            text = text.replace(old_pwa, new_pwa)
+            text = text.replace(old_cache, new_cache)
+            text = text.replace('__CNC_MAIN_PWA__', old_pwa)
+            text = text.replace('__CNC_MAIN_CACHE__', old_cache)
             if text == before:
               raise SystemExit(f'未找到待同步Pages过渡构建针：{file}')
-            if '20260811-pwa38' in text or '20260811-learning38' in text:
-              raise SystemExit(f'Pages当前main过渡仍残留PWA38：{file}')
+            if older_pwa in text or older_cache in text:
+              raise SystemExit(f'Pages当前main过渡仍残留旧构建：{file}')
             path.write_text(text, encoding='utf-8')
 
           info = Path('cnc/build-info.json')
@@ -96,21 +103,17 @@ jobs:
           addition = 'AI老师嵌套异常学习数据只读降级'
           if addition not in text:
             if marker not in text:
-              raise SystemExit('build-info缺少AI老师PWA39阶段标记')
+              raise SystemExit('build-info缺少AI老师上一阶段标记')
             text = text.replace(marker, marker + ' · ' + addition, 1)
           text = text.replace('"generatedAt": "2026-08-12T10:57:00+08:00"', '"generatedAt": "2026-08-12T14:28:40+08:00"')
           info.write_text(text, encoding='utf-8')
           PY
       - name: Verify synchronization contract
-        env:
-          CNC_BASE_SHA: ${{ github.event.before }}
-          CNC_HEAD_SHA: ${{ github.sha }}
         run: |
           node --check cnc/tests/pwa-build-reference-audit-smoke.cjs
           node cnc/tests/pwa-build-reference-audit-smoke.cjs
           CNC_BASE_SHA=3e64fc981c91c30bf48af03434b2cbd7f719238c CNC_HEAD_SHA=${{ github.sha }} node cnc/tests/pwa-core-resource-build-bump-smoke.cjs
           node --check cnc/tests/ai-teacher-data-integrity-smoke.cjs
-          node --check cnc/ai-teacher.html || true
           python3 - <<'PY'
           from pathlib import Path
           info = Path('cnc/build-info.json').read_text(encoding='utf-8')
@@ -120,6 +123,16 @@ jobs:
           if "const BUILD = '20260812-pwa40'" not in sw or "const CACHE_REVISION = '20260812-learning40'" not in sw:
               raise SystemExit('Service Worker未对齐PWA40')
           PY
+      - name: Upload synchronization diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-pwa40-pin-sync-${{ github.run_id }}
+          path: |
+            cnc/test-results/pwa-build-reference-audit.json
+            cnc/test-results/pwa-core-resource-build-bump.json
+          if-no-files-found: warn
+          retention-days: 14
       - name: Commit synchronized pins
         run: |
           git config user.name 'CNC Automation'
