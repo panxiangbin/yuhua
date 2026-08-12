@@ -3,9 +3,9 @@ const fs=require('fs');
 const path=require('path');
 const {execFileSync}=require('child_process');
 const ROOT=path.resolve(__dirname,'..','..');
-const FROM_PWA='20260812-pwa40';
+const FROM_PWA='20260812-pwa41';
 const TO_PWA='20260812-pwa41';
-const FROM_CACHE='20260812-learning40';
+const FROM_CACHE='20260812-learning41';
 const TO_CACHE='20260812-learning41';
 const TRANSITION_FILES=[
   'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs',
