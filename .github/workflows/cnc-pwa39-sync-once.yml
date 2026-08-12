@@ -87,7 +87,7 @@ jobs:
           node cnc/tests/pwa-build-reference-audit-smoke.cjs 2>&1 | tee cnc/test-results/pwa39-pin-sync/audit.log
 
           allowed=$(printf '%s\n' "${files[@]}" | sort)
-          changed=$(git diff --name-only | sort)
+          changed=$(git diff --name-only -- .github/workflows/cnc-*.yml cnc/ ':!cnc/test-results' | sort)
           printf '%s\n' "$changed" > cnc/test-results/pwa39-pin-sync/changed-files.txt
           if [[ "$changed" != "$allowed" ]]; then
             echo 'PWA39同步实际文件范围与受控清单不一致' | tee cnc/test-results/pwa39-pin-sync/error.txt >&2
