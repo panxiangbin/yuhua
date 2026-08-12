@@ -98,11 +98,27 @@ const validDocument = { schemaVersion: 1, requiredNotice: REQUIRED_NOTICE, recor
 const validErrors = validateDocument(validDocument);
 if (validErrors.length) errors.push(`合法测试记录被错误拒绝：${validErrors.join(' | ')}`);
 
+const futureDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 const invalidCases = [
   {
     name: '占位发布机构',
     document: { ...validDocument, records: [{ ...validRecord, publisher: '待填写' }] },
-    expected: '仍是占位内容'
+    expected: '仍含占位或未核实内容'
+  },
+  {
+    name: '复合占位页码',
+    document: { ...validDocument, records: [{ ...validRecord, pageOrSection: '第 3 章 / 待填写页码' }] },
+    expected: '仍含占位或未核实内容'
+  },
+  {
+    name: '待确认适用范围',
+    document: { ...validDocument, records: [{ ...validRecord, applicabilityNotes: '控制系统版本待确认，当前不能确定适用范围。' }] },
+    expected: '仍含占位或未核实内容'
+  },
+  {
+    name: 'TODO 复核备注',
+    document: { ...validDocument, records: [{ ...validRecord, verificationNotes: '已查阅测试资料，TODO：仍需核对原厂手册后再确认。' }] },
+    expected: '仍含占位或未核实内容'
   },
   {
     name: '关闭上机验证要求',
@@ -118,6 +134,11 @@ const invalidCases = [
     name: '伪造日期',
     document: { ...validDocument, records: [{ ...validRecord, reviewedAt: '2026-02-30' }] },
     expected: '真实的 YYYY-MM-DD'
+  },
+  {
+    name: '未来复核日期',
+    document: { ...validDocument, records: [{ ...validRecord, reviewedAt: futureDate }] },
+    expected: '不得晚于当前 UTC 日期'
   },
   {
     name: '额外未受控记录字段',
@@ -176,7 +197,7 @@ fs.writeFileSync(path.join(OUTPUT_DIR, 'findings.txt'), [
   `复核结论：${report.decisionCount}`,
   `非法场景拦截：${invalidResults.filter((item) => item.passed).length}/${invalidResults.length}`,
   '',
-  ...(errors.length ? errors.map((item) => `ERROR: ${item}`) : ['PASS: 模板保持空白，模板说明受 Schema 约束，根节点和记录字段、适用范围、复核结论及现场验证要求均已结构化校验。'])
+  ...(errors.length ? errors.map((item) => `ERROR: ${item}`) : ['PASS: 模板保持空白；占位或待核对内容、未来复核日期、根节点和记录字段、适用范围、复核结论及现场验证要求均已受控校验。'])
 ].join('\n') + '\n');
 
 if (errors.length) {
