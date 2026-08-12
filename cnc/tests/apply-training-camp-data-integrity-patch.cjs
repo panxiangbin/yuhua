@@ -1,13 +1,7 @@
 'use strict';
 const fs=require('fs');
-
-function replaceOnce(source,from,to,label){
-  if(!source.includes(from)) throw new Error(`缺少补丁锚点：${label}`);
-  return source.replace(from,to);
-}
-
-const campPath='cnc/training-camp.html';
-let camp=fs.readFileSync(campPath,'utf8');
+function replaceOnce(source,from,to,label){if(!source.includes(from))throw new Error(`缺少补丁锚点：${label}`);return source.replace(from,to)}
+const campPath='cnc/training-camp.html';let camp=fs.readFileSync(campPath,'utf8');
 const oldHelpers=`function safeParse(key,fallback){try{const v=JSON.parse(localStorage.getItem(key)||'null');return v&&typeof v==='object'?v:fallback}catch{return fallback}}
 function getScores(profile){return profile.courseScores&&typeof profile.courseScores==='object'?profile.courseScores:{}}
 function isDone(profile,id){const done=Array.isArray(profile.completedStages)?profile.completedStages:[];return done.includes(id)||Number(getScores(profile)[id]||0)>=80}
@@ -28,122 +22,12 @@ function simulatorRecordPassed(record){if(record.passed===true)return true;const
 function countSimulatorPassed(simulator){return SIMULATOR_IDS.filter(id=>simulatorCandidates(simulator,id).some(simulatorRecordPassed)).length}`;
 camp=replaceOnce(camp,oldHelpers,newHelpers,'训练营数据读取函数');
 camp=replaceOnce(camp,"const average=done.length?Math.round(done.reduce((s,c)=>s+Number(scores[c.id]||80),0)/done.length):0;","const average=done.length?Math.round(done.reduce((sum,course)=>sum+(courseScore(profile,course.id)||80),0)/done.length):0;",'平均分严格数值');
-camp=replaceOnce(camp,"document.getElementById('course-list').innerHTML=COURSES.map((c,i)=>{const doneFlag=isDone(profile,c.id),score=Number(scores[c.id]||0),current=c.id===next.id&&!doneFlag;return `<a class=\"course ${doneFlag?'done':''} ${current?'current':''}\" href=\"./${c.file}\" data-stage=\"${c.id}\"><span class=\"number\">${String(i+1).padStart(2,'0')}</span><span><h2>${c.title}</h2><p>${c.reason}</p></span><span class=\"status\">${doneFlag?`已通过 ${score||80}分`:current?'继续学习':'未开始'}</span></a>`}).join('');","document.getElementById('course-list').innerHTML=COURSES.map((c,i)=>{const doneFlag=isDone(profile,c.id),score=courseScore(profile,c.id),current=c.id===next.id&&!doneFlag;return `<a class=\"course ${doneFlag?'done':''} ${current?'current':''}\" href=\"./${c.file}\" data-stage=\"${c.id}\"><span class=\"number\">${String(i+1).padStart(2,'0')}</span><span><h2>${c.title}</h2><p>${c.reason}</p></span><span class=\"status\">${doneFlag?`已通过 ${score||80}分`:current?'继续学习':'未开始'}</span></a>`}).join('');",'课程状态严格分数');
-fs.writeFileSync(campPath,camp);
-
-const test=`const { chromium } = require('playwright');
-const fs = require('fs');
-const assert = require('assert');
-
-const BASE = process.env.CNC_BASE_URL || 'http://127.0.0.1:4173';
-const ARTIFACT_DIR = 'artifacts/training-camp-hub';
-fs.mkdirSync(ARTIFACT_DIR, { recursive: true });
-
-async function openPage(browser, storage = {}) {
-  const page = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
-  const consoleErrors = [], pageErrors = [];
-  page.on('console', msg => { if (msg.type() === 'error') consoleErrors.push(msg.text()); });
-  page.on('pageerror', error => pageErrors.push(error.message));
-  await page.addInitScript(seed => {
-    localStorage.clear();
-    for (const [key, value] of Object.entries(seed)) localStorage.setItem(key, JSON.stringify(value));
-  }, storage);
-  await page.goto(\`${BASE}/cnc/training-camp.html\`, { waitUntil: 'networkidle' });
-  const before = await page.evaluate(() => Object.fromEntries(Object.keys(localStorage).sort().map(key => [key, localStorage.getItem(key)])));
-  return { page, consoleErrors, pageErrors, before };
-}
-
-async function assertReadOnly(caseData) {
-  const after = await caseData.page.evaluate(() => Object.fromEntries(Object.keys(localStorage).sort().map(key => [key, localStorage.getItem(key)])));
-  assert.deepStrictEqual(after, caseData.before, '训练营不得清理、迁移或静默改写localStorage');
-}
-async function assertMobile(caseData) {
-  const { page, consoleErrors, pageErrors } = caseData;
-  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
-  assert.ok(overflow <= 1, \`390px页面横向溢出：${overflow}\`);
-  const text = await page.locator('body').innerText();
-  assert.ok(!/NaN|Infinity/.test(text), '页面不得出现NaN/Infinity');
-  const targets = await page.locator('a:visible').evaluateAll(nodes => nodes.map(node => { const r=node.getBoundingClientRect(); return {text:node.textContent.trim().replace(/\\s+/g,' '),height:r.height,width:r.width}; }));
-  const invalid = targets.filter(item => item.width > 0 && item.height > 0 && item.height < 44);
-  assert.deepStrictEqual(invalid, [], \`触控区不足44px: ${JSON.stringify(invalid)}\`);
-  assert.deepStrictEqual(consoleErrors, [], \`控制台错误: ${consoleErrors.join(' | ')}\`);
-  assert.deepStrictEqual(pageErrors, [], \`页面错误: ${pageErrors.join(' | ')}\`);
-  await assertReadOnly(caseData);
-}
-
-(async () => {
-  const browser = await chromium.launch({ headless: true });
-  const report = { viewport: '390x844', cases: {} };
-  try {
-    const empty = await openPage(browser);
-    assert.strictEqual(await empty.page.locator('#passed-count').textContent(), '0');
-    assert.strictEqual(await empty.page.locator('#wrong-count').textContent(), '0');
-    assert.strictEqual(await empty.page.locator('#simulator-status').textContent(), '已通过 0/13 项');
-    assert.match(await empty.page.locator('#next-title').textContent(), /第1关.*安全基础/);
-    await assertMobile(empty); report.cases.empty = true;
-    await empty.page.close();
-
-    const malformed = await openPage(browser, {
-      cnc_training_profile_v1: { completedStages: ['stage-1','unknown',null,['stage-6']], courseScores: {'stage-2':90,'stage-3':'999','stage-4':120,'stage-5':-1,'stage-6':'Infinity',unknown:100} },
-      cnc_training_practice_v1: { wrongQuestions: [{id:'q1'},null,'bad',[],{id:'q2'}] },
-      cnc_training_simulator_v1: { records: { homing:{passed:true},'workholding-check':{bestScore:90},'tool-installation':{bestScore:'999'},'tool-length-offset-check':{bestScore:120},'work-offset-setting':{bestScore:-1},'program-dry-run':{passed:'true'},unknown:{passed:true} }, simulators: {'workholding-check':{bestScore:100}} }
-    });
-    assert.strictEqual(await malformed.page.locator('#passed-count').textContent(), '2', '只有合法完成记录与合法90分应计为通过');
-    assert.strictEqual(await malformed.page.locator('#avg-score').textContent(), '85');
-    assert.strictEqual(await malformed.page.locator('#wrong-count').textContent(), '2', '损坏错题不得计数');
-    assert.strictEqual(await malformed.page.locator('#simulator-status').textContent(), '已通过 2/13 项', '损坏模拟成绩/字符串passed/未知ID不得计通过');
-    assert.match(await malformed.page.locator('#next-title').textContent(), /第3关/);
-    await assertMobile(malformed); report.cases.malformedReadOnly = true;
-    await malformed.page.screenshot({ path: \`${ARTIFACT_DIR}/malformed-data.png\`, fullPage: true });
-    await malformed.page.close();
-
-    const completeProfile = { completedStages: Array.from({length:12},(_,i)=>\`stage-${i+1}\`), courseScores: Object.fromEntries(Array.from({length:12},(_,i)=>[\`stage-${i+1}\`,80+(i%3)*10])) };
-    const complete = await openPage(browser, {
-      cnc_training_profile_v1: completeProfile,
-      cnc_training_practice_v1: { wrongQuestions: [null,'bad',[]] },
-      cnc_training_simulator_v1: { records: { homing:{passed:true},'workholding-check':{bestScore:90},'tool-installation':{bestScore:'999'},'tool-length-offset-check':{bestScore:120} } }
-    });
-    assert.strictEqual(await complete.page.locator('#passed-count').textContent(), '12');
-    assert.strictEqual(await complete.page.locator('#wrong-count').textContent(), '0');
-    assert.strictEqual(await complete.page.locator('#simulator-status').textContent(), '已通过 2/13 项');
-    assert.match(await complete.page.locator('#route-title').textContent(), /继续模拟训练（2\/13）/);
-    assert.match(await complete.page.locator('#route-cta').getAttribute('href'), /simulator-hub\\.html/);
-    await assertMobile(complete); report.cases.completeRoute = true;
-    await complete.page.close();
-
-    const arrayRoots = await openPage(browser, { cnc_training_profile_v1: [], cnc_training_practice_v1: [], cnc_training_simulator_v1: [] });
-    assert.strictEqual(await arrayRoots.page.locator('#passed-count').textContent(), '0');
-    assert.strictEqual(await arrayRoots.page.locator('#wrong-count').textContent(), '0');
-    assert.strictEqual(await arrayRoots.page.locator('#simulator-status').textContent(), '已通过 0/13 项');
-    await assertMobile(arrayRoots); report.cases.arrayRoots = true;
-    await arrayRoots.page.close();
-
-    report.passed = true;
-    fs.writeFileSync(\`${ARTIFACT_DIR}/report.json\`, JSON.stringify(report, null, 2));
-    console.log('CNC training camp hub data integrity smoke passed');
-  } catch (error) {
-    report.passed = false; report.error = String(error.stack || error);
-    fs.writeFileSync(\`${ARTIFACT_DIR}/report.json\`, JSON.stringify(report, null, 2));
-    fs.writeFileSync(\`${ARTIFACT_DIR}/error.txt\`, \`${error.stack || error}\\n\`);
-    throw error;
-  } finally { await browser.close(); }
-})();
-`;
-fs.writeFileSync('cnc/tests/mobile-training-camp-hub-smoke.cjs',test);
-
-let sw=fs.readFileSync('cnc/sw.js','utf8');
-sw=replaceOnce(sw,"const BUILD = '20260812-pwa40';","const BUILD = '20260812-pwa41';",'Service Worker PWA41');
-sw=replaceOnce(sw,"const CACHE_REVISION = '20260812-learning40';","const CACHE_REVISION = '20260812-learning41';",'Service Worker learning41');
-fs.writeFileSync('cnc/sw.js',sw);
-const infoPath='cnc/build-info.json';
-const info=JSON.parse(fs.readFileSync(infoPath,'utf8'));
-if(info.pwaBuild!=='20260812-pwa40'||info.cacheRevision!=='20260812-learning40') throw new Error(`build-info基线意外：${info.pwaBuild}/${info.cacheRevision}`);
-info.pwaBuild='20260812-pwa41'; info.cacheRevision='20260812-learning41'; info.generatedAt='2026-08-12T19:31:42+08:00';
-if(!String(info.contentStage).includes('训练营异常学习数据只读降级')) info.contentStage+=' · 训练营异常学习数据只读降级';
-fs.writeFileSync(infoPath,JSON.stringify(info,null,2)+'\n');
-for(const path of ['cnc/pwa-status.html','cnc/pwa-self-test.html','cnc/MOBILE_LEARNING_MEDIA_PROGRESS.md']){
-  let source=fs.readFileSync(path,'utf8');
-  source=source.replaceAll('20260812-pwa40','20260812-pwa41').replaceAll('20260812-learning40','20260812-learning41');
-  fs.writeFileSync(path,source);
-}
+const oldCourse="document.getElementById('course-list').innerHTML=COURSES.map((c,i)=>{const doneFlag=isDone(profile,c.id),score=Number(scores[c.id]||0),current=c.id===next.id&&!doneFlag;return `<a class=\"course ${doneFlag?'done':''} ${current?'current':''}\" href=\"./${c.file}\" data-stage=\"${c.id}\"><span class=\"number\">${String(i+1).padStart(2,'0')}</span><span><h2>${c.title}</h2><p>${c.reason}</p></span><span class=\"status\">${doneFlag?`已通过 ${score||80}分`:current?'继续学习':'未开始'}</span></a>`}).join('');";
+const newCourse="document.getElementById('course-list').innerHTML=COURSES.map((c,i)=>{const doneFlag=isDone(profile,c.id),score=courseScore(profile,c.id),current=c.id===next.id&&!doneFlag;return `<a class=\"course ${doneFlag?'done':''} ${current?'current':''}\" href=\"./${c.file}\" data-stage=\"${c.id}\"><span class=\"number\">${String(i+1).padStart(2,'0')}</span><span><h2>${c.title}</h2><p>${c.reason}</p></span><span class=\"status\">${doneFlag?`已通过 ${score||80}分`:current?'继续学习':'未开始'}</span></a>`}).join('');";
+camp=replaceOnce(camp,oldCourse,newCourse,'课程状态严格分数');fs.writeFileSync(campPath,camp);
+const testBase64='Y29uc3QgeyBjaHJvbWl1bSB9ID0gcmVxdWlyZSgncGxheXdyaWdodCcpOwpjb25zdCBmcyA9IHJlcXVpcmUoJ2ZzJyk7CmNvbnN0IGFzc2VydCA9IHJlcXVpcmUoJ2Fzc2VydCcpOwoKY29uc3QgQkFTRSA9IHByb2Nlc3MuZW52LkNOQ19CQVNFX1VSTCB8fCAnaHR0cDovLzEyNy4wLjAuMTo0MTczJzsKY29uc3QgQVJUSUZBQ1RfRElSID0gJ2FydGlmYWN0cy90cmFpbmluZy1jYW1wLWh1Yic7CmZzLm1rZGlyU3luYyhBUlRJRkFDVF9ESVIsIHsgcmVjdXJzaXZlOiB0cnVlIH0pOwoKYXN5bmMgZnVuY3Rpb24gb3BlblBhZ2UoYnJvd3Nlciwgc3RvcmFnZSA9IHt9KSB7CiAgY29uc3QgcGFnZSA9IGF3YWl0IGJyb3dzZXIubmV3UGFnZSh7IHZpZXdwb3J0OiB7IHdpZHRoOiAzOTAsIGhlaWdodDogODQ0IH0sIGlzTW9iaWxlOiB0cnVlLCBoYXNUb3VjaDogdHJ1ZSwgZGV2aWNlU2NhbGVGYWN0b3I6IDIgfSk7CiAgY29uc3QgY29uc29sZUVycm9ycyA9IFtdLCBwYWdlRXJyb3JzID0gW107CiAgcGFnZS5vbignY29uc29sZScsIG1zZyA9PiB7IGlmIChtc2cudHlwZSgpID09PSAnZXJyb3InKSBjb25zb2xlRXJyb3JzLnB1c2gobXNnLnRleHQoKSk7IH0pOwogIHBhZ2Uub24oJ3BhZ2VlcnJvcicsIGVycm9yID0+IHBhZ2VFcnJvcnMucHVzaChlcnJvci5tZXNzYWdlKSk7CiAgYXdhaXQgcGFnZS5hZGRJbml0U2NyaXB0KHNlZWQgPT4gewogICAgbG9jYWxTdG9yYWdlLmNsZWFyKCk7CiAgICBmb3IgKGNvbnN0IFtrZXksIHZhbHVlXSBvZiBPYmplY3QuZW50cmllcyhzZWVkKSkgbG9jYWxTdG9yYWdlLnNldEl0ZW0oa2V5LCBKU09OLnN0cmluZ2lmeSh2YWx1ZSkpOwogIH0sIHN0b3JhZ2UpOwogIGF3YWl0IHBhZ2UuZ290byhgJHtCQVNFfS9jbmMvdHJhaW5pbmctY2FtcC5odG1sYCwgeyB3YWl0VW50aWw6ICduZXR3b3JraWRsZScgfSk7CiAgY29uc3QgYmVmb3JlID0gYXdhaXQgcGFnZS5ldmFsdWF0ZSgoKSA9PiBPYmplY3QuZnJvbUVudHJpZXMoT2JqZWN0LmtleXMobG9jYWxTdG9yYWdlKS5zb3J0KCkubWFwKGtleSA9PiBba2V5LCBsb2NhbFN0b3JhZ2UuZ2V0SXRlbShrZXkpXSkpKTsKICByZXR1cm4geyBwYWdlLCBjb25zb2xlRXJyb3JzLCBwYWdlRXJyb3JzLCBiZWZvcmUgfTsKfQoKYXN5bmMgZnVuY3Rpb24gYXNzZXJ0UmVhZE9ubHkoY2FzZURhdGEpIHsKICBjb25zdCBhZnRlciA9IGF3YWl0IGNhc2VEYXRhLnBhZ2UuZXZhbHVhdGUoKCkgPT4gT2JqZWN0LmZyb21FbnRyaWVzKE9iamVjdC5rZXlzKGxvY2FsU3RvcmFnZSkuc29ydCgpLm1hcChrZXkgPT4gW2tleSwgbG9jYWxTdG9yYWdlLmdldEl0ZW0oa2V5KV0pKSk7CiAgYXNzZXJ0LmRlZXBTdHJpY3RFcXVhbChhZnRlciwgY2FzZURhdGEuYmVmb3JlLCAn6K6t57uD6JCl5LiN5b6X5riF55CG44CB6L+B56e75oiW6Z2Z6buY5pS55YaZbG9jYWxTdG9yYWdlJyk7Cn0KYXN5bmMgZnVuY3Rpb24gYXNzZXJ0TW9iaWxlKGNhc2VEYXRhKSB7CiAgY29uc3QgeyBwYWdlLCBjb25zb2xlRXJyb3JzLCBwYWdlRXJyb3JzIH0gPSBjYXNlRGF0YTsKICBjb25zdCBvdmVyZmxvdyA9IGF3YWl0IHBhZ2UuZXZhbHVhdGUoKCkgPT4gZG9jdW1lbnQuZG9jdW1lbnRFbGVtZW50LnNjcm9sbFdpZHRoIC0gZG9jdW1lbnQuZG9jdW1lbnRFbGVtZW50LmNsaWVudFdpZHRoKTsKICBhc3NlcnQub2sob3ZlcmZsb3cgPD0gMSwgYDM5MHB46aG16Z2i5qiq5ZCR5rqi5Ye677yaJHtvdmVyZmxvd31gKTsKICBjb25zdCB0ZXh0ID0gYXdhaXQgcGFnZS5sb2NhdG9yKCdib2R5JykuaW5uZXJUZXh0KCk7CiAgYXNzZXJ0Lm9rKCEvTmFOfEluZmluaXR5Ly50ZXN0KHRleHQpLCAn6aG16Z2i5LiN5b6X5Ye6546wTmFOL0luZmluaXR5Jyk7CiAgY29uc3QgdGFyZ2V0cyA9IGF3YWl0IHBhZ2UubG9jYXRvcignYTp2aXNpYmxlJykuZXZhbHVhdGVBbGwobm9kZXMgPT4gbm9kZXMubWFwKG5vZGUgPT4geyBjb25zdCByPW5vZGUuZ2V0Qm91bmRpbmdDbGllbnRSZWN0KCk7IHJldHVybiB7dGV4dDpub2RlLnRleHRDb250ZW50LnRyaW0oKS5yZXBsYWNlKC9ccysvZywnICcpLGhlaWdodDpyLmhlaWdodCx3aWR0aDpyLndpZHRofTsgfSkpOwogIGNvbnN0IGludmFsaWQgPSB0YXJnZXRzLmZpbHRlcihpdGVtID0+IGl0ZW0ud2lkdGggPiAwICYmIGl0ZW0uaGVpZ2h0ID4gMCAmJiBpdGVtLmhlaWdodCA8IDQ0KTsKICBhc3NlcnQuZGVlcFN0cmljdEVxdWFsKGludmFsaWQsIFtdLCBg6Kem5o6n5Yy65LiN6LazNDRweDogJHtKU09OLnN0cmluZ2lmeShpbnZhbGlkKX1gKTsKICBhc3NlcnQuZGVlcFN0cmljdEVxdWFsKGNvbnNvbGVFcnJvcnMsIFtdLCBg5o6n5Yi25Y+w6ZSZ6K+vOiAke2NvbnNvbGVFcnJvcnMuam9pbignIHwgJyl9YCk7CiAgYXNzZXJ0LmRlZXBTdHJpY3RFcXVhbChwYWdlRXJyb3JzLCBbXSwgYOmhtemdoumUmeivrzogJHtwYWdlRXJyb3JzLmpvaW4oJyB8ICcpfWApOwogIGF3YWl0IGFzc2VydFJlYWRPbmx5KGNhc2VEYXRhKTsKfQoKKGFzeW5jICgpID0+IHsKICBjb25zdCBicm93c2VyID0gYXdhaXQgY2hyb21pdW0ubGF1bmNoKHsgaGVhZGxlc3M6IHRydWUgfSk7CiAgY29uc3QgcmVwb3J0ID0geyB2aWV3cG9ydDogJzM5MHg4NDQnLCBjYXNlczoge30gfTsKICB0cnkgewogICAgY29uc3QgZW1wdHkgPSBhd2FpdCBvcGVuUGFnZShicm93c2VyKTsKICAgIGFzc2VydC5zdHJpY3RFcXVhbChhd2FpdCBlbXB0eS5wYWdlLmxvY2F0b3IoJyNwYXNzZWQtY291bnQnKS50ZXh0Q29udGVudCgpLCAnMCcpOwogICAgYXNzZXJ0LnN0cmljdEVxdWFsKGF3YWl0IGVtcHR5LnBhZ2UubG9jYXRvcignI3dyb25nLWNvdW50JykudGV4dENvbnRlbnQoKSwgJzAnKTsKICAgIGFzc2VydC5zdHJpY3RFcXVhbChhd2FpdCBlbXB0eS5wYWdlLmxvY2F0b3IoJyNzaW11bGF0b3Itc3RhdHVzJykudGV4dENvbnRlbnQoKSwgJ+W3sumAmui/hyAwLzEzIOmhuScpOwogICAgYXNzZXJ0Lm1hdGNoKGF3YWl0IGVtcHR5LnBhZ2UubG9jYXRvcignI25leHQtdGl0bGUnKS50ZXh0Q29udGVudCgpLCAv56ysMeWFsy4q5a6J5YWo5Z+656GALyk7CiAgICBhd2FpdCBhc3NlcnRNb2JpbGUoZW1wdHkpOyByZXBvcnQuY2FzZXMuZW1wdHkgPSB0cnVlOwogICAgYXdhaXQgZW1wdHkucGFnZS5jbG9zZSgpOwoKICAgIGNvbnN0IG1hbGZvcm1lZCA9IGF3YWl0IG9wZW5QYWdlKGJyb3dzZXIsIHsKICAgICAgY25jX3RyYWluaW5nX3Byb2ZpbGVfdjE6IHsgY29tcGxldGVkU3RhZ2VzOiBbJ3N0YWdlLTEnLCd1bmtub3duJyxudWxsLFsnc3RhZ2UtNiddXSwgY291cnNlU2NvcmVzOiB7J3N0YWdlLTInOjkwLCdzdGFnZS0zJzonOTk5Jywnc3RhZ2UtNCc6MTIwLCdzdGFnZS01JzotMSwnc3RhZ2UtNic6J0luZmluaXR5Jyx1bmtub3duOjEwMH0gfSwKICAgICAgY25jX3RyYWluaW5nX3ByYWN0aWNlX3YxOiB7IHdyb25nUXVlc3Rpb25zOiBbe2lkOidxMSd9LG51bGwsJ2JhZCcsW10se2lkOidxMid9XSB9LAogICAgICBjbmNfdHJhaW5pbmdfc2ltdWxhdG9yX3YxOiB7IHJlY29yZHM6IHsgaG9taW5nOntwYXNzZWQ6dHJ1ZX0sJ3dvcmtob2xkaW5nLWNoZWNrJzp7YmVzdFNjb3JlOjkwfSwndG9vbC1pbnN0YWxsYXRpb24nOntiZXN0U2NvcmU6Jzk5OSd9LCd0b29sLWxlbmd0aC1vZmZzZXQtY2hlY2snOntiZXN0U2NvcmU6MTIwfSwnd29yay1vZmZzZXQtc2V0dGluZyc6e2Jlc3RTY29yZTotMX0sJ3Byb2dyYW0tZHJ5LXJ1bic6e3Bhc3NlZDondHJ1ZSd9LHVua25vd246e3Bhc3NlZDp0cnVlfSB9LCBzaW11bGF0b3JzOiB7J3dvcmtob2xkaW5nLWNoZWNrJzp7YmVzdFNjb3JlOjEwMH19IH0KICAgIH0pOwogICAgYXNzZXJ0LnN0cmljdEVxdWFsKGF3YWl0IG1hbGZvcm1lZC5wYWdlLmxvY2F0b3IoJyNwYXNzZWQtY291bnQnKS50ZXh0Q29udGVudCgpLCAnMicsICflj6rmnInlkIjms5XlrozmiJDorrDlvZXkuI7lkIjms5U5MOWIhuW6lOiuoeS4uumAmui/hycpOwogICAgYXNzZXJ0LnN0cmljdEVxdWFsKGF3YWl0IG1hbGZvcm1lZC5wYWdlLmxvY2F0b3IoJyNhdmctc2NvcmUnKS50ZXh0Q29udGVudCgpLCAnODUnKTsKICAgIGFzc2VydC5zdHJpY3RFcXVhbChhd2FpdCBtYWxmb3JtZWQucGFnZS5sb2NhdG9yKCcjd3JvbmctY291bnQnKS50ZXh0Q29udGVudCgpLCAnMicsICfmjZ/lnY/plJnpopjkuI3lvpforqHmlbAnKTsKICAgIGFzc2VydC5zdHJpY3RFcXVhbChhd2FpdCBtYWxmb3JtZWQucGFnZS5sb2NhdG9yKCcjc2ltdWxhdG9yLXN0YXR1cycpLnRleHRDb250ZW50KCksICflt7LpgJrov4cgMi8xMyDpobknLCAn5o2f5Z2P5qih5ouf5oiQ57upL+Wtl+espuS4snBhc3NlZC/mnKrnn6VJROS4jeW+l+iuoemAmui/hycpOwogICAgYXNzZXJ0Lm1hdGNoKGF3YWl0IG1hbGZvcm1lZC5wYWdlLmxvY2F0b3IoJyNuZXh0LXRpdGxlJykudGV4dENvbnRlbnQoKSwgL+esrDPlhbMvKTsKICAgIGF3YWl0IGFzc2VydE1vYmlsZShtYWxmb3JtZWQpOyByZXBvcnQuY2FzZXMubWFsZm9ybWVkUmVhZE9ubHkgPSB0cnVlOwogICAgYXdhaXQgbWFsZm9ybWVkLnBhZ2Uuc2NyZWVuc2hvdCh7IHBhdGg6IGAke0FSVElGQUNUX0RJUn0vbWFsZm9ybWVkLWRhdGEucG5nYCwgZnVsbFBhZ2U6IHRydWUgfSk7CiAgICBhd2FpdCBtYWxmb3JtZWQucGFnZS5jbG9zZSgpOwoKICAgIGNvbnN0IGNvbXBsZXRlUHJvZmlsZSA9IHsgY29tcGxldGVkU3RhZ2VzOiBBcnJheS5mcm9tKHtsZW5ndGg6MTJ9LChfLGkpPT5gc3RhZ2UtJHtpKzF9YCksIGNvdXJzZVNjb3JlczogT2JqZWN0LmZyb21FbnRyaWVzKEFycmF5LmZyb20oe2xlbmd0aDoxMn0sKF8saSk9Pltgc3RhZ2UtJHtpKzF9YCw4MCsoaSUzKSoxMF0pKSB9OwogICAgY29uc3QgY29tcGxldGUgPSBhd2FpdCBvcGVuUGFnZShicm93c2VyLCB7CiAgICAgIGNuY190cmFpbmluZ19wcm9maWxlX3YxOiBjb21wbGV0ZVByb2ZpbGUsCiAgICAgIGNuY190cmFpbmluZ19wcmFjdGljZV92MTogeyB3cm9uZ1F1ZXN0aW9uczogW251bGwsJ2JhZCcsW11dIH0sCiAgICAgIGNuY190cmFpbmluZ19zaW11bGF0b3JfdjE6IHsgcmVjb3JkczogeyBob21pbmc6e3Bhc3NlZDp0cnVlfSwnd29ya2hvbGRpbmctY2hlY2snOntiZXN0U2NvcmU6OTB9LCd0b29sLWluc3RhbGxhdGlvbic6e2Jlc3RTY29yZTonOTk5J30sJ3Rvb2wtbGVuZ3RoLW9mZnNldC1jaGVjayc6e2Jlc3RTY29yZToxMjB9IH0gfQogICAgfSk7CiAgICBhc3NlcnQuc3RyaWN0RXF1YWwoYXdhaXQgY29tcGxldGUucGFnZS5sb2NhdG9yKCcjcGFzc2VkLWNvdW50JykudGV4dENvbnRlbnQoKSwgJzEyJyk7CiAgICBhc3NlcnQuc3RyaWN0RXF1YWwoYXdhaXQgY29tcGxldGUucGFnZS5sb2NhdG9yKCcjd3JvbmctY291bnQnKS50ZXh0Q29udGVudCgpLCAnMCcpOwogICAgYXNzZXJ0LnN0cmljdEVxdWFsKGF3YWl0IGNvbXBsZXRlLnBhZ2UubG9jYXRvcignI3NpbXVsYXRvci1zdGF0dXMnKS50ZXh0Q29udGVudCgpLCAn5bey6YCa6L+HIDIvMTMg6aG5Jyk7CiAgICBhc3NlcnQubWF0Y2goYXdhaXQgY29tcGxldGUucGFnZS5sb2NhdG9yKCcjcm91dGUtdGl0bGUnKS50ZXh0Q29udGVudCgpLCAv57un57ut5qih5ouf6K6t57uD77yIMlwvMTPvvIkvKTsKICAgIGFzc2VydC5tYXRjaChhd2FpdCBjb21wbGV0ZS5wYWdlLmxvY2F0b3IoJyNyb3V0ZS1jdGEnKS5nZXRBdHRyaWJ1dGUoJ2hyZWYnKSwgL3NpbXVsYXRvci1odWJcLmh0bWwvKTsKICAgIGF3YWl0IGFzc2VydE1vYmlsZShjb21wbGV0ZSk7IHJlcG9ydC5jYXNlcy5jb21wbGV0ZVJvdXRlID0gdHJ1ZTsKICAgIGF3YWl0IGNvbXBsZXRlLnBhZ2UuY2xvc2UoKTsKCiAgICBjb25zdCBhcnJheVJvb3RzID0gYXdhaXQgb3BlblBhZ2UoYnJvd3NlciwgeyBjbmNfdHJhaW5pbmdfcHJvZmlsZV92MTogW10sIGNuY190cmFpbmluZ19wcmFjdGljZV92MTogW10sIGNuY190cmFpbmluZ19zaW11bGF0b3JfdjE6IFtdIH0pOwogICAgYXNzZXJ0LnN0cmljdEVxdWFsKGF3YWl0IGFycmF5Um9vdHMucGFnZS5sb2NhdG9yKCcjcGFzc2VkLWNvdW50JykudGV4dENvbnRlbnQoKSwgJzAnKTsKICAgIGFzc2VydC5zdHJpY3RFcXVhbChhd2FpdCBhcnJheVJvb3RzLnBhZ2UubG9jYXRvcignI3dyb25nLWNvdW50JykudGV4dENvbnRlbnQoKSwgJzAnKTsKICAgIGFzc2VydC5zdHJpY3RFcXVhbChhd2FpdCBhcnJheVJvb3RzLnBhZ2UubG9jYXRvcignI3NpbXVsYXRvci1zdGF0dXMnKS50ZXh0Q29udGVudCgpLCAn5bey6YCa6L+HIDAvMTMg6aG5Jyk7CiAgICBhd2FpdCBhc3NlcnRNb2JpbGUoYXJyYXlSb290cyk7IHJlcG9ydC5jYXNlcy5hcnJheVJvb3RzID0gdHJ1ZTsKICAgIGF3YWl0IGFycmF5Um9vdHMucGFnZS5jbG9zZSgpOwoKICAgIHJlcG9ydC5wYXNzZWQgPSB0cnVlOwogICAgZnMud3JpdGVGaWxlU3luYyhgJHtBUlRJRkFDVF9ESVJ9L3JlcG9ydC5qc29uYCwgSlNPTi5zdHJpbmdpZnkocmVwb3J0LCBudWxsLCAyKSk7CiAgICBjb25zb2xlLmxvZygnQ05DIHRyYWluaW5nIGNhbXAgaHViIGRhdGEgaW50ZWdyaXR5IHNtb2tlIHBhc3NlZCcpOwogIH0gY2F0Y2ggKGVycm9yKSB7CiAgICByZXBvcnQucGFzc2VkID0gZmFsc2U7IHJlcG9ydC5lcnJvciA9IFN0cmluZyhlcnJvci5zdGFjayB8fCBlcnJvcik7CiAgICBmcy53cml0ZUZpbGVTeW5jKGAke0FSVElGQUNUX0RJUn0vcmVwb3J0Lmpzb25gLCBKU09OLnN0cmluZ2lmeShyZXBvcnQsIG51bGwsIDIpKTsKICAgIGZzLndyaXRlRmlsZVN5bmMoYCR7QVJUSUZBQ1RfRElSfS9lcnJvci50eHRgLCBgJHtlcnJvci5zdGFjayB8fCBlcnJvcn1cbmApOwogICAgdGhyb3cgZXJyb3I7CiAgfSBmaW5hbGx5IHsgYXdhaXQgYnJvd3Nlci5jbG9zZSgpOyB9Cn0pKCk7Cg==';
+fs.writeFileSync('cnc/tests/mobile-training-camp-hub-smoke.cjs',Buffer.from(testBase64,'base64').toString('utf8'));
+let sw=fs.readFileSync('cnc/sw.js','utf8');sw=replaceOnce(sw,"const BUILD = '20260812-pwa40';","const BUILD = '20260812-pwa41';",'Service Worker PWA41');sw=replaceOnce(sw,"const CACHE_REVISION = '20260812-learning40';","const CACHE_REVISION = '20260812-learning41';",'Service Worker learning41');fs.writeFileSync('cnc/sw.js',sw);
+const infoPath='cnc/build-info.json';const info=JSON.parse(fs.readFileSync(infoPath,'utf8'));if(info.pwaBuild!=='20260812-pwa40'||info.cacheRevision!=='20260812-learning40')throw new Error(`build-info基线意外：${info.pwaBuild}/${info.cacheRevision}`);info.pwaBuild='20260812-pwa41';info.cacheRevision='20260812-learning41';info.generatedAt='2026-08-12T19:31:42+08:00';if(!String(info.contentStage).includes('训练营异常学习数据只读降级'))info.contentStage+=' · 训练营异常学习数据只读降级';fs.writeFileSync(infoPath,JSON.stringify(info,null,2)+'\n');
+for(const path of ['cnc/pwa-status.html','cnc/pwa-self-test.html','cnc/MOBILE_LEARNING_MEDIA_PROGRESS.md']){let source=fs.readFileSync(path,'utf8');source=source.replaceAll('20260812-pwa40','20260812-pwa41').replaceAll('20260812-learning40','20260812-learning41');fs.writeFileSync(path,source)}
 console.log('training-camp data integrity patch applied');
