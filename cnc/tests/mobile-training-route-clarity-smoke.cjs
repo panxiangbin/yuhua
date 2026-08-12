@@ -46,7 +46,14 @@ async function assertTouchTargets(page) {
 
     const wrong = await openPage(browser, {
       cnc_training_profile_v1: { version: 1, completedStages, courseScores },
-      cnc_training_practice_v1: { version: 1, wrongQuestions: ['a', 'b', 'c'] }
+      cnc_training_practice_v1: {
+        version: 1,
+        wrongQuestions: [
+          { id: 'wrong-1', ability: '安全基础' },
+          { id: 'wrong-2', ability: '坐标基础' },
+          { id: 'wrong-3', ability: '程序基础' }
+        ]
+      }
     }, 'wrong-review-recommendation');
     assert.strictEqual(await wrong.page.locator('.route-card.recommended').getAttribute('id'), 'route-practice');
     assert.match(await wrong.page.locator('#route-title').textContent(), /3道错题/);
