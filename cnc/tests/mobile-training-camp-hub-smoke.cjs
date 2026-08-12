@@ -72,11 +72,34 @@ async function assertMobile(caseData) {
     });
     assert.strictEqual(await complete.page.locator('#passed-count').textContent(), '12');
     assert.strictEqual(await complete.page.locator('#wrong-count').textContent(), '0');
-    assert.strictEqual(await complete.page.locator('#simulator-status').textContent(), '已通过 2/13 项');
-    assert.match(await complete.page.locator('#route-title').textContent(), /继续模拟训练（2\/13）/);
+    assert.strictEqual(await complete.page.locator('#simulator-status').textContent(), '已通过 1/13 项', '90分不得单独计为模拟通过');
+    assert.match(await complete.page.locator('#route-title').textContent(), /继续模拟训练（1\/13）/);
     assert.match(await complete.page.locator('#route-cta').getAttribute('href'), /simulator-hub\.html/);
     await assertMobile(complete); report.cases.completeRoute = true;
     await complete.page.close();
+
+    const simulatorIds = ['homing','workholding-check','tool-installation','tool-length-offset-check','work-offset-setting','program-dry-run','single-block-first-approach','graphics-segment-prediction','first-piece-inspection','alarm-troubleshooting','cutter-comp-risk','hole-cycle-troubleshooting','measurement-vs-machining-error'];
+    const ninetyOnly = await openPage(browser, {
+      cnc_training_profile_v1: completeProfile,
+      cnc_training_practice_v1: { wrongQuestions: [] },
+      cnc_training_simulator_v1: { records: Object.fromEntries(simulatorIds.map(id => [id, { bestScore: 90 }])) }
+    });
+    assert.strictEqual(await ninetyOnly.page.locator('#simulator-status').textContent(), '已通过 0/13 项', '13项都只有90分时不得提前完成模拟训练');
+    assert.match(await ninetyOnly.page.locator('#route-title').textContent(), /继续模拟训练（0\/13）/);
+    assert.match(await ninetyOnly.page.locator('#route-cta').getAttribute('href'), /simulator-hub\.html/);
+    await assertMobile(ninetyOnly); report.cases.ninetyIsNotPassed = true;
+    await ninetyOnly.page.close();
+
+    const fullyPassed = await openPage(browser, {
+      cnc_training_profile_v1: completeProfile,
+      cnc_training_practice_v1: { wrongQuestions: [] },
+      cnc_training_simulator_v1: { records: Object.fromEntries(simulatorIds.map((id, index) => [id, index % 2 === 0 ? { bestScore: 100 } : { passed: true, bestScore: 90 }])) }
+    });
+    assert.strictEqual(await fullyPassed.page.locator('#simulator-status').textContent(), '已通过 13/13 项', '100分或真实passed=true才可完成模拟训练');
+    assert.match(await fullyPassed.page.locator('#route-title').textContent(), /查看成长档案/);
+    assert.match(await fullyPassed.page.locator('#route-cta').getAttribute('href'), /profile\.html/);
+    await assertMobile(fullyPassed); report.cases.fullPassRoute = true;
+    await fullyPassed.page.close();
 
     const arrayRoots = await openPage(browser, { cnc_training_profile_v1: [], cnc_training_practice_v1: [], cnc_training_simulator_v1: [] });
     assert.strictEqual(await arrayRoots.page.locator('#passed-count').textContent(), '0');
