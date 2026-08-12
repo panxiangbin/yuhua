@@ -62,7 +62,7 @@ function courseScore(profile,id){const value=strictScore(getScores(profile)[id])
 function isDone(profile,id){const done=completedStageIds(profile);if(done.has(id))return true;const value=strictScore(getScores(profile)[id]);return value!==null&&value>=80}
 function countWrong(practice){const wrong=practice.wrongQuestions??practice.wrong??[];if(Array.isArray(wrong))return wrong.filter(isRecord).length;if(isRecord(wrong))return Object.values(wrong).filter(isRecord).length;return 0}
 function simulatorCandidates(simulator,id){return [isRecord(simulator.records)&&isRecord(simulator.records[id])?simulator.records[id]:null,isRecord(simulator.simulators)&&isRecord(simulator.simulators[id])?simulator.simulators[id]:null,isRecord(simulator[id])?simulator[id]:null].filter(isRecord)}
-function simulatorRecordPassed(record){if(record.passed===true)return true;const best=strictScore(record.bestScore??record.best??record.score);return best!==null&&best>=80}
+function simulatorRecordPassed(record){if(record.passed===true)return true;const best=strictScore(record.bestScore??record.best??record.score);return best!==null&&best===100}
 function countSimulatorPassed(simulator){return SIMULATOR_IDS.filter(id=>simulatorCandidates(simulator,id).some(simulatorRecordPassed)).length}
 function setRecommended(id){document.querySelectorAll('.route-card').forEach(card=>card.classList.toggle('recommended',card.id===id))}
 function handoffOutcome(state,data=null){return {state,data}}
