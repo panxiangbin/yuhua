@@ -48,6 +48,7 @@
 <script>
 const PROFILE='cnc_training_profile_v1',PRACTICE='cnc_training_practice_v1',SIM='cnc_training_simulator_v1';
 const SETS=['safety-coordinate','advanced-verification','drawing-setup-process','program-fill-sort-debug','alarm-parameter-first-piece'];
+const SOURCE_PREFIXES=[['sc-','safety-coordinate'],['av-','advanced-verification'],['dsp-','drawing-setup-process'],['pfsd-','program-fill-sort-debug'],['apf-','alarm-parameter-first-piece']];
 const ABILITIES=['安全基础','坐标与对刀','图纸与工艺','程序验证','首件与测量','故障排查'];
 function record(v){return !!v&&typeof v==='object'&&!Array.isArray(v)}
 function finite(v,fallback=0){const n=Number(v);return Number.isFinite(n)?n:fallback}
@@ -56,7 +57,11 @@ function nonNegativeInt(v){return Math.max(0,Math.floor(finite(v,0)))}
 function read(k){try{const v=JSON.parse(localStorage.getItem(k)||'null');return record(v)?v:{}}catch{return {}}}
 function arr(v){return Array.isArray(v)?v:[]}
 function rows(v){return arr(v).filter(record)}
-function wrongRows(d){const v=d.wrongQuestions??d.wrong??[];return Array.isArray(v)?rows(v):record(v)?Object.values(v).filter(record):[]}
+function listValues(v){return Array.isArray(v)?v:record(v)?Object.values(v):[]}
+function scalarText(v){return ['string','number','boolean'].includes(typeof v)?String(v).trim():''}
+function wrongQuestionId(w){return scalarText(w.questionId??w.id??w.key)}
+function wrongSourceId(w){const hint=scalarText(w.practiceId??w.source??w.setId??w.practice??w.redoUrl).toLowerCase();const direct=SETS.find(id=>hint.includes(id));if(direct)return direct;const id=wrongQuestionId(w).toLowerCase(),mapped=SOURCE_PREFIXES.find(([prefix])=>id.startsWith(prefix));return mapped?mapped[1]:''}
+function wrongRows(d){const map=new Map;[...listValues(d.wrongQuestions),...listValues(d.wrongItems),...listValues(d.wrong)].forEach(w=>{if(!record(w))return;const sid=wrongSourceId(w),id=wrongQuestionId(w);if(!sid||!id)return;const key=`${sid}:${id}`,old=map.get(key)||{};map.set(key,{...old,...w})});return [...map.values()]}
 function history(d){return [...rows(d.history),...rows(d.attempts),...rows(d.results)]}
 function practiceStats(d){return SETS.map(id=>{const attempts=history(d).filter(r=>String(r.practiceId||r.source||r.setId||'').includes(id));return {id,best:Math.max(0,...attempts.map(r=>score(r.score)))}})}
 function simRows(d){const root=record(d.simulators)?d.simulators:d;return Object.values(root||{}).filter(v=>record(v)&&('passed'in v||'bestScore'in v||'score'in v))}
