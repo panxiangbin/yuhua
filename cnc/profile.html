@@ -52,10 +52,9 @@ const SOURCE_PREFIXES=[['sc-','safety-coordinate'],['av-','advanced-verification
 const SIM_IDS=['homing','workholding-check','tool-installation','tool-length-offset-check','work-offset-setting','program-dry-run','single-block-first-approach','graphics-segment-prediction','first-piece-inspection','alarm-troubleshooting','cutter-comp-risk','hole-cycle-troubleshooting','measurement-vs-machining-error'];
 const ABILITIES=['安全基础','坐标与对刀','图纸与工艺','程序验证','首件与测量','故障排查'];
 function record(v){return !!v&&typeof v==='object'&&!Array.isArray(v)}
-function finite(v,fallback=0){const n=Number(v);return Number.isFinite(n)?n:fallback}
-function score(v){return Math.max(0,Math.min(100,finite(v,0)))}
-function strictScore(v){const n=Number(v);return Number.isFinite(n)&&n>=0&&n<=100?n:0}
-function nonNegativeInt(v){return Math.max(0,Math.floor(finite(v,0)))}
+function score(v){return typeof v==='number'&&Number.isFinite(v)&&v>=0&&v<=100?v:0}
+function strictScore(v){return typeof v==='number'&&Number.isFinite(v)&&v>=0&&v<=100?v:0}
+function nonNegativeInt(v){return typeof v==='number'&&Number.isFinite(v)&&v>=0?Math.floor(v):0}
 function read(k){try{const v=JSON.parse(localStorage.getItem(k)||'null');return record(v)?v:{}}catch{return {}}}
 function arr(v){return Array.isArray(v)?v:[]}
 function rows(v){return arr(v).filter(record)}
