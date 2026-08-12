@@ -6,6 +6,15 @@ const path = require('path');
 
 (async () => {
   const root = path.resolve(__dirname, '../..');
+  const profileSource = fs.readFileSync(path.join(root, 'cnc/profile.html'), 'utf8');
+  for (const token of [
+    '...listValues(d.wrongQuestions)',
+    '...listValues(d.wrongItems)',
+    '...listValues(d.wrong)',
+    "const SOURCE_PREFIXES=[['sc-','safety-coordinate'],['av-','advanced-verification'],['dsp-','drawing-setup-process'],['pfsd-','program-fill-sort-debug'],['apf-','alarm-parameter-first-piece']]",
+    'const key=`${sid}:${id}`'
+  ]) assert(profileSource.includes(token), `成长档案缺少跨专项错题兼容/去重契约：${token}`);
+
   const server = spawn('python3', ['-m', 'http.server', '4173'], { cwd: root, stdio: 'ignore' });
   let browser;
   try {
@@ -17,7 +26,7 @@ const path = require('path');
     });
 
     await page.goto('http://127.0.0.1:4173/cnc/profile.html');
-    await page.evaluate(() => {
+    const baselineSnapshot = await page.evaluate(() => {
       localStorage.setItem('cnc_training_profile_v1', JSON.stringify({
         version: 1,
         xp: 420,
@@ -31,26 +40,46 @@ const path = require('path');
           { practiceId: 'drawing-setup-process', score: 67 }
         ],
         wrongQuestions: [
-          { id: 'a1', practiceId: 'advanced-verification', ability: '程序验证', risk: '高' },
-          { id: 'a2', practiceId: 'drawing-setup-process', ability: '图纸识读', risk: '中' },
-          { id: 'a3', practiceId: 'alarm-parameter-first-piece', ability: '故障排查', risk: '高' }
-        ]
+          { id: 'av-01', practiceId: 'advanced-verification', ability: '程序验证', risk: '高' },
+          { id: 'dsp-02', source: 'practice-drawing-setup-process.html', ability: '图纸识读', risk: '中' },
+          { id: 'apf-03', redoUrl: './practice-alarm-parameter-first-piece.html', ability: '故障排查', risk: '高' }
+        ],
+        wrongItems: [
+          { id: 'av-01', source: 'advanced-verification', ability: '程序验证', risk: '高', explanation: '同题兼容字段镜像' },
+          { id: 'pfsd-04', source: 'program-fill-sort-debug', ability: '程序验证', risk: '中' }
+        ],
+        wrong: {
+          safetyMirror: { id: 'sc-05', ability: '安全基础', risk: '高' },
+          drawingDuplicate: { id: 'dsp-02', practice: 'drawing-setup-process', ability: '图纸识读', risk: '中' }
+        }
       }));
       localStorage.setItem('cnc_training_simulator_v1', JSON.stringify({
         version: 1,
         simulators: { homing: { passed: true, bestScore: 100 }, workholding: { passed: true, bestScore: 100 }, alarm: { passed: false, bestScore: 75 } }
       }));
+      return {
+        profile: localStorage.getItem('cnc_training_profile_v1'),
+        practice: localStorage.getItem('cnc_training_practice_v1'),
+        simulator: localStorage.getItem('cnc_training_simulator_v1')
+      };
     });
     await page.reload();
     await page.waitForFunction(() => document.querySelector('#xp')?.textContent === '420');
     assert.equal(await page.locator('#practice-pass').textContent(), '2/5');
-    assert.equal(await page.locator('#wrong-count').textContent(), '3');
+    assert.equal(await page.locator('#wrong-count').textContent(), '5', '五专项真实来源应全部汇总，同一题跨字段镜像不得重复计数');
     assert.equal(await page.locator('#sim-pass').textContent(), '2/13');
     assert.equal(await page.locator('#recommend-practice').getAttribute('href'), './practice-wrong-review.html');
+    assert((await page.locator('#recommend-copy').textContent()).includes('还有5道跨专项错题'), '下一步推荐应使用去重后的真实跨专项错题数');
     assert.equal(await page.locator('#ability-grid .ability').count(), 6);
     const min = await page.locator('a:visible').evaluateAll(nodes => Math.min(...nodes.map(node => node.getBoundingClientRect().height)));
     assert(min >= 44, `touch target ${min}`);
     assert.equal(errors.length, 0, errors.join('\n'));
+    const baselineAfter = await page.evaluate(() => ({
+      profile: localStorage.getItem('cnc_training_profile_v1'),
+      practice: localStorage.getItem('cnc_training_practice_v1'),
+      simulator: localStorage.getItem('cnc_training_simulator_v1')
+    }));
+    assert.deepEqual(baselineAfter, baselineSnapshot, '正常跨专项错题汇总也必须保持 LocalStorage 只读');
 
     errors.length = 0;
     const corruptSnapshot = await page.evaluate(() => {
@@ -64,7 +93,16 @@ const path = require('path');
         history: [null, '损坏记录', { practiceId: 'safety-coordinate', score: '坏分数' }, { practiceId: 'advanced-verification', score: 120 }],
         attempts: [false, 12],
         results: [{ setId: 'drawing-setup-process', score: -30 }],
-        wrongQuestions: [null, '损坏错题', { id: 'safe-1', ability: '安全基础', risk: '高' }]
+        wrongQuestions: [null, '损坏错题', { id: 'sc-safe-1', practiceId: 'safety-coordinate', ability: '安全基础', risk: '高' }],
+        wrongItems: [
+          ['数组错题'],
+          { id: 'sc-safe-1', source: 'safety-coordinate', ability: '安全基础', risk: '高' },
+          { id: '', source: 'program-fill-sort-debug', ability: '程序验证' }
+        ],
+        wrong: {
+          badArray: ['不能计数'],
+          unknownSource: { id: 'unknown-1', ability: '待核验' }
+        }
       }));
       localStorage.setItem('cnc_training_simulator_v1', JSON.stringify({
         version: 1,
@@ -80,7 +118,7 @@ const path = require('path');
     await page.reload();
     await page.waitForFunction(() => document.querySelector('#xp')?.textContent === '0');
     assert.equal(await page.locator('#practice-pass').textContent(), '1/5');
-    assert.equal(await page.locator('#wrong-count').textContent(), '1');
+    assert.equal(await page.locator('#wrong-count').textContent(), '1', '损坏、未知来源和跨字段重复错题不得污染成长档案统计');
     assert.equal(await page.locator('#sim-pass').textContent(), '1/13');
     assert.equal(await page.locator('#recommend-practice').getAttribute('href'), './practice-wrong-review.html');
     assert.equal(await page.locator('#ability-grid .ability').count(), 6);
@@ -98,10 +136,10 @@ const path = require('path');
     fs.mkdirSync(path.join(root, 'cnc/test-results'), { recursive: true });
     await page.screenshot({ path: path.join(root, 'cnc/test-results/profile-practice-analytics-390x844.png'), fullPage: true });
     fs.writeFileSync(path.join(root, 'cnc/test-results/profile-practice-analytics.json'), JSON.stringify({
-      baseline: { xp: 420, practicePass: '2/5', wrong: 3, simPass: '2/13', minTouch: min },
-      corruptData: { xp: 0, practicePass: '1/5', wrong: 1, simPass: '1/13', readOnly: true, consoleErrors: errors }
+      baseline: { xp: 420, practicePass: '2/5', wrong: 5, sourceSets: 5, crossContainerDedup: true, simPass: '2/13', minTouch: min, readOnly: true },
+      corruptData: { xp: 0, practicePass: '1/5', wrong: 1, malformedAndUnknownIgnored: true, crossContainerDedup: true, simPass: '1/13', readOnly: true, consoleErrors: errors }
     }, null, 2));
-    console.log('profile analytics and corrupt-data degradation smoke passed');
+    console.log('profile cross-specialty wrong-source reflow and corrupt-data degradation smoke passed');
   } finally {
     if (browser) await browser.close();
     server.kill('SIGTERM');
