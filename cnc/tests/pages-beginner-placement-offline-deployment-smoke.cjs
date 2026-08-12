@@ -9,15 +9,18 @@ fs.mkdirSync(out, { recursive: true });
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
 const branchTargetPwaBuild = '20260812-pwa39';
+const currentMainPwaBuild = '20260811-pwa38';
 const controlledPublicPwaBuild = '20260811-pwa37';
 const expectedSiteBuild = '20260806-learning-depth1';
 const controlledPublicSiteBuild = '20260806-learning-depth1';
 const cacheRevisionByBuild = {
   [branchTargetPwaBuild]: '20260812-learning39',
+  [currentMainPwaBuild]: '20260811-learning38',
   [controlledPublicPwaBuild]: '20260811-learning37'
 };
 const siteBuildByPwaBuild = {
   [branchTargetPwaBuild]: expectedSiteBuild,
+  [currentMainPwaBuild]: expectedSiteBuild,
   [controlledPublicPwaBuild]: controlledPublicSiteBuild
 };
 const attempts = Number(process.env.CNC_PAGES_VERIFY_ATTEMPTS || 18);
@@ -52,6 +55,7 @@ const LEARNING_DEPTH_CORE_PATHS = new Set([
 
 function expectedCoreForBuild(build, label) {
   if (build === branchTargetPwaBuild) return EXACT_CORE;
+  if (build === currentMainPwaBuild) return CONTROLLED_PUBLIC_CORE_PATHS;
   if (build === controlledPublicPwaBuild) return CONTROLLED_PUBLIC_CORE_PATHS;
   throw new Error(`${label}出现未受控核心资源构建：${build}`);
 }
@@ -59,7 +63,7 @@ function expectedCoreForBuild(build, label) {
 if (!Number.isInteger(attempts) || attempts < 1) throw new Error('CNC_PAGES_VERIFY_ATTEMPTS必须是大于0的整数');
 if (!Number.isFinite(intervalMs) || intervalMs < 0) throw new Error('CNC_PAGES_VERIFY_INTERVAL_MS不能为负数');
 
-const report = { checkedAt: new Date().toISOString(), publicRoot, mainRoot, branchTargetPwaBuild, controlledPublicPwaBuild, expectedSiteBuild, controlledPublicSiteBuild, eventName, attempts: [], resources: {} };
+const report = { checkedAt: new Date().toISOString(), publicRoot, mainRoot, branchTargetPwaBuild, currentMainPwaBuild, controlledPublicPwaBuild, expectedSiteBuild, controlledPublicSiteBuild, eventName, attempts: [], resources: {} };
 const digest = buffer => crypto.createHash('sha256').update(buffer).digest('hex');
 const exact = (left, right) => left.bytes === right.bytes && left.sha256 === right.sha256;
 
