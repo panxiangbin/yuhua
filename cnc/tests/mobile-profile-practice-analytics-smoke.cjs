@@ -17,8 +17,11 @@ const path = require('path');
     'record(d.records)&&record(d.records[id])?d.records[id]:null',
     'record(d.simulators)&&record(d.simulators[id])?d.simulators[id]:null',
     'record(d[id])?d[id]:null',
-    'best===100'
-  ]) assert(profileSource.includes(token), `成长档案缺少错题/模拟兼容契约：${token}`);
+    'best===100',
+    "function score(v){return typeof v==='number'&&Number.isFinite(v)&&v>=0&&v<=100?v:0}",
+    "function strictScore(v){return typeof v==='number'&&Number.isFinite(v)&&v>=0&&v<=100?v:0}",
+    "function nonNegativeInt(v){return typeof v==='number'&&Number.isFinite(v)&&v>=0?Math.floor(v):0}"
+  ]) assert(profileSource.includes(token), `成长档案缺少错题/模拟/严格数值契约：${token}`);
 
   const server = spawn('python3', ['-m', 'http.server', '4173'], { cwd: root, stdio: 'ignore' });
   let browser;
@@ -101,14 +104,20 @@ const path = require('path');
     const corruptSnapshot = await page.evaluate(() => {
       localStorage.setItem('cnc_training_profile_v1', JSON.stringify({
         version: 1,
-        xp: '坏数据',
-        abilities: { safety: { score: '不是数字' }, coordinate: 76, troubleshooting: null }
+        xp: '999',
+        abilities: { safety: { score: '88' }, coordinate: 76, troubleshooting: null }
       }));
       localStorage.setItem('cnc_training_practice_v1', JSON.stringify({
         version: 1,
-        history: [null, '损坏记录', { practiceId: 'safety-coordinate', score: '坏分数' }, { practiceId: 'advanced-verification', score: 120 }],
+        history: [
+          null,
+          '损坏记录',
+          { practiceId: 'safety-coordinate', score: '95' },
+          { practiceId: 'advanced-verification', score: 120 },
+          { practiceId: 'drawing-setup-process', score: 85 }
+        ],
         attempts: [false, 12],
-        results: [{ setId: 'drawing-setup-process', score: -30 }],
+        results: [{ setId: 'program-fill-sort-debug', score: -30 }],
         wrongQuestions: [null, '损坏错题', { id: 'sc-safe-1', practiceId: 'safety-coordinate', ability: '安全基础', risk: '高' }],
         wrongItems: [
           ['数组错题'],
@@ -126,7 +135,8 @@ const path = require('path');
           homing: ['数组记录'],
           'program-dry-run': { passed: false, bestScore: 120 },
           'first-piece-inspection': { passed: false, bestScore: 'Infinity' },
-          'work-offset-setting': { passed: 'true', bestScore: -20 }
+          'work-offset-setting': { passed: 'true', bestScore: -20 },
+          'tool-installation': { passed: false, bestScore: '100' }
         },
         simulators: {
           homing: { passed: true, bestScore: 100 },
@@ -145,9 +155,9 @@ const path = require('path');
 
     await page.reload();
     await page.waitForFunction(() => document.querySelector('#xp')?.textContent === '0');
-    assert.equal(await page.locator('#practice-pass').textContent(), '1/5');
+    assert.equal(await page.locator('#practice-pass').textContent(), '1/5', '数值字符串和越界专项成绩不得冒充通过，合法 number 成绩应继续计入');
     assert.equal(await page.locator('#wrong-count').textContent(), '1', '损坏、未知来源和跨字段重复错题不得污染成长档案统计');
-    assert.equal(await page.locator('#sim-pass').textContent(), '1/13', '越界成绩、字符串 passed、数组记录和未知模拟ID不得冒充通过');
+    assert.equal(await page.locator('#sim-pass').textContent(), '1/13', '数值字符串、越界成绩、字符串 passed、数组记录和未知模拟ID不得冒充通过');
     assert.equal(await page.locator('#recommend-practice').getAttribute('href'), './practice-wrong-review.html');
     assert.equal(await page.locator('#ability-grid .ability').count(), 6);
     const visibleText = await page.locator('body').innerText();
@@ -165,9 +175,9 @@ const path = require('path');
     await page.screenshot({ path: path.join(root, 'cnc/test-results/profile-practice-analytics-390x844.png'), fullPage: true });
     fs.writeFileSync(path.join(root, 'cnc/test-results/profile-practice-analytics.json'), JSON.stringify({
       baseline: { xp: 420, practicePass: '2/5', wrong: 5, sourceSets: 5, crossContainerDedup: true, simPass: '4/13', simulatorSchemas: ['records','simulators','direct'], knownIdDedup: true, simFullScoreBoundary: true, minTouch: min, readOnly: true },
-      corruptData: { xp: 0, practicePass: '1/5', wrong: 1, malformedAndUnknownIgnored: true, crossContainerDedup: true, simPass: '1/13', simulatorMalformedIgnored: true, outOfRangeScoreRejected: true, unknownSimulatorIdsIgnored: true, readOnly: true, consoleErrors: errors }
+      corruptData: { xp: 0, numericStringXpRejected: true, practicePass: '1/5', numericStringScoresRejected: true, outOfRangePracticeScoreRejected: true, wrong: 1, malformedAndUnknownIgnored: true, crossContainerDedup: true, simPass: '1/13', simulatorMalformedIgnored: true, outOfRangeScoreRejected: true, unknownSimulatorIdsIgnored: true, readOnly: true, consoleErrors: errors }
     }, null, 2));
-    console.log('profile cross-specialty wrong-source and simulator schema compatibility smoke passed');
+    console.log('profile cross-specialty wrong-source, simulator schema, and strict numeric integrity smoke passed');
   } finally {
     if (browser) await browser.close();
     server.kill('SIGTERM');
