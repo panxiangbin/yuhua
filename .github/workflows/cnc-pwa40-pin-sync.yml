@@ -1,0 +1,135 @@
+name: CNC PWA40 pin sync
+on:
+  push:
+    branches:
+      - codex/cnc-ai-teacher-nested-data-integrity
+    paths:
+      - '.github/workflows/cnc-pwa40-pin-sync.yml'
+permissions:
+  contents: write
+concurrency:
+  group: cnc-pwa40-pin-sync
+  cancel-in-progress: false
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/cnc-ai-teacher-nested-data-integrity
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Synchronize PWA40 pins
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          ordinary = [
+            '.github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml',
+            '.github/workflows/cnc-beginner-placement-offline-pages-smoke.yml',
+            '.github/workflows/cnc-g95-cold-offline-source-trust-smoke.yml',
+            '.github/workflows/cnc-g96-g97-cold-offline-source-trust-smoke.yml',
+            '.github/workflows/cnc-g98-g99-cold-offline-source-trust-smoke.yml',
+            '.github/workflows/cnc-learning-media-smoke.yml',
+            '.github/workflows/cnc-pwa-offline-cache-smoke.yml',
+            '.github/workflows/cnc-pwa-self-test-smoke.yml',
+            '.github/workflows/cnc-pwa-upgrade-data-smoke.yml',
+            '.github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml',
+            'cnc/MOBILE_LEARNING_MEDIA_PROGRESS.md',
+            'cnc/build-info.json',
+            'cnc/pwa-self-test.html',
+            'cnc/pwa-status.html',
+            'cnc/sw.js',
+            'cnc/tests/g10-programmable-data-input-trust-smoke.cjs',
+            'cnc/tests/g28-reference-return-boundary-trust-smoke.cjs',
+            'cnc/tests/g53-machine-coordinate-boundary-trust-smoke.cjs',
+            'cnc/tests/g92-dual-semantic-boundary-trust-smoke.cjs',
+            'cnc/tests/g94-dual-semantic-boundary-trust-smoke.cjs',
+            'cnc/tests/g95-cold-offline-source-trust-smoke.cjs',
+            'cnc/tests/g95-dual-semantic-boundary-trust-smoke.cjs',
+            'cnc/tests/g96-g97-cold-offline-source-trust-smoke.cjs',
+            'cnc/tests/g96-g97-spindle-mode-boundary-trust-smoke.cjs',
+            'cnc/tests/g98-g99-cold-offline-source-trust-smoke.cjs',
+            'cnc/tests/g98-g99-dual-semantic-boundary-trust-smoke.cjs',
+            'cnc/tests/mobile-pwa-offline-cache-smoke.cjs',
+            'cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs',
+            'cnc/tests/mobile-pwa-upgrade-data-smoke.cjs',
+          ]
+          transition = [
+            'cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs',
+            'cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs',
+            'cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs',
+          ]
+
+          for file in ordinary:
+            path = Path(file)
+            text = path.read_text(encoding='utf-8')
+            before = text
+            text = text.replace('20260812-pwa39', '20260812-pwa40')
+            text = text.replace('20260812-learning39', '20260812-learning40')
+            if text == before:
+              raise SystemExit(f'未找到待同步PWA39构建针：{file}')
+            path.write_text(text, encoding='utf-8')
+
+          for file in transition:
+            path = Path(file)
+            text = path.read_text(encoding='utf-8')
+            before = text
+            text = text.replace('20260811-pwa38', '__CNC_MAIN_PWA__')
+            text = text.replace('20260811-learning38', '__CNC_MAIN_CACHE__')
+            text = text.replace('20260812-pwa39', '20260812-pwa40')
+            text = text.replace('20260812-learning39', '20260812-learning40')
+            text = text.replace('__CNC_MAIN_PWA__', '20260812-pwa39')
+            text = text.replace('__CNC_MAIN_CACHE__', '20260812-learning39')
+            if text == before:
+              raise SystemExit(f'未找到待同步Pages过渡构建针：{file}')
+            if '20260811-pwa38' in text or '20260811-learning38' in text:
+              raise SystemExit(f'Pages当前main过渡仍残留PWA38：{file}')
+            path.write_text(text, encoding='utf-8')
+
+          info = Path('cnc/build-info.json')
+          text = info.read_text(encoding='utf-8')
+          marker = 'AI老师异常档案全部快捷入口阻断'
+          addition = 'AI老师嵌套异常学习数据只读降级'
+          if addition not in text:
+            if marker not in text:
+              raise SystemExit('build-info缺少AI老师PWA39阶段标记')
+            text = text.replace(marker, marker + ' · ' + addition, 1)
+          text = text.replace('"generatedAt": "2026-08-12T10:57:00+08:00"', '"generatedAt": "2026-08-12T14:28:40+08:00"')
+          info.write_text(text, encoding='utf-8')
+          PY
+      - name: Verify synchronization contract
+        env:
+          CNC_BASE_SHA: ${{ github.event.before }}
+          CNC_HEAD_SHA: ${{ github.sha }}
+        run: |
+          node --check cnc/tests/pwa-build-reference-audit-smoke.cjs
+          node cnc/tests/pwa-build-reference-audit-smoke.cjs
+          CNC_BASE_SHA=3e64fc981c91c30bf48af03434b2cbd7f719238c CNC_HEAD_SHA=${{ github.sha }} node cnc/tests/pwa-core-resource-build-bump-smoke.cjs
+          node --check cnc/tests/ai-teacher-data-integrity-smoke.cjs
+          node --check cnc/ai-teacher.html || true
+          python3 - <<'PY'
+          from pathlib import Path
+          info = Path('cnc/build-info.json').read_text(encoding='utf-8')
+          sw = Path('cnc/sw.js').read_text(encoding='utf-8')
+          if '20260812-pwa40' not in info or '20260812-learning40' not in info:
+              raise SystemExit('build-info未对齐PWA40')
+          if "const BUILD = '20260812-pwa40'" not in sw or "const CACHE_REVISION = '20260812-learning40'" not in sw:
+              raise SystemExit('Service Worker未对齐PWA40')
+          PY
+      - name: Commit synchronized pins
+        run: |
+          git config user.name 'CNC Automation'
+          git config user.email 'actions@users.noreply.github.com'
+          git add .github/workflows/cnc-*.yml cnc
+          git reset -- cnc/test-results || true
+          git diff --cached --name-only | tee /tmp/pwa40-files.txt
+          test -s /tmp/pwa40-files.txt
+          git commit -m 'CNC：同步PWA40离线核心构建针'
+          git rev-parse HEAD | tee /tmp/pwa40-commit.txt
+      - name: Push synchronized commit
+        run: |
+          git push origin HEAD:codex/cnc-ai-teacher-nested-data-integrity
