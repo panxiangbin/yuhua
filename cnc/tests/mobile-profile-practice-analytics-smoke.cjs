@@ -12,8 +12,13 @@ const path = require('path');
     '...listValues(d.wrongItems)',
     '...listValues(d.wrong)',
     "const SOURCE_PREFIXES=[['sc-','safety-coordinate'],['av-','advanced-verification'],['dsp-','drawing-setup-process'],['pfsd-','program-fill-sort-debug'],['apf-','alarm-parameter-first-piece']]",
-    'const key=`${sid}:${id}`'
-  ]) assert(profileSource.includes(token), `成长档案缺少跨专项错题兼容/去重契约：${token}`);
+    'const key=`${sid}:${id}`',
+    "const SIM_IDS=['homing','workholding-check','tool-installation','tool-length-offset-check','work-offset-setting','program-dry-run','single-block-first-approach','graphics-segment-prediction','first-piece-inspection','alarm-troubleshooting','cutter-comp-risk','hole-cycle-troubleshooting','measurement-vs-machining-error']",
+    'record(d.records)&&record(d.records[id])?d.records[id]:null',
+    'record(d.simulators)&&record(d.simulators[id])?d.simulators[id]:null',
+    'record(d[id])?d[id]:null',
+    'best===100'
+  ]) assert(profileSource.includes(token), `成长档案缺少错题/模拟兼容契约：${token}`);
 
   const server = spawn('python3', ['-m', 'http.server', '4173'], { cwd: root, stdio: 'ignore' });
   let browser;
@@ -55,7 +60,18 @@ const path = require('path');
       }));
       localStorage.setItem('cnc_training_simulator_v1', JSON.stringify({
         version: 1,
-        simulators: { homing: { passed: true, bestScore: 100 }, workholding: { passed: true, bestScore: 100 }, alarm: { passed: false, bestScore: 75 } }
+        records: {
+          'program-dry-run': { passed: false, bestScore: 100 },
+          'first-piece-inspection': { passed: true, bestScore: 87 },
+          'work-offset-setting': { passed: false, bestScore: 80 }
+        },
+        simulators: {
+          homing: { passed: true, bestScore: 100 },
+          'program-dry-run': { passed: false, bestScore: 75 },
+          unknownLegacy: { passed: true, bestScore: 100 }
+        },
+        'alarm-troubleshooting': { passed: true, bestScore: 100 },
+        unknownDirect: { passed: true, bestScore: 100 }
       }));
       return {
         profile: localStorage.getItem('cnc_training_profile_v1'),
@@ -67,7 +83,7 @@ const path = require('path');
     await page.waitForFunction(() => document.querySelector('#xp')?.textContent === '420');
     assert.equal(await page.locator('#practice-pass').textContent(), '2/5');
     assert.equal(await page.locator('#wrong-count').textContent(), '5', '五专项真实来源应全部汇总，同一题跨字段镜像不得重复计数');
-    assert.equal(await page.locator('#sim-pass').textContent(), '2/13');
+    assert.equal(await page.locator('#sim-pass').textContent(), '4/13', '成长档案应合并新版 records、旧版 simulators 和受控直根记录，并按13项ID去重');
     assert.equal(await page.locator('#recommend-practice').getAttribute('href'), './practice-wrong-review.html');
     assert((await page.locator('#recommend-copy').textContent()).includes('还有5道跨专项错题'), '下一步推荐应使用去重后的真实跨专项错题数');
     assert.equal(await page.locator('#ability-grid .ability').count(), 6);
@@ -79,7 +95,7 @@ const path = require('path');
       practice: localStorage.getItem('cnc_training_practice_v1'),
       simulator: localStorage.getItem('cnc_training_simulator_v1')
     }));
-    assert.deepEqual(baselineAfter, baselineSnapshot, '正常跨专项错题汇总也必须保持 LocalStorage 只读');
+    assert.deepEqual(baselineAfter, baselineSnapshot, '正常跨专项错题/模拟记录汇总也必须保持 LocalStorage 只读');
 
     errors.length = 0;
     const corruptSnapshot = await page.evaluate(() => {
@@ -106,7 +122,19 @@ const path = require('path');
       }));
       localStorage.setItem('cnc_training_simulator_v1', JSON.stringify({
         version: 1,
-        simulators: { broken: null, alarm: { passed: false, bestScore: '坏分数' }, homing: { passed: true, bestScore: 100 } }
+        records: {
+          homing: ['数组记录'],
+          'program-dry-run': { passed: false, bestScore: 120 },
+          'first-piece-inspection': { passed: false, bestScore: 'Infinity' },
+          'work-offset-setting': { passed: 'true', bestScore: -20 }
+        },
+        simulators: {
+          homing: { passed: true, bestScore: 100 },
+          'program-dry-run': null,
+          unknownLegacy: { passed: true, bestScore: 100 }
+        },
+        'alarm-troubleshooting': { passed: false, bestScore: '坏分数' },
+        unknownDirect: { passed: true, bestScore: 100 }
       }));
       return {
         profile: localStorage.getItem('cnc_training_profile_v1'),
@@ -119,7 +147,7 @@ const path = require('path');
     await page.waitForFunction(() => document.querySelector('#xp')?.textContent === '0');
     assert.equal(await page.locator('#practice-pass').textContent(), '1/5');
     assert.equal(await page.locator('#wrong-count').textContent(), '1', '损坏、未知来源和跨字段重复错题不得污染成长档案统计');
-    assert.equal(await page.locator('#sim-pass').textContent(), '1/13');
+    assert.equal(await page.locator('#sim-pass').textContent(), '1/13', '越界成绩、字符串 passed、数组记录和未知模拟ID不得冒充通过');
     assert.equal(await page.locator('#recommend-practice').getAttribute('href'), './practice-wrong-review.html');
     assert.equal(await page.locator('#ability-grid .ability').count(), 6);
     const visibleText = await page.locator('body').innerText();
@@ -136,10 +164,10 @@ const path = require('path');
     fs.mkdirSync(path.join(root, 'cnc/test-results'), { recursive: true });
     await page.screenshot({ path: path.join(root, 'cnc/test-results/profile-practice-analytics-390x844.png'), fullPage: true });
     fs.writeFileSync(path.join(root, 'cnc/test-results/profile-practice-analytics.json'), JSON.stringify({
-      baseline: { xp: 420, practicePass: '2/5', wrong: 5, sourceSets: 5, crossContainerDedup: true, simPass: '2/13', minTouch: min, readOnly: true },
-      corruptData: { xp: 0, practicePass: '1/5', wrong: 1, malformedAndUnknownIgnored: true, crossContainerDedup: true, simPass: '1/13', readOnly: true, consoleErrors: errors }
+      baseline: { xp: 420, practicePass: '2/5', wrong: 5, sourceSets: 5, crossContainerDedup: true, simPass: '4/13', simulatorSchemas: ['records','simulators','direct'], knownIdDedup: true, simFullScoreBoundary: true, minTouch: min, readOnly: true },
+      corruptData: { xp: 0, practicePass: '1/5', wrong: 1, malformedAndUnknownIgnored: true, crossContainerDedup: true, simPass: '1/13', simulatorMalformedIgnored: true, outOfRangeScoreRejected: true, unknownSimulatorIdsIgnored: true, readOnly: true, consoleErrors: errors }
     }, null, 2));
-    console.log('profile cross-specialty wrong-source reflow and corrupt-data degradation smoke passed');
+    console.log('profile cross-specialty wrong-source and simulator schema compatibility smoke passed');
   } finally {
     if (browser) await browser.close();
     server.kill('SIGTERM');
