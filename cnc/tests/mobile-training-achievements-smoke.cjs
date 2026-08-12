@@ -17,7 +17,9 @@ function dateKey(value) {
   browser = await chromium.launch({ headless: true });
   page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
   const errors = [];
+  const consoleErrors = [];
   page.on('pageerror', error => errors.push(error.message));
+  page.on('console', message => { if (message.type() === 'error') consoleErrors.push(message.text()); });
 
   await page.goto('http://127.0.0.1:4173/cnc/training-achievements.html', { waitUntil: 'domcontentloaded', timeout: 60000 });
   await page.evaluate(() => localStorage.clear());
@@ -38,15 +40,15 @@ function dateKey(value) {
     localStorage.setItem('cnc_study_completed_v1', JSON.stringify([1, 2, 3, 4]));
     localStorage.setItem('cnc_training_practice_v1', JSON.stringify({
       version: 1,
-      wrong: ['g00-cutting', 'safe-stop-first'],
+      wrong: [{ id: 'g00-cutting' }, { id: 'safe-stop-first' }],
       correct: ['axis-z-direction'],
       lessonScores: { 1: 100, 2: 90, 3: 85, 4: 80 }
     }));
     localStorage.setItem('cnc_training_simulator_v1', JSON.stringify({
       simulators: {
-        safety: { passed: true, bestScore: 100 },
-        workOffset: { passed: false, bestScore: 80 },
-        alarm: { passed: false, score: 60 }
+        homing: { passed: true, bestScore: 100 },
+        'workholding-check': { passed: false, bestScore: 100 },
+        'alarm-troubleshooting': { passed: false, score: 60 }
       }
     }));
     location.reload();
@@ -101,10 +103,81 @@ function dateKey(value) {
   assert.match(await page.locator('.notice').textContent(), /原厂手册/);
   assert.match(await page.locator('.notice').textContent(), /报警、参数、刀补和安全步骤/);
   assert.deepEqual(errors, []);
+  assert.deepEqual(consoleErrors, []);
 
-  const validReport = { snapshot, viewport: await page.viewportSize(), errors: [...errors] };
+  const validReport = { snapshot, viewport: await page.viewportSize(), errors: [...errors], consoleErrors: [...consoleErrors] };
   fs.writeFileSync(path.join(artifactDir, 'valid-state.json'), JSON.stringify(validReport, null, 2));
   await page.screenshot({ path: path.join(artifactDir, 'training-achievements-valid-390x844.png'), fullPage: true });
+
+  // 嵌套记录损坏时只读降级：数值字符串、越界分数、未知ID、数组和重复记录都不能抬高成长成果。
+  const readOnlyBefore = await page.evaluate(({ todayKey }) => {
+    localStorage.setItem('cnc_training_profile_v1', JSON.stringify({
+      version: 1,
+      currentStreak: '30',
+      trainingDays: [todayKey, todayKey, 7, null, 'bad-date'],
+      badges: ['有效徽章', '有效徽章', 7, null]
+    }));
+    localStorage.setItem('cnc_study_completed_v1', JSON.stringify([1, 2, '3', 'stage-4', 13, -1, 2]));
+    localStorage.setItem('cnc_training_practice_v1', JSON.stringify({
+      wrongQuestions: [{ id: 'valid-a' }, null, 'bad', [], { id: 'valid-b' }]
+    }));
+    localStorage.setItem('cnc_training_simulator_v1', JSON.stringify({
+      records: {
+        homing: { passed: 'true', bestScore: '100' },
+        'workholding-check': { passed: false, bestScore: 120 },
+        'tool-installation': { passed: false, bestScore: 100 },
+        unknown: { passed: true, bestScore: 100 }
+      },
+      simulators: {
+        'tool-installation': { passed: true, bestScore: 100 },
+        'program-dry-run': { passed: true, bestScore: 0 },
+        'alarm-troubleshooting': []
+      },
+      'first-piece-inspection': { passed: false, score: '100' }
+    }));
+    const keys = ['cnc_training_profile_v1', 'cnc_study_completed_v1', 'cnc_training_practice_v1', 'cnc_training_simulator_v1'];
+    return Object.fromEntries(keys.map(key => [key, localStorage.getItem(key)]));
+  }, { todayKey });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(() => window.CNC_TRAINING_ACHIEVEMENTS?.build === '20260808a', null, { timeout: 15000 });
+
+  const degradedSnapshot = await page.evaluate(() => window.CNC_TRAINING_ACHIEVEMENTS.snapshot());
+  assert.deepEqual(degradedSnapshot, {
+    streak: 0,
+    days: 1,
+    badges: 1,
+    trainedToday: true,
+    target: 3,
+    remaining: 3,
+    courses: 3,
+    wrong: 2,
+    simulations: 2,
+    integrity: true,
+    invalid: [],
+    nextKind: 'course',
+    nextLevel: 3
+  });
+  assert.equal(await page.locator('#courses').textContent(), '3/12');
+  assert.equal(await page.locator('#wrong').textContent(), '2');
+  assert.equal(await page.locator('#simulations').textContent(), '2/13');
+  assert.equal(await page.locator('#streak').textContent(), '0');
+  assert.equal(await page.locator('#days').textContent(), '1');
+  assert.equal(await page.locator('#badges').textContent(), '1');
+  assert.match(await page.locator('#next-title').textContent(), /第 3 关/);
+  assert.equal(await page.locator('#data-integrity').isHidden(), true);
+  const bodyText = await page.locator('body').textContent();
+  assert.doesNotMatch(bodyText, /NaN|Infinity/);
+  const overflow = await page.evaluate(() => ({ scrollWidth: document.documentElement.scrollWidth, clientWidth: document.documentElement.clientWidth }));
+  assert.ok(overflow.scrollWidth <= overflow.clientWidth, `390px 页面横向溢出：${JSON.stringify(overflow)}`);
+  const readOnlyAfter = await page.evaluate(() => {
+    const keys = ['cnc_training_profile_v1', 'cnc_study_completed_v1', 'cnc_training_practice_v1', 'cnc_training_simulator_v1'];
+    return Object.fromEntries(keys.map(key => [key, localStorage.getItem(key)]));
+  });
+  assert.deepEqual(readOnlyAfter, readOnlyBefore, '成长成果页不得静默清洗或改写异常学习数据');
+  assert.deepEqual(errors, []);
+  assert.deepEqual(consoleErrors, []);
+  fs.writeFileSync(path.join(artifactDir, 'degraded-state.json'), JSON.stringify({ degradedSnapshot, overflow, readOnlyDegradation: true, errors: [...errors], consoleErrors: [...consoleErrors] }, null, 2));
+  await page.screenshot({ path: path.join(artifactDir, 'training-achievements-degraded-390x844.png'), fullPage: true });
 
   // 主完成状态结构损坏时，必须明确阻断成长推荐，不得静默退回旧字段或当作0进度。
   await page.evaluate(() => {
@@ -126,6 +199,7 @@ function dateKey(value) {
   assert.match(await page.locator('#next-link').getAttribute('href'), /data-health\.html/);
   assert.ok((await page.locator('#data-integrity .action').evaluate(node => node.getBoundingClientRect().height)) >= 44);
   assert.deepEqual(errors, []);
+  assert.deepEqual(consoleErrors, []);
 
   // 当前主完成状态缺失、只能依赖旧档案兼容时，如果旧档案本身损坏，同样不得显示成0/12。
   await page.evaluate(() => {
@@ -143,11 +217,12 @@ function dateKey(value) {
   assert.equal(await page.locator('#courses').textContent(), '—');
   assert.match(await page.locator('#data-integrity-copy').textContent(), /cnc_training_profile_v1/);
   assert.deepEqual(errors, []);
+  assert.deepEqual(consoleErrors, []);
 
-  const report = { passed: true, valid: validReport, invalidSnapshot, fallbackInvalidSnapshot, errors };
+  const report = { passed: true, valid: validReport, degradedSnapshot, readOnlyDegradation: true, invalidSnapshot, fallbackInvalidSnapshot, errors, consoleErrors };
   fs.writeFileSync(path.join(artifactDir, 'report.json'), JSON.stringify(report, null, 2));
   await page.screenshot({ path: path.join(artifactDir, 'training-achievements-invalid-390x844.png'), fullPage: true });
-  console.log('成长成果主线/错题/模拟闭环、固定12关主完成状态、异常数据阻断、7天预览和安全边界通过', report);
+  console.log('成长成果主线/错题/模拟闭环、严格数值语义、固定13项模拟、异常数据只读降级、7天预览和安全边界通过', report);
   await browser.close();
 })().catch(async error => {
   const stack = error && error.stack ? error.stack : String(error);
