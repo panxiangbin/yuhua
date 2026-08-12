@@ -69,10 +69,11 @@ function fail(message) {
       'workholding-check': 'bad-record',
       'tool-installation': { bestScore: 'oops', attempts: -2, passed: 'false' },
       'tool-length-offset-check': { bestScore: 120, attempts: 'bad', passed: false },
-      'work-offset-setting': { bestScore: 100, attempts: 1, passed: false }
+      'work-offset-setting': { bestScore: 100, attempts: 1, passed: false },
+      'program-dry-run': { bestScore: '100', attempts: '4', passed: false }
     }});
     const profile = JSON.stringify({ version: 1, abilities: {
-      safety: 'oops', coordinate: 120, offsetRisk: -5, inspection: 88,
+      safety: '100', coordinate: '88', offsetRisk: -5, inspection: 88,
       measurementDiagnosis: 'NaN', troubleshooting: 'Infinity', holeCycleTroubleshooting: 77
     }});
     localStorage.setItem('cnc_training_simulator_v1', simulator);
@@ -85,6 +86,8 @@ function fail(message) {
   if (corruptSnapshot.passed !== 1) fail(`corrupt data created false pass: ${corruptSnapshot.passed}`);
   if (corruptSnapshot.attempts !== 1) fail(`corrupt attempts not degraded: ${corruptSnapshot.attempts}`);
   if (corruptSnapshot.average !== 8) fail(`corrupt score not degraded: ${corruptSnapshot.average}`);
+  const numericStringText = await text('[data-id="program-dry-run"]');
+  if (!numericStringText.includes('最高0分 · 0次') || !numericStringText.includes('待训练')) fail(`numeric-string simulator values were coerced: ${numericStringText}`);
   const corruptBody = await text('body');
   if (/NaN|Infinity/.test(corruptBody)) fail('corrupt data leaked NaN/Infinity to UI');
   const abilityText = await text('#ability');
@@ -128,8 +131,9 @@ function fail(message) {
     normalSnapshot,
     corruptSnapshot,
     arraySnapshot,
+    numericStringDegradation: true,
     readOnlyDegradation: true,
-    visible: { cutterText, homingText, holeText, note },
+    visible: { cutterText, homingText, holeText, note, numericStringText },
     bodyWidth,
     consoleErrors,
     pageErrors,
@@ -137,7 +141,7 @@ function fail(message) {
   };
   fs.writeFileSync(path.join(outDir, 'diagnostics.json'), JSON.stringify(diagnostics, null, 2));
   await browser.close();
-  console.log('CNC simulator hub mixed-schema and corrupt-data smoke passed');
+  console.log('CNC simulator hub mixed-schema, numeric-string and corrupt-data smoke passed');
 })().catch(error => {
   fs.writeFileSync(path.join(outDir, 'failure.txt'), String(error && error.stack || error));
   console.error(error);
