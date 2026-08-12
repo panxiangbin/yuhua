@@ -56,17 +56,19 @@
       ['hole-cycle-troubleshooting','孔加工循环异常排查','simulator-hole-cycle-troubleshooting.html','孔加工排查'],
       ['measurement-vs-machining-error','测量误差与加工误差分类','simulator-measurement-vs-machining-error.html','测量诊断']
     ];
-    function read(k){try{const v=JSON.parse(localStorage.getItem(k)||'{}');return v&&typeof v==='object'?v:{}}catch{return {}}}
     function asRecord(value){return value&&typeof value==='object'&&!Array.isArray(value)?value:null}
+    function read(k){try{return asRecord(JSON.parse(localStorage.getItem(k)||'{}'))||{}}catch{return {}}}
+    function validScore(value){const n=Number(value);return Number.isFinite(n)&&n>=0&&n<=100?n:0}
+    function validCount(value){const n=Number(value);return Number.isFinite(n)&&n>=0?Math.floor(n):0}
     function recordSignature(record){return [record.lastCompletedAt||record.updatedAt||'',record.bestScore??record.best??'',record.lastScore??'',record.attempts??'',record.passed??''].join('|')}
     function item(data,id){
       const candidates=[asRecord(data.records&&data.records[id]),asRecord(data.simulators&&data.simulators[id]),asRecord(data[id])].filter(Boolean);
       const unique=[];const seen=new Set();
       candidates.forEach(record=>{const signature=recordSignature(record);if(!seen.has(signature)){seen.add(signature);unique.push(record)}});
       if(!unique.length)return{bestScore:0,attempts:0,passed:false,sources:0};
-      const bestScore=Math.max(...unique.map(record=>Math.max(0,Math.min(100,Number(record.bestScore??record.best??0)||0))));
-      const attempts=unique.reduce((sum,record)=>sum+Math.max(0,Math.floor(Number(record.attempts)||0)),0);
-      const passed=unique.some(record=>Boolean(record.passed))||bestScore===100;
+      const bestScore=Math.max(...unique.map(record=>validScore(record.bestScore??record.best??0)));
+      const attempts=unique.reduce((sum,record)=>sum+validCount(record.attempts),0);
+      const passed=unique.some(record=>record.passed===true)||bestScore===100;
       return{bestScore,attempts,passed,sources:unique.length};
     }
     function render(){
@@ -83,9 +85,9 @@
       document.getElementById('continue').textContent=passed===SIMS.length?'重新巩固':'继续模拟训练';
       document.getElementById('list').innerHTML=rows.join('');
       document.getElementById('data-note').textContent=compatRecords?`已读取 ${compatRecords}/13 项本机训练记录；兼容旧版 simulators 与新版 records 存储。`:'尚无模拟训练记录，从第1项开始即可。';
-      const abilities=profile.abilities&&typeof profile.abilities==='object'?profile.abilities:{};
-      const groups=[['安全验证',abilities.safety||abilities.verification||0],['坐标与刀补',Math.max(abilities.coordinate||0,abilities.offsetRisk||0)],['检验诊断',Math.max(abilities.inspection||0,abilities.measurementDiagnosis||0)],['故障排查',Math.max(abilities.troubleshooting||0,abilities.holeCycleTroubleshooting||0)]];
-      document.getElementById('ability').innerHTML=groups.map(g=>`<div><strong>${g[0]} ${Number(g[1]||0)}分</strong><span class="muted">由课程、考试和模拟训练记录综合形成</span></div>`).join('');
+      const abilities=asRecord(profile.abilities)||{};
+      const groups=[['安全验证',validScore(abilities.safety??abilities.verification??0)],['坐标与刀补',Math.max(validScore(abilities.coordinate),validScore(abilities.offsetRisk))],['检验诊断',Math.max(validScore(abilities.inspection),validScore(abilities.measurementDiagnosis))],['故障排查',Math.max(validScore(abilities.troubleshooting),validScore(abilities.holeCycleTroubleshooting))]];
+      document.getElementById('ability').innerHTML=groups.map(g=>`<div><strong>${g[0]} ${g[1]}分</strong><span class="muted">由课程、考试和模拟训练记录综合形成</span></div>`).join('');
       document.body.dataset.simulatorHub='ready';
       window.CNC_SIMULATOR_HUB={snapshot:()=>({passed,average:SIMS.length?Math.round(total/SIMS.length):0,attempts,records:compatRecords,nextId:nextIndex<0?null:next[0]})};
     }
