@@ -125,7 +125,7 @@
   function asArray(value){return Array.isArray(value)?value:[]}
   function isRecord(value){return Boolean(value&&typeof value==='object'&&!Array.isArray(value))}
   function wrongRows(practice){const value=practice.wrongQuestions||practice.wrong||[];const rows=Array.isArray(value)?value:isRecord(value)?Object.values(value):[];return rows.filter(isRecord)}
-  function simulatorRows(simulator){const nested=simulator.simulators;const root=isRecord(nested)?nested:simulator;if(!isRecord(root))return [];return Object.values(root).filter(value=>isRecord(value)&&('passed'in value||'bestScore'in value||'score'in value))}
+  function simulatorRows(simulator){const nestedRecords=simulator.records;const legacyRecords=simulator.simulators;const root=isRecord(nestedRecords)?nestedRecords:(isRecord(legacyRecords)?legacyRecords:simulator);if(!isRecord(root))return [];return Object.values(root).filter(value=>isRecord(value)&&('passed'in value||'bestScore'in value||'score'in value))}
   function normalizedScore(value){const raw=isRecord(value)&&value.score!==undefined?value.score:value;return typeof raw==='number'&&Number.isFinite(raw)&&raw>=0&&raw<=100?raw:null}
   function simulationPassed(row){const raw=row.bestScore!==undefined?row.bestScore:row.score;const score=normalizedScore(raw);return row.passed===true||(score!==null&&score>=80)}
   function stageLevel(value){const match=String(value??'').match(/(?:stage-)?(\d{1,2})$/i);const level=Number(match?.[1]);return level>=1&&level<=12?level:null}
