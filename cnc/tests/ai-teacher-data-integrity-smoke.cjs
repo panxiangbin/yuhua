@@ -16,6 +16,7 @@ const report = {
   viewport: { width: 390, height: 844 },
   corruptKey: 'cnc_training_profile_v1',
   staticSilentFallbackDetected: false,
+  strictNestedGuardDetected: false,
   explicitAlertVisible: false,
   summaryBlocked: false,
   recommendationBlocked: false,
@@ -25,6 +26,12 @@ const report = {
   healthLink: false,
   backupLink: false,
   corruptDataPreserved: false,
+  nestedWrongFiltered: false,
+  nestedSimulatorFiltered: false,
+  nestedScoreStrict: false,
+  nestedIntegrityRemainsUsable: false,
+  nestedDataPreserved: false,
+  nestedNoNonFiniteText: false,
   passed: false
 };
 const logs = [];
@@ -37,7 +44,12 @@ function writeDiagnostics(error) {
 (async () => {
   const source = fs.readFileSync(path.join(root, 'cnc/ai-teacher.html'), 'utf8');
   report.staticSilentFallbackDetected = /function read\(key\)[\s\S]{0,240}catch\s*\{\s*return \{\}\s*\}/.test(source);
+  report.strictNestedGuardDetected = source.includes("function isRecord(value){return Boolean(value&&typeof value==='object'&&!Array.isArray(value))}")
+    && source.includes('const nestedRecords=simulator.records;const legacyRecords=simulator.simulators;')
+    && source.includes("return typeof raw==='number'&&Number.isFinite(raw)&&raw>=0&&raw<=100?raw:null")
+    && source.includes('simulations.filter(simulationPassed).length');
   logs.push(`静态静默回退命中：${report.staticSilentFallbackDetected}`);
+  logs.push(`嵌套数据严格归一化门禁：${report.strictNestedGuardDetected}`);
 
   const server = spawn('python3', ['-m', 'http.server', '4173'], { cwd: root, stdio: 'ignore' });
   let browser;
@@ -122,10 +134,10 @@ function writeDiagnostics(error) {
     logs.push(`备份恢复入口：${report.backupLink}`);
     logs.push(`损坏原始数据保持不变：${report.corruptDataPreserved}`);
 
-    assert.equal(consoleErrors.length, 0, consoleErrors.join('\n'));
     assert.equal(storageState.unrelated, '保留', '不得修改无关 LocalStorage');
     assert.equal(report.corruptDataPreserved, true, '不得为了阻断个性化建议而覆盖或清理损坏原始档案');
     assert.equal(report.staticSilentFallbackDetected, false, 'AI老师仍将解析失败静默替换为空对象');
+    assert.equal(report.strictNestedGuardDetected, true, 'AI老师缺少嵌套记录/成绩或新旧模拟schema的严格归一化保护');
     assert.equal(report.explicitAlertVisible, true, '损坏档案时必须显示可见、可访问的数据异常提示');
     assert.equal(report.summaryBlocked, true, '损坏档案时不得继续显示 0/12 等伪装成真实进度的汇总');
     assert.equal(report.publicApiBlocked, true, '损坏档案时公开 initialSummary/getSummary 接口不得继续暴露可信零进度');
@@ -134,11 +146,86 @@ function writeDiagnostics(error) {
     assert.equal(report.healthLink, true, '异常处置必须提供数据健康检查入口');
     assert.equal(report.backupLink, true, '异常处置必须提供备份恢复入口');
 
+    const nestedPracticeRaw = JSON.stringify({
+      version: 1,
+      wrongQuestions: [
+        { id: 'valid-wrong-1', ability: '安全' },
+        ['array-should-ignore'],
+        null,
+        'string-should-ignore',
+        { id: 'valid-wrong-2', ability: '坐标' }
+      ],
+      lessonScores: { 1: '999', 2: 120, 3: 79 }
+    });
+    const nestedSimulatorRaw = JSON.stringify({
+      version: 2,
+      records: {
+        booleanPass: { passed: true, score: 10 },
+        scorePass: { passed: false, bestScore: 80 },
+        stringScore: { passed: false, bestScore: '999' },
+        infinityString: { passed: false, score: 'Infinity' },
+        overRange: { passed: false, score: 120 },
+        negative: { passed: false, score: -5 },
+        stringPassed: { passed: 'true', score: 0 },
+        arrayRecord: [{ passed: true, score: 100 }],
+        nullRecord: null
+      }
+    });
+    await page.evaluate(({ practiceRaw, simulatorRaw }) => {
+      localStorage.clear();
+      localStorage.setItem('cnc_study_completed_v1', '[]');
+      localStorage.setItem('cnc_training_profile_v1', JSON.stringify({ version: 1 }));
+      localStorage.setItem('cnc_training_practice_v1', practiceRaw);
+      localStorage.setItem('cnc_training_simulator_v1', simulatorRaw);
+      localStorage.setItem('cnc_training_exam_v1', JSON.stringify({ version: 1 }));
+      localStorage.setItem('unrelated_keep_me', '保留');
+    }, { practiceRaw: nestedPracticeRaw, simulatorRaw: nestedSimulatorRaw });
+    await page.reload({ waitUntil: 'networkidle' });
+
+    const nested = await page.evaluate(() => ({
+      summary: window.CNC_AI_TEACHER?.getSummary?.() || null,
+      practiceRaw: localStorage.getItem('cnc_training_practice_v1'),
+      simulatorRaw: localStorage.getItem('cnc_training_simulator_v1'),
+      unrelated: localStorage.getItem('unrelated_keep_me'),
+      bodyText: document.body.innerText,
+      alertHidden: document.getElementById('data-integrity-alert')?.hidden === true
+    }));
+    const visibleNested = {
+      wrong: await page.locator('#wrong-count').textContent(),
+      simulations: await page.locator('#sim-progress').textContent(),
+      weakest: await page.locator('#weakest').textContent()
+    };
+    report.nestedSummary = nested.summary;
+    report.nestedVisible = visibleNested;
+    report.nestedWrongFiltered = nested.summary?.wrong === 2 && visibleNested.wrong === '2';
+    report.nestedSimulatorFiltered = nested.summary?.simulations === 2 && visibleNested.simulations === '2/13';
+    report.nestedScoreStrict = nested.summary?.weakest === '机床与坐标' && nested.summary?.weakestScore === 26 && visibleNested.weakest === '机床与坐标';
+    report.nestedIntegrityRemainsUsable = nested.alertHidden === true;
+    report.nestedDataPreserved = nested.practiceRaw === nestedPracticeRaw
+      && nested.simulatorRaw === nestedSimulatorRaw
+      && nested.unrelated === '保留';
+    report.nestedNoNonFiniteText = !/NaN|Infinity/.test(nested.bodyText || '');
+
+    logs.push(`嵌套异常错题安全过滤：${report.nestedWrongFiltered}（${visibleNested.wrong}）`);
+    logs.push(`新版 records 模拟结构与嵌套异常安全过滤：${report.nestedSimulatorFiltered}（${visibleNested.simulations}）`);
+    logs.push(`非法/越界/字符串成绩不参与能力判断：${report.nestedScoreStrict}（${nested.summary?.weakest}/${nested.summary?.weakestScore}）`);
+    logs.push(`根结构正常时嵌套坏记录只读降级、不误触发全局阻断：${report.nestedIntegrityRemainsUsable}`);
+    logs.push(`嵌套异常原始数据保持不变：${report.nestedDataPreserved}`);
+    logs.push(`页面无 NaN/Infinity 污染：${report.nestedNoNonFiniteText}`);
+
+    assert.equal(report.nestedWrongFiltered, true, '数组/null/字符串错题不得污染AI老师错题数量');
+    assert.equal(report.nestedSimulatorFiltered, true, '新版records结构必须正确统计，且字符串passed、字符串/越界/负数成绩或数组记录不得冒充模拟通过');
+    assert.equal(report.nestedScoreStrict, true, '字符串或超出0-100范围的课程成绩不得污染AI老师能力画像');
+    assert.equal(report.nestedIntegrityRemainsUsable, true, '根结构合法时应忽略嵌套坏记录，而不是把整个学习档案误判为损坏');
+    assert.equal(report.nestedDataPreserved, true, '嵌套坏数据降级不得自动清理、迁移或改写原始LocalStorage');
+    assert.equal(report.nestedNoNonFiniteText, true, '页面不得出现NaN或Infinity污染');
+    assert.equal(consoleErrors.length, 0, consoleErrors.join('\n'));
+
     const minTouch = await page.locator('a:visible,button:visible').evaluateAll(nodes => Math.min(...nodes.map(node => Math.max(node.getBoundingClientRect().height, node.getBoundingClientRect().width))));
     assert(minTouch >= 44, `最小触控目标仅 ${minTouch}px`);
     report.minTouch = minTouch;
     report.passed = true;
-    logs.push('AI老师损坏档案全入口保护验收通过');
+    logs.push('AI老师根损坏阻断 + 新版模拟records + 嵌套异常只读降级验收通过');
     writeDiagnostics();
   } catch (error) {
     logs.push(`验收失败：${error.message}`);

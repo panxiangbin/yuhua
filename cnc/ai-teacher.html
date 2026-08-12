@@ -123,9 +123,11 @@
   function read(key){const raw=localStorage.getItem(key);if(raw===null)return {};try{const value=JSON.parse(raw);return value&&typeof value==='object'&&!Array.isArray(value)?value:{__cncDataInvalid:true}}catch{return {__cncDataInvalid:true}}}
   function readCompleted(key){const raw=localStorage.getItem(key);if(raw===null)return [];try{const value=JSON.parse(raw);return Array.isArray(value)?value:{__cncDataInvalid:true}}catch{return {__cncDataInvalid:true}}}
   function asArray(value){return Array.isArray(value)?value:[]}
-  function wrongRows(practice){const value=practice.wrongQuestions||practice.wrong||[];return Array.isArray(value)?value:Object.values(value||{})}
-  function simulatorRows(simulator){const root=simulator.simulators&&typeof simulator.simulators==='object'?simulator.simulators:simulator;return Object.values(root||{}).filter(value=>value&&typeof value==='object'&&('passed'in value||'bestScore'in value||'score'in value))}
-  function normalizedScore(value){const number=Number(value&&value.score!==undefined?value.score:value);return Number.isFinite(number)?Math.max(0,Math.min(100,number)):null}
+  function isRecord(value){return Boolean(value&&typeof value==='object'&&!Array.isArray(value))}
+  function wrongRows(practice){const value=practice.wrongQuestions||practice.wrong||[];const rows=Array.isArray(value)?value:isRecord(value)?Object.values(value):[];return rows.filter(isRecord)}
+  function simulatorRows(simulator){const nestedRecords=simulator.records;const legacyRecords=simulator.simulators;const root=isRecord(nestedRecords)?nestedRecords:(isRecord(legacyRecords)?legacyRecords:simulator);if(!isRecord(root))return [];return Object.values(root).filter(value=>isRecord(value)&&('passed'in value||'bestScore'in value||'score'in value))}
+  function normalizedScore(value){const raw=isRecord(value)&&value.score!==undefined?value.score:value;return typeof raw==='number'&&Number.isFinite(raw)&&raw>=0&&raw<=100?raw:null}
+  function simulationPassed(row){const raw=row.bestScore!==undefined?row.bestScore:row.score;const score=normalizedScore(raw);return row.passed===true||(score!==null&&score>=80)}
   function stageLevel(value){const match=String(value??'').match(/(?:stage-)?(\d{1,2})$/i);const level=Number(match?.[1]);return level>=1&&level<=12?level:null}
   function lessonScore(level,profile,practice){
     const candidates=[
@@ -159,7 +161,7 @@
     const completed=completedCourses(study,profile),wrong=wrongRows(practice),simulations=simulatorRows(simulator);
     const abilities=abilitySnapshot(profile,practice,completed),focus=focusLesson(profile,practice,completed);
     const weakest=abilities.find(item=>item.lessons.includes(focus))||abilities[0];
-    return {study,profile,practice,simulator,exam,completed,wrong,simulations,abilities,weakest,simulationPass:simulations.filter(row=>row.passed===true||Number(row.bestScore||row.score||0)>=80).length,nextCourse:Array.from({length:12},(_,i)=>i+1).find(level=>!completed.has(level))||12};
+    return {study,profile,practice,simulator,exam,completed,wrong,simulations,abilities,weakest,simulationPass:simulations.filter(simulationPassed).length,nextCourse:Array.from({length:12},(_,i)=>i+1).find(level=>!completed.has(level))||12};
   }
   function route(text,href,primary=false){return {text,href,primary}}
   function source(type,label,status,href){return {type,label,status,href}}
