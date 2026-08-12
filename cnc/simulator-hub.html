@@ -58,8 +58,8 @@
     ];
     function asRecord(value){return value&&typeof value==='object'&&!Array.isArray(value)?value:null}
     function read(k){try{return asRecord(JSON.parse(localStorage.getItem(k)||'{}'))||{}}catch{return {}}}
-    function validScore(value){const n=Number(value);return Number.isFinite(n)&&n>=0&&n<=100?n:0}
-    function validCount(value){const n=Number(value);return Number.isFinite(n)&&n>=0?Math.floor(n):0}
+    function validScore(value){return typeof value==='number'&&Number.isFinite(value)&&value>=0&&value<=100?value:0}
+    function validCount(value){return typeof value==='number'&&Number.isFinite(value)&&value>=0?Math.floor(value):0}
     function recordSignature(record){return [record.lastCompletedAt||record.updatedAt||'',record.bestScore??record.best??'',record.lastScore??'',record.attempts??'',record.passed??''].join('|')}
     function item(data,id){
       const candidates=[asRecord(data.records&&data.records[id]),asRecord(data.simulators&&data.simulators[id]),asRecord(data[id])].filter(Boolean);
