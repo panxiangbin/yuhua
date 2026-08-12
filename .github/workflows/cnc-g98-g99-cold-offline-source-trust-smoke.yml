@@ -73,7 +73,7 @@ jobs:
           const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
           const sw = fs.readFileSync('cnc/sw.js', 'utf8');
           const test = fs.readFileSync('cnc/tests/g98-g99-cold-offline-source-trust-smoke.cjs', 'utf8');
-          if (info.pwaBuild !== '20260812-pwa40' || info.cacheRevision !== '20260812-learning40') {
+          if (info.pwaBuild !== '20260812-pwa41' || info.cacheRevision !== '20260812-learning41') {
             throw new Error(`unexpected PWA38 marker: ${info.pwaBuild}/${info.cacheRevision}`);
           }
           if (!String(info.contentStage || '').includes('G98/G99车铣双语义适用范围') || !String(info.contentStage || '').includes('G96/G97恒线速/恒转速适用范围')) {
@@ -83,8 +83,8 @@ jobs:
             if (!sw.includes(file)) throw new Error(`Service Worker core cache missing: ${file}`);
           }
           for (const token of [
-            "const PWA_BUILD = '20260812-pwa40'",
-            "const CACHE_REVISION = '20260812-learning40'",
+            "const PWA_BUILD = '20260812-pwa41'",
+            "const CACHE_REVISION = '20260812-learning41'",
             "stage = 'cold-offline-g98-g99-source'",
             "stage = 'cold-offline-g98-g99-reload'",
             'context.setOffline(true)',

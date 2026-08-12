@@ -52,11 +52,11 @@ jobs:
           const placement = fs.readFileSync('cnc/beginner-placement.html', 'utf8');
           const camp = fs.readFileSync('cnc/training-camp.html', 'utf8');
           if (info.build !== '20260806-learning-depth1') throw new Error(`unexpected site build: ${info.build}`);
-          if (info.pwaBuild !== '20260812-pwa40' || info.cacheRevision !== '20260812-learning40') throw new Error(`unexpected PWA/cache build: ${info.pwaBuild}/${info.cacheRevision}`);
-          if (!sw.includes("const BUILD = '20260812-pwa40'") || !sw.includes("const CACHE_REVISION = '20260812-learning40'")) throw new Error('Service Worker build/cache mismatch');
+          if (info.pwaBuild !== '20260812-pwa41' || info.cacheRevision !== '20260812-learning41') throw new Error(`unexpected PWA/cache build: ${info.pwaBuild}/${info.cacheRevision}`);
+          if (!sw.includes("const BUILD = '20260812-pwa41'") || !sw.includes("const CACHE_REVISION = '20260812-learning41'")) throw new Error('Service Worker build/cache mismatch');
           for (const token of [
-            "const branchTargetPwaBuild = '20260812-pwa40'", "const controlledPublicPwaBuild = '20260811-pwa37'",
-            "[branchTargetPwaBuild]: '20260812-learning40'", "[controlledPublicPwaBuild]: '20260811-learning37'",
+            "const branchTargetPwaBuild = '20260812-pwa41'", "const controlledPublicPwaBuild = '20260811-pwa37'",
+            "[branchTargetPwaBuild]: '20260812-learning41'", "[controlledPublicPwaBuild]: '20260811-learning37'",
             "const expectedSiteBuild = '20260806-learning-depth1'", 'const VIDEO_CORE = [',
             'const EXACT_CORE = [...BASE_CORE, ...VIDEO_CORE]', 'const CONTROLLED_PUBLIC_CORE_PATHS = EXACT_CORE',
             'CNC_PAGES_VERIFY_ATTEMPTS || 18', "cache: 'no-store'", 'cnc/beginner-placement.html',

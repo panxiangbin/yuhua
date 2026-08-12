@@ -51,11 +51,19 @@ const COURSES=[
 {id:'stage-12',title:'完整程序与首件验证',file:'course-complete-program-first-piece.html',reason:'把图纸、装夹、刀具、坐标、程序、试切和测量串成闭环。'}
 ];
 let placementHandoffConsumed=false;
-function safeParse(key,fallback){try{const v=JSON.parse(localStorage.getItem(key)||'null');return v&&typeof v==='object'?v:fallback}catch{return fallback}}
-function getScores(profile){return profile.courseScores&&typeof profile.courseScores==='object'?profile.courseScores:{}}
-function isDone(profile,id){const done=Array.isArray(profile.completedStages)?profile.completedStages:[];return done.includes(id)||Number(getScores(profile)[id]||0)>=80}
-function countWrong(practice){const wrong=practice.wrongQuestions||practice.wrong||[];return Array.isArray(wrong)?wrong.length:Object.keys(wrong||{}).length}
-function countSimulatorPassed(simulator){const source=simulator.simulators&&typeof simulator.simulators==='object'?simulator.simulators:simulator;return Object.values(source||{}).filter(item=>item&&typeof item==='object'&&(item.passed===true||Number(item.bestScore||item.score||0)>=80)).length}
+const COURSE_ID_SET=new Set(COURSES.map(course=>course.id));
+const SIMULATOR_IDS=['homing','workholding-check','tool-installation','tool-length-offset-check','work-offset-setting','program-dry-run','single-block-first-approach','graphics-segment-prediction','first-piece-inspection','alarm-troubleshooting','cutter-comp-risk','hole-cycle-troubleshooting','measurement-vs-machining-error'];
+function isRecord(value){return !!value&&typeof value==='object'&&!Array.isArray(value)}
+function strictScore(value){return typeof value==='number'&&Number.isFinite(value)&&value>=0&&value<=100?value:null}
+function safeParse(key,fallback){try{const value=JSON.parse(localStorage.getItem(key)||'null');return isRecord(value)?value:fallback}catch{return fallback}}
+function getScores(profile){return isRecord(profile.courseScores)?profile.courseScores:{}}
+function completedStageIds(profile){return new Set((Array.isArray(profile.completedStages)?profile.completedStages:[]).filter(id=>typeof id==='string'&&COURSE_ID_SET.has(id)))}
+function courseScore(profile,id){const value=strictScore(getScores(profile)[id]);return value===null?0:value}
+function isDone(profile,id){const done=completedStageIds(profile);if(done.has(id))return true;const value=strictScore(getScores(profile)[id]);return value!==null&&value>=80}
+function countWrong(practice){const wrong=practice.wrongQuestions??practice.wrong??[];if(Array.isArray(wrong))return wrong.filter(isRecord).length;if(isRecord(wrong))return Object.values(wrong).filter(isRecord).length;return 0}
+function simulatorCandidates(simulator,id){return [isRecord(simulator.records)&&isRecord(simulator.records[id])?simulator.records[id]:null,isRecord(simulator.simulators)&&isRecord(simulator.simulators[id])?simulator.simulators[id]:null,isRecord(simulator[id])?simulator[id]:null].filter(isRecord)}
+function simulatorRecordPassed(record){if(record.passed===true)return true;const best=strictScore(record.bestScore??record.best??record.score);return best!==null&&best>=80}
+function countSimulatorPassed(simulator){return SIMULATOR_IDS.filter(id=>simulatorCandidates(simulator,id).some(simulatorRecordPassed)).length}
 function setRecommended(id){document.querySelectorAll('.route-card').forEach(card=>card.classList.toggle('recommended',card.id===id))}
 function handoffOutcome(state,data=null){return {state,data}}
 function payloadMatchesCanonicalRoute(data,canonical){
@@ -112,7 +120,7 @@ function render(){
   const scores=getScores(profile);
   const done=COURSES.filter(c=>isDone(profile,c.id));
   const next=COURSES.find(c=>!isDone(profile,c.id))||COURSES[COURSES.length-1];
-  const average=done.length?Math.round(done.reduce((s,c)=>s+Number(scores[c.id]||80),0)/done.length):0;
+  const average=done.length?Math.round(done.reduce((sum,course)=>sum+(courseScore(profile,course.id)||80),0)/done.length):0;
   const wrongCount=countWrong(practice);
   const simulatorPassed=countSimulatorPassed(simulator);
   document.getElementById('passed-count').textContent=done.length;
@@ -136,7 +144,7 @@ function render(){
   document.getElementById('route-cta').href=route.href;
   document.getElementById('route-cta').textContent=route.label;
   setRecommended(route.id);
-  document.getElementById('course-list').innerHTML=COURSES.map((c,i)=>{const doneFlag=isDone(profile,c.id),score=Number(scores[c.id]||0),current=c.id===next.id&&!doneFlag;return `<a class="course ${doneFlag?'done':''} ${current?'current':''}" href="./${c.file}" data-stage="${c.id}"><span class="number">${String(i+1).padStart(2,'0')}</span><span><h2>${c.title}</h2><p>${c.reason}</p></span><span class="status">${doneFlag?`已通过 ${score||80}分`:current?'继续学习':'未开始'}</span></a>`}).join('');
+  document.getElementById('course-list').innerHTML=COURSES.map((c,i)=>{const doneFlag=isDone(profile,c.id),score=courseScore(profile,c.id),current=c.id===next.id&&!doneFlag;return `<a class="course ${doneFlag?'done':''} ${current?'current':''}" href="./${c.file}" data-stage="${c.id}"><span class="number">${String(i+1).padStart(2,'0')}</span><span><h2>${c.title}</h2><p>${c.reason}</p></span><span class="status">${doneFlag?`已通过 ${score||80}分`:current?'继续学习':'未开始'}</span></a>`}).join('');
 }
 render();
 renderHandoffState(consumePlacementHandoff());
