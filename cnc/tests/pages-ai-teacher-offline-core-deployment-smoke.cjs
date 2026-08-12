@@ -8,12 +8,14 @@ fs.mkdirSync(resultsDir, { recursive: true });
 
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
-const branchTargetPwaBuild = '20260811-pwa38';
+const branchTargetPwaBuild = '20260812-pwa39';
+const currentMainPwaBuild = '20260811-pwa38';
 const controlledPublicPwaBuild = '20260811-pwa37';
 const expectedSiteBuild = '20260806-learning-depth1';
 const controlledPublicSiteBuild = '20260806-learning-depth1';
 const cacheRevisionByBuild = {
-  [branchTargetPwaBuild]: '20260811-learning38',
+  [branchTargetPwaBuild]: '20260812-learning39',
+  [currentMainPwaBuild]: '20260811-learning38',
   [controlledPublicPwaBuild]: '20260811-learning37'
 };
 const attempts = Number(process.env.CNC_PAGES_VERIFY_ATTEMPTS || 18);
@@ -97,6 +99,7 @@ const LEARNING_DEPTH_CORE_PATHS = new Set([
 
 function expectedCoreForBuild(build, label) {
   if (build === branchTargetPwaBuild) return EXACT_CORE_PATHS;
+  if (build === currentMainPwaBuild) return CONTROLLED_PUBLIC_CORE_PATHS;
   if (build === controlledPublicPwaBuild) return CONTROLLED_PUBLIC_CORE_PATHS;
   throw new Error(`${label}出现未受控核心资源构建：${build}`);
 }
@@ -108,6 +111,7 @@ const diagnostics = {
   publicRoot,
   mainRoot,
   branchTargetPwaBuild,
+  currentMainPwaBuild,
   controlledPublicPwaBuild,
   expectedSiteBuild,
   controlledPublicSiteBuild,
@@ -179,7 +183,7 @@ function forbidTokens(text, label, patterns) {
 }
 
 function assertAllowedBuild(build, label) {
-  if (![controlledPublicPwaBuild, branchTargetPwaBuild].includes(build)) throw new Error(`${label}出现未受控PWA构建：${build}`);
+  if (![controlledPublicPwaBuild, currentMainPwaBuild, branchTargetPwaBuild].includes(build)) throw new Error(`${label}出现未受控PWA构建：${build}`);
 }
 
 function expectedCacheRevision(build, label) {
@@ -190,6 +194,7 @@ function expectedCacheRevision(build, label) {
 
 function expectedSiteBuildFor(build, label) {
   if (build === branchTargetPwaBuild) return expectedSiteBuild;
+  if (build === currentMainPwaBuild) return expectedSiteBuild;
   if (build === controlledPublicPwaBuild) return controlledPublicSiteBuild;
   throw new Error(`${label}出现未受控站点/PWA构建组合：${build}`);
 }

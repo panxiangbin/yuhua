@@ -156,7 +156,7 @@
   }
   function learningState(){
     const study=readCompleted(KEYS.study),profile=read(KEYS.profile),practice=read(KEYS.practice),simulator=read(KEYS.simulator),exam=read(KEYS.exam);
-    const completed=completedCourses(study,profile,practice),wrong=wrongRows(practice),simulations=simulatorRows(simulator);
+    const completed=completedCourses(study,profile),wrong=wrongRows(practice),simulations=simulatorRows(simulator);
     const abilities=abilitySnapshot(profile,practice,completed),focus=focusLesson(profile,practice,completed);
     const weakest=abilities.find(item=>item.lessons.includes(focus))||abilities[0];
     return {study,profile,practice,simulator,exam,completed,wrong,simulations,abilities,weakest,simulationPass:simulations.filter(row=>row.passed===true||Number(row.bestScore||row.score||0)>=80).length,nextCourse:Array.from({length:12},(_,i)=>i+1).find(level=>!completed.has(level))||12};
@@ -281,8 +281,8 @@
   }
 
   document.addEventListener('click',event=>{
-    const next=event.target.closest('[data-intent="next"]');
-    if(!next||inspectLearningData().ok)return;
+    const quickQuestion=event.target.closest('#quick-questions [data-intent]');
+    if(!quickQuestion||inspectLearningData().ok)return;
     event.preventDefault();
     event.stopImmediatePropagation();
     renderIntegrityBlock();

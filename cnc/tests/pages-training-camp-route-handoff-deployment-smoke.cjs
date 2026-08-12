@@ -9,15 +9,18 @@ fs.mkdirSync(out, { recursive: true });
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
 const expectedSiteBuild = '20260806-learning-depth1';
-const expectedPwaBuild = '20260811-pwa38';
+const expectedPwaBuild = '20260812-pwa39';
+const currentMainPwaBuild = '20260811-pwa38';
 const controlledPublicSiteBuild = '20260806-learning-depth1';
 const controlledPublicPwaBuild = '20260811-pwa37';
 const cacheRevisionByBuild = {
-  [expectedPwaBuild]: '20260811-learning38',
+  [expectedPwaBuild]: '20260812-learning39',
+  [currentMainPwaBuild]: '20260811-learning38',
   [controlledPublicPwaBuild]: '20260811-learning37'
 };
 const siteBuildByPwaBuild = {
   [expectedPwaBuild]: expectedSiteBuild,
+  [currentMainPwaBuild]: expectedSiteBuild,
   [controlledPublicPwaBuild]: controlledPublicSiteBuild
 };
 const attempts = Number(process.env.CNC_PAGES_VERIFY_ATTEMPTS || 18);
@@ -52,6 +55,7 @@ const LEARNING_DEPTH_CORE_PATHS = new Set([
 
 function expectedCoreForBuild(build, label) {
   if (build === expectedPwaBuild) return EXACT_CORE;
+  if (build === currentMainPwaBuild) return CONTROLLED_PUBLIC_CORE_PATHS;
   if (build === controlledPublicPwaBuild) return CONTROLLED_PUBLIC_CORE_PATHS;
   throw new Error(`${label}出现未受控核心资源构建：${build}`);
 }
@@ -65,6 +69,7 @@ const report = {
   mainRoot,
   expectedSiteBuild,
   expectedPwaBuild,
+  currentMainPwaBuild,
   controlledPublicSiteBuild,
   controlledPublicPwaBuild,
   eventName,
