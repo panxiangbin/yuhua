@@ -30,6 +30,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          mkdir -p cnc/test-results/pwa39-pin-sync
+          export OLD_PWA_DATE='20260811'
+          export OLD_PWA_SUFFIX='pwa38'
+          export NEW_PWA='20260812-pwa39'
+          export OLD_CACHE_DATE='20260811'
+          export OLD_CACHE_SUFFIX='learning38'
+          export NEW_CACHE='20260812-learning39'
           files=(
             '.github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml'
             '.github/workflows/cnc-beginner-placement-offline-pages-smoke.yml'
@@ -62,24 +69,28 @@ jobs:
             'cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs'
             'cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs'
           )
+          printf '%s\n' "${files[@]}" > cnc/test-results/pwa39-pin-sync/expected-files.txt
           for file in "${files[@]}"; do
             test -f "$file"
             python - "$file" <<'PY'
-          import pathlib, sys
+          import os, pathlib, sys
           path = pathlib.Path(sys.argv[1])
           source = path.read_text(encoding='utf-8')
-          updated = source.replace('20260811-pwa38', '20260812-pwa39').replace('20260811-learning38', '20260812-learning39')
+          old_pwa = os.environ['OLD_PWA_DATE'] + '-' + os.environ['OLD_PWA_SUFFIX']
+          old_cache = os.environ['OLD_CACHE_DATE'] + '-' + os.environ['OLD_CACHE_SUFFIX']
+          updated = source.replace(old_pwa, os.environ['NEW_PWA']).replace(old_cache, os.environ['NEW_CACHE'])
           path.write_text(updated, encoding='utf-8')
           PY
           done
 
           git diff --check
-          node cnc/tests/pwa-build-reference-audit-smoke.cjs
+          node cnc/tests/pwa-build-reference-audit-smoke.cjs 2>&1 | tee cnc/test-results/pwa39-pin-sync/audit.log
 
           allowed=$(printf '%s\n' "${files[@]}" | sort)
           changed=$(git diff --name-only | sort)
+          printf '%s\n' "$changed" > cnc/test-results/pwa39-pin-sync/changed-files.txt
           if [[ "$changed" != "$allowed" ]]; then
-            echo 'PWA39同步实际文件范围与受控清单不一致' >&2
+            echo 'PWA39同步实际文件范围与受控清单不一致' | tee cnc/test-results/pwa39-pin-sync/error.txt >&2
             echo '--- expected ---' >&2
             printf '%s\n' "$allowed" >&2
             echo '--- changed ---' >&2
@@ -90,12 +101,20 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if git diff --quiet; then
+          if git diff --quiet -- .github/workflows/cnc-*.yml cnc/ ':!cnc/test-results'; then
             echo 'No PWA39 pin changes to commit.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -- .github/workflows/cnc-*.yml cnc/
+          git add -- .github/workflows/cnc-*.yml cnc/ ':!cnc/test-results'
           git commit -m 'CNC：同步 PWA39 全量构建针'
           git push origin HEAD:codex/cnc-ai-integrity-quick-guard
+      - name: Upload synchronization diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-pwa39-pin-sync-${{ github.run_id }}
+          path: cnc/test-results/pwa39-pin-sync/**
+          if-no-files-found: error
+          retention-days: 14
