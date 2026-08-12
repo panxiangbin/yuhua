@@ -8,6 +8,11 @@ fs.mkdirSync(ARTIFACT_DIR, { recursive: true });
 
 const completedStages = Array.from({ length: 12 }, (_, index) => `stage-${index + 1}`);
 const courseScores = Object.fromEntries(completedStages.map(id => [id, 90]));
+const simulatorIds = [
+  'homing','workholding-check','tool-installation','tool-length-offset-check','work-offset-setting',
+  'program-dry-run','single-block-first-approach','graphics-segment-prediction','first-piece-inspection',
+  'alarm-troubleshooting','cutter-comp-risk','hole-cycle-troubleshooting','measurement-vs-machining-error'
+];
 
 async function openPage(browser, seed, name) {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
@@ -61,7 +66,7 @@ async function assertTouchTargets(page) {
     assert.strictEqual(wrong.errors.length, 0, `错题场景控制台错误: ${wrong.errors.join(' | ')}`);
     await wrong.page.close();
 
-    const partialSimulators = Object.fromEntries(Array.from({ length: 4 }, (_, index) => [`sim-${index + 1}`, { passed: true, bestScore: 100 }]));
+    const partialSimulators = Object.fromEntries(simulatorIds.slice(0, 4).map(id => [id, { passed: true, bestScore: 100 }]));
     const simulator = await openPage(browser, {
       cnc_training_profile_v1: { version: 1, completedStages, courseScores },
       cnc_training_practice_v1: { version: 1, wrongQuestions: [] },
@@ -74,7 +79,7 @@ async function assertTouchTargets(page) {
     assert.strictEqual(simulator.errors.length, 0, `模拟场景控制台错误: ${simulator.errors.join(' | ')}`);
     await simulator.page.close();
 
-    const completeSimulators = Object.fromEntries(Array.from({ length: 13 }, (_, index) => [`sim-${index + 1}`, { passed: true, bestScore: 100 }]));
+    const completeSimulators = Object.fromEntries(simulatorIds.map(id => [id, { passed: true, bestScore: 100 }]));
     const complete = await openPage(browser, {
       cnc_training_profile_v1: { version: 1, completedStages, courseScores },
       cnc_training_practice_v1: { version: 1, wrongQuestions: [] },
