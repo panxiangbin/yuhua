@@ -45,11 +45,16 @@ const REQUIRED_FIELDS = [
 ];
 const OPTIONAL_FIELDS = new Set(['fileSha256']);
 const PLACEHOLDER_PATTERN = /^(待填写|待提供|未知|不详|todo|tbd|unknown|example|示例|占位)$/i;
+const RECORD_PLACEHOLDER_PATTERN = /(待填写|待提供|待确认|待核对|未知|不详|\b(?:todo|tbd|unknown|example)\b|示例|占位)/i;
 
 function isRealDate(value) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
   const date = new Date(`${value}T00:00:00Z`);
   return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
+}
+
+function isFutureDate(value, now = new Date()) {
+  return value > now.toISOString().slice(0, 10);
 }
 
 function validateText(record, field, minimum, errors, index) {
@@ -58,8 +63,8 @@ function validateText(record, field, minimum, errors, index) {
     errors.push(`records[${index}].${field} 至少需要 ${minimum} 个非空字符`);
     return;
   }
-  if (PLACEHOLDER_PATTERN.test(value.trim())) {
-    errors.push(`records[${index}].${field} 仍是占位内容：${value.trim()}`);
+  if (RECORD_PLACEHOLDER_PATTERN.test(value.trim())) {
+    errors.push(`records[${index}].${field} 仍含占位或未核实内容：${value.trim()}`);
   }
 }
 
@@ -138,6 +143,8 @@ function validateDocument(document) {
 
     if (typeof record.reviewedAt !== 'string' || !isRealDate(record.reviewedAt)) {
       errors.push(`records[${index}].reviewedAt 必须为真实的 YYYY-MM-DD 日期`);
+    } else if (isFutureDate(record.reviewedAt)) {
+      errors.push(`records[${index}].reviewedAt 不得晚于当前 UTC 日期`);
     }
     if (record.fileSha256 !== undefined && (typeof record.fileSha256 !== 'string' || !/^[a-f0-9]{64}$/.test(record.fileSha256))) {
       errors.push(`records[${index}].fileSha256 必须为 64 位小写十六进制 SHA-256`);
@@ -186,6 +193,10 @@ module.exports = {
   DATASET_PATHS,
   SOURCE_TYPES,
   DECISIONS,
+  PLACEHOLDER_PATTERN,
+  RECORD_PLACEHOLDER_PATTERN,
+  isRealDate,
+  isFutureDate,
   validateDocument,
   validateFile
 };
