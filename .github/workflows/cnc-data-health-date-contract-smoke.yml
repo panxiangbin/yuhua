@@ -1,0 +1,43 @@
+name: CNC data health strict date contract smoke
+on:
+  pull_request:
+    paths:
+      - 'cnc/data-health.html'
+      - 'cnc/tests/data-health-date-contract-smoke.cjs'
+      - '.github/workflows/cnc-data-health-date-contract-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  strict-date-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout exact tested head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Verify exact tested head
+        shell: bash
+        run: |
+          set -euo pipefail
+          tested_head="$(git rev-parse HEAD)"
+          expected_head="${{ github.event.pull_request.head.sha || github.sha }}"
+          test "$tested_head" = "$expected_head"
+          printf '{"testedHead":"%s","expectedHead":"%s"}\n' "$tested_head" "$expected_head" > data-health-date-identity.json
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Run strict calendar date contract
+        run: |
+          node --check cnc/tests/data-health-date-contract-smoke.cjs
+          node cnc/tests/data-health-date-contract-smoke.cjs
+      - name: Upload identity evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-data-health-date-contract-${{ github.run_id }}
+          path: data-health-date-identity.json
+          if-no-files-found: error
+          retention-days: 14
