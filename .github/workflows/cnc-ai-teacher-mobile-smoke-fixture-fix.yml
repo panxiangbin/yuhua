@@ -51,7 +51,7 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add cnc/tests/mobile-ai-teacher-smoke.cjs .github/workflows/cnc-ai-teacher-mobile-smoke-fixture-fix.yml
+          git add -A -- cnc/tests/mobile-ai-teacher-smoke.cjs .github/workflows/cnc-ai-teacher-mobile-smoke-fixture-fix.yml
           git commit -m 'CNC：对齐AI老师共享模拟回归夹具'
           git rev-parse HEAD | tee generated-sha.txt
           git diff --name-only "$BASE_MAIN" HEAD | tee final-diff-files.txt
