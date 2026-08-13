@@ -1,0 +1,86 @@
+name: Canonical Link Audit
+
+on:
+  push:
+    branches: [upgrade-84h]
+    paths:
+      - "**/*.html"
+      - "assets/site-config.js"
+      - "scripts/audit-canonical-links.cjs"
+      - "scripts/classify-canonical-page-types.cjs"
+      - "scripts/build-self-canonical-plan.cjs"
+      - "scripts/audit-self-canonical-plan-integrity.cjs"
+      - "scripts/build-canonical-pilot-batch.cjs"
+      - "scripts/audit-canonical-pilot-preflight.cjs"
+      - "scripts/check-no-direct-contact.cjs"
+      - "scripts/audit-public-contact-leaks.cjs"
+      - ".github/workflows/canonical-link-audit.yml"
+  pull_request:
+    paths:
+      - "**/*.html"
+      - "assets/site-config.js"
+      - "scripts/audit-canonical-links.cjs"
+      - "scripts/classify-canonical-page-types.cjs"
+      - "scripts/build-self-canonical-plan.cjs"
+      - "scripts/audit-self-canonical-plan-integrity.cjs"
+      - "scripts/build-canonical-pilot-batch.cjs"
+      - "scripts/audit-canonical-pilot-preflight.cjs"
+      - "scripts/check-no-direct-contact.cjs"
+      - "scripts/audit-public-contact-leaks.cjs"
+      - ".github/workflows/canonical-link-audit.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check audit script syntax
+        run: |
+          node --check scripts/audit-canonical-links.cjs
+          node --check scripts/classify-canonical-page-types.cjs
+          node --check scripts/build-self-canonical-plan.cjs
+          node --check scripts/audit-self-canonical-plan-integrity.cjs
+          node --check scripts/build-canonical-pilot-batch.cjs
+          node --check scripts/audit-canonical-pilot-preflight.cjs
+      - name: Enforce no direct contact policy
+        run: node scripts/check-no-direct-contact.cjs
+      - name: Audit public text for contact leaks
+        run: node scripts/audit-public-contact-leaks.cjs
+      - name: Audit canonical link coverage and safety
+        run: node scripts/audit-canonical-links.cjs
+      - name: Classify canonical gaps by page type
+        run: node scripts/classify-canonical-page-types.cjs
+      - name: Build non-executing self-canonical implementation plan
+        run: node scripts/build-self-canonical-plan.cjs
+      - name: Audit self-canonical plan integrity
+        run: node scripts/audit-self-canonical-plan-integrity.cjs
+      - name: Build low-risk canonical pilot batch
+        run: node scripts/build-canonical-pilot-batch.cjs
+      - name: Audit canonical pilot implementation preflight
+        run: node scripts/audit-canonical-pilot-preflight.cjs
+      - name: Upload canonical audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-link-audit
+          path: |
+            test-artifacts/canonical-link-audit.json
+            test-artifacts/canonical-link-audit.csv
+            test-artifacts/canonical-page-type-classification.json
+            test-artifacts/canonical-page-type-classification.csv
+            test-artifacts/self-canonical-implementation-plan.json
+            test-artifacts/self-canonical-implementation-plan.csv
+            test-artifacts/self-canonical-plan-integrity-audit.json
+            test-artifacts/self-canonical-plan-integrity-audit.csv
+            test-artifacts/canonical-pilot-batch.json
+            test-artifacts/canonical-pilot-batch.csv
+            test-artifacts/canonical-pilot-preflight-audit.json
+            test-artifacts/canonical-pilot-preflight-audit.csv
+          if-no-files-found: error
+          retention-days: 14

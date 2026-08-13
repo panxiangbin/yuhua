@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://panxiangbin.github.io/yuhua/sitemap.xml
