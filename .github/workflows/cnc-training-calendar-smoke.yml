@@ -7,12 +7,28 @@ on:
       - '.github/workflows/cnc-training-calendar-smoke.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   training-calendar:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout actual PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+      - name: Verify tested commit is actual PR head
+        shell: bash
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          tested="$(git rev-parse HEAD)"
+          test "$tested" = "$EXPECTED_HEAD" || { echo "tested head mismatch: $tested != $EXPECTED_HEAD"; exit 1; }
+          printf '{"testedHead":"%s","expectedHead":"%s","eventSha":"%s"}\n' "$tested" "$EXPECTED_HEAD" "$GITHUB_SHA" > cnc-training-calendar-identity.json
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
@@ -24,3 +40,13 @@ jobs:
         run: python3 -m http.server 4173 --directory . > /tmp/cnc-server.log 2>&1 &
       - name: Chromium 390x844 seven-day calendar
         run: node cnc/tests/mobile-training-calendar-smoke.cjs
+      - name: Upload training calendar diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-training-calendar-diagnostics-${{ github.run_id }}
+          path: |
+            cnc-training-calendar-identity.json
+            cnc/test-results/training-calendar/report.json
+          retention-days: 7
+          if-no-files-found: error
