@@ -4,8 +4,10 @@ const assert = require('node:assert/strict');
 (async () => {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
-  const errors = [];
-  page.on('pageerror', error => errors.push(error.message));
+  const pageErrors = [];
+  const consoleErrors = [];
+  page.on('pageerror', error => pageErrors.push(error.message));
+  page.on('console', msg => { if (msg.type() === 'error') consoleErrors.push(msg.text()); });
   await page.goto('http://127.0.0.1:4173/cnc/training-certificate.html', { waitUntil: 'domcontentloaded', timeout: 60000 });
 
   await page.evaluate(() => {
@@ -35,18 +37,63 @@ const assert = require('node:assert/strict');
     const list = document.querySelector('#score-list');
     const listBox = list.getBoundingClientRect();
     const boxes = [...list.querySelectorAll('.score')].map(node => node.getBoundingClientRect());
-    return { listBox, boxes };
+    return { listBox, boxes, overflow: document.documentElement.scrollWidth > innerWidth + 1 };
   });
   assert.ok(layout.boxes.every(box => box.width >= layout.listBox.width - 2));
   assert.ok(layout.boxes.every((box, index) => index === 0 || box.top >= layout.boxes[index - 1].bottom));
+  assert.equal(layout.overflow, false);
   assert.ok((await page.locator('.back').evaluate(node => node.getBoundingClientRect().height)) >= 44);
   assert.match(await page.locator('.notice').textContent(), /不是职业资格证书/);
   assert.match(await page.locator('.notice').textContent(), /原厂手册/);
+
+  const corruptStorage = await page.evaluate(() => {
+    localStorage.setItem('cnc_training_practice_v1', JSON.stringify({ lessonScores: { 1: '100', 2: 120, 3: -1, 4: 100, 5: 'Infinity' } }));
+    localStorage.setItem('cnc_training_profile_v1', JSON.stringify({ trainingDays: ['2026-07-20', '2026-07-20', '2026-02-30', 'bad', null], badges: ['迈出第一步', '迈出第一步', ' ', null, '成绩达标'] }));
+    localStorage.setItem('cnc_study_completed_v1', JSON.stringify([6, '7', 'stage-8', 99, null, []]));
+    const before = {
+      practice: localStorage.getItem('cnc_training_practice_v1'),
+      profile: localStorage.getItem('cnc_training_profile_v1'),
+      done: localStorage.getItem('cnc_study_completed_v1')
+    };
+    sessionStorage.setItem('certificate-corrupt-before', JSON.stringify(before));
+    location.reload();
+    return before;
+  });
+  await page.waitForFunction(() => window.CNC_TRAINING_CERTIFICATE?.build === '20260724c');
+  const corrupt = await page.evaluate(() => ({
+    snapshot: window.CNC_TRAINING_CERTIFICATE.snapshot(),
+    before: JSON.parse(sessionStorage.getItem('certificate-corrupt-before')),
+    after: {
+      practice: localStorage.getItem('cnc_training_practice_v1'),
+      profile: localStorage.getItem('cnc_training_profile_v1'),
+      done: localStorage.getItem('cnc_study_completed_v1')
+    },
+    text: document.body.innerText
+  }));
+  assert.deepEqual(corrupt.before, corruptStorage);
+  assert.deepEqual(corrupt.after, corrupt.before, '损坏学习数据必须只读降级');
+  assert.equal(corrupt.snapshot.passed, 3);
+  assert.equal(corrupt.snapshot.average, 22);
+  assert.equal(corrupt.snapshot.days, 1);
+  assert.equal(corrupt.snapshot.badges, 2);
+  assert.equal(corrupt.snapshot.graduated, false);
+  assert.doesNotMatch(corrupt.text, /NaN|Infinity/);
+
+  await page.evaluate(() => {
+    localStorage.setItem('cnc_training_practice_v1', JSON.stringify([]));
+    localStorage.setItem('cnc_training_profile_v1', JSON.stringify([]));
+    localStorage.setItem('cnc_study_completed_v1', JSON.stringify({ bad: true }));
+    location.reload();
+  });
+  await page.waitForFunction(() => window.CNC_TRAINING_CERTIFICATE?.build === '20260724c');
+  const malformedRoots = await page.evaluate(() => window.CNC_TRAINING_CERTIFICATE.snapshot());
+  assert.deepEqual(malformedRoots, { passed: 0, average: 0, days: 0, badges: 0, graduated: false, abilities: [0,0,0,0,0,0] });
 
   await page.evaluate(() => {
     const lessonScores = {};
     for (let level = 1; level <= 12; level += 1) lessonScores[level] = 90;
     localStorage.setItem('cnc_training_practice_v1', JSON.stringify({ version: 1, lessonScores }));
+    localStorage.setItem('cnc_training_profile_v1', JSON.stringify({ version: 1, trainingDays: ['2026-07-20', '2026-07-21', '2026-07-22'], badges: ['迈出第一步', '成绩达标'] }));
     localStorage.setItem('cnc_study_completed_v1', JSON.stringify([1,2,3,4,5,6,7,8,9,10,11,12]));
     location.reload();
   });
@@ -55,12 +102,15 @@ const assert = require('node:assert/strict');
   const graduated = await page.evaluate(() => window.CNC_TRAINING_CERTIFICATE.snapshot());
   assert.equal(graduated.passed, 12);
   assert.equal(graduated.average, 90);
+  assert.equal(graduated.days, 3);
+  assert.equal(graduated.badges, 2);
   assert.equal(graduated.graduated, true);
   assert.equal(await page.locator('#certificate-status').textContent(), '基础训练营已达标');
   assert.match(await page.locator('.notice').textContent(), /不是职业资格证书/);
   assert.match(await page.locator('.notice').textContent(), /原厂手册/);
-  assert.deepEqual(errors, []);
+  assert.deepEqual(pageErrors, []);
+  assert.deepEqual(consoleErrors, []);
 
-  console.log('阶段训练证书未达标与达标双场景、12关成绩、六维能力与安全声明通过', { unfinished, graduated });
+  console.log('阶段训练证书严格数值、日期、徽章、损坏根结构、只读降级与达标双场景通过', { unfinished, corrupt: corrupt.snapshot, malformedRoots, graduated });
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });
