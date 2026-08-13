@@ -8,14 +8,14 @@ fs.mkdirSync(resultsDir, { recursive: true });
 
 const publicRoot = (process.env.CNC_PAGES_URL || 'https://panxiangbin.github.io/yuhua').replace(/\/+$/, '');
 const mainRoot = (process.env.CNC_MAIN_RAW_ROOT || 'https://raw.githubusercontent.com/panxiangbin/yuhua/main').replace(/\/+$/, '');
-const branchTargetPwaBuild = '20260813-pwa43';
-const currentMainPwaBuild = '20260813-pwa42';
+const branchTargetPwaBuild = '20260813-pwa44';
+const currentMainPwaBuild = '20260813-pwa43';
 const controlledPublicPwaBuild = '20260811-pwa37';
 const expectedSiteBuild = '20260806-learning-depth1';
 const controlledPublicSiteBuild = '20260806-learning-depth1';
 const cacheRevisionByBuild = {
-  [branchTargetPwaBuild]: '20260813-learning43',
-  [currentMainPwaBuild]: '20260813-learning42',
+  [branchTargetPwaBuild]: '20260813-learning44',
+  [currentMainPwaBuild]: '20260813-learning43',
   [controlledPublicPwaBuild]: '20260811-learning37'
 };
 const attempts = Number(process.env.CNC_PAGES_VERIFY_ATTEMPTS || 18);
