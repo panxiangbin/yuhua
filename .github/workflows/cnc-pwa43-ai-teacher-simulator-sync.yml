@@ -1,0 +1,79 @@
+name: CNC PWA43 AI teacher simulator sync
+
+on:
+  push:
+    branches:
+      - codex/cnc-ai-teacher-simulator-pass-pwa43
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact branch head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Apply controlled AI teacher and PWA43 sync
+        run: node cnc/tests/pwa43-ai-teacher-simulator-sync.cjs
+      - name: Run strict PWA build reference audit
+        run: node cnc/tests/pwa-build-reference-audit-smoke.cjs
+      - name: Verify AI teacher JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import re, pathlib
+          src=pathlib.Path('cnc/ai-teacher.html').read_text(encoding='utf-8')
+          scripts=re.findall(r'<script(?:\s[^>]*)?>([\s\S]*?)</script>', src, flags=re.I)
+          pathlib.Path('/tmp/ai-teacher-inline.js').write_text('\n'.join(scripts), encoding='utf-8')
+          PY
+          node --check /tmp/ai-teacher-inline.js
+          node --check cnc/tests/ai-teacher-data-integrity-smoke.cjs
+      - name: Create generated sync commit
+        id: generated
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add cnc .github/workflows/cnc-*.yml
+          git reset -- cnc/test-results || true
+          git diff --cached --name-only | tee changed-files.txt
+          test "$(git diff --cached --name-only | wc -l | tr -d ' ')" = '34'
+          git diff --cached --name-only | awk '($0 ~ /^cnc\//) || ($0 ~ /^\.github\/workflows\/cnc-.*\.ya?ml$/) {next} {print "unexpected path: "$0; bad=1} END{exit bad}'
+          git commit -m 'CNC：统一AI老师模拟满分通过并升级PWA43'
+          git rev-parse HEAD | tee generated-sha.txt
+      - name: Attempt non-force branch push
+        id: push
+        shell: bash
+        run: |
+          set +e
+          git push origin HEAD:codex/cnc-ai-teacher-simulator-pass-pwa43 > push-output.txt 2>&1
+          code=$?
+          echo "$code" > push-code.txt
+          cat push-output.txt
+          exit 0
+      - name: Upload controlled sync diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-pwa43-ai-teacher-simulator-sync-${{ github.run_id }}
+          path: |
+            cnc/test-results/pwa43-ai-teacher-simulator-sync/sync-report.json
+            cnc/test-results/pwa-build-reference-audit/report.json
+            changed-files.txt
+            generated-sha.txt
+            push-code.txt
+            push-output.txt
+          retention-days: 7
+          if-no-files-found: error
