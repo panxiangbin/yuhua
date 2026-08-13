@@ -24,9 +24,9 @@ if (aliasPos < 0 || gmPos < 0 || aliasPos >= gmPos) {
 for (const core of ["'./search-aliases.js'", "'./gm-code-complete.js'"]) {
   if (!swText.includes(core)) errors.push(`PWA首次安装核心缺少G28可信目录依赖：${core}`);
 }
-if (!swText.includes("const BUILD = '20260813-pwa42'")) errors.push('Service Worker未升级到20260813-pwa42');
-if (!swText.includes("const CACHE_REVISION = '20260813-learning42'")) errors.push('Service Worker缓存修订未升级到20260813-learning42');
-if (buildInfo.pwaBuild !== '20260813-pwa42' || buildInfo.cacheRevision !== '20260813-learning42') {
+if (!swText.includes("const BUILD = '20260813-pwa43'")) errors.push('Service Worker未升级到20260813-pwa43');
+if (!swText.includes("const CACHE_REVISION = '20260813-learning43'")) errors.push('Service Worker缓存修订未升级到20260813-learning43');
+if (buildInfo.pwaBuild !== '20260813-pwa43' || buildInfo.cacheRevision !== '20260813-learning43') {
   errors.push(`build-info与PWA38不一致：${buildInfo.pwaBuild} / ${buildInfo.cacheRevision}`);
 }
 if (!String(buildInfo.contentStage || '').includes('G28参考点返回适用范围')) {

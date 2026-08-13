@@ -45,7 +45,9 @@ function writeDiagnostics(error) {
   const source = fs.readFileSync(path.join(root, 'cnc/ai-teacher.html'), 'utf8');
   report.staticSilentFallbackDetected = /function read\(key\)[\s\S]{0,240}catch\s*\{\s*return \{\}\s*\}/.test(source);
   report.strictNestedGuardDetected = source.includes("function isRecord(value){return Boolean(value&&typeof value==='object'&&!Array.isArray(value))}")
-    && source.includes('const nestedRecords=simulator.records;const legacyRecords=simulator.simulators;')
+    && source.includes("const SIMULATOR_IDS=['homing','workholding-check','tool-installation'")
+    && source.includes('const records=isRecord(simulator.records)?simulator.records:{};const legacy=isRecord(simulator.simulators)?simulator.simulators:{};')
+    && source.includes('const passed=unique.some(row=>row.passed===true)||bestScore===100')
     && source.includes("return typeof raw==='number'&&Number.isFinite(raw)&&raw>=0&&raw<=100?raw:null")
     && source.includes('simulations.filter(simulationPassed).length');
   logs.push(`静态静默回退命中：${report.staticSilentFallbackDetected}`);
@@ -160,15 +162,21 @@ function writeDiagnostics(error) {
     const nestedSimulatorRaw = JSON.stringify({
       version: 2,
       records: {
-        booleanPass: { passed: true, score: 10 },
-        scorePass: { passed: false, bestScore: 80 },
-        stringScore: { passed: false, bestScore: '999' },
-        infinityString: { passed: false, score: 'Infinity' },
-        overRange: { passed: false, score: 120 },
-        negative: { passed: false, score: -5 },
-        stringPassed: { passed: 'true', score: 0 },
+        homing: { passed: true, score: 10 },
+        'workholding-check': { passed: false, bestScore: 100 },
+        'tool-installation': { passed: false, bestScore: 90 },
+        'program-dry-run': { passed: false, bestScore: '100' },
+        'single-block-first-approach': { passed: false, score: 'Infinity' },
+        'graphics-segment-prediction': { passed: false, score: 120 },
+        'first-piece-inspection': { passed: false, score: -5 },
+        'alarm-troubleshooting': { passed: 'true', score: 0 },
+        unknownSimulator: { passed: true, score: 100 },
         arrayRecord: [{ passed: true, score: 100 }],
         nullRecord: null
+      },
+      simulators: {
+        'work-offset-setting': { passed: true, bestScore: 20 },
+        'workholding-check': { passed: false, bestScore: 100 }
       }
     });
     await page.evaluate(({ practiceRaw, simulatorRaw }) => {
@@ -198,7 +206,7 @@ function writeDiagnostics(error) {
     report.nestedSummary = nested.summary;
     report.nestedVisible = visibleNested;
     report.nestedWrongFiltered = nested.summary?.wrong === 2 && visibleNested.wrong === '2';
-    report.nestedSimulatorFiltered = nested.summary?.simulations === 2 && visibleNested.simulations === '2/13';
+    report.nestedSimulatorFiltered = nested.summary?.simulations === 3 && visibleNested.simulations === '3/13';
     report.nestedScoreStrict = nested.summary?.weakest === '机床与坐标' && nested.summary?.weakestScore === 26 && visibleNested.weakest === '机床与坐标';
     report.nestedIntegrityRemainsUsable = nested.alertHidden === true;
     report.nestedDataPreserved = nested.practiceRaw === nestedPracticeRaw
@@ -207,14 +215,14 @@ function writeDiagnostics(error) {
     report.nestedNoNonFiniteText = !/NaN|Infinity/.test(nested.bodyText || '');
 
     logs.push(`嵌套异常错题安全过滤：${report.nestedWrongFiltered}（${visibleNested.wrong}）`);
-    logs.push(`新版 records 模拟结构与嵌套异常安全过滤：${report.nestedSimulatorFiltered}（${visibleNested.simulations}）`);
+    logs.push(`固定13项ID、新旧模拟schema合并与满分通过过滤：${report.nestedSimulatorFiltered}（${visibleNested.simulations}）`);
     logs.push(`非法/越界/字符串成绩不参与能力判断：${report.nestedScoreStrict}（${nested.summary?.weakest}/${nested.summary?.weakestScore}）`);
     logs.push(`根结构正常时嵌套坏记录只读降级、不误触发全局阻断：${report.nestedIntegrityRemainsUsable}`);
     logs.push(`嵌套异常原始数据保持不变：${report.nestedDataPreserved}`);
     logs.push(`页面无 NaN/Infinity 污染：${report.nestedNoNonFiniteText}`);
 
     assert.equal(report.nestedWrongFiltered, true, '数组/null/字符串错题不得污染AI老师错题数量');
-    assert.equal(report.nestedSimulatorFiltered, true, '新版records结构必须正确统计，且字符串passed、字符串/越界/负数成绩或数组记录不得冒充模拟通过');
+    assert.equal(report.nestedSimulatorFiltered, true, '固定13项模拟ID必须合并新版records与旧simulators，90分、未知ID、字符串passed、字符串/越界/负数成绩或数组记录不得冒充模拟通过');
     assert.equal(report.nestedScoreStrict, true, '字符串或超出0-100范围的课程成绩不得污染AI老师能力画像');
     assert.equal(report.nestedIntegrityRemainsUsable, true, '根结构合法时应忽略嵌套坏记录，而不是把整个学习档案误判为损坏');
     assert.equal(report.nestedDataPreserved, true, '嵌套坏数据降级不得自动清理、迁移或改写原始LocalStorage');
