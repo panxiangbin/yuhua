@@ -50,9 +50,11 @@ fs.mkdirSync(OUT, { recursive: true });
 
     const malformedRaw = JSON.stringify({version:1,history:[
       null,'损坏记录',
-      {practiceId:'safety-coordinate',score:'not-a-number'},
+      {practiceId:'safety-coordinate',score:'100'},
       {practiceId:'safety-coordinate',score:120},
-      {practiceId:'advanced-verification',score:-5}
+      {practiceId:'advanced-verification',score:-5},
+      {practiceId:'advanced-verification',score:'Infinity'},
+      {practiceId:'drawing-setup-process',score:82}
     ],wrongQuestions:[
       null,'损坏错题',
       {practiceId:'safety-coordinate',ability:'安全与坐标'},
@@ -60,9 +62,9 @@ fs.mkdirSync(OUT, { recursive: true });
     ]});
     await page.evaluate(raw=>localStorage.setItem('cnc_training_practice_v1',raw),malformedRaw);
     await page.reload({waitUntil:'networkidle'});
-    assert.equal(await page.locator('#passed-count').textContent(),'1','超范围120分应按100分上限显示并通过');
+    assert.equal(await page.locator('#passed-count').textContent(),'1','只有真实数字82分应通过；字符串100、120、负分和Infinity字符串都应归零');
     assert.equal(await page.locator('#wrong-count').textContent(),'2','损坏错题项应忽略，只统计有效对象');
-    assert.equal(await page.locator('#avg-score').textContent(),'100','非法分数与负分应安全归零，超范围分数应封顶100');
+    assert.equal(await page.locator('#avg-score').textContent(),'82','异常分数不得夹取或强制转换，平均分只应包含真实合法数字82');
     assert.equal(await page.locator('.weak').count(),2,'损坏错题不应破坏薄弱项分析');
     const malformedText=await page.locator('body').innerText();
     assert(!/NaN|Infinity/.test(malformedText),'损坏数据不得在页面显示NaN或Infinity');
@@ -81,7 +83,7 @@ fs.mkdirSync(OUT, { recursive: true });
     assert.deepEqual(small,[],'可见交互控件高度不得小于44px');
     assert.deepEqual(errors,[],'控制台不应报错');
     await page.screenshot({path:path.join(OUT,'practice-hub-390x844.png'),fullPage:true});
-    fs.writeFileSync(path.join(OUT,'result.json'),JSON.stringify({passed:true,viewport:'390x844',practices:5,filters:3,normalWrong:3,malformedReadOnly:true,arrayRootReadOnly:true,noNaNInfinity:true},null,2));
+    fs.writeFileSync(path.join(OUT,'result.json'),JSON.stringify({passed:true,viewport:'390x844',practices:5,filters:3,normalWrong:3,strictNumericScores:true,malformedReadOnly:true,arrayRootReadOnly:true,noNaNInfinity:true},null,2));
   }catch(err){
     await page.screenshot({path:path.join(OUT,'failure.png'),fullPage:true}).catch(()=>{});
     fs.writeFileSync(path.join(OUT,'error.txt'),String(err.stack||err));
