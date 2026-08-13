@@ -42,7 +42,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git rm cnc/tests/pwa43-ai-teacher-simulator-sync.cjs .github/workflows/cnc-pwa43-ai-teacher-simulator-sync.yml
+          git rm -f cnc/tests/pwa43-ai-teacher-simulator-sync.cjs .github/workflows/cnc-pwa43-ai-teacher-simulator-sync.yml
       - name: Run strict PWA build reference audit on final tree
         run: node cnc/tests/pwa-build-reference-audit-smoke.cjs
       - name: Verify AI teacher JavaScript syntax
