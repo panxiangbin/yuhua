@@ -1,0 +1,65 @@
+name: CNC training profile PWA44 controlled sync v2
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/tools/apply_training_profile_strict_data.py'
+      - 'cnc/tools/sync_pwa44_runtime_pins_v2.py'
+      - '.github/workflows/cnc-training-profile-pwa44-sync-v2.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  controlled-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+      - name: Verify exact tested head
+        run: |
+          set -euo pipefail
+          expected='${{ github.event.pull_request.head.sha || github.sha }}'
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+          printf 'expected=%s\nactual=%s\n' "$expected" "$actual" | tee /tmp/exact-head.txt
+      - name: Generate and audit PWA44 change set
+        run: |
+          set -euo pipefail
+          python3 cnc/tools/apply_training_profile_strict_data.py
+          python3 cnc/tools/sync_pwa44_runtime_pins_v2.py | tee /tmp/changed-files.txt
+          node --check cnc/training-profile.js
+          node --check cnc/tests/mobile-daily-training-plan-smoke.cjs
+          node cnc/tests/pwa-build-reference-audit-smoke.cjs
+          git diff --check
+          git diff --name-only | tee /tmp/generated-scope.txt
+          if grep -Ev '^(cnc/|\.github/workflows/cnc-)' /tmp/generated-scope.txt; then exit 1; fi
+      - name: Create generated commit
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add cnc .github/workflows/cnc-*.yml
+          git commit -m 'CNC：收紧共享训练档案并同步PWA44构建针'
+          git rev-parse HEAD | tee /tmp/generated-commit.txt
+          git show --stat --oneline HEAD | tee /tmp/generated-stat.txt
+          git diff HEAD^ HEAD --binary > /tmp/generated.patch
+      - name: Push generated commit without force
+        run: git push origin "HEAD:${{ github.event.pull_request.head.ref }}"
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-training-profile-pwa44-sync-v2-${{ github.run_id }}
+          path: |
+            /tmp/exact-head.txt
+            /tmp/changed-files.txt
+            /tmp/generated-scope.txt
+            /tmp/generated-commit.txt
+            /tmp/generated-stat.txt
+            /tmp/generated.patch
+          if-no-files-found: warn
