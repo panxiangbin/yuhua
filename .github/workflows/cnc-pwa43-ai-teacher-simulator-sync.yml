@@ -38,7 +38,12 @@ jobs:
           PY
       - name: Apply controlled AI teacher and PWA43 sync
         run: node cnc/tests/pwa43-ai-teacher-simulator-sync.cjs
-      - name: Run strict PWA build reference audit
+      - name: Remove one-time sync tooling before strict audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          git rm cnc/tests/pwa43-ai-teacher-simulator-sync.cjs .github/workflows/cnc-pwa43-ai-teacher-simulator-sync.yml
+      - name: Run strict PWA build reference audit on final tree
         run: node cnc/tests/pwa-build-reference-audit-smoke.cjs
       - name: Verify AI teacher JavaScript syntax
         shell: bash
@@ -52,20 +57,27 @@ jobs:
           PY
           node --check /tmp/ai-teacher-inline.js
           node --check cnc/tests/ai-teacher-data-integrity-smoke.cjs
-      - name: Create generated sync commit
+      - name: Create generated final-tree commit
         id: generated
         shell: bash
+        env:
+          BASE_MAIN: 036d5e68e65d93586c54fb9c8b1e3179a81c9dca
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add cnc .github/workflows/cnc-*.yml
-          git reset -- cnc/test-results cnc/tests/pwa43-ai-teacher-simulator-sync.cjs || true
-          git diff --cached --name-only | tee changed-files.txt
-          test "$(git diff --cached --name-only | wc -l | tr -d ' ')" = '34'
+          git reset -- cnc/test-results || true
+          git diff --cached --name-only | tee changed-files-from-temp-parent.txt
+          test "$(git diff --cached --name-only | wc -l | tr -d ' ')" = '36'
           git diff --cached --name-only | awk '($0 ~ /^cnc\//) || ($0 ~ /^\.github\/workflows\/cnc-.*\.ya?ml$/) {next} {print "unexpected path: "$0; bad=1} END{exit bad}'
           git commit -m 'CNC：统一AI老师模拟满分通过并升级PWA43'
           git rev-parse HEAD | tee generated-sha.txt
+          git diff --name-only "$BASE_MAIN" HEAD | tee final-diff-files.txt
+          test "$(git diff --name-only "$BASE_MAIN" HEAD | wc -l | tr -d ' ')" = '34'
+          ! grep -Fxq 'cnc/tests/pwa43-ai-teacher-simulator-sync.cjs' final-diff-files.txt
+          ! grep -Fxq '.github/workflows/cnc-pwa43-ai-teacher-simulator-sync.yml' final-diff-files.txt
+          git diff --name-only "$BASE_MAIN" HEAD | awk '($0 ~ /^cnc\//) || ($0 ~ /^\.github\/workflows\/cnc-.*\.ya?ml$/) {next} {print "unexpected final path: "$0; bad=1} END{exit bad}'
       - name: Attempt non-force branch push
         id: push
         shell: bash
@@ -84,7 +96,8 @@ jobs:
           path: |
             cnc/test-results/pwa43-ai-teacher-simulator-sync/sync-report.json
             cnc/test-results/pwa-build-reference-audit/report.json
-            changed-files.txt
+            changed-files-from-temp-parent.txt
+            final-diff-files.txt
             generated-sha.txt
             push-code.txt
             push-output.txt
