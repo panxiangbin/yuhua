@@ -46,8 +46,8 @@ fs.mkdirSync(OUT, { recursive: true });
         version: 1,
         simulators: {
           homing: { passed: true, bestScore: 100 },
-          workholding: { passed: false, bestScore: 85 },
-          alarm: { passed: false, bestScore: 75 }
+          'workholding-check': { passed: false, bestScore: 100 },
+          'alarm-troubleshooting': { passed: false, bestScore: 90 }
         }
       }));
       localStorage.setItem('cnc_training_exam_v1', JSON.stringify({ version: 1, highestScore: 73 }));
