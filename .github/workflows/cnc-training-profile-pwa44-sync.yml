@@ -1,0 +1,81 @@
+name: CNC training profile PWA44 controlled sync
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/tools/apply_training_profile_strict_data.py'
+      - 'cnc/tools/sync_pwa44_runtime_pins.py'
+      - '.github/workflows/cnc-training-profile-pwa44-sync.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  controlled-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+      - name: Verify exact tested head
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='${{ github.event.pull_request.head.sha || github.sha }}'
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+          printf 'expected=%s\nactual=%s\n' "$expected" "$actual" | tee /tmp/exact-head.txt
+      - name: Apply strict shared profile patch and PWA44 pins
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 cnc/tools/apply_training_profile_strict_data.py
+          python3 cnc/tools/sync_pwa44_runtime_pins.py | tee /tmp/changed-files.txt
+          node --check cnc/training-profile.js
+          node --check cnc/tests/mobile-daily-training-plan-smoke.cjs
+          node cnc/tests/pwa-build-reference-audit-smoke.cjs
+          git diff --check
+      - name: Audit allowed scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --name-only | tee /tmp/generated-scope.txt
+          if grep -Ev '^(cnc/|\.github/workflows/cnc-)' /tmp/generated-scope.txt; then
+            echo '发现非CNC范围改动' >&2
+            exit 1
+          fi
+      - name: Create generated commit
+        id: generated
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add cnc .github/workflows/cnc-*.yml
+          git commit -m 'CNC：收紧共享训练档案并同步PWA44构建针'
+          sha="$(git rev-parse HEAD)"
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+          printf '%s\n' "$sha" | tee /tmp/generated-commit.txt
+          git show --stat --oneline --decorate HEAD | tee /tmp/generated-stat.txt
+          git diff HEAD^ HEAD --binary > /tmp/generated.patch
+      - name: Push generated commit without force
+        shell: bash
+        run: |
+          set -euo pipefail
+          git push origin "HEAD:${{ github.event.pull_request.head.ref }}"
+      - name: Upload controlled sync diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-training-profile-pwa44-sync-${{ github.run_id }}
+          path: |
+            /tmp/exact-head.txt
+            /tmp/changed-files.txt
+            /tmp/generated-scope.txt
+            /tmp/generated-commit.txt
+            /tmp/generated-stat.txt
+            /tmp/generated.patch
+          if-no-files-found: warn
