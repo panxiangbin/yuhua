@@ -25,18 +25,16 @@ jobs:
           set -euo pipefail
           python3 - <<'PY'
           from pathlib import Path
-          p=Path('cnc/tests/mobile-ai-teacher-smoke.cjs')
-          s=p.read_text(encoding='utf-8')
-          old="""          homing: { passed: true, bestScore: 100 },
-          workholding: { passed: false, bestScore: 85 },
-          alarm: { passed: false, bestScore: 75 }
-"""
-          new="""          homing: { passed: true, bestScore: 100 },
-          'workholding-check': { passed: false, bestScore: 100 },
-          'alarm-troubleshooting': { passed: false, bestScore: 90 }
-"""
-          assert s.count(old)==1, 'shared AI teacher simulator fixture target mismatch'
-          p.write_text(s.replace(old,new), encoding='utf-8')
+          p = Path('cnc/tests/mobile-ai-teacher-smoke.cjs')
+          s = p.read_text(encoding='utf-8')
+          replacements = [
+              ("workholding: { passed: false, bestScore: 85 }", "'workholding-check': { passed: false, bestScore: 100 }"),
+              ("alarm: { passed: false, bestScore: 75 }", "'alarm-troubleshooting': { passed: false, bestScore: 90 }")
+          ]
+          for old, new in replacements:
+              assert s.count(old) == 1, f'fixture target mismatch: {old}'
+              s = s.replace(old, new)
+          p.write_text(s, encoding='utf-8')
           PY
           node --check cnc/tests/mobile-ai-teacher-smoke.cjs
           grep -Fq "'workholding-check': { passed: false, bestScore: 100 }" cnc/tests/mobile-ai-teacher-smoke.cjs
