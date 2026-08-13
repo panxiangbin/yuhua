@@ -32,7 +32,7 @@ function isRecord(v){return !!v&&typeof v==='object'&&!Array.isArray(v)}
 function safeParse(){try{const v=JSON.parse(localStorage.getItem(KEY)||'null');return isRecord(v)?v:{}}catch{return {}}}
 function arr(v){return Array.isArray(v)?v:[]}
 function records(v){return arr(v).filter(isRecord)}
-function safeScore(v){const n=Number(v);return Number.isFinite(n)?Math.max(0,Math.min(100,n)):0}
+function safeScore(v){return typeof v==='number'&&Number.isFinite(v)&&v>=0&&v<=100?v:0}
 function allWrong(data){const raw=data.wrongQuestions||data.wrong||[];const values=Array.isArray(raw)?raw:isRecord(raw)?Object.values(raw):[];return values.filter(isRecord)}
 function histories(data){return [...records(data.history),...records(data.attempts),...records(data.results)]}
 function statsFor(data,p){const rows=histories(data).filter(r=>String(r.practiceId||r.source||r.setId||'').includes(p.id));const best=Math.max(0,...rows.map(r=>safeScore(r.score)));const wrong=allWrong(data).filter(w=>String(w.practiceId||w.source||w.setId||w.id||'').includes(p.id));return {best,attempts:rows.length,wrong:wrong.length,passed:best>=80}}
