@@ -16,7 +16,7 @@ let page;
   page.on('pageerror', error => errors.push(error.message));
 
   await page.goto('http://127.0.0.1:4173/cnc/?smoke=daily-plan', { waitUntil: 'domcontentloaded', timeout: 60000 });
-  await page.waitForFunction(() => window.CNC_TRAINING_PROFILE?.build === '20260808b', null, { timeout: 20000 });
+  await page.waitForFunction(() => window.CNC_TRAINING_PROFILE?.build === '20260813c', null, { timeout: 20000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-startup-home') === 'stable', null, { timeout: 15000 });
   await page.waitForFunction(() => window.CNC_GAME_QUERY_NAV?.build === '20260731d', null, { timeout: 15000 });
   // 成长档案样式由脚本动态挂载，并有一次启动补渲染。
@@ -228,6 +228,43 @@ let page;
   assert.equal(await page.locator('#xp-practice-panel').getAttribute('data-question-id'), 'g54-independent-check');
   assert.match(await page.locator('#xp-practice-panel').textContent(), /G54/);
   assert.deepEqual(errors, []);
+
+  // 损坏/导入异常共享数据必须只读降级；数值字符串、越界值、重复/未知课程与非法日期不能抬高进度。
+  const corruptReadOnly = await page.evaluate(() => {
+    const d = new Date();
+    const today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    const profile = { version: 1, xp: '999', badges: ['迈出第一步', '迈出第一步', null, [], {}], completed: [1, '2', 2, 99], trainingDays: ['2026-08-13', '2026-08-13', '2026-02-30', null, [], {}], currentStreak: '99', bestStreak: '365', lastTrainingDate: '2026-02-30' };
+    const practice = { version: 2, gateVersion: 2, attempts: {}, wrong: ['g00-cutting', 'g00-cutting', null, '', {}, []], correct: [], lessonScores: { 1: '100', 2: 100, 3: 120, 4: -1, 5: '80', 6: null, 7: 80 }, legacyLessonScores: {} };
+    const done = [1, '2', 2, 13, 0, null, [], {}];
+    localStorage.setItem('cnc_training_profile_v1', JSON.stringify(profile));
+    localStorage.setItem('cnc_training_practice_v1', JSON.stringify(practice));
+    localStorage.setItem('cnc_study_completed_v1', JSON.stringify(done));
+    localStorage.setItem('cnc_daily_training_plan_v1', JSON.stringify({ version: 1, date: today, lesson: '12' }));
+    const before = { profile: localStorage.getItem('cnc_training_profile_v1'), practice: localStorage.getItem('cnc_training_practice_v1'), done: localStorage.getItem('cnc_study_completed_v1') };
+    const state = window.CNC_TRAINING_PROFILE.snapshot();
+    window.CNC_TRAINING_PROFILE.render();
+    const after = { profile: localStorage.getItem('cnc_training_profile_v1'), practice: localStorage.getItem('cnc_training_practice_v1'), done: localStorage.getItem('cnc_study_completed_v1') };
+    return { state, before, after, dailyStored: JSON.parse(localStorage.getItem('cnc_daily_training_plan_v1')) };
+  });
+  assert.deepEqual(corruptReadOnly.after, corruptReadOnly.before, '读取损坏共享学习数据不得静默改写原始profile/practice/done');
+  assert.equal(corruptReadOnly.state.xp, 0, '数值字符串XP不得被信任');
+  assert.equal(corruptReadOnly.state.completed, 2, '字符串课程号不得计入固定12关完成数');
+  assert.equal(corruptReadOnly.state.wrong, 1, '错题只接受非空字符串ID并去重');
+  assert.equal(corruptReadOnly.state.badges.length, 1, '徽章字符串必须去重并过滤异常项');
+  assert.equal(corruptReadOnly.state.streak.current, 0, '字符串连续天数不得被信任');
+  assert.equal(corruptReadOnly.state.streak.best, 0, '字符串历史连续天数不得被信任');
+  assert.equal(corruptReadOnly.state.streak.total, 1, '训练日期必须严格校验并去重');
+  assert.equal(corruptReadOnly.state.lessons.find(item => item.level === 1).score, 0, '字符串100分不得被信任');
+  assert.equal(corruptReadOnly.state.lessons.find(item => item.level === 2).score, 100, '合法数字100分必须保留');
+  assert.equal(corruptReadOnly.state.lessons.find(item => item.level === 3).score, 0, '120分不得进入课程成绩');
+  assert.equal(corruptReadOnly.state.lessons.find(item => item.level === 4).score, 0, '负分不得进入课程成绩');
+  assert.equal(corruptReadOnly.state.lessons.find(item => item.level === 5).score, 0, '字符串80分不得被信任');
+  assert.equal(corruptReadOnly.state.dailyPlan.lesson, 3, '字符串缓存课程号不得劫持今日推荐');
+  assert.equal(corruptReadOnly.dailyStored.lesson, 3, '无效日计划只允许重建独立daily plan缓存');
+  assert.doesNotMatch(JSON.stringify(corruptReadOnly.state), /NaN|Infinity/, '共享训练状态不得泄露NaN/Infinity');
+  const corruptLayout = await page.evaluate(() => ({ scrollWidth: document.documentElement.scrollWidth, innerWidth, text: document.body.innerText }));
+  assert.ok(corruptLayout.scrollWidth <= corruptLayout.innerWidth + 1, `损坏数据场景不得产生手机横向溢出：${JSON.stringify(corruptLayout)}`);
+  assert.doesNotMatch(corruptLayout.text, /NaN|Infinity/, '损坏数据场景页面不得显示NaN/Infinity');
 
   const report = {
     passed: true,

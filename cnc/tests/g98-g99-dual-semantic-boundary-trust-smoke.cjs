@@ -12,9 +12,9 @@ const selfTest = fs.readFileSync(path.join(root, 'pwa-self-test.html'), 'utf8');
 const index = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const errors = [];
 
-if (info.pwaBuild !== '20260813-pwa43' || info.cacheRevision !== '20260813-learning43') errors.push(`构建版本错误：${info.pwaBuild}/${info.cacheRevision}`);
+if (info.pwaBuild !== '20260813-pwa44' || info.cacheRevision !== '20260813-learning44') errors.push(`构建版本错误：${info.pwaBuild}/${info.cacheRevision}`);
 if (!String(info.contentStage || '').includes('G98/G99车铣双语义适用范围')) errors.push('build-info缺少G98/G99内容可信度阶段');
-if (!swText.includes("const BUILD = '20260813-pwa43'") || !swText.includes("const CACHE_REVISION = '20260813-learning43'")) errors.push('Service Worker未对齐PWA38/learning38');
+if (!swText.includes("const BUILD = '20260813-pwa44'") || !swText.includes("const CACHE_REVISION = '20260813-learning44'")) errors.push('Service Worker未对齐PWA38/learning38');
 for (const core of ["'./search-aliases.js'", "'./gm-code-complete.js'"]) if (!swText.includes(core)) errors.push(`首次安装离线核心缺少：${core}`);
 const aliasPos = index.indexOf('search-aliases.js');
 const gmPos = index.indexOf('gm-code-complete.js');

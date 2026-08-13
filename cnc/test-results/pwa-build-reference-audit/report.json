@@ -1,0 +1,873 @@
+{
+  "generatedAt": "2026-08-13T05:53:22.442Z",
+  "commitSha": "370cbfc923dbd2d3caf8afb0848f46757dc8ab1a",
+  "currentPwaBuild": "20260813-pwa44",
+  "currentCacheRevision": "20260813-learning44",
+  "currentMainTransitionPwaBuild": "20260813-pwa43",
+  "controlledPublicPwaBuild": "20260811-pwa37",
+  "previousPwaBuild": "20260810-pwa35",
+  "mediaTarget": {
+    "file": "cnc/MOBILE_LEARNING_MEDIA_PROGRESS.md",
+    "pwaBuild": "20260813-pwa44",
+    "cacheRevision": "20260813-learning44"
+  },
+  "allowedVersions": [
+    "20260813-pwa44",
+    "20260811-pwa37",
+    "20260810-pwa35"
+  ],
+  "scannedFileCount": 1002,
+  "referenceCount": 94,
+  "operationalReferenceCount": 71,
+  "historicalReferenceCount": 21,
+  "governanceReferenceCount": 2,
+  "transitionReferenceCount": 3,
+  "legacyReferenceCount": 2,
+  "currentReferenceCount": 58,
+  "currentMainTransitionReferenceCount": 3,
+  "controlledPublicReferenceCount": 6,
+  "previousReferenceCount": 2,
+  "currentMainTransitionPinCount": 3,
+  "currentMainTransitionPins": [
+    {
+      "file": "cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs",
+      "label": "AI老师离线核心Pages当前main过渡基线",
+      "version": "20260813-pwa43"
+    },
+    {
+      "file": "cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs",
+      "label": "起点测评离线Pages当前main过渡基线",
+      "version": "20260813-pwa43"
+    },
+    {
+      "file": "cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs",
+      "label": "训练营路线Pages当前main过渡基线",
+      "version": "20260813-pwa43"
+    }
+  ],
+  "controlledPublicPinCount": 3,
+  "controlledPublicPins": [
+    {
+      "file": "cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs",
+      "label": "AI老师离线核心Pages受控公网基线",
+      "version": "20260811-pwa37"
+    },
+    {
+      "file": "cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs",
+      "label": "起点测评离线Pages受控公网基线",
+      "version": "20260811-pwa37"
+    },
+    {
+      "file": "cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs",
+      "label": "训练营路线Pages受控公网基线",
+      "version": "20260811-pwa37"
+    }
+  ],
+  "activePinCount": 10,
+  "currentPins": [
+    {
+      "file": "cnc/sw.js",
+      "label": "Service Worker缓存构建",
+      "version": "20260813-pwa44"
+    },
+    {
+      "file": "cnc/pwa-status.html",
+      "label": "PWA状态页期望构建",
+      "version": "20260813-pwa44"
+    },
+    {
+      "file": "cnc/pwa-self-test.html",
+      "label": "PWA自检页期望构建",
+      "version": "20260813-pwa44"
+    },
+    {
+      "file": "cnc/MOBILE_LEARNING_MEDIA_PROGRESS.md",
+      "label": "学习媒体进度受控目标",
+      "version": "20260813-pwa44"
+    },
+    {
+      "file": "cnc/tests/mobile-pwa-offline-cache-smoke.cjs",
+      "label": "冷离线浏览器门禁",
+      "version": "20260813-pwa44"
+    },
+    {
+      "file": "cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs",
+      "label": "BFCache浏览器门禁",
+      "version": "20260813-pwa44"
+    },
+    {
+      "file": "cnc/tests/mobile-pwa-upgrade-data-smoke.cjs",
+      "label": "升级数据保护当前构建",
+      "version": "20260813-pwa44"
+    },
+    {
+      "file": "cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs",
+      "label": "AI老师离线核心Pages目标",
+      "version": "20260813-pwa44"
+    },
+    {
+      "file": "cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs",
+      "label": "起点测评离线Pages目标",
+      "version": "20260813-pwa44"
+    },
+    {
+      "file": "cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs",
+      "label": "训练营路线Pages目标",
+      "version": "20260813-pwa44"
+    }
+  ],
+  "previousPin": {
+    "file": "cnc/tests/mobile-pwa-upgrade-data-smoke.cjs",
+    "label": "升级数据保护上一构建",
+    "version": "20260810-pwa35"
+  },
+  "references": [
+    {
+      "file": ".github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml",
+      "line": 64,
+      "version": "20260813-pwa44",
+      "scope": "workflow"
+    },
+    {
+      "file": ".github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml",
+      "line": 66,
+      "version": "20260813-pwa44",
+      "scope": "workflow"
+    },
+    {
+      "file": ".github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml",
+      "line": 67,
+      "version": "20260811-pwa37",
+      "scope": "workflow"
+    },
+    {
+      "file": ".github/workflows/cnc-beginner-placement-offline-pages-smoke.yml",
+      "line": 55,
+      "version": "20260813-pwa44",
+      "scope": "workflow"
+    },
+    {
+      "file": ".github/workflows/cnc-beginner-placement-offline-pages-smoke.yml",
+      "line": 56,
+      "version": "20260813-pwa44",
+      "scope": "workflow"
+    },
+    {
+      "file": ".github/workflows/cnc-beginner-placement-offline-pages-smoke.yml",
+      "line": 58,
+      "version": "20260813-pwa44",
+      "scope": "workflow"
+    },
+    {
+      "file": ".github/workflows/cnc-beginner-placement-offline-pages-smoke.yml",
+      "line": 58,
+      "version": "20260811-pwa37",
+      "scope": "workflow"
+    },
+    {
+      "file": ".github/workflows/cnc-g95-cold-offline-source-trust-smoke.yml",
+      "line": 53,
+      "version": "20260813-pwa44",
+      "scope": "workflow"
+    },
+    {
+      "file": ".github/workflows/cnc-g96-g97-cold-offline-source-trust-smoke.yml",
+      "line": 53,
+      "version": "20260813-pwa44",
+      "scope": "workflow"
+    },
+    {
+      "file": ".github/workflows/cnc-g98-g99-cold-offline-source-trust-smoke.yml",
+      "line": 76,
+      "version": "20260813-pwa44",
+      "scope": "workflow"
+    },
+    {
+      "file": ".github/workflows/cnc-g98-g99-cold-offline-source-trust-smoke.yml",
+      "line": 86,
+      "version": "20260813-pwa44",
+      "scope": "workflow"
+    },
+    {
+      "file": ".github/workflows/cnc-learning-media-smoke.yml",
+      "line": 70,
+      "version": "20260813-pwa44",
+      "scope": "workflow"
+    },
+    {
+      "file": ".github/workflows/cnc-learning-media-smoke.yml",
+      "line": 72,
+      "version": "20260813-pwa44",
+      "scope": "workflow"
+    },
+    {
+      "file": ".github/workflows/cnc-learning-media-smoke.yml",
+      "line": 74,
+      "version": "20260813-pwa44",
+      "scope": "workflow"
+    },
+    {
+      "file": ".github/workflows/cnc-learning-media-smoke.yml",
+      "line": 75,
+      "version": "20260813-pwa44",
+      "scope": "workflow"
+    },
+    {
+      "file": ".github/workflows/cnc-pwa-offline-cache-smoke.yml",
+      "line": 56,
+      "version": "20260813-pwa44",
+      "scope": "workflow"
+    },
+    {
+      "file": ".github/workflows/cnc-pwa-offline-cache-smoke.yml",
+      "line": 58,
+      "version": "20260813-pwa44",
+      "scope": "workflow"
+    },
+    {
+      "file": ".github/workflows/cnc-pwa-self-test-smoke.yml",
+      "line": 56,
+      "version": "20260813-pwa44",
+      "scope": "workflow"
+    },
+    {
+      "file": ".github/workflows/cnc-pwa-upgrade-data-smoke.yml",
+      "line": 52,
+      "version": "20260813-pwa44",
+      "scope": "workflow"
+    },
+    {
+      "file": ".github/workflows/cnc-pwa-upgrade-data-smoke.yml",
+      "line": 57,
+      "version": "20260810-pwa35",
+      "scope": "workflow"
+    },
+    {
+      "file": ".github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml",
+      "line": 54,
+      "version": "20260813-pwa44",
+      "scope": "workflow"
+    },
+    {
+      "file": ".github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml",
+      "line": 55,
+      "version": "20260813-pwa44",
+      "scope": "workflow"
+    },
+    {
+      "file": ".github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml",
+      "line": 57,
+      "version": "20260813-pwa44",
+      "scope": "workflow"
+    },
+    {
+      "file": ".github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml",
+      "line": 58,
+      "version": "20260811-pwa37",
+      "scope": "workflow"
+    },
+    {
+      "file": "cnc/build-info.json",
+      "line": 5,
+      "version": "20260813-pwa44",
+      "scope": "runtime"
+    },
+    {
+      "file": "cnc/docs/ai-teacher-explainability-offline-core-contract.md",
+      "line": 11,
+      "version": "20260801-pwa4",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/ai-teacher-explainability-offline-core-contract.md",
+      "line": 12,
+      "version": "20260802-pwa5",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/ai-teacher-explainability-offline-core-contract.md",
+      "line": 58,
+      "version": "20260802-pwa5",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/ai-teacher-offline-core-pages-contract.md",
+      "line": 21,
+      "version": "20260802-pwa7",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/ai-teacher-offline-core-pages-contract.md",
+      "line": 22,
+      "version": "20260802-pwa6",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/beginner-placement-offline-core-contract.md",
+      "line": 11,
+      "version": "20260802-pwa6",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/beginner-placement-offline-core-contract.md",
+      "line": 12,
+      "version": "20260802-pwa7",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/beginner-placement-offline-pages-contract.md",
+      "line": 30,
+      "version": "20260802-pwa7",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/beginner-placement-offline-pages-contract.md",
+      "line": 31,
+      "version": "20260802-pwa6",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/course-gate-real-80-audit.md",
+      "line": 79,
+      "version": "20260808-pwa22",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/G96_G97_SPINDLE_MODE_SAFETY_AUDIT.md",
+      "line": 91,
+      "version": "20260810-pwa34",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/LEARNING_DATA_REPAIR_TRANSACTION_SAFETY_AUDIT.md",
+      "line": 111,
+      "version": "20260811-pwa36",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/placement-first-step-offline-core-contract.md",
+      "line": 37,
+      "version": "20260803-pwa9",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/placement-first-step-offline-core-contract.md",
+      "line": 37,
+      "version": "20260802-pwa8",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/pwa-build-reference-audit-contract.md",
+      "line": 38,
+      "version": "20260728-pwa3",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/pwa-build-reference-audit-contract.md",
+      "line": 39,
+      "version": "20260728-pwa3",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/pwa14-gate-repair-audit.md",
+      "line": 21,
+      "version": "20260804-pwa13",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/pwa14-gate-repair-audit.md",
+      "line": 21,
+      "version": "20260806-pwa14",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/training-camp-route-handoff-pages-contract.md",
+      "line": 21,
+      "version": "20260802-pwa8",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/import-test.js",
+      "line": 168,
+      "version": "20260728-pwa3",
+      "scope": "runtime"
+    },
+    {
+      "file": "cnc/MOBILE_HOME_REFACTOR_PROGRESS.md",
+      "line": 83,
+      "version": "20260804-pwa12",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/MOBILE_HOME_REFACTOR_PROGRESS.md",
+      "line": 126,
+      "version": "20260804-pwa12",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/MOBILE_LEARNING_MEDIA_PROGRESS.md",
+      "line": 7,
+      "version": "20260813-pwa44",
+      "scope": "runtime"
+    },
+    {
+      "file": "cnc/pwa-self-test.html",
+      "line": 38,
+      "version": "20260813-pwa44",
+      "scope": "runtime"
+    },
+    {
+      "file": "cnc/pwa-status.html",
+      "line": 30,
+      "version": "20260813-pwa44",
+      "scope": "runtime"
+    },
+    {
+      "file": "cnc/pwa-status.html",
+      "line": 47,
+      "version": "20260813-pwa44",
+      "scope": "runtime"
+    },
+    {
+      "file": "cnc/runtime-env-detector.js",
+      "line": 200,
+      "version": "20260728-pwa3",
+      "scope": "runtime"
+    },
+    {
+      "file": "cnc/sw.js",
+      "line": 2,
+      "version": "20260813-pwa44",
+      "scope": "runtime"
+    },
+    {
+      "file": "cnc/tests/g10-programmable-data-input-trust-smoke.cjs",
+      "line": 40,
+      "version": "20260813-pwa44",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/g10-programmable-data-input-trust-smoke.cjs",
+      "line": 40,
+      "version": "20260813-pwa44",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/g10-programmable-data-input-trust-smoke.cjs",
+      "line": 42,
+      "version": "20260813-pwa44",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/g28-reference-return-boundary-trust-smoke.cjs",
+      "line": 27,
+      "version": "20260813-pwa44",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/g28-reference-return-boundary-trust-smoke.cjs",
+      "line": 27,
+      "version": "20260813-pwa44",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/g28-reference-return-boundary-trust-smoke.cjs",
+      "line": 29,
+      "version": "20260813-pwa44",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/g53-machine-coordinate-boundary-trust-smoke.cjs",
+      "line": 27,
+      "version": "20260813-pwa44",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/g53-machine-coordinate-boundary-trust-smoke.cjs",
+      "line": 27,
+      "version": "20260813-pwa44",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/g53-machine-coordinate-boundary-trust-smoke.cjs",
+      "line": 29,
+      "version": "20260813-pwa44",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/g92-dual-semantic-boundary-trust-smoke.cjs",
+      "line": 26,
+      "version": "20260813-pwa44",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/g92-dual-semantic-boundary-trust-smoke.cjs",
+      "line": 26,
+      "version": "20260813-pwa44",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/g92-dual-semantic-boundary-trust-smoke.cjs",
+      "line": 28,
+      "version": "20260813-pwa44",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/g94-dual-semantic-boundary-trust-smoke.cjs",
+      "line": 26,
+      "version": "20260813-pwa44",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/g94-dual-semantic-boundary-trust-smoke.cjs",
+      "line": 26,
+      "version": "20260813-pwa44",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/g94-dual-semantic-boundary-trust-smoke.cjs",
+      "line": 28,
+      "version": "20260813-pwa44",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/g95-cold-offline-source-trust-smoke.cjs",
+      "line": 10,
+      "version": "20260813-pwa44",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/g95-dual-semantic-boundary-trust-smoke.cjs",
+      "line": 26,
+      "version": "20260813-pwa44",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/g95-dual-semantic-boundary-trust-smoke.cjs",
+      "line": 26,
+      "version": "20260813-pwa44",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/g95-dual-semantic-boundary-trust-smoke.cjs",
+      "line": 28,
+      "version": "20260813-pwa44",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/g96-g97-cold-offline-source-trust-smoke.cjs",
+      "line": 10,
+      "version": "20260813-pwa44",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/g96-g97-spindle-mode-boundary-trust-smoke.cjs",
+      "line": 24,
+      "version": "20260813-pwa44",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/g96-g97-spindle-mode-boundary-trust-smoke.cjs",
+      "line": 26,
+      "version": "20260813-pwa44",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/g96-g97-spindle-mode-boundary-trust-smoke.cjs",
+      "line": 105,
+      "version": "20260813-pwa44",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/g98-g99-cold-offline-source-trust-smoke.cjs",
+      "line": 10,
+      "version": "20260813-pwa44",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/g98-g99-dual-semantic-boundary-trust-smoke.cjs",
+      "line": 15,
+      "version": "20260813-pwa44",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/g98-g99-dual-semantic-boundary-trust-smoke.cjs",
+      "line": 17,
+      "version": "20260813-pwa44",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/mobile-pwa-offline-cache-smoke.cjs",
+      "line": 10,
+      "version": "20260813-pwa44",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/mobile-pwa-profile-bfcache-smoke.cjs",
+      "line": 10,
+      "version": "20260813-pwa44",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/mobile-pwa-upgrade-data-smoke.cjs",
+      "line": 11,
+      "version": "20260813-pwa44",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/mobile-pwa-upgrade-data-smoke.cjs",
+      "line": 12,
+      "version": "20260810-pwa35",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs",
+      "line": 11,
+      "version": "20260813-pwa44",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs",
+      "line": 12,
+      "version": "20260813-pwa43",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs",
+      "line": 13,
+      "version": "20260811-pwa37",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs",
+      "line": 11,
+      "version": "20260813-pwa44",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs",
+      "line": 12,
+      "version": "20260813-pwa43",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs",
+      "line": 13,
+      "version": "20260811-pwa37",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs",
+      "line": 12,
+      "version": "20260813-pwa44",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs",
+      "line": 13,
+      "version": "20260813-pwa43",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs",
+      "line": 15,
+      "version": "20260811-pwa37",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/pwa-build-reference-audit-smoke.cjs",
+      "line": 46,
+      "version": "20260728-pwa3",
+      "scope": "audit-governance"
+    },
+    {
+      "file": "cnc/tests/pwa-build-reference-audit-smoke.cjs",
+      "line": 51,
+      "version": "20260728-pwa3",
+      "scope": "audit-governance"
+    }
+  ],
+  "historicalReferences": [
+    {
+      "file": "cnc/MOBILE_HOME_REFACTOR_PROGRESS.md",
+      "line": 83,
+      "version": "20260804-pwa12",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/MOBILE_HOME_REFACTOR_PROGRESS.md",
+      "line": 126,
+      "version": "20260804-pwa12",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/G96_G97_SPINDLE_MODE_SAFETY_AUDIT.md",
+      "line": 91,
+      "version": "20260810-pwa34",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/LEARNING_DATA_REPAIR_TRANSACTION_SAFETY_AUDIT.md",
+      "line": 111,
+      "version": "20260811-pwa36",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/ai-teacher-explainability-offline-core-contract.md",
+      "line": 11,
+      "version": "20260801-pwa4",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/ai-teacher-explainability-offline-core-contract.md",
+      "line": 12,
+      "version": "20260802-pwa5",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/ai-teacher-explainability-offline-core-contract.md",
+      "line": 58,
+      "version": "20260802-pwa5",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/ai-teacher-offline-core-pages-contract.md",
+      "line": 21,
+      "version": "20260802-pwa7",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/ai-teacher-offline-core-pages-contract.md",
+      "line": 22,
+      "version": "20260802-pwa6",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/beginner-placement-offline-core-contract.md",
+      "line": 11,
+      "version": "20260802-pwa6",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/beginner-placement-offline-core-contract.md",
+      "line": 12,
+      "version": "20260802-pwa7",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/beginner-placement-offline-pages-contract.md",
+      "line": 30,
+      "version": "20260802-pwa7",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/beginner-placement-offline-pages-contract.md",
+      "line": 31,
+      "version": "20260802-pwa6",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/course-gate-real-80-audit.md",
+      "line": 79,
+      "version": "20260808-pwa22",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/placement-first-step-offline-core-contract.md",
+      "line": 37,
+      "version": "20260803-pwa9",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/placement-first-step-offline-core-contract.md",
+      "line": 37,
+      "version": "20260802-pwa8",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/pwa-build-reference-audit-contract.md",
+      "line": 38,
+      "version": "20260728-pwa3",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/pwa-build-reference-audit-contract.md",
+      "line": 39,
+      "version": "20260728-pwa3",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/pwa14-gate-repair-audit.md",
+      "line": 21,
+      "version": "20260804-pwa13",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/pwa14-gate-repair-audit.md",
+      "line": 21,
+      "version": "20260806-pwa14",
+      "scope": "documentation-history"
+    },
+    {
+      "file": "cnc/docs/training-camp-route-handoff-pages-contract.md",
+      "line": 21,
+      "version": "20260802-pwa8",
+      "scope": "documentation-history"
+    }
+  ],
+  "governanceReferences": [
+    {
+      "file": "cnc/tests/pwa-build-reference-audit-smoke.cjs",
+      "line": 46,
+      "version": "20260728-pwa3",
+      "scope": "audit-governance"
+    },
+    {
+      "file": "cnc/tests/pwa-build-reference-audit-smoke.cjs",
+      "line": 51,
+      "version": "20260728-pwa3",
+      "scope": "audit-governance"
+    }
+  ],
+  "transitionReferences": [
+    {
+      "file": "cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs",
+      "line": 12,
+      "version": "20260813-pwa43",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs",
+      "line": 12,
+      "version": "20260813-pwa43",
+      "scope": "test"
+    },
+    {
+      "file": "cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs",
+      "line": 13,
+      "version": "20260813-pwa43",
+      "scope": "test"
+    }
+  ],
+  "legacyReferences": [
+    {
+      "file": "cnc/import-test.js",
+      "line": 168,
+      "version": "20260728-pwa3",
+      "scope": "runtime",
+      "reason": "兼容层备用注册诊断标记，不参与ServiceWorker缓存命名或构建判定"
+    },
+    {
+      "file": "cnc/runtime-env-detector.js",
+      "line": 200,
+      "version": "20260728-pwa3",
+      "scope": "runtime",
+      "reason": "早期原生注册启动诊断标记，不参与Service Worker缓存命名或构建判定"
+    }
+  ],
+  "unusedTransitionAllowances": [],
+  "unusedLegacyAllowances": [],
+  "staleActivePins": [],
+  "unexpectedReferences": [],
+  "passed": true
+}
