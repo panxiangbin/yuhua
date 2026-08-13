@@ -23,6 +23,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - name: Correct temporary sync unique-file accounting
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('cnc/tests/pwa43-ai-teacher-simulator-sync.cjs')
+          s=p.read_text(encoding='utf-8')
+          old='  changed.push(file);\n  return true;'
+          new='  if (!changed.includes(file)) changed.push(file);\n  return true;'
+          assert s.count(old)==1, 'temporary sync accounting patch target mismatch'
+          p.write_text(s.replace(old,new), encoding='utf-8')
+          PY
       - name: Apply controlled AI teacher and PWA43 sync
         run: node cnc/tests/pwa43-ai-teacher-simulator-sync.cjs
       - name: Run strict PWA build reference audit
@@ -47,7 +60,7 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add cnc .github/workflows/cnc-*.yml
-          git reset -- cnc/test-results || true
+          git reset -- cnc/test-results cnc/tests/pwa43-ai-teacher-simulator-sync.cjs || true
           git diff --cached --name-only | tee changed-files.txt
           test "$(git diff --cached --name-only | wc -l | tr -d ' ')" = '34'
           git diff --cached --name-only | awk '($0 ~ /^cnc\//) || ($0 ~ /^\.github\/workflows\/cnc-.*\.ya?ml$/) {next} {print "unexpected path: "$0; bad=1} END{exit bad}'
