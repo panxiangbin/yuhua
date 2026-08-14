@@ -38,8 +38,8 @@ fs.mkdirSync(OUT, { recursive: true });
         gateVersion: 2,
         lessonScores: { 5: 20 },
         wrongQuestions: [
-          { id: 'alarm-1', ability: '故障排查', risk: '高', title: '报警后连续复位' },
-          { id: 'alarm-2', ability: '故障排查', risk: '高', title: '未记录报警原文' }
+          { id: 'apf-alarm-1', practiceId: 'alarm-parameter-first-piece', ability: '故障排查', risk: '高', title: '报警后连续复位' },
+          { id: 'apf-alarm-2', practiceId: 'alarm-parameter-first-piece', ability: '故障排查', risk: '高', title: '未记录报警原文' }
         ]
       }));
       localStorage.setItem('cnc_training_simulator_v1', JSON.stringify({
@@ -189,8 +189,8 @@ fs.mkdirSync(OUT, { recursive: true });
       localStorage.setItem('cnc_training_profile_v1', JSON.stringify(profile));
       const practice = JSON.parse(localStorage.getItem('cnc_training_practice_v1'));
       practice.wrongQuestions = [
-        { id: 'alarm-1', ability: '故障排查', risk: '高', title: '报警后连续复位' },
-        { id: 'alarm-2', ability: '故障排查', risk: '高', title: '未记录报警原文' }
+        { id: 'apf-alarm-1', practiceId: 'alarm-parameter-first-piece', ability: '故障排查', risk: '高', title: '报警后连续复位' },
+        { id: 'apf-alarm-2', practiceId: 'alarm-parameter-first-piece', ability: '故障排查', risk: '高', title: '未记录报警原文' }
       ];
       localStorage.setItem('cnc_training_practice_v1', JSON.stringify(practice));
     });
