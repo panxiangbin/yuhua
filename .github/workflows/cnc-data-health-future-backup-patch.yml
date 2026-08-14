@@ -1,0 +1,62 @@
+name: CNC data health future backup patch
+on:
+  push:
+    branches:
+      - codex/cnc-data-health-future-backup
+    paths:
+      - '.github/workflows/cnc-data-health-future-backup-patch.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: codex/cnc-data-health-future-backup
+      - name: Patch future backup freshness semantics
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          html = Path('cnc/data-health.html')
+          text = html.read_text(encoding='utf-8')
+          old = "if(Number.isNaN(parsedAt)){backup='备份时间无效，请重新导出备份';addCheck('备份新鲜度','warn',backup)}else{const days=Math.floor((Date.now()-parsedAt)/86400000);"
+          new = "if(!Number.isFinite(parsedAt)||parsedAt>Date.now()){backup=parsedAt>Date.now()?'备份时间晚于当前时间，请核对设备时间并重新导出':'备份时间无效，请重新导出备份';addCheck('备份新鲜度','warn',backup)}else{const days=Math.floor((Date.now()-parsedAt)/86400000);"
+          if old not in text:
+              raise SystemExit('data-health future backup target not found')
+          text = text.replace(old, new, 1)
+          html.write_text(text, encoding='utf-8')
+
+          test = Path('cnc/tests/mobile-data-health-smoke.cjs')
+          text = test.read_text(encoding='utf-8')
+          marker = "assert.equal(rolled.other,'保留');const min="
+          insertion = "assert.equal(rolled.other,'保留');const futureBackup=new Date(Date.now()+3*86400000).toISOString();await page.evaluate(v=>localStorage.setItem('cnc_training_backup_meta_v1',JSON.stringify({lastExportAt:v})),futureBackup);await page.reload();await page.waitForFunction(()=>document.querySelectorAll('#checks .check').length===8);const futureBackupCheck=page.locator('#checks .check').filter({hasText:'备份新鲜度'});assert.equal(await futureBackupCheck.count(),1);assert((await futureBackupCheck.textContent()).includes('晚于当前时间'),'未来备份时间必须提示核对设备时间并重新导出');assert.equal(await page.evaluate(()=>localStorage.getItem('cnc_training_backup_meta_v1')),JSON.stringify({lastExportAt:futureBackup}),'未来备份时间检查不得改写备份元数据');const min="
+          if marker not in text:
+              raise SystemExit('mobile data health insertion target not found')
+          text = text.replace(marker, insertion, 1)
+          marker2 = "invalidBackupDateWarns:true,rewardDuplicateRiskWarns:true"
+          replacement2 = "invalidBackupDateWarns:true,futureBackupWarns:true,rewardDuplicateRiskWarns:true"
+          if marker2 not in text:
+              raise SystemExit('mobile data health diagnostics target not found')
+          text = text.replace(marker2, replacement2, 1)
+          test.write_text(text, encoding='utf-8')
+          PY
+          node --check cnc/tests/mobile-data-health-smoke.cjs
+          git diff --check
+          git diff -- cnc/data-health.html cnc/tests/mobile-data-health-smoke.cjs
+      - name: Commit patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add cnc/data-health.html cnc/tests/mobile-data-health-smoke.cjs
+          git commit -m 'CNC：统一数据健康未来备份时间语义'
+          git push origin HEAD:codex/cnc-data-health-future-backup
