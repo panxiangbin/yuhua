@@ -32,6 +32,9 @@ const report = {
   nestedIntegrityRemainsUsable: false,
   nestedDataPreserved: false,
   nestedNoNonFiniteText: false,
+  wrongCompatUnified: false,
+  wrongCompatReadOnly: false,
+  wrongCompatCounts: null,
   passed: false
 };
 const logs = [];
@@ -50,8 +53,12 @@ function writeDiagnostics(error) {
     && source.includes('const passed=unique.some(row=>row.passed===true)||bestScore===100')
     && source.includes("return typeof raw==='number'&&Number.isFinite(raw)&&raw>=0&&raw<=100?raw:null")
     && source.includes('simulations.filter(simulationPassed).length');
+  report.strictWrongCompatibilityDetected = source.includes('...listValues(practice.wrongItems)')
+    && source.includes('const key=`${source}:${id}`')
+    && source.includes("const WRONG_SOURCE_PREFIXES=[['sc-','safety-coordinate']");
   logs.push(`静态静默回退命中：${report.staticSilentFallbackDetected}`);
   logs.push(`嵌套数据严格归一化门禁：${report.strictNestedGuardDetected}`);
+  logs.push(`三类错题兼容字段去重门禁：${report.strictWrongCompatibilityDetected}`);
 
   const server = spawn('python3', ['-m', 'http.server', '4173'], { cwd: root, stdio: 'ignore' });
   let browser;
@@ -140,6 +147,7 @@ function writeDiagnostics(error) {
     assert.equal(report.corruptDataPreserved, true, '不得为了阻断个性化建议而覆盖或清理损坏原始档案');
     assert.equal(report.staticSilentFallbackDetected, false, 'AI老师仍将解析失败静默替换为空对象');
     assert.equal(report.strictNestedGuardDetected, true, 'AI老师缺少嵌套记录/成绩或新旧模拟schema的严格归一化保护');
+    assert.equal(report.strictWrongCompatibilityDetected, true, 'AI老师必须同时读取wrongQuestions/wrongItems/wrong并按来源专项+题目ID去重');
     assert.equal(report.explicitAlertVisible, true, '损坏档案时必须显示可见、可访问的数据异常提示');
     assert.equal(report.summaryBlocked, true, '损坏档案时不得继续显示 0/12 等伪装成真实进度的汇总');
     assert.equal(report.publicApiBlocked, true, '损坏档案时公开 initialSummary/getSummary 接口不得继续暴露可信零进度');
@@ -151,11 +159,11 @@ function writeDiagnostics(error) {
     const nestedPracticeRaw = JSON.stringify({
       version: 1,
       wrongQuestions: [
-        { id: 'valid-wrong-1', ability: '安全' },
+        { id: 'sc-valid-wrong-1', practiceId: 'safety-coordinate', ability: '安全' },
         ['array-should-ignore'],
         null,
         'string-should-ignore',
-        { id: 'valid-wrong-2', ability: '坐标' }
+        { id: 'av-valid-wrong-2', practiceId: 'advanced-verification', ability: '坐标' }
       ],
       lessonScores: { 1: '999', 2: 120, 3: 79 }
     });
@@ -229,11 +237,55 @@ function writeDiagnostics(error) {
     assert.equal(report.nestedNoNonFiniteText, true, '页面不得出现NaN或Infinity污染');
     assert.equal(consoleErrors.length, 0, consoleErrors.join('\n'));
 
+    const wrongCompatRaw = JSON.stringify({
+      version: 1,
+      wrongQuestions: [
+        { id: 'sc-dup', practiceId: 'safety-coordinate', ability: '安全', title: '重复错题A' },
+        { id: 'av-only', practiceId: 'advanced-verification', ability: '程序验证', title: '仅wrongQuestions' }
+      ],
+      wrongItems: {
+        duplicate: { id: 'sc-dup', practiceId: 'safety-coordinate', ability: '安全', title: '重复错题A旧结构' },
+        unique: { id: 'dsp-only', practiceId: 'drawing-setup-process', ability: '图纸', title: '仅wrongItems' }
+      },
+      wrong: [
+        { id: 'sc-dup', practiceId: 'safety-coordinate', ability: '安全', title: '重复错题A更旧结构' },
+        { id: 'pfsd-only', practiceId: 'program-fill-sort-debug', ability: '程序验证', title: '仅wrong' }
+      ]
+    });
+    await page.evaluate(practiceRaw => {
+      localStorage.clear();
+      localStorage.setItem('cnc_study_completed_v1', '[]');
+      localStorage.setItem('cnc_training_profile_v1', JSON.stringify({ version: 1 }));
+      localStorage.setItem('cnc_training_practice_v1', practiceRaw);
+      localStorage.setItem('cnc_training_simulator_v1', JSON.stringify({ version: 1, records: {} }));
+      localStorage.setItem('cnc_training_exam_v1', JSON.stringify({ version: 1 }));
+      localStorage.setItem('unrelated_keep_me', '保留');
+    }, wrongCompatRaw);
+    await page.reload({ waitUntil: 'networkidle' });
+    const aiWrong = await page.locator('#wrong-count').textContent();
+    const aiSummary = await page.evaluate(() => window.CNC_AI_TEACHER?.getSummary?.() || null);
+    await page.goto('http://127.0.0.1:4173/cnc/practice-wrong-review.html', { waitUntil: 'networkidle' });
+    const reviewWrong = await page.locator('#wrong-total').textContent();
+    await page.goto('http://127.0.0.1:4173/cnc/profile.html', { waitUntil: 'networkidle' });
+    const profileWrong = await page.locator('#wrong-count').textContent();
+    const compatAfter = await page.evaluate(() => ({
+      practiceRaw: localStorage.getItem('cnc_training_practice_v1'),
+      unrelated: localStorage.getItem('unrelated_keep_me')
+    }));
+    report.wrongCompatCounts = { aiTeacher: aiWrong, wrongReview: reviewWrong, profile: profileWrong };
+    report.wrongCompatUnified = aiSummary?.wrong === 4 && aiWrong === '4' && reviewWrong === '4' && profileWrong === '4';
+    report.wrongCompatReadOnly = compatAfter.practiceRaw === wrongCompatRaw && compatAfter.unrelated === '保留';
+    logs.push(`AI老师/错题复习/成长档案三字段去重一致：${report.wrongCompatUnified}（${JSON.stringify(report.wrongCompatCounts)}）`);
+    logs.push(`三字段去重跨页面读取保持LocalStorage只读：${report.wrongCompatReadOnly}`);
+    assert.equal(report.wrongCompatUnified, true, 'AI老师必须与跨专项错题页、成长档案统一三类错题兼容字段并按来源专项+题目ID去重');
+    assert.equal(report.wrongCompatReadOnly, true, '三类错题跨页面汇总不得自动清理、迁移或改写原始LocalStorage');
+    await page.goto('http://127.0.0.1:4173/cnc/ai-teacher.html', { waitUntil: 'networkidle' });
+
     const minTouch = await page.locator('a:visible,button:visible').evaluateAll(nodes => Math.min(...nodes.map(node => Math.max(node.getBoundingClientRect().height, node.getBoundingClientRect().width))));
     assert(minTouch >= 44, `最小触控目标仅 ${minTouch}px`);
     report.minTouch = minTouch;
     report.passed = true;
-    logs.push('AI老师根损坏阻断 + 新版模拟records + 嵌套异常只读降级验收通过');
+    logs.push('AI老师根损坏阻断 + 新版模拟records + 嵌套异常只读降级 + 三类错题跨页面去重一致性验收通过');
     writeDiagnostics();
   } catch (error) {
     logs.push(`验收失败：${error.message}`);
