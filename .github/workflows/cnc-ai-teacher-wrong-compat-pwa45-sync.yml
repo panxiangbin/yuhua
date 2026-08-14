@@ -8,7 +8,7 @@ on:
       - '.github/workflows/cnc-*.yml'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   generate:
@@ -84,6 +84,30 @@ jobs:
           if [ -f cnc/test-results/ai-teacher-wrong-compat-pwa45-sync/manifest.json ]; then
             cp cnc/test-results/ai-teacher-wrong-compat-pwa45-sync/manifest.json "$out/manifest.json"
           fi
+
+      - name: Create clean generated commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          out=cnc/test-artifacts/ai-teacher-wrong-compat-pwa45-sync
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          while IFS= read -r path; do
+            [ -n "$path" ] && git add -- "$path"
+          done < "$out/changed-files.txt"
+          git rm -- .github/workflows/cnc-ai-teacher-wrong-compat-pwa45-sync.yml cnc/tools/apply_ai_teacher_wrong_compat_pwa45.py
+          git commit -m 'CNC：统一AI老师错题兼容字段并升级PWA45'
+          generated="$(git rev-parse HEAD)"
+          printf '%s\n' "$generated" > "$out/generated-commit-sha.txt"
+          git show --stat --oneline --no-renames HEAD > "$out/generated-commit-stat.txt"
+          git diff-tree --no-commit-id --name-status -r HEAD > "$out/generated-commit-files.txt"
+
+      - name: Attempt clean branch fast-forward push
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          git push origin "HEAD:${GITHUB_HEAD_REF}"
 
       - name: Upload controlled sync evidence
         if: always()
