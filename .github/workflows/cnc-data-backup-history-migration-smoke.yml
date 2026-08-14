@@ -10,12 +10,25 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout exact tested head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Verify exact tested head
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          ACTUAL_HEAD="$(git rev-parse HEAD)"
+          test "$ACTUAL_HEAD" = "$EXPECTED_HEAD"
+          mkdir -p cnc/test-results
+          printf '{"expectedHead":"%s","testedHead":"%s"}\n' "$EXPECTED_HEAD" "$ACTUAL_HEAD" > cnc/test-results/data-backup-history-migration-identity.json
       - uses: actions/setup-node@v4
         with:
           node-version: 20
       - run: npm install --no-save playwright@1.52.0
       - run: npx playwright install --with-deps chromium
+      - name: Check JavaScript syntax
+        run: node --check cnc/tests/mobile-data-backup-history-migration-smoke.cjs
       - run: node cnc/tests/mobile-data-backup-history-migration-smoke.cjs
       - name: Upload diagnostics
         if: always()
