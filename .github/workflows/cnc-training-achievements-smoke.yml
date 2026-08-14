@@ -55,6 +55,7 @@ jobs:
         run: |
           node --check cnc/tests/mobile-training-achievements-smoke.cjs
           node --check cnc/tests/training-achievements-date-contract-smoke.cjs
+          node --check cnc/tests/training-achievements-wrong-compat-smoke.cjs
           node cnc/tests/training-achievements-date-contract-smoke.cjs
           python3 - <<'PY'
           from pathlib import Path
@@ -88,6 +89,7 @@ jobs:
         run: |
           set -o pipefail
           node cnc/tests/mobile-training-achievements-smoke.cjs 2>&1 | tee cnc/test-artifacts/training-achievements/test.log
+          node cnc/tests/training-achievements-wrong-compat-smoke.cjs 2>&1 | tee cnc/test-artifacts/training-achievements/wrong-compat-test.log
 
       - name: Prove gate is read-only for tracked CNC sources
         shell: bash
