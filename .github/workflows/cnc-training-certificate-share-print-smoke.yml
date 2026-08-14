@@ -11,8 +11,21 @@ jobs:
   certificate-share-print:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout exact tested head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.EXPECTED_HEAD }}
+      - name: Verify exact tested head
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$EXPECTED_HEAD"
+          mkdir -p cnc/test-results/training-certificate-share-print
+          printf '{"testedHead":"%s","expectedHead":"%s","event":"%s"}\n' "$actual" "$EXPECTED_HEAD" "${{ github.event_name }}" > cnc/test-results/training-certificate-share-print/identity.json
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
@@ -23,4 +36,11 @@ jobs:
       - name: Start static server
         run: python3 -m http.server 4173 --directory . > /tmp/cnc-server.log 2>&1 &
       - name: Chromium 390x844 certificate share and print
-        run: node cnc/tests/mobile-training-certificate-share-print-smoke.cjs
+        run: node cnc/tests/mobile-training-certificate-share-print-smoke.cjs | tee cnc/test-results/training-certificate-share-print/browser.log
+      - name: Upload exact-head diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-training-certificate-share-print-${{ github.run_id }}
+          path: cnc/test-results/training-certificate-share-print
+          if-no-files-found: error
