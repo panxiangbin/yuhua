@@ -91,11 +91,17 @@ def sync_build_pins(changed: set[str]) -> dict[str, int]:
 def patch_ai_teacher(changed: set[str]) -> None:
     path = ROOT / 'cnc/ai-teacher.html'
     text = read(path)
-    old = "function stageLevel(value){const match=String(value??'').match(/(?:stage-)?(\\d{1,2})$/i);const level=Number(match?.[1]);return level>=1&&level<=12?level:null}"
-    new = "function stageLevel(value){if(typeof value==='number'&&Number.isInteger(value)&&value>=1&&value<=12)return value;if(typeof value==='string'){const match=value.match(/^stage-(\\d{1,2})$/i),level=Number(match?.[1]);if(Number.isInteger(level)&&level>=1&&level<=12)return level}return null}"
-    if old not in text:
+    old_stage = "function stageLevel(value){const match=String(value??'').match(/(?:stage-)?(\\d{1,2})$/i);const level=Number(match?.[1]);return level>=1&&level<=12?level:null}"
+    new_stage = "function stageLevel(value){if(typeof value==='number'&&Number.isInteger(value)&&value>=1&&value<=12)return value;if(typeof value==='string'){const match=value.match(/^stage-(\\d{1,2})$/i),level=Number(match?.[1]);if(Number.isInteger(level)&&level>=1&&level<=12)return level}return null}"
+    if old_stage not in text:
         raise RuntimeError('ai-teacher stageLevel旧实现未找到，拒绝猜测修改')
-    text = text.replace(old, new, 1)
+    text = text.replace(old_stage, new_stage, 1)
+
+    old_completed = "function completedCourses(study,profile){const completed=new Set(asArray(study).map(stageLevel).filter(Boolean));asArray(profile.completed).map(stageLevel).filter(Boolean).forEach(level=>completed.add(level));asArray(profile.completedStages).map(stageLevel).filter(Boolean).forEach(level=>completed.add(level));return completed;}"
+    new_completed = "function completedCourses(study,profile){const completed=new Set(asArray(study).map(stageLevel).filter(Boolean));if(localStorage.getItem(KEYS.study)!==null)return completed;asArray(profile.completed).map(stageLevel).filter(Boolean).forEach(level=>completed.add(level));asArray(profile.completedStages).map(stageLevel).filter(Boolean).forEach(level=>completed.add(level));return completed;}"
+    if old_completed not in text:
+        raise RuntimeError('ai-teacher completedCourses旧实现未找到，拒绝猜测修改')
+    text = text.replace(old_completed, new_completed, 1)
     write_if_changed(path, text, changed)
 
 
@@ -104,7 +110,7 @@ def patch_ai_teacher_test(changed: set[str]) -> None:
     text = read(path)
     text = text.replace(
         "  wrongCompatCounts: null,\n  passed: false",
-        "  wrongCompatCounts: null,\n  strictCompletionIdGuardDetected: false,\n  completionIdStrict: false,\n  completionIdReadOnly: false,\n  completionSummary: null,\n  passed: false",
+        "  wrongCompatCounts: null,\n  strictCompletionIdGuardDetected: false,\n  strictCompletionSourcePrecedenceDetected: false,\n  completionIdStrict: false,\n  completionCanonicalPreferred: false,\n  completionLegacyFallbackStrict: false,\n  completionIdReadOnly: false,\n  completionSummary: null,\n  passed: false",
         1,
     )
     static_anchor = "  report.strictWrongCompatibilityDetected = source.includes('...listValues(practice.wrongItems)')\n    && source.includes('const key=`${source}:${id}`')\n    && source.includes(\"const WRONG_SOURCE_PREFIXES=[['sc-','safety-coordinate']\");"
@@ -112,17 +118,17 @@ def patch_ai_teacher_test(changed: set[str]) -> None:
         raise RuntimeError('ai-teacher-data-integrity静态错题门禁插入点未找到')
     text = text.replace(
         static_anchor,
-        static_anchor + "\n  report.strictCompletionIdGuardDetected = source.includes(\"if(typeof value==='number'&&Number.isInteger(value)&&value>=1&&value<=12)return value\")\n    && source.includes(\"value.match(/^stage-(\\\\d{1,2})$/i)\")\n    && !source.includes(\"String(value??'').match(/(?:stage-)?\");",
+        static_anchor + "\n  report.strictCompletionIdGuardDetected = source.includes(\"if(typeof value==='number'&&Number.isInteger(value)&&value>=1&&value<=12)return value\")\n    && source.includes(\"value.match(/^stage-(\\\\d{1,2})$/i)\")\n    && !source.includes(\"String(value??'').match(/(?:stage-)?\");\n  report.strictCompletionSourcePrecedenceDetected = source.includes(\"if(localStorage.getItem(KEYS.study)!==null)return completed\");",
         1,
     )
     text = text.replace(
         "  logs.push(`三类错题兼容字段去重门禁：${report.strictWrongCompatibilityDetected}`);",
-        "  logs.push(`三类错题兼容字段去重门禁：${report.strictWrongCompatibilityDetected}`);\n  logs.push(`课程完成ID严格类型门禁：${report.strictCompletionIdGuardDetected}`);",
+        "  logs.push(`三类错题兼容字段去重门禁：${report.strictWrongCompatibilityDetected}`);\n  logs.push(`课程完成ID严格类型门禁：${report.strictCompletionIdGuardDetected}`);\n  logs.push(`课程完成canonical优先级门禁：${report.strictCompletionSourcePrecedenceDetected}`);",
         1,
     )
     text = text.replace(
         "    assert.equal(report.strictWrongCompatibilityDetected, true, 'AI老师必须同时读取wrongQuestions/wrongItems/wrong并按来源专项+题目ID去重');",
-        "    assert.equal(report.strictWrongCompatibilityDetected, true, 'AI老师必须同时读取wrongQuestions/wrongItems/wrong并按来源专项+题目ID去重');\n    assert.equal(report.strictCompletionIdGuardDetected, true, 'AI老师课程完成ID必须只接受真实1-12整数或stage-N兼容格式，不能接受纯数字字符串');",
+        "    assert.equal(report.strictWrongCompatibilityDetected, true, 'AI老师必须同时读取wrongQuestions/wrongItems/wrong并按来源专项+题目ID去重');\n    assert.equal(report.strictCompletionIdGuardDetected, true, 'AI老师课程完成ID必须只接受真实1-12整数或stage-N兼容格式，不能接受纯数字字符串');\n    assert.equal(report.strictCompletionSourcePrecedenceDetected, true, 'canonical课程完成记录存在时不得继续叠加旧profile完成字段');",
         1,
     )
     marker = "    await page.goto('http://127.0.0.1:4173/cnc/ai-teacher.html', { waitUntil: 'networkidle' });\n\n    const minTouch = await page.locator('a:visible,button:visible').evaluateAll(nodes => Math.min(...nodes.map(node => Math.max(node.getBoundingClientRect().height, node.getBoundingClientRect().width))));"
@@ -146,31 +152,58 @@ def patch_ai_teacher_test(changed: set[str]) -> None:
       localStorage.setItem('unrelated_keep_me', '保留');
     }, { studyRaw: completionStudyRaw, profileRaw: completionProfileRaw });
     await page.reload({ waitUntil: 'networkidle' });
-    const completion = await page.evaluate(() => ({
+    const canonicalCompletion = await page.evaluate(() => ({
       summary: window.CNC_AI_TEACHER?.getSummary?.() || null,
       studyRaw: localStorage.getItem('cnc_study_completed_v1'),
       profileRaw: localStorage.getItem('cnc_training_profile_v1'),
       unrelated: localStorage.getItem('unrelated_keep_me'),
       alertHidden: document.getElementById('data-integrity-alert')?.hidden === true
     }));
-    const completionVisible = await page.locator('#course-progress').textContent();
-    report.completionSummary = { summary: completion.summary, visible: completionVisible };
-    report.completionIdStrict = completion.summary?.courses === 7
-      && completionVisible === '7/12'
-      && completion.alertHidden === true;
-    report.completionIdReadOnly = completion.studyRaw === completionStudyRaw
-      && completion.profileRaw === completionProfileRaw
-      && completion.unrelated === '保留';
-    logs.push(`课程完成ID严格类型/旧stage-N兼容：${report.completionIdStrict}（${completionVisible}）`);
-    logs.push(`课程完成ID归一化保持LocalStorage只读：${report.completionIdReadOnly}`);
-    assert.equal(report.completionIdStrict, true, '纯数字字符串课程号不得冒充完成；真实数字1-12与stage-N兼容记录必须继续有效');
-    assert.equal(report.completionIdReadOnly, true, '课程完成ID严格归一化不得自动修改study/profile原始LocalStorage');
+    const canonicalVisible = await page.locator('#course-progress').textContent();
+    report.completionCanonicalPreferred = canonicalCompletion.summary?.courses === 3
+      && canonicalVisible === '3/12'
+      && canonicalCompletion.alertHidden === true;
+    const canonicalReadOnly = canonicalCompletion.studyRaw === completionStudyRaw
+      && canonicalCompletion.profileRaw === completionProfileRaw
+      && canonicalCompletion.unrelated === '保留';
+
+    await page.evaluate(profileRaw => {
+      localStorage.removeItem('cnc_study_completed_v1');
+      localStorage.setItem('cnc_training_profile_v1', profileRaw);
+    }, completionProfileRaw);
+    await page.reload({ waitUntil: 'networkidle' });
+    const legacyCompletion = await page.evaluate(() => ({
+      summary: window.CNC_AI_TEACHER?.getSummary?.() || null,
+      studyRaw: localStorage.getItem('cnc_study_completed_v1'),
+      profileRaw: localStorage.getItem('cnc_training_profile_v1'),
+      unrelated: localStorage.getItem('unrelated_keep_me'),
+      alertHidden: document.getElementById('data-integrity-alert')?.hidden === true
+    }));
+    const legacyVisible = await page.locator('#course-progress').textContent();
+    report.completionLegacyFallbackStrict = legacyCompletion.summary?.courses === 4
+      && legacyVisible === '4/12'
+      && legacyCompletion.alertHidden === true;
+    const legacyReadOnly = legacyCompletion.studyRaw === null
+      && legacyCompletion.profileRaw === completionProfileRaw
+      && legacyCompletion.unrelated === '保留';
+    report.completionIdStrict = report.completionCanonicalPreferred && report.completionLegacyFallbackStrict;
+    report.completionIdReadOnly = canonicalReadOnly && legacyReadOnly;
+    report.completionSummary = {
+      canonical: { summary: canonicalCompletion.summary, visible: canonicalVisible },
+      legacyFallback: { summary: legacyCompletion.summary, visible: legacyVisible }
+    };
+    logs.push(`canonical完成记录优先且纯数字字符串无效：${report.completionCanonicalPreferred}（${canonicalVisible}）`);
+    logs.push(`缺少canonical时stage-N旧档案严格回退：${report.completionLegacyFallbackStrict}（${legacyVisible}）`);
+    logs.push(`课程完成来源与ID归一化保持LocalStorage只读：${report.completionIdReadOnly}`);
+    assert.equal(report.completionCanonicalPreferred, true, 'canonical课程完成记录存在时必须优先使用，不能再叠加旧profile完成字段；纯数字字符串不得冒充完成');
+    assert.equal(report.completionLegacyFallbackStrict, true, 'canonical完成记录缺失时才允许回退旧profile字段，且只接受真实数字1-12或stage-N格式');
+    assert.equal(report.completionIdReadOnly, true, '课程完成来源优先级与ID严格归一化不得自动修改study/profile原始LocalStorage');
 
     const minTouch = await page.locator('a:visible,button:visible').evaluateAll(nodes => Math.min(...nodes.map(node => Math.max(node.getBoundingClientRect().height, node.getBoundingClientRect().width))));'''
     text = text.replace(marker, block, 1)
     text = text.replace(
         "    logs.push('AI老师根损坏阻断 + 新版模拟records + 嵌套异常只读降级 + 三类错题跨页面去重一致性验收通过');",
-        "    logs.push('AI老师根损坏阻断 + 新版模拟records + 嵌套异常只读降级 + 三类错题跨页面去重 + 课程完成ID严格类型验收通过');",
+        "    logs.push('AI老师根损坏阻断 + 新版模拟records + 嵌套异常只读降级 + 三类错题跨页面去重 + canonical课程完成优先级与严格ID验收通过');",
         1,
     )
     write_if_changed(path, text, changed)
@@ -179,7 +212,7 @@ def patch_ai_teacher_test(changed: set[str]) -> None:
 def update_build_info(changed: set[str]) -> None:
     path = ROOT / 'cnc/build-info.json'
     data = json.loads(read(path))
-    phrase = 'AI老师课程完成ID严格类型与stage-N兼容'
+    phrase = 'AI老师课程完成canonical优先级、严格ID与stage-N兼容'
     stage = str(data.get('contentStage') or '')
     if phrase not in stage:
         data['contentStage'] = f'{stage} · {phrase}' if stage else phrase
