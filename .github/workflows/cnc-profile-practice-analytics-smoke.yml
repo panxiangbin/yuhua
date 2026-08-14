@@ -10,17 +10,36 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout exact tested head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Verify exact tested head
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='${{ github.event.pull_request.head.sha || github.sha }}'
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+          mkdir -p cnc/test-results
+          printf '{"testedHead":"%s","expectedHead":"%s"}\n' "$actual" "$expected" > cnc/test-results/profile-practice-analytics-identity.json
       - uses: actions/setup-node@v4
         with:
           node-version: 20
       - run: npm install --no-save playwright@1.52.0
       - run: npx playwright install --with-deps chromium
+      - name: Check JavaScript syntax
+        run: |
+          node --check cnc/tests/mobile-profile-practice-analytics-smoke.cjs
+          node --check cnc/tests/profile-root-integrity-smoke.cjs
       - run: node cnc/tests/mobile-profile-practice-analytics-smoke.cjs
+      - run: node cnc/tests/profile-root-integrity-smoke.cjs
       - name: Upload diagnostics
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: cnc-profile-practice-analytics-${{ github.run_id }}
-          path: cnc/test-results/profile-practice-analytics*
+          path: |
+            cnc/test-results/profile-practice-analytics*
+            cnc/test-results/profile-root-integrity*
           if-no-files-found: warn
