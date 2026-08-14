@@ -124,7 +124,13 @@
   function readCompleted(key){const raw=localStorage.getItem(key);if(raw===null)return [];try{const value=JSON.parse(raw);return Array.isArray(value)?value:{__cncDataInvalid:true}}catch{return {__cncDataInvalid:true}}}
   function asArray(value){return Array.isArray(value)?value:[]}
   function isRecord(value){return Boolean(value&&typeof value==='object'&&!Array.isArray(value))}
-  function wrongRows(practice){const value=practice.wrongQuestions||practice.wrong||[];const rows=Array.isArray(value)?value:isRecord(value)?Object.values(value):[];return rows.filter(isRecord)}
+  const PRACTICE_IDS=['safety-coordinate','advanced-verification','drawing-setup-process','program-fill-sort-debug','alarm-parameter-first-piece'];
+  const WRONG_SOURCE_PREFIXES=[['sc-','safety-coordinate'],['av-','advanced-verification'],['dsp-','drawing-setup-process'],['pfsd-','program-fill-sort-debug'],['apf-','alarm-parameter-first-piece']];
+  function listValues(value){return Array.isArray(value)?value:isRecord(value)?Object.values(value):[]}
+  function scalarText(value){return ['string','number','boolean'].includes(typeof value)?String(value).trim():''}
+  function wrongQuestionId(row){return scalarText(row.questionId??row.id??row.key)}
+  function wrongSourceId(row){const hint=scalarText(row.practiceId??row.source??row.setId??row.practice??row.redoUrl).toLowerCase();const direct=PRACTICE_IDS.find(id=>hint.includes(id));if(direct)return direct;const id=wrongQuestionId(row).toLowerCase(),mapped=WRONG_SOURCE_PREFIXES.find(([prefix])=>id.startsWith(prefix));return mapped?mapped[1]:''}
+  function wrongRows(practice){const map=new Map();[...listValues(practice.wrongQuestions),...listValues(practice.wrongItems),...listValues(practice.wrong)].forEach(row=>{if(!isRecord(row))return;const source=wrongSourceId(row),id=wrongQuestionId(row);if(!source||!id)return;const key=`${source}:${id}`,previous=map.get(key)||{};map.set(key,{...previous,...row,practiceId:source,questionId:id})});return [...map.values()]}
   const SIMULATOR_IDS=['homing','workholding-check','tool-installation','tool-length-offset-check','work-offset-setting','program-dry-run','single-block-first-approach','graphics-segment-prediction','first-piece-inspection','alarm-troubleshooting','cutter-comp-risk','hole-cycle-troubleshooting','measurement-vs-machining-error'];
   function normalizedScore(value){const raw=isRecord(value)&&value.score!==undefined?value.score:value;return typeof raw==='number'&&Number.isFinite(raw)&&raw>=0&&raw<=100?raw:null}
   function simulatorSignature(row){return [row.lastCompletedAt||row.updatedAt||'',row.bestScore??row.best??row.score??'',row.attempts??'',row.passed??''].join('|')}

@@ -36,7 +36,19 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout exact tested head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      - name: Verify exact tested head
+        env:
+          EXPECTED_TESTED_HEAD: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$EXPECTED_TESTED_HEAD"
+          mkdir -p artifacts/ai-teacher-handoff-accessibility
+          printf '{"testedHead":"%s","expectedHead":"%s"}\n' "$actual" "$EXPECTED_TESTED_HEAD" > artifacts/ai-teacher-handoff-accessibility/identity.json
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
