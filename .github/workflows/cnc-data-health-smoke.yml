@@ -5,12 +5,41 @@ on:
       - 'cnc/**'
       - '.github/workflows/cnc-data-health-smoke.yml'
   workflow_dispatch:
+
+permissions:
+  contents: read
+
 jobs:
   smoke:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout exact tested head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Record exact tested head
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p cnc/test-results/data-health-identity
+          tested_head="$(git rev-parse HEAD)"
+          expected_head="${{ github.event.pull_request.head.sha || github.sha }}"
+          if [ "$tested_head" != "$expected_head" ]; then
+            echo "数据健康实际检出提交与预期最新头不一致：tested=$tested_head expected=$expected_head" >&2
+            exit 1
+          fi
+          TESTED_HEAD="$tested_head" EVENT_SHA="$GITHUB_SHA" node - <<'NODE'
+          const fs=require('fs');
+          fs.writeFileSync('cnc/test-results/data-health-identity/identity.json',JSON.stringify({
+            runId:process.env.GITHUB_RUN_ID,
+            eventName:process.env.GITHUB_EVENT_NAME,
+            testedHead:process.env.TESTED_HEAD,
+            eventSha:process.env.EVENT_SHA,
+            createdAt:new Date().toISOString()
+          },null,2));
+          NODE
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -20,10 +49,21 @@ jobs:
         run: node cnc/tests/mobile-data-health-smoke.cjs
       - name: Run transaction fault injection smoke
         run: node cnc/tests/data-health-transaction-smoke.cjs
+      - name: Prove gate is read-only for tracked CNC sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -n "$(git status --porcelain --untracked-files=no)" ]; then
+            echo '数据健康门禁修改了受版本控制文件：' >&2
+            git status --short --untracked-files=no >&2
+            exit 1
+          fi
       - name: Upload diagnostics
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: cnc-data-health-${{ github.run_id }}
-          path: cnc/test-results/data-health*
-          if-no-files-found: warn
+          path: |
+            cnc/test-results/data-health*
+          if-no-files-found: error
+          retention-days: 14
