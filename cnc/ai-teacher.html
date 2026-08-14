@@ -136,7 +136,7 @@
   function simulatorSignature(row){return [row.lastCompletedAt||row.updatedAt||'',row.bestScore??row.best??row.score??'',row.attempts??'',row.passed??''].join('|')}
   function simulatorRows(simulator){const records=isRecord(simulator.records)?simulator.records:{};const legacy=isRecord(simulator.simulators)?simulator.simulators:{};return SIMULATOR_IDS.map(id=>{const candidates=[records[id],legacy[id],simulator[id]].filter(isRecord);const unique=[];const seen=new Set();candidates.forEach(row=>{const signature=simulatorSignature(row);if(!seen.has(signature)){seen.add(signature);unique.push(row)}});if(!unique.length)return null;const scores=unique.map(row=>normalizedScore(row.bestScore??row.best??row.score)).filter(score=>score!==null);const bestScore=scores.length?Math.max(...scores):null;const passed=unique.some(row=>row.passed===true)||bestScore===100;return{id,passed,bestScore,sources:unique.length}}).filter(Boolean)}
   function simulationPassed(row){return row.passed===true}
-  function stageLevel(value){const match=String(value??'').match(/(?:stage-)?(\d{1,2})$/i);const level=Number(match?.[1]);return level>=1&&level<=12?level:null}
+  function stageLevel(value){if(typeof value==='number'&&Number.isInteger(value)&&value>=1&&value<=12)return value;if(typeof value==='string'){const match=value.match(/^stage-(\d{1,2})$/i),level=Number(match?.[1]);if(Number.isInteger(level)&&level>=1&&level<=12)return level}return null}
   function lessonScore(level,profile,practice){
     const candidates=[
       practice.lessonScores?.[level],practice.lessonScores?.[String(level)],
@@ -145,7 +145,7 @@
     ].map(normalizedScore).filter(value=>value!==null);
     return candidates.length?Math.max(...candidates):0;
   }
-  function completedCourses(study,profile){const completed=new Set(asArray(study).map(stageLevel).filter(Boolean));asArray(profile.completed).map(stageLevel).filter(Boolean).forEach(level=>completed.add(level));asArray(profile.completedStages).map(stageLevel).filter(Boolean).forEach(level=>completed.add(level));return completed;}
+  function completedCourses(study,profile){const completed=new Set(asArray(study).map(stageLevel).filter(Boolean));if(localStorage.getItem(KEYS.study)!==null)return completed;asArray(profile.completed).map(stageLevel).filter(Boolean).forEach(level=>completed.add(level));asArray(profile.completedStages).map(stageLevel).filter(Boolean).forEach(level=>completed.add(level));return completed;}
   function abilitySnapshot(profile,practice,completed){
     return ABILITY_DEFS.map(def=>{
       const rows=def.lessons.map(level=>({level,score:Math.max(lessonScore(level,profile,practice),completed.has(level)?80:0)}));

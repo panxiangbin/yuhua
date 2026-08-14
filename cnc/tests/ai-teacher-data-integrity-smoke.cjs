@@ -35,6 +35,13 @@ const report = {
   wrongCompatUnified: false,
   wrongCompatReadOnly: false,
   wrongCompatCounts: null,
+  strictCompletionIdGuardDetected: false,
+  strictCompletionSourcePrecedenceDetected: false,
+  completionIdStrict: false,
+  completionCanonicalPreferred: false,
+  completionLegacyFallbackStrict: false,
+  completionIdReadOnly: false,
+  completionSummary: null,
   passed: false
 };
 const logs = [];
@@ -56,9 +63,15 @@ function writeDiagnostics(error) {
   report.strictWrongCompatibilityDetected = source.includes('...listValues(practice.wrongItems)')
     && source.includes('const key=`${source}:${id}`')
     && source.includes("const WRONG_SOURCE_PREFIXES=[['sc-','safety-coordinate']");
+  report.strictCompletionIdGuardDetected = source.includes("if(typeof value==='number'&&Number.isInteger(value)&&value>=1&&value<=12)return value")
+    && source.includes("value.match(/^stage-(\\d{1,2})$/i)")
+    && !source.includes("String(value??'').match(/(?:stage-)?");
+  report.strictCompletionSourcePrecedenceDetected = source.includes("if(localStorage.getItem(KEYS.study)!==null)return completed");
   logs.push(`静态静默回退命中：${report.staticSilentFallbackDetected}`);
   logs.push(`嵌套数据严格归一化门禁：${report.strictNestedGuardDetected}`);
   logs.push(`三类错题兼容字段去重门禁：${report.strictWrongCompatibilityDetected}`);
+  logs.push(`课程完成ID严格类型门禁：${report.strictCompletionIdGuardDetected}`);
+  logs.push(`课程完成canonical优先级门禁：${report.strictCompletionSourcePrecedenceDetected}`);
 
   const server = spawn('python3', ['-m', 'http.server', '4173'], { cwd: root, stdio: 'ignore' });
   let browser;
@@ -148,6 +161,8 @@ function writeDiagnostics(error) {
     assert.equal(report.staticSilentFallbackDetected, false, 'AI老师仍将解析失败静默替换为空对象');
     assert.equal(report.strictNestedGuardDetected, true, 'AI老师缺少嵌套记录/成绩或新旧模拟schema的严格归一化保护');
     assert.equal(report.strictWrongCompatibilityDetected, true, 'AI老师必须同时读取wrongQuestions/wrongItems/wrong并按来源专项+题目ID去重');
+    assert.equal(report.strictCompletionIdGuardDetected, true, 'AI老师课程完成ID必须只接受真实1-12整数或stage-N兼容格式，不能接受纯数字字符串');
+    assert.equal(report.strictCompletionSourcePrecedenceDetected, true, 'canonical课程完成记录存在时不得继续叠加旧profile完成字段');
     assert.equal(report.explicitAlertVisible, true, '损坏档案时必须显示可见、可访问的数据异常提示');
     assert.equal(report.summaryBlocked, true, '损坏档案时不得继续显示 0/12 等伪装成真实进度的汇总');
     assert.equal(report.publicApiBlocked, true, '损坏档案时公开 initialSummary/getSummary 接口不得继续暴露可信零进度');
@@ -281,11 +296,74 @@ function writeDiagnostics(error) {
     assert.equal(report.wrongCompatReadOnly, true, '三类错题跨页面汇总不得自动清理、迁移或改写原始LocalStorage');
     await page.goto('http://127.0.0.1:4173/cnc/ai-teacher.html', { waitUntil: 'networkidle' });
 
+    const completionStudyRaw = JSON.stringify([1, '2', 'stage-3', 4, 99, null, [], {}]);
+    const completionProfileRaw = JSON.stringify({
+      version: 1,
+      completed: ['5', 'stage-6', 7],
+      completedStages: ['8', 'stage-9', 10]
+    });
+    await page.evaluate(({ studyRaw, profileRaw }) => {
+      localStorage.clear();
+      localStorage.setItem('cnc_study_completed_v1', studyRaw);
+      localStorage.setItem('cnc_training_profile_v1', profileRaw);
+      localStorage.setItem('cnc_training_practice_v1', JSON.stringify({ version: 1, wrongQuestions: [], lessonScores: {} }));
+      localStorage.setItem('cnc_training_simulator_v1', JSON.stringify({ version: 1, records: {} }));
+      localStorage.setItem('cnc_training_exam_v1', JSON.stringify({ version: 1 }));
+      localStorage.setItem('unrelated_keep_me', '保留');
+    }, { studyRaw: completionStudyRaw, profileRaw: completionProfileRaw });
+    await page.reload({ waitUntil: 'networkidle' });
+    const canonicalCompletion = await page.evaluate(() => ({
+      summary: window.CNC_AI_TEACHER?.getSummary?.() || null,
+      studyRaw: localStorage.getItem('cnc_study_completed_v1'),
+      profileRaw: localStorage.getItem('cnc_training_profile_v1'),
+      unrelated: localStorage.getItem('unrelated_keep_me'),
+      alertHidden: document.getElementById('data-integrity-alert')?.hidden === true
+    }));
+    const canonicalVisible = await page.locator('#course-progress').textContent();
+    report.completionCanonicalPreferred = canonicalCompletion.summary?.courses === 3
+      && canonicalVisible === '3/12'
+      && canonicalCompletion.alertHidden === true;
+    const canonicalReadOnly = canonicalCompletion.studyRaw === completionStudyRaw
+      && canonicalCompletion.profileRaw === completionProfileRaw
+      && canonicalCompletion.unrelated === '保留';
+
+    await page.evaluate(profileRaw => {
+      localStorage.removeItem('cnc_study_completed_v1');
+      localStorage.setItem('cnc_training_profile_v1', profileRaw);
+    }, completionProfileRaw);
+    await page.reload({ waitUntil: 'networkidle' });
+    const legacyCompletion = await page.evaluate(() => ({
+      summary: window.CNC_AI_TEACHER?.getSummary?.() || null,
+      studyRaw: localStorage.getItem('cnc_study_completed_v1'),
+      profileRaw: localStorage.getItem('cnc_training_profile_v1'),
+      unrelated: localStorage.getItem('unrelated_keep_me'),
+      alertHidden: document.getElementById('data-integrity-alert')?.hidden === true
+    }));
+    const legacyVisible = await page.locator('#course-progress').textContent();
+    report.completionLegacyFallbackStrict = legacyCompletion.summary?.courses === 4
+      && legacyVisible === '4/12'
+      && legacyCompletion.alertHidden === true;
+    const legacyReadOnly = legacyCompletion.studyRaw === null
+      && legacyCompletion.profileRaw === completionProfileRaw
+      && legacyCompletion.unrelated === '保留';
+    report.completionIdStrict = report.completionCanonicalPreferred && report.completionLegacyFallbackStrict;
+    report.completionIdReadOnly = canonicalReadOnly && legacyReadOnly;
+    report.completionSummary = {
+      canonical: { summary: canonicalCompletion.summary, visible: canonicalVisible },
+      legacyFallback: { summary: legacyCompletion.summary, visible: legacyVisible }
+    };
+    logs.push(`canonical完成记录优先且纯数字字符串无效：${report.completionCanonicalPreferred}（${canonicalVisible}）`);
+    logs.push(`缺少canonical时stage-N旧档案严格回退：${report.completionLegacyFallbackStrict}（${legacyVisible}）`);
+    logs.push(`课程完成来源与ID归一化保持LocalStorage只读：${report.completionIdReadOnly}`);
+    assert.equal(report.completionCanonicalPreferred, true, 'canonical课程完成记录存在时必须优先使用，不能再叠加旧profile完成字段；纯数字字符串不得冒充完成');
+    assert.equal(report.completionLegacyFallbackStrict, true, 'canonical完成记录缺失时才允许回退旧profile字段，且只接受真实数字1-12或stage-N格式');
+    assert.equal(report.completionIdReadOnly, true, '课程完成来源优先级与ID严格归一化不得自动修改study/profile原始LocalStorage');
+
     const minTouch = await page.locator('a:visible,button:visible').evaluateAll(nodes => Math.min(...nodes.map(node => Math.max(node.getBoundingClientRect().height, node.getBoundingClientRect().width))));
     assert(minTouch >= 44, `最小触控目标仅 ${minTouch}px`);
     report.minTouch = minTouch;
     report.passed = true;
-    logs.push('AI老师根损坏阻断 + 新版模拟records + 嵌套异常只读降级 + 三类错题跨页面去重一致性验收通过');
+    logs.push('AI老师根损坏阻断 + 新版模拟records + 嵌套异常只读降级 + 三类错题跨页面去重 + canonical课程完成优先级与严格ID验收通过');
     writeDiagnostics();
   } catch (error) {
     logs.push(`验收失败：${error.message}`);
