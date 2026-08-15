@@ -51,12 +51,14 @@ jobs:
       - run: npm install --no-save playwright@1.52.0
       - run: npx playwright install --with-deps chromium
 
-      - name: JavaScript syntax and strict date contract
+      - name: JavaScript syntax and strict data contracts
         run: |
           node --check cnc/tests/mobile-training-achievements-smoke.cjs
           node --check cnc/tests/training-achievements-date-contract-smoke.cjs
           node --check cnc/tests/training-achievements-wrong-compat-smoke.cjs
+          node --check cnc/tests/training-achievements-completion-integrity-contract-smoke.cjs
           node cnc/tests/training-achievements-date-contract-smoke.cjs
+          node cnc/tests/training-achievements-completion-integrity-contract-smoke.cjs
           python3 - <<'PY'
           from pathlib import Path
           import re
