@@ -47,6 +47,66 @@ const assert = require('node:assert/strict');
   assert.match(await page.locator('.notice').last().textContent(), /不是职业资格证书/);
   assert.match(await page.locator('.notice').last().textContent(), /原厂手册/);
 
+  const canonicalBefore = await page.evaluate(() => {
+    localStorage.setItem('cnc_training_practice_v1', JSON.stringify({ version: 1, lessonScores: {} }));
+    localStorage.setItem('cnc_training_profile_v1', JSON.stringify({ version: 1, completed: [1,2,3,4,5,6,7], completedStages: ['stage-8','stage-9'], trainingDays: ['2026-07-20'], badges: [] }));
+    localStorage.setItem('cnc_study_completed_v1', JSON.stringify([1,2,'stage-3']));
+    const before = {
+      practice: localStorage.getItem('cnc_training_practice_v1'),
+      profile: localStorage.getItem('cnc_training_profile_v1'),
+      done: localStorage.getItem('cnc_study_completed_v1')
+    };
+    sessionStorage.setItem('certificate-canonical-before', JSON.stringify(before));
+    location.reload();
+    return before;
+  });
+  await page.waitForFunction(() => window.CNC_TRAINING_CERTIFICATE?.build === '20260724c');
+  const canonical = await page.evaluate(() => ({
+    snapshot: window.CNC_TRAINING_CERTIFICATE.snapshot(),
+    before: JSON.parse(sessionStorage.getItem('certificate-canonical-before')),
+    after: {
+      practice: localStorage.getItem('cnc_training_practice_v1'),
+      profile: localStorage.getItem('cnc_training_profile_v1'),
+      done: localStorage.getItem('cnc_study_completed_v1')
+    }
+  }));
+  assert.deepEqual(canonical.before, canonicalBefore);
+  assert.deepEqual(canonical.after, canonical.before, 'canonical 优先场景必须保持学习记录只读');
+  assert.equal(canonical.snapshot.integrity, true);
+  assert.equal(canonical.snapshot.passed, 3, 'canonical 已存在时不得叠加旧 profile 完成记录');
+  assert.equal(canonical.snapshot.average, 20);
+  assert.equal(canonical.snapshot.days, 1);
+
+  const legacyBefore = await page.evaluate(() => {
+    localStorage.setItem('cnc_training_practice_v1', JSON.stringify({ version: 1, lessonScores: {} }));
+    localStorage.setItem('cnc_training_profile_v1', JSON.stringify({ version: 1, completed: [1,'stage-2','3',3], completedStages: ['stage-4','stage-4','5'], trainingDays: ['2026-07-20'], badges: [] }));
+    localStorage.removeItem('cnc_study_completed_v1');
+    const before = {
+      practice: localStorage.getItem('cnc_training_practice_v1'),
+      profile: localStorage.getItem('cnc_training_profile_v1'),
+      done: localStorage.getItem('cnc_study_completed_v1')
+    };
+    sessionStorage.setItem('certificate-legacy-before', JSON.stringify(before));
+    location.reload();
+    return before;
+  });
+  await page.waitForFunction(() => window.CNC_TRAINING_CERTIFICATE?.build === '20260724c');
+  const legacy = await page.evaluate(() => ({
+    snapshot: window.CNC_TRAINING_CERTIFICATE.snapshot(),
+    before: JSON.parse(sessionStorage.getItem('certificate-legacy-before')),
+    after: {
+      practice: localStorage.getItem('cnc_training_practice_v1'),
+      profile: localStorage.getItem('cnc_training_profile_v1'),
+      done: localStorage.getItem('cnc_study_completed_v1')
+    }
+  }));
+  assert.deepEqual(legacy.before, legacyBefore);
+  assert.deepEqual(legacy.after, legacy.before, 'legacy 回退不得创建或迁移 canonical 记录');
+  assert.equal(legacy.snapshot.integrity, true);
+  assert.equal(legacy.snapshot.passed, 4, 'canonical 缺失时仅接受整数与严格 stage-N 的旧档案完成记录并去重');
+  assert.equal(legacy.snapshot.average, 27);
+  assert.equal(legacy.snapshot.days, 1);
+
   const corruptStorage = await page.evaluate(() => {
     localStorage.setItem('cnc_training_practice_v1', JSON.stringify({ lessonScores: { 1: '100', 2: 120, 3: -1, 4: 100, 5: 'Infinity' } }));
     localStorage.setItem('cnc_training_profile_v1', JSON.stringify({ trainingDays: ['2026-07-20', '2026-07-20', '2026-02-30', 'bad', null], badges: ['迈出第一步', '迈出第一步', ' ', null, '成绩达标'] }));
@@ -80,6 +140,36 @@ const assert = require('node:assert/strict');
   assert.equal(corrupt.snapshot.badges, 2);
   assert.equal(corrupt.snapshot.graduated, false);
   assert.doesNotMatch(corrupt.text, /NaN|Infinity/);
+
+  const corruptCanonicalBefore = await page.evaluate(() => {
+    localStorage.setItem('cnc_training_practice_v1', JSON.stringify({ version: 1, lessonScores: {} }));
+    localStorage.setItem('cnc_training_profile_v1', JSON.stringify({ version: 1, completed: [1,2,3,4,5,6,7,8,9,10,11,12], completedStages: ['stage-12'], trainingDays: [], badges: [] }));
+    localStorage.setItem('cnc_study_completed_v1', JSON.stringify({ bad: true }));
+    const before = {
+      practice: localStorage.getItem('cnc_training_practice_v1'),
+      profile: localStorage.getItem('cnc_training_profile_v1'),
+      done: localStorage.getItem('cnc_study_completed_v1')
+    };
+    sessionStorage.setItem('certificate-corrupt-canonical-before', JSON.stringify(before));
+    location.reload();
+    return before;
+  });
+  await page.waitForFunction(() => window.CNC_TRAINING_CERTIFICATE?.build === '20260724c');
+  const corruptCanonical = await page.evaluate(() => ({
+    snapshot: window.CNC_TRAINING_CERTIFICATE.snapshot(),
+    before: JSON.parse(sessionStorage.getItem('certificate-corrupt-canonical-before')),
+    after: {
+      practice: localStorage.getItem('cnc_training_practice_v1'),
+      profile: localStorage.getItem('cnc_training_profile_v1'),
+      done: localStorage.getItem('cnc_study_completed_v1')
+    },
+    metrics: ['passed','average','days','badges'].map(id => document.getElementById(id).textContent)
+  }));
+  assert.deepEqual(corruptCanonical.before, corruptCanonicalBefore);
+  assert.deepEqual(corruptCanonical.after, corruptCanonical.before, '损坏 canonical 不得回退旧 profile 或改写原记录');
+  assert.equal(corruptCanonical.snapshot.integrity, false);
+  assert.ok(corruptCanonical.snapshot.invalid.includes('cnc_study_completed_v1'));
+  assert.deepEqual(corruptCanonical.metrics, ['—','—','—','—']);
 
   const malformedRootBefore = await page.evaluate(() => {
     localStorage.setItem('cnc_training_practice_v1', '{');
@@ -163,6 +253,6 @@ const assert = require('node:assert/strict');
   assert.deepEqual(pageErrors, []);
   assert.deepEqual(consoleErrors, []);
 
-  console.log('阶段训练证书严格数值、日期、徽章、损坏根结构阻断、只读降级与达标双场景通过', { unfinished, corrupt: corrupt.snapshot, malformedRoots: malformedRoots.snapshot, graduated });
+  console.log('阶段训练证书 canonical 优先、旧档案回退、严格数值、日期、徽章、损坏根结构阻断、只读降级与达标场景通过', { unfinished, canonical: canonical.snapshot, legacy: legacy.snapshot, corrupt: corrupt.snapshot, corruptCanonical: corruptCanonical.snapshot, malformedRoots: malformedRoots.snapshot, graduated });
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });
