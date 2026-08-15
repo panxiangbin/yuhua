@@ -51,6 +51,94 @@ const assert = require('node:assert/strict');
   assert.equal(await page.locator('#integrity-notice').isHidden(), true);
   assert.match(await page.locator('.notice').last().textContent(), /原厂手册/);
 
+  const canonicalPriority = await page.evaluate(() => {
+    localStorage.setItem('cnc_training_profile_v1', JSON.stringify({
+      version: 1,
+      currentStreak: 0,
+      bestStreak: 0,
+      completed: [1, 2, 3, 4, 5, 6],
+      completedStages: ['stage-7']
+    }));
+    localStorage.setItem('cnc_study_completed_v1', JSON.stringify([1, 2, 3]));
+    localStorage.setItem('cnc_training_practice_v1', JSON.stringify({ version: 1, lessonScores: {} }));
+    const before = {
+      profile: localStorage.getItem('cnc_training_profile_v1'),
+      done: localStorage.getItem('cnc_study_completed_v1'),
+      practice: localStorage.getItem('cnc_training_practice_v1')
+    };
+    const rendered = window.CNC_TRAINING_BADGES.render();
+    const after = {
+      profile: localStorage.getItem('cnc_training_profile_v1'),
+      done: localStorage.getItem('cnc_study_completed_v1'),
+      practice: localStorage.getItem('cnc_training_practice_v1')
+    };
+    return { rendered, before, after };
+  });
+
+  assert.deepEqual(canonicalPriority.rendered.done, [1, 2, 3], 'canonical 存在时不得叠加旧 profile 完成记录');
+  assert.equal(canonicalPriority.rendered.earned, 2);
+  assert.deepEqual(canonicalPriority.rendered.integrityIssues, []);
+  assert.deepEqual(canonicalPriority.after, canonicalPriority.before, 'canonical 优先级判断不得改写学习记录');
+
+  const legacyFallback = await page.evaluate(() => {
+    localStorage.setItem('cnc_training_profile_v1', JSON.stringify({
+      version: 1,
+      currentStreak: 0,
+      bestStreak: 0,
+      completed: [1, 'stage-2', '3'],
+      completedStages: ['stage-3', 4, 4]
+    }));
+    localStorage.removeItem('cnc_study_completed_v1');
+    localStorage.setItem('cnc_training_practice_v1', JSON.stringify({ version: 1, lessonScores: {} }));
+    const before = {
+      profile: localStorage.getItem('cnc_training_profile_v1'),
+      done: localStorage.getItem('cnc_study_completed_v1'),
+      practice: localStorage.getItem('cnc_training_practice_v1')
+    };
+    const rendered = window.CNC_TRAINING_BADGES.render();
+    const after = {
+      profile: localStorage.getItem('cnc_training_profile_v1'),
+      done: localStorage.getItem('cnc_study_completed_v1'),
+      practice: localStorage.getItem('cnc_training_practice_v1')
+    };
+    return { rendered, before, after };
+  });
+
+  assert.deepEqual(legacyFallback.rendered.done, [1, 2, 3, 4], 'canonical 缺失时必须兼容旧 profile 完成记录并去重');
+  assert.equal(legacyFallback.rendered.earned, 2);
+  assert.ok(legacyFallback.rendered.integrityIssues.some(item => item.includes('completed:entry')), '旧 profile 纯数字字符串课程号必须判为异常');
+  assert.deepEqual(legacyFallback.after, legacyFallback.before, '旧档案回退不得创建 canonical 或改写原记录');
+
+  const corruptCanonical = await page.evaluate(() => {
+    localStorage.setItem('cnc_training_profile_v1', JSON.stringify({
+      version: 1,
+      currentStreak: 0,
+      bestStreak: 0,
+      completed: [1, 2, 3, 4, 5, 6],
+      completedStages: ['stage-7']
+    }));
+    localStorage.setItem('cnc_study_completed_v1', JSON.stringify({ fake: 12 }));
+    localStorage.setItem('cnc_training_practice_v1', JSON.stringify({ version: 1, lessonScores: {} }));
+    const before = {
+      profile: localStorage.getItem('cnc_training_profile_v1'),
+      done: localStorage.getItem('cnc_study_completed_v1'),
+      practice: localStorage.getItem('cnc_training_practice_v1')
+    };
+    const rendered = window.CNC_TRAINING_BADGES.render();
+    const after = {
+      profile: localStorage.getItem('cnc_training_profile_v1'),
+      done: localStorage.getItem('cnc_study_completed_v1'),
+      practice: localStorage.getItem('cnc_training_practice_v1')
+    };
+    return { rendered, before, after };
+  });
+
+  assert.deepEqual(corruptCanonical.rendered.done, [], 'canonical 已存在但损坏时不得偷偷回退旧 profile');
+  assert.equal(corruptCanonical.rendered.earned, 0);
+  assert.ok(corruptCanonical.rendered.integrityIssues.some(item => item === 'cnc_study_completed_v1:shape'));
+  assert.deepEqual(corruptCanonical.after, corruptCanonical.before, '损坏 canonical 阻断时不得改写原记录');
+  assert.equal(await page.locator('#integrity-notice').isVisible(), true);
+
   const malformed = await page.evaluate(() => {
     localStorage.setItem('cnc_training_profile_v1', JSON.stringify({
       version: 1,
@@ -132,8 +220,11 @@ const assert = require('node:assert/strict');
   assert.deepEqual(pageErrors, []);
   assert.deepEqual(consoleErrors, []);
 
-  console.log('训练徽章严格课程/成绩/连续训练语义、异常根结构只读降级、390x844布局与安全提示通过', {
+  console.log('训练徽章 canonical 优先/旧档案回退、严格课程/成绩/连续训练语义、异常根结构只读降级、390x844布局与安全提示通过', {
     normal: normal.rendered,
+    canonicalPriority: canonicalPriority.rendered,
+    legacyFallback: legacyFallback.rendered,
+    corruptCanonical: corruptCanonical.rendered,
     malformed: malformed.rendered,
     brokenRoots: brokenRoots.rendered,
     layout
