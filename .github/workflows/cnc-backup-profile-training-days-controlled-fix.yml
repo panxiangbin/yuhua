@@ -1,0 +1,45 @@
+name: CNC backup profile training days controlled fix
+
+on:
+  push:
+    branches:
+      - codex/cnc-backup-profile-training-days-guard
+    paths:
+      - 'cnc/tests/apply_backup_profile_training_days_guard.py'
+      - '.github/workflows/cnc-backup-profile-training-days-controlled-fix.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply-fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact branch head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Verify tested head
+        run: test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+      - name: Apply controlled patch
+        run: python3 cnc/tests/apply_backup_profile_training_days_guard.py
+      - name: Validate scope and syntax
+        run: |
+          set -euo pipefail
+          node --check cnc/tests/mobile-data-backup-history-migration-smoke.cjs
+          git diff --check
+          changed="$(git diff --name-only)"
+          printf '%s\n' "$changed"
+          test -n "$changed"
+          test "$(printf '%s\n' "$changed" | grep -vcE '^(cnc/data-backup\.html|cnc/tests/mobile-data-backup-history-migration-smoke\.cjs)$' || true)" -eq 0
+      - name: Commit generated CNC-only fix
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add cnc/data-backup.html cnc/tests/mobile-data-backup-history-migration-smoke.cjs
+          git commit -m 'CNC：阻断损坏训练日证据自动恢复'
+          git push origin HEAD:codex/cnc-backup-profile-training-days-guard
