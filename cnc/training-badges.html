@@ -73,10 +73,18 @@
         var profile=isRecord(rawProfile)?rawProfile:{version:1,currentStreak:0,bestStreak:0};
         if(!isRecord(rawProfile))issues.push(PROFILE+':shape');
 
+        var hasCanonicalDone=localStorage.getItem(DONE)!==null;
         var rawDone=readJson(DONE,[],issues),doneSet=new Set();
-        if(Array.isArray(rawDone)){
-          rawDone.forEach(function(value){var level=stageLevel(value);if(level==null)issues.push(DONE+':entry');else doneSet.add(level);});
-        }else issues.push(DONE+':shape');
+        function addDone(values,issuePrefix){
+          if(!Array.isArray(values)){issues.push(issuePrefix+':shape');return;}
+          values.forEach(function(value){var level=stageLevel(value);if(level==null)issues.push(issuePrefix+':entry');else doneSet.add(level);});
+        }
+        if(hasCanonicalDone){
+          addDone(rawDone,DONE);
+        }else{
+          if(Object.prototype.hasOwnProperty.call(profile,'completed'))addDone(profile.completed,PROFILE+':completed');
+          if(Object.prototype.hasOwnProperty.call(profile,'completedStages'))addDone(profile.completedStages,PROFILE+':completedStages');
+        }
 
         var rawPractice=readJson(PRACTICE,{version:1,lessonScores:{}},issues);
         var practice=isRecord(rawPractice)?rawPractice:{version:1,lessonScores:{}};
