@@ -67,12 +67,12 @@ jobs:
           for name in "${files[@]}"; do
             test -s "cnc/assets/videos/learning/$name"
           done
-          grep -q '20260815-pwa46' cnc/build-info.json
-          grep -q '20260815-learning46' cnc/build-info.json
-          grep -q '20260815-pwa46' cnc/sw.js
-          grep -q '20260815-learning46' cnc/sw.js
-          grep -q '20260815-pwa46' cnc/pwa-status.html
-          grep -q '20260815-pwa46' cnc/pwa-self-test.html
+          grep -q '20260815-pwa47' cnc/build-info.json
+          grep -q '20260815-learning47' cnc/build-info.json
+          grep -q '20260815-pwa47' cnc/sw.js
+          grep -q '20260815-learning47' cnc/sw.js
+          grep -q '20260815-pwa47' cnc/pwa-status.html
+          grep -q '20260815-pwa47' cnc/pwa-self-test.html
           grep -q 'T/H刀长补偿映射适用范围' cnc/build-info.json
           grep -q 'G10可编程数据写入适用范围' cnc/build-info.json
           grep -q 'G/M代码首次安装离线核心' cnc/build-info.json
