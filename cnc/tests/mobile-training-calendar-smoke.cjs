@@ -48,24 +48,43 @@ function writeReport() {
     assert.ok(boxes.every(box => box.width > 330));
     assert.ok(boxes.every((box, index) => index === 0 || box.top >= boxes[index - 1].bottom));
 
-    const corruptRaw = JSON.stringify({
+    const invalidDaysRaw = JSON.stringify({
       version: 1,
       trainingDays: [dates.d1, dates.d2, dates.d2, '2026-02-30', '2026-13-01', 'not-date', '', null, 123, {}, [dates.d1]],
-      currentStreak: '99',
-      bestStreak: '365'
+      currentStreak: 2,
+      bestStreak: 4
     });
     await page.evaluate(raw => {
       localStorage.setItem('cnc_training_profile_v1', raw);
       window.CNC_TRAINING_CALENDAR.render();
-    }, corruptRaw);
+    }, invalidDaysRaw);
+    assert.equal(await page.evaluate(() => document.body.dataset.trainingCalendar), 'blocked');
+    assert.equal(await page.locator('#current-streak').textContent(), '--');
+    assert.equal(await page.locator('#best-streak').textContent(), '--');
+    assert.equal(await page.locator('#total-days').textContent(), '--');
+    assert.equal(await page.locator('.day').count(), 0);
+    assert.equal(await page.locator('#integrity-warning').isVisible(), true);
+    assert.match(await page.locator('#integrity-detail').textContent(), /训练日期记录包含8个无法确认的日期/);
+    assert.equal(await page.evaluate(() => localStorage.getItem('cnc_training_profile_v1')), invalidDaysRaw);
+    const invalidRecoveryHeights = await page.locator('#integrity-warning a').evaluateAll(nodes => nodes.map(node => node.getBoundingClientRect().height));
+    assert.equal(invalidRecoveryHeights.length, 2);
+    assert.ok(invalidRecoveryHeights.every(height => height >= 44));
+    report.invalidTrainingDays = { blocked: true, invalidRows: 8, readOnly: true, recoveryTouchMin: Math.min(...invalidRecoveryHeights) };
+
+    const corruptNumericRaw = JSON.stringify({ version:1, trainingDays:[dates.d1,dates.d2], currentStreak:'99', bestStreak:'365' });
+    await page.evaluate(raw => {
+      localStorage.setItem('cnc_training_profile_v1', raw);
+      window.CNC_TRAINING_CALENDAR.render();
+    }, corruptNumericRaw);
+    assert.equal(await page.evaluate(() => document.body.dataset.trainingCalendar), 'ready');
     assert.equal(await page.locator('#current-streak').textContent(), '0');
     assert.equal(await page.locator('#best-streak').textContent(), '0');
     assert.equal(await page.locator('#total-days').textContent(), '2');
     assert.equal(await page.locator('.day.is-done').count(), 2);
     assert.equal(await page.locator('#integrity-warning').isHidden(), true);
-    assert.equal(await page.evaluate(() => localStorage.getItem('cnc_training_profile_v1')), corruptRaw);
+    assert.equal(await page.evaluate(() => localStorage.getItem('cnc_training_profile_v1')), corruptNumericRaw);
     assert.ok(!(await page.locator('body').innerText()).match(/NaN|Infinity/));
-    report.corruptFields = { currentStreak: 0, bestStreak: 0, totalDays: 2, invalidRowsIgnored: true, readOnly: true };
+    report.corruptNumericFields = { currentStreak: 0, bestStreak: 0, totalDays: 2, readOnly: true };
 
     const rootCases = [
       { name: 'array-root', raw: JSON.stringify([dates.d1, dates.d2]), reason: '根结构不是对象' },
@@ -112,7 +131,7 @@ function writeReport() {
     report.mobile = { horizontalOverflow: false, backTouchHeight: backHeight };
     report.passed = true;
     writeReport();
-    console.log('7天训练日历严格日期、连续训练数值语义、损坏根数据阻断、只读降级、手机单列和44px恢复入口通过');
+    console.log('7天训练日历严格日期、异常日期条目阻断、连续训练数值语义、损坏根数据阻断、只读降级、手机单列和44px恢复入口通过');
     await browser.close();
   } catch (error) {
     report.error = error && error.stack ? error.stack : String(error);
