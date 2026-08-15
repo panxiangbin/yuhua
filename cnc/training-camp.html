@@ -52,15 +52,24 @@ const COURSES=[
 ];
 let placementHandoffConsumed=false;
 const COURSE_ID_SET=new Set(COURSES.map(course=>course.id));
+const STUDY_KEY='cnc_study_completed_v1';
+const PRACTICE_IDS=['safety-coordinate','advanced-verification','drawing-setup-process','program-fill-sort-debug','alarm-parameter-first-piece'];
+const WRONG_SOURCE_PREFIXES=[['sc-','safety-coordinate'],['av-','advanced-verification'],['dsp-','drawing-setup-process'],['pfsd-','program-fill-sort-debug'],['apf-','alarm-parameter-first-piece']];
 const SIMULATOR_IDS=['homing','workholding-check','tool-installation','tool-length-offset-check','work-offset-setting','program-dry-run','single-block-first-approach','graphics-segment-prediction','first-piece-inspection','alarm-troubleshooting','cutter-comp-risk','hole-cycle-troubleshooting','measurement-vs-machining-error'];
 function isRecord(value){return !!value&&typeof value==='object'&&!Array.isArray(value)}
 function strictScore(value){return typeof value==='number'&&Number.isFinite(value)&&value>=0&&value<=100?value:null}
 function safeParse(key,fallback){try{const value=JSON.parse(localStorage.getItem(key)||'null');return isRecord(value)?value:fallback}catch{return fallback}}
+function listValues(value){return Array.isArray(value)?value:isRecord(value)?Object.values(value):[]}
+function scalarText(value){return ['string','number','boolean'].includes(typeof value)?String(value).trim():''}
+function stageLevel(value){if(typeof value==='number'&&Number.isInteger(value)&&value>=1&&value<=12)return value;if(typeof value==='string'){const match=value.match(/^stage-(\d{1,2})$/i),level=Number(match?.[1]);if(Number.isInteger(level)&&level>=1&&level<=12)return level}return null}
 function getScores(profile){return isRecord(profile.courseScores)?profile.courseScores:{}}
-function completedStageIds(profile){return new Set((Array.isArray(profile.completedStages)?profile.completedStages:[]).filter(id=>typeof id==='string'&&COURSE_ID_SET.has(id)))}
+function completedStageIds(profile){const raw=localStorage.getItem(STUDY_KEY),levels=new Set();if(raw!==null){try{const rows=JSON.parse(raw);if(Array.isArray(rows))rows.map(stageLevel).filter(Boolean).forEach(level=>levels.add(level))}catch{}return new Set([...levels].map(level=>`stage-${level}`))}[...listValues(profile.completed),...listValues(profile.completedStages)].map(stageLevel).filter(Boolean).forEach(level=>levels.add(level));return new Set([...levels].map(level=>`stage-${level}`))}
 function courseScore(profile,id){const value=strictScore(getScores(profile)[id]);return value===null?0:value}
-function isDone(profile,id){const done=completedStageIds(profile);if(done.has(id))return true;const value=strictScore(getScores(profile)[id]);return value!==null&&value>=80}
-function countWrong(practice){const wrong=practice.wrongQuestions??practice.wrong??[];if(Array.isArray(wrong))return wrong.filter(isRecord).length;if(isRecord(wrong))return Object.values(wrong).filter(isRecord).length;return 0}
+function isDone(profile,id){return completedStageIds(profile).has(id)}
+function wrongQuestionId(row){return scalarText(row.questionId??row.id??row.key)}
+function wrongSourceId(row){const hint=scalarText(row.practiceId??row.source??row.setId??row.practice??row.redoUrl).toLowerCase();const direct=PRACTICE_IDS.find(id=>hint.includes(id));if(direct)return direct;const id=wrongQuestionId(row).toLowerCase(),mapped=WRONG_SOURCE_PREFIXES.find(([prefix])=>id.startsWith(prefix));return mapped?mapped[1]:''}
+function wrongRows(practice){const map=new Map();[...listValues(practice.wrongQuestions),...listValues(practice.wrongItems),...listValues(practice.wrong)].forEach(row=>{if(!isRecord(row))return;const source=wrongSourceId(row),id=wrongQuestionId(row);if(!source||!id)return;const key=`${source}:${id}`;if(!map.has(key))map.set(key,row)});return [...map.values()]}
+function countWrong(practice){return wrongRows(practice).length}
 function simulatorCandidates(simulator,id){return [isRecord(simulator.records)&&isRecord(simulator.records[id])?simulator.records[id]:null,isRecord(simulator.simulators)&&isRecord(simulator.simulators[id])?simulator.simulators[id]:null,isRecord(simulator[id])?simulator[id]:null].filter(isRecord)}
 function simulatorRecordPassed(record){if(record.passed===true)return true;const best=strictScore(record.bestScore??record.best??record.score);return best!==null&&best===100}
 function countSimulatorPassed(simulator){return SIMULATOR_IDS.filter(id=>simulatorCandidates(simulator,id).some(simulatorRecordPassed)).length}

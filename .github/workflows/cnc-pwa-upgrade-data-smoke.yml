@@ -49,8 +49,8 @@ jobs:
           const swCacheRevision = sw.match(/const CACHE_REVISION = '([^']+)'/)?.[1];
           if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
           if (swCacheRevision !== info.cacheRevision) throw new Error(`Service Worker/build-info cache mismatch: ${swCacheRevision} / ${info.cacheRevision}`);
-          if (info.pwaBuild !== '20260815-pwa46') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
-          if (info.cacheRevision !== '20260815-learning46') throw new Error(`unexpected cache revision: ${info.cacheRevision}`);
+          if (info.pwaBuild !== '20260815-pwa47') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
+          if (info.cacheRevision !== '20260815-learning47') throw new Error(`unexpected cache revision: ${info.cacheRevision}`);
           if (!test.includes(`const CURRENT_PWA_BUILD = '${info.pwaBuild}'`)) throw new Error('upgrade test current PWA build mismatch');
           if (!test.includes(`const CURRENT_CACHE_REVISION = '${info.cacheRevision}'`)) throw new Error('upgrade test current cache revision mismatch');
           for (const required of [

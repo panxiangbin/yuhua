@@ -54,9 +54,9 @@ async function assertTouchTargets(page) {
       cnc_training_practice_v1: {
         version: 1,
         wrongQuestions: [
-          { id: 'wrong-1', ability: '安全基础' },
-          { id: 'wrong-2', ability: '坐标基础' },
-          { id: 'wrong-3', ability: '程序基础' }
+          { id: 'sc-route-1', ability: '安全基础' },
+          { id: 'av-route-2', ability: '坐标基础' },
+          { id: 'pfsd-route-3', ability: '程序基础' }
         ]
       }
     }, 'wrong-review-recommendation');

@@ -7,8 +7,8 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const PWA_BUILD = '20260815-pwa46';
-const CACHE_REVISION = '20260815-learning46';
+const PWA_BUILD = '20260815-pwa47';
+const CACHE_REVISION = '20260815-learning47';
 let offlineProbeHits = 0;
 let serverStoppedForOffline = false;
 let coldOfflineConsoleWindow = false;

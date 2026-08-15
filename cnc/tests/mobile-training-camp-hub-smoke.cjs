@@ -55,14 +55,49 @@ async function assertMobile(caseData) {
       cnc_training_practice_v1: { wrongQuestions: [{id:'q1'},null,'bad',[],{id:'q2'}] },
       cnc_training_simulator_v1: { records: { homing:{passed:true},'workholding-check':{bestScore:90},'tool-installation':{bestScore:'999'},'tool-length-offset-check':{bestScore:120},'work-offset-setting':{bestScore:-1},'program-dry-run':{passed:'true'},unknown:{passed:true} }, simulators: {'workholding-check':{bestScore:100}} }
     });
-    assert.strictEqual(await malformed.page.locator('#passed-count').textContent(), '2', '只有合法完成记录与合法90分应计为通过');
-    assert.strictEqual(await malformed.page.locator('#avg-score').textContent(), '85');
-    assert.strictEqual(await malformed.page.locator('#wrong-count').textContent(), '2', '损坏错题不得计数');
+    assert.strictEqual(await malformed.page.locator('#passed-count').textContent(), '1', '只有真实完成记录可计为通过，90分成绩不能冒充课程完成');
+    assert.strictEqual(await malformed.page.locator('#avg-score').textContent(), '80');
+    assert.strictEqual(await malformed.page.locator('#wrong-count').textContent(), '0', '缺少可确认专项来源的错题不得污染统计');
     assert.strictEqual(await malformed.page.locator('#simulator-status').textContent(), '已通过 2/13 项', '损坏模拟成绩/字符串passed/未知ID不得计通过');
-    assert.match(await malformed.page.locator('#next-title').textContent(), /第3关/);
+    assert.match(await malformed.page.locator('#next-title').textContent(), /第2关/);
     await assertMobile(malformed); report.cases.malformedReadOnly = true;
     await malformed.page.screenshot({ path: `${ARTIFACT_DIR}/malformed-data.png`, fullPage: true });
     await malformed.page.close();
+
+    const canonicalWins = await openPage(browser, {
+      cnc_study_completed_v1: [1, 2, 'stage-3', '4', 99, null],
+      cnc_training_profile_v1: { completed: [1,2,3,4,5,6], completedStages: ['stage-1','stage-2','stage-3','stage-4','stage-5','stage-6'], courseScores: {'stage-4':100,'stage-5':100,'stage-6':100} },
+      cnc_training_practice_v1: { wrongQuestions: [] }
+    });
+    assert.strictEqual(await canonicalWins.page.locator('#passed-count').textContent(), '3', 'canonical存在时只能认canonical真实整数与stage-N，旧profile不得抬高完成数');
+    assert.match(await canonicalWins.page.locator('#next-title').textContent(), /第4关/);
+    await assertMobile(canonicalWins); report.cases.canonicalCompletionWins = true;
+    await canonicalWins.page.close();
+
+    const legacyFallback = await openPage(browser, {
+      cnc_training_profile_v1: { completed: [1,'2','stage-3'], completedStages: ['stage-4','5','stage-6'], courseScores: {'stage-2':100,'stage-5':100} },
+      cnc_training_practice_v1: { wrongQuestions: [] }
+    });
+    assert.strictEqual(await legacyFallback.page.locator('#passed-count').textContent(), '4', 'canonical缺失时才兼容旧profile，纯数字字符串与单独高分不得冒充完成');
+    assert.match(await legacyFallback.page.locator('#next-title').textContent(), /第2关/);
+    await assertMobile(legacyFallback); report.cases.legacyCompletionFallback = true;
+    await legacyFallback.page.close();
+
+    const wrongCompat = await openPage(browser, {
+      cnc_study_completed_v1: Array.from({length:12},(_,i)=>i+1),
+      cnc_training_profile_v1: { courseScores: {} },
+      cnc_training_practice_v1: {
+        wrongQuestions: [{practiceId:'safety-coordinate',id:'sc-1'},{practiceId:'advanced-verification',id:'av-1'}],
+        wrongItems: [{practiceId:'safety-coordinate',id:'sc-1'},{id:'dsp-1'}],
+        wrong: [{id:'apf-1'},{id:'dsp-1'},null,[]]
+      }
+    });
+    assert.strictEqual(await wrongCompat.page.locator('#passed-count').textContent(), '12');
+    assert.strictEqual(await wrongCompat.page.locator('#wrong-count').textContent(), '4', '三类兼容错题字段必须按专项来源+题目ID去重');
+    assert.match(await wrongCompat.page.locator('#route-title').textContent(), /先清掉4道错题/);
+    assert.match(await wrongCompat.page.locator('#route-cta').getAttribute('href'), /practice-wrong-review\.html/);
+    await assertMobile(wrongCompat); report.cases.wrongThreeFieldDedup = true;
+    await wrongCompat.page.close();
 
     const completeProfile = { completedStages: Array.from({length:12},(_,i)=>`stage-${i+1}`), courseScores: Object.fromEntries(Array.from({length:12},(_,i)=>[`stage-${i+1}`,80+(i%3)*10])) };
     const complete = await openPage(browser, {
