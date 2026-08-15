@@ -1,0 +1,54 @@
+name: CNC data health training days controlled fix
+
+on:
+  push:
+    branches:
+      - codex/cnc-data-health-training-days-integrity
+    paths:
+      - cnc/tests/apply_data_health_training_days_integrity.py
+      - .github/workflows/cnc-data-health-training-days-controlled-fix.yml
+
+permissions:
+  contents: write
+
+jobs:
+  apply-fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact branch head
+        uses: actions/checkout@v4
+        with:
+          ref: codex/cnc-data-health-training-days-integrity
+          fetch-depth: 0
+      - name: Record tested head
+        run: |
+          mkdir -p cnc/test-results/data-health-training-days-controlled-fix
+          git rev-parse HEAD | tee cnc/test-results/data-health-training-days-controlled-fix/tested-head.txt
+      - name: Apply controlled patch
+        run: python3 cnc/tests/apply_data_health_training_days_integrity.py
+      - name: Validate target JavaScript and scope
+        run: |
+          node --check cnc/tests/mobile-data-health-smoke.cjs
+          git diff --check
+          changed="$(git diff --name-only | sort)"
+          printf '%s\n' "$changed"
+          expected="$(printf '%s\n' cnc/data-health.html cnc/tests/mobile-data-health-smoke.cjs | sort)"
+          test "$changed" = "$expected"
+          grep -q '10项健康检查' cnc/data-health.html
+          grep -q '训练日记录' cnc/data-health.html
+          grep -q '5个无法确认的训练日条目' cnc/tests/mobile-data-health-smoke.cjs
+      - name: Commit generated fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add cnc/data-health.html cnc/tests/mobile-data-health-smoke.cjs
+          git commit -m "CNC：补齐数据健康训练日条目完整性检查"
+          git rev-parse HEAD | tee cnc/test-results/data-health-training-days-controlled-fix/generated-head.txt
+          git push origin HEAD:codex/cnc-data-health-training-days-integrity
+      - name: Upload controlled fix evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-data-health-training-days-controlled-fix-${{ github.run_id }}
+          path: cnc/test-results/data-health-training-days-controlled-fix
+          if-no-files-found: warn
