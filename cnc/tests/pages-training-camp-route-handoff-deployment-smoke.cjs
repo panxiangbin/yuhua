@@ -178,8 +178,14 @@ function assertTrainingCamp(text, label) {
     '上机授权和现场监护'
   ]);
 
-  const removeIndex = text.indexOf('sessionStorage.removeItem(PLACEMENT_HANDOFF_KEY)');
-  const parseIndex = text.indexOf('JSON.parse(raw)');
+  const consumeStart = text.indexOf('function consumePlacementHandoff(){');
+  const consumeEnd = text.indexOf('function renderHandoffSteps', consumeStart);
+  if (consumeStart < 0 || consumeEnd <= consumeStart) {
+    throw new Error(`${label}无法定位一次性交接消费函数`);
+  }
+  const consumeBlock = text.slice(consumeStart, consumeEnd);
+  const removeIndex = consumeBlock.indexOf('sessionStorage.removeItem(PLACEMENT_HANDOFF_KEY)');
+  const parseIndex = consumeBlock.indexOf('JSON.parse(raw)');
   if (removeIndex < 0 || parseIndex < 0 || removeIndex > parseIndex) {
     throw new Error(`${label}必须在解析前删除一次性交接键`);
   }
