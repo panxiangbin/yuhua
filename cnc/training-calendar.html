@@ -6,7 +6,7 @@
   <title>7天训练日历｜数控小潘 CNC新手训练平台</title>
   <style>
     :root{color-scheme:light;--bg:#f1efe9;--surface:#fffdf9;--ink:#292c2f;--muted:#687078;--blue:#3f6179;--line:#d8d3c8;--warn:#c48722}
-    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}.shell{width:min(100%,760px);margin:0 auto;padding:18px 14px 32px}.back{display:inline-flex;min-height:44px;align-items:center;padding:0 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);text-decoration:none;font-weight:800;box-shadow:0 2px 0 rgba(41,44,47,.08)}.hero,.summary,.calendar,.notice{margin-top:14px;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:0 6px 16px rgba(48,44,36,.07)}.hero{padding:18px}.eyebrow{margin:0 0 6px;color:var(--blue);font-size:12px;font-weight:900;letter-spacing:.08em}.hero h1{margin:0;font-size:30px;line-height:1.15}.hero p{margin:10px 0 0;color:var(--muted);line-height:1.65}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px}.metric{padding:12px;border:1px solid var(--line);border-radius:10px;background:#f7f4ee}.metric strong{display:block;font-size:28px}.metric span{font-size:12px;color:var(--muted);font-weight:800}.calendar{padding:14px}.calendar h2{margin:0 0 12px;font-size:20px}.days{display:grid;gap:10px}.day{display:grid;grid-template-columns:62px 1fr auto;gap:10px;align-items:center;padding:13px;border:1px solid var(--line);border-radius:12px;background:#faf8f3}.day strong{font-size:18px}.day small{display:block;color:var(--muted);margin-top:3px}.status{min-width:74px;text-align:center;padding:7px 10px;border-radius:999px;border:1px solid var(--line);font-size:12px;font-weight:900}.is-done{border-color:#9fb4a5;background:#edf5ef}.is-today{border-color:#9fb0bd;background:#edf2f5}.is-missed{border-color:#d4c39a;background:#fff8e8}.notice{padding:14px}.notice strong{display:block;margin-bottom:6px}.notice p{margin:0;color:var(--muted);line-height:1.65}.empty{padding:16px;border:1px dashed var(--line);border-radius:12px;color:var(--muted);text-align:center}.foot{margin-top:14px;color:var(--muted);font-size:12px;line-height:1.6}@media(max-width:520px){.summary{grid-template-columns:1fr}.day{grid-template-columns:56px 1fr}.status{grid-column:2;justify-self:start}.hero h1{font-size:27px}}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}.shell{width:min(100%,760px);margin:0 auto;padding:18px 14px 32px}.back,.integrity a{display:inline-flex;min-height:44px;align-items:center;padding:0 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);text-decoration:none;font-weight:800;box-shadow:0 2px 0 rgba(41,44,47,.08)}.hero,.summary,.calendar,.notice,.integrity{margin-top:14px;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:0 6px 16px rgba(48,44,36,.07)}.hero{padding:18px}.eyebrow{margin:0 0 6px;color:var(--blue);font-size:12px;font-weight:900;letter-spacing:.08em}.hero h1{margin:0;font-size:30px;line-height:1.15}.hero p{margin:10px 0 0;color:var(--muted);line-height:1.65}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px}.metric{padding:12px;border:1px solid var(--line);border-radius:10px;background:#f7f4ee}.metric strong{display:block;font-size:28px}.metric span{font-size:12px;color:var(--muted);font-weight:800}.calendar{padding:14px}.calendar h2{margin:0 0 12px;font-size:20px}.days{display:grid;gap:10px}.day{display:grid;grid-template-columns:62px 1fr auto;gap:10px;align-items:center;padding:13px;border:1px solid var(--line);border-radius:12px;background:#faf8f3}.day strong{font-size:18px}.day small{display:block;color:var(--muted);margin-top:3px}.status{min-width:74px;text-align:center;padding:7px 10px;border-radius:999px;border:1px solid var(--line);font-size:12px;font-weight:900}.is-done{border-color:#9fb4a5;background:#edf5ef}.is-today{border-color:#9fb0bd;background:#edf2f5}.is-missed{border-color:#d4c39a;background:#fff8e8}.notice,.integrity{padding:14px}.notice strong,.integrity strong{display:block;margin-bottom:6px}.notice p,.integrity p{margin:0;color:var(--muted);line-height:1.65}.integrity{border-color:#d6b36c;background:#fff8e8}.integrity-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.empty{padding:16px;border:1px dashed var(--line);border-radius:12px;color:var(--muted);text-align:center}.foot{margin-top:14px;color:var(--muted);font-size:12px;line-height:1.6}[hidden]{display:none!important}@media(max-width:520px){.summary{grid-template-columns:1fr}.day{grid-template-columns:56px 1fr}.status{grid-column:2;justify-self:start}.hero h1{font-size:27px}}
   </style>
 </head>
 <body>
@@ -16,6 +16,14 @@
       <p class="eyebrow">CNC 新手训练营</p>
       <h1>最近7天训练日历</h1>
       <p>看清自己有没有连续练、哪天中断，以及今天是否已经完成训练。数据来自本机浏览器中的成长档案。</p>
+    </section>
+    <section class="integrity" id="integrity-warning" hidden aria-live="polite">
+      <strong>学习数据异常，暂不显示训练统计</strong>
+      <p id="integrity-detail">成长档案根数据无法可信读取。请先检查或从备份恢复；本页不会自动清洗、迁移或覆盖原始学习记录。</p>
+      <div class="integrity-actions">
+        <a href="data-health.html">检查学习数据</a>
+        <a href="data-backup.html">备份与恢复</a>
+      </div>
     </section>
     <section class="summary" aria-label="训练统计">
       <div class="metric"><strong id="current-streak">0</strong><span>当前连续天数</span></div>
@@ -38,14 +46,34 @@
       var KEY='cnc_training_profile_v1';
       var ISO_DAY=/^(\d{4})-(\d{2})-(\d{2})$/;
       function isRecord(value){return !!value&&typeof value==='object'&&!Array.isArray(value);}
-      function read(){try{var value=JSON.parse(localStorage.getItem(KEY));return isRecord(value)&&value.version===1?value:{version:1,trainingDays:[],currentStreak:0,bestStreak:0};}catch(e){return{version:1,trainingDays:[],currentStreak:0,bestStreak:0};}}
+      function emptyProfile(){return{version:1,trainingDays:[],currentStreak:0,bestStreak:0};}
+      function read(){
+        var raw=localStorage.getItem(KEY);
+        if(raw===null)return{ok:true,data:emptyProfile(),reason:''};
+        try{
+          var value=JSON.parse(raw);
+          if(!isRecord(value))return{ok:false,data:null,reason:'成长档案根结构不是对象'};
+          if(value.version!==1)return{ok:false,data:null,reason:'成长档案版本字段异常'};
+          return{ok:true,data:value,reason:''};
+        }catch(e){return{ok:false,data:null,reason:'成长档案 JSON 无法解析'};}
+      }
       function fmt(date){return date.getFullYear()+'-'+String(date.getMonth()+1).padStart(2,'0')+'-'+String(date.getDate()).padStart(2,'0');}
       function validDay(value){if(typeof value!=='string')return '';var match=ISO_DAY.exec(value);if(!match)return '';var year=Number(match[1]),month=Number(match[2]),day=Number(match[3]),date=new Date(year,month-1,day);return date.getFullYear()===year&&date.getMonth()===month-1&&date.getDate()===day?value:'';}
       function trainingDaySet(data){var rows=Array.isArray(data.trainingDays)?data.trainingDays:[],set=new Set();rows.forEach(function(row){var day=validDay(row);if(day)set.add(day);});return set;}
       function streak(value){return typeof value==='number'&&Number.isFinite(value)&&value>=0?Math.min(3650,Math.floor(value)):0;}
       function label(date,index){if(index===6)return '今天';if(index===5)return '昨天';return ['日','一','二','三','四','五','六'][date.getDay()]+'曜日';}
-      function render(){var data=read(),days=trainingDaySet(data),box=document.getElementById('days'),today=new Date(),html=[];document.getElementById('current-streak').textContent=streak(data.currentStreak);document.getElementById('best-streak').textContent=streak(data.bestStreak);document.getElementById('total-days').textContent=days.size;for(var i=6;i>=0;i--){var d=new Date(today);d.setDate(today.getDate()-i);var key=fmt(d),done=days.has(key),isToday=i===0,status=done?'已完成':isToday?'待完成':'未记录',cls=done?'is-done':isToday?'is-today':'is-missed';html.push('<article class="day '+cls+'" role="listitem"><strong>'+label(d,6-i)+'</strong><div><b>'+key+'</b><small>'+(done?'这一天已经计入训练连续天数':isToday?'完成今日训练后会自动点亮':'这一天没有有效训练记录')+'</small></div><span class="status">'+status+'</span></article>');}box.innerHTML=html.join('');document.body.dataset.trainingCalendar='ready';}
-      render();window.addEventListener('storage',render);window.CNC_TRAINING_CALENDAR={build:'20260723b',render:render};
+      function render(){
+        var state=read(),warning=document.getElementById('integrity-warning'),detail=document.getElementById('integrity-detail'),box=document.getElementById('days');
+        if(!state.ok){
+          warning.hidden=false;detail.textContent=state.reason+'。请先检查或从备份恢复；本页不会自动清洗、迁移或覆盖原始学习记录。';
+          document.getElementById('current-streak').textContent='--';document.getElementById('best-streak').textContent='--';document.getElementById('total-days').textContent='--';
+          box.innerHTML='<div class="empty">学习数据异常，暂不生成最近7天记录。</div>';
+          document.body.dataset.trainingCalendar='blocked';return;
+        }
+        warning.hidden=true;
+        var data=state.data,days=trainingDaySet(data),today=new Date(),html=[];document.getElementById('current-streak').textContent=streak(data.currentStreak);document.getElementById('best-streak').textContent=streak(data.bestStreak);document.getElementById('total-days').textContent=days.size;for(var i=6;i>=0;i--){var d=new Date(today);d.setDate(today.getDate()-i);var key=fmt(d),done=days.has(key),isToday=i===0,status=done?'已完成':isToday?'待完成':'未记录',cls=done?'is-done':isToday?'is-today':'is-missed';html.push('<article class="day '+cls+'" role="listitem"><strong>'+label(d,6-i)+'</strong><div><b>'+key+'</b><small>'+(done?'这一天已经计入训练连续天数':isToday?'完成今日训练后会自动点亮':'这一天没有有效训练记录')+'</small></div><span class="status">'+status+'</span></article>');}box.innerHTML=html.join('');document.body.dataset.trainingCalendar='ready';
+      }
+      render();window.addEventListener('storage',render);window.CNC_TRAINING_CALENDAR={build:'20260815c',render:render};
     })();
   </script>
 </body>
