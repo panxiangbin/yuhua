@@ -73,7 +73,7 @@
         warning.hidden=true;
         var data=state.data,days=trainingDaySet(data),today=new Date(),html=[];document.getElementById('current-streak').textContent=streak(data.currentStreak);document.getElementById('best-streak').textContent=streak(data.bestStreak);document.getElementById('total-days').textContent=days.size;for(var i=6;i>=0;i--){var d=new Date(today);d.setDate(today.getDate()-i);var key=fmt(d),done=days.has(key),isToday=i===0,status=done?'已完成':isToday?'待完成':'未记录',cls=done?'is-done':isToday?'is-today':'is-missed';html.push('<article class="day '+cls+'" role="listitem"><strong>'+label(d,6-i)+'</strong><div><b>'+key+'</b><small>'+(done?'这一天已经计入训练连续天数':isToday?'完成今日训练后会自动点亮':'这一天没有有效训练记录')+'</small></div><span class="status">'+status+'</span></article>');}box.innerHTML=html.join('');document.body.dataset.trainingCalendar='ready';
       }
-      render();window.addEventListener('storage',render);window.CNC_TRAINING_CALENDAR={build:'20260815c',render:render};
+      render();window.addEventListener('storage',render);window.CNC_TRAINING_CALENDAR={build:'20260723b',render:render};
     })();
   </script>
 </body>
