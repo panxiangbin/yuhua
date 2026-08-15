@@ -47,6 +47,8 @@
       var ISO_DAY=/^(\d{4})-(\d{2})-(\d{2})$/;
       function isRecord(value){return !!value&&typeof value==='object'&&!Array.isArray(value);}
       function emptyProfile(){return{version:1,trainingDays:[],currentStreak:0,bestStreak:0};}
+      function fmt(date){return date.getFullYear()+'-'+String(date.getMonth()+1).padStart(2,'0')+'-'+String(date.getDate()).padStart(2,'0');}
+      function validDay(value){if(typeof value!=='string')return '';var match=ISO_DAY.exec(value);if(!match)return '';var year=Number(match[1]),month=Number(match[2]),day=Number(match[3]),date=new Date(year,month-1,day);return date.getFullYear()===year&&date.getMonth()===month-1&&date.getDate()===day?value:'';}
       function read(){
         var raw=localStorage.getItem(KEY);
         if(raw===null)return{ok:true,data:emptyProfile(),reason:''};
@@ -54,11 +56,14 @@
           var value=JSON.parse(raw);
           if(!isRecord(value))return{ok:false,data:null,reason:'成长档案根结构不是对象'};
           if(value.version!==1)return{ok:false,data:null,reason:'成长档案版本字段异常'};
+          if(Object.prototype.hasOwnProperty.call(value,'trainingDays')){
+            if(!Array.isArray(value.trainingDays))return{ok:false,data:null,reason:'训练日期记录根结构不是数组'};
+            var invalidRows=value.trainingDays.filter(function(row){return !validDay(row);}).length;
+            if(invalidRows)return{ok:false,data:null,reason:'训练日期记录包含'+invalidRows+'个无法确认的日期'};
+          }
           return{ok:true,data:value,reason:''};
         }catch(e){return{ok:false,data:null,reason:'成长档案 JSON 无法解析'};}
       }
-      function fmt(date){return date.getFullYear()+'-'+String(date.getMonth()+1).padStart(2,'0')+'-'+String(date.getDate()).padStart(2,'0');}
-      function validDay(value){if(typeof value!=='string')return '';var match=ISO_DAY.exec(value);if(!match)return '';var year=Number(match[1]),month=Number(match[2]),day=Number(match[3]),date=new Date(year,month-1,day);return date.getFullYear()===year&&date.getMonth()===month-1&&date.getDate()===day?value:'';}
       function trainingDaySet(data){var rows=Array.isArray(data.trainingDays)?data.trainingDays:[],set=new Set();rows.forEach(function(row){var day=validDay(row);if(day)set.add(day);});return set;}
       function streak(value){return typeof value==='number'&&Number.isFinite(value)&&value>=0?Math.min(3650,Math.floor(value)):0;}
       function label(date,index){if(index===6)return '今天';if(index===5)return '昨天';return ['日','一','二','三','四','五','六'][date.getDay()]+'曜日';}
