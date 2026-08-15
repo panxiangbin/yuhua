@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   training-achievements:
@@ -43,32 +43,6 @@ jobs:
             initializedAt: new Date().toISOString()
           }, null, 2));
           NODE
-
-      - name: Controlled apply integrity fix to child commit
-        if: github.event_name == 'pull_request'
-        shell: bash
-        run: |
-          set -euo pipefail
-          if grep -q "function addCompleted(set,values,source)" cnc/training-achievements.html; then
-            echo '成长成果完整性生产修复已经进入当前头提交；继续执行真实门禁。'
-            exit 0
-          fi
-          python3 cnc/tests/apply_training_achievements_completion_integrity_fix.py
-          git diff --check
-          mapfile -t files < <(git diff --name-only | sort)
-          expected=(cnc/tests/mobile-training-achievements-smoke.cjs cnc/training-achievements.html)
-          if [ "${#files[@]}" -ne "${#expected[@]}" ]; then
-            printf '受控修复文件范围异常：\n%s\n' "${files[*]}" >&2
-            exit 1
-          fi
-          for i in "${!expected[@]}"; do test "${files[$i]}" = "${expected[$i]}"; done
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add cnc/training-achievements.html cnc/tests/mobile-training-achievements-smoke.cjs
-          git commit -m 'CNC：阻断成长成果非法课程完成项静默降级'
-          git push origin HEAD:${GITHUB_HEAD_REF}
-          echo '已生成新的真实子提交；当前旧头门禁故意失败，最终结果只认新头。' >&2
-          exit 1
 
       - uses: actions/setup-node@v4
         with:
