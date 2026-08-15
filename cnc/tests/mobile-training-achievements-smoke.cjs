@@ -109,7 +109,7 @@ function dateKey(value) {
   fs.writeFileSync(path.join(artifactDir, 'valid-state.json'), JSON.stringify(validReport, null, 2));
   await page.screenshot({ path: path.join(artifactDir, 'training-achievements-valid-390x844.png'), fullPage: true });
 
-  // 嵌套记录损坏时只读降级：数值字符串、越界分数、未知ID、数组和重复记录都不能抬高成长成果。
+  // 嵌套记录损坏时只读阻断：非法课程完成项不得被静默忽略后继续生成个性化路线。
   const readOnlyBefore = await page.evaluate(({ todayKey }) => {
     localStorage.setItem('cnc_training_profile_v1', JSON.stringify({
       version: 1,
@@ -152,10 +152,10 @@ function dateKey(value) {
     courses: 3,
     wrong: 2,
     simulations: 2,
-    integrity: true,
-    invalid: [],
-    nextKind: 'course',
-    nextLevel: 3
+    integrity: false,
+    invalid: ['cnc_study_completed_v1:entry'],
+    nextKind: 'integrity',
+    nextLevel: null
   });
   assert.equal(await page.locator('#courses').textContent(), '3/12');
   assert.equal(await page.locator('#wrong').textContent(), '2');
@@ -163,8 +163,10 @@ function dateKey(value) {
   assert.equal(await page.locator('#streak').textContent(), '0');
   assert.equal(await page.locator('#days').textContent(), '1');
   assert.equal(await page.locator('#badges').textContent(), '1');
-  assert.match(await page.locator('#next-title').textContent(), /第 3 关/);
-  assert.equal(await page.locator('#data-integrity').isHidden(), true);
+  assert.match(await page.locator('#next-title').textContent(), /检查学习数据/);
+  assert.equal(await page.locator('#data-integrity').isHidden(), false);
+  assert.match(await page.locator('#data-integrity-copy').textContent(), /cnc_study_completed_v1:entry/);
+  assert.match(await page.locator('#next-link').getAttribute('href'), /data-health\.html/);
   const bodyText = await page.locator('body').textContent();
   assert.doesNotMatch(bodyText, /NaN|Infinity/);
   const overflow = await page.evaluate(() => ({ scrollWidth: document.documentElement.scrollWidth, clientWidth: document.documentElement.clientWidth }));
