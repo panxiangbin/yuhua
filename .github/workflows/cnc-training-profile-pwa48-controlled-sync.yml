@@ -34,7 +34,11 @@ jobs:
         with:
           node-version: '24'
       - name: Generate CNC-only PWA48 source/test changes
-        run: python3 cnc/tests/apply_training_profile_root_integrity_pwa48.py
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p cnc/test-artifacts/training-profile-pwa48-sync
+          python3 cnc/tests/apply_training_profile_root_integrity_pwa48.py 2>&1 | tee cnc/test-artifacts/training-profile-pwa48-sync/generator.log
       - name: Record generated commit and scope
         shell: bash
         run: |
