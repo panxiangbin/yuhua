@@ -1,0 +1,57 @@
+name: CNC PWA48 workflow pin controlled repair
+on:
+  pull_request:
+    paths:
+      - 'cnc/tests/repair_pwa48_workflow_pins.py'
+      - '.github/workflows/cnc-pwa48-workflow-pin-repair.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  repair:
+    if: ${{ github.actor != 'github-actions[bot]' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+      - name: Verify exact tested head
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = '${{ github.event.pull_request.head.sha || github.sha }}'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Configure generated commit identity
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+      - name: Restore complete workflows and sync PWA48 pins
+        run: python3 cnc/tests/repair_pwa48_workflow_pins.py
+      - name: Run strict central PWA build-reference audit
+        run: |
+          node cnc/tests/pwa-build-reference-audit-smoke.cjs
+          rm -rf cnc/test-results/pwa-build-reference-audit
+      - name: Create local repair child commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add .github/workflows/cnc-*.yml
+          git commit -m 'CNC：修复PWA48工作流构建针同步'
+          mkdir -p cnc/test-artifacts/pwa48-workflow-pin-repair
+          git rev-parse HEAD > cnc/test-artifacts/pwa48-workflow-pin-repair/generated-head.txt
+          git show --stat --oneline HEAD > cnc/test-artifacts/pwa48-workflow-pin-repair/stat.txt
+          git diff --name-only HEAD^ HEAD > cnc/test-artifacts/pwa48-workflow-pin-repair/files.txt
+          git diff HEAD^ HEAD > cnc/test-artifacts/pwa48-workflow-pin-repair/generated.patch
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-pwa48-workflow-pin-repair-${{ github.run_id }}
+          path: cnc/test-artifacts/pwa48-workflow-pin-repair/*
+          if-no-files-found: warn
+          retention-days: 14
