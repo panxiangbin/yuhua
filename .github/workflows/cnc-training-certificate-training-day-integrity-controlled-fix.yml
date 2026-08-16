@@ -1,0 +1,77 @@
+name: CNC training certificate training-day integrity controlled fix
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/tests/apply_training_certificate_training_day_integrity_fix.py'
+      - '.github/workflows/cnc-training-certificate-training-day-integrity-controlled-fix.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  controlled-fix:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+      HEAD_BRANCH: ${{ github.head_ref }}
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.EXPECTED_HEAD }}
+          fetch-depth: 0
+      - name: Verify exact PR head
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Apply controlled two-file fix
+        run: python cnc/tests/apply_training_certificate_training_day_integrity_fix.py
+      - name: Verify scope and syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check cnc/tests/mobile-training-certificate-smoke.cjs
+          git diff --check
+          mapfile -t changed < <(git diff --name-only)
+          printf '%s\n' "${changed[@]}"
+          test "${#changed[@]}" -eq 2
+          printf '%s\n' "${changed[@]}" | grep -Fx 'cnc/training-certificate.html'
+          printf '%s\n' "${changed[@]}" | grep -Fx 'cnc/tests/mobile-training-certificate-smoke.cjs'
+          grep -q "trainingIntegrity" cnc/training-certificate.html
+          grep -q "certificate-invalid-training-days-before" cnc/tests/mobile-training-certificate-smoke.cjs
+      - name: Save generated evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/training-certificate-training-day-fix
+          git diff -- cnc/training-certificate.html cnc/tests/mobile-training-certificate-smoke.cjs > artifacts/training-certificate-training-day-fix/patch.diff
+          git diff --stat > artifacts/training-certificate-training-day-fix/stat.txt
+          printf '{"testedHead":"%s","branch":"%s"}\n' "$EXPECTED_HEAD" "$HEAD_BRANCH" > artifacts/training-certificate-training-day-fix/identity.json
+      - name: Commit generated fix
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add cnc/training-certificate.html cnc/tests/mobile-training-certificate-smoke.cjs
+          git commit -m 'CNC：阻断阶段证书异常训练日证据签发'
+          git push origin "HEAD:${HEAD_BRANCH}"
+      - name: Upload generated evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-training-certificate-training-day-fix-${{ github.run_id }}
+          path: artifacts/training-certificate-training-day-fix
+          if-no-files-found: warn
+          retention-days: 7
