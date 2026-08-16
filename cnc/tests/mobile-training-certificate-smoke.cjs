@@ -171,6 +171,56 @@ const assert = require('node:assert/strict');
   assert.ok(corruptCanonical.snapshot.invalid.includes('cnc_study_completed_v1'));
   assert.deepEqual(corruptCanonical.metrics, ['—','—','—','—']);
 
+  const invalidTrainingDaysBefore = await page.evaluate(() => {
+    const lessonScores = {};
+    for (let level = 1; level <= 12; level += 1) lessonScores[level] = 90;
+    localStorage.setItem('cnc_training_practice_v1', JSON.stringify({ version: 1, lessonScores }));
+    localStorage.setItem('cnc_training_profile_v1', JSON.stringify({ version: 1, trainingDays: ['2026-07-20', '2026-02-30', null], badges: ['迈出第一步', '成绩达标'] }));
+    localStorage.setItem('cnc_study_completed_v1', JSON.stringify([1,2,3,4,5,6,7,8,9,10,11,12]));
+    const before = {
+      practice: localStorage.getItem('cnc_training_practice_v1'),
+      profile: localStorage.getItem('cnc_training_profile_v1'),
+      done: localStorage.getItem('cnc_study_completed_v1')
+    };
+    sessionStorage.setItem('certificate-invalid-training-days-before', JSON.stringify(before));
+    location.reload();
+    return before;
+  });
+  await page.waitForFunction(() => window.CNC_TRAINING_CERTIFICATE?.build === '20260724c');
+  const invalidTrainingDays = await page.evaluate(() => ({
+    snapshot: window.CNC_TRAINING_CERTIFICATE.snapshot(),
+    before: JSON.parse(sessionStorage.getItem('certificate-invalid-training-days-before')),
+    after: {
+      practice: localStorage.getItem('cnc_training_practice_v1'),
+      profile: localStorage.getItem('cnc_training_profile_v1'),
+      done: localStorage.getItem('cnc_study_completed_v1')
+    },
+    status: document.querySelector('#certificate-status').textContent,
+    integrityHidden: document.querySelector('#data-integrity').hidden,
+    integrityText: document.querySelector('#data-integrity').innerText,
+    shareDisabled: document.querySelector('#share-certificate').disabled,
+    printDisabled: document.querySelector('#print-certificate').disabled,
+    text: document.body.innerText
+  }));
+  assert.deepEqual(invalidTrainingDays.before, invalidTrainingDaysBefore);
+  assert.deepEqual(invalidTrainingDays.after, invalidTrainingDays.before, '异常训练日证据不得被阶段证书自动改写');
+  assert.equal(invalidTrainingDays.snapshot.integrity, true);
+  assert.equal(invalidTrainingDays.snapshot.completionIntegrity, true);
+  assert.equal(invalidTrainingDays.snapshot.trainingIntegrity, false);
+  assert.equal(invalidTrainingDays.snapshot.certificateReady, false);
+  assert.ok(invalidTrainingDays.snapshot.invalid.includes('cnc_training_profile_v1:trainingDays:entry'));
+  assert.equal(invalidTrainingDays.snapshot.passed, 12);
+  assert.equal(invalidTrainingDays.snapshot.average, 90);
+  assert.equal(invalidTrainingDays.snapshot.days, 1);
+  assert.equal(invalidTrainingDays.snapshot.badges, 2);
+  assert.equal(invalidTrainingDays.snapshot.graduated, false);
+  assert.equal(invalidTrainingDays.status, '训练日记录异常');
+  assert.equal(invalidTrainingDays.integrityHidden, false);
+  assert.match(invalidTrainingDays.integrityText, /训练日记录/);
+  assert.equal(invalidTrainingDays.shareDisabled, true);
+  assert.equal(invalidTrainingDays.printDisabled, true);
+  assert.doesNotMatch(invalidTrainingDays.text, /NaN|Infinity/);
+
   const malformedRootBefore = await page.evaluate(() => {
     localStorage.setItem('cnc_training_practice_v1', '{');
     localStorage.setItem('cnc_training_profile_v1', JSON.stringify([]));
