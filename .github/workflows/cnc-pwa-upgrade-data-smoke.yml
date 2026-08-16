@@ -49,52 +49,15 @@ jobs:
           const swCacheRevision = sw.match(/const CACHE_REVISION = '([^']+)'/)?.[1];
           if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
           if (swCacheRevision !== info.cacheRevision) throw new Error(`Service Worker/build-info cache mismatch: ${swCacheRevision} / ${info.cacheRevision}`);
-          if (info.pwaBuild !== '20260815-pwa47') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
-          if (info.cacheRevision !== '20260815-learning47') throw new Error(`unexpected cache revision: ${info.cacheRevision}`);
+          if (info.pwaBuild !== '20260817-pwa48') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
+          if (info.cacheRevision !== '20260817-learning48') throw new Error(`unexpected cache revision: ${info.cacheRevision}`);
           if (!test.includes(`const CURRENT_PWA_BUILD = '${info.pwaBuild}'`)) throw new Error('upgrade test current PWA build mismatch');
           if (!test.includes(`const CURRENT_CACHE_REVISION = '${info.cacheRevision}'`)) throw new Error('upgrade test current cache revision mismatch');
           for (const required of [
             "const PREVIOUS_PWA_BUILD = '20260810-pwa35'",
             "const PREVIOUS_CACHE_REVISION = '20260810-learning35'",
             "const TRAINING_CORE_PATHS = ['./training-practice.js', './training-profile.js', './search-aliases.js', './gm-code-complete.js', './learning-content-data.js']",
-            'trainingCoreStaticCacheReady: true',
-            'mainLearningContentColdOfflineAfterUpgrade: true',
-            'toolOffsetMappingColdOfflineAfterUpgrade: true',
-            "stage = 'cold-offline-g28-directory-after-upgrade'",
-            'g28ReferenceReturnColdOfflineAfterUpgrade: true',
-            '高风险自动运动',
-            'G90/G91',
-            '当前CNC和机床厂原厂手册',
-            '完整计划运动空间',
-            'G28冷离线源目录缺少安全边界',
-            'G28常配合G91 Z0先回Z，减少撞机。',
-            "stage = 'cold-offline-g92-directory-after-upgrade'",
-            'G92冷离线源目录缺少双语义安全边界',
-            '车铣差异',
-            '部分铣床/加工中心',
-            '部分车床',
-            'G52/G54-G59',
-            'X/Z或U/W',
-            'I/Q/F',
-            '主轴同步',
-            '安全退刀空间',
-            '两类程序不能直接互抄',
-            '加工中心/旧系统可用于坐标设定，车床常用于简单螺纹循环。',
-            "stage = 'cold-offline-main-learning-content-after-upgrade'",
-            'cnc_training_profile_v1', 'cnc_training_practice_v1', 'cnc_training_simulator_v1',
-            'indexedDB.open', 'other-app-cache-v1', 'beginner-placement.html', 'training-camp\\.html',
-            'beginnerPlacementColdOfflineAfterUpgrade: true', 'beginnerPlacementCriticalSafetyGateAfterUpgrade: true',
-            'trainingCampColdOfflineAfterUpgrade: true', 'placementRouteHandoffColdOfflineAfterUpgrade: true',
-            'placementRouteHandoffImmediateCleanup: true', 'placementFirstStepClickColdOfflineAfterUpgrade: true',
-            'placementFirstStepCoursesColdOfflineAfterUpgrade: true', 'course-safety-foundation.html',
-            'course-coordinate-axes.html', 'course-g00-g01-basics.html', 'ai-teacher.html', 'ai-teacher-intake.html',
-            'ai-teacher-explainability.html', 'explainabilityColdOfflineAfterUpgrade: true',
-            '不能把“先Z后XY”当成所有机床通用规则', '固定直线或固定折线',
-            'T/H 数字相同是常见约定，不是所有机床都必须遵守的硬规则',
-            '不能仅凭 T01 M06 后使用 G43 H02 就直接判错', '原厂手册',
-            'function assertControlledPracticeMigration', 'localStorageByteExactImmediatelyAfterWorkerUpgrade: true',
-            'nonPracticeLocalStorageByteExactAfterOfflineNavigation: true', 'practiceSchemaMigrationVerified: true',
-            '练习状态迁移丢失历史成绩', '练习状态迁移丢失旧错题记录', '练习状态迁移出现未授权字段'
+            'trainingCoreStaticCacheReady: true','mainLearningContentColdOfflineAfterUpgrade: true','toolOffsetMappingColdOfflineAfterUpgrade: true',"stage = 'cold-offline-g28-directory-after-upgrade'",'g28ReferenceReturnColdOfflineAfterUpgrade: true','高风险自动运动','G90/G91','当前CNC和机床厂原厂手册','完整计划运动空间','G28冷离线源目录缺少安全边界','G28常配合G91 Z0先回Z，减少撞机。',"stage = 'cold-offline-g92-directory-after-upgrade'",'G92冷离线源目录缺少双语义安全边界','车铣差异','部分铣床/加工中心','部分车床','G52/G54-G59','X/Z或U/W','I/Q/F','主轴同步','安全退刀空间','两类程序不能直接互抄','加工中心/旧系统可用于坐标设定，车床常用于简单螺纹循环。',"stage = 'cold-offline-main-learning-content-after-upgrade'",'cnc_training_profile_v1','cnc_training_practice_v1','cnc_training_simulator_v1','indexedDB.open','other-app-cache-v1','beginner-placement.html','training-camp\\.html','beginnerPlacementColdOfflineAfterUpgrade: true','beginnerPlacementCriticalSafetyGateAfterUpgrade: true','trainingCampColdOfflineAfterUpgrade: true','placementRouteHandoffColdOfflineAfterUpgrade: true','placementRouteHandoffImmediateCleanup: true','placementFirstStepClickColdOfflineAfterUpgrade: true','placementFirstStepCoursesColdOfflineAfterUpgrade: true','course-safety-foundation.html','course-coordinate-axes.html','course-g00-g01-basics.html','ai-teacher.html','ai-teacher-intake.html','ai-teacher-explainability.html','explainabilityColdOfflineAfterUpgrade: true','不能把“先Z后XY”当成所有机床通用规则','固定直线或固定折线','T/H 数字相同是常见约定，不是所有机床都必须遵守的硬规则','不能仅凭 T01 M06 后使用 G43 H02 就直接判错','原厂手册','function assertControlledPracticeMigration','localStorageByteExactImmediatelyAfterWorkerUpgrade: true','nonPracticeLocalStorageByteExactAfterOfflineNavigation: true','practiceSchemaMigrationVerified: true','练习状态迁移丢失历史成绩','练习状态迁移丢失旧错题记录','练习状态迁移出现未授权字段'
           ]) if (!test.includes(required)) throw new Error(`upgrade contract missing: ${required}`);
           if (!placement.includes('criticalFailures') || !placement.includes("decision:'critical-safety'")) throw new Error('beginner placement critical safety gate missing');
           if (!placement.includes('cnc_beginner_placement_route_handoff_v1') || !camp.includes('cnc_beginner_placement_route_handoff_v1')) throw new Error('placement route handoff producer or consumer missing');
