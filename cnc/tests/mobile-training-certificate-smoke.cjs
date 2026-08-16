@@ -221,6 +221,57 @@ const assert = require('node:assert/strict');
   assert.equal(invalidTrainingDays.printDisabled, true);
   assert.doesNotMatch(invalidTrainingDays.text, /NaN|Infinity/);
 
+  const invalidBadgeEntriesBefore = await page.evaluate(() => {
+    const lessonScores = {};
+    for (let level = 1; level <= 12; level += 1) lessonScores[level] = 90;
+    localStorage.setItem('cnc_training_practice_v1', JSON.stringify({ version: 1, lessonScores }));
+    localStorage.setItem('cnc_training_profile_v1', JSON.stringify({ version: 1, trainingDays: ['2026-07-20', '2026-07-21'], badges: ['迈出第一步', null, {}, '成绩达标'] }));
+    localStorage.setItem('cnc_study_completed_v1', JSON.stringify([1,2,3,4,5,6,7,8,9,10,11,12]));
+    const before = {
+      practice: localStorage.getItem('cnc_training_practice_v1'),
+      profile: localStorage.getItem('cnc_training_profile_v1'),
+      done: localStorage.getItem('cnc_study_completed_v1')
+    };
+    sessionStorage.setItem('certificate-invalid-badges-before', JSON.stringify(before));
+    location.reload();
+    return before;
+  });
+  await page.waitForFunction(() => window.CNC_TRAINING_CERTIFICATE?.build === '20260724c');
+  const invalidBadgeEntries = await page.evaluate(() => ({
+    snapshot: window.CNC_TRAINING_CERTIFICATE.snapshot(),
+    before: JSON.parse(sessionStorage.getItem('certificate-invalid-badges-before')),
+    after: {
+      practice: localStorage.getItem('cnc_training_practice_v1'),
+      profile: localStorage.getItem('cnc_training_profile_v1'),
+      done: localStorage.getItem('cnc_study_completed_v1')
+    },
+    status: document.querySelector('#certificate-status').textContent,
+    integrityHidden: document.querySelector('#data-integrity').hidden,
+    integrityText: document.querySelector('#data-integrity').innerText,
+    shareDisabled: document.querySelector('#share-certificate').disabled,
+    printDisabled: document.querySelector('#print-certificate').disabled,
+    text: document.body.innerText
+  }));
+  assert.deepEqual(invalidBadgeEntries.before, invalidBadgeEntriesBefore);
+  assert.deepEqual(invalidBadgeEntries.after, invalidBadgeEntries.before, '非法徽章证据不得被阶段证书自动改写');
+  assert.equal(invalidBadgeEntries.snapshot.integrity, true);
+  assert.equal(invalidBadgeEntries.snapshot.completionIntegrity, true);
+  assert.equal(invalidBadgeEntries.snapshot.trainingIntegrity, true);
+  assert.equal(invalidBadgeEntries.snapshot.rewardIntegrity, false);
+  assert.equal(invalidBadgeEntries.snapshot.certificateReady, false);
+  assert.ok(invalidBadgeEntries.snapshot.invalid.includes('cnc_training_profile_v1:badges:entry'));
+  assert.equal(invalidBadgeEntries.snapshot.passed, 12);
+  assert.equal(invalidBadgeEntries.snapshot.average, 90);
+  assert.equal(invalidBadgeEntries.snapshot.days, 2);
+  assert.equal(invalidBadgeEntries.snapshot.badges, 2);
+  assert.equal(invalidBadgeEntries.snapshot.graduated, false);
+  assert.equal(invalidBadgeEntries.status, '奖励记录异常');
+  assert.equal(invalidBadgeEntries.integrityHidden, false);
+  assert.match(invalidBadgeEntries.integrityText, /奖励记录/);
+  assert.equal(invalidBadgeEntries.shareDisabled, true);
+  assert.equal(invalidBadgeEntries.printDisabled, true);
+  assert.doesNotMatch(invalidBadgeEntries.text, /NaN|Infinity/);
+
   const malformedRootBefore = await page.evaluate(() => {
     localStorage.setItem('cnc_training_practice_v1', '{');
     localStorage.setItem('cnc_training_profile_v1', JSON.stringify([]));
