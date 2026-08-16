@@ -57,7 +57,7 @@
     var SIMULATOR_IDS=['homing','workholding-check','tool-installation','tool-length-offset-check','work-offset-setting','program-dry-run','single-block-first-approach','graphics-segment-prediction','first-piece-inspection','alarm-troubleshooting','cutter-comp-risk','hole-cycle-troubleshooting','measurement-vs-machining-error'];
     var PRACTICE_IDS=['safety-coordinate','advanced-verification','drawing-setup-process','program-fill-sort-debug','alarm-parameter-first-piece'];
     var WRONG_SOURCE_PREFIXES=[['sc-','safety-coordinate'],['av-','advanced-verification'],['dsp-','drawing-setup-process'],['pfsd-','program-fill-sort-debug'],['apf-','alarm-parameter-first-piece']];
-    var invalid=[];
+    var invalid=[],trainingDaysShapeValid=true,badgesShapeValid=true;
     function raw(k){return localStorage.getItem(k);}
     function isRecord(v){return !!v&&typeof v==='object'&&!Array.isArray(v);}
     function strictScore(v){return typeof v==='number'&&Number.isFinite(v)&&v>=0&&v<=100?v:null;}
@@ -77,8 +77,8 @@
     function simulatorCandidates(simulator,id){return [isRecord(simulator.value.records)&&isRecord(simulator.value.records[id])?simulator.value.records[id]:null,isRecord(simulator.value.simulators)&&isRecord(simulator.value.simulators[id])?simulator.value.simulators[id]:null,isRecord(simulator.value[id])?simulator.value[id]:null].filter(isRecord);}
     function simulatorRecordPassed(record){if(record.passed===true)return true;var best=strictScore(record.bestScore!==undefined?record.bestScore:record.best!==undefined?record.best:record.score);return best===100;}
     function simulatorPass(simulator){if(!simulator.valid)return null;return SIMULATOR_IDS.filter(function(id){return simulatorCandidates(simulator,id).some(simulatorRecordPassed);}).length;}
-    function validDays(profile){var values=Array.isArray(profile.trainingDays)?profile.trainingDays:[],set=new Set();values.forEach(function(v){var day=validDay(v);if(day)set.add(day);});return Array.from(set);}
-    function validBadges(profile){var values=Array.isArray(profile.badges)?profile.badges:[],set=new Set();values.forEach(function(v){if(typeof v==='string'&&v.trim())set.add(v.trim());});return Array.from(set);}
+    function validDays(profile){if(profile.trainingDays===undefined)return[];if(!Array.isArray(profile.trainingDays)){trainingDaysShapeValid=false;invalid.push('cnc_training_profile_v1.trainingDays');return[];}var set=new Set();profile.trainingDays.forEach(function(v){var day=validDay(v);if(day)set.add(day);});return Array.from(set);}
+    function validBadges(profile){if(profile.badges===undefined)return[];if(!Array.isArray(profile.badges)){badgesShapeValid=false;invalid.push('cnc_training_profile_v1.badges');return[];}var set=new Set();profile.badges.forEach(function(v){if(typeof v==='string'&&v.trim())set.add(v.trim());});return Array.from(set);}
     function setMetric(id,value,suffix){document.getElementById(id).textContent=value==null?'—':String(value)+(suffix||'');}
     function nextPlan(completed,wrong,simPass,integrity){
       if(!integrity)return{title:'先检查学习数据',copy:'检测到学习记录结构异常，当前页面不会把异常数据当成0进度继续推荐。请先检查或恢复数据。',href:'./data-health.html',label:'检查学习数据',kind:'integrity',nextLevel:null};
@@ -94,16 +94,16 @@
     setMetric('courses',completionValid?completed.size:null,completionValid?'/12':'');
     setMetric('wrong',wrong,'');
     setMetric('simulations',simPass,simPass==null?'':'/13');
-    setMetric('streak',profile.valid?streak:null,'');
-    setMetric('days',profile.valid?days.length:null,'');
-    setMetric('badges',profile.valid?badges.length:null,'');
+    setMetric('streak',profile.valid&&trainingDaysShapeValid?streak:null,'');
+    setMetric('days',profile.valid&&trainingDaysShapeValid?days.length:null,'');
+    setMetric('badges',profile.valid&&badgesShapeValid?badges.length:null,'');
     document.getElementById('next-title').textContent=plan.title;document.getElementById('next-copy').textContent=plan.copy;document.getElementById('next-link').href=plan.href;document.getElementById('next-link').textContent=plan.label;
     if(!integrity){var alert=document.getElementById('data-integrity');alert.hidden=false;document.getElementById('data-integrity-copy').textContent='异常数据源：'+Array.from(new Set(invalid)).join('、')+'。请先检查本机学习数据，再继续依据成长成果安排训练。';}
     document.getElementById('today-date').textContent=todayKey;document.getElementById('today-title').textContent=trained?'今日已完成':'今日待完成';document.getElementById('today-copy').textContent=trained?'今天的有效训练已经记录，继续保持节奏。':'完成今日推荐课程并达到80分后，可在成长档案记录当天训练。';document.getElementById('today-card').classList.add(trained?'is-done':'is-pending');
     var week=[];for(var i=6;i>=0;i--){var d=new Date(today);d.setDate(today.getDate()-i);var k=key(d),done=days.indexOf(k)!==-1;week.push('<div class="day '+(done?'is-done ':'')+(k===todayKey?'is-today':'')+'" role="listitem"><strong>'+['日','一','二','三','四','五','六'][d.getDay()]+'</strong><span>'+String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0')+'</span><span>'+(done?'完成':'—')+'</span></div>');}document.getElementById('week-preview').innerHTML=week.join('');
     var targets=[3,7,30],target=targets.find(function(n){return streak<n;})||30,remaining=Math.max(0,target-streak);document.getElementById('milestone-title').textContent='连续训练'+target+'天';document.getElementById('milestone-copy').textContent=remaining?'再完成 '+remaining+' 天有效训练即可达到该里程碑。':'已达到30天里程碑，继续保持稳定训练。';var progress=document.getElementById('milestone-progress');progress.max=target;progress.value=Math.min(streak,target);progress.setAttribute('aria-label','连续训练 '+streak+' 天，目标 '+target+' 天');
     document.body.dataset.trainingAchievements=integrity?'ready':'data-error';
-    window.CNC_TRAINING_ACHIEVEMENTS={build:BUILD,snapshot:function(){return{streak:profile.valid?streak:null,days:profile.valid?days.length:null,badges:profile.valid?badges.length:null,trainedToday:trained,target:target,remaining:remaining,courses:completionValid?completed.size:null,wrong:wrong,simulations:simPass,integrity:integrity,invalid:Array.from(new Set(invalid)),nextKind:plan.kind,nextLevel:plan.nextLevel};}};
+    window.CNC_TRAINING_ACHIEVEMENTS={build:BUILD,snapshot:function(){return{streak:profile.valid&&trainingDaysShapeValid?streak:null,days:profile.valid&&trainingDaysShapeValid?days.length:null,badges:profile.valid&&badgesShapeValid?badges.length:null,trainedToday:trained,target:target,remaining:remaining,courses:completionValid?completed.size:null,wrong:wrong,simulations:simPass,integrity:integrity,invalid:Array.from(new Set(invalid)),nextKind:plan.kind,nextLevel:plan.nextLevel};}};
   })();
   </script>
 </body>
