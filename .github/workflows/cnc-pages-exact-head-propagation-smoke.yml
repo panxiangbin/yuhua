@@ -59,9 +59,11 @@ jobs:
       - name: Validate public propagation gate contract
         run: |
           node --check cnc/tests/mobile-pages-deployment-status-smoke.cjs
+          node --check cnc/tests/pages-exact-head-local-marker-contract-smoke.cjs
           node - <<'NODE'
           const fs = require('fs');
           const text = fs.readFileSync('cnc/tests/mobile-pages-deployment-status-smoke.cjs', 'utf8');
+          const exact = fs.readFileSync('cnc/tests/pages-exact-head-local-marker-contract-smoke.cjs', 'utf8');
           for (const token of [
             'waitForPagesToMatchMain',
             'publicReachable',
@@ -73,19 +75,34 @@ jobs:
           ]) {
             if (!text.includes(token)) throw new Error(`Pages公网传播门禁缺少关键契约：${token}`);
           }
+          for (const token of [
+            'mustMatchLocal',
+            'localMatchesMain',
+            'branchDeploymentPending',
+            'pushExactHeadPublished',
+            'exactMarkerMatch',
+            'CNC_PAGES_VERIFY_ATTEMPTS || 18',
+            "eventName === 'push'",
+            'process.exit(1)'
+          ]) {
+            if (!exact.includes(token)) throw new Error(`Pages exact-head本地标记契约缺少：${token}`);
+          }
           for (const forbidden of [
             'process.exit(0)',
             'CNC_PAGES_VERIFY_ATTEMPTS || 0',
             'test.skip(',
             'continue-on-error: true'
           ]) {
-            if (text.includes(forbidden)) throw new Error(`Pages公网传播门禁发现绕过：${forbidden}`);
+            if (text.includes(forbidden) || exact.includes(forbidden)) throw new Error(`Pages公网传播门禁发现绕过：${forbidden}`);
           }
           NODE
 
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+
+      - name: Verify exact tested marker propagation contract
+        run: node cnc/tests/pages-exact-head-local-marker-contract-smoke.cjs
 
       - name: Install Playwright runtime
         run: npm install --no-save playwright@1.52.0
@@ -112,6 +129,7 @@ jobs:
           name: cnc-pages-exact-head-${{ github.run_id }}
           path: |
             cnc/test-results/pages-exact-head-bootstrap.json
+            cnc/test-results/pages-exact-head-local-marker-contract.json
             cnc/test-results/pages-deployment-status-*
           if-no-files-found: error
           retention-days: 14
