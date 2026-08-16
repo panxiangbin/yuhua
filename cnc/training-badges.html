@@ -44,6 +44,11 @@
       function isRecord(value){return Boolean(value)&&typeof value==='object'&&!Array.isArray(value);}
       function strictScore(value){return typeof value==='number'&&Number.isFinite(value)&&value>=0&&value<=100?value:null;}
       function strictNonNegativeInt(value){return typeof value==='number'&&Number.isInteger(value)&&value>=0?value:null;}
+      function validDay(value){
+        if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(value))return false;
+        var parts=value.split('-').map(Number),date=new Date(Date.UTC(parts[0],parts[1]-1,parts[2]));
+        return date.getUTCFullYear()===parts[0]&&date.getUTCMonth()===parts[1]-1&&date.getUTCDate()===parts[2];
+      }
       function stageLevel(value){
         if(typeof value==='number'&&Number.isInteger(value)&&value>=1&&value<=12)return value;
         if(typeof value==='string'){
@@ -98,6 +103,28 @@
           if(score>=80)scorePassed=true;
         });
 
+        var trainingDaysIntegrity=true;
+        if(Object.prototype.hasOwnProperty.call(profile,'trainingDays')){
+          if(!Array.isArray(profile.trainingDays)){
+            issues.push(PROFILE+':trainingDays:shape');
+            trainingDaysIntegrity=false;
+          }else{
+            var seenTrainingDays=new Set();
+            profile.trainingDays.forEach(function(day){
+              if(!validDay(day)){
+                issues.push(PROFILE+':trainingDays:entry');
+                trainingDaysIntegrity=false;
+                return;
+              }
+              if(seenTrainingDays.has(day)){
+                issues.push(PROFILE+':trainingDays:duplicate');
+                trainingDaysIntegrity=false;
+              }
+              seenTrainingDays.add(day);
+            });
+          }
+        }
+
         var current=0,best=0;
         if(Object.prototype.hasOwnProperty.call(profile,'currentStreak')){
           var currentValue=strictNonNegativeInt(profile.currentStreak);
@@ -107,7 +134,7 @@
           var bestValue=strictNonNegativeInt(profile.bestStreak);
           if(bestValue==null)issues.push(PROFILE+':bestStreak');else best=bestValue;
         }
-        return{done:Array.from(doneSet).sort(function(a,b){return a-b;}),scorePassed:scorePassed,streak:Math.max(current,best),integrityIssues:Array.from(new Set(issues))};
+        return{done:Array.from(doneSet).sort(function(a,b){return a-b;}),scorePassed:scorePassed,streak:trainingDaysIntegrity?Math.max(current,best):0,trainingDaysIntegrity:trainingDaysIntegrity,integrityIssues:Array.from(new Set(issues))};
       }
       function definitions(state){return[
         {id:'first-step',mark:'01',name:'迈出第一步',desc:'完成任意1关课程并达到本站通关标准。',earned:state.done.length>=1},
@@ -127,7 +154,7 @@
         document.getElementById('badges').innerHTML=list.map(function(item){return '<article class="badge '+(item.earned?'is-earned':'is-locked')+'" role="listitem"><div class="badge-mark">'+esc(item.mark)+'</div><div><h3>'+esc(item.name)+'</h3><p>'+esc(item.desc)+'</p></div><span class="state">'+(item.earned?'已获得':'未获得')+'</span></article>';}).join('');
         document.getElementById('integrity-notice').hidden=state.integrityIssues.length===0;
         document.body.dataset.trainingBadges='ready';
-        return{earned:earned,total:list.length,done:state.done.slice(),scorePassed:state.scorePassed,streak:state.streak,integrityIssues:state.integrityIssues.slice()};
+        return{earned:earned,total:list.length,done:state.done.slice(),scorePassed:state.scorePassed,streak:state.streak,trainingDaysIntegrity:state.trainingDaysIntegrity,integrityIssues:state.integrityIssues.slice()};
       }
       render();
       window.addEventListener('storage',render);
