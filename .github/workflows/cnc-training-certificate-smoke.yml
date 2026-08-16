@@ -32,11 +32,15 @@ jobs:
       - run: npm install --no-save playwright@1.52.0
       - run: npx playwright install --with-deps chromium
       - name: JavaScript syntax
-        run: node --check cnc/tests/mobile-training-certificate-smoke.cjs
+        run: |
+          node --check cnc/tests/mobile-training-certificate-smoke.cjs
+          node --check cnc/tests/mobile-training-certificate-reward-integrity-smoke.cjs
       - name: Start static server
         run: python3 -m http.server 4173 --directory . > /tmp/cnc-server.log 2>&1 &
       - name: Chromium 390x844 training certificate
         run: node cnc/tests/mobile-training-certificate-smoke.cjs | tee cnc/test-results/training-certificate/browser.log
+      - name: Chromium 390x844 certificate reward evidence integrity
+        run: node cnc/tests/mobile-training-certificate-reward-integrity-smoke.cjs | tee cnc/test-results/training-certificate/reward-integrity-browser.log
       - name: Upload exact-head diagnostics
         if: always()
         uses: actions/upload-artifact@v4
