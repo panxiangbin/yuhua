@@ -33,6 +33,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - name: Configure generated commit identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
       - name: Generate CNC-only PWA48 source/test changes
         shell: bash
         run: |
@@ -55,8 +61,6 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git push origin HEAD:${{ github.event.pull_request.head.ref }}
       - name: Upload controlled sync diagnostics
         if: always()
