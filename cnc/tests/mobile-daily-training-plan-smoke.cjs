@@ -235,7 +235,7 @@ let page;
     const today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
     const profile = { version: 1, xp: '999', badges: ['迈出第一步', '迈出第一步', null, [], {}], completed: [1, '2', 2, 99], trainingDays: ['2026-08-13', '2026-08-13', '2026-02-30', null, [], {}], currentStreak: '99', bestStreak: '365', lastTrainingDate: '2026-02-30' };
     const practice = { version: 2, gateVersion: 2, attempts: {}, wrong: ['g00-cutting', 'g00-cutting', null, '', {}, []], correct: [], lessonScores: { 1: '100', 2: 100, 3: 120, 4: -1, 5: '80', 6: null, 7: 80 }, legacyLessonScores: {} };
-    const done = [1, '2', 2, 13, 0, null, [], {}];
+    const done = [1, 2];
     localStorage.setItem('cnc_training_profile_v1', JSON.stringify(profile));
     localStorage.setItem('cnc_training_practice_v1', JSON.stringify(practice));
     localStorage.setItem('cnc_study_completed_v1', JSON.stringify(done));
