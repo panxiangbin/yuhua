@@ -71,6 +71,24 @@ function writeReport() {
     assert.ok(invalidRecoveryHeights.every(height => height >= 44));
     report.invalidTrainingDays = { blocked: true, invalidRows: 8, readOnly: true, recoveryTouchMin: Math.min(...invalidRecoveryHeights) };
 
+    const duplicateDaysRaw = JSON.stringify({ version:1, trainingDays:[dates.d1, dates.d2, dates.d2], currentStreak:2, bestStreak:4 });
+    await page.evaluate(raw => {
+      localStorage.setItem('cnc_training_profile_v1', raw);
+      window.CNC_TRAINING_CALENDAR.render();
+    }, duplicateDaysRaw);
+    assert.equal(await page.evaluate(() => document.body.dataset.trainingCalendar), 'blocked');
+    assert.equal(await page.locator('#current-streak').textContent(), '--');
+    assert.equal(await page.locator('#best-streak').textContent(), '--');
+    assert.equal(await page.locator('#total-days').textContent(), '--');
+    assert.equal(await page.locator('.day').count(), 0);
+    assert.equal(await page.locator('#integrity-warning').isVisible(), true);
+    assert.match(await page.locator('#integrity-detail').textContent(), /训练日期记录存在重复日期/);
+    assert.equal(await page.evaluate(() => localStorage.getItem('cnc_training_profile_v1')), duplicateDaysRaw);
+    const duplicateRecoveryHeights = await page.locator('#integrity-warning a').evaluateAll(nodes => nodes.map(node => node.getBoundingClientRect().height));
+    assert.equal(duplicateRecoveryHeights.length, 2);
+    assert.ok(duplicateRecoveryHeights.every(height => height >= 44));
+    report.duplicateTrainingDays = { blocked: true, duplicateRows: 1, readOnly: true, recoveryTouchMin: Math.min(...duplicateRecoveryHeights) };
+
     const corruptNumericRaw = JSON.stringify({ version:1, trainingDays:[dates.d1,dates.d2], currentStreak:'99', bestStreak:'365' });
     await page.evaluate(raw => {
       localStorage.setItem('cnc_training_profile_v1', raw);
@@ -131,7 +149,7 @@ function writeReport() {
     report.mobile = { horizontalOverflow: false, backTouchHeight: backHeight };
     report.passed = true;
     writeReport();
-    console.log('7天训练日历严格日期、异常日期条目阻断、连续训练数值语义、损坏根数据阻断、只读降级、手机单列和44px恢复入口通过');
+    console.log('7天训练日历严格日期、异常日期条目阻断、重复训练日证据阻断、连续训练数值语义、损坏根数据阻断、只读降级、手机单列和44px恢复入口通过');
     await browser.close();
   } catch (error) {
     report.error = error && error.stack ? error.stack : String(error);
