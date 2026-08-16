@@ -60,6 +60,7 @@
             if(!Array.isArray(value.trainingDays))return{ok:false,data:null,reason:'训练日期记录根结构不是数组'};
             var invalidRows=value.trainingDays.filter(function(row){return !validDay(row);}).length;
             if(invalidRows)return{ok:false,data:null,reason:'训练日期记录包含'+invalidRows+'个无法确认的日期'};
+            if(new Set(value.trainingDays).size!==value.trainingDays.length)return{ok:false,data:null,reason:'训练日期记录存在重复日期'};
           }
           return{ok:true,data:value,reason:''};
         }catch(e){return{ok:false,data:null,reason:'成长档案 JSON 无法解析'};}
