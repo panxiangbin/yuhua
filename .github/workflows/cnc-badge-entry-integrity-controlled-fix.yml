@@ -1,0 +1,60 @@
+name: CNC badge entry integrity controlled fix
+
+on:
+  push:
+    branches:
+      - codex/cnc-badge-entry-integrity
+    paths:
+      - cnc/tests/apply_badge_entry_integrity_fix.py
+      - .github/workflows/cnc-badge-entry-integrity-controlled-fix.yml
+
+permissions:
+  contents: write
+
+jobs:
+  apply-controlled-fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch head
+        uses: actions/checkout@v4
+        with:
+          ref: codex/cnc-badge-entry-integrity
+          fetch-depth: 0
+      - name: Record tested head
+        run: git rev-parse HEAD
+      - name: Apply exact CNC-only patch
+        run: python3 cnc/tests/apply_badge_entry_integrity_fix.py
+      - name: Verify scope and syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --check
+          mapfile -t changed < <(git diff --name-only)
+          printf '%s\n' "${changed[@]}"
+          expected=(
+            cnc/data-health.html
+            cnc/data-backup.html
+            cnc/training-certificate.html
+            cnc/tests/mobile-data-health-smoke.cjs
+            cnc/tests/mobile-data-backup-history-migration-smoke.cjs
+            cnc/tests/mobile-training-certificate-smoke.cjs
+          )
+          if [[ "${#changed[@]}" -ne "${#expected[@]}" ]]; then
+            echo "unexpected changed file count: ${#changed[@]}" >&2
+            exit 1
+          fi
+          for path in "${expected[@]}"; do
+            printf '%s\n' "${changed[@]}" | grep -Fx -- "$path" >/dev/null || { echo "missing expected file: $path" >&2; exit 1; }
+          done
+          node --check cnc/tests/mobile-data-health-smoke.cjs
+          node --check cnc/tests/mobile-data-backup-history-migration-smoke.cjs
+          node --check cnc/tests/mobile-training-certificate-smoke.cjs
+      - name: Commit generated fix
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add cnc/data-health.html cnc/data-backup.html cnc/training-certificate.html cnc/tests/mobile-data-health-smoke.cjs cnc/tests/mobile-data-backup-history-migration-smoke.cjs cnc/tests/mobile-training-certificate-smoke.cjs
+          git commit -m "CNC：统一非法徽章条目数据风险语义"
+          git push origin HEAD:codex/cnc-badge-entry-integrity
