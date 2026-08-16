@@ -298,7 +298,7 @@ let page;
   assert.equal(rootIntegrity.complete.integrity, false);
   assert.deepEqual(rootIntegrity.after, rootIntegrity.before, '完整性阻断不得创建daily plan或覆盖损坏profile/practice/done');
   assert.match(rootIntegrity.complete.reason, /学习数据异常/);
-  const blockedPanel = activeProfile.locator('#xp-training-profile');
+  const blockedPanel = activeProfile;
   assert.match(await blockedPanel.textContent(), /学习数据需要检查/);
   assert.match(await blockedPanel.textContent(), /已暂停个性化训练/);
   assert.equal(await blockedPanel.locator('[data-profile-health]').getAttribute('href'), './data-health.html');
