@@ -41,6 +41,7 @@ const assert = require('node:assert/strict');
   assert.deepEqual(normal.rendered.done, [1, 2, 3]);
   assert.equal(normal.rendered.scorePassed, true);
   assert.equal(normal.rendered.streak, 3);
+  assert.equal(normal.rendered.trainingDaysIntegrity, true);
   assert.deepEqual(normal.rendered.integrityIssues, []);
   assert.deepEqual(normal.after, normal.before, '正常徽章渲染不得改写学习记录');
   assert.equal(await page.locator('.badge').count(), 8);
@@ -139,6 +140,37 @@ const assert = require('node:assert/strict');
   assert.deepEqual(corruptCanonical.after, corruptCanonical.before, '损坏 canonical 阻断时不得改写原记录');
   assert.equal(await page.locator('#integrity-notice').isVisible(), true);
 
+  const trainingDayRisk = await page.evaluate(() => {
+    localStorage.setItem('cnc_training_profile_v1', JSON.stringify({
+      version: 1,
+      trainingDays: ['2026-07-21', '2026-07-21', '2026-02-30'],
+      currentStreak: 30,
+      bestStreak: 30
+    }));
+    localStorage.setItem('cnc_study_completed_v1', JSON.stringify([1]));
+    localStorage.setItem('cnc_training_practice_v1', JSON.stringify({ version: 1, lessonScores: {} }));
+    const before = {
+      profile: localStorage.getItem('cnc_training_profile_v1'),
+      done: localStorage.getItem('cnc_study_completed_v1'),
+      practice: localStorage.getItem('cnc_training_practice_v1')
+    };
+    const rendered = window.CNC_TRAINING_BADGES.render();
+    const after = {
+      profile: localStorage.getItem('cnc_training_profile_v1'),
+      done: localStorage.getItem('cnc_study_completed_v1'),
+      practice: localStorage.getItem('cnc_training_practice_v1')
+    };
+    return { rendered, before, after };
+  });
+
+  assert.equal(trainingDayRisk.rendered.trainingDaysIntegrity, false, '异常/重复训练日必须降低连续训练证据可信度');
+  assert.equal(trainingDayRisk.rendered.streak, 0, '训练日证据异常时不得继续颁发连续训练徽章');
+  assert.equal(trainingDayRisk.rendered.earned, 1, '只允许保留可确认的课程徽章，不得保留30天连续训练徽章');
+  assert.ok(trainingDayRisk.rendered.integrityIssues.includes('cnc_training_profile_v1:trainingDays:duplicate'));
+  assert.ok(trainingDayRisk.rendered.integrityIssues.includes('cnc_training_profile_v1:trainingDays:entry'));
+  assert.deepEqual(trainingDayRisk.after, trainingDayRisk.before, '训练日证据异常只读降级不得改写原记录');
+  assert.equal(await page.locator('#integrity-notice').isVisible(), true);
+
   const malformed = await page.evaluate(() => {
     localStorage.setItem('cnc_training_profile_v1', JSON.stringify({
       version: 1,
@@ -170,6 +202,7 @@ const assert = require('node:assert/strict');
   assert.deepEqual(malformed.rendered.done, [1, 2]);
   assert.equal(malformed.rendered.scorePassed, false);
   assert.equal(malformed.rendered.streak, 0);
+  assert.equal(malformed.rendered.trainingDaysIntegrity, true);
   assert.ok(malformed.rendered.integrityIssues.length >= 3);
   assert.deepEqual(malformed.after, malformed.before, '异常数据只读降级不得清洗或改写 localStorage');
   assert.equal(await page.locator('#earned-count').textContent(), '1');
@@ -220,11 +253,12 @@ const assert = require('node:assert/strict');
   assert.deepEqual(pageErrors, []);
   assert.deepEqual(consoleErrors, []);
 
-  console.log('训练徽章 canonical 优先/旧档案回退、严格课程/成绩/连续训练语义、异常根结构只读降级、390x844布局与安全提示通过', {
+  console.log('训练徽章 canonical 优先/旧档案回退、严格课程/成绩/连续训练语义、训练日证据完整性、异常根结构只读降级、390x844布局与安全提示通过', {
     normal: normal.rendered,
     canonicalPriority: canonicalPriority.rendered,
     legacyFallback: legacyFallback.rendered,
     corruptCanonical: corruptCanonical.rendered,
+    trainingDayRisk: trainingDayRisk.rendered,
     malformed: malformed.rendered,
     brokenRoots: brokenRoots.rendered,
     layout
