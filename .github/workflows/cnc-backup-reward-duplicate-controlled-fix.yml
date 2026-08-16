@@ -1,0 +1,58 @@
+name: CNC backup reward duplicate controlled fix
+
+on:
+  push:
+    branches:
+      - codex/cnc-backup-reward-duplicate-guard
+    paths:
+      - cnc/tests/apply_backup_reward_duplicate_guard.py
+      - .github/workflows/cnc-backup-reward-duplicate-controlled-fix.yml
+
+permissions:
+  contents: write
+
+jobs:
+  controlled-fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact branch head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Verify tested head
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+      - name: Apply controlled CNC-only patch
+        run: python3 cnc/tests/apply_backup_reward_duplicate_guard.py
+      - name: Validate JavaScript syntax and scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check cnc/tests/mobile-data-backup-history-migration-smoke.cjs
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          text=Path('cnc/data-backup.html').read_text(encoding='utf-8')
+          blocks=re.findall(r'<script[^>]*>(.*?)</script>',text,re.S)
+          Path('/tmp/data-backup-inline.js').write_text('\n'.join(blocks),encoding='utf-8')
+          PY
+          node --check /tmp/data-backup-inline.js
+          git diff --check
+          mapfile -t files < <(git diff --name-only | sort)
+          expected=(cnc/data-backup.html cnc/tests/mobile-data-backup-history-migration-smoke.cjs)
+          printf '%s\n' "${files[@]}"
+          test "${#files[@]}" -eq 2
+          test "${files[0]}" = "${expected[0]}"
+          test "${files[1]}" = "${expected[1]}"
+      - name: Commit generated fix
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add cnc/data-backup.html cnc/tests/mobile-data-backup-history-migration-smoke.cjs
+          git commit -m "CNC：阻断重复奖励证据自动恢复"
+          git push origin HEAD:codex/cnc-backup-reward-duplicate-guard
