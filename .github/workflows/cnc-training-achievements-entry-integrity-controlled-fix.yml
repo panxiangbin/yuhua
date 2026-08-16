@@ -1,0 +1,93 @@
+name: CNC training achievements entry integrity controlled fix
+
+on:
+  push:
+    branches:
+      - 'codex/cnc-achievements-entry-integrity'
+    paths:
+      - 'cnc/tests/apply_training_achievements_entry_integrity_fix.py'
+      - '.github/workflows/cnc-training-achievements-entry-integrity-controlled-fix.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  controlled-fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact generator head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.sha }}
+
+      - name: Verify exact generator head
+        shell: bash
+        run: |
+          set -euo pipefail
+          tested="$(git rev-parse HEAD)"
+          if [ "$tested" != "$GITHUB_SHA" ]; then
+            echo "受控修复检出SHA不一致：tested=$tested expected=$GITHUB_SHA" >&2
+            exit 1
+          fi
+
+      - name: Apply target-only fix
+        run: python3 cnc/tests/apply_training_achievements_entry_integrity_fix.py
+
+      - name: Verify target-only diff and syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t changed < <(git diff --name-only | sort)
+          printf '%s\n' "${changed[@]}"
+          expected=(
+            'cnc/tests/mobile-training-achievements-profile-shape-smoke.cjs'
+            'cnc/tests/mobile-training-achievements-smoke.cjs'
+            'cnc/training-achievements.html'
+          )
+          if [ "${changed[*]}" != "${expected[*]}" ]; then
+            echo '受控修复文件范围异常' >&2
+            exit 1
+          fi
+          node --check cnc/tests/mobile-training-achievements-smoke.cjs
+          node --check cnc/tests/mobile-training-achievements-profile-shape-smoke.cjs
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          html = Path('cnc/training-achievements.html').read_text(encoding='utf-8')
+          scripts = re.findall(r'<script>(.*?)</script>', html, re.S)
+          if len(scripts) != 1:
+              raise SystemExit(f'成长成果页内联脚本数量异常：{len(scripts)}')
+          Path('/tmp/cnc-training-achievements-inline.js').write_text(scripts[0], encoding='utf-8')
+          PY
+          node --check /tmp/cnc-training-achievements-inline.js
+
+      - name: Save generated evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/cnc-achievements-entry-fix
+          git diff -- cnc/training-achievements.html cnc/tests/mobile-training-achievements-smoke.cjs cnc/tests/mobile-training-achievements-profile-shape-smoke.cjs > /tmp/cnc-achievements-entry-fix/generated.patch
+          git diff --stat > /tmp/cnc-achievements-entry-fix/stat.txt
+          printf '{"generatorHead":"%s","branch":"%s"}\n' "$GITHUB_SHA" "$GITHUB_REF_NAME" > /tmp/cnc-achievements-entry-fix/identity.json
+
+      - name: Commit target-only fix
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add cnc/training-achievements.html cnc/tests/mobile-training-achievements-smoke.cjs cnc/tests/mobile-training-achievements-profile-shape-smoke.cjs
+          git commit -m 'CNC：统一成长成果训练日与徽章条目完整性语义'
+          git rev-parse HEAD | tee /tmp/cnc-achievements-entry-fix/generated-commit.txt
+          git push origin HEAD:codex/cnc-achievements-entry-integrity
+
+      - name: Upload controlled-fix evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-training-achievements-entry-integrity-fix-${{ github.run_id }}
+          path: /tmp/cnc-achievements-entry-fix/*
+          if-no-files-found: warn
+          retention-days: 14
