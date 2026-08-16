@@ -1,0 +1,47 @@
+name: CNC reward whitespace duplicate controlled fix
+on:
+  push:
+    branches:
+      - codex/cnc-reward-whitespace-duplicate-guard
+permissions:
+  contents: write
+jobs:
+  apply-fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact branch head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Verify tested head
+        run: test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+      - name: Apply exact CNC-only patch
+        run: python3 cnc/tests/apply_reward_whitespace_duplicate_fix.py
+      - name: Validate target scope and syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t files < <(git diff --name-only)
+          printf '%s\n' "${files[@]}"
+          test "${#files[@]}" -eq 4
+          printf '%s\n' "${files[@]}" | sort > /tmp/actual.txt
+          printf '%s\n' \
+            cnc/data-backup.html \
+            cnc/data-health.html \
+            cnc/tests/mobile-data-backup-history-migration-smoke.cjs \
+            cnc/tests/mobile-data-health-smoke.cjs | sort > /tmp/expected.txt
+          diff -u /tmp/expected.txt /tmp/actual.txt
+          node --check cnc/tests/mobile-data-health-smoke.cjs
+          node --check cnc/tests/mobile-data-backup-history-migration-smoke.cjs
+          git diff --check
+      - name: Commit target-only fix
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add cnc/data-health.html cnc/data-backup.html cnc/tests/mobile-data-health-smoke.cjs cnc/tests/mobile-data-backup-history-migration-smoke.cjs
+          git commit -m "CNC：统一空白变体奖励重复风险语义"
+          git push origin HEAD:codex/cnc-reward-whitespace-duplicate-guard
