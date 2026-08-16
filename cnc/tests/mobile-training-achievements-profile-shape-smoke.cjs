@@ -67,7 +67,54 @@ let page;
   assert.deepEqual(errors, []);
   assert.deepEqual(consoleErrors, []);
 
-  const report = { passed: true, snapshot, overflow, readOnly: true, errors, consoleErrors };
+  // 根结构合法但训练日/徽章条目损坏或重复时，也必须阻断个性化路线；可确认统计继续展示且原始数据只读。
+  const entryBefore = await page.evaluate(() => {
+    localStorage.setItem('cnc_training_profile_v1', JSON.stringify({
+      version: 1,
+      currentStreak: 7,
+      trainingDays: ['2026-08-15', '2026-08-15', '2026-02-30', null],
+      badges: ['连续训练3天', ' 连续训练3天 ', null, {}]
+    }));
+    localStorage.setItem('cnc_study_completed_v1', JSON.stringify([1, 2, 3]));
+    localStorage.setItem('cnc_training_practice_v1', JSON.stringify({ version: 1 }));
+    localStorage.setItem('cnc_training_simulator_v1', JSON.stringify({ version: 1 }));
+    const keys = ['cnc_training_profile_v1', 'cnc_study_completed_v1', 'cnc_training_practice_v1', 'cnc_training_simulator_v1'];
+    return Object.fromEntries(keys.map(key => [key, localStorage.getItem(key)]));
+  });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(() => window.CNC_TRAINING_ACHIEVEMENTS?.build === '20260808a', null, { timeout: 15000 });
+  await page.locator('#data-integrity').waitFor({ state: 'visible', timeout: 10000 });
+
+  const entrySnapshot = await page.evaluate(() => window.CNC_TRAINING_ACHIEVEMENTS.snapshot());
+  assert.equal(entrySnapshot.integrity, false);
+  assert.equal(entrySnapshot.courses, 3);
+  assert.equal(entrySnapshot.streak, 7);
+  assert.equal(entrySnapshot.days, 1);
+  assert.equal(entrySnapshot.badges, 1);
+  assert.equal(entrySnapshot.nextKind, 'integrity');
+  assert.ok(entrySnapshot.invalid.includes('cnc_training_profile_v1.trainingDays:entry'));
+  assert.ok(entrySnapshot.invalid.includes('cnc_training_profile_v1.trainingDays:duplicate'));
+  assert.ok(entrySnapshot.invalid.includes('cnc_training_profile_v1.badges:entry'));
+  assert.ok(entrySnapshot.invalid.includes('cnc_training_profile_v1.badges:duplicate'));
+  assert.equal(await page.locator('#courses').textContent(), '3/12');
+  assert.equal(await page.locator('#streak').textContent(), '7');
+  assert.equal(await page.locator('#days').textContent(), '1');
+  assert.equal(await page.locator('#badges').textContent(), '1');
+  assert.match(await page.locator('#next-title').textContent(), /检查学习数据/);
+  assert.match(await page.locator('#data-integrity-copy').textContent(), /trainingDays:entry/);
+  assert.match(await page.locator('#data-integrity-copy').textContent(), /trainingDays:duplicate/);
+  assert.match(await page.locator('#data-integrity-copy').textContent(), /badges:entry/);
+  assert.match(await page.locator('#data-integrity-copy').textContent(), /badges:duplicate/);
+  const entryAfter = await page.evaluate(() => {
+    const keys = ['cnc_training_profile_v1', 'cnc_study_completed_v1', 'cnc_training_practice_v1', 'cnc_training_simulator_v1'];
+    return Object.fromEntries(keys.map(key => [key, localStorage.getItem(key)]));
+  });
+  assert.deepEqual(entryAfter, entryBefore, '成长成果页不得修改嵌套条目异常或重复的学习数据');
+  assert.doesNotMatch(await page.locator('body').textContent(), /NaN|Infinity/);
+  assert.deepEqual(errors, []);
+  assert.deepEqual(consoleErrors, []);
+
+  const report = { passed: true, snapshot, entrySnapshot, overflow, readOnly: true, errors, consoleErrors };
   fs.writeFileSync(path.join(artifactDir, 'report.json'), JSON.stringify(report, null, 2));
   await page.screenshot({ path: path.join(artifactDir, 'training-achievements-profile-shape-390x844.png'), fullPage: true });
   console.log('成长成果嵌套训练日/徽章结构异常阻断通过', report);

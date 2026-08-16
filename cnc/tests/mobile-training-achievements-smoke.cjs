@@ -153,7 +153,13 @@ function dateKey(value) {
     wrong: 2,
     simulations: 2,
     integrity: false,
-    invalid: ['cnc_study_completed_v1:entry'],
+    invalid: [
+      'cnc_training_profile_v1.trainingDays:entry',
+      'cnc_training_profile_v1.trainingDays:duplicate',
+      'cnc_training_profile_v1.badges:entry',
+      'cnc_training_profile_v1.badges:duplicate',
+      'cnc_study_completed_v1:entry'
+    ],
     nextKind: 'integrity',
     nextLevel: null
   });
