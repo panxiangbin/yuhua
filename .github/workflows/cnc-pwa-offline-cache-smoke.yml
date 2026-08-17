@@ -53,10 +53,10 @@ jobs:
           const swCacheRevision = sw.match(/const CACHE_REVISION = '([^']+)'/)?.[1];
           if (swBuild !== info.pwaBuild) throw new Error(`Service Worker/build-info mismatch: ${swBuild} / ${info.pwaBuild}`);
           if (swCacheRevision !== info.cacheRevision) throw new Error(`Service Worker/build-info cache mismatch: ${swCacheRevision} / ${info.cacheRevision}`);
-          if (info.pwaBuild !== '20260817-pwa50') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
-          if (info.cacheRevision !== '20260817-learning50') throw new Error(`unexpected cache revision: ${info.cacheRevision}`);
-          if (!test.includes("const PWA_BUILD = '20260817-pwa50'")) throw new Error('offline browser PWA build mismatch');
-          if (!test.includes("const CACHE_REVISION = '20260817-learning50'")) throw new Error('offline browser cache revision mismatch');
+          if (info.pwaBuild !== '20260817-pwa51') throw new Error(`unexpected PWA build: ${info.pwaBuild}`);
+          if (info.cacheRevision !== '20260817-learning51') throw new Error(`unexpected cache revision: ${info.cacheRevision}`);
+          if (!test.includes("const PWA_BUILD = '20260817-pwa51'")) throw new Error('offline browser PWA build mismatch');
+          if (!test.includes("const CACHE_REVISION = '20260817-learning51'")) throw new Error('offline browser cache revision mismatch');
           for (const file of [
             './training-practice.js',
             './training-profile.js',
