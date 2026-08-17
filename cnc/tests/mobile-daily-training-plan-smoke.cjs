@@ -16,7 +16,7 @@ let page;
   page.on('pageerror', error => errors.push(error.message));
 
   await page.goto('http://127.0.0.1:4173/cnc/?smoke=daily-plan', { waitUntil: 'domcontentloaded', timeout: 60000 });
-  await page.waitForFunction(() => window.CNC_TRAINING_PROFILE?.build === '20260817c', null, { timeout: 20000 });
+  await page.waitForFunction(() => window.CNC_TRAINING_PROFILE?.build === '20260817d', null, { timeout: 20000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-startup-home') === 'stable', null, { timeout: 15000 });
   await page.waitForFunction(() => window.CNC_GAME_QUERY_NAV?.build === '20260731d', null, { timeout: 15000 });
   // 成长档案样式由脚本动态挂载，并有一次启动补渲染。
@@ -283,6 +283,55 @@ let page;
   assert.ok(nestedRecoveryTouch >= 44, `嵌套完整性恢复入口触控高度不得小于44px：${nestedRecoveryTouch}`);
   assert.doesNotMatch(await activeProfile.textContent(), /NaN|Infinity/);
 
+  // 专项练习页历史上会把错题保存成对象记录；共享档案必须兼容三类字段并按题目ID去重，不能把合法历史数据误判成损坏。
+  const compatibleWrong = await page.evaluate(() => {
+    localStorage.removeItem('cnc_daily_training_plan_v1');
+    localStorage.setItem('cnc_training_profile_v1', JSON.stringify({
+      version: 1,
+      xp: 260,
+      badges: ['迈出第一步'],
+      completed: [1, 2, 3],
+      trainingDays: [],
+      currentStreak: 0,
+      bestStreak: 0,
+      lastTrainingDate: null
+    }));
+    localStorage.setItem('cnc_training_practice_v1', JSON.stringify({
+      version: 1,
+      gateVersion: 2,
+      attempts: {},
+      wrong: {
+        'sc-legacy-01': { id: 'sc-legacy-01', course: '安全与坐标', title: '历史专项错题' },
+        'g54-independent-check': { id: 'g54-independent-check', course: '工件坐标', title: 'G54独立检查' }
+      },
+      wrongItems: [{ questionId: 'av-legacy-02', title: '旧版兼容错题' }],
+      wrongQuestions: [{ id: 'g54-independent-check', title: '同题重复记录' }],
+      correct: [],
+      lessonScores: { 1: 100, 2: 100, 3: 80, 4: 60, 5: 20, 6: 80, 7: 60, 8: 0, 9: 40, 10: 40, 11: 0, 12: 0 },
+      legacyLessonScores: {}
+    }));
+    localStorage.setItem('cnc_study_completed_v1', JSON.stringify([1, 2, 3]));
+    const before = {
+      profile: localStorage.getItem('cnc_training_profile_v1'),
+      practice: localStorage.getItem('cnc_training_practice_v1'),
+      done: localStorage.getItem('cnc_study_completed_v1')
+    };
+    const state = window.CNC_TRAINING_PROFILE.snapshot();
+    const after = {
+      profile: localStorage.getItem('cnc_training_profile_v1'),
+      practice: localStorage.getItem('cnc_training_practice_v1'),
+      done: localStorage.getItem('cnc_study_completed_v1')
+    };
+    return { state, before, after };
+  });
+  assert.equal(compatibleWrong.state.integrity, true, '合法对象型/数组型历史错题兼容字段不能被误判为练习档案损坏');
+  assert.deepEqual(compatibleWrong.state.wrongIds.slice().sort(), ['av-legacy-02', 'g54-independent-check', 'sc-legacy-01'], '三类错题字段必须按题目ID去重汇总');
+  assert.equal(compatibleWrong.state.wrong, 3, '兼容错题总数必须按唯一题目ID统计');
+  assert.equal(compatibleWrong.state.dailyPlan.lesson, 5, '兼容错题不得改变真实薄弱课推荐');
+  assert.deepEqual(compatibleWrong.state.dailyPlan.lessonWrong, ['g54-independent-check'], '本关兼容错题必须精准回流到第5关');
+  assert.equal(compatibleWrong.state.dailyPlan.steps[1].otherWrong, 2, '其它专项兼容错题只能计入全局错题，不得劫持当前课程');
+  assert.deepEqual(compatibleWrong.after, compatibleWrong.before, '读取兼容错题不得改写profile/practice/done源学习数据');
+
   // 练习档案根对象虽然合法，但 wrong / lessonScores 嵌套证据损坏时也必须阻断，不能静默按0错题/0分继续生成计划。
   const practiceIntegrity = await page.evaluate(() => {
     localStorage.removeItem('cnc_daily_training_plan_v1');
@@ -300,7 +349,7 @@ let page;
       version: 2,
       gateVersion: 2,
       attempts: {},
-      wrong: { bad: 'g54-independent-check' },
+      wrong: { bad: 42 },
       correct: [],
       lessonScores: { 1: 100, 2: '100', 13: 80, 3: 120 },
       legacyLessonScores: {}
@@ -327,7 +376,7 @@ let page;
   await activeProfile.waitFor({ state: 'visible', timeout: 10000 });
   await page.waitForFunction(() => document.querySelector('#view-favorites.active #xp-training-profile')?.dataset.integrity === 'blocked', null, { timeout: 10000 });
   assert.equal(practiceIntegrity.state.integrity, false, '练习档案嵌套损坏必须进入共享成长档案完整性阻断');
-  assert.ok(practiceIntegrity.state.issues.includes('cnc_training_practice_v1.wrong:shape'), '对象型wrong必须明确标记结构异常');
+  assert.ok(practiceIntegrity.state.issues.includes('cnc_training_practice_v1.wrong:entry'), '对象型wrong中的非记录值必须明确标记条目异常');
   assert.ok(practiceIntegrity.state.issues.includes('cnc_training_practice_v1.lessonScores:entry'), '数值字符串/越界lessonScores必须明确标记条目异常');
   assert.equal(practiceIntegrity.complete.ok, false, '练习档案嵌套损坏时禁止写入今日训练完成记录');
   assert.equal(practiceIntegrity.complete.integrity, false);
