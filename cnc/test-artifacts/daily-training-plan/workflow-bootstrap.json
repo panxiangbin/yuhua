@@ -1,8 +1,0 @@
-{
-  "stage": "workflow-bootstrap",
-  "runId": "31982563244",
-  "eventName": "pull_request",
-  "testedHead": "859a76cac8b267093f8b5936e1c7dee2e3dc4344",
-  "eventSha": "a8c019ffb72e3d7020502011599ba21bb47ed1cd",
-  "initializedAt": "2026-08-17T00:39:35.692Z"
-}
