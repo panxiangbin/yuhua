@@ -16,7 +16,7 @@ let page;
   page.on('pageerror', error => errors.push(error.message));
 
   await page.goto('http://127.0.0.1:4173/cnc/?smoke=daily-plan', { waitUntil: 'domcontentloaded', timeout: 60000 });
-  await page.waitForFunction(() => window.CNC_TRAINING_PROFILE?.build === '20260817b', null, { timeout: 20000 });
+  await page.waitForFunction(() => window.CNC_TRAINING_PROFILE?.build === '20260817c', null, { timeout: 20000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-startup-home') === 'stable', null, { timeout: 15000 });
   await page.waitForFunction(() => window.CNC_GAME_QUERY_NAV?.build === '20260731d', null, { timeout: 15000 });
   // 成长档案样式由脚本动态挂载，并有一次启动补渲染。
@@ -281,6 +281,64 @@ let page;
   assert.equal(await activeProfile.locator('[data-profile-backup]').getAttribute('href'), './data-backup.html');
   const nestedRecoveryTouch = await activeProfile.locator('[data-profile-health],[data-profile-backup]').evaluateAll(nodes => Math.min(...nodes.map(node => node.getBoundingClientRect().height)));
   assert.ok(nestedRecoveryTouch >= 44, `嵌套完整性恢复入口触控高度不得小于44px：${nestedRecoveryTouch}`);
+  assert.doesNotMatch(await activeProfile.textContent(), /NaN|Infinity/);
+
+  // 练习档案根对象虽然合法，但 wrong / lessonScores 嵌套证据损坏时也必须阻断，不能静默按0错题/0分继续生成计划。
+  const practiceIntegrity = await page.evaluate(() => {
+    localStorage.removeItem('cnc_daily_training_plan_v1');
+    localStorage.setItem('cnc_training_profile_v1', JSON.stringify({
+      version: 1,
+      xp: 180,
+      badges: ['迈出第一步'],
+      completed: [1],
+      trainingDays: ['2026-08-17'],
+      currentStreak: 1,
+      bestStreak: 1,
+      lastTrainingDate: '2026-08-17'
+    }));
+    localStorage.setItem('cnc_training_practice_v1', JSON.stringify({
+      version: 2,
+      gateVersion: 2,
+      attempts: {},
+      wrong: { bad: 'g54-independent-check' },
+      correct: [],
+      lessonScores: { 1: 100, 2: '100', 13: 80, 3: 120 },
+      legacyLessonScores: {}
+    }));
+    localStorage.setItem('cnc_study_completed_v1', JSON.stringify([1]));
+    const before = {
+      profile: localStorage.getItem('cnc_training_profile_v1'),
+      practice: localStorage.getItem('cnc_training_practice_v1'),
+      done: localStorage.getItem('cnc_study_completed_v1'),
+      daily: localStorage.getItem('cnc_daily_training_plan_v1')
+    };
+    const state = window.CNC_TRAINING_PROFILE.snapshot();
+    const complete = window.CNC_TRAINING_PROFILE.completeToday();
+    window.CNC_TRAINING_PROFILE.render();
+    const after = {
+      profile: localStorage.getItem('cnc_training_profile_v1'),
+      practice: localStorage.getItem('cnc_training_practice_v1'),
+      done: localStorage.getItem('cnc_study_completed_v1'),
+      daily: localStorage.getItem('cnc_daily_training_plan_v1')
+    };
+    return { state, complete, before, after };
+  });
+  await profileNav.click();
+  await activeProfile.waitFor({ state: 'visible', timeout: 10000 });
+  await page.waitForFunction(() => document.querySelector('#view-favorites.active #xp-training-profile')?.dataset.integrity === 'blocked', null, { timeout: 10000 });
+  assert.equal(practiceIntegrity.state.integrity, false, '练习档案嵌套损坏必须进入共享成长档案完整性阻断');
+  assert.ok(practiceIntegrity.state.issues.includes('cnc_training_practice_v1.wrong:shape'), '对象型wrong必须明确标记结构异常');
+  assert.ok(practiceIntegrity.state.issues.includes('cnc_training_practice_v1.lessonScores:entry'), '数值字符串/越界lessonScores必须明确标记条目异常');
+  assert.equal(practiceIntegrity.complete.ok, false, '练习档案嵌套损坏时禁止写入今日训练完成记录');
+  assert.equal(practiceIntegrity.complete.integrity, false);
+  assert.deepEqual(practiceIntegrity.after, practiceIntegrity.before, '练习档案完整性阻断不得创建daily plan或改写profile/practice/done');
+  assert.match(practiceIntegrity.complete.reason, /学习数据异常/);
+  assert.match(await activeProfile.textContent(), /学习数据需要检查/);
+  assert.match(await activeProfile.textContent(), /已暂停个性化训练/);
+  assert.equal(await activeProfile.locator('[data-profile-health]').getAttribute('href'), './data-health.html');
+  assert.equal(await activeProfile.locator('[data-profile-backup]').getAttribute('href'), './data-backup.html');
+  const practiceRecoveryTouch = await activeProfile.locator('[data-profile-health],[data-profile-backup]').evaluateAll(nodes => Math.min(...nodes.map(node => node.getBoundingClientRect().height)));
+  assert.ok(practiceRecoveryTouch >= 44, `练习档案完整性恢复入口触控高度不得小于44px：${practiceRecoveryTouch}`);
   assert.doesNotMatch(await activeProfile.textContent(), /NaN|Infinity/);
 
   // 根级损坏不能伪装成零进度，更不能在“完成今日训练”时覆盖原始学习档案。

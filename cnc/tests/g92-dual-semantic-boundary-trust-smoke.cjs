@@ -23,9 +23,9 @@ if (aliasPos < 0 || gmPos < 0 || aliasPos >= gmPos) {
 for (const core of ["'./search-aliases.js'", "'./gm-code-complete.js'"]) {
   if (!swText.includes(core)) errors.push(`PWA首次安装核心缺少G92可信目录依赖：${core}`);
 }
-if (!swText.includes("const BUILD = '20260817-pwa49'")) errors.push('Service Worker未升级到20260817-pwa49');
-if (!swText.includes("const CACHE_REVISION = '20260817-learning49'")) errors.push('Service Worker缓存修订未升级到20260817-learning49');
-if (buildInfo.pwaBuild !== '20260817-pwa49' || buildInfo.cacheRevision !== '20260817-learning49') {
+if (!swText.includes("const BUILD = '20260817-pwa50'")) errors.push('Service Worker未升级到20260817-pwa50');
+if (!swText.includes("const CACHE_REVISION = '20260817-learning50'")) errors.push('Service Worker缓存修订未升级到20260817-learning50');
+if (buildInfo.pwaBuild !== '20260817-pwa50' || buildInfo.cacheRevision !== '20260817-learning50') {
   errors.push(`build-info与PWA38不一致：${buildInfo.pwaBuild} / ${buildInfo.cacheRevision}`);
 }
 if (!String(buildInfo.contentStage || '').includes('G92车铣双语义适用范围')) {
