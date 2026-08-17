@@ -44,13 +44,13 @@ jobs:
             initializedAt: new Date().toISOString()
           }, null, 2));
           NODE
-      - name: Temporary controlled PWA49 generator
+      - name: Temporary controlled PWA49 generator and workflow pin sync
         shell: bash
         run: |
           set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           if grep -q '20260817-pwa48' cnc/build-info.json; then
-            git config user.name 'github-actions[bot]'
-            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
             python3 cnc/tests/apply_training_profile_nested_integrity_pwa49.py 2>&1 | tee cnc/test-artifacts/daily-training-plan/pwa49-generator.log
             git diff --name-only | tee cnc/test-artifacts/daily-training-plan/pwa49-files.txt
             if git diff --name-only | grep -Ev '^cnc/'; then
@@ -62,8 +62,14 @@ jobs:
             git add cnc
             git commit -m 'CNC：阻断共享成长档案嵌套异常覆盖并同步PWA49'
             git push origin "HEAD:${{ github.head_ref || github.ref_name }}"
-          else
-            echo 'PWA49正式CNC生成内容已经存在，本次仅执行只读回归。'
+          fi
+          if [ -f cnc/tests/update_pwa49_workflow_pins.py ]; then
+            python3 cnc/tests/update_pwa49_workflow_pins.py 2>&1 | tee cnc/test-artifacts/daily-training-plan/pwa49-workflow-pins.log
+            if [ -n "$(git status --porcelain .github/workflows)" ]; then
+              git add .github/workflows
+              git commit -m 'CNC：同步PWA49工作流构建针'
+              git push origin "HEAD:${{ github.head_ref || github.ref_name }}"
+            fi
           fi
       - run: npm install --no-save playwright@1.52.0
       - run: npx playwright install --with-deps chromium
