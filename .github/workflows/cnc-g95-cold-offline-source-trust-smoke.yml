@@ -50,7 +50,7 @@ jobs:
           const fs = require('fs');
           const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
           const test = fs.readFileSync('cnc/tests/g95-cold-offline-source-trust-smoke.cjs', 'utf8');
-          if (info.pwaBuild !== '20260817-pwa51' || info.cacheRevision !== '20260817-learning51') {
+          if (info.pwaBuild !== '20260818-pwa52' || info.cacheRevision !== '20260818-learning52') {
             throw new Error(`unexpected build: ${info.pwaBuild}/${info.cacheRevision}`);
           }
           for (const token of [
