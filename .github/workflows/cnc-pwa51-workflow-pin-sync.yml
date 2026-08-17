@@ -1,0 +1,101 @@
+name: CNC PWA51 workflow pin controlled sync
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'cnc/tests/update_pwa51_workflow_pins.py'
+      - '.github/workflows/cnc-pwa51-workflow-pin-sync.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Verify exact tested head
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual="$(git rev-parse HEAD)"
+          expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          test "$actual" = "$expected"
+          mkdir -p cnc/test-artifacts/pwa51-workflow-pin-sync
+          printf '{"testedHead":"%s","expectedHead":"%s"}\n' "$actual" "$expected" > cnc/test-artifacts/pwa51-workflow-pin-sync/identity.json
+
+      - name: Configure Git identity
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+      - name: Generate PWA51 workflow pins
+        shell: bash
+        run: |
+          set -euo pipefail
+          python cnc/tests/update_pwa51_workflow_pins.py 2>&1 | tee cnc/test-artifacts/pwa51-workflow-pin-sync/generator.log
+          git diff --name-only -- .github/workflows > cnc/test-artifacts/pwa51-workflow-pin-sync/changed-workflows.txt
+
+      - name: Run central PWA build reference audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check cnc/tests/pwa-build-reference-audit-smoke.cjs
+          node cnc/tests/pwa-build-reference-audit-smoke.cjs
+
+      - name: Validate exact workflow scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          allowed = {
+            '.github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml',
+            '.github/workflows/cnc-beginner-placement-offline-pages-smoke.yml',
+            '.github/workflows/cnc-g95-cold-offline-source-trust-smoke.yml',
+            '.github/workflows/cnc-g96-g97-cold-offline-source-trust-smoke.yml',
+            '.github/workflows/cnc-g98-g99-cold-offline-source-trust-smoke.yml',
+            '.github/workflows/cnc-learning-media-smoke.yml',
+            '.github/workflows/cnc-pwa-offline-cache-smoke.yml',
+            '.github/workflows/cnc-pwa-self-test-smoke.yml',
+            '.github/workflows/cnc-pwa-upgrade-data-smoke.yml',
+            '.github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml',
+          }
+          got = {line.strip() for line in Path('cnc/test-artifacts/pwa51-workflow-pin-sync/changed-workflows.txt').read_text().splitlines() if line.strip()}
+          if got != allowed:
+              raise SystemExit(f'workflow scope mismatch missing={sorted(allowed-got)} extra={sorted(got-allowed)}')
+          PY
+
+      - name: Commit workflow pin sync
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add .github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml .github/workflows/cnc-beginner-placement-offline-pages-smoke.yml .github/workflows/cnc-g95-cold-offline-source-trust-smoke.yml .github/workflows/cnc-g96-g97-cold-offline-source-trust-smoke.yml .github/workflows/cnc-g98-g99-cold-offline-source-trust-smoke.yml .github/workflows/cnc-learning-media-smoke.yml .github/workflows/cnc-pwa-offline-cache-smoke.yml .github/workflows/cnc-pwa-self-test-smoke.yml .github/workflows/cnc-pwa-upgrade-data-smoke.yml .github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml
+          git commit -m 'CNC：同步PWA51工作流构建针'
+          git rev-parse HEAD > cnc/test-artifacts/pwa51-workflow-pin-sync/generated-commit.txt
+          git show --stat --oneline HEAD > cnc/test-artifacts/pwa51-workflow-pin-sync/stat.txt
+          git diff HEAD^ HEAD -- .github/workflows > cnc/test-artifacts/pwa51-workflow-pin-sync/patch.diff
+
+      - name: Push without force
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git push origin HEAD:${{ github.head_ref }}
+
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-pwa51-workflow-pin-sync-${{ github.run_id }}
+          path: cnc/test-artifacts/pwa51-workflow-pin-sync/
+          if-no-files-found: warn
