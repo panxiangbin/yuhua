@@ -6,7 +6,7 @@ function validDate(v){if(typeof v!=='string'||!v)return false;const m=v.match(/^
 function stageLevel(v){if(typeof v==='number'&&Number.isInteger(v)&&v>=1&&v<=12)return v;if(typeof v==='string'){const m=v.match(/^stage-(\d{1,2})$/i),n=Number(m&&m[1]);if(Number.isInteger(n)&&n>=1&&n<=12)return n}return null}
 function isPlainObject(v){return !!v&&typeof v==='object'&&!Array.isArray(v)}
 function wrongRecordId(item,fallbackKey){if(typeof item==='string'){const text=item.trim();return text||null}if(!isPlainObject(item))return null;for(const v of [item.questionId,item.id,item.key,fallbackKey]){if(typeof v==='string'&&v.trim())return v.trim()}return null}
-function wrongInvalidCount(value){if(Array.isArray(value))return value.filter(item=>!wrongRecordId(item,null)).length;if(isPlainObject(value))return Object.entries(value).filter(([key,item])=>!isPlainObject(item)||!wrongRecordId(item,key)).length;return value==null?0:1}
+function wrongInvalidCount(value){if(Array.isArray(value))return value.filter(item=>!wrongRecordId(item,null)).length;if(isPlainObject(value))return Object.entries(value).filter(([key,item])=>!isPlainObject(item)||!wrongRecordId(item,key)).length;return 1}
 function addCheck(name,level,detail){state.checks.push({name,level,detail})}
 function addRepair(key,type,label,apply){state.repairs.push({id:`${key}:${type}`,key,type,label,apply})}
 function setDisabled(disabled){document.getElementById('repair-btn').disabled=disabled;document.getElementById('rollback-btn').disabled=disabled;document.getElementById('confirm').disabled=disabled}
