@@ -44,13 +44,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Validate PWA49 and anti-bypass contract
+      - name: Validate PWA50 and anti-bypass contract
         run: |
           node <<'NODE'
           const fs = require('fs');
           const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
           const test = fs.readFileSync('cnc/tests/g96-g97-cold-offline-source-trust-smoke.cjs', 'utf8');
-          if (info.pwaBuild !== '20260817-pwa49' || info.cacheRevision !== '20260817-learning49') {
+          if (info.pwaBuild !== '20260817-pwa50' || info.cacheRevision !== '20260817-learning50') {
             throw new Error(`unexpected build: ${info.pwaBuild}/${info.cacheRevision}`);
           }
           for (const token of [
