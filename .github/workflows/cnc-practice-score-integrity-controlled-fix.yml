@@ -5,6 +5,7 @@ on:
     types: [opened, synchronize, reopened]
     paths:
       - 'cnc/tests/apply_practice_score_integrity_fix.py'
+      - 'cnc/tests/run_practice_score_integrity_fix_v2.py'
       - '.github/workflows/cnc-practice-score-integrity-controlled-fix.yml'
 
 permissions:
@@ -34,7 +35,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 cnc/tests/apply_practice_score_integrity_fix.py | tee /tmp/generator.log
+          python3 cnc/tests/run_practice_score_integrity_fix_v2.py | tee /tmp/generator.log
           node --check cnc/tests/mobile-data-health-smoke.cjs
           node --check cnc/tests/data-health-transaction-smoke.cjs
           node --check cnc/tests/mobile-data-backup-history-migration-smoke.cjs
