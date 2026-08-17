@@ -1,9 +1,9 @@
-name: CNC training profile stage compatibility PWA52 controlled fix
+name: CNC training profile PWA52 workflow pin controlled sync
 
 on:
   pull_request:
     paths:
-      - 'cnc/tests/apply_training_profile_stage_compat_pwa52.py'
+      - 'cnc/tests/update_pwa52_workflow_pins.py'
       - '.github/workflows/cnc-training-profile-stage-compat-pwa52-controlled.yml'
   workflow_dispatch:
 
@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 jobs:
-  controlled-fix:
+  controlled-sync:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -26,8 +26,8 @@ jobs:
           tested="$(git rev-parse HEAD)"
           expected="${{ github.event.pull_request.head.sha || github.sha }}"
           test "$tested" = "$expected"
-          mkdir -p /tmp/cnc-pwa52
-          printf '%s\n' "$tested" > /tmp/cnc-pwa52/tested-head.txt
+          mkdir -p /tmp/cnc-pwa52-workflows
+          printf '%s\n' "$tested" > /tmp/cnc-pwa52-workflows/tested-head.txt
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
@@ -35,44 +35,58 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-      - name: Generate scoped runtime and PWA52 changes
+      - name: Synchronize PWA52 workflow pins
         run: |
           set -euo pipefail
-          python3 cnc/tests/apply_training_profile_stage_compat_pwa52.py 2>&1 | tee /tmp/cnc-pwa52/generator.log
+          python3 cnc/tests/update_pwa52_workflow_pins.py 2>&1 | tee /tmp/cnc-pwa52-workflows/generator.log
           git diff --check
-          git diff --name-only | tee /tmp/cnc-pwa52/changed-files.txt
-          git diff > /tmp/cnc-pwa52/generated.patch
-      - name: Verify generated scope and syntax
+          git diff --name-only | tee /tmp/cnc-pwa52-workflows/changed-files.txt
+          git diff > /tmp/cnc-pwa52-workflows/generated.patch
+      - name: Verify exact 10-workflow scope
         shell: bash
         run: |
           set -euo pipefail
-          test -s /tmp/cnc-pwa52/changed-files.txt
-          if grep -Ev '^cnc/' /tmp/cnc-pwa52/changed-files.txt; then
-            echo '受控生成越过 cnc/** 范围' >&2
+          cat > /tmp/cnc-pwa52-workflows/expected-files.txt <<'EOF'
+          .github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml
+          .github/workflows/cnc-beginner-placement-offline-pages-smoke.yml
+          .github/workflows/cnc-g95-cold-offline-source-trust-smoke.yml
+          .github/workflows/cnc-g96-g97-cold-offline-source-trust-smoke.yml
+          .github/workflows/cnc-g98-g99-cold-offline-source-trust-smoke.yml
+          .github/workflows/cnc-learning-media-smoke.yml
+          .github/workflows/cnc-pwa-offline-cache-smoke.yml
+          .github/workflows/cnc-pwa-self-test-smoke.yml
+          .github/workflows/cnc-pwa-upgrade-data-smoke.yml
+          .github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml
+          EOF
+          sort -o /tmp/cnc-pwa52-workflows/expected-files.txt /tmp/cnc-pwa52-workflows/expected-files.txt
+          sort /tmp/cnc-pwa52-workflows/changed-files.txt > /tmp/cnc-pwa52-workflows/actual-files.txt
+          diff -u /tmp/cnc-pwa52-workflows/expected-files.txt /tmp/cnc-pwa52-workflows/actual-files.txt
+          grep -R -q '20260818-pwa52' $(cat /tmp/cnc-pwa52-workflows/expected-files.txt)
+          if grep -R '20260817-pwa51\|20260817-learning51' $(cat /tmp/cnc-pwa52-workflows/expected-files.txt); then
+            echo 'workflow current target still contains PWA51/learning51' >&2
             exit 1
           fi
-          node --check cnc/training-profile.js
-          node --check cnc/tests/mobile-training-profile-stage-compat-smoke.cjs
-          grep -q '20260818-pwa52' cnc/build-info.json
-          grep -q '20260818-learning52' cnc/build-info.json
-          grep -q "var BUILD='20260818a'" cnc/training-profile.js
-      - name: Create and push generated child commit
+      - name: Run central PWA build reference audit
+        run: |
+          set -euo pipefail
+          node cnc/tests/pwa-build-reference-audit-smoke.cjs 2>&1 | tee /tmp/cnc-pwa52-workflows/pwa-audit.log
+      - name: Create generated workflow child commit
         shell: bash
         run: |
           set -euo pipefail
-          git add cnc
-          git commit -m 'CNC：兼容共享课程完成stage-N并升级PWA52'
+          git add .github/workflows
+          git commit -m 'CNC：同步PWA52工作流构建针'
           child="$(git rev-parse HEAD)"
           parent="$(git rev-parse HEAD^)"
-          printf '%s\n' "$child" > /tmp/cnc-pwa52/child-sha.txt
-          printf '%s\n' "$parent" > /tmp/cnc-pwa52/parent-sha.txt
-          git show --stat --oneline HEAD > /tmp/cnc-pwa52/child-stat.txt
+          printf '%s\n' "$child" > /tmp/cnc-pwa52-workflows/child-sha.txt
+          printf '%s\n' "$parent" > /tmp/cnc-pwa52-workflows/parent-sha.txt
+          git show --stat --oneline HEAD > /tmp/cnc-pwa52-workflows/child-stat.txt
           git push origin "HEAD:${{ github.head_ref }}"
-      - name: Upload controlled generation diagnostics
+      - name: Upload controlled workflow sync diagnostics
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: cnc-training-profile-stage-compat-pwa52-${{ github.run_id }}
-          path: /tmp/cnc-pwa52/*
+          name: cnc-pwa52-workflow-pin-sync-${{ github.run_id }}
+          path: /tmp/cnc-pwa52-workflows/*
           if-no-files-found: warn
           retention-days: 14
