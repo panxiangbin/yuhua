@@ -10,6 +10,7 @@ OLD_MAIN = '20260815-pwa47'
 NEW_MAIN = OLD_PWA
 OLD_MAIN_CACHE = '20260815-learning47'
 NEW_MAIN_CACHE = OLD_CACHE
+TEMP_DAILY = 'cnc-daily-training-plan-smoke.yml'
 TRANSITION_FILES = {
     'cnc-ai-teacher-offline-core-pages-smoke.yml',
     'cnc-beginner-placement-offline-pages-smoke.yml',
@@ -18,6 +19,8 @@ TRANSITION_FILES = {
 
 changed=[]
 for path in sorted(WF.glob('cnc-*.yml')):
+    if path.name == TEMP_DAILY:
+        continue
     text=path.read_text(encoding='utf-8')
     updated=text.replace(OLD_PWA, NEW_PWA).replace(OLD_CACHE, NEW_CACHE)
     if path.name in TRANSITION_FILES:
@@ -29,8 +32,10 @@ for path in sorted(WF.glob('cnc-*.yml')):
 if not changed:
     raise SystemExit('没有发现需要同步的PWA49 CNC工作流构建针')
 
-# 四代治理：工作流中允许PWA49当前目标；PWA48仅允许三个Pages当前main过渡；PWA37/PWA35保持历史治理。
+# 四代治理：工作流中允许PWA49当前目标；PWA48仅允许三个Pages当前main过渡；临时daily中的PWA48条件会在最终清理时整体恢复主线只读版本。
 for path in sorted(WF.glob('cnc-*.yml')):
+    if path.name == TEMP_DAILY:
+        continue
     text=path.read_text(encoding='utf-8')
     if OLD_MAIN in text or OLD_MAIN_CACHE in text:
         raise SystemExit(f'仍存在旧PWA47当前main工作流引用：{path}')
