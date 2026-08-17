@@ -17,7 +17,7 @@ const assert = require('node:assert/strict');
       && nav.getAttribute('aria-hidden') === 'false'
       && !nav.hasAttribute('inert');
   }, null, { timeout: 20000 });
-  await page.waitForFunction(() => window.CNC_TRAINING_PROFILE?.build === '20260817a', null, { timeout: 20000 });
+  await page.waitForFunction(() => window.CNC_TRAINING_PROFILE?.build === '20260817b', null, { timeout: 20000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-startup-home') === 'stable', null, { timeout: 15000 });
 
   const startup = await page.evaluate(() => ({
@@ -39,7 +39,7 @@ const assert = require('node:assert/strict');
   assert.deepEqual(startup.oldHomes, [], '单层手机首页不得恢复已删除的双首页节点');
   assert.equal(startup.api.legacyHomeRemoved, true, '旧手机首页必须保持移除');
   assert.equal(startup.api.bottomNavReady, true, '真实五项底栏必须完成就绪');
-  assert.equal(startup.profileApi.build, '20260817a', '成长档案公开构建契约漂移');
+  assert.equal(startup.profileApi.build, '20260817b', '成长档案公开构建契约漂移');
   assert.equal(startup.profileApi.snapshot, true, '成长档案快照接口必须存在');
   assert.equal(startup.profileApi.render, true, '成长档案渲染接口必须存在');
   assert.equal(startup.homeProgress, '0/12', '零记录新手首页不得伪造课程进度');
