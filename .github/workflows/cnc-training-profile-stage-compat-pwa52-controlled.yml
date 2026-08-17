@@ -1,0 +1,78 @@
+name: CNC training profile stage compatibility PWA52 controlled fix
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/tests/apply_training_profile_stage_compat_pwa52.py'
+      - '.github/workflows/cnc-training-profile-stage-compat-pwa52-controlled.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  controlled-fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Verify exact tested head
+        shell: bash
+        run: |
+          set -euo pipefail
+          tested="$(git rev-parse HEAD)"
+          expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          test "$tested" = "$expected"
+          mkdir -p /tmp/cnc-pwa52
+          printf '%s\n' "$tested" > /tmp/cnc-pwa52/tested-head.txt
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Configure controlled commit identity
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+      - name: Generate scoped runtime and PWA52 changes
+        run: |
+          set -euo pipefail
+          python3 cnc/tests/apply_training_profile_stage_compat_pwa52.py 2>&1 | tee /tmp/cnc-pwa52/generator.log
+          git diff --check
+          git diff --name-only | tee /tmp/cnc-pwa52/changed-files.txt
+          git diff > /tmp/cnc-pwa52/generated.patch
+      - name: Verify generated scope and syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s /tmp/cnc-pwa52/changed-files.txt
+          if grep -Ev '^cnc/' /tmp/cnc-pwa52/changed-files.txt; then
+            echo '受控生成越过 cnc/** 范围' >&2
+            exit 1
+          fi
+          node --check cnc/training-profile.js
+          node --check cnc/tests/mobile-training-profile-stage-compat-smoke.cjs
+          grep -q '20260818-pwa52' cnc/build-info.json
+          grep -q '20260818-learning52' cnc/build-info.json
+          grep -q "var BUILD='20260818a'" cnc/training-profile.js
+      - name: Create and push generated child commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add cnc
+          git commit -m 'CNC：兼容共享课程完成stage-N并升级PWA52'
+          child="$(git rev-parse HEAD)"
+          parent="$(git rev-parse HEAD^)"
+          printf '%s\n' "$child" > /tmp/cnc-pwa52/child-sha.txt
+          printf '%s\n' "$parent" > /tmp/cnc-pwa52/parent-sha.txt
+          git show --stat --oneline HEAD > /tmp/cnc-pwa52/child-stat.txt
+          git push origin "HEAD:${{ github.head_ref }}"
+      - name: Upload controlled generation diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-training-profile-stage-compat-pwa52-${{ github.run_id }}
+          path: /tmp/cnc-pwa52/*
+          if-no-files-found: warn
+          retention-days: 14
