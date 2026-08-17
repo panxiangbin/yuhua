@@ -16,7 +16,7 @@ let page;
   page.on('pageerror', error => errors.push(error.message));
 
   await page.goto('http://127.0.0.1:4173/cnc/?smoke=daily-plan', { waitUntil: 'domcontentloaded', timeout: 60000 });
-  await page.waitForFunction(() => window.CNC_TRAINING_PROFILE?.build === '20260817a', null, { timeout: 20000 });
+  await page.waitForFunction(() => window.CNC_TRAINING_PROFILE?.build === '20260817b', null, { timeout: 20000 });
   await page.waitForFunction(() => document.body.getAttribute('data-cnc-startup-home') === 'stable', null, { timeout: 15000 });
   await page.waitForFunction(() => window.CNC_GAME_QUERY_NAV?.build === '20260731d', null, { timeout: 15000 });
   // 成长档案样式由脚本动态挂载，并有一次启动补渲染。
@@ -229,42 +229,59 @@ let page;
   assert.match(await page.locator('#xp-practice-panel').textContent(), /G54/);
   assert.deepEqual(errors, []);
 
-  // 损坏/导入异常共享数据必须只读降级；数值字符串、越界值、重复/未知课程与非法日期不能抬高进度。
-  const corruptReadOnly = await page.evaluate(() => {
-    const d = new Date();
-    const today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-    const profile = { version: 1, xp: '999', badges: ['迈出第一步', '迈出第一步', null, [], {}], completed: [1, '2', 2, 99], trainingDays: ['2026-08-13', '2026-08-13', '2026-02-30', null, [], {}], currentStreak: '99', bestStreak: '365', lastTrainingDate: '2026-02-30' };
-    const practice = { version: 2, gateVersion: 2, attempts: {}, wrong: ['g00-cutting', 'g00-cutting', null, '', {}, []], correct: [], lessonScores: { 1: '100', 2: 100, 3: 120, 4: -1, 5: '80', 6: null, 7: 80 }, legacyLessonScores: {} };
-    const done = [1, 2];
+  // 已存在但嵌套损坏的共享成长档案必须阻断个性化计划与训练完成写入，不能先静默归一化再覆盖证据。
+  const nestedIntegrity = await page.evaluate(() => {
+    localStorage.removeItem('cnc_daily_training_plan_v1');
+    const profile = {
+      version: 1,
+      xp: 360,
+      badges: ['迈出第一步', ' 迈出第一步 '],
+      completed: [1, 2],
+      trainingDays: ['2026-08-13', '2026-08-13', '2026-02-30'],
+      currentStreak: 2,
+      bestStreak: 2,
+      lastTrainingDate: '2026-08-13'
+    };
+    const practice = { version: 2, gateVersion: 2, attempts: {}, wrong: [], correct: [], lessonScores: { 1: 100, 2: 100, 3: 100 }, legacyLessonScores: {} };
+    const done = [1, 2, 3];
     localStorage.setItem('cnc_training_profile_v1', JSON.stringify(profile));
     localStorage.setItem('cnc_training_practice_v1', JSON.stringify(practice));
     localStorage.setItem('cnc_study_completed_v1', JSON.stringify(done));
-    localStorage.setItem('cnc_daily_training_plan_v1', JSON.stringify({ version: 1, date: today, lesson: '12' }));
-    const before = { profile: localStorage.getItem('cnc_training_profile_v1'), practice: localStorage.getItem('cnc_training_practice_v1'), done: localStorage.getItem('cnc_study_completed_v1') };
+    const before = {
+      profile: localStorage.getItem('cnc_training_profile_v1'),
+      practice: localStorage.getItem('cnc_training_practice_v1'),
+      done: localStorage.getItem('cnc_study_completed_v1'),
+      daily: localStorage.getItem('cnc_daily_training_plan_v1')
+    };
     const state = window.CNC_TRAINING_PROFILE.snapshot();
+    const complete = window.CNC_TRAINING_PROFILE.completeToday();
     window.CNC_TRAINING_PROFILE.render();
-    const after = { profile: localStorage.getItem('cnc_training_profile_v1'), practice: localStorage.getItem('cnc_training_practice_v1'), done: localStorage.getItem('cnc_study_completed_v1') };
-    return { state, before, after, dailyStored: JSON.parse(localStorage.getItem('cnc_daily_training_plan_v1')) };
+    const after = {
+      profile: localStorage.getItem('cnc_training_profile_v1'),
+      practice: localStorage.getItem('cnc_training_practice_v1'),
+      done: localStorage.getItem('cnc_study_completed_v1'),
+      daily: localStorage.getItem('cnc_daily_training_plan_v1')
+    };
+    return { state, complete, before, after };
   });
-  assert.deepEqual(corruptReadOnly.after, corruptReadOnly.before, '读取损坏共享学习数据不得静默改写原始profile/practice/done');
-  assert.equal(corruptReadOnly.state.xp, 0, '数值字符串XP不得被信任');
-  assert.equal(corruptReadOnly.state.completed, 2, '字符串课程号不得计入固定12关完成数');
-  assert.equal(corruptReadOnly.state.wrong, 1, '错题只接受非空字符串ID并去重');
-  assert.equal(corruptReadOnly.state.badges.length, 1, '徽章字符串必须去重并过滤异常项');
-  assert.equal(corruptReadOnly.state.streak.current, 0, '字符串连续天数不得被信任');
-  assert.equal(corruptReadOnly.state.streak.best, 0, '字符串历史连续天数不得被信任');
-  assert.equal(corruptReadOnly.state.streak.total, 1, '训练日期必须严格校验并去重');
-  assert.equal(corruptReadOnly.state.lessons.find(item => item.level === 1).score, 0, '字符串100分不得被信任');
-  assert.equal(corruptReadOnly.state.lessons.find(item => item.level === 2).score, 100, '合法数字100分必须保留');
-  assert.equal(corruptReadOnly.state.lessons.find(item => item.level === 3).score, 0, '120分不得进入课程成绩');
-  assert.equal(corruptReadOnly.state.lessons.find(item => item.level === 4).score, 0, '负分不得进入课程成绩');
-  assert.equal(corruptReadOnly.state.lessons.find(item => item.level === 5).score, 0, '字符串80分不得被信任');
-  assert.equal(corruptReadOnly.state.dailyPlan.lesson, 3, '字符串缓存课程号不得劫持今日推荐');
-  assert.equal(corruptReadOnly.dailyStored.lesson, 3, '无效日计划只允许重建独立daily plan缓存');
-  assert.doesNotMatch(JSON.stringify(corruptReadOnly.state), /NaN|Infinity/, '共享训练状态不得泄露NaN/Infinity');
-  const corruptLayout = await page.evaluate(() => ({ scrollWidth: document.documentElement.scrollWidth, innerWidth, text: document.body.innerText }));
-  assert.ok(corruptLayout.scrollWidth <= corruptLayout.innerWidth + 1, `损坏数据场景不得产生手机横向溢出：${JSON.stringify(corruptLayout)}`);
-  assert.doesNotMatch(corruptLayout.text, /NaN|Infinity/, '损坏数据场景页面不得显示NaN/Infinity');
+  await profileNav.click();
+  await activeProfile.waitFor({ state: 'visible', timeout: 10000 });
+  await page.waitForFunction(() => document.querySelector('#view-favorites.active #xp-training-profile')?.dataset.integrity === 'blocked', null, { timeout: 10000 });
+  assert.equal(nestedIntegrity.state.integrity, false, '嵌套损坏的共享成长档案必须进入完整性阻断');
+  assert.ok(nestedIntegrity.state.issues.includes('cnc_training_profile_v1.trainingDays:entry'), '非法训练日期必须明确标记');
+  assert.ok(nestedIntegrity.state.issues.includes('cnc_training_profile_v1.trainingDays:duplicate'), '重复训练日期必须明确标记');
+  assert.ok(nestedIntegrity.state.issues.includes('cnc_training_profile_v1.badges:duplicate'), '空白变体重复徽章必须明确标记');
+  assert.equal(nestedIntegrity.complete.ok, false, '嵌套损坏档案不得写入今日训练完成记录');
+  assert.equal(nestedIntegrity.complete.integrity, false);
+  assert.deepEqual(nestedIntegrity.after, nestedIntegrity.before, '完整性阻断不得创建daily plan或覆盖嵌套损坏profile/practice/done');
+  assert.match(nestedIntegrity.complete.reason, /学习数据异常/);
+  assert.match(await activeProfile.textContent(), /学习数据需要检查/);
+  assert.match(await activeProfile.textContent(), /已暂停个性化训练/);
+  assert.equal(await activeProfile.locator('[data-profile-health]').getAttribute('href'), './data-health.html');
+  assert.equal(await activeProfile.locator('[data-profile-backup]').getAttribute('href'), './data-backup.html');
+  const nestedRecoveryTouch = await activeProfile.locator('[data-profile-health],[data-profile-backup]').evaluateAll(nodes => Math.min(...nodes.map(node => node.getBoundingClientRect().height)));
+  assert.ok(nestedRecoveryTouch >= 44, `嵌套完整性恢复入口触控高度不得小于44px：${nestedRecoveryTouch}`);
+  assert.doesNotMatch(await activeProfile.textContent(), /NaN|Infinity/);
 
   // 根级损坏不能伪装成零进度，更不能在“完成今日训练”时覆盖原始学习档案。
   const rootIntegrity = await page.evaluate(() => {
