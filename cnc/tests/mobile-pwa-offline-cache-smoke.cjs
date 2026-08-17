@@ -7,8 +7,8 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const out = path.join(root, 'cnc/test-results');
-const PWA_BUILD = '20260817-pwa49';
-const CACHE_REVISION = '20260817-learning49';
+const PWA_BUILD = '20260817-pwa50';
+const CACHE_REVISION = '20260817-learning50';
 const PLACEMENT_FIRST_STEP_COURSES = [
   {
     path: './course-safety-foundation.html',

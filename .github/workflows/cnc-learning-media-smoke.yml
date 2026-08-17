@@ -59,7 +59,7 @@ jobs:
           },null,2));
           NODE
 
-      - name: Validate committed PWA49 media contract
+      - name: Validate committed PWA50 media contract
         shell: bash
         run: |
           set -euo pipefail
@@ -67,12 +67,12 @@ jobs:
           for name in "${files[@]}"; do
             test -s "cnc/assets/videos/learning/$name"
           done
-          grep -q '20260817-pwa49' cnc/build-info.json
-          grep -q '20260817-learning49' cnc/build-info.json
-          grep -q '20260817-pwa49' cnc/sw.js
-          grep -q '20260817-learning49' cnc/sw.js
-          grep -q '20260817-pwa49' cnc/pwa-status.html
-          grep -q '20260817-pwa49' cnc/pwa-self-test.html
+          grep -q '20260817-pwa50' cnc/build-info.json
+          grep -q '20260817-learning50' cnc/build-info.json
+          grep -q '20260817-pwa50' cnc/sw.js
+          grep -q '20260817-learning50' cnc/sw.js
+          grep -q '20260817-pwa50' cnc/pwa-status.html
+          grep -q '20260817-pwa50' cnc/pwa-self-test.html
           grep -q 'T/H刀长补偿映射适用范围' cnc/build-info.json
           grep -q 'G10可编程数据写入适用范围' cnc/build-info.json
           grep -q 'G/M代码首次安装离线核心' cnc/build-info.json
@@ -87,7 +87,7 @@ jobs:
           grep -q 'const videoNames=' cnc/learning-detail.html
           test "$(grep -o "assets/videos/learning/stage[0-9][0-9]_[a-z0-9_]*.mp4" cnc/sw.js | sort -u | wc -l)" -eq 12
           test "$(grep -o "assets/videos/learning/stage[0-9][0-9]_[a-z0-9_]*.mp4" cnc/pwa-self-test.html | sort -u | wc -l)" -eq 12
-          echo 'Committed PWA49 media contract passed.'
+          echo 'Committed PWA50 media contract passed.'
 
       - name: Install ffmpeg runtime
         shell: bash
