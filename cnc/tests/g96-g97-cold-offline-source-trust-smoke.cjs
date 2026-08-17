@@ -7,8 +7,8 @@ const { ensureControlled } = require('./pwa-controller-test-helper.cjs');
 
 const root = path.resolve(__dirname, '../..');
 const outDir = path.join(root, 'cnc/test-results/g96-g97-cold-offline-source-trust');
-const PWA_BUILD = '20260817-pwa50';
-const CACHE_REVISION = '20260817-learning50';
+const PWA_BUILD = '20260817-pwa51';
+const CACHE_REVISION = '20260817-learning51';
 let offlineProbeHits = 0;
 let originServerStopped = false;
 let coldOfflineConsoleWindow = false;
