@@ -1,0 +1,65 @@
+name: CNC backup wrong integrity controlled fix
+
+on:
+  push:
+    branches:
+      - codex/cnc-backup-wrong-integrity
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact branch head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Verify tested head
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          printf '{"testedHead":"%s","expectedHead":"%s"}\n' "$(git rev-parse HEAD)" "${GITHUB_SHA}" > identity.json
+      - name: Configure commit identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Apply scoped CNC patch
+        run: python3 cnc/tests/apply_backup_wrong_integrity_fix.py
+      - name: Verify exact target scope and syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --check
+          git diff --name-only > changed.txt
+          printf '%s\n' \
+            cnc/data-backup.html \
+            cnc/data-health.html \
+            cnc/tests/mobile-data-backup-history-migration-smoke.cjs \
+            cnc/tests/mobile-data-health-smoke.cjs | sort > expected.txt
+          sort changed.txt > actual.txt
+          diff -u expected.txt actual.txt
+          node --check cnc/tests/mobile-data-backup-history-migration-smoke.cjs
+          node --check cnc/tests/mobile-data-health-smoke.cjs
+      - name: Commit and push target-only repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add cnc/data-backup.html cnc/data-health.html cnc/tests/mobile-data-backup-history-migration-smoke.cjs cnc/tests/mobile-data-health-smoke.cjs
+          git commit -m "CNC：阻断损坏错题记录自动恢复"
+          git push origin HEAD:codex/cnc-backup-wrong-integrity
+      - name: Upload generation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-backup-wrong-integrity-controlled-fix-${{ github.sha }}
+          path: |
+            identity.json
+            changed.txt
+            actual.txt
+            expected.txt
+          if-no-files-found: warn
