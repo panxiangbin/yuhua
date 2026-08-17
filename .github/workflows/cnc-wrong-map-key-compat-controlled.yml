@@ -4,24 +4,29 @@ on:
   push:
     branches:
       - codex/cnc-wrong-map-key-compat
+  pull_request:
+    branches:
+      - main
 
 permissions:
   contents: write
 
 jobs:
   apply:
-    if: github.actor != 'github-actions[bot]'
+    if: github.actor != 'github-actions[bot]' && (github.event_name == 'push' || github.event.pull_request.head.ref == 'codex/cnc-wrong-map-key-compat')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout exact tested head
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.sha }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
       - name: Prove tested commit identity
         shell: bash
         run: |
-          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "$(git rev-parse HEAD)" = "${EXPECTED_HEAD}"
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Configure bot commit identity
         shell: bash
         run: |
