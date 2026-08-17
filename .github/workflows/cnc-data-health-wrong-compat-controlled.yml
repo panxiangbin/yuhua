@@ -1,0 +1,77 @@
+name: CNC data health wrong compatibility controlled fix
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'cnc/tests/apply_data_health_wrong_compat_fix.py'
+      - '.github/workflows/cnc-data-health-wrong-compat-controlled.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  controlled-fix:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Verify exact head identity
+        shell: bash
+        run: |
+          expected='${{ github.event.pull_request.head.sha || github.sha }}'
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+          printf '{"testedHead":"%s","expectedHead":"%s"}\n' "$actual" "$expected" > /tmp/identity.json
+
+      - name: Apply scoped CNC fix
+        run: python3 cnc/tests/apply_data_health_wrong_compat_fix.py
+
+      - name: Validate JavaScript and scope
+        shell: bash
+        run: |
+          node --check cnc/tests/mobile-data-health-smoke.cjs
+          node --check cnc/tests/data-health-transaction-smoke.cjs
+          python3 - <<'PY'
+          from pathlib import Path
+          text=Path('cnc/data-health.html').read_text(encoding='utf-8')
+          script=text.split('<script>',1)[1].split('</script>',1)[0]
+          Path('/tmp/data-health.js').write_text(script,encoding='utf-8')
+          PY
+          node --check /tmp/data-health.js
+          mapfile -t files < <(git diff --name-only)
+          printf '%s\n' "${files[@]}"
+          test "${#files[@]}" -eq 3
+          printf '%s\n' "${files[@]}" | sort > /tmp/actual-files.txt
+          printf '%s\n' \
+            'cnc/data-health.html' \
+            'cnc/tests/data-health-transaction-smoke.cjs' \
+            'cnc/tests/mobile-data-health-smoke.cjs' | sort > /tmp/expected-files.txt
+          diff -u /tmp/expected-files.txt /tmp/actual-files.txt
+
+      - name: Commit generated CNC files
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add cnc/data-health.html cnc/tests/data-health-transaction-smoke.cjs cnc/tests/mobile-data-health-smoke.cjs
+          git commit -m 'CNC：统一数据健康错题兼容结构语义'
+
+      - name: Push generated commit
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: git push origin HEAD:${{ github.event.pull_request.head.ref }}
+
+      - name: Upload identity
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-data-health-wrong-compat-controlled-${{ github.run_id }}
+          path: /tmp/identity.json
+          if-no-files-found: error
