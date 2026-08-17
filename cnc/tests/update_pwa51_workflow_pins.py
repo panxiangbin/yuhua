@@ -46,6 +46,6 @@ for rel in WORKFLOWS:
     if PREVIOUS_PWA in text or PREVIOUS_CACHE in text:
         raise RuntimeError(f'{rel}: stale PWA50 workflow target pins remain after sync')
 
-print('通过：10个CNC-only workflow已同步PWA51当前目标构建针。')
+print('OK: 10 CNC-only workflows synced to PWA51 target pins.')
 for rel in changed:
     print(rel)
