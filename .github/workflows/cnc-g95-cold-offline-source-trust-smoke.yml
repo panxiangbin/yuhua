@@ -44,13 +44,13 @@ jobs:
           expected='${{ github.event.pull_request.head.sha || github.sha }}'
           actual="$(git rev-parse HEAD)"
           test "$actual" = "$expected" || { echo "exact-head mismatch: expected=$expected actual=$actual" >&2; exit 1; }
-      - name: Validate PWA53 and anti-bypass contract
+      - name: Validate PWA54 and anti-bypass contract
         run: |
           node <<'NODE'
           const fs = require('fs');
           const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
           const test = fs.readFileSync('cnc/tests/g95-cold-offline-source-trust-smoke.cjs', 'utf8');
-          if (info.pwaBuild !== '20260818-pwa53' || info.cacheRevision !== '20260818-learning53') {
+          if (info.pwaBuild !== '20260818-pwa54' || info.cacheRevision !== '20260818-learning54') {
             throw new Error(`unexpected build: ${info.pwaBuild}/${info.cacheRevision}`);
           }
           for (const token of [
