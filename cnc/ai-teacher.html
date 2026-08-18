@@ -227,6 +227,13 @@
     {key:'cnc_training_simulator_v1',kind:'object'},
     {key:'cnc_training_exam_v1',kind:'object'}
   ];
+  const KEYS = Object.freeze({
+    study:'cnc_study_completed_v1',
+    profile:'cnc_training_profile_v1',
+    practice:'cnc_training_practice_v1',
+    simulator:'cnc_training_simulator_v1',
+    exam:'cnc_training_exam_v1'
+  });
 
   function isPlainObject(value){return Boolean(value)&&typeof value==='object'&&!Array.isArray(value)}
   function validLessonId(value){return Number.isInteger(value)&&value>=1&&value<=12?value:null}
