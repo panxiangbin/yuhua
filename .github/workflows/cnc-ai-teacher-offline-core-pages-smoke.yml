@@ -88,11 +88,15 @@ jobs:
           ]) {
             if (!test.includes(token)) throw new Error(`deployment test missing: ${token}`);
           }
-          for (const file of ['./training-practice.js','./training-profile.js','./search-aliases.js','./gm-code-complete.js','./learning-content-data.js','./beginner-placement.html','./training-camp.html','./learning-sublesson-specificity.js','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html','./ai-teacher.html','./ai-teacher-intake.html','./ai-teacher-explainability.html']) {
+          for (const file of [
+            './training-practice.js','./training-profile.js','./search-aliases.js','./gm-code-complete.js','./learning-content-data.js','./beginner-placement.html','./training-camp.html','./learning-sublesson-specificity.js','./course-safety-foundation.html','./course-coordinate-axes.html','./course-g00-g01-basics.html','./ai-teacher.html','./ai-teacher-intake.html','./ai-teacher-explainability.html'
+          ]) {
             if (!sw.includes(`'${file}'`)) throw new Error(`Service Worker core missing: ${file}`);
             if (!selfTest.includes(file)) throw new Error(`self-test core missing: ${file}`);
           }
-          for (const video of ['./assets/videos/learning/stage01_safety.mp4','./assets/videos/learning/stage02_xyz.mp4','./assets/videos/learning/stage03_z_tool.mp4','./assets/videos/learning/stage04_program.mp4','./assets/videos/learning/stage05_g90_g91.mp4','./assets/videos/learning/stage06_g00_g01.mp4','./assets/videos/learning/stage07_sf.mp4','./assets/videos/learning/stage08_g02_g03.mp4','./assets/videos/learning/stage09_milling_direction.mp4','./assets/videos/learning/stage10_g41_g42.mp4','./assets/videos/learning/stage11_g81_g83.mp4','./assets/videos/learning/stage12_first_part.mp4']) {
+          for (const video of [
+            './assets/videos/learning/stage01_safety.mp4','./assets/videos/learning/stage02_xyz.mp4','./assets/videos/learning/stage03_z_tool.mp4','./assets/videos/learning/stage04_program.mp4','./assets/videos/learning/stage05_g90_g91.mp4','./assets/videos/learning/stage06_g00_g01.mp4','./assets/videos/learning/stage07_sf.mp4','./assets/videos/learning/stage08_g02_g03.mp4','./assets/videos/learning/stage09_milling_direction.mp4','./assets/videos/learning/stage10_g41_g42.mp4','./assets/videos/learning/stage11_g81_g83.mp4','./assets/videos/learning/stage12_first_part.mp4'
+          ]) {
             if (!sw.includes(`'${video}'`)) throw new Error(`Service Worker video core missing: ${video}`);
             if (!selfTest.includes(video)) throw new Error(`self-test video core missing: ${video}`);
           }
@@ -100,9 +104,37 @@ jobs:
           if (!placement.includes('cnc_beginner_placement_route_handoff_v1') || !camp.includes('cnc_beginner_placement_route_handoff_v1')) throw new Error('placement route handoff producer or consumer missing');
           if (!status.includes(`const EXPECTED='${info.pwaBuild}'`) || !status.includes(`const EXPECTED_CACHE='${info.cacheRevision}'`)) throw new Error('PWA status build/cache mismatch');
           if (!selfTest.includes(`const EXPECTED='${info.pwaBuild}'`) || !selfTest.includes(`const EXPECTED_CACHE='${info.cacheRevision}'`)) throw new Error('PWA self-test build/cache mismatch');
-          for (const token of ['练习达到80分只能作为能力证据','必须同时完成当天目标课程的真实通关记录','才能增加训练天数、连续训练和20 XP','不能假定轨迹必然为固定直线或固定折线','不能把“先Z后XY”教成所有机床通用规则','12关主课程数据','T/H编号相同只是常见工具管理约定','不能仅凭T01后调用H02就直接判错','G/M代码可信目录','G10可编程数据写入适用范围','备份原数据','授权人员确认','G28参考点返回适用范围','G53机床坐标定位适用范围','G92车铣双语义适用范围','G94车铣双语义适用范围','G98/G99车铣双语义适用范围','两类程序不能直接互抄','G52/G54-G59','X/Z或U/W','I/Q/F','主轴同步','初始平面','R平面','单位制','F含义','教学格式示意不得直接作为真实机床参数']) {
-            if (!status.includes(token)) throw new Error(`PWA status explanation missing: ${token}`);
-            if (!selfTest.includes(token)) throw new Error(`PWA self-test explanation missing: ${token}`);
+          for (const token of [
+            '练习达到80分只能作为能力证据',
+            '必须同时完成当天目标课程的真实通关记录',
+            '才能增加训练天数、连续训练和20 XP',
+            '不能假定轨迹必然为固定直线或固定折线',
+            '不能把“先Z后XY”教成所有机床通用规则',
+            '12关主课程数据',
+            'T/H编号相同只是常见工具管理约定',
+            '不能仅凭T01后调用H02就直接判错',
+            'G/M代码可信目录',
+            'G10可编程数据写入适用范围',
+            '备份原数据',
+            '授权人员确认',
+            'G28参考点返回适用范围',
+            'G53机床坐标定位适用范围',
+            'G92车铣双语义适用范围',
+            'G94车铣双语义适用范围',
+            'G98/G99车铣双语义适用范围',
+            '两类程序不能直接互抄',
+            'G52/G54-G59',
+            'X/Z或U/W',
+            'I/Q/F',
+            '主轴同步',
+            '初始平面',
+            'R平面',
+            '单位制',
+            'F含义',
+            '教学格式示意不得直接作为真实机床参数'
+          ]) {
+            if (!status.includes(token)) throw new Error(`PWA status PWA33 explanation missing: ${token}`);
+            if (!selfTest.includes(token)) throw new Error(`PWA self-test PWA33 explanation missing: ${token}`);
           }
           if (!status.includes('G90/G91下的绝对或增量解释')) throw new Error('PWA status缺少G10在G90/G91下的解释边界');
           if (!selfTest.includes('G90/G91绝对或增量解释')) throw new Error('PWA self-test缺少G10在G90/G91下的解释边界');
