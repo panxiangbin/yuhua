@@ -1,0 +1,86 @@
+name: CNC AI teacher wrong-key PWA53 controlled fix
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/tests/apply_ai_teacher_wrong_key_pwa53.py'
+      - '.github/workflows/cnc-ai-teacher-wrong-key-pwa53-controlled.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  controlled-fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Verify exact tested head
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha }}"
+
+      - name: Configure bot identity
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Apply scoped CNC runtime patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          python cnc/tests/apply_ai_teacher_wrong_key_pwa53.py 2>&1 | tee generator.log
+
+      - name: Validate generated scope and syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --check
+          changed="$(git diff --name-only)"
+          test -n "$changed"
+          if printf '%s\n' "$changed" | grep -Ev '^cnc/' ; then
+            echo '发现 CNC 范围外改动，拒绝生成。' >&2
+            exit 1
+          fi
+          node --check cnc/tests/ai-teacher-data-integrity-smoke.cjs
+          node --check cnc/tests/pages-ai-teacher-offline-core-deployment-smoke.cjs
+          node --check cnc/tests/pages-beginner-placement-offline-deployment-smoke.cjs
+          node --check cnc/tests/pages-training-camp-route-handoff-deployment-smoke.cjs
+
+      - name: Save generated patch manifest
+        if: always()
+        shell: bash
+        run: |
+          git rev-parse HEAD > tested-head.txt
+          git diff --name-only > generated-files.txt || true
+          git diff --stat > generated-stat.txt || true
+          git diff > generated.patch || true
+
+      - name: Commit generated CNC runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add cnc
+          git commit -m "CNC：兼容AI老师错题对象键并升级PWA53"
+          git rev-parse HEAD > generated-child-head.txt
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
+
+      - name: Upload controlled-fix evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-ai-teacher-wrong-key-pwa53-controlled-${{ github.event.pull_request.head.sha }}
+          path: |
+            generator.log
+            tested-head.txt
+            generated-child-head.txt
+            generated-files.txt
+            generated-stat.txt
+            generated.patch
+          if-no-files-found: warn
