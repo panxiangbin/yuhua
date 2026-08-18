@@ -8,9 +8,10 @@ const path = require('path');
   const root = path.resolve(__dirname, '../..');
   const profileSource = fs.readFileSync(path.join(root, 'cnc/profile.html'), 'utf8');
   for (const token of [
-    '...listValues(d.wrongQuestions)',
-    '...listValues(d.wrongItems)',
-    '...listValues(d.wrong)',
+    '...wrongEntries(d.wrongQuestions)',
+    '...wrongEntries(d.wrongItems)',
+    '...wrongEntries(d.wrong)',
+    "function wrongQuestionId(w,fallback='')",
     "const SOURCE_PREFIXES=[['sc-','safety-coordinate'],['av-','advanced-verification'],['dsp-','drawing-setup-process'],['pfsd-','program-fill-sort-debug'],['apf-','alarm-parameter-first-piece']]",
     'const key=`${sid}:${id}`',
     "const SIM_IDS=['homing','workholding-check','tool-installation','tool-length-offset-check','work-offset-setting','program-dry-run','single-block-first-approach','graphics-segment-prediction','first-piece-inspection','alarm-troubleshooting','cutter-comp-risk','hole-cycle-troubleshooting','measurement-vs-machining-error']",
@@ -57,8 +58,8 @@ const path = require('path');
           { id: 'pfsd-04', source: 'program-fill-sort-debug', ability: '程序验证', risk: '中' }
         ],
         wrong: {
-          safetyMirror: { id: 'sc-05', ability: '安全基础', risk: '高' },
-          drawingDuplicate: { id: 'dsp-02', practice: 'drawing-setup-process', ability: '图纸识读', risk: '中' }
+          'sc-05': { ability: '安全基础', risk: '高' },
+          'dsp-02': { practice: 'drawing-setup-process', ability: '图纸识读', risk: '中' }
         }
       }));
       localStorage.setItem('cnc_training_simulator_v1', JSON.stringify({
