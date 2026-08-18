@@ -4,8 +4,6 @@ import subprocess
 TARGETS = [
     '.github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml',
     '.github/workflows/cnc-beginner-placement-offline-pages-smoke.yml',
-    '.github/workflows/cnc-g95-cold-offline-source-trust-smoke.yml',
-    '.github/workflows/cnc-g96-g97-cold-offline-source-trust-smoke.yml',
     '.github/workflows/cnc-g98-g99-cold-offline-source-trust-smoke.yml',
     '.github/workflows/cnc-learning-media-smoke.yml',
     '.github/workflows/cnc-pwa-offline-cache-smoke.yml',
@@ -26,7 +24,7 @@ for name in TARGETS:
     old_pwa_count = text.count(old_pwa)
     old_cache_count = text.count(old_cache)
     if old_pwa_count + old_cache_count == 0:
-        raise SystemExit(f'{name}: no PWA52 target pins found')
+        raise SystemExit(f'{name}: no remaining PWA52 target pins found')
     updated = text.replace(old_pwa, new_pwa).replace(old_cache, new_cache)
     if old_pwa in updated or old_cache in updated:
         raise SystemExit(f'{name}: residual old target pin after replacement')
@@ -39,4 +37,4 @@ if sorted(actual) != sorted(TARGETS):
 
 for name, pwa_count, cache_count in changed:
     print(f'{name}: pwa={pwa_count}, cache={cache_count}')
-print('OK: PWA53 workflow target pins synchronized in exactly 10 CNC-only workflows.')
+print('OK: PWA53 workflow target pins synchronized in exactly 8 remaining CNC-only workflows.')
