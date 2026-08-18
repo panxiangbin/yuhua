@@ -1,0 +1,93 @@
+name: CNC training achievements wrong-key controlled fix
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/tests/apply_training_achievements_wrong_key_fix.py'
+      - 'cnc/tests/training-achievements-wrong-compat-smoke.cjs'
+      - '.github/workflows/cnc-training-achievements-wrong-key-controlled-fix.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  controlled-fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Verify exact tested head
+        shell: bash
+        run: |
+          set -euo pipefail
+          tested="$(git rev-parse HEAD)"
+          expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          test "$tested" = "$expected"
+          mkdir -p cnc/test-artifacts/training-achievements-wrong-key-fix
+          printf '{"testedHead":"%s","expectedHead":"%s"}\n' "$tested" "$expected" > cnc/test-artifacts/training-achievements-wrong-key-fix/identity.json
+
+      - name: Configure commit identity
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+      - name: Apply scoped CNC fix
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 cnc/tests/apply_training_achievements_wrong_key_fix.py | tee cnc/test-artifacts/training-achievements-wrong-key-fix/generator.log
+
+      - name: Audit exact one-file production scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t files < <(git diff --name-only)
+          printf '%s\n' "${files[@]}" > cnc/test-artifacts/training-achievements-wrong-key-fix/changed-files.txt
+          if [ "${#files[@]}" -ne 1 ] || [ "${files[0]}" != 'cnc/training-achievements.html' ]; then
+            echo '受控修复超出唯一允许文件 cnc/training-achievements.html' >&2
+            printf '%s\n' "${files[@]}" >&2
+            exit 1
+          fi
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          html = Path('cnc/training-achievements.html').read_text(encoding='utf-8')
+          scripts = re.findall(r'<script>(.*?)</script>', html, re.S)
+          if len(scripts) != 1:
+              raise SystemExit(f'成长成果页内联脚本数量异常：{len(scripts)}')
+          Path('/tmp/cnc-training-achievements-inline.js').write_text(scripts[0], encoding='utf-8')
+          PY
+          node --check /tmp/cnc-training-achievements-inline.js
+          node --check cnc/tests/training-achievements-wrong-compat-smoke.cjs
+
+      - name: Commit exact production fix
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add cnc/training-achievements.html
+          git commit -m 'CNC：兼容成长成果错题对象键历史结构'
+          git rev-parse HEAD > cnc/test-artifacts/training-achievements-wrong-key-fix/generated-commit.txt
+          git show --stat --oneline HEAD > cnc/test-artifacts/training-achievements-wrong-key-fix/generated-stat.txt
+
+      - name: Push exact child commit
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
+
+      - name: Upload controlled-fix diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-training-achievements-wrong-key-fix-${{ github.run_id }}
+          path: cnc/test-artifacts/training-achievements-wrong-key-fix/*
+          if-no-files-found: error
+          retention-days: 14
