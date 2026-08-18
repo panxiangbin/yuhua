@@ -1,0 +1,107 @@
+name: CNC AI teacher nested integrity contract smoke
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/ai-teacher.html'
+      - 'cnc/training-profile.js'
+      - 'cnc/tests/ai-teacher-nested-integrity-contract-smoke.cjs'
+      - '.github/workflows/cnc-ai-teacher-nested-integrity-contract-smoke.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'cnc/ai-teacher.html'
+      - 'cnc/training-profile.js'
+      - 'cnc/tests/ai-teacher-nested-integrity-contract-smoke.cjs'
+      - '.github/workflows/cnc-ai-teacher-nested-integrity-contract-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cnc-ai-teacher-nested-integrity-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact tested head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Verify exact tested head
+        shell: bash
+        run: |
+          expected='${{ github.event.pull_request.head.sha || github.sha }}'
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+          mkdir -p cnc/test-results
+          printf '{"expectedHead":"%s","testedHead":"%s"}\n' "$expected" "$actual" > cnc/test-results/ai-teacher-nested-integrity-identity.json
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: JavaScript语法与反绕过检查
+        shell: bash
+        run: |
+          node --check cnc/tests/ai-teacher-nested-integrity-contract-smoke.cjs
+          node - <<'NODE'
+          const fs = require('fs');
+          const test = fs.readFileSync('cnc/tests/ai-teacher-nested-integrity-contract-smoke.cjs', 'utf8');
+          const workflow = fs.readFileSync('.github/workflows/cnc-ai-teacher-nested-integrity-contract-smoke.yml', 'utf8');
+          for (const forbidden of ['test.skip', 'continue-on-error', 'if-no-files-found: warn', '|| true']) {
+            if (test.includes(forbidden) || workflow.includes(forbidden)) throw new Error(`门禁包含绕过标记：${forbidden}`);
+          }
+          if (!workflow.includes('cancel-in-progress: false')) throw new Error('不得取消旧运行并把 cancelled 当成功');
+          console.log('AI老师嵌套档案完整性反绕过检查通过');
+          NODE
+
+      - name: 安装真实浏览器运行环境
+        run: |
+          npm install --no-save playwright@1.52.0
+          npx playwright install --with-deps chromium
+
+      - name: 执行390×844嵌套档案完整性fail-first验收
+        id: browser
+        shell: bash
+        run: |
+          set +e
+          node cnc/tests/ai-teacher-nested-integrity-contract-smoke.cjs 2>&1 | tee cnc/test-results/ai-teacher-nested-integrity-contract-run.log
+          code=${PIPESTATUS[0]}
+          echo "exit_code=${code}" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: 诊断完整性检查
+        if: always()
+        shell: bash
+        run: |
+          test -s cnc/test-results/ai-teacher-nested-integrity-identity.json
+          test -s cnc/test-results/ai-teacher-nested-integrity-contract-run.log
+          test -s cnc/test-results/ai-teacher-nested-integrity-contract.json
+          if [ "${{ steps.browser.outputs.exit_code }}" != "0" ]; then
+            test -s cnc/test-results/ai-teacher-nested-integrity-contract-error.txt
+          fi
+
+      - name: 上传结构化诊断
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-ai-teacher-nested-integrity-${{ github.run_id }}
+          path: cnc/test-results/ai-teacher-nested-integrity-*
+          if-no-files-found: error
+
+      - name: 按真实验收结果结束
+        if: always()
+        shell: bash
+        run: |
+          code='${{ steps.browser.outputs.exit_code }}'
+          if [ -z "$code" ]; then
+            echo '浏览器验收未返回退出码' >&2
+            exit 1
+          fi
+          exit "$code"
