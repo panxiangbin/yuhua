@@ -1,0 +1,84 @@
+name: CNC PWA53 workflow pin controlled sync
+on:
+  push:
+    branches:
+      - codex/cnc-ai-teacher-wrong-key-pwa53
+    paths:
+      - 'cnc/tests/update_pwa53_workflow_pins.py'
+      - '.github/workflows/cnc-pwa53-workflow-pin-sync.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact branch head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Verify tested head identity
+        run: |
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          printf '%s\n' "${GITHUB_SHA}" > tested-head.txt
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Synchronize exact CNC workflow pins
+        run: python cnc/tests/update_pwa53_workflow_pins.py | tee pin-sync.log
+      - name: Run unchanged central PWA build reference audit
+        run: node cnc/tests/pwa-build-reference-audit-smoke.cjs | tee pwa-audit.log
+      - name: Verify exact 10-workflow scope
+        shell: bash
+        run: |
+          cat > expected-files.txt <<'EOF'
+          .github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml
+          .github/workflows/cnc-beginner-placement-offline-pages-smoke.yml
+          .github/workflows/cnc-g95-cold-offline-source-trust-smoke.yml
+          .github/workflows/cnc-g96-g97-cold-offline-source-trust-smoke.yml
+          .github/workflows/cnc-g98-g99-cold-offline-source-trust-smoke.yml
+          .github/workflows/cnc-learning-media-smoke.yml
+          .github/workflows/cnc-pwa-offline-cache-smoke.yml
+          .github/workflows/cnc-pwa-self-test-smoke.yml
+          .github/workflows/cnc-pwa-upgrade-data-smoke.yml
+          .github/workflows/cnc-training-camp-route-handoff-pages-smoke.yml
+          EOF
+          git diff --name-only | sort > actual-files.txt
+          sort expected-files.txt -o expected-files.txt
+          diff -u expected-files.txt actual-files.txt
+      - name: Create clean workflow-pin commit
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- $(cat expected-files.txt)
+          git commit -m 'CNC：同步PWA53工作流构建针'
+          git rev-parse HEAD > generated-child-head.txt
+          git diff-tree --no-commit-id --name-only -r HEAD > generated-files.txt
+          git show --stat --oneline HEAD > generated-stat.txt
+          git show --format=fuller --binary HEAD > generated.patch
+      - name: Push generated child commit
+        shell: bash
+        run: git push origin HEAD:codex/cnc-ai-teacher-wrong-key-pwa53
+      - name: Upload synchronization diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-pwa53-workflow-pin-sync-${{ github.run_id }}
+          path: |
+            tested-head.txt
+            pin-sync.log
+            pwa-audit.log
+            expected-files.txt
+            actual-files.txt
+            generated-child-head.txt
+            generated-files.txt
+            generated-stat.txt
+            generated.patch
+          if-no-files-found: warn
+          retention-days: 14
