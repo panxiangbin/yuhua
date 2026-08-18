@@ -29,18 +29,16 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Synchronize exact CNC workflow pins
+      - name: Synchronize remaining CNC workflow pins
         run: python cnc/tests/update_pwa53_workflow_pins.py | tee pin-sync.log
       - name: Run unchanged central PWA build reference audit
         run: node cnc/tests/pwa-build-reference-audit-smoke.cjs | tee pwa-audit.log
-      - name: Verify exact 10-workflow scope
+      - name: Verify exact 8-workflow scope
         shell: bash
         run: |
           cat > expected-files.txt <<'EOF'
           .github/workflows/cnc-ai-teacher-offline-core-pages-smoke.yml
           .github/workflows/cnc-beginner-placement-offline-pages-smoke.yml
-          .github/workflows/cnc-g95-cold-offline-source-trust-smoke.yml
-          .github/workflows/cnc-g96-g97-cold-offline-source-trust-smoke.yml
           .github/workflows/cnc-g98-g99-cold-offline-source-trust-smoke.yml
           .github/workflows/cnc-learning-media-smoke.yml
           .github/workflows/cnc-pwa-offline-cache-smoke.yml
@@ -57,7 +55,7 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -- $(cat expected-files.txt)
-          git commit -m 'CNC：同步PWA53工作流构建针'
+          git commit -m 'CNC：同步PWA53剩余工作流构建针'
           git rev-parse HEAD > generated-child-head.txt
           git diff-tree --no-commit-id --name-only -r HEAD > generated-files.txt
           git show --stat --oneline HEAD > generated-stat.txt
