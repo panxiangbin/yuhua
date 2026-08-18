@@ -60,7 +60,7 @@ function writeDiagnostics(error) {
     && source.includes('const passed=unique.some(row=>row.passed===true)||bestScore===100')
     && source.includes("return typeof raw==='number'&&Number.isFinite(raw)&&raw>=0&&raw<=100?raw:null")
     && source.includes('simulations.filter(simulationPassed).length');
-  report.strictWrongCompatibilityDetected = source.includes('...listValues(practice.wrongItems)')
+  report.strictWrongCompatibilityDetected = source.includes('...wrongEntries(practice.wrongItems)') && source.includes("wrongQuestionId(row,fallbackKey='')")
     && source.includes('const key=`${source}:${id}`')
     && source.includes("const WRONG_SOURCE_PREFIXES=[['sc-','safety-coordinate']");
   report.strictCompletionIdGuardDetected = source.includes("if(typeof value==='number'&&Number.isInteger(value)&&value>=1&&value<=12)return value")
@@ -260,7 +260,8 @@ function writeDiagnostics(error) {
       ],
       wrongItems: {
         duplicate: { id: 'sc-dup', practiceId: 'safety-coordinate', ability: '安全', title: '重复错题A旧结构' },
-        unique: { id: 'dsp-only', practiceId: 'drawing-setup-process', ability: '图纸', title: '仅wrongItems' }
+        unique: { id: 'dsp-only', practiceId: 'drawing-setup-process', ability: '图纸', title: '仅wrongItems' },
+        keyOnly: { practiceId: 'safety-coordinate', ability: '安全基础', title: '对象键历史错题' }
       },
       wrong: [
         { id: 'sc-dup', practiceId: 'safety-coordinate', ability: '安全', title: '重复错题A更旧结构' },
@@ -288,7 +289,7 @@ function writeDiagnostics(error) {
       unrelated: localStorage.getItem('unrelated_keep_me')
     }));
     report.wrongCompatCounts = { aiTeacher: aiWrong, wrongReview: reviewWrong, profile: profileWrong };
-    report.wrongCompatUnified = aiSummary?.wrong === 4 && aiWrong === '4' && reviewWrong === '4' && profileWrong === '4';
+    report.wrongCompatUnified = aiSummary?.wrong === 5 && aiWrong === '5' && reviewWrong === '5' && profileWrong === '5';
     report.wrongCompatReadOnly = compatAfter.practiceRaw === wrongCompatRaw && compatAfter.unrelated === '保留';
     logs.push(`AI老师/错题复习/成长档案三字段去重一致：${report.wrongCompatUnified}（${JSON.stringify(report.wrongCompatCounts)}）`);
     logs.push(`三字段去重跨页面读取保持LocalStorage只读：${report.wrongCompatReadOnly}`);
