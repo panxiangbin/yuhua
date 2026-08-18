@@ -54,8 +54,14 @@ jobs:
           const fs = require('fs');
           const test = fs.readFileSync('cnc/tests/ai-teacher-nested-integrity-contract-smoke.cjs', 'utf8');
           const workflow = fs.readFileSync('.github/workflows/cnc-ai-teacher-nested-integrity-contract-smoke.yml', 'utf8');
-          for (const forbidden of ['test.skip', 'continue-on-error', 'if-no-files-found: warn', '|| true']) {
-            if (test.includes(forbidden) || workflow.includes(forbidden)) throw new Error(`门禁包含绕过标记：${forbidden}`);
+          const forbidden = [
+            'test' + '.skip',
+            'continue' + '-on-error',
+            'if-no-files-found' + ': warn',
+            '||' + ' true'
+          ];
+          for (const token of forbidden) {
+            if (test.includes(token) || workflow.includes(token)) throw new Error(`门禁包含绕过标记：${token}`);
           }
           if (!workflow.includes('cancel-in-progress: false')) throw new Error('不得取消旧运行并把 cancelled 当成功');
           console.log('AI老师嵌套档案完整性反绕过检查通过');
