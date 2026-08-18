@@ -31,8 +31,22 @@ jobs:
   smoke:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      EXPECTED_TESTED_HEAD: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout exact tested head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.EXPECTED_TESTED_HEAD }}
+
+      - name: Verify exact tested head
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$EXPECTED_TESTED_HEAD"
+          mkdir -p cnc/test-results
+          printf '{"testedHead":"%s","expectedHead":"%s"}\n' "$actual" "$EXPECTED_TESTED_HEAD" > cnc/test-results/ai-teacher-data-integrity-identity.json
 
       - uses: actions/setup-node@v4
         with:
@@ -59,6 +73,7 @@ jobs:
             if (test.includes(forbidden)) throw new Error(`测试脚本包含绕过标记：${forbidden}`);
           }
           if (!workflow.includes('cancel-in-progress: false')) throw new Error('不得取消旧运行并把 cancelled 当作成功');
+          if (!workflow.includes('Checkout exact tested head') || !workflow.includes('Verify exact tested head')) throw new Error('门禁必须锁定并验证真实tested head');
           console.log('AI老师学习档案异常保护静态契约检查通过');
           NODE
 
@@ -84,6 +99,7 @@ jobs:
         if: always()
         shell: bash
         run: |
+          test -s cnc/test-results/ai-teacher-data-integrity-identity.json
           test -s cnc/test-results/ai-teacher-data-integrity-bootstrap.log
           test -s cnc/test-results/ai-teacher-data-integrity-run.log
           test -s cnc/test-results/ai-teacher-data-integrity.json

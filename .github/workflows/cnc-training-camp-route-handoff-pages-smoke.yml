@@ -51,11 +51,11 @@ jobs:
           const sw = fs.readFileSync('cnc/sw.js', 'utf8');
           const info = JSON.parse(fs.readFileSync('cnc/build-info.json', 'utf8'));
           if (info.build !== '20260806-learning-depth1') throw new Error(`unexpected site build: ${info.build}`);
-          if (info.pwaBuild !== '20260818-pwa53' || info.cacheRevision !== '20260818-learning53') throw new Error(`unexpected PWA/cache build: ${info.pwaBuild}/${info.cacheRevision}`);
-          if (!sw.includes("const BUILD = '20260818-pwa53'") || !sw.includes("const CACHE_REVISION = '20260818-learning53'")) throw new Error('Service Worker build/cache mismatch');
+          if (info.pwaBuild !== '20260818-pwa54' || info.cacheRevision !== '20260818-learning54') throw new Error(`unexpected PWA/cache build: ${info.pwaBuild}/${info.cacheRevision}`);
+          if (!sw.includes("const BUILD = '20260818-pwa54'") || !sw.includes("const CACHE_REVISION = '20260818-learning54'")) throw new Error('Service Worker build/cache mismatch');
           for (const token of [
-            "const expectedSiteBuild = '20260806-learning-depth1'", "const expectedPwaBuild = '20260818-pwa53'",
-            "const controlledPublicPwaBuild = '20260811-pwa37'", "[expectedPwaBuild]: '20260818-learning53'",
+            "const expectedSiteBuild = '20260806-learning-depth1'", "const expectedPwaBuild = '20260818-pwa54'",
+            "const controlledPublicPwaBuild = '20260811-pwa37'", "[expectedPwaBuild]: '20260818-learning54'",
             "[controlledPublicPwaBuild]: '20260811-learning37'", 'const VIDEO_CORE = [',
             'const EXACT_CORE = [...BASE_CORE, ...VIDEO_CORE]', 'const CONTROLLED_PUBLIC_CORE_PATHS = EXACT_CORE',
             'CNC_PAGES_VERIFY_ATTEMPTS || 18', "cache: 'no-store'", "const resources = ['cnc/training-camp.html', 'cnc/sw.js', 'cnc/build-info.json']",

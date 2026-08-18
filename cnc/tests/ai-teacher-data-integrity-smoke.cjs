@@ -228,10 +228,10 @@ function writeDiagnostics(error) {
     };
     report.nestedSummary = nested.summary;
     report.nestedVisible = visibleNested;
-    report.nestedWrongFiltered = nested.summary?.wrong === 2 && visibleNested.wrong === '2';
-    report.nestedSimulatorFiltered = nested.summary?.simulations === 3 && visibleNested.simulations === '3/13';
-    report.nestedScoreStrict = nested.summary?.weakest === '机床与坐标' && nested.summary?.weakestScore === 26 && visibleNested.weakest === '机床与坐标';
-    report.nestedIntegrityRemainsUsable = nested.alertHidden === true;
+    report.nestedWrongFiltered = nested.summary?.integrity === 'blocked' && visibleNested.wrong === '--';
+    report.nestedSimulatorFiltered = nested.summary?.integrity === 'blocked' && visibleNested.simulations === '--';
+    report.nestedScoreStrict = nested.summary?.integrity === 'blocked' && visibleNested.weakest === '暂停判断';
+    report.nestedIntegrityRemainsUsable = nested.alertHidden === false;
     report.nestedDataPreserved = nested.practiceRaw === nestedPracticeRaw
       && nested.simulatorRaw === nestedSimulatorRaw
       && nested.unrelated === '保留';
@@ -240,14 +240,14 @@ function writeDiagnostics(error) {
     logs.push(`嵌套异常错题安全过滤：${report.nestedWrongFiltered}（${visibleNested.wrong}）`);
     logs.push(`固定13项ID、新旧模拟schema合并与满分通过过滤：${report.nestedSimulatorFiltered}（${visibleNested.simulations}）`);
     logs.push(`非法/越界/字符串成绩不参与能力判断：${report.nestedScoreStrict}（${nested.summary?.weakest}/${nested.summary?.weakestScore}）`);
-    logs.push(`根结构正常时嵌套坏记录只读降级、不误触发全局阻断：${report.nestedIntegrityRemainsUsable}`);
+    logs.push(`practice嵌套坏记录触发全局可信度阻断：${report.nestedIntegrityRemainsUsable}`);
     logs.push(`嵌套异常原始数据保持不变：${report.nestedDataPreserved}`);
     logs.push(`页面无 NaN/Infinity 污染：${report.nestedNoNonFiniteText}`);
 
-    assert.equal(report.nestedWrongFiltered, true, '数组/null/字符串错题不得污染AI老师错题数量');
-    assert.equal(report.nestedSimulatorFiltered, true, '固定13项模拟ID必须合并新版records与旧simulators，90分、未知ID、字符串passed、字符串/越界/负数成绩或数组记录不得冒充模拟通过');
-    assert.equal(report.nestedScoreStrict, true, '字符串或超出0-100范围的课程成绩不得污染AI老师能力画像');
-    assert.equal(report.nestedIntegrityRemainsUsable, true, '根结构合法时应忽略嵌套坏记录，而不是把整个学习档案误判为损坏');
+    assert.equal(report.nestedWrongFiltered, true, '损坏错题结构必须阻断AI老师可信错题数量');
+    assert.equal(report.nestedSimulatorFiltered, true, 'practice嵌套损坏时不得继续暴露可信模拟进度');
+    assert.equal(report.nestedScoreStrict, true, '字符串或超出0-100范围的课程成绩必须阻断AI老师能力画像');
+    assert.equal(report.nestedIntegrityRemainsUsable, true, 'practice根对象合法但嵌套证据损坏时必须进入完整性阻断');
     assert.equal(report.nestedDataPreserved, true, '嵌套坏数据降级不得自动清理、迁移或改写原始LocalStorage');
     assert.equal(report.nestedNoNonFiniteText, true, '页面不得出现NaN或Infinity污染');
     assert.equal(consoleErrors.length, 0, consoleErrors.join('\n'));
@@ -297,11 +297,11 @@ function writeDiagnostics(error) {
     assert.equal(report.wrongCompatReadOnly, true, '三类错题跨页面汇总不得自动清理、迁移或改写原始LocalStorage');
     await page.goto('http://127.0.0.1:4173/cnc/ai-teacher.html', { waitUntil: 'networkidle' });
 
-    const completionStudyRaw = JSON.stringify([1, '2', 'stage-3', 4, 99, null, [], {}]);
+    const completionStudyRaw = JSON.stringify([1, 'stage-3', 4]);
     const completionProfileRaw = JSON.stringify({
       version: 1,
-      completed: ['5', 'stage-6', 7],
-      completedStages: ['8', 'stage-9', 10]
+      completed: ['stage-6', 7],
+      completedStages: ['stage-9', 10]
     });
     await page.evaluate(({ studyRaw, profileRaw }) => {
       localStorage.clear();
