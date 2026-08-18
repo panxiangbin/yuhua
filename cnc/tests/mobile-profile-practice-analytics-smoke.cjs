@@ -8,8 +8,8 @@ const path = require('path');
   const root = path.resolve(__dirname, '../..');
   const profileSource = fs.readFileSync(path.join(root, 'cnc/profile.html'), 'utf8');
   for (const token of [
-    '...listValues(d.wrongQuestions)',
-    '...listValues(d.wrongItems)',
+    '...wrongEntries(d.wrongQuestions)',
+    '...wrongEntries(d.wrongItems)',
     '...wrongEntries(d.wrong)',
     "function wrongQuestionId(w,fallback='')",
     "const SOURCE_PREFIXES=[['sc-','safety-coordinate'],['av-','advanced-verification'],['dsp-','drawing-setup-process'],['pfsd-','program-fill-sort-debug'],['apf-','alarm-parameter-first-piece']]",
