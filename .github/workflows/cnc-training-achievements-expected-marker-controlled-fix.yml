@@ -1,0 +1,74 @@
+name: CNC training achievements expected marker controlled fix
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'cnc/tests/apply_training_achievements_expected_marker_fix.py'
+      - 'cnc/tests/mobile-training-achievements-smoke.cjs'
+      - '.github/workflows/cnc-training-achievements-expected-marker-controlled-fix.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cnc-training-achievements-expected-marker-controlled-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  controlled-fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
+          persist-credentials: true
+
+      - name: Verify exact tested head
+        shell: bash
+        run: |
+          set -euo pipefail
+          tested="$(git rev-parse HEAD)"
+          expected="${{ github.event.pull_request.head.sha }}"
+          test "$tested" = "$expected"
+
+      - name: Apply exact test-contract fix
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 cnc/tests/apply_training_achievements_expected_marker_fix.py
+          node --check cnc/tests/mobile-training-achievements-smoke.cjs
+
+      - name: Enforce target-only diff
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t changed < <(git diff --name-only)
+          test "${#changed[@]}" -eq 1
+          test "${changed[0]}" = "cnc/tests/mobile-training-achievements-smoke.cjs"
+          mkdir -p cnc/test-artifacts/training-achievements-expected-marker-fix
+          git diff -- cnc/tests/mobile-training-achievements-smoke.cjs > cnc/test-artifacts/training-achievements-expected-marker-fix/patch.diff
+          git rev-parse HEAD > cnc/test-artifacts/training-achievements-expected-marker-fix/parent-sha.txt
+
+      - name: Commit and push exact target fix
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add cnc/tests/mobile-training-achievements-smoke.cjs
+          git commit -m 'CNC：同步成长成果异常场景完整性标记期望'
+          git rev-parse HEAD > cnc/test-artifacts/training-achievements-expected-marker-fix/child-sha.txt
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
+
+      - name: Upload controlled-fix evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cnc-training-achievements-expected-marker-fix-${{ github.run_id }}
+          path: cnc/test-artifacts/training-achievements-expected-marker-fix/*
+          if-no-files-found: warn
+          retention-days: 14
