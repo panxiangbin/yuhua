@@ -158,7 +158,8 @@ function dateKey(value) {
       'cnc_training_profile_v1.trainingDays:duplicate',
       'cnc_training_profile_v1.badges:entry',
       'cnc_training_profile_v1.badges:duplicate',
-      'cnc_study_completed_v1:entry'
+      'cnc_study_completed_v1:entry',
+      'cnc_training_practice_v1.wrongQuestions:entry'
     ],
     nextKind: 'integrity',
     nextLevel: null
