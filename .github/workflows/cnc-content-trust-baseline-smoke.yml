@@ -21,7 +21,20 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout exact tested head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Verify exact tested head
+        shell: bash
+        run: |
+          set -euo pipefail
+          tested="$(git rev-parse HEAD)"
+          expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          test "$tested" = "$expected"
+          mkdir -p artifacts/content-trust-baseline
+          printf '{"testedHead":"%s","expectedHead":"%s"}\n' "$tested" "$expected" > artifacts/content-trust-baseline/identity.json
 
       - uses: actions/setup-node@v4
         with:
@@ -116,10 +129,22 @@ jobs:
           npm install --no-save playwright@1.54.1
           npx playwright install --with-deps chromium
 
-      - name: Start static server
+      - name: Start static server and wait until ready
+        shell: bash
         run: |
+          set -euo pipefail
           python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/cnc-content-trust-server.log 2>&1 &
           echo $! > /tmp/cnc-content-trust-server.pid
+          for attempt in $(seq 1 40); do
+            if curl -fs http://127.0.0.1:4173/cnc/content-trust-status.html >/dev/null 2>&1; then
+              echo "content trust static server ready on attempt ${attempt}"
+              exit 0
+            fi
+            sleep 0.25
+          done
+          echo 'content trust static server did not become ready' >&2
+          cat /tmp/cnc-content-trust-server.log >&2 || true
+          exit 1
 
       - name: Run 390x844 mobile trust status smoke
         run: node cnc/tests/mobile-content-trust-status-smoke.cjs
