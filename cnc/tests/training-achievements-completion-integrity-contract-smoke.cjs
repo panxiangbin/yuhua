@@ -9,7 +9,7 @@ fs.mkdirSync(artifactDir, { recursive: true });
 
 const html = fs.readFileSync(htmlPath, 'utf8');
 const start = html.indexOf('function stageLevel(value)');
-const end = html.indexOf('function listValues(v)', start);
+const end = html.indexOf('function wrongEntries(v)', start);
 assert.ok(start >= 0 && end > start, '必须能从真实成长成果页提取课程完成归一化函数');
 
 const source = html.slice(start, end);

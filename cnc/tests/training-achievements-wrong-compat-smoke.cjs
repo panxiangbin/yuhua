@@ -30,7 +30,8 @@ let page;
       ],
       wrongItems: {
         duplicate: { id: 'sc-dup', practiceId: 'safety-coordinate', title: '重复错题A旧结构' },
-        unique: { id: 'av-only', practiceId: 'advanced-verification', title: '仅wrongItems' }
+        unique: { id: 'av-only', practiceId: 'advanced-verification', title: '仅wrongItems' },
+        'pfsd-key-only': { title: '题目ID仅存在于对象key' }
       },
       wrong: [
         { id: 'sc-only', practiceId: 'safety-coordinate', title: '重复错题B旧结构' },
@@ -45,20 +46,20 @@ let page;
   const achievements = await page.evaluate(() => window.CNC_TRAINING_ACHIEVEMENTS.snapshot());
   assert.equal(achievements.integrity, true);
   assert.equal(achievements.courses, 12);
-  assert.equal(achievements.wrong, 4, '成长成果必须合并 wrongQuestions / wrongItems / wrong 并按来源专项+题目ID去重');
+  assert.equal(achievements.wrong, 5, '成长成果必须合并 wrongQuestions / wrongItems / wrong，保留对象key题目ID，并按来源专项+题目ID去重');
   assert.equal(achievements.nextKind, 'wrong');
-  assert.equal(await page.locator('#wrong').textContent(), '4');
-  assert.match(await page.locator('#next-title').textContent(), /4 道错题/);
+  assert.equal(await page.locator('#wrong').textContent(), '5');
+  assert.match(await page.locator('#next-title').textContent(), /5 道错题/);
 
   const overflow = await page.evaluate(() => ({ scrollWidth: document.documentElement.scrollWidth, clientWidth: document.documentElement.clientWidth }));
   assert.ok(overflow.scrollWidth <= overflow.clientWidth, `390px 页面横向溢出：${JSON.stringify(overflow)}`);
   assert.ok((await page.locator('#next-link').evaluate(node => node.getBoundingClientRect().height)) >= 44);
 
   await page.goto('http://127.0.0.1:4173/cnc/practice-wrong-review.html', { waitUntil: 'domcontentloaded', timeout: 60000 });
-  assert.equal(await page.locator('#wrong-total').textContent(), '4', '跨专项错题页与成长成果错题数必须一致');
+  assert.equal(await page.locator('#wrong-total').textContent(), '5', '跨专项错题页必须识别对象key题目ID，并与成长成果错题数一致');
 
   await page.goto('http://127.0.0.1:4173/cnc/profile.html', { waitUntil: 'domcontentloaded', timeout: 60000 });
-  assert.equal(await page.locator('#wrong-count').textContent(), '4', '成长档案与成长成果错题数必须一致');
+  assert.equal(await page.locator('#wrong-count').textContent(), '5', '成长档案必须识别对象key题目ID，并与成长成果错题数一致');
 
   const after = await page.evaluate(() => localStorage.getItem('cnc_training_practice_v1'));
   assert.equal(after, before, '跨页面统计与去重必须保持专项练习 localStorage 严格只读');
@@ -68,7 +69,8 @@ let page;
   const report = {
     passed: true,
     wrongCount: achievements.wrong,
-    crossPageCounts: { achievements: 4, wrongReview: 4, profile: 4 },
+    objectKeyFallback: true,
+    crossPageCounts: { achievements: 5, wrongReview: 5, profile: 5 },
     readOnly: after === before,
     overflow,
     pageErrors,
@@ -76,7 +78,7 @@ let page;
   };
   fs.writeFileSync(path.join(artifactDir, 'wrong-compat-report.json'), JSON.stringify(report, null, 2));
   await page.screenshot({ path: path.join(artifactDir, 'training-achievements-wrong-compat-390x844.png'), fullPage: true });
-  console.log('成长成果三类错题兼容字段汇总、来源+题号去重、跨页面一致性与只读保护通过', report);
+  console.log('成长成果三类错题兼容、对象key题目ID、来源+题号去重、跨页面一致性与只读保护通过', report);
   await browser.close();
 })().catch(async error => {
   const stack = error && error.stack ? error.stack : String(error);
