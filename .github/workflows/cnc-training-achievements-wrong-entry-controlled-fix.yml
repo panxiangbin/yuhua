@@ -1,0 +1,66 @@
+name: CNC training achievements wrong entry controlled fix
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'cnc/tests/apply_training_achievements_wrong_entry_fix.py'
+      - '.github/workflows/cnc-training-achievements-wrong-entry-controlled-fix.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  controlled-fix:
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'codex/cnc-training-achievements-wrong-entry-integrity'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
+          persist-credentials: true
+
+      - name: Verify exact tested head
+        shell: bash
+        run: |
+          set -euo pipefail
+          tested="$(git rev-parse HEAD)"
+          expected="${{ github.event.pull_request.head.sha }}"
+          test "$tested" = "$expected"
+
+      - name: Apply scoped CNC fix
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 cnc/tests/apply_training_achievements_wrong_entry_fix.py
+          changed="$(git diff --name-only)"
+          test "$changed" = "cnc/training-achievements.html"
+
+      - name: Validate production JavaScript
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          html = Path('cnc/training-achievements.html').read_text(encoding='utf-8')
+          scripts = re.findall(r'<script>(.*?)</script>', html, re.S)
+          if len(scripts) != 1:
+              raise SystemExit(f'成长成果页内联脚本数量异常：{len(scripts)}')
+          Path('/tmp/cnc-training-achievements-inline.js').write_text(scripts[0], encoding='utf-8')
+          PY
+          node --check /tmp/cnc-training-achievements-inline.js
+          grep -F "cnc_training_practice_v1.'+field+':entry'" cnc/training-achievements.html >/dev/null
+
+      - name: Commit production fix
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add cnc/training-achievements.html
+          git diff --cached --quiet && { echo '没有待提交的生产修复' >&2; exit 1; }
+          git commit -m 'CNC：阻断成长成果错题嵌套损坏静默降级'
+          git push origin HEAD:${{ github.head_ref }}
