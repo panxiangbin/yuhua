@@ -1,0 +1,117 @@
+name: Yuhua large asset audit
+
+on:
+  pull_request:
+    paths:
+      - '**/*.mp4'
+      - '**/*.webm'
+      - '**/*.mov'
+      - '**/*.avi'
+      - '**/*.mkv'
+      - '**/*.m4v'
+      - '**/*.mp3'
+      - '**/*.wav'
+      - '**/*.m4a'
+      - '**/*.aac'
+      - '**/*.ogg'
+      - '**/*.flac'
+      - '**/*.jpg'
+      - '**/*.jpeg'
+      - '**/*.png'
+      - '**/*.webp'
+      - '**/*.gif'
+      - '**/*.svg'
+      - '**/*.avif'
+      - '**/*.pdf'
+      - '**/*.doc'
+      - '**/*.docx'
+      - '**/*.xls'
+      - '**/*.xlsx'
+      - '**/*.ppt'
+      - '**/*.pptx'
+      - '**/*.zip'
+      - '**/*.rar'
+      - '**/*.7z'
+      - '**/*.tar'
+      - '**/*.gz'
+      - '**/*.tgz'
+      - '**/*.woff'
+      - '**/*.woff2'
+      - '**/*.ttf'
+      - '**/*.otf'
+      - '**/*.eot'
+      - 'tools/audit_large_assets.py'
+      - '.github/workflows/yuhua-large-assets.yml'
+  push:
+    branches: [main]
+    paths:
+      - '**/*.mp4'
+      - '**/*.webm'
+      - '**/*.mov'
+      - '**/*.avi'
+      - '**/*.mkv'
+      - '**/*.m4v'
+      - '**/*.mp3'
+      - '**/*.wav'
+      - '**/*.m4a'
+      - '**/*.aac'
+      - '**/*.ogg'
+      - '**/*.flac'
+      - '**/*.jpg'
+      - '**/*.jpeg'
+      - '**/*.png'
+      - '**/*.webp'
+      - '**/*.gif'
+      - '**/*.svg'
+      - '**/*.avif'
+      - '**/*.pdf'
+      - '**/*.doc'
+      - '**/*.docx'
+      - '**/*.xls'
+      - '**/*.xlsx'
+      - '**/*.ppt'
+      - '**/*.pptx'
+      - '**/*.zip'
+      - '**/*.rar'
+      - '**/*.7z'
+      - '**/*.tar'
+      - '**/*.gz'
+      - '**/*.tgz'
+      - '**/*.woff'
+      - '**/*.woff2'
+      - '**/*.ttf'
+      - '**/*.otf'
+      - '**/*.eot'
+      - 'tools/audit_large_assets.py'
+      - '.github/workflows/yuhua-large-assets.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Audit tracked large assets
+        run: |
+          python -m py_compile tools/audit_large_assets.py
+          python tools/audit_large_assets.py --json-output large_asset_report.json
+
+      - name: Upload large-asset audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-large-assets-report
+          path: large_asset_report.json
+          if-no-files-found: error
+          retention-days: 90
+
+      # Read-only by design. Existing large files are reported, not deleted,
+      # recompressed, renamed, migrated, or treated as product-data corrections.
