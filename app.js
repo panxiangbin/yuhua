@@ -124,14 +124,14 @@
   var imgByKey = {};
   CATS.forEach(function (c) { imgByKey[c.key] = c.img; });
 
-  // 完整资料页只允许两种明确匹配：data.js 的 detail 字段，或 PAGES 中的型号前缀。
-  // 不再按产品分类跳到其他型号资料页，避免客户误把同类产品资料当成当前型号资料。
+  // 完整资料页只允许两种明确匹配：data.js 的 detail 字段，或同产品分类下的 PAGES 型号前缀。
+  // 不再按产品分类跳到其他型号资料页，且前缀匹配必须同时满足分类一致，避免 R 等短前缀误配。
   var _PAGES = window.PAGES || [];
-  var _prefixMap = [];   // [{prefix, page}, ...]  按长度降序
+  var _prefixMap = [];   // [{prefix, key, page}, ...]  按长度降序
   _PAGES.forEach(function(pg) {
     if (pg.prefixes && pg.prefixes.length) {
       pg.prefixes.forEach(function(pf) {
-        _prefixMap.push({ prefix: pf.toUpperCase(), page: pg.page });
+        _prefixMap.push({ prefix: pf.toUpperCase(), key: pg.key, page: pg.page });
       });
     }
   });
@@ -140,9 +140,10 @@
   function getDetail(p) {
     if (p.detail) return p.detail;
     var m = (p["型号"] || "").toUpperCase();
-    if (!m) return "";
+    if (!m || !p.key) return "";
     for (var i = 0; i < _prefixMap.length; i++) {
-      if (m.indexOf(_prefixMap[i].prefix) === 0) return _prefixMap[i].page;
+      var candidate = _prefixMap[i];
+      if (p.key === candidate.key && m.indexOf(candidate.prefix) === 0) return candidate.page;
     }
     return "";
   }
