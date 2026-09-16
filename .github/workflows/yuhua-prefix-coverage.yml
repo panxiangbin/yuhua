@@ -35,6 +35,23 @@ jobs:
       - name: Audit actual detail-page prefix hits
         run: python tools/audit_page_prefix_hits.py --json-output prefix_coverage_report.json
 
+      - name: Enforce safe runtime resolution
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path('prefix_coverage_report.json').read_text(encoding='utf-8'))
+          assert report['runtime_ambiguous_count'] == 0, (
+              'Detail-page runtime ambiguity detected: ' + repr(report['runtime_ambiguous'])
+          )
+          assert report['missing_explicit_detail_target_count'] == 0, (
+              'Explicit product detail points to missing file: '
+              + repr(report['missing_explicit_detail_targets'])
+          )
+          print('Runtime detail-page safety gate: OK')
+          PY
+
       - name: Upload prefix coverage report
         uses: actions/upload-artifact@v4
         with:
