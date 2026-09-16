@@ -1,0 +1,335 @@
+/* Customer-facing usability enhancements */
+.quick-entry {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 32px 28px 0;
+}
+.quick-entry-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  box-shadow: var(--sh0);
+  padding: 20px 22px;
+}
+.quick-entry-card h2 {
+  color: var(--navy);
+  font-size: 18px;
+  margin-bottom: 7px;
+}
+.quick-entry-card p {
+  color: var(--sub);
+  font-size: 13.5px;
+  margin-bottom: 13px;
+}
+.quick-models {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.quick-models a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 7px 13px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #f8fbff;
+  color: var(--blue);
+  font-size: 13px;
+  font-weight: 700;
+  transition: .18s;
+}
+.quick-models a:hover,
+.quick-models a:focus-visible {
+  border-color: var(--blue);
+  background: #eef6ff;
+  outline: 3px solid rgba(20,100,200,.12);
+  outline-offset: 1px;
+}
+
+/* product modal inquiry actions */
+.inquiry-tools {
+  margin: 22px 0 4px;
+  padding: 16px;
+  border: 1px solid #d8e7f7;
+  border-radius: 12px;
+  background: #f7fbff;
+}
+.inquiry-tools-title {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--navy);
+  font-size: 14px;
+  font-weight: 800;
+}
+.inquiry-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+.inquiry-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 9px 14px;
+  border-radius: 9px;
+  border: 1px solid var(--blue);
+  background: #fff;
+  color: var(--blue);
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+}
+.inquiry-action.primary {
+  color: #fff;
+  background: var(--blue);
+}
+.inquiry-action:hover { filter: brightness(.97); }
+.inquiry-action:focus-visible,
+.cat-card:focus-visible,
+.ptable tbody tr[tabindex]:focus-visible,
+.copy-email-btn:focus-visible,
+.send-email-btn:focus-visible,
+.clear-form-btn:focus-visible,
+.email-float:focus-visible {
+  outline: 3px solid rgba(20,100,200,.22);
+  outline-offset: 2px;
+}
+.inquiry-status {
+  min-height: 20px;
+  margin-top: 8px;
+  color: #24714b;
+  font-size: 12.5px;
+}
+
+/* selection assistant */
+.inquiry-panel {
+  display: grid;
+  grid-template-columns: minmax(260px, .82fr) minmax(0, 1.45fr);
+  gap: 26px;
+  align-items: stretch;
+}
+.inquiry-intro,
+.selection-form {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  box-shadow: var(--sh1);
+}
+.inquiry-intro {
+  padding: 30px;
+  background: linear-gradient(155deg, #0a1e36 0%, #0d4a98 68%, #0b7892 100%);
+  color: #fff;
+}
+.inquiry-kicker {
+  display: inline-block;
+  margin-bottom: 12px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #8cecf7;
+}
+.inquiry-intro h3 {
+  margin-bottom: 14px;
+  font-size: clamp(22px, 2.7vw, 32px);
+  line-height: 1.25;
+}
+.inquiry-intro > p {
+  color: rgba(255,255,255,.78);
+  font-size: 14px;
+  line-height: 1.85;
+}
+.email-card {
+  margin-top: 26px;
+  padding: 18px;
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 12px;
+  background: rgba(255,255,255,.1);
+}
+.email-card span,
+.email-card small {
+  display: block;
+}
+.email-card span {
+  margin-bottom: 5px;
+  color: rgba(255,255,255,.68);
+  font-size: 12px;
+}
+.email-card a {
+  display: inline-block;
+  margin-bottom: 12px;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 800;
+  word-break: break-all;
+}
+.copy-email-btn {
+  min-height: 36px;
+  padding: 6px 12px;
+  border: 1px solid rgba(255,255,255,.36);
+  border-radius: 8px;
+  background: rgba(255,255,255,.12);
+  color: #fff;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.email-card small {
+  min-height: 18px;
+  margin-top: 8px;
+  color: #aef7dd;
+  font-size: 12px;
+}
+.selection-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 28px;
+}
+.selection-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 800;
+}
+.selection-form input,
+.selection-form select,
+.selection-form textarea {
+  width: 100%;
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--ink);
+  padding: 11px 13px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  transition: border-color .18s, box-shadow .18s;
+}
+.selection-form textarea { resize: vertical; min-height: 104px; }
+.selection-form input:focus,
+.selection-form select:focus,
+.selection-form textarea:focus {
+  outline: 0;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 4px rgba(20,100,200,.09);
+}
+.full-row { grid-column: 1 / -1; }
+.form-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.send-email-btn,
+.clear-form-btn {
+  min-height: 46px;
+  border-radius: 10px;
+  padding: 10px 19px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.send-email-btn {
+  border: 1px solid var(--blue);
+  background: var(--blue);
+  color: #fff;
+  box-shadow: 0 5px 16px rgba(20,100,200,.24);
+}
+.clear-form-btn {
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--sub);
+}
+.form-tip {
+  margin-top: -5px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.text-email,
+.footer-contact a {
+  color: inherit;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.footer-contact {
+  margin-top: 8px;
+  color: rgba(255,255,255,.82);
+}
+
+/* persistent email CTA */
+.email-float {
+  position: fixed;
+  right: 82px;
+  bottom: 24px;
+  z-index: 49;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 9px 15px;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--blue-d);
+  border: 1px solid #cddff2;
+  box-shadow: 0 6px 22px rgba(10,30,54,.18);
+  font-size: 13px;
+  font-weight: 800;
+  transition: transform .18s, box-shadow .18s;
+}
+.email-float:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(10,30,54,.23);
+}
+
+.seo-note {
+  padding: 14px 18px;
+  margin: 0 auto;
+  max-width: 1280px;
+  color: var(--sub);
+  font-size: 13px;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .inquiry-panel { grid-template-columns: 1fr; }
+  .inquiry-intro { padding: 24px; }
+}
+
+@media (max-width: 768px) {
+  .quick-entry { padding: 22px 18px 0; }
+  .quick-entry-card { padding: 17px 16px; }
+  .quick-models a { flex: 1 1 calc(50% - 8px); justify-content: center; }
+  .inquiry-actions { flex-direction: column; }
+  .inquiry-action { width: 100%; }
+  .selection-form {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+  .full-row { grid-column: auto; }
+  .email-float {
+    right: 76px;
+    bottom: 25px;
+    padding: 8px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .video-grid { grid-template-columns: 1fr; }
+  .quick-models a { flex-basis: 100%; }
+  .form-actions { flex-direction: column; align-items: stretch; }
+  .send-email-btn, .clear-form-btn { width: 100%; }
+  .email-float {
+    left: 16px;
+    right: auto;
+    bottom: 22px;
+  }
+}

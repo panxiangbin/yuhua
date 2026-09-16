@@ -5,42 +5,67 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>予华仪器 · 实验室仪器产品中心</title>
 <meta name="description" content="巩义予华仪器 — 旋转蒸发仪、玻璃反应釜、高压反应釜、分子蒸馏、高低温循环装置、磁力搅拌器等实验室仪器整体解决方案，厂家直供。">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0a1e36">
+<link rel="canonical" href="https://panxiangbin.github.io/yuhua/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="予华仪器">
+<meta property="og:title" content="予华仪器 · 实验室仪器产品中心">
+<meta property="og:description" content="旋转蒸发、反应釜、分子蒸馏、控温循环、搅拌真空等实验室仪器型号、规格书与选型咨询。">
+<meta property="og:url" content="https://panxiangbin.github.io/yuhua/">
 <link rel="stylesheet" href="styles.css?v=20260614b">
+<link rel="stylesheet" href="assets/customer-tools.css?v=20260916c">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "巩义市予华仪器有限责任公司",
+  "alternateName": "予华仪器",
+  "url": "https://panxiangbin.github.io/yuhua/",
+  "email": "smxpxb008@gmail.com",
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "sales",
+    "email": "smxpxb008@gmail.com",
+    "availableLanguage": ["zh-CN", "en"]
+  }
+}
+</script>
 </head>
 <body>
 
-<!-- 顶部导航 -->
+<!-- customer-ready release: email-only public inquiry -->
 <header class="nav" id="top">
   <div class="nav-inner">
-    <a class="brand" href="#top">
+    <a class="brand" href="#top" aria-label="返回予华仪器首页顶部">
       <span class="brand-logo">予华</span>
       <span class="brand-text"><b>予华仪器</b><i>YUHUA INSTRUMENT</i></span>
     </a>
-    <nav class="nav-links">
+    <nav class="nav-links" aria-label="主导航">
       <a href="#home">首页</a>
       <a href="#products">产品中心</a>
       <a href="#videos">产品视频</a>
       <a href="#catalog">型号查询</a>
       <a href="#specs">规格书</a>
+      <a href="#inquiry">选型咨询</a>
       <a href="#about">关于我们</a>
     </nav>
-    <button class="nav-toggle" id="navToggle" aria-label="菜单">
+    <button class="nav-toggle" id="navToggle" aria-label="打开或关闭菜单" aria-expanded="false" aria-controls="navMobile">
       <span></span><span></span><span></span>
     </button>
   </div>
 </header>
 
-<!-- 移动端导航抽屉 -->
-<nav class="nav-mobile" id="navMobile">
+<nav class="nav-mobile" id="navMobile" aria-label="移动端导航" aria-hidden="true">
   <a href="#home">首页</a>
   <a href="#products">产品中心</a>
   <a href="#videos">产品视频</a>
   <a href="#catalog">型号查询</a>
   <a href="#specs">规格书</a>
+  <a href="#inquiry">选型咨询</a>
   <a href="#about">关于我们</a>
 </nav>
 
-<!-- 首屏 -->
 <section class="hero" id="home">
   <div class="hero-bg"></div>
   <div class="hero-inner">
@@ -50,6 +75,7 @@
     <div class="hero-actions">
       <a class="btn btn-primary" href="#products">浏览产品系列</a>
       <a class="btn btn-ghost" href="#catalog">查询具体型号</a>
+      <a class="btn btn-ghost" href="#inquiry">提交选型需求</a>
     </div>
     <div class="hero-stats">
       <div><b id="stat-cats">12</b><span>大产品系列</span></div>
@@ -59,117 +85,146 @@
   </div>
 </section>
 
-<!-- 产品中心 -->
+<section class="quick-entry" aria-labelledby="quickModelsTitle">
+  <div class="quick-entry-card">
+    <h2 id="quickModelsTitle">常用型号快速入口</h2>
+    <p>点击型号后直接进入参数查询，也可以复制链接分享给采购、技术或同事。</p>
+    <div class="quick-models">
+      <a href="?q=YRE-2020Z#catalog">YRE-2020Z 旋转蒸发仪</a>
+      <a href="?q=YRE-301#catalog">YRE-301 旋转蒸发仪</a>
+      <a href="?q=YRE-501#catalog">YRE-501 旋转蒸发仪</a>
+      <a href="?q=YSF-50L#catalog">YSF-50L 双层玻璃反应釜</a>
+      <a href="?q=DLSB-5%2F30#catalog">DLSB-5/30 低温冷却循环泵</a>
+      <a href="?q=SHZ-D#catalog">SHZ-D 循环水真空泵</a>
+      <a href="?q=TGYF-C-0.5L#catalog">TGYF-C-0.5L 高压反应釜</a>
+      <a href="?q=GDSZ#catalog">GDSZ 高低温循环装置</a>
+    </div>
+  </div>
+</section>
+
 <section class="section" id="products">
   <div class="section-head">
     <h2>产品中心</h2>
     <p>按应用场景精选分类，点击任一系列可查看该系列下全部型号参数</p>
   </div>
-  <div class="cat-grid" id="catGrid"><!-- JS 注入 --></div>
+  <div class="cat-grid" id="catGrid"></div>
 </section>
 
-<!-- 产品视频 -->
 <section class="section section-alt" id="videos">
   <div class="section-head">
     <h2>产品视频</h2>
     <p>工厂实拍与产品运行演示，直观了解予华仪器</p>
   </div>
-  <div class="video-grid" id="videoGrid"><!-- JS 注入 --></div>
+  <div class="video-grid" id="videoGrid"></div>
 </section>
 
-<!-- 型号查询 -->
 <section class="section section-alt" id="catalog">
   <div class="section-head">
     <h2>型号查询</h2>
     <p>输入型号 / 名称关键词，或点选下方分类筛选。共收录 <b id="totalCount">0</b> 个型号</p>
   </div>
   <div class="catalog-tools">
-    <input type="search" id="searchInput" placeholder="🔍 搜索型号或名称，如 YRE-2020Z、反应釜、DLSB…" autocomplete="off">
+    <input type="search" id="searchInput" aria-label="搜索产品型号或名称" placeholder="🔍 搜索型号或名称，如 YRE-2020Z、反应釜、DLSB…" autocomplete="off">
     <div class="chips" id="chips"></div>
   </div>
   <p class="result-info"><span id="resultCount">0</span> 个结果</p>
   <div class="table-wrap">
     <table class="ptable">
-      <thead>
-        <tr>
-          <th>型号</th><th>产品名称 / 类别</th><th class="hide-sm">材质</th><th class="hide-sm">容量</th>
-          <th class="hide-sm">控温范围</th><th>详细参数</th>
-        </tr>
-      </thead>
+      <thead><tr><th>型号</th><th>产品名称 / 类别</th><th class="hide-sm">材质</th><th class="hide-sm">容量</th><th class="hide-sm">控温范围</th><th>详细参数</th></tr></thead>
       <tbody id="tableBody"></tbody>
     </table>
     <p class="empty-tip" id="emptyTip" hidden>没有匹配的型号，换个关键词试试～</p>
   </div>
+  <noscript><p class="seo-note">型号筛选需要启用 JavaScript。您仍可通过上方常用型号入口以及下方产品规格书访问产品资料。</p></noscript>
 </section>
 
-<!-- 详细参数弹窗 -->
 <div class="modal-mask" id="modalMask" hidden>
-  <div class="modal" role="dialog" aria-modal="true">
-    <button class="modal-close" id="modalClose" title="关闭">×</button>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+    <button class="modal-close" id="modalClose" title="关闭" aria-label="关闭产品参数">×</button>
     <div class="modal-head">
       <img id="mImg" src="" alt="">
-      <div>
-        <span class="modal-cat" id="mCat"></span>
-        <h3 id="mTitle"></h3>
-        <p id="mName"></p>
-      </div>
+      <div><span class="modal-cat" id="mCat"></span><h3 id="mTitle"></h3><p id="mName"></p></div>
     </div>
     <div class="modal-body">
       <div id="mDetail"></div>
       <h4>技术参数</h4>
       <table class="spec-table"><tbody id="mSpecs"></tbody></table>
-      <div id="mSellingWrap" hidden>
-        <h4>产品特点</h4>
-        <ul class="selling-list" id="mSelling"></ul>
-      </div>
-      <p class="modal-note">📋 以上为产品资料整理参数，具体配置与报价请联系予华仪器销售。</p>
+      <div id="mSellingWrap" hidden><h4>产品特点</h4><ul class="selling-list" id="mSelling"></ul></div>
+      <p class="modal-note">📋 以上为产品资料整理参数，具体配置、报价与交期请通过邮件向予华仪器咨询。</p>
     </div>
   </div>
 </div>
 
-<!-- 规格书查询 -->
 <section class="section" id="specs">
   <div class="section-head">
     <h2>规格书查询</h2>
     <p>输入型号关键词搜索，直接在线查看或下载原始 Word 规格书。共收录 <b id="specCount">0</b> 份</p>
   </div>
   <div class="catalog-tools">
-    <input type="search" id="specSearch" placeholder="🔍 搜索型号，如 GDSZ-100-40、YSF-50L、YRE-2020Z…" autocomplete="off">
+    <input type="search" id="specSearch" aria-label="搜索产品规格书" placeholder="🔍 搜索型号，如 GDSZ-100-40、YSF-50L、YRE-2020Z…" autocomplete="off">
     <div class="chips" id="specChips"></div>
   </div>
   <p class="result-info"><span id="specResultCount">0</span> 个结果</p>
   <div class="table-wrap">
-    <table class="ptable">
-      <thead><tr><th>型号/文件名</th><th class="hide-sm">产品系列</th><th>在线查看</th><th>下载</th></tr></thead>
-      <tbody id="specBody"></tbody>
-    </table>
+    <table class="ptable"><thead><tr><th>型号/文件名</th><th class="hide-sm">产品系列</th><th>在线查看</th><th>下载</th></tr></thead><tbody id="specBody"></tbody></table>
     <p class="empty-tip" id="specEmptyTip" hidden>没有匹配的规格书，换个关键词试试～</p>
   </div>
 </section>
 
-<!-- 关于 -->
+<section class="section section-alt" id="inquiry">
+  <div class="section-head">
+    <h2>选型与询价</h2>
+    <p>填写已知条件即可生成询价邮件；本站不收集或保存表单内容。</p>
+  </div>
+  <div class="inquiry-panel">
+    <div class="inquiry-intro">
+      <span class="inquiry-kicker">EMAIL INQUIRY</span>
+      <h3>把实验条件告诉我们</h3>
+      <p>即使暂时不知道具体型号，也可以填写容量、温度、真空/压力、防爆或材质需求。点击发送后会调用您设备上的邮件程序，并自动整理成询价邮件。</p>
+      <div class="email-card">
+        <span>销售咨询邮箱</span>
+        <a href="mailto:smxpxb008@gmail.com">smxpxb008@gmail.com</a>
+        <button type="button" id="copyEmail" class="copy-email-btn">复制邮箱</button>
+        <small id="copyEmailStatus" aria-live="polite"></small>
+      </div>
+    </div>
+    <form class="selection-form" id="selectionForm">
+      <label>产品类别<select id="inqCategory"><option value="">请选择或暂不确定</option><option>旋转蒸发仪</option><option>双层/三层玻璃反应釜</option><option>高压反应釜</option><option>分子蒸馏装置</option><option>高低温循环装置</option><option>高温循环装置</option><option>低温冷却循环泵</option><option>恒温槽 / 反应浴</option><option>磁力搅拌器</option><option>电动搅拌器</option><option>真空泵 / 抽滤</option><option>其他实验室仪器</option></select></label>
+      <label>参考型号<input type="text" id="inqModel" placeholder="如 YRE-2020Z；不知道可留空"></label>
+      <label>容量 / 处理量<input type="text" id="inqCapacity" placeholder="如 5L、50L、20kg/h"></label>
+      <label>温度范围<input type="text" id="inqTemperature" placeholder="如 -30~200℃"></label>
+      <label>真空 / 压力要求<input type="text" id="inqPressure" placeholder="如 -0.098MPa、10MPa"></label>
+      <label>电源 / 使用地区<input type="text" id="inqPower" placeholder="如 220V 50Hz、中国；或 110V 60Hz"></label>
+      <label class="full-row">材质、防爆、物料与其他要求<textarea id="inqNotes" rows="4" placeholder="例如：接触物料需316L；需要防爆；物料易挥发；希望提供整套配置等"></textarea></label>
+      <div class="form-actions full-row"><button type="submit" class="send-email-btn">生成邮件并发送</button><button type="button" id="clearInquiry" class="clear-form-btn">清空</button></div>
+      <p class="form-tip full-row">点击“生成邮件并发送”不会把数据上传到本站，只会打开本机默认邮件应用并填好内容。</p>
+    </form>
+  </div>
+</section>
+
 <section class="section" id="about">
   <div class="section-head"><h2>关于予华仪器</h2></div>
   <div class="about-body">
     <p>巩义予华仪器长期专注于实验室仪器的研发与制造，产品涵盖<b>旋转蒸发仪、双层玻璃反应釜、高压反应釜、分子蒸馏装置、高低温循环装置、恒温槽、磁力/电动搅拌器、真空泵</b>等多个系列，广泛应用于化工、制药、科研院所、高校实验室等领域。</p>
-    <p>工厂支持<b>非标定制与防爆机型</b>，欢迎来图来样洽谈。</p>
-    <div class="about-note">
-      💡 本站为产品资料展示，<b>不含价格信息</b>。如需报价、选型建议或技术参数详表，请联系予华仪器销售人员。
-    </div>
+    <p>工厂支持<b>非标定制与防爆机型</b>，欢迎提供实验条件、技术要求或图纸进行选型沟通。</p>
+    <div class="about-note">💡 本站为产品资料展示，<b>不含价格信息</b>。如需报价、选型建议或技术参数详表，请发送邮件至 <a class="text-email" href="mailto:smxpxb008@gmail.com">smxpxb008@gmail.com</a>。</div>
   </div>
 </section>
 
 <footer class="footer">
   <div>予华仪器 YUHUA INSTRUMENT · 实验室仪器产品中心</div>
+  <div class="footer-contact">业务咨询：<a href="mailto:smxpxb008@gmail.com">smxpxb008@gmail.com</a></div>
   <div class="footer-sub">本页面由产品资料整理生成 · 仅供参考，具体以实物及正式技术文件为准</div>
 </footer>
 
-<button class="to-top" id="toTop" title="返回顶部">↑</button>
+<a class="email-float" href="mailto:smxpxb008@gmail.com?subject=%E4%BA%88%E5%8D%8E%E4%BB%AA%E5%99%A8%E4%BA%A7%E5%93%81%E5%92%A8%E8%AF%A2" aria-label="通过邮件咨询予华仪器">✉ 邮件询价</a>
+<button class="to-top" id="toTop" title="返回顶部" aria-label="返回页面顶部">↑</button>
 
 <script src="assets/data.js?v=20260614b"></script>
 <script src="assets/videos.js?v=20260614b"></script>
 <script src="assets/pages.js?v=20260614b"></script>
 <script src="assets/specs.js?v=20260614b"></script>
 <script src="app.js?v=20260614b"></script>
+<script src="assets/customer-tools.js?v=20260916c"></script>
 </body>
 </html>
