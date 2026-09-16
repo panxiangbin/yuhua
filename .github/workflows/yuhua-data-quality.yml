@@ -83,11 +83,15 @@ jobs:
           node <<'NODE'
           const fs = require('fs');
           const source = fs.readFileSync('app.js', 'utf8');
-          ['normalizeSearchText', 'normalizeSearchToken', 'searchMatchRank', 'rankSearchResults'].forEach(name => {
+          const names = ['normalizeSearchText', 'normalizeSearchToken', 'searchMatchRank', 'rankSearchResults'];
+          const snippets = names.map(name => {
             const fn = source.match(new RegExp('function ' + name + '\\([^)]*\\) \\{[\\s\\S]*?\\n  \\}'));
             if (!fn) throw new Error(name + ' helper is missing');
-            eval(fn[0]);
+            return fn[0];
           });
+          const helpers = new Function(snippets.join('\n') + '\nreturn { normalizeSearchText, normalizeSearchToken, searchMatchRank, rankSearchResults };')();
+          const normalizeSearchText = helpers.normalizeSearchText;
+          const rankSearchResults = helpers.rankSearchResults;
 
           const models = [
             { model: 'YSFS-50L', text: '高温循环装置' },
