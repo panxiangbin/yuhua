@@ -152,6 +152,15 @@ window.PAGES = [
   "page": "product/fcf.html"
  },
  {
+  "pid": "tgyf-c",
+  "title": "TGYF-C高压反应釜资料入口",
+  "key": "hp_reactor",
+  "prefixes": [
+   "TGYF-C"
+  ],
+  "page": "product/tgyf-c.html"
+ },
+ {
   "pid": "tgyf",
   "title": "TGYF-A台式高压釜",
   "key": "hp_reactor",
