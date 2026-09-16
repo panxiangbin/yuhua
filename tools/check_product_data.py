@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Read-only data quality checks for the Yuhua product catalogue.
 
-This script NEVER modifies product/spec data. It only reports records that need
-manual review before they are published or merged.
+This script NEVER modifies product/spec data. It only reports records and page
+mappings that need manual review before they are published or merged.
 """
 from __future__ import annotations
 
@@ -24,6 +24,18 @@ def load_json(path: Path) -> Any:
         return json.load(f)
 
 
+def load_pages_js(path: Path) -> list[dict[str, Any]]:
+    """Load the JSON array assigned to window.PAGES without executing JS."""
+    text = path.read_text(encoding="utf-8")
+    match = re.search(r"window\.PAGES\s*=\s*(\[.*\])\s*;\s*$", text, re.S)
+    if not match:
+        raise SystemExit(f"Could not parse window.PAGES from {path}")
+    pages = json.loads(match.group(1))
+    if not isinstance(pages, list):
+        raise SystemExit(f"window.PAGES in {path} must be an array")
+    return pages
+
+
 def clean(value: Any) -> str:
     return str(value or "").strip()
 
@@ -35,7 +47,6 @@ def norm_model(value: Any) -> str:
 
 
 def is_suspicious_model(value: Any) -> bool:
-    raw = clean(value)
     normalized = norm_model(value)
     if not normalized:
         return False
@@ -132,9 +143,124 @@ def spec_report(specs: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
+def page_mapping_report(pages: list[dict[str, Any]], repo_root: Path) -> dict[str, Any]:
+    """Audit model-prefix → product-page mappings used by app.js.
+
+    The browser now requires both a product key and a model prefix to match.
+    Exact duplicate (key, prefix) mappings to different pages are therefore
+    genuinely ambiguous: whichever equally-long entry appears first wins.
+    Other overlap/short-prefix findings are warnings only and need manual review.
+    """
+    prefix_owners: defaultdict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
+    prefix_by_key: defaultdict[str, list[dict[str, str]]] = defaultdict(list)
+    global_prefix_owners: defaultdict[str, list[dict[str, str]]] = defaultdict(list)
+    missing_targets = []
+    prefixless_pages = []
+    empty_prefixes = []
+    prefix_count = 0
+
+    for row, pg in enumerate(pages, start=1):
+        pid = clean(pg.get("pid"))
+        title = clean(pg.get("title"))
+        key = clean(pg.get("key"))
+        page = clean(pg.get("page"))
+        prefixes = pg.get("prefixes") or []
+
+        if page and not (repo_root / page).is_file():
+            missing_targets.append({"row": row, "pid": pid, "title": title, "key": key, "page": page})
+
+        if not prefixes:
+            prefixless_pages.append({"row": row, "pid": pid, "title": title, "key": key, "page": page})
+
+        for raw_prefix in prefixes:
+            prefix = norm_model(raw_prefix)
+            if not prefix:
+                empty_prefixes.append({"row": row, "pid": pid, "title": title, "key": key, "page": page})
+                continue
+            prefix_count += 1
+            owner = {"row": row, "pid": pid, "title": title, "key": key, "page": page, "prefix": prefix}
+            prefix_owners[(key, prefix)].append(owner)
+            prefix_by_key[key].append({"prefix": prefix, "page": page, "pid": pid, "title": title})
+            global_prefix_owners[prefix].append({"key": key, "page": page, "pid": pid, "title": title})
+
+    ambiguous_same_key = []
+    for (key, prefix), owners in prefix_owners.items():
+        pages_for_prefix = sorted({item["page"] for item in owners})
+        if len(pages_for_prefix) > 1:
+            ambiguous_same_key.append({
+                "key": key,
+                "prefix": prefix,
+                "pages": pages_for_prefix,
+                "owners": owners,
+            })
+    ambiguous_same_key.sort(key=lambda x: (x["key"], x["prefix"]))
+
+    cross_key_reuse = []
+    for prefix, owners in global_prefix_owners.items():
+        keys = sorted({item["key"] for item in owners})
+        if len(keys) > 1:
+            cross_key_reuse.append({"prefix": prefix, "keys": keys, "owners": owners})
+    cross_key_reuse.sort(key=lambda x: x["prefix"])
+
+    overlaps = []
+    for key, items in prefix_by_key.items():
+        unique = []
+        seen = set()
+        for item in items:
+            ident = (item["prefix"], item["page"])
+            if ident not in seen:
+                seen.add(ident)
+                unique.append(item)
+        for i, a in enumerate(unique):
+            for b in unique[i + 1:]:
+                if a["page"] == b["page"] or a["prefix"] == b["prefix"]:
+                    continue
+                if a["prefix"].startswith(b["prefix"]) or b["prefix"].startswith(a["prefix"]):
+                    shorter, longer = sorted((a["prefix"], b["prefix"]), key=len)
+                    overlaps.append({
+                        "key": key,
+                        "shorter_prefix": shorter,
+                        "longer_prefix": longer,
+                        "pages": sorted({a["page"], b["page"]}),
+                    })
+    overlaps.sort(key=lambda x: (x["key"], x["shorter_prefix"], x["longer_prefix"]))
+
+    short_prefixes = []
+    for (key, prefix), owners in prefix_owners.items():
+        alnum_len = len(re.sub(r"[^A-Z0-9]", "", prefix))
+        if alnum_len <= 2:
+            short_prefixes.append({
+                "key": key,
+                "prefix": prefix,
+                "pages": sorted({item["page"] for item in owners}),
+                "titles": sorted({item["title"] for item in owners if item["title"]}),
+            })
+    short_prefixes.sort(key=lambda x: (len(x["prefix"]), x["prefix"], x["key"]))
+
+    return {
+        "page_entry_count": len(pages),
+        "prefix_count": prefix_count,
+        "missing_target_count": len(missing_targets),
+        "missing_targets": missing_targets,
+        "ambiguous_same_key_prefix_count": len(ambiguous_same_key),
+        "ambiguous_same_key_prefixes": ambiguous_same_key,
+        "same_key_overlap_count": len(overlaps),
+        "same_key_overlaps": overlaps,
+        "short_prefix_count": len(short_prefixes),
+        "short_prefixes": short_prefixes,
+        "cross_key_reuse_count": len(cross_key_reuse),
+        "cross_key_reuse": cross_key_reuse,
+        "prefixless_page_count": len(prefixless_pages),
+        "prefixless_pages": prefixless_pages,
+        "empty_prefix_count": len(empty_prefixes),
+        "empty_prefixes": empty_prefixes,
+    }
+
+
 def print_human(report: dict[str, Any]) -> None:
     p = report["products"]
     s = report["specs"]
+    m = report["page_mapping"]
 
     print("=== 予华仪器数据质量检查（只读，不修改数据） ===")
     print(f"产品记录: {p['total']}")
@@ -148,6 +274,12 @@ def print_human(report: dict[str, Any]) -> None:
     print(f"  缺在线页面: {s['missing_page_count']}")
     print(f"  缺下载路径: {s['missing_download_count']}")
     print(f"  重复型号组: {s['duplicate_model_group_count']}")
+    print(f"详情页映射: {m['page_entry_count']} 个页面项 / {m['prefix_count']} 个前缀")
+    print(f"  缺失目标文件: {m['missing_target_count']}")
+    print(f"  同分类同前缀指向多个页面: {m['ambiguous_same_key_prefix_count']}")
+    print(f"  同分类前缀包含关系: {m['same_key_overlap_count']}")
+    print(f"  过短前缀(<=2字母数字): {m['short_prefix_count']}")
+    print(f"  无前缀资料页: {m['prefixless_page_count']}")
 
     if p["suspicious_models"]:
         print("\n产品疑似异常型号（前30条）:")
@@ -164,23 +296,40 @@ def print_human(report: dict[str, Any]) -> None:
         for item in p["duplicate_models"][:30]:
             print(f"  {item['model']}: {item['count']} 条，rows={item['rows'][:12]}")
 
+    if m["ambiguous_same_key_prefixes"]:
+        print("\n高风险详情页映射：同分类同前缀指向多个页面（需人工确认，脚本不会自动修复）:")
+        for item in m["ambiguous_same_key_prefixes"][:30]:
+            print(f"  key={item['key']!r} prefix={item['prefix']!r} pages={item['pages']}")
+
+    if m["missing_targets"]:
+        print("\n详情页映射缺失目标文件:")
+        for item in m["missing_targets"][:30]:
+            print(f"  #{item['row']} {item['page']} ({item['title']})")
+
+    if m["short_prefixes"]:
+        print("\n过短详情页前缀（仅审计，需结合真实型号人工判断）:")
+        for item in m["short_prefixes"][:30]:
+            print(f"  key={item['key']!r} prefix={item['prefix']!r} pages={item['pages']}")
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--products", default="products.json")
     ap.add_argument("--specs", default="specs_index.json")
+    ap.add_argument("--pages", default="assets/pages.js")
     ap.add_argument("--json-output", default="")
     args = ap.parse_args()
 
     products = load_json(Path(args.products))
     specs = load_json(Path(args.specs))
+    pages = load_pages_js(Path(args.pages))
     if not isinstance(products, list) or not isinstance(specs, list):
         raise SystemExit("products.json and specs_index.json must both contain JSON arrays")
 
     report = {
         "products": product_report(products),
         "specs": spec_report(specs),
+        "page_mapping": page_mapping_report(pages, Path.cwd()),
     }
     print_human(report)
 

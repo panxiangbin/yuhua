@@ -5,8 +5,10 @@ on:
     paths:
       - 'index.html'
       - 'app.js'
+      - 'assets/pages.js'
       - 'assets/customer-tools.js'
       - 'assets/customer-tools.css'
+      - 'product/**'
       - 'model/**'
       - 'sitemap.xml'
       - 'products.json'
@@ -18,8 +20,10 @@ on:
     paths:
       - 'index.html'
       - 'app.js'
+      - 'assets/pages.js'
       - 'assets/customer-tools.js'
       - 'assets/customer-tools.css'
+      - 'product/**'
       - 'model/**'
       - 'sitemap.xml'
       - 'products.json'
@@ -45,6 +49,7 @@ jobs:
       - name: Check JavaScript syntax
         run: |
           node --check app.js
+          node --check assets/pages.js
           node --check assets/customer-tools.js
 
       - name: Prevent unsafe category-level detail fallback
@@ -106,7 +111,7 @@ jobs:
           print(f'Sitemap/model-page check: OK ({len(model_pages)} model pages)')
           PY
 
-      - name: Check product and spec data
+      - name: Check product, spec and detail-page mapping data
         run: python tools/check_product_data.py --json-output data_quality_report.json
 
       - name: Upload data-quality report
