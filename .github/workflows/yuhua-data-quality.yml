@@ -47,6 +47,26 @@ jobs:
           node --check app.js
           node --check assets/customer-tools.js
 
+      - name: Prevent unsafe category-level detail fallback
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          js = Path('app.js').read_text(encoding='utf-8')
+          forbidden = [
+              'var _keyMap',
+              '_keyMap[p.key]',
+              '同类任意详情页均可引路',
+          ]
+          for token in forbidden:
+              assert token not in js, f'Unsafe category-level detail fallback found: {token}'
+
+          assert 'if (p.detail) return p.detail;' in js, 'Explicit product detail mapping is missing'
+          assert '_prefixMap.push({ prefix: pf.toUpperCase(), key: pg.key, page: pg.page });' in js, 'Prefix mappings must retain product category key'
+          assert 'p.key === candidate.key && m.indexOf(candidate.prefix) === 0' in js, 'Prefix detail links must also match product category'
+          print('Detail-link safety policy: OK (explicit detail, or prefix + category match only)')
+          PY
+
       - name: Verify email-only public contact policy
         run: |
           python - <<'PY'

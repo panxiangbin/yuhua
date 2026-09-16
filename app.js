@@ -124,29 +124,27 @@
   var imgByKey = {};
   CATS.forEach(function (c) { imgByKey[c.key] = c.img; });
 
-  // 完整资料页映射: 先匹配 data.js 里的 detail 字段, 再按 PAGES 前缀匹配, 最后按分类兜底
+  // 完整资料页只允许两种明确匹配：data.js 的 detail 字段，或同产品分类下的 PAGES 型号前缀。
+  // 不再按产品分类跳到其他型号资料页，且前缀匹配必须同时满足分类一致，避免 R 等短前缀误配。
   var _PAGES = window.PAGES || [];
-  var _prefixMap = [];   // [{prefix, page}, ...]  按长度降序
-  var _keyMap = {};      // key -> page (无前缀系列用分类兜底)
+  var _prefixMap = [];   // [{prefix, key, page}, ...]  按长度降序
   _PAGES.forEach(function(pg) {
     if (pg.prefixes && pg.prefixes.length) {
       pg.prefixes.forEach(function(pf) {
-        _prefixMap.push({ prefix: pf.toUpperCase(), page: pg.page });
+        _prefixMap.push({ prefix: pf.toUpperCase(), key: pg.key, page: pg.page });
       });
     }
-    // 所有页面都参与分类兜底(有前缀的也加入, 供无法匹配前缀的同类产品使用)
-    if (!_keyMap[pg.key]) _keyMap[pg.key] = pg.page;
   });
   _prefixMap.sort(function(a, b) { return b.prefix.length - a.prefix.length; });
 
   function getDetail(p) {
     if (p.detail) return p.detail;
     var m = (p["型号"] || "").toUpperCase();
+    if (!m || !p.key) return "";
     for (var i = 0; i < _prefixMap.length; i++) {
-      if (m.indexOf(_prefixMap[i].prefix) === 0) return _prefixMap[i].page;
+      var candidate = _prefixMap[i];
+      if (p.key === candidate.key && m.indexOf(candidate.prefix) === 0) return candidate.page;
     }
-    // 分类兜底 — 同类任意详情页均可引路
-    if (p.key && _keyMap[p.key]) return _keyMap[p.key];
     return "";
   }
 
@@ -155,8 +153,8 @@
     var dEl = document.getElementById("mDetail");
     var durl = getDetail(p);
     dEl.innerHTML = durl
-      ? '<a class="full-doc-btn" href="' + durl + '" target="_blank" rel="noopener">📄 查看完整产品资料（含完整对比参数表 · 可下载 Word / PDF）</a>'
-      : "";
+      ? '<a class="full-doc-btn" href="' + durl + '" target="_blank" rel="noopener">📄 查看匹配的完整产品资料（含对比参数表 · 可下载 Word / PDF）</a>'
+      : '<p class="muted">暂未绑定与该型号准确匹配的完整资料页，可查看当前展示参数或通过邮箱咨询。</p>';
     document.getElementById("mName").textContent = p["产品名称"] || "";
     document.getElementById("mCat").textContent = keyName[p.key] || p["类别"] || "";
     var img = document.getElementById("mImg");
