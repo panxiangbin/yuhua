@@ -85,18 +85,57 @@
   function normalizeSearchText(value) {
     return String(value || "").toLowerCase().replace(/[\s_\/.．／‐‑‒–—―·-]+/g, "");
   }
+  function normalizeSearchToken(value) {
+    return String(value || "").toLowerCase().trim()
+      .replace(/[\s_\/.．／‐‑‒–—―·-]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  }
+  function searchMatchRank(modelValue, textValue, q, qCompact) {
+    if (!q) return 0;
+    var model = String(modelValue || "").trim().toLowerCase();
+    var modelCompact = normalizeSearchText(model);
+    var modelToken = normalizeSearchToken(model);
+    var qToken = normalizeSearchToken(q);
+    if (qCompact && modelCompact === qCompact) return 0;
+    if (qToken && modelToken.indexOf(qToken + "-") === 0) return 1;
+    if (qCompact && modelCompact.indexOf(qCompact) === 0) return 2;
+    if (qCompact && modelCompact.indexOf(qCompact) >= 0) return 3;
+    var text = String(textValue || "").toLowerCase();
+    if (text.indexOf(q) >= 0) return 4;
+    if (qCompact && normalizeSearchText(text).indexOf(qCompact) >= 0) return 5;
+    return 99;
+  }
+  function rankSearchResults(items, getModel, getText, q, qCompact) {
+    if (!q) return items.slice();
+    return items.map(function (item, index) {
+      return {
+        item: item,
+        index: index,
+        rank: searchMatchRank(getModel(item), getText(item), q, qCompact)
+      };
+    }).filter(function (entry) {
+      return entry.rank < 99;
+    }).sort(function (a, b) {
+      return a.rank - b.rank || a.index - b.index;
+    }).map(function (entry) {
+      return entry.item;
+    });
+  }
 
   var curRows = [];
   function render() {
     var q = (searchInput.value || "").trim().toLowerCase();
     var qCompact = normalizeSearchText(q);
-    curRows = PRODUCTS.filter(function (p) {
-      if (activeKey !== "all" && p.key !== activeKey) return false;
-      if (!q) return true;
-      var hay = (p["型号"] + " " + p["产品名称"] + " " + p["类别"]).toLowerCase();
-      if (hay.indexOf(q) >= 0) return true;
-      return qCompact && normalizeSearchText(hay).indexOf(qCompact) >= 0;
+    var candidates = PRODUCTS.filter(function (p) {
+      return activeKey === "all" || p.key === activeKey;
     });
+    curRows = rankSearchResults(
+      candidates,
+      function (p) { return p["型号"]; },
+      function (p) { return (p["产品名称"] || "") + " " + (p["类别"] || ""); },
+      q,
+      qCompact
+    );
 
     resultCount.textContent = curRows.length;
     if (!curRows.length) {
@@ -256,13 +295,16 @@
     if (!specBody) return;
     var q = (specSearch ? specSearch.value || "" : "").trim().toLowerCase();
     var qCompact = normalizeSearchText(q);
-    var rows = SPECS.filter(function(s){
-      if (specKey !== "all" && s.key !== specKey) return false;
-      if (!q) return true;
-      var hay = (s.title+s.series+s.model).toLowerCase();
-      if (hay.indexOf(q) >= 0) return true;
-      return qCompact && normalizeSearchText(hay).indexOf(qCompact) >= 0;
+    var candidates = SPECS.filter(function(s){
+      return specKey === "all" || s.key === specKey;
     });
+    var rows = rankSearchResults(
+      candidates,
+      function (s) { return s.model; },
+      function (s) { return (s.title || "") + " " + (s.series || ""); },
+      q,
+      qCompact
+    );
     if (specResultCount) specResultCount.textContent = rows.length;
     if (!rows.length) {
       specBody.innerHTML = "";
