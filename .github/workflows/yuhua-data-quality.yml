@@ -62,8 +62,9 @@ jobs:
               assert token not in js, f'Unsafe category-level detail fallback found: {token}'
 
           assert 'if (p.detail) return p.detail;' in js, 'Explicit product detail mapping is missing'
-          assert 'm.indexOf(_prefixMap[i].prefix) === 0' in js, 'Model-prefix detail mapping is missing'
-          print('Detail-link safety policy: OK (explicit detail or model-prefix match only)')
+          assert '_prefixMap.push({ prefix: pf.toUpperCase(), key: pg.key, page: pg.page });' in js, 'Prefix mappings must retain product category key'
+          assert 'p.key === candidate.key && m.indexOf(candidate.prefix) === 0' in js, 'Prefix detail links must also match product category'
+          print('Detail-link safety policy: OK (explicit detail, or prefix + category match only)')
           PY
 
       - name: Verify email-only public contact policy
