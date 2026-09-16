@@ -82,15 +82,20 @@
 
   function cell(v) { return v ? v : '<span class="muted">—</span>'; }
   function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function normalizeSearchText(value) {
+    return String(value || "").toLowerCase().replace(/[\s_\/.．／‐‑‒–—―·-]+/g, "");
+  }
 
   var curRows = [];
   function render() {
     var q = (searchInput.value || "").trim().toLowerCase();
+    var qCompact = normalizeSearchText(q);
     curRows = PRODUCTS.filter(function (p) {
       if (activeKey !== "all" && p.key !== activeKey) return false;
       if (!q) return true;
       var hay = (p["型号"] + " " + p["产品名称"] + " " + p["类别"]).toLowerCase();
-      return hay.indexOf(q) >= 0;
+      if (hay.indexOf(q) >= 0) return true;
+      return qCompact && normalizeSearchText(hay).indexOf(qCompact) >= 0;
     });
 
     resultCount.textContent = curRows.length;
@@ -250,10 +255,13 @@
   function renderSpecs() {
     if (!specBody) return;
     var q = (specSearch ? specSearch.value || "" : "").trim().toLowerCase();
+    var qCompact = normalizeSearchText(q);
     var rows = SPECS.filter(function(s){
       if (specKey !== "all" && s.key !== specKey) return false;
       if (!q) return true;
-      return (s.title+s.series+s.model).toLowerCase().indexOf(q) >= 0;
+      var hay = (s.title+s.series+s.model).toLowerCase();
+      if (hay.indexOf(q) >= 0) return true;
+      return qCompact && normalizeSearchText(hay).indexOf(qCompact) >= 0;
     });
     if (specResultCount) specResultCount.textContent = rows.length;
     if (!rows.length) {

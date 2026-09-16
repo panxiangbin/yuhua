@@ -52,6 +52,32 @@ jobs:
           node --check assets/pages.js
           node --check assets/customer-tools.js
 
+      - name: Verify separator-tolerant model search
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const source = fs.readFileSync('app.js', 'utf8');
+          const fn = source.match(/function normalizeSearchText\(value\) \{[\s\S]*?\n  \}/);
+          if (!fn) throw new Error('normalizeSearchText helper is missing');
+          eval(fn[0]);
+
+          const variants = ['DLSB-5/30', 'DLSB-5-30', 'DLSB 5 30', 'DLSB_5／30'];
+          const normalized = variants.map(normalizeSearchText);
+          if (!normalized.every(v => v === 'dlsb530')) {
+            throw new Error('DLSB model separator normalization failed: ' + normalized.join(', '));
+          }
+          if (normalizeSearchText('YRE-2020Z') !== normalizeSearchText('YRE 2020Z')) {
+            throw new Error('YRE separator normalization failed');
+          }
+          if ((source.match(/var qCompact = normalizeSearchText\(q\);/g) || []).length < 2) {
+            throw new Error('Both product and specification searches must normalize the query');
+          }
+          if ((source.match(/normalizeSearchText\(hay\)\.indexOf\(qCompact\)/g) || []).length < 2) {
+            throw new Error('Both product and specification searches must match normalized catalogue text');
+          }
+          console.log('Separator-tolerant search: OK');
+          NODE
+
       - name: Prevent unsafe category-level detail fallback
         run: |
           python - <<'PY'
