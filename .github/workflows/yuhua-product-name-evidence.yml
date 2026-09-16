@@ -1,0 +1,36 @@
+name: Yuhua product name evidence audit
+
+on:
+  pull_request:
+    paths:
+      - 'products.json'
+      - 'specs_index.json'
+      - 'tools/audit_product_name_evidence.py'
+      - '.github/workflows/yuhua-product-name-evidence.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'products.json'
+      - 'specs_index.json'
+      - 'tools/audit_product_name_evidence.py'
+      - '.github/workflows/yuhua-product-name-evidence.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit missing product names and existing specification evidence
+        run: |
+          python tools/audit_product_name_evidence.py \
+            --json-output product_name_evidence_report.json
+      - name: Upload audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-product-name-evidence-report
+          path: product_name_evidence_report.json
+          if-no-files-found: error
+          retention-days: 90
