@@ -94,6 +94,44 @@
     });
   });
 
+  // ---------- 筛选状态与搜索结果无障碍反馈 ----------
+  function enhanceFilterGroup(containerId, label) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+    container.setAttribute("role", "group");
+    container.setAttribute("aria-label", label);
+
+    function syncPressed() {
+      Array.prototype.forEach.call(container.querySelectorAll("button"), function (button) {
+        button.setAttribute("aria-pressed", button.classList.contains("active") ? "true" : "false");
+      });
+    }
+
+    syncPressed();
+    container.addEventListener("click", function (e) {
+      if (!e.target.closest("button")) return;
+      window.setTimeout(syncPressed, 0);
+    });
+  }
+
+  function enhanceSearchStatus(input, resultCountId, tableBodyId, statusId) {
+    if (!input) return;
+    var resultCount = document.getElementById(resultCountId);
+    var status = resultCount ? resultCount.parentElement : null;
+    if (status) {
+      status.id = statusId;
+      status.setAttribute("aria-live", "polite");
+      status.setAttribute("aria-atomic", "true");
+      input.setAttribute("aria-describedby", statusId);
+    }
+    input.setAttribute("aria-controls", tableBodyId);
+  }
+
+  enhanceFilterGroup("chips", "产品分类筛选");
+  enhanceFilterGroup("specChips", "规格书分类筛选");
+  enhanceSearchStatus(searchInput, "resultCount", "tableBody", "catalogResultStatus");
+  enhanceSearchStatus(specSearch, "specResultCount", "specBody", "specResultStatus");
+
   // ---------- 移动导航 ARIA 状态 ----------
   var navToggle = document.getElementById("navToggle");
   var navMobile = document.getElementById("navMobile");
