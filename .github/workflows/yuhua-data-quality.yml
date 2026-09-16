@@ -47,6 +47,25 @@ jobs:
           node --check app.js
           node --check assets/customer-tools.js
 
+      - name: Prevent unsafe category-level detail fallback
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          js = Path('app.js').read_text(encoding='utf-8')
+          forbidden = [
+              'var _keyMap',
+              '_keyMap[p.key]',
+              '同类任意详情页均可引路',
+          ]
+          for token in forbidden:
+              assert token not in js, f'Unsafe category-level detail fallback found: {token}'
+
+          assert 'if (p.detail) return p.detail;' in js, 'Explicit product detail mapping is missing'
+          assert 'm.indexOf(_prefixMap[i].prefix) === 0' in js, 'Model-prefix detail mapping is missing'
+          print('Detail-link safety policy: OK (explicit detail or model-prefix match only)')
+          PY
+
       - name: Verify email-only public contact policy
         run: |
           python - <<'PY'
