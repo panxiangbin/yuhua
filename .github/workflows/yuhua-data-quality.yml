@@ -67,3 +67,6 @@ jobs:
         with:
           name: yuhua-data-quality-report
           path: data_quality_report.json
+
+      # This workflow is intentionally read-only: it reports catalogue problems
+      # but never edits or deletes product parameters automatically.
