@@ -114,6 +114,22 @@ jobs:
       - name: Check product, spec and detail-page mapping data
         run: python tools/check_product_data.py --json-output data_quality_report.json
 
+      - name: Enforce unambiguous detail-page mappings
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path('data_quality_report.json').read_text(encoding='utf-8'))
+          mapping = report['page_mapping']
+          assert mapping['missing_target_count'] == 0, f"Missing detail-page targets: {mapping['missing_targets']}"
+          assert mapping['ambiguous_same_key_prefix_count'] == 0, (
+              'Ambiguous same-category model prefixes must be resolved before merge: '
+              + repr(mapping['ambiguous_same_key_prefixes'])
+          )
+          print('Detail-page mapping gate: OK (no missing targets, no ambiguous same-category prefixes)')
+          PY
+
       - name: Upload data-quality report
         uses: actions/upload-artifact@v4
         with:

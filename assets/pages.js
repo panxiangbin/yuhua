@@ -273,8 +273,7 @@ window.PAGES = [
   "title": "高温循环油浴锅",
   "key": "bath",
   "prefixes": [
-   "GSC",
-   "YH-CJS"
+   "GSC"
   ],
   "page": "product/gsc.html"
  },
