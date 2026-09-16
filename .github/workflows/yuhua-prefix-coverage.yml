@@ -1,0 +1,42 @@
+name: Yuhua detail-page prefix coverage
+
+on:
+  pull_request:
+    paths:
+      - 'assets/data.js'
+      - 'assets/pages.js'
+      - 'app.js'
+      - 'tools/audit_page_prefix_hits.py'
+      - '.github/workflows/yuhua-prefix-coverage.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'assets/data.js'
+      - 'assets/pages.js'
+      - 'app.js'
+      - 'tools/audit_page_prefix_hits.py'
+      - '.github/workflows/yuhua-prefix-coverage.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit-prefix-coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Audit actual detail-page prefix hits
+        run: python tools/audit_page_prefix_hits.py --json-output prefix_coverage_report.json
+
+      - name: Upload prefix coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-prefix-coverage-report
+          path: prefix_coverage_report.json
