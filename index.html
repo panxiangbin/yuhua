@@ -5,18 +5,36 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>予华仪器 · 实验室仪器产品中心</title>
 <meta name="description" content="巩义予华仪器 — 旋转蒸发仪、玻璃反应釜、高压反应釜、分子蒸馏、高低温循环装置、磁力搅拌器等实验室仪器整体解决方案，厂家直供。">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#0a1e36">
+<link rel="canonical" href="https://panxiangbin.github.io/yuhua/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="予华仪器">
+<meta property="og:title" content="予华仪器 · 实验室仪器产品中心">
+<meta property="og:description" content="旋转蒸发、反应釜、分子蒸馏、控温循环、搅拌真空等实验室仪器型号与规格书查询。">
+<meta property="og:url" content="https://panxiangbin.github.io/yuhua/">
 <link rel="stylesheet" href="styles.css?v=20260614b">
+<link rel="stylesheet" href="assets/customer-tools.css?v=20260916">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "巩义市予华仪器有限责任公司",
+  "alternateName": "予华仪器",
+  "url": "https://panxiangbin.github.io/yuhua/"
+}
+</script>
 </head>
 <body>
 
 <!-- 顶部导航 -->
 <header class="nav" id="top">
   <div class="nav-inner">
-    <a class="brand" href="#top">
+    <a class="brand" href="#top" aria-label="返回予华仪器首页顶部">
       <span class="brand-logo">予华</span>
       <span class="brand-text"><b>予华仪器</b><i>YUHUA INSTRUMENT</i></span>
     </a>
-    <nav class="nav-links">
+    <nav class="nav-links" aria-label="主导航">
       <a href="#home">首页</a>
       <a href="#products">产品中心</a>
       <a href="#videos">产品视频</a>
@@ -24,14 +42,14 @@
       <a href="#specs">规格书</a>
       <a href="#about">关于我们</a>
     </nav>
-    <button class="nav-toggle" id="navToggle" aria-label="菜单">
+    <button class="nav-toggle" id="navToggle" aria-label="打开或关闭菜单" aria-expanded="false" aria-controls="navMobile">
       <span></span><span></span><span></span>
     </button>
   </div>
 </header>
 
 <!-- 移动端导航抽屉 -->
-<nav class="nav-mobile" id="navMobile">
+<nav class="nav-mobile" id="navMobile" aria-label="移动端导航" aria-hidden="true">
   <a href="#home">首页</a>
   <a href="#products">产品中心</a>
   <a href="#videos">产品视频</a>
@@ -55,6 +73,24 @@
       <div><b id="stat-cats">12</b><span>大产品系列</span></div>
       <div><b id="stat-models">450+</b><span>在册型号</span></div>
       <div><b>厂家直供</b><span>实体工厂 · 可定制</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 常用型号静态入口：既方便客户快速进入，也让搜索引擎能发现核心型号 -->
+<section class="quick-entry" aria-labelledby="quickModelsTitle">
+  <div class="quick-entry-card">
+    <h2 id="quickModelsTitle">常用型号快速入口</h2>
+    <p>点击型号后直接进入参数查询，也可以复制链接分享给采购、技术或同事。</p>
+    <div class="quick-models">
+      <a href="?q=YRE-2020Z#catalog">YRE-2020Z 旋转蒸发仪</a>
+      <a href="?q=YRE-301#catalog">YRE-301 旋转蒸发仪</a>
+      <a href="?q=YRE-501#catalog">YRE-501 旋转蒸发仪</a>
+      <a href="?q=YSF-50L#catalog">YSF-50L 双层玻璃反应釜</a>
+      <a href="?q=DLSB-5%2F30#catalog">DLSB-5/30 低温冷却循环泵</a>
+      <a href="?q=SHZ-D#catalog">SHZ-D 循环水真空泵</a>
+      <a href="?q=TGYF-C-0.5L#catalog">TGYF-C-0.5L 高压反应釜</a>
+      <a href="?q=GDSZ#catalog">GDSZ 高低温循环装置</a>
     </div>
   </div>
 </section>
@@ -84,7 +120,7 @@
     <p>输入型号 / 名称关键词，或点选下方分类筛选。共收录 <b id="totalCount">0</b> 个型号</p>
   </div>
   <div class="catalog-tools">
-    <input type="search" id="searchInput" placeholder="🔍 搜索型号或名称，如 YRE-2020Z、反应釜、DLSB…" autocomplete="off">
+    <input type="search" id="searchInput" aria-label="搜索产品型号或名称" placeholder="🔍 搜索型号或名称，如 YRE-2020Z、反应釜、DLSB…" autocomplete="off">
     <div class="chips" id="chips"></div>
   </div>
   <p class="result-info"><span id="resultCount">0</span> 个结果</p>
@@ -100,12 +136,13 @@
     </table>
     <p class="empty-tip" id="emptyTip" hidden>没有匹配的型号，换个关键词试试～</p>
   </div>
+  <noscript><p class="seo-note">型号筛选需要启用 JavaScript。您仍可通过上方常用型号入口以及下方产品规格书访问产品资料。</p></noscript>
 </section>
 
 <!-- 详细参数弹窗 -->
 <div class="modal-mask" id="modalMask" hidden>
-  <div class="modal" role="dialog" aria-modal="true">
-    <button class="modal-close" id="modalClose" title="关闭">×</button>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+    <button class="modal-close" id="modalClose" title="关闭" aria-label="关闭产品参数">×</button>
     <div class="modal-head">
       <img id="mImg" src="" alt="">
       <div>
@@ -134,7 +171,7 @@
     <p>输入型号关键词搜索，直接在线查看或下载原始 Word 规格书。共收录 <b id="specCount">0</b> 份</p>
   </div>
   <div class="catalog-tools">
-    <input type="search" id="specSearch" placeholder="🔍 搜索型号，如 GDSZ-100-40、YSF-50L、YRE-2020Z…" autocomplete="off">
+    <input type="search" id="specSearch" aria-label="搜索产品规格书" placeholder="🔍 搜索型号，如 GDSZ-100-40、YSF-50L、YRE-2020Z…" autocomplete="off">
     <div class="chips" id="specChips"></div>
   </div>
   <p class="result-info"><span id="specResultCount">0</span> 个结果</p>
@@ -164,12 +201,13 @@
   <div class="footer-sub">本页面由产品资料整理生成 · 仅供参考，具体以实物及正式技术文件为准</div>
 </footer>
 
-<button class="to-top" id="toTop" title="返回顶部">↑</button>
+<button class="to-top" id="toTop" title="返回顶部" aria-label="返回页面顶部">↑</button>
 
 <script src="assets/data.js?v=20260614b"></script>
 <script src="assets/videos.js?v=20260614b"></script>
 <script src="assets/pages.js?v=20260614b"></script>
 <script src="assets/specs.js?v=20260614b"></script>
 <script src="app.js?v=20260614b"></script>
+<script src="assets/customer-tools.js?v=20260916"></script>
 </body>
 </html>
