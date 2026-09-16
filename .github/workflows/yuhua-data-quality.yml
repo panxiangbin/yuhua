@@ -7,6 +7,8 @@ on:
       - 'app.js'
       - 'assets/customer-tools.js'
       - 'assets/customer-tools.css'
+      - 'model/**'
+      - 'sitemap.xml'
       - 'products.json'
       - 'specs_index.json'
       - 'tools/check_product_data.py'
@@ -18,6 +20,8 @@ on:
       - 'app.js'
       - 'assets/customer-tools.js'
       - 'assets/customer-tools.css'
+      - 'model/**'
+      - 'sitemap.xml'
       - 'products.json'
       - 'specs_index.json'
       - 'tools/check_product_data.py'
@@ -49,14 +53,37 @@ jobs:
           import re
           from pathlib import Path
 
-          html = Path('index.html').read_text(encoding='utf-8')
           expected = 'smxpxb008@gmail.com'
-          assert expected in html, 'Sales email is missing from index.html'
-          assert 'mailto:' + expected in html, 'Clickable sales email is missing'
-          assert 'tel:' not in html.lower(), 'Telephone link found in public page'
-          assert '微信' not in html, 'WeChat wording found in public page'
-          assert not re.search(r'(?<!\d)1[3-9]\d{9}(?!\d)', html), 'Possible mobile phone number found in public page'
-          print('Email-only contact policy: OK')
+          index_html = Path('index.html').read_text(encoding='utf-8')
+          assert expected in index_html, 'Sales email is missing from index.html'
+          assert 'mailto:' + expected in index_html, 'Clickable sales email is missing'
+
+          public_html = [Path('index.html')] + sorted(Path('model').glob('*.html'))
+          for path in public_html:
+              html = path.read_text(encoding='utf-8')
+              assert 'tel:' not in html.lower(), f'Telephone link found in {path}'
+              assert '微信' not in html, f'WeChat wording found in {path}'
+              assert not re.search(r'(?<!\d)1[3-9]\d{9}(?!\d)', html), f'Possible mobile phone number found in {path}'
+          print(f'Email-only contact policy: OK ({len(public_html)} public pages checked)')
+          PY
+
+      - name: Verify sitemap and model landing pages
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from urllib.parse import urlparse
+          import xml.etree.ElementTree as ET
+
+          root = ET.parse('sitemap.xml').getroot()
+          ns = {'sm': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
+          locs = [node.text.strip() for node in root.findall('sm:url/sm:loc', ns) if node.text]
+          assert len(locs) == len(set(locs)), 'Duplicate URLs found in sitemap.xml'
+
+          sitemap_paths = {urlparse(url).path.removeprefix('/yuhua/') for url in locs}
+          model_pages = sorted(Path('model').glob('*.html'))
+          for page in model_pages:
+              assert page.as_posix() in sitemap_paths, f'{page} is not listed in sitemap.xml'
+          print(f'Sitemap/model-page check: OK ({len(model_pages)} model pages)')
           PY
 
       - name: Check product and spec data
