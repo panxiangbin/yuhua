@@ -72,10 +72,45 @@ jobs:
           if ((source.match(/var qCompact = normalizeSearchText\(q\);/g) || []).length < 2) {
             throw new Error('Both product and specification searches must normalize the query');
           }
-          if ((source.match(/normalizeSearchText\(hay\)\.indexOf\(qCompact\)/g) || []).length < 2) {
-            throw new Error('Both product and specification searches must match normalized catalogue text');
+          if ((source.match(/rankSearchResults\(/g) || []).length < 3) {
+            throw new Error('Both product and specification searches must use the shared ranking helper');
           }
           console.log('Separator-tolerant search: OK');
+          NODE
+
+      - name: Verify exact-model-first search ranking
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const source = fs.readFileSync('app.js', 'utf8');
+          ['normalizeSearchText', 'normalizeSearchToken', 'searchMatchRank', 'rankSearchResults'].forEach(name => {
+            const fn = source.match(new RegExp('function ' + name + '\\([^)]*\\) \\{[\\s\\S]*?\\n  \\}'));
+            if (!fn) throw new Error(name + ' helper is missing');
+            eval(fn[0]);
+          });
+
+          const models = [
+            { model: 'YSFS-50L', text: '高温循环装置' },
+            { model: 'YSF-50L', text: '高温循环装置' },
+            { model: 'YSF', text: '高温循环装置' },
+            { model: 'AYSF-50L', text: '测试文本' },
+            { model: 'DLSB-5-30', text: '低温冷却循环泵' }
+          ];
+          function ranked(query) {
+            const q = query.toLowerCase();
+            return rankSearchResults(models, x => x.model, x => x.text, q, normalizeSearchText(q)).map(x => x.model);
+          }
+
+          const ysf = ranked('YSF');
+          const expectedYsf = ['YSF', 'YSF-50L', 'YSFS-50L', 'AYSF-50L'];
+          if (ysf.slice(0, 4).join('|') !== expectedYsf.join('|')) {
+            throw new Error('YSF ranking is not exact -> family boundary -> broader prefix -> contains: ' + ysf.join(', '));
+          }
+          const dlsb = ranked('DLSB-5/30');
+          if (dlsb[0] !== 'DLSB-5-30') {
+            throw new Error('Separator-equivalent exact model must rank first: ' + dlsb.join(', '));
+          }
+          console.log('Exact-model-first ranking: OK');
           NODE
 
       - name: Prevent unsafe category-level detail fallback
