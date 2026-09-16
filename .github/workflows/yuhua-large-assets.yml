@@ -41,6 +41,7 @@ on:
       - '**/*.otf'
       - '**/*.eot'
       - 'tools/audit_large_assets.py'
+      - 'tools/check_large_asset_additions.py'
       - '.github/workflows/yuhua-large-assets.yml'
   push:
     branches: [main]
@@ -83,6 +84,7 @@ on:
       - '**/*.otf'
       - '**/*.eot'
       - 'tools/audit_large_assets.py'
+      - 'tools/check_large_asset_additions.py'
       - '.github/workflows/yuhua-large-assets.yml'
 
 permissions:
@@ -94,6 +96,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # On pull_request, depth 2 keeps the merge ref plus its parents so the
+          # exact base SHA is available without fetching the repository history.
+          fetch-depth: 2
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -102,7 +108,7 @@ jobs:
 
       - name: Audit tracked large assets
         run: |
-          python -m py_compile tools/audit_large_assets.py
+          python -m py_compile tools/audit_large_assets.py tools/check_large_asset_additions.py
           python tools/audit_large_assets.py --json-output large_asset_report.json
 
       - name: Upload large-asset audit report
@@ -113,5 +119,13 @@ jobs:
           if-no-files-found: error
           retention-days: 90
 
-      # Read-only by design. Existing large files are reported, not deleted,
-      # recompressed, renamed, migrated, or treated as product-data corrections.
+      - name: Guard newly added very large files
+        if: github.event_name == 'pull_request'
+        run: |
+          python tools/check_large_asset_additions.py \
+            --base-ref "${{ github.event.pull_request.base.sha }}" \
+            --max-mib 50
+
+      # Existing large files remain read-only audit findings. The PR guard only
+      # blocks newly added tracked blobs >=50 MiB so legacy assets are never
+      # deleted, recompressed, renamed, migrated, or treated as product data.
