@@ -1,0 +1,67 @@
+name: Yuhua suspicious specification model audit
+
+on:
+  pull_request:
+    paths:
+      - 'products.json'
+      - 'specs_index.json'
+      - 'tools/check_product_data.py'
+      - 'tools/audit_suspicious_spec_models.py'
+      - '.github/workflows/yuhua-spec-model-anomaly-audit.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'products.json'
+      - 'specs_index.json'
+      - 'tools/check_product_data.py'
+      - 'tools/audit_suspicious_spec_models.py'
+      - '.github/workflows/yuhua-spec-model-anomaly-audit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Compile audit scripts
+        run: python -m py_compile tools/check_product_data.py tools/audit_suspicious_spec_models.py
+
+      - name: Classify suspicious specification models
+        run: |
+          python tools/audit_suspicious_spec_models.py \
+            --json-output spec_model_anomaly_report.json
+
+      - name: Verify report is read-only and internally consistent
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path('spec_model_anomaly_report.json').read_text(encoding='utf-8'))
+          summary = report['summary']
+          categories = summary['category_counts']
+          assert report['policy']['read_only'] is True
+          assert report['policy']['auto_fix_count'] == 0
+          assert summary['suspicious_model_count'] == sum(categories.values())
+          assert summary['filename_extension_suffix_count'] == categories.get('filename_extension_suffix', 0)
+          assert summary['extension_placeholder_count'] == categories.get('extension_placeholder', 0)
+          assert len(report['all_suspicious_records']) == summary['suspicious_model_count']
+          print('Specification-model anomaly report: OK')
+          PY
+
+      - name: Upload anomaly audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-spec-model-anomaly-report
+          path: spec_model_anomaly_report.json
+          if-no-files-found: error
+          retention-days: 90
+
+      # Audit-only by design: source product/specification data is never rewritten.
