@@ -103,7 +103,9 @@ jobs:
             echo "::error::Allowed public sales email is missing from deployed index.html."
             exit 1
           fi
-          if grep -Eqi 'href=["'"']tel:|weixin://|wechat://' /tmp/actual-index.html; then
+          if grep -Fqi 'href="tel:' /tmp/actual-index.html || \
+             grep -Fqi "href='tel:" /tmp/actual-index.html || \
+             grep -Eqi 'weixin://|wechat://' /tmp/actual-index.html; then
             echo "::error::Disallowed phone/WeChat contact link found on deployed index.html."
             exit 1
           fi
