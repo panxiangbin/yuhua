@@ -1,0 +1,119 @@
+name: Yuhua duplicate asset audit
+
+on:
+  pull_request:
+    paths:
+      - '**/*.mp4'
+      - '**/*.webm'
+      - '**/*.mov'
+      - '**/*.avi'
+      - '**/*.mkv'
+      - '**/*.m4v'
+      - '**/*.jpg'
+      - '**/*.jpeg'
+      - '**/*.png'
+      - '**/*.webp'
+      - '**/*.gif'
+      - '**/*.svg'
+      - '**/*.avif'
+      - '**/*.pdf'
+      - '**/*.doc'
+      - '**/*.docx'
+      - '**/*.xls'
+      - '**/*.xlsx'
+      - '**/*.ppt'
+      - '**/*.pptx'
+      - '**/*.zip'
+      - '**/*.rar'
+      - '**/*.7z'
+      - '**/*.tar'
+      - '**/*.gz'
+      - '**/*.tgz'
+      - 'tools/audit_duplicate_assets.py'
+      - '.github/workflows/yuhua-duplicate-assets-audit.yml'
+  push:
+    branches: [main]
+    paths:
+      - '**/*.mp4'
+      - '**/*.webm'
+      - '**/*.mov'
+      - '**/*.avi'
+      - '**/*.mkv'
+      - '**/*.m4v'
+      - '**/*.jpg'
+      - '**/*.jpeg'
+      - '**/*.png'
+      - '**/*.webp'
+      - '**/*.gif'
+      - '**/*.svg'
+      - '**/*.avif'
+      - '**/*.pdf'
+      - '**/*.doc'
+      - '**/*.docx'
+      - '**/*.xls'
+      - '**/*.xlsx'
+      - '**/*.ppt'
+      - '**/*.pptx'
+      - '**/*.zip'
+      - '**/*.rar'
+      - '**/*.7z'
+      - '**/*.tar'
+      - '**/*.gz'
+      - '**/*.tgz'
+      - 'tools/audit_duplicate_assets.py'
+      - '.github/workflows/yuhua-duplicate-assets-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Generate read-only duplicate asset report
+        run: |
+          python -m py_compile tools/audit_duplicate_assets.py
+          python tools/audit_duplicate_assets.py \
+            --json-output duplicate_assets_report.json \
+            --markdown-output duplicate_assets_report.md \
+            --large-mib 1 \
+            --text-scan-mib 2 \
+            --top 100
+
+      - name: Verify audit-only policy and report shape
+        run: |
+          python - <<'PY'
+          import json
+          report = json.load(open('duplicate_assets_report.json', encoding='utf-8'))
+          assert report['policy']['mode'] == 'audit_only'
+          assert report['policy']['auto_fix_count'] == 0
+          assert report['summary']['tracked_file_count'] > 0
+          assert report['summary']['unique_blob_count'] > 0
+          assert report['summary']['duplicate_blob_group_count'] >= 0
+          assert report['summary']['duplicate_mib_reclaimable_if_one_copy_kept_per_blob'] >= 0
+          print(report['summary'])
+          PY
+
+      - name: Upload duplicate asset audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-duplicate-assets-report
+          path: |
+            duplicate_assets_report.json
+            duplicate_assets_report.md
+          if-no-files-found: error
+          retention-days: 90
+
+      # Evidence only: this workflow never deletes, moves, renames, compresses,
+      # or rewrites customer assets, product data, or specification files.
