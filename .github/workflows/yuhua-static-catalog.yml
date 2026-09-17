@@ -3,6 +3,7 @@ name: Yuhua static catalog index check
 on:
   pull_request:
     paths:
+      - 'index.html'
       - 'catalog.html'
       - 'products.json'
       - 'specs_index.json'
@@ -11,6 +12,7 @@ on:
   push:
     branches: [main]
     paths:
+      - 'index.html'
       - 'catalog.html'
       - 'products.json'
       - 'specs_index.json'
@@ -39,6 +41,7 @@ jobs:
           products = json.loads(Path('products.json').read_text(encoding='utf-8'))
           specs = json.loads(Path('specs_index.json').read_text(encoding='utf-8'))
           html = Path('catalog.html').read_text(encoding='utf-8')
+          index_html = Path('index.html').read_text(encoding='utf-8')
 
           expected = {
               'product-records': len(products),
@@ -51,6 +54,18 @@ jobs:
               actual = int(match.group(1))
               assert actual == value, f'data-{key} is stale: page={actual}, source={value}'
               assert f'<b>{value}</b>' in html, f'visible count {value} is missing from catalog.html'
+
+          index_product_count = re.search(r'<b id="totalCount">(\d+)</b>', index_html)
+          assert index_product_count, 'static totalCount fallback is missing from index.html'
+          assert int(index_product_count.group(1)) == len(products), (
+              f'index product count is stale: page={index_product_count.group(1)}, source={len(products)}'
+          )
+          index_spec_count = re.search(r'<b id="specCount">(\d+)</b>', index_html)
+          assert index_spec_count, 'static specCount fallback is missing from index.html'
+          assert int(index_spec_count.group(1)) == len(specs), (
+              f'index spec count is stale: page={index_spec_count.group(1)}, source={len(specs)}'
+          )
+          assert 'href="catalog.html"' in index_html, 'index.html must expose the static catalog link'
 
           expected_email = 'smxpxb008@gmail.com'
           assert expected_email in html and f'mailto:{expected_email}' in html, 'approved sales email is missing'
@@ -78,4 +93,5 @@ jobs:
           sitemap = Path('sitemap.xml').read_text(encoding='utf-8')
           assert 'https://panxiangbin.github.io/yuhua/catalog.html' in sitemap, 'catalog.html is missing from sitemap.xml'
           print('Static catalog index: OK', expected)
+          print('Homepage static fallback: OK', {'products': len(products), 'specs': len(specs)})
           PY
