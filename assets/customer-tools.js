@@ -233,6 +233,8 @@
   var copyEmail = document.getElementById("copyEmail");
   var copyEmailStatus = document.getElementById("copyEmailStatus");
   var clearInquiry = document.getElementById("clearInquiry");
+  var copySelectionInquiry = null;
+  var selectionCopyStatus = null;
 
   if (copyEmail) {
     copyEmail.addEventListener("click", function () {
@@ -245,44 +247,80 @@
     return el ? (el.value || "").trim() : "";
   }
 
+  function selectionInquiryContent() {
+    var category = fieldValue("inqCategory");
+    var model = fieldValue("inqModel");
+    var capacity = fieldValue("inqCapacity");
+    var temperature = fieldValue("inqTemperature");
+    var pressure = fieldValue("inqPressure");
+    var power = fieldValue("inqPower");
+    var notes = fieldValue("inqNotes");
+
+    var subject = "予华仪器选型/询价" +
+      (model ? " - " + model : category ? " - " + category : "");
+
+    var lines = [
+      "您好，我需要咨询予华仪器产品，需求如下：",
+      "",
+      "产品类别：" + (category || "暂不确定"),
+      "参考型号：" + (model || "暂不确定"),
+      "容量/处理量：" + (capacity || "未填写"),
+      "温度范围：" + (temperature || "未填写"),
+      "真空/压力要求：" + (pressure || "未填写"),
+      "电源/使用地区：" + (power || "未填写"),
+      "材质、防爆、物料与其他要求：" + (notes || "未填写"),
+      "",
+      "请协助推荐适合的型号/配置，并提供报价、交期及相关技术资料。",
+      "",
+      "网站：" + window.location.origin + window.location.pathname
+    ];
+
+    return { subject: subject, body: lines.join("\n") };
+  }
+
   if (selectionForm) {
+    var formActions = selectionForm.querySelector(".form-actions");
+    if (formActions) {
+      copySelectionInquiry = document.createElement("button");
+      copySelectionInquiry.type = "button";
+      copySelectionInquiry.id = "copySelectionInquiry";
+      copySelectionInquiry.className = "clear-form-btn";
+      copySelectionInquiry.textContent = "复制完整询价内容";
+      copySelectionInquiry.setAttribute("aria-describedby", "selectionCopyStatus");
+
+      if (clearInquiry) formActions.insertBefore(copySelectionInquiry, clearInquiry);
+      else formActions.appendChild(copySelectionInquiry);
+
+      selectionCopyStatus = document.createElement("span");
+      selectionCopyStatus.id = "selectionCopyStatus";
+      selectionCopyStatus.className = "inquiry-status";
+      selectionCopyStatus.setAttribute("aria-live", "polite");
+      selectionCopyStatus.setAttribute("aria-atomic", "true");
+      formActions.appendChild(selectionCopyStatus);
+    }
+
     selectionForm.addEventListener("submit", function (e) {
       e.preventDefault();
-
-      var category = fieldValue("inqCategory");
-      var model = fieldValue("inqModel");
-      var capacity = fieldValue("inqCapacity");
-      var temperature = fieldValue("inqTemperature");
-      var pressure = fieldValue("inqPressure");
-      var power = fieldValue("inqPower");
-      var notes = fieldValue("inqNotes");
-
-      var subject = "予华仪器选型/询价" +
-        (model ? " - " + model : category ? " - " + category : "");
-
-      var lines = [
-        "您好，我需要咨询予华仪器产品，需求如下：",
-        "",
-        "产品类别：" + (category || "暂不确定"),
-        "参考型号：" + (model || "暂不确定"),
-        "容量/处理量：" + (capacity || "未填写"),
-        "温度范围：" + (temperature || "未填写"),
-        "真空/压力要求：" + (pressure || "未填写"),
-        "电源/使用地区：" + (power || "未填写"),
-        "材质、防爆、物料与其他要求：" + (notes || "未填写"),
-        "",
-        "请协助推荐适合的型号/配置，并提供报价、交期及相关技术资料。",
-        "",
-        "网站：" + window.location.origin + window.location.pathname
-      ];
-
-      window.location.href = mailto(subject, lines.join("\n"));
+      var inquiryContent = selectionInquiryContent();
+      window.location.href = mailto(inquiryContent.subject, inquiryContent.body);
     });
+
+    if (copySelectionInquiry) {
+      copySelectionInquiry.addEventListener("click", function () {
+        var inquiryContent = selectionInquiryContent();
+        var fullText =
+          "收件人：" + SALES_EMAIL + "\n" +
+          "主题：" + inquiryContent.subject + "\n\n" +
+          inquiryContent.body;
+        copyText(fullText, selectionCopyStatus, "完整询价内容已复制");
+      });
+    }
   }
 
   if (clearInquiry && selectionForm) {
     clearInquiry.addEventListener("click", function () {
       selectionForm.reset();
+      if (selectionCopyStatus) selectionCopyStatus.textContent = "";
       document.getElementById("inqCategory").focus();
     });
   }
