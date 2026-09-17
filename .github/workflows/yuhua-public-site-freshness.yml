@@ -1,0 +1,106 @@
+name: Yuhua public deployment freshness
+
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'catalog.html'
+      - 'app.js'
+      - 'assets/customer-tools.js'
+      - '.github/workflows/yuhua-public-site-freshness.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'catalog.html'
+      - 'app.js'
+      - 'assets/customer-tools.js'
+      - '.github/workflows/yuhua-public-site-freshness.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-public-copy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Compare deployed core files with repository source
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
+            EXPECTED_REF="${{ github.event.pull_request.base.sha }}"
+            MAX_ATTEMPTS=1
+          else
+            EXPECTED_REF="${GITHUB_SHA}"
+            MAX_ATTEMPTS=12
+          fi
+
+          RAW_BASE="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${EXPECTED_REF}"
+          PUBLIC_BASE="https://panxiangbin.github.io/yuhua"
+          FILES=(
+            "index.html"
+            "catalog.html"
+            "app.js"
+            "assets/customer-tools.js"
+          )
+
+          echo "Expected source commit: ${EXPECTED_REF}"
+          echo "Checking public deployment without cloning the ~1.2 GB repository."
+
+          matched=0
+          for attempt in $(seq 1 "${MAX_ATTEMPTS}"); do
+            echo "Public deployment check attempt ${attempt}/${MAX_ATTEMPTS}"
+            all_match=1
+
+            for path in "${FILES[@]}"; do
+              expected="/tmp/expected-${path//\//-}"
+              actual="/tmp/actual-${path//\//-}"
+
+              curl -fsSL --retry 3 --retry-delay 2 \
+                "${RAW_BASE}/${path}" -o "${expected}"
+              curl -fsSL --retry 3 --retry-delay 2 \
+                -H 'Cache-Control: no-cache' \
+                "${PUBLIC_BASE}/${path}?source=${EXPECTED_REF}&attempt=${attempt}" -o "${actual}"
+
+              if ! cmp -s "${expected}" "${actual}"; then
+                all_match=0
+                echo "Mismatch: ${path}"
+                echo "  expected sha256: $(sha256sum "${expected}" | awk '{print $1}')"
+                echo "  public   sha256: $(sha256sum "${actual}" | awk '{print $1}')"
+              else
+                echo "Match: ${path}"
+              fi
+            done
+
+            if [[ "${all_match}" -eq 1 ]]; then
+              matched=1
+              break
+            fi
+
+            if [[ "${attempt}" -lt "${MAX_ATTEMPTS}" ]]; then
+              echo "Pages may still be propagating; retrying in 15 seconds."
+              sleep 15
+            fi
+          done
+
+          if [[ "${matched}" -ne 1 ]]; then
+            echo "::error::Public GitHub Pages content does not match expected repository source ${EXPECTED_REF}."
+            echo "First lines of the public and expected home pages:"
+            diff -u <(sed -n '1,120p' /tmp/expected-index.html) <(sed -n '1,120p' /tmp/actual-index.html) || true
+            exit 1
+          fi
+
+          if ! grep -Fq 'smxpxb008@gmail.com' /tmp/actual-index.html; then
+            echo "::error::Allowed public sales email is missing from deployed index.html."
+            exit 1
+          fi
+          if grep -Eqi 'href=["'"']tel:|weixin://|wechat://' /tmp/actual-index.html; then
+            echo "::error::Disallowed phone/WeChat contact link found on deployed index.html."
+            exit 1
+          fi
+
+          echo "Public deployment matches ${EXPECTED_REF} for all checked core files."
