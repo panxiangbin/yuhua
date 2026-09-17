@@ -30,6 +30,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          REPORT="${RUNNER_TEMP}/yuhua-public-freshness-report.txt"
+          exec > >(tee -a "${REPORT}") 2>&1
 
           if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
             EXPECTED_REF="${{ github.event.pull_request.base.sha }}"
@@ -104,3 +106,11 @@ jobs:
           fi
 
           echo "Public deployment matches ${EXPECTED_REF} for all checked core files."
+
+      - name: Upload public deployment freshness report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-public-deployment-freshness-report
+          path: ${{ runner.temp }}/yuhua-public-freshness-report.txt
+          if-no-files-found: warn
