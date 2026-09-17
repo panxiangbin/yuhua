@@ -1,0 +1,63 @@
+name: Yuhua homepage video poster audit
+
+on:
+  pull_request:
+    paths:
+      - "assets/videos.js"
+      - "assets/videos/**"
+      - "tools/audit_homepage_video_posters.py"
+      - ".github/workflows/yuhua-homepage-video-posters.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "assets/videos.js"
+      - "assets/videos/**"
+      - "tools/audit_homepage_video_posters.py"
+      - ".github/workflows/yuhua-homepage-video-posters.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Compile audit script
+        run: python -m py_compile tools/audit_homepage_video_posters.py
+
+      - name: Audit homepage video posters
+        run: |
+          python tools/audit_homepage_video_posters.py \
+            --json artifacts/homepage-video-posters.json \
+            --md artifacts/homepage-video-posters.md
+          cat artifacts/homepage-video-posters.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Enforce read-only policy
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path("artifacts/homepage-video-posters.json").read_text(encoding="utf-8"))
+          assert report["policy"]["mode"] == "audit_only"
+          assert report["policy"]["auto_fix_count"] == 0
+          print("read-only poster audit policy verified")
+          PY
+
+      - name: Upload poster audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-homepage-video-poster-report
+          path: |
+            artifacts/homepage-video-posters.json
+            artifacts/homepage-video-posters.md
+          if-no-files-found: error
+          retention-days: 30
