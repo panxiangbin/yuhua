@@ -47,12 +47,45 @@ jobs:
           report = json.loads(Path('spec_model_anomaly_report.json').read_text(encoding='utf-8'))
           summary = report['summary']
           categories = summary['category_counts']
+          groups = report['review_groups']
+
           assert report['policy']['read_only'] is True
           assert report['policy']['auto_fix_count'] == 0
           assert summary['suspicious_model_count'] == sum(categories.values())
           assert summary['filename_extension_suffix_count'] == categories.get('filename_extension_suffix', 0)
           assert summary['extension_placeholder_count'] == categories.get('extension_placeholder', 0)
           assert len(report['all_suspicious_records']) == summary['suspicious_model_count']
+
+          assert summary['supported_correction_candidate_count'] == len(groups['supported_correction_candidates'])
+          assert summary['existing_spec_model_collision_count'] == len(groups['existing_spec_model_collision_risk'])
+          assert summary['other_unresolved_suffix_count'] == len(groups['other_unresolved_suffix_candidates'])
+
+          # A supported correction candidate must be backed by both the title and
+          # an existing product model, must not be a capacity-only token, and must
+          # not collide with an already-clean specification model.
+          for row in groups['supported_correction_candidates']:
+              assert row['category'] == 'filename_extension_suffix'
+              assert row['candidate_in_title'] is True
+              assert row['candidate_is_capacity_only'] is False
+              assert row['candidate_itself_suspicious'] is False
+              assert row['exact_product_model_matches']
+              assert row['existing_spec_model_matches'] == []
+              assert row['fix_readiness'] == 'supported_correction_candidate'
+
+          for row in groups['existing_spec_model_collision_risk']:
+              assert row['existing_spec_model_matches']
+              assert row['fix_readiness'] == 'existing_spec_model_collision'
+
+          # Every .DOC/.DOCX suffix anomaly must land in exactly one readiness bucket.
+          readiness = summary['fix_readiness_counts']
+          suffix_partition = (
+              readiness.get('supported_correction_candidate', 0)
+              + readiness.get('existing_spec_model_collision', 0)
+              + readiness.get('capacity_only_manual_review', 0)
+              + readiness.get('candidate_still_suspicious', 0)
+              + readiness.get('insufficient_cross_source_evidence', 0)
+          )
+          assert suffix_partition == summary['filename_extension_suffix_count']
           print('Specification-model anomaly report: OK')
           PY
 
