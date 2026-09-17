@@ -2,8 +2,10 @@
 """Read-only audit for byte-identical tracked assets.
 
 The audit groups tracked files by Git blob OID. Files sharing the same blob OID
-are byte-for-byte identical, so the report can quantify duplicate storage
-without decoding, recompressing, deleting, moving, or rewriting any asset.
+are byte-for-byte identical, so the report can quantify repeated materialized
+or published path footprint without decoding, recompressing, deleting, moving,
+or rewriting any asset. Git already de-duplicates identical blobs in its object
+database, so these figures are not Git object-storage savings.
 
 Reference evidence is deliberately conservative: source-like text files up to a
 bounded size are scanned for exact repository paths and basenames. Missing text
@@ -190,7 +192,7 @@ def main() -> int:
         "policy": {
             "mode": "audit_only",
             "auto_fix_count": 0,
-            "meaning": "Same Git blob OID means byte-identical content. Reference scans are evidence only; no-reference does not mean unused.",
+            "meaning": "Same Git blob OID means byte-identical content. Reclaimable figures describe repeated materialized publication/working-tree path footprint, not Git object-database savings. Reference scans are evidence only; no-reference does not mean unused.",
         },
         "summary": summary,
         "large_duplicate_groups": large_groups[: args.top],
@@ -203,6 +205,7 @@ def main() -> int:
         "# Yuhua duplicate tracked asset audit",
         "",
         "This report is read-only. Files sharing one Git blob OID are byte-for-byte identical.",
+        "Potential duplicate MiB refers to repeated materialized publication/working-tree paths; Git already de-duplicates identical blobs in its object database.",
         "A missing text reference is not proof that a file is unused; runtime/dynamic references may exist.",
         "",
         "## Summary",
