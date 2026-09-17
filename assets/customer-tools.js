@@ -3,34 +3,45 @@
 
   var SALES_EMAIL = "smxpxb008@gmail.com";
 
+  function setCopyStatus(statusEl, text) {
+    if (!statusEl) return;
+    statusEl.textContent = text;
+    window.setTimeout(function () {
+      if (statusEl.textContent === text) statusEl.textContent = "";
+    }, 3200);
+  }
+
   function copyText(text, statusEl, successText) {
     function done() {
-      if (statusEl) statusEl.textContent = successText || "已复制";
-      window.setTimeout(function () {
-        if (statusEl) statusEl.textContent = "";
-      }, 2600);
+      setCopyStatus(statusEl, successText || "已复制");
+    }
+
+    function failed() {
+      setCopyStatus(statusEl, "复制失败，请重试");
     }
 
     if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(text).then(done).catch(function () {
-        fallbackCopy(text, done);
+        fallbackCopy(text, done, failed);
       });
     } else {
-      fallbackCopy(text, done);
+      fallbackCopy(text, done, failed);
     }
   }
 
-  function fallbackCopy(text, callback) {
+  function fallbackCopy(text, onSuccess, onFailure) {
     var ta = document.createElement("textarea");
+    var copied = false;
     ta.value = text;
     ta.setAttribute("readonly", "");
     ta.style.position = "fixed";
     ta.style.left = "-9999px";
     document.body.appendChild(ta);
     ta.select();
-    try { document.execCommand("copy"); } catch (e) {}
+    try { copied = document.execCommand("copy"); } catch (e) {}
     document.body.removeChild(ta);
-    callback();
+    if (copied) onSuccess();
+    else onFailure();
   }
 
   function setUrlParam(key, value) {
