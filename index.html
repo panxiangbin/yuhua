@@ -223,6 +223,24 @@
 
 <script src="assets/data.js?v=20260614b"></script>
 <script src="assets/videos.js?v=20260614b"></script>
+<script>
+(function () {
+  var missingPosters = {
+    "assets/videos/dji_20260115_143343_503_video.jpg": true,
+    "assets/videos/img_1655.jpg": true,
+    "assets/videos/img_1659.jpg": true,
+    "assets/videos/img_1660.jpg": true,
+    "assets/videos/img_1669.jpg": true,
+    "assets/videos/img_1670.jpg": true,
+    "assets/videos/img_1671.jpg": true,
+    "assets/videos/img_1672.jpg": true,
+    "assets/videos/img_1678.jpg": true
+  };
+  (window.VIDEOS || []).forEach(function (video) {
+    if (missingPosters[video.poster]) video.poster = "";
+  });
+})();
+</script>
 <script src="assets/pages.js?v=20260614b"></script>
 <script src="assets/specs.js?v=20260614b"></script>
 <script src="app.js?v=20260614b"></script>
