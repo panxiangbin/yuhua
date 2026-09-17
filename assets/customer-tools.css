@@ -333,3 +333,20 @@
     bottom: 22px;
   }
 }
+
+/* product modal: touch-friendly close control + visible keyboard focus */
+.modal-close {
+  width: 44px;
+  height: 44px;
+}
+.modal-close:focus-visible,
+.spec-btn:focus-visible {
+  outline: 3px solid rgba(20,100,200,.22);
+  outline-offset: 2px;
+}
+@media (pointer: coarse) {
+  .modal-close {
+    width: 48px;
+    height: 48px;
+  }
+}
