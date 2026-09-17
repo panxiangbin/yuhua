@@ -1,0 +1,151 @@
+name: Yuhua Pages publish-scope audit
+
+on:
+  pull_request:
+    paths:
+      - '**/*.html'
+      - '**/*.htm'
+      - '**/*.css'
+      - '**/*.js'
+      - '**/*.mjs'
+      - '**/*.json'
+      - '**/*.xml'
+      - '**/*.mp4'
+      - '**/*.webm'
+      - '**/*.mov'
+      - '**/*.avi'
+      - '**/*.mkv'
+      - '**/*.m4v'
+      - '**/*.mp3'
+      - '**/*.wav'
+      - '**/*.m4a'
+      - '**/*.aac'
+      - '**/*.ogg'
+      - '**/*.flac'
+      - '**/*.jpg'
+      - '**/*.jpeg'
+      - '**/*.png'
+      - '**/*.webp'
+      - '**/*.gif'
+      - '**/*.svg'
+      - '**/*.avif'
+      - '**/*.pdf'
+      - '**/*.doc'
+      - '**/*.docx'
+      - '**/*.xls'
+      - '**/*.xlsx'
+      - '**/*.ppt'
+      - '**/*.pptx'
+      - '**/*.zip'
+      - '**/*.rar'
+      - '**/*.7z'
+      - '**/*.tar'
+      - '**/*.gz'
+      - '**/*.tgz'
+      - '**/*.woff'
+      - '**/*.woff2'
+      - '**/*.ttf'
+      - '**/*.otf'
+      - '**/*.eot'
+      - 'tools/audit_pages_publish_scope.py'
+      - '.github/workflows/yuhua-pages-publish-scope.yml'
+  push:
+    branches: [main]
+    paths:
+      - '**/*.html'
+      - '**/*.htm'
+      - '**/*.css'
+      - '**/*.js'
+      - '**/*.mjs'
+      - '**/*.json'
+      - '**/*.xml'
+      - '**/*.mp4'
+      - '**/*.webm'
+      - '**/*.mov'
+      - '**/*.avi'
+      - '**/*.mkv'
+      - '**/*.m4v'
+      - '**/*.mp3'
+      - '**/*.wav'
+      - '**/*.m4a'
+      - '**/*.aac'
+      - '**/*.ogg'
+      - '**/*.flac'
+      - '**/*.jpg'
+      - '**/*.jpeg'
+      - '**/*.png'
+      - '**/*.webp'
+      - '**/*.gif'
+      - '**/*.svg'
+      - '**/*.avif'
+      - '**/*.pdf'
+      - '**/*.doc'
+      - '**/*.docx'
+      - '**/*.xls'
+      - '**/*.xlsx'
+      - '**/*.ppt'
+      - '**/*.pptx'
+      - '**/*.zip'
+      - '**/*.rar'
+      - '**/*.7z'
+      - '**/*.tar'
+      - '**/*.gz'
+      - '**/*.tgz'
+      - '**/*.woff'
+      - '**/*.woff2'
+      - '**/*.ttf'
+      - '**/*.otf'
+      - '**/*.eot'
+      - 'tools/audit_pages_publish_scope.py'
+      - '.github/workflows/yuhua-pages-publish-scope.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Generate read-only Pages publish-scope report
+        run: |
+          python -m py_compile tools/audit_pages_publish_scope.py
+          python tools/audit_pages_publish_scope.py \
+            --json-output pages_publish_scope_report.json \
+            --markdown-output pages_publish_scope_report.md \
+            --large-mib 5 \
+            --top 100
+
+      - name: Verify audit-only policy
+        run: |
+          python - <<'PY'
+          import json
+          report = json.load(open('pages_publish_scope_report.json', encoding='utf-8'))
+          assert report['policy']['mode'] == 'audit_only'
+          assert report['policy']['auto_fix_count'] == 0
+          assert report['summary']['tracked_file_count'] > 0
+          print(report['summary'])
+          PY
+
+      - name: Upload Pages publish-scope audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-pages-publish-scope-report
+          path: |
+            pages_publish_scope_report.json
+            pages_publish_scope_report.md
+          if-no-files-found: error
+          retention-days: 90
+
+      # This workflow is evidence-only. It never deletes, moves, compresses,
+      # renames, or rewrites customer assets or product/specification data.

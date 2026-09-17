@@ -223,6 +223,83 @@
 
 <script src="assets/data.js?v=20260614b"></script>
 <script src="assets/videos.js?v=20260614b"></script>
+<script>
+(function () {
+  var missingPosters = {
+    "assets/videos/dji_20260115_143343_503_video.jpg": true,
+    "assets/videos/img_1655.jpg": true,
+    "assets/videos/img_1659.jpg": true,
+    "assets/videos/img_1660.jpg": true,
+    "assets/videos/img_1669.jpg": true,
+    "assets/videos/img_1670.jpg": true,
+    "assets/videos/img_1671.jpg": true,
+    "assets/videos/img_1672.jpg": true,
+    "assets/videos/img_1678.jpg": true
+  };
+  var posterByFile = {};
+
+  (window.VIDEOS || []).forEach(function (video) {
+    if (!video) return;
+    if (missingPosters[video.poster]) video.poster = "";
+    if (!video.file || !video.poster) return;
+    posterByFile[video.file] = video.poster;
+    video.poster = "";
+  });
+
+  function initLazyVideoPosters() {
+    var grid = document.getElementById("videoGrid");
+    if (!grid || !Object.keys(posterByFile).length) return;
+
+    var seen = typeof WeakSet === "function" ? new WeakSet() : null;
+    var observer = "IntersectionObserver" in window ? new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting && entry.intersectionRatio <= 0) return;
+        reveal(entry.target);
+        observer.unobserve(entry.target);
+      });
+    }, { rootMargin: "800px 0px" }) : null;
+
+    function reveal(videoEl) {
+      if (!videoEl || videoEl.getAttribute("poster")) return;
+      var source = videoEl.querySelector("source[src]");
+      if (!source) return;
+      var poster = posterByFile[source.getAttribute("src")];
+      if (poster) videoEl.setAttribute("poster", poster);
+    }
+
+    function prepare(videoEl) {
+      if (!videoEl || videoEl.nodeName !== "VIDEO") return;
+      if (seen && seen.has(videoEl)) return;
+      if (seen) seen.add(videoEl);
+      if (observer) observer.observe(videoEl);
+      else reveal(videoEl);
+    }
+
+    function scan(root) {
+      if (!root) return;
+      if (root.nodeName === "VIDEO") prepare(root);
+      if (root.querySelectorAll) {
+        Array.prototype.forEach.call(root.querySelectorAll("video"), prepare);
+      }
+    }
+
+    scan(grid);
+    if ("MutationObserver" in window) {
+      new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+          Array.prototype.forEach.call(mutation.addedNodes || [], scan);
+        });
+      }).observe(grid, { childList: true, subtree: true });
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initLazyVideoPosters, { once: true });
+  } else {
+    initLazyVideoPosters();
+  }
+})();
+</script>
 <script src="assets/pages.js?v=20260614b"></script>
 <script src="assets/specs.js?v=20260614b"></script>
 <script src="app.js?v=20260614b"></script>

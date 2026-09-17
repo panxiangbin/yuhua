@@ -1,0 +1,54 @@
+name: Yuhua homepage video runtime audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'assets/videos.js'
+      - 'assets/videos/**'
+      - 'tools/audit_homepage_video_runtime.py'
+      - '.github/workflows/yuhua-homepage-video-runtime.yml'
+  pull_request:
+    paths:
+      - 'assets/videos.js'
+      - 'assets/videos/**'
+      - 'tools/audit_homepage_video_runtime.py'
+      - '.github/workflows/yuhua-homepage-video-runtime.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check script syntax
+        run: python -m py_compile tools/audit_homepage_video_runtime.py
+
+      - name: Build homepage video runtime report
+        run: python tools/audit_homepage_video_runtime.py --output-dir audit_reports/homepage-video-runtime
+
+      - name: Verify audit-only mode
+        run: |
+          python - <<'PY'
+          import json
+          path = 'audit_reports/homepage-video-runtime/homepage-video-runtime-audit.json'
+          with open(path, encoding='utf-8') as handle:
+              data = json.load(handle)
+          assert data['summary']['mode'] == 'audit_only'
+          assert data['summary']['auto_fix_count'] == 0
+          print(json.dumps(data['summary'], ensure_ascii=False, indent=2))
+          PY
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-homepage-video-runtime-report
+          path: audit_reports/homepage-video-runtime/
+          if-no-files-found: error

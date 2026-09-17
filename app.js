@@ -35,16 +35,47 @@
   // ---------- 产品视频 ----------
   var VIDEOS = window.VIDEOS || [];
   var vgrid = document.getElementById("videoGrid");
-  if (vgrid && VIDEOS.length) {
-    VIDEOS.forEach(function (v) {
+  var VIDEO_BATCH_SIZE = 12;
+  var renderedVideoCount = 0;
+  var videoMoreButton = null;
+
+  function appendVideoBatch() {
+    var end = Math.min(renderedVideoCount + VIDEO_BATCH_SIZE, VIDEOS.length);
+    var fragment = document.createDocumentFragment();
+    for (var i = renderedVideoCount; i < end; i++) {
+      var v = VIDEOS[i];
       var card = document.createElement("div");
       card.className = "video-card";
       card.innerHTML =
         '<video controls preload="none" playsinline poster="' + v.poster + '">' +
         '<source src="' + v.file + '" type="video/mp4"></video>' +
         '<div class="video-meta"><b>' + v.title + '</b><span>' + (v.sub || "") + '</span></div>';
-      vgrid.appendChild(card);
-    });
+      fragment.appendChild(card);
+    }
+    vgrid.appendChild(fragment);
+    renderedVideoCount = end;
+
+    if (videoMoreButton) {
+      if (renderedVideoCount >= VIDEOS.length) {
+        videoMoreButton.remove();
+        videoMoreButton = null;
+      } else {
+        videoMoreButton.textContent = "加载更多视频（已显示 " + renderedVideoCount + " / " + VIDEOS.length + "）";
+      }
+    }
+  }
+
+  if (vgrid && VIDEOS.length) {
+    appendVideoBatch();
+    if (renderedVideoCount < VIDEOS.length) {
+      videoMoreButton = document.createElement("button");
+      videoMoreButton.type = "button";
+      videoMoreButton.className = "chip";
+      videoMoreButton.setAttribute("aria-controls", "videoGrid");
+      videoMoreButton.textContent = "加载更多视频（已显示 " + renderedVideoCount + " / " + VIDEOS.length + "）";
+      videoMoreButton.addEventListener("click", appendVideoBatch);
+      vgrid.parentNode.insertBefore(videoMoreButton, vgrid.nextSibling);
+    }
   } else if (vgrid) {
     var sec = document.getElementById("videos");
     if (sec) sec.style.display = "none";
