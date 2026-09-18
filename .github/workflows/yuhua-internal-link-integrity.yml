@@ -1,0 +1,209 @@
+name: Yuhua internal link integrity
+
+on:
+  pull_request:
+    paths:
+      - '**/*.html'
+      - '**/*.htm'
+      - '.github/workflows/yuhua-internal-link-integrity.yml'
+  push:
+    branches: [main]
+    paths:
+      - '**/*.html'
+      - '**/*.htm'
+      - '.github/workflows/yuhua-internal-link-integrity.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  internal-links:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Audit local href/src targets
+        run: |
+          python - <<'PY'
+          import json
+          import subprocess
+          from html.parser import HTMLParser
+          from pathlib import Path
+          from urllib.parse import unquote, urlsplit
+
+          ROOT = Path.cwd().resolve()
+          PROJECT_PREFIX = '/yuhua'
+          SKIP_SCHEMES = ('http:', 'https:', 'mailto:', 'tel:', 'data:', 'javascript:', 'blob:')
+
+          class RefParser(HTMLParser):
+              def __init__(self):
+                  super().__init__(convert_charrefs=True)
+                  self.refs = []
+
+              def handle_starttag(self, tag, attrs):
+                  self._collect(tag, attrs)
+
+              def handle_startendtag(self, tag, attrs):
+                  self._collect(tag, attrs)
+
+              def _collect(self, tag, attrs):
+                  values = dict(attrs)
+                  for attr in ('href', 'src'):
+                      value = values.get(attr)
+                      if value:
+                          self.refs.append((tag, attr, value.strip()))
+                  srcset = values.get('srcset')
+                  if srcset:
+                      for candidate in srcset.split(','):
+                          value = candidate.strip().split()[0] if candidate.strip() else ''
+                          if value:
+                              self.refs.append((tag, 'srcset', value))
+
+          def tracked_html_files():
+              output = subprocess.check_output(
+                  ['git', 'ls-files', '*.html', '*.htm'], text=True, encoding='utf-8'
+              )
+              return [Path(line) for line in output.splitlines() if line.strip()]
+
+          def resolve_ref(source, raw):
+              value = raw.strip()
+              lower = value.lower()
+              if not value or value.startswith('#') or lower.startswith(SKIP_SCHEMES) or value.startswith('//'):
+                  return None, 'ignored'
+
+              split = urlsplit(value)
+              path = unquote(split.path)
+              if not path:
+                  return None, 'same_document'
+
+              if path == PROJECT_PREFIX or path == PROJECT_PREFIX + '/':
+                  target = ROOT / 'index.html'
+              elif path.startswith(PROJECT_PREFIX + '/'):
+                  target = ROOT / path[len(PROJECT_PREFIX) + 1:]
+              elif path.startswith('/'):
+                  return None, 'root_absolute_outside_project'
+              else:
+                  target = (source.parent / path).resolve()
+
+              try:
+                  target.relative_to(ROOT)
+              except ValueError:
+                  return None, 'outside_repository'
+
+              if target.is_dir():
+                  target = target / 'index.html'
+              return target, 'local'
+
+          checked = []
+          missing = []
+          ignored = 0
+          html_files = tracked_html_files()
+
+          for rel_source in html_files:
+              source = (ROOT / rel_source).resolve()
+              parser = RefParser()
+              try:
+                  parser.feed(source.read_text(encoding='utf-8'))
+              except UnicodeDecodeError:
+                  parser.feed(source.read_text(encoding='utf-8', errors='replace'))
+
+              for tag, attr, raw in parser.refs:
+                  target, kind = resolve_ref(source, raw)
+                  if kind in ('ignored', 'same_document'):
+                      ignored += 1
+                      continue
+
+                  row = {
+                      'source': rel_source.as_posix(),
+                      'tag': tag,
+                      'attribute': attr,
+                      'reference': raw,
+                      'kind': kind,
+                  }
+
+                  if kind != 'local':
+                      row['target'] = None
+                      missing.append(row)
+                      continue
+
+                  row['target'] = target.relative_to(ROOT).as_posix()
+                  checked.append(row)
+                  if not target.exists():
+                      missing.append(row)
+
+          report = {
+              'policy': {
+                  'mode': 'deterministic_internal_link_gate',
+                  'scope': 'tracked HTML href/src/srcset references only',
+                  'external_network_requests': 0,
+                  'auto_fix_count': 0,
+                  'project_prefix': PROJECT_PREFIX,
+              },
+              'summary': {
+                  'html_file_count': len(html_files),
+                  'local_reference_count': len(checked),
+                  'ignored_reference_count': ignored,
+                  'missing_reference_count': len(missing),
+              },
+              'missing': missing,
+          }
+
+          Path('internal_link_report.json').write_text(
+              json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8'
+          )
+
+          lines = [
+              '# Yuhua internal link integrity report',
+              '',
+              f"- HTML files scanned: {len(html_files)}",
+              f"- Local references checked: {len(checked)}",
+              f"- Ignored external/same-document references: {ignored}",
+              f"- Missing or unsafe internal references: {len(missing)}",
+              '',
+          ]
+          if missing:
+              lines.extend(['## Missing / unsafe references', ''])
+              for row in missing:
+                  lines.append(
+                      f"- `{row['source']}` → `{row['reference']}` "
+                      f"({row['tag']}[{row['attribute']}], {row['kind']})"
+                  )
+          else:
+              lines.append('No missing internal HTML references were found.')
+
+          Path('internal_link_report.md').write_text('\n'.join(lines) + '\n', encoding='utf-8')
+          print(json.dumps(report['summary'], ensure_ascii=False))
+          PY
+
+      - name: Enforce internal-link integrity
+        run: |
+          python - <<'PY'
+          import json
+          report = json.load(open('internal_link_report.json', encoding='utf-8'))
+          missing = report['summary']['missing_reference_count']
+          if missing:
+              for item in report['missing'][:100]:
+                  print(f"BROKEN: {item['source']} -> {item['reference']} ({item['kind']})")
+              raise SystemExit(f"Found {missing} missing or unsafe internal HTML reference(s)")
+          print('Internal HTML href/src/srcset integrity: OK')
+          PY
+
+      - name: Upload internal-link report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-internal-link-report
+          path: |
+            internal_link_report.json
+            internal_link_report.md
+          if-no-files-found: error
+          retention-days: 90
