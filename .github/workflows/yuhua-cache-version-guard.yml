@@ -1,0 +1,137 @@
+name: Yuhua cache version guard
+
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'styles.css'
+      - 'app.js'
+      - 'assets/data.js'
+      - 'assets/videos.js'
+      - 'assets/pages.js'
+      - 'assets/specs.js'
+      - 'assets/customer-tools.css'
+      - 'assets/customer-tools.js'
+      - '.github/workflows/yuhua-cache-version-guard.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'styles.css'
+      - 'app.js'
+      - 'assets/data.js'
+      - 'assets/videos.js'
+      - 'assets/pages.js'
+      - 'assets/specs.js'
+      - 'assets/customer-tools.css'
+      - 'assets/customer-tools.js'
+      - '.github/workflows/yuhua-cache-version-guard.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify-cache-version-bumps:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify changed cached assets bump their version
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import re
+          import subprocess
+          from pathlib import Path
+
+          event = json.loads(Path(os.environ['GITHUB_EVENT_PATH']).read_text(encoding='utf-8'))
+          event_name = os.environ.get('GITHUB_EVENT_NAME', '')
+
+          if event_name == 'pull_request':
+              base = event['pull_request']['base']['sha']
+              head = event['pull_request']['head']['sha']
+          else:
+              base = event.get('before')
+              head = event.get('after') or os.environ['GITHUB_SHA']
+              if not base or set(base) == {'0'}:
+                  base = subprocess.check_output(
+                      ['git', 'rev-parse', f'{head}^'], text=True
+                  ).strip()
+
+          def git_text(*args):
+              return subprocess.check_output(['git', *args], text=True, encoding='utf-8')
+
+          def file_exists(ref, path):
+              result = subprocess.run(
+                  ['git', 'cat-file', '-e', f'{ref}:{path}'],
+                  stdout=subprocess.DEVNULL,
+                  stderr=subprocess.DEVNULL,
+              )
+              return result.returncode == 0
+
+          def index_at(ref):
+              return git_text('show', f'{ref}:index.html')
+
+          attr_re = re.compile(
+              r'''(?:src|href)=["']([^"'?#]+)\?v=([^"'&#]+)(?:&[^"']*)?["']''',
+              re.IGNORECASE,
+          )
+
+          def cache_versions(html):
+              versions = {}
+              for path, version in attr_re.findall(html):
+                  if '://' in path or path.startswith('//'):
+                      continue
+                  normalized = path.removeprefix('./')
+                  versions.setdefault(normalized, set()).add(version)
+              conflicts = {path: vals for path, vals in versions.items() if len(vals) != 1}
+              assert not conflicts, f'inconsistent cache versions in index.html: {conflicts}'
+              return {path: next(iter(vals)) for path, vals in versions.items()}
+
+          base_versions = cache_versions(index_at(base))
+          head_versions = cache_versions(index_at(head))
+          changed = set(git_text('diff', '--name-only', base, head).splitlines())
+          cached_changed = sorted(changed & (set(base_versions) | set(head_versions)))
+
+          failures = []
+          transitions = []
+          for asset in cached_changed:
+              if not file_exists(head, asset):
+                  transitions.append(f'{asset}: removed')
+                  continue
+
+              old = base_versions.get(asset)
+              new = head_versions.get(asset)
+              if new is None:
+                  failures.append(
+                      f'{asset}: file changed but index.html no longer has a cache-busted ?v= reference'
+                  )
+                  continue
+              if old == new:
+                  failures.append(
+                      f'{asset}: file changed but cache version stayed at {new!r}'
+                  )
+                  continue
+              transitions.append(f'{asset}: {old or "<new>"} -> {new}')
+
+          print('Cache-busted assets currently referenced:', ', '.join(sorted(head_versions)))
+          if cached_changed:
+              print('Changed cache-busted assets:', ', '.join(cached_changed))
+          else:
+              print('No cache-busted frontend assets changed in this diff.')
+          for transition in transitions:
+              print('OK', transition)
+
+          if failures:
+              raise SystemExit(
+                  'Cache version guard failed:\n- ' + '\n- '.join(failures)
+                  + '\nUpdate the matching ?v= value in index.html in the same change.'
+              )
+
+          print('Cache version guard: OK')
+          PY
