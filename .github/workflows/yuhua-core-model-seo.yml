@@ -1,0 +1,145 @@
+name: Yuhua core model SEO integrity
+
+on:
+  pull_request:
+    paths:
+      - 'model/**'
+      - '.github/workflows/yuhua-core-model-seo.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'model/**'
+      - '.github/workflows/yuhua-core-model-seo.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  check-core-model-seo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify core model SEO metadata
+        run: |
+          python - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          import json
+
+          SITE_ROOT = 'https://panxiangbin.github.io/yuhua/'
+
+          class SeoParser(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.lang = ''
+                  self.in_title = False
+                  self.title_parts = []
+                  self.meta = {}
+                  self.canonicals = []
+                  self.in_jsonld = False
+                  self.jsonld_parts = []
+                  self.jsonld_blocks = []
+
+              def handle_starttag(self, tag, attrs):
+                  attrs = dict(attrs)
+                  if tag == 'html':
+                      self.lang = attrs.get('lang', '').strip()
+                  elif tag == 'title':
+                      self.in_title = True
+                  elif tag == 'meta':
+                      key = (attrs.get('name') or attrs.get('property') or '').strip().lower()
+                      if key:
+                          self.meta.setdefault(key, []).append(attrs.get('content', '').strip())
+                  elif tag == 'link' and attrs.get('rel', '').lower() == 'canonical':
+                      self.canonicals.append(attrs.get('href', '').strip())
+                  elif tag == 'script' and attrs.get('type', '').lower() == 'application/ld+json':
+                      self.in_jsonld = True
+                      self.jsonld_parts = []
+
+              def handle_data(self, data):
+                  if self.in_title:
+                      self.title_parts.append(data)
+                  if self.in_jsonld:
+                      self.jsonld_parts.append(data)
+
+              def handle_endtag(self, tag):
+                  if tag == 'title':
+                      self.in_title = False
+                  elif tag == 'script' and self.in_jsonld:
+                      self.in_jsonld = False
+                      raw = ''.join(self.jsonld_parts).strip()
+                      if raw:
+                          self.jsonld_blocks.append(raw)
+
+              @property
+              def title(self):
+                  return ' '.join(''.join(self.title_parts).split())
+
+          def first(meta, key):
+              values = meta.get(key, [])
+              assert len(values) == 1, f'Expected exactly one {key}, found {len(values)}'
+              value = values[0].strip()
+              assert value, f'{key} must not be empty'
+              return value
+
+          def iter_jsonld_nodes(value):
+              if isinstance(value, dict):
+                  yield value
+                  for child in value.values():
+                      yield from iter_jsonld_nodes(child)
+              elif isinstance(value, list):
+                  for child in value:
+                      yield from iter_jsonld_nodes(child)
+
+          pages = sorted(Path('model').glob('*.html'))
+          assert pages, 'No core model pages found'
+
+          seen_titles = set()
+          seen_canonicals = set()
+
+          for page in pages:
+              html = page.read_text(encoding='utf-8')
+              parser = SeoParser()
+              parser.feed(html)
+
+              assert parser.lang.lower() == 'zh-cn', f'{page}: html lang must be zh-CN'
+              assert parser.title, f'{page}: title is missing or empty'
+              assert parser.title not in seen_titles, f'{page}: duplicate page title: {parser.title}'
+              seen_titles.add(parser.title)
+
+              description = first(parser.meta, 'description')
+              robots = first(parser.meta, 'robots').lower().replace(' ', '')
+              assert 'index' in robots and 'follow' in robots, f'{page}: robots must allow index and follow'
+
+              expected_url = SITE_ROOT + page.as_posix()
+              assert parser.canonicals == [expected_url], f'{page}: canonical must be exactly {expected_url!r}, got {parser.canonicals!r}'
+              assert expected_url not in seen_canonicals, f'{page}: duplicate canonical URL: {expected_url}'
+              seen_canonicals.add(expected_url)
+
+              assert first(parser.meta, 'og:type').lower() == 'product', f'{page}: og:type must be product'
+              assert first(parser.meta, 'og:title') == parser.title, f'{page}: og:title must match title'
+              assert first(parser.meta, 'og:description'), f'{page}: og:description must not be empty'
+              assert first(parser.meta, 'og:url') == expected_url, f'{page}: og:url must match canonical'
+
+              products = []
+              for raw in parser.jsonld_blocks:
+                  try:
+                      data = json.loads(raw)
+                  except json.JSONDecodeError as exc:
+                      raise AssertionError(f'{page}: invalid JSON-LD: {exc}') from exc
+                  for node in iter_jsonld_nodes(data):
+                      node_type = node.get('@type')
+                      types = node_type if isinstance(node_type, list) else [node_type]
+                      if 'Product' in types:
+                          products.append(node)
+
+              assert products, f'{page}: Product JSON-LD is missing'
+              assert any(str(p.get('url', '')).strip() == expected_url for p in products), f'{page}: Product JSON-LD url must match canonical'
+              assert any(str(p.get('name', '')).strip() for p in products), f'{page}: Product JSON-LD name is missing'
+              assert any(str(p.get('model', '')).strip() for p in products), f'{page}: Product JSON-LD model is missing'
+              assert description, f'{page}: description must not be empty'
+
+          print(f'Core model SEO metadata: OK ({len(pages)} pages; unique title/canonical + OG + Product JSON-LD)')
+          PY
