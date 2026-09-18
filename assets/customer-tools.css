@@ -320,6 +320,21 @@
     bottom: 25px;
     padding: 8px 12px;
   }
+
+  /* Keep mobile table headers aligned with the visible body columns. */
+  #catalog .ptable tbody td:nth-child(3),
+  #catalog .ptable tbody td:nth-child(4),
+  #catalog .ptable tbody td:nth-child(5),
+  #specs .ptable tbody .pname {
+    display: none;
+  }
+
+  /* The specs table keeps three action columns; allow deliberate horizontal scroll instead of clipping them. */
+  #specs .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  #specs .ptable { min-width: 430px; }
 }
 
 @media (max-width: 480px) {
