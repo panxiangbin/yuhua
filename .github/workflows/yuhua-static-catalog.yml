@@ -8,6 +8,7 @@ on:
       - 'products.json'
       - 'specs_index.json'
       - 'sitemap.xml'
+      - 'model/*.html'
       - '.github/workflows/yuhua-static-catalog.yml'
   push:
     branches: [main]
@@ -17,6 +18,7 @@ on:
       - 'products.json'
       - 'specs_index.json'
       - 'sitemap.xml'
+      - 'model/*.html'
       - '.github/workflows/yuhua-static-catalog.yml'
 
 permissions:
@@ -36,7 +38,7 @@ jobs:
           import re
           from html.parser import HTMLParser
           from pathlib import Path
-          from urllib.parse import urlparse
+          from urllib.parse import unquote, urlparse
 
           products = json.loads(Path('products.json').read_text(encoding='utf-8'))
           specs = json.loads(Path('specs_index.json').read_text(encoding='utf-8'))
@@ -82,6 +84,7 @@ jobs:
                       if href: self.hrefs.append(href)
 
           parser = LinkParser(); parser.feed(html)
+          catalog_paths = set()
           for href in parser.hrefs:
               if href.startswith(('mailto:', 'http://', 'https://', '#')):
                   continue
@@ -90,8 +93,26 @@ jobs:
                   continue
               assert Path(path).exists(), f'broken local link in catalog.html: {href}'
 
+              normalized = unquote(path).lstrip('/')
+              if normalized.startswith('yuhua/'):
+                  normalized = normalized.removeprefix('yuhua/')
+              catalog_paths.add(normalized)
+
+          model_pages = sorted(
+              path.as_posix()
+              for path in Path('model').glob('*.html')
+              if path.is_file()
+          )
+          assert model_pages, 'no standalone model/*.html pages found'
+          missing_model_links = [path for path in model_pages if path not in catalog_paths]
+          assert not missing_model_links, (
+              'catalog.html is missing standalone model page links: '
+              + ', '.join(missing_model_links)
+          )
+
           sitemap = Path('sitemap.xml').read_text(encoding='utf-8')
           assert 'https://panxiangbin.github.io/yuhua/catalog.html' in sitemap, 'catalog.html is missing from sitemap.xml'
           print('Static catalog index: OK', expected)
           print('Homepage static fallback: OK', {'products': len(products), 'specs': len(specs)})
+          print(f'Standalone model coverage in catalog.html: OK ({len(model_pages)}/{len(model_pages)})')
           PY
