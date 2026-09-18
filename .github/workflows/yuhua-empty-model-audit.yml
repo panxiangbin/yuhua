@@ -4,11 +4,13 @@ on:
   pull_request:
     paths:
       - 'products.json'
+      - 'specs_index.json'
       - '.github/workflows/yuhua-empty-model-audit.yml'
   push:
     branches: [main]
     paths:
       - 'products.json'
+      - 'specs_index.json'
       - '.github/workflows/yuhua-empty-model-audit.yml'
 
 permissions:
@@ -34,10 +36,12 @@ jobs:
           from collections import Counter, defaultdict
           from pathlib import Path
 
-          source = Path('products.json')
-          products = json.loads(source.read_text(encoding='utf-8'))
+          products = json.loads(Path('products.json').read_text(encoding='utf-8'))
+          specs = json.loads(Path('specs_index.json').read_text(encoding='utf-8'))
           if not isinstance(products, list):
               raise SystemExit('products.json must contain a JSON array')
+          if not isinstance(specs, list):
+              raise SystemExit('specs_index.json must contain a JSON array')
 
           # Exact-signature comparisons intentionally use only facts already present
           # in products.json. They are review evidence, NOT proof of model identity.
@@ -49,8 +53,28 @@ jobs:
           def clean(value):
               return re.sub(r'\s+', ' ', str(value or '')).strip()
 
+          def normalize_model(value):
+              value = clean(value).upper().replace('．', '.')
+              # Some existing spec-index model cells include the source-file suffix.
+              # Removing only a trailing document suffix keeps matching conservative.
+              return re.sub(r'\.(?:DOCX?|PDF)$', '', value)
+
           def signature(record):
               return tuple(clean(record.get(field)) for field in evidence_fields)
+
+          specs_by_model = defaultdict(list)
+          for spec_no, spec in enumerate(specs, start=1):
+              normalized = normalize_model(spec.get('model'))
+              if not normalized:
+                  continue
+              specs_by_model[normalized].append({
+                  'spec_row': spec_no,
+                  'title': clean(spec.get('title')),
+                  'model': clean(spec.get('model')),
+                  'series': clean(spec.get('series')),
+                  'page': clean(spec.get('page')),
+                  'dl': clean(spec.get('dl')),
+              })
 
           empty_rows = []
           empty_by_signature = defaultdict(list)
@@ -68,6 +92,7 @@ jobs:
           records = []
           classes = Counter()
           category_counts = Counter()
+          candidate_review_counts = Counter()
 
           for row_no, record, sig in empty_rows:
               category = clean(record.get('类别')) or '未分类'
@@ -91,12 +116,35 @@ jobs:
                   classification = 'manual_source_review'
               classes[classification] += 1
 
+              distinct_models = sorted({clean(m['model']) for m in named_matches if clean(m['model'])})
+              spec_support = []
+              for model in distinct_models:
+                  exact_specs = specs_by_model.get(normalize_model(model), [])
+                  spec_support.append({
+                      'candidate_model': model,
+                      'exact_spec_model_match_count': len(exact_specs),
+                      'exact_spec_model_matches': exact_specs,
+                  })
+
+              if len(distinct_models) > 1:
+                  candidate_review = 'ambiguous_multiple_named_models'
+              elif len(distinct_models) == 1 and spec_support[0]['exact_spec_model_match_count']:
+                  candidate_review = 'single_named_match_with_spec_index'
+              elif len(distinct_models) == 1:
+                  candidate_review = 'single_named_match_without_spec_index'
+              else:
+                  candidate_review = 'not_a_named_match_candidate'
+              candidate_review_counts[candidate_review] += 1
+
               records.append({
                   'row': row_no,
                   'category': category,
                   'evidence_field_count': evidence_count,
                   'evidence_fields_present': present,
                   'exact_named_matches': named_matches,
+                  'candidate_models': distinct_models,
+                  'candidate_spec_index_support': spec_support,
+                  'candidate_review': candidate_review,
                   'same_signature_empty_rows': sibling_empty_rows,
                   'classification': classification,
               })
@@ -104,11 +152,14 @@ jobs:
           report = {
               'policy': (
                   '只读审计：exact_non_model_signature_match 仅表示 products.json 中除型号/产品名称外的现有字段逐项完全一致；'
-                  '它不是型号归属证明，不得据此自动填充、覆盖或删除任何产品事实。'
+                  'specs_index 的同型号命中只表示该候选型号存在现有规格书索引，也不是空记录型号归属证明。'
+                  '任何候选都不得据此自动填充、覆盖或删除产品事实，必须回查原始资料。'
               ),
               'product_total': len(products),
+              'spec_index_total': len(specs),
               'empty_model_count': len(empty_rows),
               'classification_counts': dict(classes),
+              'candidate_review_counts': dict(candidate_review_counts),
               'empty_model_category_counts': dict(category_counts.most_common()),
               'records': records,
           }
@@ -120,6 +171,7 @@ jobs:
 
           print('=== 空型号记录证据审计（只读，不修改产品数据） ===')
           print(f"产品记录: {len(products)}")
+          print(f"规格书索引: {len(specs)}")
           print(f"空型号: {len(empty_rows)}")
           for key in (
               'exact_non_model_signature_match',
@@ -128,16 +180,22 @@ jobs:
               'manual_source_review',
           ):
               print(f"{key}: {classes.get(key, 0)}")
+          print('候选复核分布:', dict(candidate_review_counts))
           print('分类分布:', dict(category_counts.most_common()))
 
           candidates = [r for r in records if r['exact_named_matches']]
           if candidates:
               print('\n仅供人工核验的完全同字段候选（前20条；不得自动回填）:')
               for item in candidates[:20]:
-                  models = ', '.join(
-                      f"{m['model']} (row {m['row']})" for m in item['exact_named_matches']
+                  pieces = []
+                  for support in item['candidate_spec_index_support']:
+                      pieces.append(
+                          f"{support['candidate_model']} [spec-index exact={support['exact_spec_model_match_count']}]"
+                      )
+                  print(
+                      f"  row {item['row']}: {', '.join(pieces)}; "
+                      f"review={item['candidate_review']}"
                   )
-                  print(f"  row {item['row']}: {models}")
           PY
 
       - name: Verify audit is read-only and complete
@@ -147,13 +205,23 @@ jobs:
           from pathlib import Path
 
           products = json.loads(Path('products.json').read_text(encoding='utf-8'))
+          specs = json.loads(Path('specs_index.json').read_text(encoding='utf-8'))
           report = json.loads(Path('empty_model_audit.json').read_text(encoding='utf-8'))
           expected = sum(1 for row in products if not str(row.get('型号') or '').strip())
           assert report['empty_model_count'] == expected
+          assert report['spec_index_total'] == len(specs)
           assert len(report['records']) == expected
           assert sum(report['classification_counts'].values()) == expected
+          assert sum(report['candidate_review_counts'].values()) == expected
           assert '不得据此自动填充' in report['policy']
-          print(f'Empty-model audit integrity: OK ({expected} records classified)')
+          for row in report['records']:
+              models = row['candidate_models']
+              if len(models) > 1:
+                  assert row['candidate_review'] == 'ambiguous_multiple_named_models'
+              for support in row['candidate_spec_index_support']:
+                  assert support['candidate_model'] in models
+                  assert support['exact_spec_model_match_count'] == len(support['exact_spec_model_matches'])
+          print(f'Empty-model audit integrity: OK ({expected} records classified; spec cross-check enabled)')
           PY
 
       - name: Upload empty-model audit report
@@ -162,4 +230,4 @@ jobs:
           name: yuhua-empty-model-audit
           path: empty_model_audit.json
 
-      # This workflow is intentionally read-only. It never edits products.json.
+      # This workflow is intentionally read-only. It never edits products.json or specs_index.json.
