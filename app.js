@@ -382,16 +382,19 @@
   // ---------- 移动端汉堡菜单 ----------
   var navToggle = document.getElementById("navToggle");
   var navMobile = document.getElementById("navMobile");
+  function setMobileNavState(open) {
+    navToggle.classList.toggle("open", open);
+    navMobile.classList.toggle("open", open);
+    navToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    navMobile.setAttribute("aria-hidden", open ? "false" : "true");
+    document.body.style.overflow = open ? "hidden" : "";
+  }
   function closeMobileNav() {
-    navToggle.classList.remove("open");
-    navMobile.classList.remove("open");
-    document.body.style.overflow = "";
+    setMobileNavState(false);
   }
   if (navToggle && navMobile) {
     navToggle.addEventListener("click", function () {
-      var open = navMobile.classList.toggle("open");
-      navToggle.classList.toggle("open", open);
-      document.body.style.overflow = open ? "hidden" : "";
+      setMobileNavState(!navMobile.classList.contains("open"));
     });
     navMobile.querySelectorAll("a").forEach(function (a) {
       a.addEventListener("click", closeMobileNav);
