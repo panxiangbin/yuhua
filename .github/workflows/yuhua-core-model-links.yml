@@ -1,0 +1,97 @@
+name: Yuhua core model link integrity
+
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'model/**'
+      - 'sitemap.xml'
+      - '.github/workflows/yuhua-core-model-links.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'model/**'
+      - 'sitemap.xml'
+      - '.github/workflows/yuhua-core-model-links.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  check-core-model-links:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify homepage core-model links
+        run: |
+          python - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          from urllib.parse import urlparse
+          import xml.etree.ElementTree as ET
+
+          class QuickModelParser(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.quick_depth = 0
+                  self.current = None
+                  self.links = []
+
+              @staticmethod
+              def classes(attrs):
+                  return set(dict(attrs).get('class', '').split())
+
+              def handle_starttag(self, tag, attrs):
+                  if tag == 'div':
+                      if self.quick_depth:
+                          self.quick_depth += 1
+                      elif 'quick-models' in self.classes(attrs):
+                          self.quick_depth = 1
+                  elif tag == 'a' and self.quick_depth:
+                      href = dict(attrs).get('href', '').strip()
+                      self.current = {'href': href, 'text': ''}
+
+              def handle_data(self, data):
+                  if self.current is not None:
+                      self.current['text'] += data
+
+              def handle_endtag(self, tag):
+                  if tag == 'a' and self.current is not None:
+                      self.current['text'] = ' '.join(self.current['text'].split())
+                      self.links.append(self.current)
+                      self.current = None
+                  elif tag == 'div' and self.quick_depth:
+                      self.quick_depth -= 1
+
+          parser = QuickModelParser()
+          parser.feed(Path('index.html').read_text(encoding='utf-8'))
+          assert parser.links, 'Homepage quick-model entry block has no links'
+
+          root = ET.parse('sitemap.xml').getroot()
+          ns = {'sm': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
+          locs = [node.text.strip() for node in root.findall('sm:url/sm:loc', ns) if node.text]
+          sitemap_paths = {urlparse(url).path.removeprefix('/yuhua/') for url in locs}
+
+          concrete = []
+          for link in parser.links:
+              href, label = link['href'], link['text']
+              if href.startswith('model/'):
+                  assert href.endswith('.html'), f'Core model link is not an HTML page: {label} -> {href}'
+                  assert Path(href).is_file(), f'Core model link target is missing: {label} -> {href}'
+                  assert href in sitemap_paths, f'Core model page is missing from sitemap.xml: {href}'
+
+              if '系列' not in label:
+                  assert href.startswith('model/'), (
+                      f'Concrete core-model entry must link directly to model/*.html: {label} -> {href}'
+                  )
+                  concrete.append((label, href))
+
+          assert concrete, 'No concrete core-model entries found on homepage'
+          hrefs = [href for _, href in concrete]
+          assert len(hrefs) == len(set(hrefs)), f'Duplicate concrete core-model targets found: {hrefs}'
+
+          print(f'Homepage core-model link integrity: OK ({len(concrete)} concrete model links checked)')
+          PY
