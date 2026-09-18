@@ -52,6 +52,64 @@ jobs:
           node --check assets/pages.js
           node --check assets/customer-tools.js
 
+      - name: Verify mobile table header/body alignment contract
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+
+          html = Path('index.html').read_text(encoding='utf-8')
+          css = Path('assets/customer-tools.css').read_text(encoding='utf-8')
+          app_js = Path('app.js').read_text(encoding='utf-8')
+          tools_js = Path('assets/customer-tools.js').read_text(encoding='utf-8')
+
+          def hidden_header_columns(section_id):
+              section = re.search(
+                  rf'<section\b[^>]*\bid=["\']{re.escape(section_id)}["\'][^>]*>(.*?)</section>',
+                  html,
+                  flags=re.S | re.I,
+              )
+              assert section, f'Missing section #{section_id}'
+              head = re.search(r'<thead>\s*<tr>(.*?)</tr>\s*</thead>', section.group(1), flags=re.S | re.I)
+              assert head, f'Missing table header in #{section_id}'
+              cells = re.findall(r'<th\b([^>]*)>', head.group(1), flags=re.S | re.I)
+              assert cells, f'No header cells found in #{section_id}'
+              return [
+                  index
+                  for index, attrs in enumerate(cells, start=1)
+                  if re.search(r'\bclass=["\'][^"\']*\bhide-sm\b', attrs, flags=re.I)
+              ]
+
+          catalog_hidden = hidden_header_columns('catalog')
+          specs_hidden = hidden_header_columns('specs')
+          assert catalog_hidden == [3, 4, 5], f'Unexpected catalog mobile-hidden headers: {catalog_hidden}'
+          assert specs_hidden == [2], f'Unexpected specs mobile-hidden headers: {specs_hidden}'
+
+          media_start = css.find('@media (max-width: 768px)')
+          media_end = css.find('@media (max-width: 480px)', media_start + 1)
+          assert media_start >= 0 and media_end > media_start, 'Expected 768px mobile CSS block is missing'
+          mobile_css = css[media_start:media_end]
+
+          for column in catalog_hidden:
+              selector = f'#catalog .ptable tbody td:nth-child({column})'
+              assert selector in mobile_css, f'Mobile catalog body does not hide column {column}'
+          assert '#specs .ptable tbody .pname' in mobile_css, 'Specs body series/title column is not hidden with its header'
+          assert '#specs .table-wrap' in mobile_css and 'overflow-x: auto' in mobile_css, 'Specs table must remain horizontally scrollable on mobile'
+          assert '#specs .ptable { min-width:' in mobile_css, 'Specs table needs a mobile minimum width so action columns are not clipped'
+
+          # Body structure contracts that the CSS selectors depend on.
+          assert app_js.count('<td class="pname">') >= 2, 'Expected pname cells for product/spec table rendering'
+          assert "'<td><a class=\"spec-btn rich\"" in app_js, 'Specs online-view action column is missing'
+          assert "'<td><a class=\"spec-btn\"" in app_js, 'Specs download action column is missing'
+
+          # customer-tools.js adds the fifth specs action column after the four-column base table renders.
+          assert 'headCell.className = "spec-inquiry-head";' in tools_js, 'Specs inquiry header extension is missing'
+          assert 'cell.className = "spec-inquiry-cell";' in tools_js, 'Specs inquiry body extension is missing'
+          assert 'if (row.cells[0].colSpan >= 4) row.cells[0].colSpan = 5;' in tools_js, 'Specs overflow row colspan must expand to five columns'
+
+          print('Mobile table alignment contract: OK (catalog hidden 3/4/5; specs hidden 2 + 3 visible actions)')
+          PY
+
       - name: Verify separator-tolerant model search
         run: |
           node <<'NODE'
