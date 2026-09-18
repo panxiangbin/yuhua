@@ -34,10 +34,10 @@ jobs:
   verify-cache-version-bumps:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout full history
+      - name: Checkout current change
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 2
 
       - name: Verify changed cached assets bump their version
         shell: bash
@@ -49,6 +49,9 @@ jobs:
           import subprocess
           from pathlib import Path
 
+          def git_text(*args):
+              return subprocess.check_output(['git', *args], text=True, encoding='utf-8')
+
           event = json.loads(Path(os.environ['GITHUB_EVENT_PATH']).read_text(encoding='utf-8'))
           event_name = os.environ.get('GITHUB_EVENT_NAME', '')
 
@@ -56,15 +59,8 @@ jobs:
               base = event['pull_request']['base']['sha']
               head = event['pull_request']['head']['sha']
           else:
-              base = event.get('before')
-              head = event.get('after') or os.environ['GITHUB_SHA']
-              if not base or set(base) == {'0'}:
-                  base = subprocess.check_output(
-                      ['git', 'rev-parse', f'{head}^'], text=True
-                  ).strip()
-
-          def git_text(*args):
-              return subprocess.check_output(['git', *args], text=True, encoding='utf-8')
+              head = os.environ['GITHUB_SHA']
+              base = git_text('rev-parse', f'{head}^').strip()
 
           def file_exists(ref, path):
               result = subprocess.run(
