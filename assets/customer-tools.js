@@ -143,6 +143,57 @@
   enhanceSearchStatus(searchInput, "resultCount", "tableBody", "catalogResultStatus");
   enhanceSearchStatus(specSearch, "specResultCount", "specBody", "specResultStatus");
 
+  // ---------- 规格书列表：上下文邮件咨询 ----------
+  function enhanceSpecInquiryActions() {
+    var specBody = document.getElementById("specBody");
+    var specTable = specBody ? specBody.closest("table") : null;
+    if (!specBody || !specTable) return;
+
+    var headRow = specTable.querySelector("thead tr");
+    if (headRow && !headRow.querySelector(".spec-inquiry-head")) {
+      var headCell = document.createElement("th");
+      headCell.className = "spec-inquiry-head";
+      headCell.textContent = "邮件咨询";
+      headRow.appendChild(headCell);
+    }
+
+    function syncSpecInquiryActions() {
+      Array.prototype.forEach.call(specBody.rows, function (row) {
+        if (row.cells.length === 1) {
+          if (row.cells[0].colSpan >= 4) row.cells[0].colSpan = 5;
+          return;
+        }
+        if (row.querySelector(".spec-inquiry-cell") || row.cells.length < 4) return;
+
+        var label = (row.cells[0].textContent || "").trim();
+        var series = (row.cells[1].textContent || "").trim();
+        var pageLink = row.cells[2].querySelector("a[href]");
+        var pageUrl = pageLink ? pageLink.href : window.location.href;
+        var subject = "予华仪器规格书咨询" + (label ? " - " + label : "");
+        var body = "您好，我想咨询以下予华仪器规格书对应产品：\n\n" +
+          (label ? "型号/文件名：" + label + "\n" : "") +
+          (series ? "产品系列：" + series + "\n" : "") +
+          "规格书在线页：" + pageUrl + "\n\n" +
+          "请提供适用配置、报价、交期及相关技术资料。";
+
+        var cell = document.createElement("td");
+        cell.className = "spec-inquiry-cell";
+        var link = document.createElement("a");
+        link.className = "spec-btn";
+        link.href = mailto(subject, body);
+        link.textContent = "邮件咨询";
+        link.setAttribute("aria-label", "邮件咨询 " + (label || "当前规格书"));
+        cell.appendChild(link);
+        row.appendChild(cell);
+      });
+    }
+
+    syncSpecInquiryActions();
+    new MutationObserver(syncSpecInquiryActions).observe(specBody, { childList: true });
+  }
+
+  enhanceSpecInquiryActions();
+
   // ---------- 移动导航 ARIA 状态 ----------
   var navToggle = document.getElementById("navToggle");
   var navMobile = document.getElementById("navMobile");
