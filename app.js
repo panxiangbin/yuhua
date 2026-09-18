@@ -196,6 +196,8 @@
 
   // ---------- 详细参数弹窗 ----------
   var mask = document.getElementById("modalMask");
+  var modalClose = document.getElementById("modalClose");
+  var modalReturnFocus = null;
   var imgByKey = {};
   CATS.forEach(function (c) { imgByKey[c.key] = c.img; });
 
@@ -223,7 +225,14 @@
     return "";
   }
 
-  function openModal(p) {
+  function getModalFocusable() {
+    return Array.prototype.filter.call(
+      mask.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'),
+      function (node) { return !node.hidden; }
+    );
+  }
+
+  function openModal(p, opener) {
     document.getElementById("mTitle").textContent = p["型号"] || (p["产品名称"] || "产品参数");
     var dEl = document.getElementById("mDetail");
     var durl = getDetail(p);
@@ -251,20 +260,58 @@
         sell.map(function (s) { return "<li>" + esc(s) + "</li>"; }).join("");
     } else { wrap.hidden = true; }
 
+    modalReturnFocus = opener && typeof opener.focus === "function" ? opener : document.activeElement;
     mask.hidden = false;
     document.body.style.overflow = "hidden";
+    window.requestAnimationFrame(function () { modalClose.focus(); });
   }
-  function closeModal() { mask.hidden = true; document.body.style.overflow = ""; }
+  function closeModal() {
+    if (mask.hidden) return;
+    mask.hidden = true;
+    document.body.style.overflow = "";
+    var returnTarget = modalReturnFocus;
+    modalReturnFocus = null;
+    if (returnTarget && document.contains(returnTarget) && typeof returnTarget.focus === "function") {
+      returnTarget.focus();
+    }
+  }
 
   body.addEventListener("click", function (e) {
     var tr = e.target.closest("tr[data-i]");
     if (!tr) return;
     var p = curRows[+tr.dataset.i];
-    if (p) openModal(p);
+    if (p) openModal(p, e.target.closest("button, a") || document.activeElement);
   });
-  document.getElementById("modalClose").addEventListener("click", closeModal);
+  modalClose.addEventListener("click", closeModal);
   mask.addEventListener("click", function (e) { if (e.target === mask) closeModal(); });
-  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeModal(); });
+  document.addEventListener("keydown", function (e) {
+    if (mask.hidden) return;
+    if (e.key === "Escape") {
+      e.preventDefault();
+      closeModal();
+      return;
+    }
+    if (e.key !== "Tab") return;
+
+    var focusable = getModalFocusable();
+    if (!focusable.length) {
+      e.preventDefault();
+      modalClose.focus();
+      return;
+    }
+    var first = focusable[0];
+    var last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    } else if (!mask.contains(document.activeElement)) {
+      e.preventDefault();
+      first.focus();
+    }
+  });
 
   function filterTo(key) {
     setActive(key);
