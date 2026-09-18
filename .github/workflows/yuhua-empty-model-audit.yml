@@ -1,0 +1,165 @@
+name: Yuhua empty-model evidence audit
+
+on:
+  pull_request:
+    paths:
+      - 'products.json'
+      - '.github/workflows/yuhua-empty-model-audit.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'products.json'
+      - '.github/workflows/yuhua-empty-model-audit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit-empty-models:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Classify evidence for empty-model records
+        run: |
+          python - <<'PY'
+          import json
+          import re
+          from collections import Counter, defaultdict
+          from pathlib import Path
+
+          source = Path('products.json')
+          products = json.loads(source.read_text(encoding='utf-8'))
+          if not isinstance(products, list):
+              raise SystemExit('products.json must contain a JSON array')
+
+          # Exact-signature comparisons intentionally use only facts already present
+          # in products.json. They are review evidence, NOT proof of model identity.
+          evidence_fields = (
+              '类别', '材质', '电源', '功率', '控温范围', '真空度',
+              '转速', '容量', '尺寸', '重量', '简介',
+          )
+
+          def clean(value):
+              return re.sub(r'\s+', ' ', str(value or '')).strip()
+
+          def signature(record):
+              return tuple(clean(record.get(field)) for field in evidence_fields)
+
+          empty_rows = []
+          empty_by_signature = defaultdict(list)
+          named_by_signature = defaultdict(list)
+
+          for row_no, record in enumerate(products, start=1):
+              model = clean(record.get('型号'))
+              sig = signature(record)
+              if model:
+                  named_by_signature[sig].append({'row': row_no, 'model': model})
+              else:
+                  empty_rows.append((row_no, record, sig))
+                  empty_by_signature[sig].append(row_no)
+
+          records = []
+          classes = Counter()
+          category_counts = Counter()
+
+          for row_no, record, sig in empty_rows:
+              category = clean(record.get('类别')) or '未分类'
+              category_counts[category] += 1
+              present = [field for field, value in zip(evidence_fields, sig) if value]
+              evidence_count = len(present)
+
+              # Requiring at least three populated evidence fields avoids presenting
+              # trivial near-empty rows as useful model candidates. Even these exact
+              # matches remain manual-review hints only and must never auto-fill 型号.
+              named_matches = named_by_signature.get(sig, []) if evidence_count >= 3 else []
+              sibling_empty_rows = [r for r in empty_by_signature[sig] if r != row_no]
+
+              if named_matches:
+                  classification = 'exact_non_model_signature_match'
+              elif sibling_empty_rows and evidence_count >= 3:
+                  classification = 'duplicate_empty_signature_group'
+              elif evidence_count <= 2:
+                  classification = 'sparse_evidence'
+              else:
+                  classification = 'manual_source_review'
+              classes[classification] += 1
+
+              records.append({
+                  'row': row_no,
+                  'category': category,
+                  'evidence_field_count': evidence_count,
+                  'evidence_fields_present': present,
+                  'exact_named_matches': named_matches,
+                  'same_signature_empty_rows': sibling_empty_rows,
+                  'classification': classification,
+              })
+
+          report = {
+              'policy': (
+                  '只读审计：exact_non_model_signature_match 仅表示 products.json 中除型号/产品名称外的现有字段逐项完全一致；'
+                  '它不是型号归属证明，不得据此自动填充、覆盖或删除任何产品事实。'
+              ),
+              'product_total': len(products),
+              'empty_model_count': len(empty_rows),
+              'classification_counts': dict(classes),
+              'empty_model_category_counts': dict(category_counts.most_common()),
+              'records': records,
+          }
+
+          Path('empty_model_audit.json').write_text(
+              json.dumps(report, ensure_ascii=False, indent=2) + '\n',
+              encoding='utf-8',
+          )
+
+          print('=== 空型号记录证据审计（只读，不修改产品数据） ===')
+          print(f"产品记录: {len(products)}")
+          print(f"空型号: {len(empty_rows)}")
+          for key in (
+              'exact_non_model_signature_match',
+              'duplicate_empty_signature_group',
+              'sparse_evidence',
+              'manual_source_review',
+          ):
+              print(f"{key}: {classes.get(key, 0)}")
+          print('分类分布:', dict(category_counts.most_common()))
+
+          candidates = [r for r in records if r['exact_named_matches']]
+          if candidates:
+              print('\n仅供人工核验的完全同字段候选（前20条；不得自动回填）:')
+              for item in candidates[:20]:
+                  models = ', '.join(
+                      f"{m['model']} (row {m['row']})" for m in item['exact_named_matches']
+                  )
+                  print(f"  row {item['row']}: {models}")
+          PY
+
+      - name: Verify audit is read-only and complete
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          products = json.loads(Path('products.json').read_text(encoding='utf-8'))
+          report = json.loads(Path('empty_model_audit.json').read_text(encoding='utf-8'))
+          expected = sum(1 for row in products if not str(row.get('型号') or '').strip())
+          assert report['empty_model_count'] == expected
+          assert len(report['records']) == expected
+          assert sum(report['classification_counts'].values()) == expected
+          assert '不得据此自动填充' in report['policy']
+          print(f'Empty-model audit integrity: OK ({expected} records classified)')
+          PY
+
+      - name: Upload empty-model audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-empty-model-audit
+          path: empty_model_audit.json
+
+      # This workflow is intentionally read-only. It never edits products.json.
