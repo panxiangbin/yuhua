@@ -29,6 +29,14 @@ on:
       - '**/*.tar'
       - '**/*.gz'
       - '**/*.tgz'
+      - 'index.html'
+      - 'catalog.html'
+      - 'app.js'
+      - 'pages.json'
+      - 'product/**/*.html'
+      - 'model/**/*.html'
+      - 'assets/**/*.js'
+      - 'assets/**/*.json'
       - 'tools/audit_duplicate_assets.py'
       - '.github/workflows/yuhua-duplicate-assets-audit.yml'
   push:
@@ -60,6 +68,14 @@ on:
       - '**/*.tar'
       - '**/*.gz'
       - '**/*.tgz'
+      - 'index.html'
+      - 'catalog.html'
+      - 'app.js'
+      - 'pages.json'
+      - 'product/**/*.html'
+      - 'model/**/*.html'
+      - 'assets/**/*.js'
+      - 'assets/**/*.json'
       - 'tools/audit_duplicate_assets.py'
       - '.github/workflows/yuhua-duplicate-assets-audit.yml'
   workflow_dispatch:
@@ -91,18 +107,175 @@ jobs:
             --text-scan-mib 2 \
             --top 100
 
+      - name: Build large duplicate video reference review queue
+        run: |
+          python - <<'PY'
+          import json
+          from collections import Counter
+          from pathlib import Path
+
+          source = json.loads(Path('duplicate_assets_report.json').read_text(encoding='utf-8'))
+          video_groups = [
+              group for group in source.get('large_duplicate_groups', [])
+              if 'video' in group.get('asset_kinds', [])
+          ]
+
+          review = []
+          for group in video_groups:
+              evidence = group.get('reference_evidence', {})
+              direct_paths = []
+              basename_only_paths = []
+              no_text_evidence_paths = []
+
+              for path in group.get('paths', []):
+                  path_evidence = evidence.get(path, {})
+                  if path_evidence.get('exact_path_references'):
+                      direct_paths.append(path)
+                  elif path_evidence.get('basename_references'):
+                      basename_only_paths.append(path)
+                  else:
+                      no_text_evidence_paths.append(path)
+
+              if len(direct_paths) >= 2:
+                  status = 'multiple_paths_directly_referenced'
+                  guidance = (
+                      '多个重复路径都有明确文本引用；除非先完成 URL/引用迁移并验证，必须保留这些路径。'
+                  )
+                  manual_candidates = []
+              elif len(direct_paths) == 1:
+                  status = 'single_path_directly_referenced'
+                  guidance = (
+                      '仅一个路径有明确文本引用；其余副本只进入人工复核候选，不能据此直接删除，'
+                      '仍需排查动态引用、外部链接和历史兼容 URL。'
+                  )
+                  manual_candidates = [
+                      path for path in group.get('paths', []) if path not in direct_paths
+                  ]
+              elif basename_only_paths:
+                  status = 'basename_only_evidence'
+                  guidance = (
+                      '仅发现文件名级弱证据，可能来自相对路径或同名文件；保持全部文件，等待人工核验。'
+                  )
+                  manual_candidates = []
+              else:
+                  status = 'no_bounded_text_reference_evidence'
+                  guidance = (
+                      '在受限文本扫描中未发现引用，这不代表文件未使用；必须继续核查运行时、生成页、'
+                      '外部链接和历史 URL。'
+                  )
+                  manual_candidates = []
+
+              review.append({
+                  'oid': group.get('oid'),
+                  'size_mib_each': group.get('size_mib_each'),
+                  'copy_count': group.get('copy_count'),
+                  'duplicate_mib_reclaimable': group.get('duplicate_mib_reclaimable'),
+                  'paths': group.get('paths', []),
+                  'status': status,
+                  'directly_referenced_paths': sorted(direct_paths),
+                  'basename_only_paths': sorted(basename_only_paths),
+                  'no_text_evidence_paths': sorted(no_text_evidence_paths),
+                  'manual_review_candidate_paths': sorted(manual_candidates),
+                  'guidance': guidance,
+                  'reference_evidence': evidence,
+              })
+
+          review.sort(
+              key=lambda item: (
+                  item.get('duplicate_mib_reclaimable') or 0,
+                  item.get('size_mib_each') or 0,
+              ),
+              reverse=True,
+          )
+          counts = Counter(item['status'] for item in review)
+          summary = {
+              'large_duplicate_video_group_count': len(review),
+              'status_counts': dict(sorted(counts.items())),
+              'single_path_review_group_count': sum(
+                  item['status'] == 'single_path_directly_referenced' for item in review
+              ),
+              'single_path_review_mib': round(sum(
+                  item.get('duplicate_mib_reclaimable') or 0
+                  for item in review
+                  if item['status'] == 'single_path_directly_referenced'
+              ), 2),
+          }
+          output = {
+              'policy': {
+                  'mode': 'audit_only',
+                  'auto_fix_count': 0,
+                  'meaning': (
+                      '引用分类只用于缩小人工核验范围。无引用或仅单一路径引用都不等于可安全删除；'
+                      '禁止自动删除、重命名、压缩、覆盖或迁移任何媒体路径。'
+                  ),
+              },
+              'summary': summary,
+              'review_queue': review,
+          }
+          Path('duplicate_video_reference_review.json').write_text(
+              json.dumps(output, ensure_ascii=False, indent=2) + '\n',
+              encoding='utf-8',
+          )
+
+          lines = [
+              '# 予华重复视频引用关系复核队列',
+              '',
+              '> 只读审计。引用证据只用于人工复核，不代表任何副本可以直接删除。',
+              '',
+              '## 汇总',
+              '',
+              f'- ≥1 MiB 的完全重复视频组：{summary["large_duplicate_video_group_count"]}',
+              f'- 仅单一路径有明确文本引用的组：{summary["single_path_review_group_count"]}',
+              f'- 这些组对应的理论重复体积：{summary["single_path_review_mib"]:.2f} MiB（不是可安全删除体积）',
+              f'- 分类：{summary["status_counts"]}',
+              '',
+          ]
+          for index, item in enumerate(review, start=1):
+              lines.extend([
+                  f'## {index}. {item["size_mib_each"]:.2f} MiB × {item["copy_count"]} — {item["status"]}',
+                  '',
+                  f'- 理论重复体积：{item["duplicate_mib_reclaimable"]:.2f} MiB',
+                  f'- 处理说明：{item["guidance"]}',
+              ])
+              for path in item['paths']:
+                  refs = item['reference_evidence'].get(path, {})
+                  exact = refs.get('exact_path_references', [])
+                  basename = refs.get('basename_references', [])
+                  lines.append(
+                      f'- `{path}`：明确路径引用 {len(exact)}；文件名弱引用 {len(basename)}'
+                  )
+                  if exact:
+                      lines.append(
+                          '  - 明确引用来源：' + ', '.join(f'`{source}`' for source in exact[:12])
+                      )
+                      if len(exact) > 12:
+                          lines.append(f'  - 另有 {len(exact) - 12} 个明确引用来源')
+              lines.append('')
+
+          Path('duplicate_video_reference_review.md').write_text(
+              '\n'.join(lines).rstrip() + '\n',
+              encoding='utf-8',
+          )
+          print(json.dumps(summary, ensure_ascii=False, indent=2))
+          PY
+
       - name: Verify audit-only policy and report shape
         run: |
           python - <<'PY'
           import json
           report = json.load(open('duplicate_assets_report.json', encoding='utf-8'))
+          review = json.load(open('duplicate_video_reference_review.json', encoding='utf-8'))
           assert report['policy']['mode'] == 'audit_only'
           assert report['policy']['auto_fix_count'] == 0
           assert report['summary']['tracked_file_count'] > 0
           assert report['summary']['unique_blob_count'] > 0
           assert report['summary']['duplicate_blob_group_count'] >= 0
           assert report['summary']['duplicate_mib_reclaimable_if_one_copy_kept_per_blob'] >= 0
+          assert review['policy']['mode'] == 'audit_only'
+          assert review['policy']['auto_fix_count'] == 0
+          assert review['summary']['large_duplicate_video_group_count'] == len(review['review_queue'])
           print(report['summary'])
+          print(review['summary'])
           PY
 
       - name: Upload duplicate asset audit report
@@ -112,6 +285,8 @@ jobs:
           path: |
             duplicate_assets_report.json
             duplicate_assets_report.md
+            duplicate_video_reference_review.json
+            duplicate_video_reference_review.md
           if-no-files-found: error
           retention-days: 90
 
