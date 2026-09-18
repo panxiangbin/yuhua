@@ -1,0 +1,237 @@
+name: Yuhua asset-size and duplicate-media audit
+
+on:
+  pull_request:
+    paths:
+      - 'assets/**'
+      - 'downloads/**'
+      - 'product/**'
+      - 'model/**'
+      - 'products.json'
+      - 'specs_index.json'
+      - 'md_specs.json'
+      - 'pages.json'
+      - 'index.html'
+      - 'catalog.html'
+      - 'app.js'
+      - 'style.css'
+      - '.github/workflows/yuhua-asset-size-audit.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'assets/**'
+      - 'downloads/**'
+      - 'product/**'
+      - 'model/**'
+      - 'products.json'
+      - 'specs_index.json'
+      - 'md_specs.json'
+      - 'pages.json'
+      - 'index.html'
+      - 'catalog.html'
+      - 'app.js'
+      - 'style.css'
+      - '.github/workflows/yuhua-asset-size-audit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit-assets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Audit tracked file sizes and duplicate media
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          import subprocess
+          from collections import defaultdict
+          from pathlib import Path
+
+          MIB = 1024 * 1024
+          VIDEO_EXTS = {'.mp4', '.mov', '.webm', '.m4v', '.avi', '.mkv'}
+          IMAGE_EXTS = {'.jpg', '.jpeg', '.png', '.webp', '.gif', '.svg', '.avif'}
+          DOCUMENT_EXTS = {'.pdf', '.doc', '.docx', '.ppt', '.pptx', '.xls', '.xlsx'}
+          ARCHIVE_EXTS = {'.zip', '.7z', '.rar', '.tar', '.gz'}
+          HASH_CATEGORIES = {'video', 'image', 'document', 'archive'}
+
+          def category(path):
+              suffix = path.suffix.lower()
+              if suffix in VIDEO_EXTS:
+                  return 'video'
+              if suffix in IMAGE_EXTS:
+                  return 'image'
+              if suffix in DOCUMENT_EXTS:
+                  return 'document'
+              if suffix in ARCHIVE_EXTS:
+                  return 'archive'
+              if suffix in {'.json', '.js', '.css', '.html', '.xml', '.txt', '.md'}:
+                  return 'site_or_data'
+              return 'other'
+
+          def sha256(path):
+              digest = hashlib.sha256()
+              with path.open('rb') as handle:
+                  for chunk in iter(lambda: handle.read(1024 * 1024), b''):
+                      digest.update(chunk)
+              return digest.hexdigest()
+
+          raw = subprocess.run(
+              ['git', 'ls-files', '-z'],
+              check=True,
+              stdout=subprocess.PIPE,
+          ).stdout
+          tracked = [Path(p.decode('utf-8', 'surrogateescape')) for p in raw.split(b'\0') if p]
+
+          files = []
+          digest_groups = defaultdict(list)
+          category_totals = defaultdict(lambda: {'count': 0, 'bytes': 0})
+
+          for path in tracked:
+              if not path.is_file():
+                  continue
+              size = path.stat().st_size
+              kind = category(path)
+              row = {'path': path.as_posix(), 'bytes': size, 'category': kind}
+              files.append(row)
+              category_totals[kind]['count'] += 1
+              category_totals[kind]['bytes'] += size
+              if kind in HASH_CATEGORIES and size > 0:
+                  digest_groups[(sha256(path), size)].append(path.as_posix())
+
+          files.sort(key=lambda row: (-row['bytes'], row['path']))
+          duplicates = []
+          for (digest, size), paths in digest_groups.items():
+              if len(paths) < 2:
+                  continue
+              duplicates.append({
+                  'sha256': digest,
+                  'bytes_each': size,
+                  'count': len(paths),
+                  'potential_duplicate_bytes': size * (len(paths) - 1),
+                  'paths': sorted(paths),
+              })
+          duplicates.sort(key=lambda row: (-row['potential_duplicate_bytes'], row['paths']))
+
+          thresholds = {
+              'ge_1_mib': [row for row in files if row['bytes'] >= 1 * MIB],
+              'ge_10_mib': [row for row in files if row['bytes'] >= 10 * MIB],
+              'ge_25_mib': [row for row in files if row['bytes'] >= 25 * MIB],
+              'ge_50_mib': [row for row in files if row['bytes'] >= 50 * MIB],
+          }
+          video_rows = [row for row in files if row['category'] == 'video']
+          duplicate_bytes = sum(row['potential_duplicate_bytes'] for row in duplicates)
+          total_bytes = sum(row['bytes'] for row in files)
+
+          report = {
+              'policy': (
+                  '只读体积审计：报告仅统计 Git 跟踪文件、媒体体积与内容完全相同的重复文件；'
+                  '不会自动压缩、删除、重命名或替换任何图片、视频、规格书或产品资料。'
+                  '重复内容也可能承担不同 URL/兼容性用途，必须确认引用关系后才能治理。'
+              ),
+              'tracked_file_count': len(files),
+              'tracked_total_bytes': total_bytes,
+              'category_totals': dict(sorted(category_totals.items())),
+              'video_count': len(video_rows),
+              'video_total_bytes': sum(row['bytes'] for row in video_rows),
+              'threshold_counts': {key: len(value) for key, value in thresholds.items()},
+              'duplicate_content_group_count': len(duplicates),
+              'potential_duplicate_bytes': duplicate_bytes,
+              'largest_files': files[:50],
+              'duplicate_content_groups': duplicates,
+          }
+          Path('asset_size_audit.json').write_text(
+              json.dumps(report, ensure_ascii=False, indent=2) + '\n',
+              encoding='utf-8',
+          )
+
+          def mib(value):
+              return f'{value / MIB:.2f} MiB'
+
+          lines = [
+              '# 予华网站静态资源体积审计',
+              '',
+              '> 只读审计：不自动压缩、删除、重命名或替换任何资源。重复文件需先确认 URL/引用用途。',
+              '',
+              '## 汇总',
+              '',
+              f'- Git 跟踪文件：{len(files)} 个，合计 {mib(total_bytes)}',
+              f'- 视频：{len(video_rows)} 个，合计 {mib(report["video_total_bytes"])}',
+              f'- ≥1 MiB：{len(thresholds["ge_1_mib"])} 个',
+              f'- ≥10 MiB：{len(thresholds["ge_10_mib"])} 个',
+              f'- ≥25 MiB：{len(thresholds["ge_25_mib"])} 个',
+              f'- ≥50 MiB：{len(thresholds["ge_50_mib"])} 个',
+              f'- 内容完全相同的媒体/文档重复组：{len(duplicates)} 组',
+              f'- 理论重复字节（不代表可直接删除）：{mib(duplicate_bytes)}',
+              '',
+              '## 最大文件（前 30）',
+              '',
+              '| 文件 | 类型 | 大小 |',
+              '|---|---:|---:|',
+          ]
+          for row in files[:30]:
+              safe_path = row['path'].replace('|', '\\|')
+              lines.append(f'| `{safe_path}` | {row["category"]} | {mib(row["bytes"])} |')
+
+          lines.extend(['', '## 内容完全相同的重复资源（前 20 组）', ''])
+          if not duplicates:
+              lines.append('未发现。')
+          else:
+              for idx, group in enumerate(duplicates[:20], start=1):
+                  lines.append(
+                      f'### {idx}. {len(group["paths"])} 个文件 × {mib(group["bytes_each"])} '
+                      f'（理论重复 {mib(group["potential_duplicate_bytes"]) }）'
+                  )
+                  for path in group['paths']:
+                      lines.append(f'- `{path}`')
+                  lines.append('')
+
+          Path('asset_size_audit.md').write_text('\n'.join(lines).rstrip() + '\n', encoding='utf-8')
+
+          print('=== 予华网站静态资源体积审计（只读） ===')
+          print(f'Git 跟踪文件: {len(files)}; 总体积: {mib(total_bytes)}')
+          print(f'视频: {len(video_rows)}; 视频总体积: {mib(report["video_total_bytes"])}')
+          print('体积阈值:', report['threshold_counts'])
+          print(f'内容完全相同重复组: {len(duplicates)}; 理论重复: {mib(duplicate_bytes)}')
+          print('最大文件前 10:')
+          for row in files[:10]:
+              print(f'  {mib(row["bytes"]):>10}  {row["path"]}')
+          print('注意：本工作流只报告，不自动删除或压缩任何现有资源。')
+          PY
+
+      - name: Verify report integrity
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path('asset_size_audit.json').read_text(encoding='utf-8'))
+          assert report['tracked_file_count'] > 0
+          assert report['tracked_total_bytes'] >= report['video_total_bytes'] >= 0
+          assert report['duplicate_content_group_count'] == len(report['duplicate_content_groups'])
+          assert report['potential_duplicate_bytes'] == sum(
+              row['potential_duplicate_bytes'] for row in report['duplicate_content_groups']
+          )
+          assert '不会自动压缩、删除' in report['policy']
+          assert Path('asset_size_audit.md').stat().st_size > 0
+          print('Asset-size audit integrity: OK')
+          PY
+
+      - name: Upload asset-size audit reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-asset-size-audit
+          path: |
+            asset_size_audit.json
+            asset_size_audit.md
+
+      # Audit only: no media or product file is modified by this workflow.
