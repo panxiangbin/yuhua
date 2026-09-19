@@ -51,13 +51,17 @@ jobs:
           assert 'width: 100%;' in fields_block, 'Inquiry fields must stay within their grid column'
           assert '*,*::before,*::after { box-sizing:border-box;' in base_css, 'Border-box sizing contract is missing'
 
-          # Touch targets for the persistent controls and generated copy button stay usable.
+          # Touch targets for the persistent controls, copy-email button and generated actions stay usable.
           email_float = tools_css.split('.email-float {', 1)[1].split('}', 1)[0]
           assert 'min-height: 44px;' in email_float, 'Floating email control must keep a 44px minimum height'
+          assert '.copy-email-btn { min-height: 44px; }' in html, 'Copy-email button must keep a 44px minimum height'
           action_buttons = tools_css.split('.send-email-btn,', 1)[1].split('}', 1)[0]
           assert 'min-height: 46px;' in action_buttons, 'Inquiry action buttons must keep touch-friendly height'
           to_top = base_css.split('.to-top {', 1)[1].split('}', 1)[0]
           assert 'width:48px; height:48px;' in to_top, 'Back-to-top target must remain 48x48px'
+
+          # Keyboard users must be able to see focus on the fixed back-to-top control.
+          assert '.to-top:focus-visible { outline: 3px solid #0b5fff; outline-offset: 3px; }' in html, 'Back-to-top needs a visible keyboard focus ring'
 
           # At <=480px, inquiry actions stack and fixed controls stay on opposite screen edges.
           mobile = tools_css.split('@media (max-width: 480px)', 1)[1]
@@ -74,5 +78,5 @@ jobs:
           assert 'selectionCopyStatus.setAttribute("aria-live", "polite");' in tools_js, 'Copy status needs polite live feedback'
           assert 'window.location.href = mailto(inquiryContent.subject, inquiryContent.body);' in tools_js, 'Mail inquiry submit behavior is missing'
 
-          print('Mobile inquiry usability contract: OK (narrow form, wrapped email, touch targets, fixed-control separation, copy fallback)')
+          print('Mobile inquiry usability contract: OK (narrow form, wrapped email, touch targets, fixed-control separation, keyboard focus, copy fallback)')
           PY
