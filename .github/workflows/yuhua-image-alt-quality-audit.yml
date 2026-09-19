@@ -1,0 +1,252 @@
+name: Yuhua image alt quality audit
+
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'catalog.html'
+      - 'model/**'
+      - 'product/**'
+      - 'specs/**'
+      - '.github/workflows/yuhua-image-alt-quality-audit.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'catalog.html'
+      - 'model/**'
+      - 'product/**'
+      - 'specs/**'
+      - '.github/workflows/yuhua-image-alt-quality-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit-image-alt-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Audit image alt-text quality without rewriting content
+        run: |
+          python - <<'PY'
+          from collections import Counter, defaultdict
+          from html.parser import HTMLParser
+          from pathlib import Path
+          import json
+          import re
+
+          paths = []
+          for fixed in ('index.html', 'catalog.html'):
+              path = Path(fixed)
+              if path.is_file():
+                  paths.append(path)
+          paths += sorted(Path('model').glob('*.html'))
+          paths += sorted(Path('product').glob('*.html'))
+          paths += sorted(Path('specs').glob('**/*.html'))
+
+          # This is deliberately an audit, not an autofix. Empty alt text can be correct
+          # for decorative images, while converted specification pages can contain alt
+          # values copied from source filenames or local cache paths. Those cases need
+          # human/source verification before any customer-facing text is changed.
+          image_ext = r'(?:png|jpe?g|webp|gif|bmp|svg|tiff?)'
+          filename_only_re = re.compile(
+              rf'(?i)^\s*(?:[^\\/]+[\\/])*[^\\/]+\.{image_ext}(?:\?[^\s]*)?\s*$'
+          )
+          windows_path_re = re.compile(
+              r'(?i)(?:^[A-Z]:[\\/]|[\\/](?:Users|AppData|Temp|WeChat Files)[\\/]|\\)'
+          )
+          wechat_cache_re = re.compile(
+              rf'(?i)(?:微信(?:图片|截图)|wechat(?:[ _-]?(?:image|screenshot))?|'
+              rf'(?:^|[\\/])WeChat Files[\\/]).*?(?:\.{image_ext})?\s*$'
+          )
+          generic_alt_re = re.compile(
+              r'(?i)^\s*(?:img|image|pic|picture|photo|图片|图像|照片)(?:[ _-]*\d+)?\s*$'
+          )
+          local_url_re = re.compile(r'(?i)^\s*(?:file:/{2,3}|data:image/)')
+
+          class ImageAltParser(HTMLParser):
+              def __init__(self):
+                  super().__init__(convert_charrefs=True)
+                  self.images = []
+
+              def _capture(self, tag, attrs):
+                  if tag.lower() != 'img':
+                      return
+                  attr_pairs = [(str(k).lower(), v) for k, v in attrs]
+                  attr_map = {k: v for k, v in attr_pairs}
+                  has_alt = any(k == 'alt' for k, _ in attr_pairs)
+                  self.images.append({
+                      'line': self.getpos()[0],
+                      'src': (attr_map.get('src') or '')[:300],
+                      'has_alt': has_alt,
+                      'alt': attr_map.get('alt') if has_alt else None,
+                      'role': (attr_map.get('role') or '').strip().lower(),
+                      'aria_hidden': (attr_map.get('aria-hidden') or '').strip().lower(),
+                  })
+
+              def handle_starttag(self, tag, attrs):
+                  self._capture(tag, attrs)
+
+              def handle_startendtag(self, tag, attrs):
+                  self._capture(tag, attrs)
+
+          def scope_for(path):
+              first = path.parts[0] if len(path.parts) > 1 else 'root'
+              return first if first in {'model', 'product', 'specs'} else 'root'
+
+          findings = []
+          totals_by_scope = defaultdict(Counter)
+          alt_frequency = Counter()
+          parse_errors = []
+          total_images = 0
+
+          def add(path, image, kind, detail=''):
+              findings.append({
+                  'path': path.as_posix(),
+                  'line': image['line'],
+                  'type': kind,
+                  'alt': image['alt'],
+                  'src': image['src'],
+                  'detail': detail,
+              })
+              totals_by_scope[scope_for(path)][kind] += 1
+
+          for path in paths:
+              html = path.read_text(encoding='utf-8', errors='replace')
+              parser = ImageAltParser()
+              try:
+                  parser.feed(html)
+              except Exception as exc:
+                  parse_errors.append({'path': path.as_posix(), 'error': str(exc)})
+                  continue
+
+              totals_by_scope[scope_for(path)]['html_files'] += 1
+              totals_by_scope[scope_for(path)]['images'] += len(parser.images)
+              total_images += len(parser.images)
+
+              for image in parser.images:
+                  if not image['has_alt']:
+                      add(path, image, 'missing_alt_attribute')
+                      continue
+
+                  alt = image['alt'] or ''
+                  stripped = alt.strip()
+                  if not stripped:
+                      # Do not call this an error: alt="" can intentionally mark a
+                      # decorative image. Report it as a review candidate only.
+                      decorative_hint = (
+                          image['role'] in {'presentation', 'none'}
+                          or image['aria_hidden'] == 'true'
+                      )
+                      add(
+                          path,
+                          image,
+                          'empty_alt_review',
+                          'decorative_hint' if decorative_hint else 'no_decorative_hint',
+                      )
+                      continue
+
+                  alt_frequency[stripped] += 1
+
+                  if local_url_re.search(stripped):
+                      add(path, image, 'local_or_data_url_alt')
+                  if windows_path_re.search(stripped):
+                      add(path, image, 'windows_or_cache_path_alt')
+                  if wechat_cache_re.search(stripped):
+                      add(path, image, 'wechat_cache_name_alt')
+                  if filename_only_re.fullmatch(stripped):
+                      add(path, image, 'filename_only_alt')
+                  if generic_alt_re.fullmatch(stripped):
+                      add(path, image, 'generic_alt')
+
+          counts = Counter(item['type'] for item in findings)
+          repeated_alts = [
+              {'alt': alt, 'count': count}
+              for alt, count in alt_frequency.most_common()
+              if count >= 4
+          ][:50]
+
+          report = {
+              'files_scanned': len(paths),
+              'images_scanned': total_images,
+              'finding_count': len(findings),
+              'counts_by_type': dict(sorted(counts.items())),
+              'by_scope': {
+                  scope: dict(sorted(counter.items()))
+                  for scope, counter in sorted(totals_by_scope.items())
+              },
+              'findings': findings,
+              'repeated_nonempty_alt_values_top50': repeated_alts,
+              'parse_errors': parse_errors,
+              'note': (
+                  'Read-only accessibility/SEO audit. Findings are review candidates, not automatic '
+                  'content errors. No alt text, product fact, specification content, image, or page is '
+                  'rewritten by this workflow.'
+              ),
+          }
+          Path('image_alt_quality_audit.json').write_text(
+              json.dumps(report, ensure_ascii=False, indent=2) + '\n',
+              encoding='utf-8',
+          )
+
+          lines = [
+              '# Yuhua image alt quality audit',
+              '',
+              f'- HTML files scanned: {len(paths)}',
+              f'- Images scanned: {total_images}',
+              f'- Review findings: {len(findings)}',
+              f'- Parser errors: {len(parse_errors)}',
+              '',
+              '## Findings by type',
+          ]
+          if counts:
+              for kind, count in sorted(counts.items()):
+                  lines.append(f'- {kind}: {count}')
+          else:
+              lines.append('- No review candidates detected.')
+          lines += [
+              '',
+              '## Scope summary',
+          ]
+          for scope, counter in sorted(totals_by_scope.items()):
+              summary = ', '.join(f'{key}={value}' for key, value in sorted(counter.items()))
+              lines.append(f'- {scope}: {summary}')
+          lines += [
+              '',
+              'This report is read-only. Empty alt text may be intentional for decorative images; '
+              'filename/path-like alt values in converted specification pages require source/context '
+              'verification before any change.',
+          ]
+          Path('image_alt_quality_audit.md').write_text('\n'.join(lines) + '\n', encoding='utf-8')
+
+          print(
+              f'Image alt quality audit: {len(paths)} HTML files; {total_images} images; '
+              f'{len(findings)} review finding(s); {len(parse_errors)} parser error(s)'
+          )
+          for kind, count in sorted(counts.items()):
+              print(f'  {kind}: {count}')
+          for item in findings[:60]:
+              detail = item['detail'] or (item['alt'] or '')[:120]
+              print(f"::notice file={item['path']},line={item['line']}::{item['type']} ({detail})")
+          if len(findings) > 60:
+              print(f'  ... {len(findings) - 60} additional review findings are in the artifact')
+          if parse_errors:
+              for item in parse_errors[:20]:
+                  print(f"::warning file={item['path']}::HTML parser error: {item['error']}")
+          PY
+
+      - name: Upload image-alt quality audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-image-alt-quality-audit
+          path: |
+            image_alt_quality_audit.json
+            image_alt_quality_audit.md
+          retention-days: 90
+
+      # Deliberately read-only. Product/specification facts and alt text are never
+      # guessed, generated, or rewritten automatically from this audit.
