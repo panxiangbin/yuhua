@@ -5,16 +5,20 @@ on:
     paths:
       - 'index.html'
       - 'catalog.html'
+      - 'styles.css'
       - 'app.js'
       - 'assets/customer-tools.js'
+      - 'assets/customer-tools.css'
       - '.github/workflows/yuhua-public-site-freshness.yml'
   push:
     branches: [main]
     paths:
       - 'index.html'
       - 'catalog.html'
+      - 'styles.css'
       - 'app.js'
       - 'assets/customer-tools.js'
+      - 'assets/customer-tools.css'
       - '.github/workflows/yuhua-public-site-freshness.yml'
   workflow_dispatch:
 
@@ -49,8 +53,10 @@ jobs:
           FILES=(
             "index.html"
             "catalog.html"
+            "styles.css"
             "app.js"
             "assets/customer-tools.js"
+            "assets/customer-tools.css"
           )
 
           echo "Expected source commit: ${EXPECTED_REF}"
