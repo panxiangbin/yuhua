@@ -1,0 +1,38 @@
+name: Yuhua CNC heavy index audit
+
+on:
+  pull_request:
+    paths:
+      - 'cnc/**'
+      - 'tools/audit_cnc_heavy_index_references.py'
+      - '.github/workflows/yuhua-cnc-heavy-index-audit.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'cnc/**'
+      - 'tools/audit_cnc_heavy_index_references.py'
+      - '.github/workflows/yuhua-cnc-heavy-index-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Audit CNC heavy-index references
+        run: >-
+          python3 tools/audit_cnc_heavy_index_references.py
+          --report yuhua-cnc-heavy-index-report.json
+
+      - name: Upload CNC heavy-index audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-cnc-heavy-index-report
+          path: yuhua-cnc-heavy-index-report.json
+          if-no-files-found: error
