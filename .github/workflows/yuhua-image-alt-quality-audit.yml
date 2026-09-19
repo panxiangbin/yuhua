@@ -67,14 +67,36 @@ jobs:
               r'(?i)^\s*(?:img|image|pic|picture|photo|图片|图像|照片)(?:[ _-]*\d+)?\s*$'
           )
           local_url_re = re.compile(r'(?i)^\s*(?:file:/{2,3}|data:image/)')
+          whitespace_re = re.compile(r'\s+')
+
+          def clean_context(value, limit=280):
+              value = whitespace_re.sub(' ', value or '').strip()
+              if len(value) > limit:
+                  return value[:limit - 1].rstrip() + '…'
+              return value
 
           class ImageAltParser(HTMLParser):
               def __init__(self):
                   super().__init__(convert_charrefs=True)
                   self.images = []
+                  self.last_heading = ''
+                  self.last_paragraph = ''
+                  self.heading_tag = None
+                  self.heading_parts = []
+                  self.paragraph_depth = 0
+                  self.paragraph_parts = []
+
+              def _current_heading(self):
+                  current = clean_context(''.join(self.heading_parts)) if self.heading_tag else ''
+                  return current or self.last_heading
+
+              def _current_paragraph(self):
+                  current = clean_context(''.join(self.paragraph_parts)) if self.paragraph_depth else ''
+                  return current or self.last_paragraph
 
               def _capture(self, tag, attrs):
-                  if tag.lower() != 'img':
+                  tag = tag.lower()
+                  if tag != 'img':
                       return
                   attr_pairs = [(str(k).lower(), v) for k, v in attrs]
                   attr_map = {k: v for k, v in attr_pairs}
@@ -86,13 +108,45 @@ jobs:
                       'alt': attr_map.get('alt') if has_alt else None,
                       'role': (attr_map.get('role') or '').strip().lower(),
                       'aria_hidden': (attr_map.get('aria-hidden') or '').strip().lower(),
+                      'nearest_heading': self._current_heading(),
+                      'nearest_paragraph': self._current_paragraph(),
                   })
 
               def handle_starttag(self, tag, attrs):
-                  self._capture(tag, attrs)
+                  lower = tag.lower()
+                  if lower in {'h1', 'h2', 'h3', 'h4', 'h5', 'h6'}:
+                      self.heading_tag = lower
+                      self.heading_parts = []
+                  elif lower == 'p':
+                      self.paragraph_depth += 1
+                      if self.paragraph_depth == 1:
+                          self.paragraph_parts = []
+                  self._capture(lower, attrs)
 
               def handle_startendtag(self, tag, attrs):
                   self._capture(tag, attrs)
+
+              def handle_data(self, data):
+                  if self.heading_tag:
+                      self.heading_parts.append(data)
+                  if self.paragraph_depth:
+                      self.paragraph_parts.append(data)
+
+              def handle_endtag(self, tag):
+                  lower = tag.lower()
+                  if self.heading_tag == lower:
+                      text = clean_context(''.join(self.heading_parts))
+                      if text:
+                          self.last_heading = text
+                      self.heading_tag = None
+                      self.heading_parts = []
+                  elif lower == 'p' and self.paragraph_depth:
+                      self.paragraph_depth -= 1
+                      if self.paragraph_depth == 0:
+                          text = clean_context(''.join(self.paragraph_parts))
+                          if text:
+                              self.last_paragraph = text
+                          self.paragraph_parts = []
 
           def scope_for(path):
               first = path.parts[0] if len(path.parts) > 1 else 'root'
@@ -105,14 +159,23 @@ jobs:
           total_images = 0
 
           def add(path, image, kind, detail=''):
-              findings.append({
+              item = {
                   'path': path.as_posix(),
                   'line': image['line'],
                   'type': kind,
                   'alt': image['alt'],
                   'src': image['src'],
                   'detail': detail,
-              })
+              }
+              # Product pages are the safest place to collect nearby source text for
+              # human review. Context is evidence for review only; it is never treated
+              # as proof of what the image depicts and never becomes an automatic alt.
+              if scope_for(path) == 'product':
+                  item['context'] = {
+                      'nearest_heading': image.get('nearest_heading', ''),
+                      'nearest_paragraph': image.get('nearest_paragraph', ''),
+                  }
+              findings.append(item)
               totals_by_scope[scope_for(path)][kind] += 1
 
           for path in paths:
@@ -120,6 +183,7 @@ jobs:
               parser = ImageAltParser()
               try:
                   parser.feed(html)
+                  parser.close()
               except Exception as exc:
                   parse_errors.append({'path': path.as_posix(), 'error': str(exc)})
                   continue
@@ -170,6 +234,22 @@ jobs:
               if count >= 4
           ][:50]
 
+          product_findings = [item for item in findings if item['path'].startswith('product/')]
+          product_context_counts = Counter()
+          product_file_counts = Counter(item['path'] for item in product_findings)
+          for item in product_findings:
+              context = item.get('context') or {}
+              heading = bool(context.get('nearest_heading'))
+              paragraph = bool(context.get('nearest_paragraph'))
+              if heading:
+                  product_context_counts['with_heading'] += 1
+              if paragraph:
+                  product_context_counts['with_paragraph'] += 1
+              if heading or paragraph:
+                  product_context_counts['with_any_context'] += 1
+              else:
+                  product_context_counts['without_context'] += 1
+
           report = {
               'files_scanned': len(paths),
               'images_scanned': total_images,
@@ -179,19 +259,33 @@ jobs:
                   scope: dict(sorted(counter.items()))
                   for scope, counter in sorted(totals_by_scope.items())
               },
+              'product_context_summary': {
+                  'finding_count': len(product_findings),
+                  **dict(sorted(product_context_counts.items())),
+                  'files_with_findings': len(product_file_counts),
+                  'top_files': [
+                      {'path': path, 'finding_count': count}
+                      for path, count in product_file_counts.most_common(20)
+                  ],
+              },
               'findings': findings,
               'repeated_nonempty_alt_values_top50': repeated_alts,
               'parse_errors': parse_errors,
               'note': (
                   'Read-only accessibility/SEO audit. Findings are review candidates, not automatic '
-                  'content errors. No alt text, product fact, specification content, image, or page is '
-                  'rewritten by this workflow.'
+                  'content errors. Product-page nearest heading/paragraph text is captured only as '
+                  'review context and is not assumed to describe an image. No alt text, product fact, '
+                  'specification content, image, or page is rewritten by this workflow.'
               ),
           }
           Path('image_alt_quality_audit.json').write_text(
               json.dumps(report, ensure_ascii=False, indent=2) + '\n',
               encoding='utf-8',
           )
+
+          def md_cell(value, limit=160):
+              value = clean_context(value, limit=limit).replace('|', '\\|')
+              return value or '—'
 
           lines = [
               '# Yuhua image alt quality audit',
@@ -215,17 +309,59 @@ jobs:
           for scope, counter in sorted(totals_by_scope.items()):
               summary = ', '.join(f'{key}={value}' for key, value in sorted(counter.items()))
               lines.append(f'- {scope}: {summary}')
+
           lines += [
               '',
-              'This report is read-only. Empty alt text may be intentional for decorative images; '
-              'filename/path-like alt values in converted specification pages require source/context '
-              'verification before any change.',
+              '## Product-page context coverage',
+              '',
+              f'- Product findings: {len(product_findings)}',
+              f"- With nearby heading and/or paragraph: {product_context_counts['with_any_context']}",
+              f"- Without nearby heading/paragraph: {product_context_counts['without_context']}",
+              f'- Product files with findings: {len(product_file_counts)}',
+          ]
+          if product_file_counts:
+              lines += ['', '### Product files with the most findings']
+              for path, count in product_file_counts.most_common(10):
+                  lines.append(f'- `{path}`: {count}')
+
+          contextual = [
+              item for item in product_findings
+              if (item.get('context') or {}).get('nearest_heading')
+              or (item.get('context') or {}).get('nearest_paragraph')
+          ]
+          if contextual:
+              lines += [
+                  '',
+                  '### Product findings with nearby source text (first 40)',
+                  '',
+                  '| Page | Type | Nearest heading | Nearest paragraph |',
+                  '| --- | --- | --- | --- |',
+              ]
+              for item in contextual[:40]:
+                  context = item.get('context') or {}
+                  lines.append(
+                      f"| `{item['path']}:{item['line']}` | {item['type']} | "
+                      f"{md_cell(context.get('nearest_heading'))} | "
+                      f"{md_cell(context.get('nearest_paragraph'))} |"
+                  )
+
+          lines += [
+              '',
+              'This report is read-only. Product-page headings and paragraphs are included only to '
+              'make human review faster; nearby text is not assumed to be an image description. Empty '
+              'alt text may be intentional for decorative images, and converted specification pages '
+              'remain audit-only until their source/context is verified.',
           ]
           Path('image_alt_quality_audit.md').write_text('\n'.join(lines) + '\n', encoding='utf-8')
 
           print(
               f'Image alt quality audit: {len(paths)} HTML files; {total_images} images; '
               f'{len(findings)} review finding(s); {len(parse_errors)} parser error(s)'
+          )
+          print(
+              f"  product context: {len(product_findings)} finding(s); "
+              f"{product_context_counts['with_any_context']} with nearby source text; "
+              f"{product_context_counts['without_context']} without"
           )
           for kind, count in sorted(counts.items()):
               print(f'  {kind}: {count}')
