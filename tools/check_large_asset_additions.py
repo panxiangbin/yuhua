@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Fail a pull request only when it adds a very large tracked file.
+"""Fail a pull request when a changed tracked blob newly crosses the size limit.
 
 This guard is intentionally narrow: it does not delete, compress, rename, move, or
-rewrite any existing repository asset. Existing large files remain audit-only;
-new additions at or above the review threshold must be handled deliberately.
+rewrite any repository asset. Existing large files remain audit-only. It blocks a
+new file at or above the review threshold, or an existing file that grows to or
+further above that threshold. Size reductions are always allowed.
 """
 
 from __future__ import annotations
@@ -29,13 +30,9 @@ def run_git_bytes(args: list[str]) -> bytes:
     return completed.stdout
 
 
-def run_git_text(args: list[str]) -> str:
-    return run_git_bytes(args).decode("utf-8", errors="replace").strip()
-
-
-def added_paths(base_ref: str) -> list[str]:
+def changed_paths(base_ref: str, diff_filter: str) -> list[str]:
     raw = run_git_bytes(
-        ["diff", "--diff-filter=A", "--name-only", "-z", base_ref, "HEAD"]
+        ["diff", f"--diff-filter={diff_filter}", "--name-only", "-z", base_ref, "HEAD"]
     )
     return [
         item.decode("utf-8", errors="replace")
@@ -44,12 +41,20 @@ def added_paths(base_ref: str) -> list[str]:
     ]
 
 
-def blob_size(path: str) -> int | None:
-    """Return the size of a HEAD blob, or None for non-blob entries."""
-    object_type = run_git_text(["cat-file", "-t", f"HEAD:{path}"])
-    if object_type != "blob":
+def blob_size(ref: str, path: str) -> int | None:
+    """Return the size of a blob at ref, or None when the path is not a blob."""
+    completed = subprocess.run(
+        ["git", "cat-file", "-s", f"{ref}:{path}"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+    )
+    if completed.returncode != 0:
         return None
-    return int(run_git_text(["cat-file", "-s", f"HEAD:{path}"]))
+    try:
+        return int(completed.stdout.decode("utf-8", errors="replace").strip())
+    except ValueError:
+        return None
 
 
 def main() -> int:
@@ -57,13 +62,16 @@ def main() -> int:
     parser.add_argument(
         "--base-ref",
         required=True,
-        help="Exact base commit/ref used to identify files newly added by the PR.",
+        help="Exact base commit/ref used to compare added and modified tracked blobs.",
     )
     parser.add_argument(
         "--max-mib",
         type=float,
         default=50.0,
-        help="Review threshold in MiB; additions at or above it fail (default: 50).",
+        help=(
+            "Review threshold in MiB; new files at/above it and existing files "
+            "that grow at/further above it fail (default: 50)."
+        ),
     )
     args = parser.parse_args()
 
@@ -71,43 +79,68 @@ def main() -> int:
         parser.error("--max-mib must be greater than zero")
 
     threshold_bytes = int(args.max_mib * MIB)
-    additions = added_paths(args.base_ref)
-    measured: list[tuple[str, int]] = []
+    added = changed_paths(args.base_ref, "A")
+    modified = changed_paths(args.base_ref, "M")
+
+    measured_added: list[tuple[str, int]] = []
+    measured_modified: list[tuple[str, int, int]] = []
     skipped: list[str] = []
 
-    for path in additions:
-        size = blob_size(path)
-        if size is None:
+    for path in added:
+        head_size = blob_size("HEAD", path)
+        if head_size is None:
             skipped.append(path)
             continue
-        measured.append((path, size))
+        measured_added.append((path, head_size))
 
-    offenders = [
-        (path, size)
-        for path, size in measured
-        if size >= threshold_bytes
-    ]
+    for path in modified:
+        base_size = blob_size(args.base_ref, path)
+        head_size = blob_size("HEAD", path)
+        if base_size is None or head_size is None:
+            skipped.append(path)
+            continue
+        measured_modified.append((path, base_size, head_size))
+
+    offenders: list[tuple[str, int, int | None]] = []
+    for path, head_size in measured_added:
+        if head_size >= threshold_bytes:
+            offenders.append((path, head_size, None))
+    for path, base_size, head_size in measured_modified:
+        if head_size >= threshold_bytes and head_size > base_size:
+            offenders.append((path, head_size, base_size))
+
     offenders.sort(key=lambda item: (-item[1], item[0].lower()))
 
     print(
-        "Large-asset addition guard: "
-        f"{len(additions)} newly added tracked paths, "
-        f"{len(measured)} blobs measured, threshold {args.max_mib:g} MiB."
+        "Large-asset growth guard: "
+        f"{len(added)} added paths, {len(modified)} modified paths, "
+        f"threshold {args.max_mib:g} MiB."
     )
 
     if skipped:
-        print(f"Skipped {len(skipped)} non-blob additions.")
+        print(f"Skipped {len(skipped)} changed paths that could not be measured as blobs.")
 
     if not offenders:
-        print("PASS: no newly added tracked blob reaches the review threshold.")
+        print(
+            "PASS: no new file reaches the review threshold and no existing file "
+            "grows at or above it."
+        )
         return 0
 
     print(
-        "FAIL: newly added very large files require explicit review before merge. "
-        "Existing large files are not affected by this guard."
+        "FAIL: new or enlarged very large files require explicit review before merge. "
+        "Unchanged legacy files and size reductions are not affected by this guard."
     )
-    for path, size in offenders:
-        print(f"  {size / MIB:9.2f} MiB  {path}")
+    for path, head_size, base_size in offenders:
+        if base_size is None:
+            detail = "new file"
+        else:
+            delta = head_size - base_size
+            detail = (
+                f"was {base_size / MIB:.2f} MiB, "
+                f"grew by {delta / MIB:.2f} MiB"
+            )
+        print(f"  {head_size / MIB:9.2f} MiB  {path}  ({detail})")
     return 1
 
 
