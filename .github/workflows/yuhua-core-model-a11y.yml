@@ -1,0 +1,68 @@
+name: Yuhua core model accessibility integrity
+
+on:
+  pull_request:
+    paths:
+      - 'model/**'
+      - '.github/workflows/yuhua-core-model-a11y.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'model/**'
+      - '.github/workflows/yuhua-core-model-a11y.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  check-core-model-accessibility:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify core-model keyboard accessibility baseline
+        run: |
+          python - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+
+          class AccessibilityParser(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.skip_links = []
+                  self.main_targets = []
+
+              def handle_starttag(self, tag, attrs):
+                  attrs = dict(attrs)
+                  classes = set(attrs.get('class', '').split())
+                  if tag == 'a' and attrs.get('href') == '#main-content' and 'skip-link' in classes:
+                      self.skip_links.append(attrs)
+                  if attrs.get('id') == 'main-content':
+                      self.main_targets.append(tag)
+
+          pages = sorted(Path('model').glob('*.html'))
+          assert pages, 'No core model pages found under model/*.html'
+
+          for page in pages:
+              html = page.read_text(encoding='utf-8')
+              parser = AccessibilityParser()
+              parser.feed(html)
+
+              assert ':focus-visible' in html, (
+                  f'{page}: missing :focus-visible keyboard focus styling'
+              )
+              assert len(parser.skip_links) == 1, (
+                  f'{page}: expected exactly one skip-link to #main-content, '
+                  f'found {len(parser.skip_links)}'
+              )
+              assert parser.main_targets == ['main'], (
+                  f'{page}: expected exactly one <main id="main-content"> target, '
+                  f'found {parser.main_targets}'
+              )
+
+          print(
+              f'Core model accessibility integrity: OK '
+              f'({len(pages)} pages checked for focus-visible, skip link and main target)'
+          )
+          PY
