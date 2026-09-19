@@ -1,0 +1,42 @@
+name: Yuhua customer-site CNC heavyweight index guard
+
+on:
+  pull_request:
+    paths:
+      - '**/*.html'
+      - '**/*.htm'
+      - '**/*.css'
+      - '**/*.js'
+      - '**/*.mjs'
+      - '**/*.json'
+      - 'tools/check_customer_cnc_index_references.py'
+      - '.github/workflows/yuhua-customer-cnc-index-guard.yml'
+  push:
+    branches: [main]
+    paths:
+      - '**/*.html'
+      - '**/*.htm'
+      - '**/*.css'
+      - '**/*.js'
+      - '**/*.mjs'
+      - '**/*.json'
+      - 'tools/check_customer_cnc_index_references.py'
+      - '.github/workflows/yuhua-customer-cnc-index-guard.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  guard-customer-site:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Ensure customer pages do not load heavyweight CNC indexes
+        run: python tools/check_customer_cnc_index_references.py
