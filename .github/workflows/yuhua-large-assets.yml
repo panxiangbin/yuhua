@@ -119,13 +119,13 @@ jobs:
           if-no-files-found: error
           retention-days: 90
 
-      - name: Guard newly added very large files
+      - name: Guard new or enlarged very large files
         if: github.event_name == 'pull_request'
         run: |
           python tools/check_large_asset_additions.py \
             --base-ref "${{ github.event.pull_request.base.sha }}" \
             --max-mib 50
 
-      # Existing large files remain read-only audit findings. The PR guard only
-      # blocks newly added tracked blobs >=50 MiB so legacy assets are never
-      # deleted, recompressed, renamed, migrated, or treated as product data.
+      # Existing large files remain read-only audit findings. The PR guard blocks
+      # new blobs >=50 MiB and existing blobs that grow at/further above 50 MiB.
+      # Unchanged legacy assets and size reductions remain allowed.
