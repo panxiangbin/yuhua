@@ -1,0 +1,217 @@
+name: Yuhua product HTML payload audit
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'product/**/*.html'
+      - '.github/workflows/yuhua-product-html-payload-audit.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'product/**/*.html'
+      - '.github/workflows/yuhua-product-html-payload-audit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit-product-html:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Audit product HTML payloads
+        run: |
+          python - <<'PY'
+          import json
+          import re
+          from collections import Counter
+          from pathlib import Path
+
+          KIB = 1024
+          MIB = 1024 * 1024
+          LARGE_HTML_BYTES = 256 * KIB
+          SINGLE_LINE_LIMIT = 2
+          INLINE_IMAGE_RE = re.compile(
+              rb'data:image/([A-Za-z0-9.+-]+);base64,([A-Za-z0-9+/=]+)',
+              re.IGNORECASE,
+          )
+
+          def decoded_base64_size(payload):
+              if not payload:
+                  return 0
+              padding = 2 if payload.endswith(b'==') else 1 if payload.endswith(b'=') else 0
+              return max(0, (len(payload) * 3) // 4 - padding)
+
+          def mib(value):
+              return f'{value / MIB:.2f} MiB'
+
+          rows = []
+          mime_counts = Counter()
+          for path in sorted(Path('product').rglob('*.html')):
+              if not path.is_file():
+                  continue
+              data = path.read_bytes()
+              matches = list(INLINE_IMAGE_RE.finditer(data))
+              inline_bytes = 0
+              inline_count = 0
+              for match in matches:
+                  mime = match.group(1).decode('ascii', errors='replace').lower()
+                  payload = match.group(2)
+                  mime_counts[mime] += 1
+                  inline_count += 1
+                  inline_bytes += decoded_base64_size(payload)
+
+              line_count = data.count(b'\n') + 1 if data else 0
+              row = {
+                  'path': path.as_posix(),
+                  'bytes': len(data),
+                  'line_count': line_count,
+                  'data_scheme_occurrences': data.lower().count(b'data:'),
+                  'inline_base64_image_count': inline_count,
+                  'estimated_inline_image_bytes': inline_bytes,
+                  'large_single_line': len(data) >= LARGE_HTML_BYTES and line_count <= SINGLE_LINE_LIMIT,
+              }
+              rows.append(row)
+
+          rows_by_size = sorted(rows, key=lambda row: (-row['bytes'], row['path']))
+          rows_by_inline = sorted(
+              [row for row in rows if row['inline_base64_image_count'] > 0],
+              key=lambda row: (-row['estimated_inline_image_bytes'], -row['inline_base64_image_count'], row['path']),
+          )
+          total_html_bytes = sum(row['bytes'] for row in rows)
+          inline_image_count = sum(row['inline_base64_image_count'] for row in rows)
+          inline_image_bytes = sum(row['estimated_inline_image_bytes'] for row in rows)
+          data_scheme_occurrences = sum(row['data_scheme_occurrences'] for row in rows)
+          large_html_count = sum(row['bytes'] >= LARGE_HTML_BYTES for row in rows)
+          large_single_line_count = sum(row['large_single_line'] for row in rows)
+
+          report = {
+              'policy': (
+                  '只读产品 HTML 负载审计：报告只统计 product/**/*.html 的文件体积、data: 出现次数、'
+                  '内嵌 base64 图片数量和估算解码体积；不会自动抽取、压缩、删除、替换或重写任何图片、'
+                  'HTML、型号、参数、规格书或产品资料。即使发现大文件或内嵌图片，也必须先确认页面用途、'
+                  '视觉等价性和链接兼容性后才能单独治理。'
+              ),
+              'product_html_file_count': len(rows),
+              'product_html_total_bytes': total_html_bytes,
+              'large_html_threshold_bytes': LARGE_HTML_BYTES,
+              'large_html_count': large_html_count,
+              'large_single_line_count': large_single_line_count,
+              'data_scheme_occurrence_count': data_scheme_occurrences,
+              'inline_base64_image_count': inline_image_count,
+              'estimated_inline_image_bytes': inline_image_bytes,
+              'inline_image_mime_counts': dict(sorted(mime_counts.items())),
+              'largest_product_html': rows_by_size[:50],
+              'inline_image_html': rows_by_inline,
+          }
+          Path('product_html_payload_audit.json').write_text(
+              json.dumps(report, ensure_ascii=False, indent=2) + '\n',
+              encoding='utf-8',
+          )
+
+          lines = [
+              '# 予华产品 HTML 负载审计',
+              '',
+              '> 只读审计：不自动抽取、压缩、删除、替换或重写现有页面和图片。',
+              '',
+              '## 汇总',
+              '',
+              f'- 产品 HTML：{len(rows)} 个，合计 {mib(total_html_bytes)}',
+              f'- ≥256 KiB 的产品 HTML：{large_html_count} 个',
+              f'- ≥256 KiB 且不超过 {SINGLE_LINE_LIMIT} 行：{large_single_line_count} 个',
+              f'- `data:` 出现次数：{data_scheme_occurrences}',
+              f'- 内嵌 base64 图片：{inline_image_count} 个',
+              f'- 内嵌图片估算解码体积：{mib(inline_image_bytes)}',
+              '',
+              '## 最大产品 HTML（前 30）',
+              '',
+              '| 文件 | HTML 大小 | 行数 | data: | 内嵌图片 | 内嵌图片估算体积 |',
+              '|---|---:|---:|---:|---:|---:|',
+          ]
+          for row in rows_by_size[:30]:
+              safe_path = row['path'].replace('|', '\\|')
+              lines.append(
+                  f'| `{safe_path}` | {mib(row["bytes"])} | {row["line_count"]} | '
+                  f'{row["data_scheme_occurrences"]} | {row["inline_base64_image_count"]} | '
+                  f'{mib(row["estimated_inline_image_bytes"])} |'
+              )
+
+          lines.extend(['', '## 含内嵌 base64 图片的页面', ''])
+          if not rows_by_inline:
+              lines.append('未发现。')
+          else:
+              lines.extend([
+                  '| 文件 | 内嵌图片 | 内嵌图片估算体积 | HTML 大小 |',
+                  '|---|---:|---:|---:|',
+              ])
+              for row in rows_by_inline[:30]:
+                  safe_path = row['path'].replace('|', '\\|')
+                  lines.append(
+                      f'| `{safe_path}` | {row["inline_base64_image_count"]} | '
+                      f'{mib(row["estimated_inline_image_bytes"])} | {mib(row["bytes"])} |'
+                  )
+
+          lines.extend([
+              '',
+              '## 解释',
+              '',
+              '- `data:` 只是字面量出现次数，不等同于图片数量；图片数量单独按 `data:image/...;base64,` 统计。',
+              '- “估算解码体积”用于判断潜在负载，不代表浏览器最终内存占用，也不构成删除或外置依据。',
+              '- 大文件、单行 HTML 或内嵌图片均可能是历史生成方式造成，治理前必须先确认页面功能和视觉等价。',
+          ])
+          Path('product_html_payload_audit.md').write_text(
+              '\n'.join(lines).rstrip() + '\n',
+              encoding='utf-8',
+          )
+
+          print('=== 予华产品 HTML 负载审计（只读） ===')
+          print(f'产品 HTML: {len(rows)}; 合计: {mib(total_html_bytes)}')
+          print(f'≥256 KiB: {large_html_count}; 大型单行/近单行: {large_single_line_count}')
+          print(f'data: 出现: {data_scheme_occurrences}; base64 图片: {inline_image_count}; 估算解码: {mib(inline_image_bytes)}')
+          print('最大产品 HTML 前 10:')
+          for row in rows_by_size[:10]:
+              print(
+                  f'  {mib(row["bytes"]):>10}  inline={row["inline_base64_image_count"]:>3} '
+                  f'({mib(row["estimated_inline_image_bytes"])})  {row["path"]}'
+              )
+          print('注意：本工作流只报告，不自动改写或删除任何产品页面和资源。')
+          PY
+
+      - name: Verify report integrity
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path('product_html_payload_audit.json').read_text(encoding='utf-8'))
+          assert report['product_html_file_count'] > 0
+          assert report['product_html_total_bytes'] > 0
+          assert report['large_html_threshold_bytes'] == 256 * 1024
+          assert report['large_html_count'] >= report['large_single_line_count'] >= 0
+          assert report['data_scheme_occurrence_count'] >= report['inline_base64_image_count'] >= 0
+          assert report['estimated_inline_image_bytes'] >= 0
+          assert report['inline_base64_image_count'] == sum(
+              row['inline_base64_image_count'] for row in report['inline_image_html']
+          )
+          assert '不会自动抽取、压缩、删除、替换或重写' in report['policy']
+          assert Path('product_html_payload_audit.md').stat().st_size > 0
+          print('Product HTML payload audit integrity: OK')
+          PY
+
+      - name: Upload product HTML payload audit reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-product-html-payload-audit
+          path: |
+            product_html_payload_audit.json
+            product_html_payload_audit.md
+
+      # Audit only: no product HTML, image, specification or product fact is modified.
