@@ -1,0 +1,127 @@
+name: Yuhua public contact audit
+
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'catalog.html'
+      - 'model/**'
+      - 'product/**'
+      - 'specs/**'
+      - '.github/workflows/yuhua-public-contact-audit.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'catalog.html'
+      - 'model/**'
+      - 'product/**'
+      - 'specs/**'
+      - '.github/workflows/yuhua-public-contact-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit-public-contacts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Audit public customer-facing HTML contact details
+        run: |
+          python - <<'PY'
+          from collections import Counter
+          from pathlib import Path
+          import json
+          import re
+
+          ALLOWED_EMAIL = 'smxpxb008@gmail.com'
+
+          paths = []
+          for fixed in ('index.html', 'catalog.html'):
+              path = Path(fixed)
+              if path.is_file():
+                  paths.append(path)
+          paths += sorted(Path('model').glob('*.html'))
+          paths += sorted(Path('product').glob('*.html'))
+          paths += sorted(Path('specs').glob('**/*.html'))
+
+          # Keep this audit deliberately narrow: flag explicit contact channels without
+          # treating ordinary technical numbers in specification tables as phone numbers.
+          email_re = re.compile(r'(?i)(?<![\w.+-])([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})(?![\w.-])')
+          mailto_re = re.compile(r'(?i)mailto:([^\s"\'<>?]+)')
+          mobile_re = re.compile(r'(?<!\d)1[3-9]\d{9}(?!\d)')
+          tel_link_re = re.compile(r'(?i)\btel\s*:')
+          wechat_re = re.compile(r'(?i)微信|wechat|weixin')
+
+          findings = []
+
+          def add(path, kind, detail=''):
+              findings.append({
+                  'path': path.as_posix(),
+                  'type': kind,
+                  'detail': detail,
+              })
+
+          for path in paths:
+              html = path.read_text(encoding='utf-8', errors='replace')
+
+              for email in sorted({m.group(1) for m in email_re.finditer(html)}, key=str.lower):
+                  if email.lower() != ALLOWED_EMAIL:
+                      add(path, 'unauthorized_email', email)
+
+              for recipient in sorted({m.group(1) for m in mailto_re.finditer(html)}, key=str.lower):
+                  if recipient.lower() != ALLOWED_EMAIL:
+                      add(path, 'unauthorized_mailto', recipient)
+
+              if tel_link_re.search(html):
+                  add(path, 'telephone_link')
+
+              mobiles = sorted(set(mobile_re.findall(html)))
+              for mobile in mobiles:
+                  add(path, 'mobile_number', mobile)
+
+              if wechat_re.search(html):
+                  add(path, 'wechat_reference')
+
+          counts = Counter(item['type'] for item in findings)
+          report = {
+              'allowed_email': ALLOWED_EMAIL,
+              'files_scanned': len(paths),
+              'finding_count': len(findings),
+              'counts_by_type': dict(sorted(counts.items())),
+              'findings': findings,
+              'note': (
+                  'Read-only audit. Findings are not edited automatically because converted '
+                  'specification pages may require source verification before any content change.'
+              ),
+          }
+          Path('public_contact_audit.json').write_text(
+              json.dumps(report, ensure_ascii=False, indent=2) + '\n',
+              encoding='utf-8',
+          )
+
+          print(f'Public contact audit: {len(paths)} HTML files scanned; {len(findings)} finding(s)')
+          if counts:
+              for kind, count in sorted(counts.items()):
+                  print(f'  {kind}: {count}')
+              for item in findings[:50]:
+                  print(f"::warning file={item['path']}::{item['type']}")
+              if len(findings) > 50:
+                  print(f'  ... {len(findings) - 50} additional findings are in public_contact_audit.json')
+          else:
+              print('Public contact policy audit: no unauthorized contact channels detected')
+          PY
+
+      - name: Upload public-contact audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-public-contact-audit
+          path: public_contact_audit.json
+          retention-days: 90
+
+      # This workflow is intentionally read-only. It never rewrites product facts,
+      # specification content, contact details, or generated pages automatically.
