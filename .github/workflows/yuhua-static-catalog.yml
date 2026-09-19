@@ -31,7 +31,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Verify static counts, links and contact policy
+      - name: Verify static counts, links, accessibility and contact policy
         run: |
           python - <<'PY'
           import json
@@ -75,6 +75,14 @@ jobs:
           assert '微信' not in html, 'WeChat wording is not allowed'
           assert not re.search(r'(?<!\d)1[3-9]\d{9}(?!\d)', html), 'possible mobile phone number found'
 
+          assert re.search(r'<a[^>]+class="skip-link"[^>]+href="#main-content"', html), (
+              'catalog.html must provide a skip link to #main-content'
+          )
+          assert re.search(r'<main[^>]+id="main-content"', html), (
+              'catalog.html must expose #main-content on the main element'
+          )
+          assert ':focus-visible' in html, 'catalog.html must keep a visible keyboard focus style'
+
           class LinkParser(HTMLParser):
               def __init__(self):
                   super().__init__(); self.hrefs = []
@@ -114,5 +122,6 @@ jobs:
           assert 'https://panxiangbin.github.io/yuhua/catalog.html' in sitemap, 'catalog.html is missing from sitemap.xml'
           print('Static catalog index: OK', expected)
           print('Homepage static fallback: OK', {'products': len(products), 'specs': len(specs)})
+          print('Static catalog accessibility baseline: OK')
           print(f'Standalone model coverage in catalog.html: OK ({len(model_pages)}/{len(model_pages)})')
           PY
