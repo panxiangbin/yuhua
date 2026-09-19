@@ -115,20 +115,33 @@ def summarize(items: list[dict]) -> dict:
     return {"count": len(items), "bytes": total, "mib": round(total / MIB, 2)}
 
 
-def load_reference_sources(paths: list[str], max_source_mib: float) -> list[tuple[str, str]]:
+def load_reference_sources(
+    paths: list[str], max_source_mib: float
+) -> tuple[list[tuple[str, str]], list[dict], int]:
+    """Load text sources and make any size-based scan blind spots explicit."""
     sources: list[tuple[str, str]] = []
+    skipped_oversize: list[dict] = []
+    scanned_bytes = 0
     limit = int(max_source_mib * MIB)
     for path in paths:
         p = Path(path)
         if p.suffix.lower() not in REFERENCE_EXTS or not p.is_file():
             continue
         try:
-            if p.stat().st_size > limit:
+            size = p.stat().st_size
+            if size > limit:
+                skipped_oversize.append({
+                    "path": path,
+                    "bytes": size,
+                    "mib": round(size / MIB, 2),
+                })
                 continue
             sources.append((path, p.read_text(encoding="utf-8", errors="ignore")))
+            scanned_bytes += size
         except OSError:
             continue
-    return sources
+    skipped_oversize.sort(key=lambda item: (-item["bytes"], item["path"].lower()))
+    return sources, skipped_oversize, scanned_bytes
 
 
 def reference_evidence(asset_path: str, sources: list[tuple[str, str]]) -> dict:
@@ -172,6 +185,7 @@ def reference_evidence(asset_path: str, sources: list[tuple[str, str]]) -> dict:
 
 def markdown_report(report: dict, limit: int) -> str:
     summary = report["summary"]
+    coverage = report["reference_scan_coverage"]
     lines = [
         "# Yuhua Pages publish-scope audit",
         "",
@@ -186,11 +200,28 @@ def markdown_report(report: dict, limit: int) -> str:
         f"- Large files with no obvious source reference: **{summary['not_obviously_referenced_large_count']}** / **{summary['not_obviously_referenced_large_mib']:.2f} MiB**",
         f"- Automatic fixes performed: **{report['policy']['auto_fix_count']}**",
         "",
+        "## Reference scan coverage",
+        "",
+        f"- Text reference sources scanned: **{coverage['scanned_source_count']}** / **{coverage['scanned_source_mib']:.2f} MiB**",
+        f"- Oversize text sources skipped (> {coverage['max_source_mib']} MiB): **{coverage['skipped_oversize_source_count']}** / **{coverage['skipped_oversize_source_mib']:.2f} MiB**",
+        "- Skipped text sources may still contain asset references. Their presence reduces confidence in `not_obviously_referenced` findings and must be reviewed before any deletion or migration decision.",
+        "",
+        "| Skipped source MiB | Path |",
+        "|---:|---|",
+    ]
+    for item in coverage["skipped_oversize_sources"][:limit]:
+        safe_path = item["path"].replace("|", "\\|")
+        lines.append(f"| {item['mib']:.2f} | `{safe_path}` |")
+    if not coverage["skipped_oversize_sources"]:
+        lines.append("| — | None |")
+
+    lines.extend([
+        "",
         "## Top-level directory totals",
         "",
         "| Directory | Files | MiB |",
         "|---|---:|---:|",
-    ]
+    ])
     for name, item in report["top_level_totals"].items():
         lines.append(f"| `{name}` | {item['count']} | {item['mib']:.2f} |")
 
@@ -214,6 +245,7 @@ def markdown_report(report: dict, limit: int) -> str:
         "- Exact-path references are only evidence that a tracked text source mentions the asset.",
         "- Basename-only references can be ambiguous and are reported separately.",
         "- Missing textual references do not prove that an asset is safe to remove; dynamic/runtime references may exist.",
+        "- Oversize text sources skipped by the scan can contain references that are invisible to this heuristic.",
         "- Any deletion, migration, compression, or Pages publish-scope change requires a separate reviewed change.",
         "",
     ])
@@ -234,7 +266,9 @@ def main() -> int:
     entries = tracked_entries()
     sizes = blob_sizes([oid for oid, _ in entries])
     all_paths = [path for _, path in entries]
-    sources = load_reference_sources(all_paths, args.max_source_mib)
+    sources, skipped_oversize_sources, scanned_source_bytes = load_reference_sources(
+        all_paths, args.max_source_mib
+    )
 
     files: list[dict] = []
     missing_size: list[str] = []
@@ -287,6 +321,7 @@ def main() -> int:
     tracked_bytes = sum(item["bytes"] for item in files)
     large_bytes = sum(item["bytes"] for item in large_files)
     no_ref_bytes = sum(item["bytes"] for item in no_ref)
+    skipped_source_bytes = sum(item["bytes"] for item in skipped_oversize_sources)
 
     report = {
         "schema_version": 1,
@@ -296,9 +331,11 @@ def main() -> int:
             "auto_fix_count": 0,
             "large_file_threshold_mib": args.large_mib,
             "reference_source_extensions": sorted(REFERENCE_EXTS),
+            "reference_source_max_mib": args.max_source_mib,
             "notes": [
                 "No file is deleted, compressed, moved, renamed, or rewritten.",
                 "not_obviously_referenced is a heuristic finding, not proof that a file is unused.",
+                "Oversize text sources skipped by the reference scan are reported explicitly.",
                 "Any publish-scope change requires a separate reviewed change.",
             ],
         },
@@ -307,6 +344,11 @@ def main() -> int:
             "tracked_bytes": tracked_bytes,
             "tracked_mib": round(tracked_bytes / MIB, 2),
             "reference_source_count": len(sources),
+            "reference_source_bytes": scanned_source_bytes,
+            "reference_source_mib": round(scanned_source_bytes / MIB, 2),
+            "reference_source_skipped_oversize_count": len(skipped_oversize_sources),
+            "reference_source_skipped_oversize_bytes": skipped_source_bytes,
+            "reference_source_skipped_oversize_mib": round(skipped_source_bytes / MIB, 2),
             "video_file_count": len(videos),
             "video_bytes": sum(item["bytes"] for item in videos),
             "video_mib": round(sum(item["bytes"] for item in videos) / MIB, 2),
@@ -317,6 +359,16 @@ def main() -> int:
             "not_obviously_referenced_large_bytes": no_ref_bytes,
             "not_obviously_referenced_large_mib": round(no_ref_bytes / MIB, 2),
             "unmeasured_tracked_file_count": len(missing_size),
+        },
+        "reference_scan_coverage": {
+            "max_source_mib": args.max_source_mib,
+            "scanned_source_count": len(sources),
+            "scanned_source_bytes": scanned_source_bytes,
+            "scanned_source_mib": round(scanned_source_bytes / MIB, 2),
+            "skipped_oversize_source_count": len(skipped_oversize_sources),
+            "skipped_oversize_source_bytes": skipped_source_bytes,
+            "skipped_oversize_source_mib": round(skipped_source_bytes / MIB, 2),
+            "skipped_oversize_sources": skipped_oversize_sources,
         },
         "top_level_totals": top_totals,
         "category_totals": category_totals,
@@ -336,6 +388,13 @@ def main() -> int:
         f"{len(large_files)} files >= {args.large_mib:g} MiB; "
         f"{len(no_ref)} large files have no obvious textual source reference."
     )
+    print(
+        "Reference scan coverage: "
+        f"{len(sources)} sources / {scanned_source_bytes / MIB:.2f} MiB scanned; "
+        f"{len(skipped_oversize_sources)} oversize sources / {skipped_source_bytes / MIB:.2f} MiB skipped."
+    )
+    for item in skipped_oversize_sources[:20]:
+        print(f"  skipped {item['mib']:9.2f} MiB  {item['path']}")
     for item in no_ref[:20]:
         print(f"  {item['mib']:9.2f} MiB  {item['category']:8s}  {item['path']}")
     print(f"JSON report: {args.json_output}")
