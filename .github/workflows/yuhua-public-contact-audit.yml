@@ -61,6 +61,9 @@ jobs:
               r'(?i)^\s*(?:微信(?:图片|截图)|wechat(?:[ _-]?(?:image|screenshot))?|weixin)'
               r'(?:[ _-]?(?:IMG)?\d[\w .()\-]*)?(?:\.(?:png|jpe?g|webp|gif|bmp))?\s*$'
           )
+          wechat_cache_path_re = re.compile(
+              r'(?i)(?:^|[\\/])WeChat Files[\\/][0-9a-f]{16,}\.(?:png|jpe?g|webp|gif|bmp)\s*$'
+          )
 
           class ContactContextParser(HTMLParser):
               """Collect customer-facing text and contact-relevant attributes only."""
@@ -130,9 +133,10 @@ jobs:
                   add(path, 'mobile_number', mobile)
 
               # A raw HTML scan produced false positives for image assets named like
-              # "微信图片_2024...jpg". Classify WeChat only when it is customer-facing
-              # text/link/label. Filename-like alt/title values stay visible in the report
-              # as metadata-only evidence, but are not treated as a contact channel.
+              # "微信图片_2024...jpg" and converted-document cache paths such as
+              # "...\\WeChat Files\\<hash>.jpg". Classify WeChat only when it is
+              # customer-facing text/link/label. Known asset/cache metadata stays in
+              # the report separately, but is not treated as a contact channel.
               if wechat_re.search(html):
                   parser = ContactContextParser()
                   try:
@@ -152,7 +156,10 @@ jobs:
                   for attr_name, value in parser.labels:
                       if not wechat_re.search(value):
                           continue
-                      if attr_name in {'alt', 'title'} and generated_wechat_asset_re.fullmatch(value):
+                      if attr_name in {'alt', 'title'} and (
+                          generated_wechat_asset_re.fullmatch(value)
+                          or wechat_cache_path_re.search(value)
+                      ):
                           continue
                       evidence.append(attr_name)
 
