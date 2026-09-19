@@ -30,15 +30,22 @@ jobs:
       - name: Audit product HTML payloads
         run: |
           python - <<'PY'
+          import base64
+          import hashlib
           import json
           import re
-          from collections import Counter
+          import subprocess
+          from collections import Counter, defaultdict
           from pathlib import Path
 
           KIB = 1024
           MIB = 1024 * 1024
           LARGE_HTML_BYTES = 256 * KIB
           SINGLE_LINE_LIMIT = 2
+          TARGET_PAGE = Path('product/hpreactor.html')
+          IMAGE_EXTENSIONS = {
+              '.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp', '.avif', '.ico', '.svg'
+          }
           INLINE_IMAGE_RE = re.compile(
               rb'data:image/([A-Za-z0-9.+-]+);base64,([A-Za-z0-9+/=]+)',
               re.IGNORECASE,
@@ -55,6 +62,7 @@ jobs:
 
           rows = []
           mime_counts = Counter()
+          target_inline = []
           for path in sorted(Path('product').rglob('*.html')):
               if not path.is_file():
                   continue
@@ -62,12 +70,32 @@ jobs:
               matches = list(INLINE_IMAGE_RE.finditer(data))
               inline_bytes = 0
               inline_count = 0
-              for match in matches:
+              for position, match in enumerate(matches, start=1):
                   mime = match.group(1).decode('ascii', errors='replace').lower()
                   payload = match.group(2)
                   mime_counts[mime] += 1
                   inline_count += 1
                   inline_bytes += decoded_base64_size(payload)
+
+                  if path == TARGET_PAGE:
+                      try:
+                          decoded = base64.b64decode(payload, validate=True)
+                          decode_error = None
+                          digest = hashlib.sha256(decoded).hexdigest()
+                          decoded_bytes = len(decoded)
+                      except Exception as exc:
+                          decoded = b''
+                          decode_error = f'{type(exc).__name__}: {exc}'
+                          digest = None
+                          decoded_bytes = 0
+                      target_inline.append({
+                          'position': position,
+                          'mime': mime,
+                          'decoded_bytes': decoded_bytes,
+                          'sha256': digest,
+                          'decode_error': decode_error,
+                          'exact_repository_image_paths': [],
+                      })
 
               line_count = data.count(b'\n') + 1 if data else 0
               row = {
@@ -80,6 +108,74 @@ jobs:
                   'large_single_line': len(data) >= LARGE_HTML_BYTES and line_count <= SINGLE_LINE_LIMIT,
               }
               rows.append(row)
+
+          # Byte-identical comparison for the current highest-payload candidate only.
+          # This is deliberately read-only: a hash match is evidence for a future review,
+          # not permission to rewrite the HTML automatically.
+          valid_target = [item for item in target_inline if item['sha256']]
+          target_sizes = {item['decoded_bytes'] for item in valid_target}
+          target_hashes = {(item['decoded_bytes'], item['sha256']) for item in valid_target}
+          hash_to_repo_images = defaultdict(list)
+          tracked_image_file_count = 0
+          size_candidate_file_count = 0
+
+          tracked = subprocess.check_output(['git', 'ls-files', '-z']).split(b'\0')
+          for raw_path in tracked:
+              if not raw_path:
+                  continue
+              path = Path(raw_path.decode('utf-8', errors='surrogateescape'))
+              if path.suffix.lower() not in IMAGE_EXTENSIONS or not path.is_file():
+                  continue
+              tracked_image_file_count += 1
+              size = path.stat().st_size
+              if size not in target_sizes:
+                  continue
+              size_candidate_file_count += 1
+              digest = hashlib.sha256(path.read_bytes()).hexdigest()
+              if (size, digest) in target_hashes:
+                  hash_to_repo_images[(size, digest)].append(path.as_posix())
+
+          for item in target_inline:
+              if not item['sha256']:
+                  continue
+              item['exact_repository_image_paths'] = sorted(
+                  hash_to_repo_images.get((item['decoded_bytes'], item['sha256']), [])
+              )
+
+          hash_occurrences = Counter(item['sha256'] for item in valid_target)
+          exact_match_items = [item for item in valid_target if item['exact_repository_image_paths']]
+          exact_match_hashes = {
+              item['sha256'] for item in exact_match_items
+          }
+          exact_match_unique_bytes = sum(
+              next(item['decoded_bytes'] for item in valid_target if item['sha256'] == digest)
+              for digest in exact_match_hashes
+          )
+          repeated_inline_hashes = {
+              digest: count for digest, count in sorted(hash_occurrences.items()) if count > 1
+          }
+
+          exact_match_audit = {
+              'target_page': TARGET_PAGE.as_posix(),
+              'policy': (
+                  '仅对当前内嵌图片负载最高的 product/hpreactor.html 做 SHA-256 字节级只读比对。'
+                  '只把 base64 解码后的图片与 Git 跟踪的现有图片文件进行完全相同字节匹配；'
+                  '即使命中，也只作为后续人工验证相对路径、部署可用性和页面视觉等价性的候选依据，'
+                  '本工作流不会自动替换、抽取、删除或改写任何页面和资源。'
+              ),
+              'target_page_exists': TARGET_PAGE.is_file(),
+              'inline_image_occurrence_count': len(target_inline),
+              'decoded_ok_count': len(valid_target),
+              'decode_error_count': len(target_inline) - len(valid_target),
+              'unique_inline_sha256_count': len(hash_occurrences),
+              'repeated_inline_sha256': repeated_inline_hashes,
+              'tracked_repository_image_file_count': tracked_image_file_count,
+              'same_size_repository_image_candidate_count': size_candidate_file_count,
+              'exact_external_match_occurrence_count': len(exact_match_items),
+              'exact_external_match_unique_sha256_count': len(exact_match_hashes),
+              'exact_external_match_unique_bytes': exact_match_unique_bytes,
+              'images': target_inline,
+          }
 
           rows_by_size = sorted(rows, key=lambda row: (-row['bytes'], row['path']))
           rows_by_inline = sorted(
@@ -111,6 +207,7 @@ jobs:
               'inline_image_mime_counts': dict(sorted(mime_counts.items())),
               'largest_product_html': rows_by_size[:50],
               'inline_image_html': rows_by_inline,
+              'exact_byte_match_audit': exact_match_audit,
           }
           Path('product_html_payload_audit.json').write_text(
               json.dumps(report, ensure_ascii=False, indent=2) + '\n',
@@ -161,10 +258,44 @@ jobs:
 
           lines.extend([
               '',
+              '## hpreactor 内嵌图片字节级重复比对',
+              '',
+              f'- 目标页面：`{TARGET_PAGE.as_posix()}`',
+              f'- 内嵌图片出现次数：{len(target_inline)}',
+              f'- 可成功解码：{len(valid_target)}；唯一 SHA-256：{len(hash_occurrences)}',
+              f'- 仓库 Git 跟踪图片文件：{tracked_image_file_count} 个；同尺寸候选：{size_candidate_file_count} 个',
+              f'- 与仓库现有图片字节完全一致的出现次数：{len(exact_match_items)}',
+              f'- 字节完全一致的唯一图片：{len(exact_match_hashes)} 个，唯一体积合计 {mib(exact_match_unique_bytes)}',
+              '',
+              '> SHA-256 完全命中只说明文件字节一致，不代表可以直接改写页面；后续仍需验证相对 URL、Pages 发布路径、视觉和断链。',
+              '',
+          ])
+          if not target_inline:
+              lines.append('目标页不存在或未发现可识别的内嵌 base64 图片。')
+          else:
+              lines.extend([
+                  '| 序号 | MIME | 解码大小 | SHA-256 | 页内重复次数 | 仓库完全一致图片 |',
+                  '|---:|---|---:|---|---:|---|',
+              ])
+              for item in target_inline:
+                  digest = item['sha256'] or '解码失败'
+                  short_digest = digest[:16] if item['sha256'] else digest
+                  repeats = hash_occurrences.get(item['sha256'], 0) if item['sha256'] else 0
+                  paths = '<br>'.join(
+                      f'`{p.replace("|", "\\|")}`' for p in item['exact_repository_image_paths']
+                  ) or '—'
+                  lines.append(
+                      f'| {item["position"]} | `{item["mime"]}` | {mib(item["decoded_bytes"])} | '
+                      f'`{short_digest}` | {repeats} | {paths} |'
+                  )
+
+          lines.extend([
+              '',
               '## 解释',
               '',
               '- `data:` 只是字面量出现次数，不等同于图片数量；图片数量单独按 `data:image/...;base64,` 统计。',
               '- “估算解码体积”用于判断潜在负载，不代表浏览器最终内存占用，也不构成删除或外置依据。',
+              '- hpreactor 的 SHA-256 比对只接受字节完全一致；相似图片、重编码图片和视觉近似图片不会被当成匹配。',
               '- 大文件、单行 HTML 或内嵌图片均可能是历史生成方式造成，治理前必须先确认页面功能和视觉等价。',
           ])
           Path('product_html_payload_audit.md').write_text(
@@ -182,6 +313,10 @@ jobs:
                   f'  {mib(row["bytes"]):>10}  inline={row["inline_base64_image_count"]:>3} '
                   f'({mib(row["estimated_inline_image_bytes"])})  {row["path"]}'
               )
+          print(
+              f'hpreactor exact-byte audit: inline={len(target_inline)}, unique={len(hash_occurrences)}, '
+              f'exact-match-occurrences={len(exact_match_items)}, exact-match-unique={len(exact_match_hashes)}'
+          )
           print('注意：本工作流只报告，不自动改写或删除任何产品页面和资源。')
           PY
 
@@ -202,6 +337,25 @@ jobs:
               row['inline_base64_image_count'] for row in report['inline_image_html']
           )
           assert '不会自动抽取、压缩、删除、替换或重写' in report['policy']
+
+          exact = report['exact_byte_match_audit']
+          assert exact['target_page'] == 'product/hpreactor.html'
+          assert exact['target_page_exists'] is True
+          assert exact['inline_image_occurrence_count'] == len(exact['images'])
+          assert exact['decoded_ok_count'] + exact['decode_error_count'] == exact['inline_image_occurrence_count']
+          assert exact['unique_inline_sha256_count'] <= exact['decoded_ok_count']
+          assert exact['exact_external_match_occurrence_count'] <= exact['decoded_ok_count']
+          assert exact['exact_external_match_unique_sha256_count'] <= exact['unique_inline_sha256_count']
+          assert exact['same_size_repository_image_candidate_count'] <= exact['tracked_repository_image_file_count']
+          assert '不会自动替换、抽取、删除或改写' in exact['policy']
+
+          for item in exact['images']:
+              if item['sha256']:
+                  assert len(item['sha256']) == 64
+                  assert item['decoded_bytes'] > 0
+              else:
+                  assert item['decode_error']
+
           assert Path('product_html_payload_audit.md').stat().st_size > 0
           print('Product HTML payload audit integrity: OK')
           PY
