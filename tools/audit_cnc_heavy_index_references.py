@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Audit runtime references to the two largest CNC knowledge indexes.
 
-This is intentionally audit-only: it never rewrites or removes knowledge data.
-The report is meant to make future lazy-loading/chunking decisions evidence-based.
+The tool never rewrites or removes knowledge data. By default it is report-only;
+CI can opt into a narrow regression guard that rejects eager HTML script loading.
 """
 
 from __future__ import annotations
@@ -40,6 +40,14 @@ def main() -> int:
         "--report",
         default="yuhua-cnc-heavy-index-report.json",
         help="JSON report output path",
+    )
+    parser.add_argument(
+        "--fail-on-eager-html-script",
+        action="store_true",
+        help=(
+            "Exit non-zero when either heavy index is referenced by an HTML "
+            "<script src=...> tag."
+        ),
     )
     args = parser.parse_args()
 
@@ -90,6 +98,10 @@ def main() -> int:
     for ref in references:
         kinds[ref["kind"]] = kinds.get(ref["kind"], 0) + 1
 
+    eager_html_script_refs = [
+        ref for ref in references if ref["kind"] == "html-script"
+    ]
+
     report = {
         "purpose": "Audit-only map of CNC runtime references to the two largest knowledge indexes.",
         "targets": targets,
@@ -98,9 +110,7 @@ def main() -> int:
             "reference_count": len(references),
             "files_with_references": len({ref["source"] for ref in references}),
             "reference_kinds": dict(sorted(kinds.items())),
-            "eager_html_script_reference_count": sum(
-                1 for ref in references if ref["kind"] == "html-script"
-            ),
+            "eager_html_script_reference_count": len(eager_html_script_refs),
         },
         "references": references,
     }
@@ -131,6 +141,14 @@ def main() -> int:
             f"[{ref['kind']}]"
         )
     print(f"Report written to {report_path}")
+
+    if args.fail_on_eager_html_script and eager_html_script_refs:
+        print(
+            "ERROR: eager HTML <script src> loading of a heavy CNC index was detected. "
+            "Keep these large indexes out of initial page loading."
+        )
+        return 2
+
     return 0
 
 
