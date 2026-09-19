@@ -329,6 +329,12 @@
     display: none;
   }
 
+  /* Product model codes and the detail action stay unbroken; scroll instead of clipping them on narrow screens. */
+  #catalog .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
   /* The specs table keeps three action columns; allow deliberate horizontal scroll instead of clipping them. */
   #specs .table-wrap {
     overflow-x: auto;
