@@ -1,0 +1,78 @@
+name: Yuhua mobile inquiry usability
+
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'styles.css'
+      - 'assets/customer-tools.css'
+      - 'assets/customer-tools.js'
+      - '.github/workflows/yuhua-mobile-inquiry.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'styles.css'
+      - 'assets/customer-tools.css'
+      - 'assets/customer-tools.js'
+      - '.github/workflows/yuhua-mobile-inquiry.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  mobile-inquiry-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Verify narrow-screen inquiry usability contract
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          html = Path('index.html').read_text(encoding='utf-8')
+          base_css = Path('styles.css').read_text(encoding='utf-8')
+          tools_css = Path('assets/customer-tools.css').read_text(encoding='utf-8')
+          tools_js = Path('assets/customer-tools.js').read_text(encoding='utf-8')
+
+          # Required customer-facing controls must remain present and keyboard-labelled.
+          assert 'id="selectionForm"' in html, 'Selection/inquiry form is missing'
+          assert 'class="email-float"' in html, 'Persistent email inquiry control is missing'
+          assert 'class="to-top"' in html, 'Back-to-top control is missing'
+          assert 'aria-label="通过邮件咨询予华仪器"' in html, 'Email floating control needs an accessible label'
+          assert 'aria-label="返回页面顶部"' in html, 'Back-to-top control needs an accessible label'
+
+          # Long email text and form fields must not force a 320/360px viewport wider.
+          email_block = tools_css.split('.email-card a {', 1)[1].split('}', 1)[0]
+          assert 'word-break: break-all;' in email_block, 'Sales email must wrap on narrow screens'
+          fields_block = tools_css.split('.selection-form input,', 1)[1].split('}', 1)[0]
+          assert 'width: 100%;' in fields_block, 'Inquiry fields must stay within their grid column'
+          assert '*,*::before,*::after { box-sizing:border-box;' in base_css, 'Border-box sizing contract is missing'
+
+          # Touch targets for the persistent controls and generated copy button stay usable.
+          email_float = tools_css.split('.email-float {', 1)[1].split('}', 1)[0]
+          assert 'min-height: 44px;' in email_float, 'Floating email control must keep a 44px minimum height'
+          action_buttons = tools_css.split('.send-email-btn,', 1)[1].split('}', 1)[0]
+          assert 'min-height: 46px;' in action_buttons, 'Inquiry action buttons must keep touch-friendly height'
+          to_top = base_css.split('.to-top {', 1)[1].split('}', 1)[0]
+          assert 'width:48px; height:48px;' in to_top, 'Back-to-top target must remain 48x48px'
+
+          # At <=480px, inquiry actions stack and fixed controls stay on opposite screen edges.
+          mobile = tools_css.split('@media (max-width: 480px)', 1)[1]
+          assert '.form-actions { flex-direction: column; align-items: stretch; }' in mobile, 'Inquiry actions must stack on small phones'
+          assert '.send-email-btn, .clear-form-btn { width: 100%; }' in mobile, 'Inquiry action buttons must fill the narrow form width'
+          mobile_float = mobile.split('.email-float {', 1)[1].split('}', 1)[0]
+          for token in ('left: 16px;', 'right: auto;', 'bottom: 22px;'):
+              assert token in mobile_float, f'Mobile email control positioning lost: {token}'
+          assert 'right:22px; bottom:22px;' in to_top, 'Back-to-top must remain right-aligned opposite the mobile email control'
+
+          # Preserve the no-mail-client fallback: users can copy the full inquiry text.
+          assert 'copySelectionInquiry.textContent = "复制完整询价内容";' in tools_js, 'Copy-complete-inquiry fallback is missing'
+          assert 'copySelectionInquiry.className = "clear-form-btn";' in tools_js, 'Copy inquiry button must inherit the mobile action sizing'
+          assert 'selectionCopyStatus.setAttribute("aria-live", "polite");' in tools_js, 'Copy status needs polite live feedback'
+          assert 'window.location.href = mailto(inquiryContent.subject, inquiryContent.body);' in tools_js, 'Mail inquiry submit behavior is missing'
+
+          print('Mobile inquiry usability contract: OK (narrow form, wrapped email, touch targets, fixed-control separation, copy fallback)')
+          PY
