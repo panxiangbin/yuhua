@@ -34,6 +34,7 @@ jobs:
         run: |
           python - <<'PY'
           from collections import Counter
+          from html.parser import HTMLParser
           from pathlib import Path
           import json
           import re
@@ -56,8 +57,55 @@ jobs:
           mobile_re = re.compile(r'(?<!\d)1[3-9]\d{9}(?!\d)')
           tel_link_re = re.compile(r'(?i)\btel\s*:')
           wechat_re = re.compile(r'(?i)微信|wechat|weixin')
+          generated_wechat_asset_re = re.compile(
+              r'(?i)^\s*(?:微信(?:图片|截图)|wechat(?:[ _-]?(?:image|screenshot))?|weixin)'
+              r'(?:[ _-]?(?:IMG)?\d[\w .()\-]*)?(?:\.(?:png|jpe?g|webp|gif|bmp))?\s*$'
+          )
+          wechat_cache_path_re = re.compile(
+              r'(?i)(?:^|[\\/])WeChat Files[\\/][0-9a-f]{16,}\.(?:png|jpe?g|webp|gif|bmp)\s*$'
+          )
+
+          class ContactContextParser(HTMLParser):
+              """Collect customer-facing text and contact-relevant attributes only."""
+
+              def __init__(self):
+                  super().__init__(convert_charrefs=True)
+                  self.skip_depth = 0
+                  self.visible_text = []
+                  self.hrefs = []
+                  self.labels = []
+
+              def handle_starttag(self, tag, attrs):
+                  tag = tag.lower()
+                  if tag in {'script', 'style', 'template', 'noscript'}:
+                      self.skip_depth += 1
+                  attrs = dict(attrs)
+                  if attrs.get('href'):
+                      self.hrefs.append(attrs['href'])
+                  for name in ('aria-label', 'title', 'alt'):
+                      value = attrs.get(name)
+                      if value:
+                          self.labels.append((name, value))
+
+              def handle_startendtag(self, tag, attrs):
+                  attrs = dict(attrs)
+                  if attrs.get('href'):
+                      self.hrefs.append(attrs['href'])
+                  for name in ('aria-label', 'title', 'alt'):
+                      value = attrs.get(name)
+                      if value:
+                          self.labels.append((name, value))
+
+              def handle_endtag(self, tag):
+                  if tag.lower() in {'script', 'style', 'template', 'noscript'} and self.skip_depth:
+                      self.skip_depth -= 1
+
+              def handle_data(self, data):
+                  if not self.skip_depth and data.strip():
+                      self.visible_text.append(data)
 
           findings = []
+          metadata_only_wechat_pages = []
 
           def add(path, kind, detail=''):
               findings.append({
@@ -84,8 +132,41 @@ jobs:
               for mobile in mobiles:
                   add(path, 'mobile_number', mobile)
 
+              # A raw HTML scan produced false positives for image assets named like
+              # "微信图片_2024...jpg" and converted-document cache paths such as
+              # "...\\WeChat Files\\<hash>.jpg". Classify WeChat only when it is
+              # customer-facing text/link/label. Known asset/cache metadata stays in
+              # the report separately, but is not treated as a contact channel.
               if wechat_re.search(html):
-                  add(path, 'wechat_reference')
+                  parser = ContactContextParser()
+                  try:
+                      parser.feed(html)
+                  except Exception:
+                      # Malformed converted HTML should not make the audit silently skip a page.
+                      parser.visible_text = [html]
+
+                  evidence = []
+                  visible = ' '.join(parser.visible_text)
+                  if wechat_re.search(visible):
+                      evidence.append('visible_text')
+
+                  if any(wechat_re.search(href) for href in parser.hrefs):
+                      evidence.append('link')
+
+                  for attr_name, value in parser.labels:
+                      if not wechat_re.search(value):
+                          continue
+                      if attr_name in {'alt', 'title'} and (
+                          generated_wechat_asset_re.fullmatch(value)
+                          or wechat_cache_path_re.search(value)
+                      ):
+                          continue
+                      evidence.append(attr_name)
+
+                  if evidence:
+                      add(path, 'wechat_reference', ','.join(sorted(set(evidence))))
+                  else:
+                      metadata_only_wechat_pages.append(path.as_posix())
 
           counts = Counter(item['type'] for item in findings)
           report = {
@@ -94,9 +175,12 @@ jobs:
               'finding_count': len(findings),
               'counts_by_type': dict(sorted(counts.items())),
               'findings': findings,
+              'metadata_only_wechat_pages': metadata_only_wechat_pages,
+              'metadata_only_wechat_count': len(metadata_only_wechat_pages),
               'note': (
-                  'Read-only audit. Findings are not edited automatically because converted '
-                  'specification pages may require source verification before any content change.'
+                  'Read-only audit. WeChat-like image/file metadata is reported separately from '
+                  'customer-facing contact references. Findings are not edited automatically because '
+                  'converted specification pages may require source verification before any content change.'
               ),
           }
           Path('public_contact_audit.json').write_text(
@@ -105,11 +189,13 @@ jobs:
           )
 
           print(f'Public contact audit: {len(paths)} HTML files scanned; {len(findings)} finding(s)')
+          if metadata_only_wechat_pages:
+              print(f'  metadata-only WeChat references (not contact findings): {len(metadata_only_wechat_pages)}')
           if counts:
               for kind, count in sorted(counts.items()):
                   print(f'  {kind}: {count}')
               for item in findings[:50]:
-                  print(f"::warning file={item['path']}::{item['type']}")
+                  print(f"::warning file={item['path']}::{item['type']} ({item['detail']})")
               if len(findings) > 50:
                   print(f'  ... {len(findings) - 50} additional findings are in public_contact_audit.json')
           else:
