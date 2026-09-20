@@ -3,6 +3,7 @@ name: Yuhua public contact audit
 on:
   pull_request:
     paths:
+      - '404.html'
       - 'index.html'
       - 'catalog.html'
       - 'model/**'
@@ -12,6 +13,7 @@ on:
   push:
     branches: [main]
     paths:
+      - '404.html'
       - 'index.html'
       - 'catalog.html'
       - 'model/**'
@@ -42,7 +44,7 @@ jobs:
           ALLOWED_EMAIL = 'smxpxb008@gmail.com'
 
           paths = []
-          for fixed in ('index.html', 'catalog.html'):
+          for fixed in ('404.html', 'index.html', 'catalog.html'):
               path = Path(fixed)
               if path.is_file():
                   paths.append(path)
