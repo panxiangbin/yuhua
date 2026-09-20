@@ -1,0 +1,72 @@
+name: Temporary fix IMG_1672 poster reference
+
+on:
+  push:
+    branches:
+      - fix/remove-img-1672-broken-poster
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Remove one confirmed missing poster reference from both manifests
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          old = '  "file": "assets/videos/img_1672.mp4",\n  "poster": "assets/videos/img_1672.jpg"\n'
+          new = '  "file": "assets/videos/img_1672.mp4"\n'
+          for rel in ('videos.json', 'assets/videos.js'):
+              path = Path(rel)
+              text = path.read_text(encoding='utf-8')
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'{rel}: expected exactly one IMG_1672 poster block, found {count}')
+              path.write_text(text.replace(old, new, 1), encoding='utf-8')
+
+          videos = json.loads(Path('videos.json').read_text(encoding='utf-8'))
+          js = Path('assets/videos.js').read_text(encoding='utf-8')
+          prefix = 'window.VIDEOS = '
+          if not js.startswith(prefix) or not js.rstrip().endswith(';'):
+              raise SystemExit('assets/videos.js wrapper changed unexpectedly')
+          js_payload = js[len(prefix):].rstrip()
+          js_payload = js_payload[:-1]
+          videos_js = json.loads(js_payload)
+
+          if videos != videos_js:
+              raise SystemExit('video manifests are no longer identical')
+          if len(videos) != 177:
+              raise SystemExit(f'expected 177 video entries, got {len(videos)}')
+          matches = [v for v in videos if v.get('file') == 'assets/videos/img_1672.mp4']
+          if len(matches) != 1:
+              raise SystemExit(f'expected one IMG_1672 entry, got {len(matches)}')
+          if 'poster' in matches[0]:
+              raise SystemExit('IMG_1672 still has a poster field')
+          if not Path('assets/videos/img_1672.mp4').is_file():
+              raise SystemExit('IMG_1672 video file is missing')
+          if Path('assets/videos/img_1672.jpg').exists():
+              raise SystemExit('IMG_1672 poster unexpectedly exists; do not remove its reference')
+
+          Path('.github/workflows/tmp-fix-img-1672-poster.yml').unlink()
+          PY
+
+      - name: Commit manifest-only fix
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add videos.json assets/videos.js .github/workflows/tmp-fix-img-1672-poster.yml
+          git diff --cached --check
+          git commit -m "Remove broken IMG_1672 poster reference"
+          git push origin HEAD:fix/remove-img-1672-broken-poster
