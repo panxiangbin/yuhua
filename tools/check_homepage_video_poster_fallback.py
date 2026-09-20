@@ -2,9 +2,9 @@
 """Guard homepage video poster fallbacks against the current manifests.
 
 The homepage intentionally suppresses poster URLs that are referenced by the video
-manifests but are not present in the repository. Keep that fallback set exactly in
-sync with the evidence: no missing poster may be omitted, and no stale fallback may
-remain after a manifest cleanup or after a poster is restored.
+manifests but are not present in the repository. Keep that fallback collection
+exactly in sync with the evidence: no missing poster may be omitted, and no stale
+fallback may remain after a manifest cleanup or after a poster is restored.
 """
 
 from __future__ import annotations
@@ -56,17 +56,35 @@ def poster_refs(items: list[dict]) -> set[str]:
 
 def fallback_paths() -> set[str]:
     text = INDEX.read_text(encoding="utf-8")
-    match = re.search(
-        r"const\s+missingPosters\s*=\s*new\s+Set\s*\(\s*\[(.*?)\]\s*\)\s*;",
+
+    # Current homepage implementation uses an object map:
+    #   var missingPosters = {"assets/videos/x.jpg": true, ...};
+    object_match = re.search(
+        r"(?:var|let|const)\s+missingPosters\s*=\s*\{(.*?)\}\s*;",
         text,
         flags=re.DOTALL,
     )
-    if not match:
-        raise ValueError("index.html missingPosters fallback set was not found")
-    return {
-        value.replace("\\", "/")
-        for value in re.findall(r"['\"]([^'\"]+)['\"]", match.group(1))
-    }
+    if object_match:
+        return {
+            value.replace("\\", "/")
+            for value in re.findall(
+                r"['\"]([^'\"]+)['\"]\s*:\s*true\b", object_match.group(1)
+            )
+        }
+
+    # Also accept a Set representation if the frontend is refactored later.
+    set_match = re.search(
+        r"(?:var|let|const)\s+missingPosters\s*=\s*new\s+Set\s*\(\s*\[(.*?)\]\s*\)\s*;",
+        text,
+        flags=re.DOTALL,
+    )
+    if set_match:
+        return {
+            value.replace("\\", "/")
+            for value in re.findall(r"['\"]([^'\"]+)['\"]", set_match.group(1))
+        }
+
+    raise ValueError("index.html missingPosters fallback collection was not found")
 
 
 def main() -> int:
