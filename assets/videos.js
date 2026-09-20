@@ -338,8 +338,7 @@ window.VIDEOS = [
   "title": "IMG_1659",
   "sub": "分子蒸馏",
   "key": "mol_dist",
-  "file": "assets/videos/img_1659.mp4",
-  "poster": "assets/videos/img_1659.jpg"
+  "file": "assets/videos/img_1659.mp4"
  },
  {
   "title": "IMG_1669",
