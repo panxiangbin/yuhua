@@ -44,10 +44,11 @@
     var fragment = document.createDocumentFragment();
     for (var i = renderedVideoCount; i < end; i++) {
       var v = VIDEOS[i];
+      var posterAttr = v.poster ? ' poster="' + v.poster + '"' : "";
       var card = document.createElement("div");
       card.className = "video-card";
       card.innerHTML =
-        '<video controls preload="none" playsinline poster="' + v.poster + '">' +
+        '<video controls preload="none" playsinline' + posterAttr + '>' +
         '<source src="' + v.file + '" type="video/mp4"></video>' +
         '<div class="video-meta"><b>' + v.title + '</b><span>' + (v.sub || "") + '</span></div>';
       fragment.appendChild(card);
