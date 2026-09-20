@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """Read-only audit for the homepage video runtime manifest.
 
-This audit compares assets/videos.js with tracked assets/videos/ files. It is
-intentionally evidence-only: a tracked video that is not present in the homepage
-manifest may still be used by product pages, sub-sites, downloads, or dynamic
-code, so no file is changed or classified as unused.
+This audit compares assets/videos.js with tracked assets/videos/ files and
+cross-checks videos.json so the two maintained video manifests can be reviewed
+for drift before cleanup work. It is intentionally evidence-only: a tracked
+video that is not present in the homepage manifest may still be used by product
+pages, sub-sites, downloads, or dynamic code, so no file is changed or
+classified as unused.
 """
 
 from __future__ import annotations
@@ -23,6 +25,7 @@ VIDEO_EXTS = {".mp4", ".mov", ".m4v", ".webm", ".avi", ".mkv"}
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--manifest", default="assets/videos.js")
+    parser.add_argument("--catalog-manifest", default="videos.json")
     parser.add_argument("--output-dir", default="audit_reports/homepage-video-runtime")
     parser.add_argument("--top", type=int, default=100)
     return parser.parse_args()
@@ -51,6 +54,45 @@ def extract_refs(text: str, key: str) -> list[str]:
     return [value.replace("\\", "/") for value in pattern.findall(text)]
 
 
+def parse_manifest(path: Path) -> list[dict]:
+    text = path.read_text(encoding="utf-8")
+    if path.suffix.lower() == ".js":
+        start = text.find("[")
+        end = text.rfind("]")
+        if start < 0 or end < start:
+            raise ValueError(f"cannot find video array in {path}")
+        text = text[start : end + 1]
+    data = json.loads(text)
+    if not isinstance(data, list):
+        raise ValueError(f"{path} must contain a list")
+    return data
+
+
+def canonical_entry(item: object) -> str:
+    return json.dumps(item, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+
+
+def compare_manifests(primary: list[dict], catalog: list[dict]) -> dict:
+    primary_counter = Counter(canonical_entry(item) for item in primary)
+    catalog_counter = Counter(canonical_entry(item) for item in catalog)
+    primary_only = list((primary_counter - catalog_counter).elements())
+    catalog_only = list((catalog_counter - primary_counter).elements())
+
+    def decode(entries: list[str]) -> list[object]:
+        return [json.loads(entry) for entry in entries]
+
+    return {
+        "primary_entry_count": len(primary),
+        "catalog_entry_count": len(catalog),
+        "semantic_match": not primary_only and not catalog_only,
+        "order_match": primary == catalog,
+        "primary_only_entry_count": len(primary_only),
+        "catalog_only_entry_count": len(catalog_only),
+        "primary_only_entries": decode(primary_only[:100]),
+        "catalog_only_entries": decode(catalog_only[:100]),
+    }
+
+
 def mib(value: int) -> float:
     return round(value / MIB, 2)
 
@@ -58,6 +100,7 @@ def mib(value: int) -> float:
 def main() -> int:
     args = parse_args()
     manifest_path = Path(args.manifest)
+    catalog_manifest_path = Path(args.catalog_manifest)
     text = manifest_path.read_text(encoding="utf-8")
     sizes = tracked_sizes()
 
@@ -74,6 +117,10 @@ def main() -> int:
     ]
     missing_files = sorted(path for path in unique_files if path not in sizes)
     missing_posters = sorted(path for path in unique_posters if path not in sizes)
+
+    primary_items = parse_manifest(manifest_path)
+    catalog_items = parse_manifest(catalog_manifest_path)
+    manifest_comparison = compare_manifests(primary_items, catalog_items)
 
     tracked_video_paths = sorted(
         path for path in sizes
@@ -114,15 +161,26 @@ def main() -> int:
         "poster_ref_count": len(poster_refs),
         "unique_poster_ref_count": len(unique_posters),
         "missing_poster_count": len(missing_posters),
+        "catalog_manifest_entry_count": manifest_comparison["catalog_entry_count"],
+        "manifest_semantic_match": manifest_comparison["semantic_match"],
+        "manifest_order_match": manifest_comparison["order_match"],
+        "manifest_primary_only_entry_count": manifest_comparison["primary_only_entry_count"],
+        "manifest_catalog_only_entry_count": manifest_comparison["catalog_only_entry_count"],
     }
 
     report = {
         "policy": {
             "mode": "audit_only",
             "auto_fix_count": 0,
-            "meaning": "Not present in the homepage runtime manifest does not mean unused. Other pages, sub-sites, downloads, or dynamic code may still require the asset. This report performs no deletion, move, compression, rename, or content rewrite.",
+            "meaning": (
+                "Not present in the homepage runtime manifest does not mean unused. Other pages, "
+                "sub-sites, downloads, or dynamic code may still require the asset. The comparison "
+                "with videos.json is evidence-only and performs no automatic reconciliation. This "
+                "report performs no deletion, move, compression, rename, or content rewrite."
+            ),
         },
         "summary": summary,
+        "manifest_comparison": manifest_comparison,
         "manifest_missing_video_paths": missing_files,
         "manifest_duplicate_video_paths": duplicate_paths,
         "missing_poster_paths": missing_posters,
@@ -147,6 +205,23 @@ def main() -> int:
     ]
     for key, value in summary.items():
         md.append(f"- **{key}**: {value}")
+
+    md += ["", "## Manifest parity: assets/videos.js vs videos.json", ""]
+    if manifest_comparison["semantic_match"]:
+        if manifest_comparison["order_match"]:
+            md.append("- The two manifests contain the same entries in the same order.")
+        else:
+            md.append("- The two manifests contain the same entries, but their order differs.")
+    else:
+        md.append(
+            f"- Entries only in `{manifest_path}`: "
+            f"{manifest_comparison['primary_only_entry_count']}"
+        )
+        md.append(
+            f"- Entries only in `{catalog_manifest_path}`: "
+            f"{manifest_comparison['catalog_only_entry_count']}"
+        )
+        md.append("- See the JSON report for up to 100 unmatched entries from each side.")
 
     md += ["", "## Manifest paths missing from tracked files", ""]
     if missing_files:
