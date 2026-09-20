@@ -15,7 +15,7 @@ permissions:
   contents: read
 
 jobs:
-  guard-new-missing-alt:
+  guard-alt-quality-regressions:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout PR head
@@ -25,16 +25,18 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
 
-      - name: Prevent missing-alt regressions on changed public HTML
+      - name: Prevent image-alt quality regressions on changed public HTML
         if: github.event_name == 'pull_request'
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           python - <<'PY'
+          from collections import Counter
           from html.parser import HTMLParser
           from pathlib import Path
           import os
+          import re
           import subprocess
           import sys
 
@@ -43,19 +45,65 @@ jobs:
           public_roots = {'model', 'product', 'specs'}
           fixed_pages = {'index.html', 'catalog.html'}
 
+          # Keep these definitions aligned with the read-only image-alt quality audit.
+          # Empty alt text is intentionally not guarded because alt="" can be correct
+          # for decorative images and needs contextual review rather than a blanket ban.
+          image_ext = r'(?:png|jpe?g|webp|gif|bmp|svg|tiff?)'
+          filename_only_re = re.compile(
+              rf'(?i)^\s*(?:[^\\/]+[\\/])*[^\\/]+\.{image_ext}(?:\?[^\s]*)?\s*$'
+          )
+          windows_path_re = re.compile(
+              r'(?i)(?:^[A-Z]:[\\/]|[\\/](?:Users|AppData|Temp|WeChat Files)[\\/]|\\)'
+          )
+          wechat_cache_re = re.compile(
+              rf'(?i)(?:微信(?:图片|截图)|wechat(?:[ _-]?(?:image|screenshot))?|'
+              rf'(?:^|[\\/])WeChat Files[\\/]).*?(?:\.{image_ext})?\s*$'
+          )
+          generic_alt_re = re.compile(
+              r'(?i)^\s*(?:img|image|pic|picture|photo|图片|图像|照片)(?:[ _-]*\d+)?\s*$'
+          )
+          local_url_re = re.compile(r'(?i)^\s*(?:file:/{2,3}|data:image/)')
+
+          guarded_kinds = (
+              'missing_alt_attribute',
+              'local_or_data_url_alt',
+              'windows_or_cache_path_alt',
+              'wechat_cache_name_alt',
+              'filename_only_alt',
+              'generic_alt',
+          )
+
           class ImgAltCounter(HTMLParser):
               def __init__(self):
                   super().__init__(convert_charrefs=True)
                   self.images = 0
-                  self.missing_alt = 0
+                  self.counts = Counter()
 
               def _capture(self, tag, attrs):
                   if tag.lower() != 'img':
                       return
                   self.images += 1
-                  names = {str(name).lower() for name, _ in attrs}
-                  if 'alt' not in names:
-                      self.missing_alt += 1
+                  attr_pairs = [(str(name).lower(), value) for name, value in attrs]
+                  has_alt = any(name == 'alt' for name, _ in attr_pairs)
+                  if not has_alt:
+                      self.counts['missing_alt_attribute'] += 1
+                      return
+
+                  alt = next((value for name, value in attr_pairs if name == 'alt'), '') or ''
+                  stripped = alt.strip()
+                  if not stripped:
+                      return
+
+                  if local_url_re.search(stripped):
+                      self.counts['local_or_data_url_alt'] += 1
+                  if windows_path_re.search(stripped):
+                      self.counts['windows_or_cache_path_alt'] += 1
+                  if wechat_cache_re.search(stripped):
+                      self.counts['wechat_cache_name_alt'] += 1
+                  if filename_only_re.fullmatch(stripped):
+                      self.counts['filename_only_alt'] += 1
+                  if generic_alt_re.fullmatch(stripped):
+                      self.counts['generic_alt'] += 1
 
               def handle_starttag(self, tag, attrs):
                   self._capture(tag, attrs)
@@ -81,9 +129,9 @@ jobs:
                   return None
               return proc.stdout.decode('utf-8', errors='replace')
 
-          def count_missing(html, label):
+          def inspect_html(html, label):
               if html is None:
-                  return 0, 0
+                  return 0, Counter()
               parser = ImgAltCounter()
               try:
                   parser.feed(html)
@@ -91,7 +139,7 @@ jobs:
               except Exception as exc:
                   print(f'::error::{label}: HTML parser error: {exc}')
                   raise
-              return parser.images, parser.missing_alt
+              return parser.images, parser.counts
 
           proc = subprocess.run(
               ['git', 'diff', '--name-status', '--find-renames', base, head],
@@ -122,17 +170,25 @@ jobs:
           for status, base_path, current_path in changed:
               current_html = Path(current_path).read_text(encoding='utf-8', errors='replace')
               base_html = read_git(base, base_path)
-              base_images, base_missing = count_missing(base_html, f'{base_path}@base')
-              current_images, current_missing = count_missing(current_html, current_path)
-              delta = current_missing - base_missing
-              rows.append((current_path, status, base_images, current_images, base_missing, current_missing, delta))
-              if delta > 0:
-                  regressions.append((current_path, base_missing, current_missing, delta))
-                  print(
-                      f'::error file={current_path}::Missing alt attributes increased '
-                      f'from {base_missing} to {current_missing} (+{delta}) versus the PR base. '
-                      'Add an evidence-based alt attribute or keep the existing baseline.'
-                  )
+              base_images, base_counts = inspect_html(base_html, f'{base_path}@base')
+              current_images, current_counts = inspect_html(current_html, current_path)
+
+              category_deltas = {}
+              for kind in guarded_kinds:
+                  before = base_counts[kind]
+                  after = current_counts[kind]
+                  delta = after - before
+                  category_deltas[kind] = (before, after, delta)
+                  if delta > 0:
+                      regressions.append((current_path, kind, before, after, delta))
+                      print(
+                          f'::error file={current_path}::Image alt quality regressed for {kind}: '
+                          f'{before} -> {after} (+{delta}) versus the PR base. '
+                          'Use an evidence-based alt value, preserve the existing baseline, '
+                          'or use alt="" only when the image is genuinely decorative.'
+                      )
+
+              rows.append((current_path, status, base_images, current_images, category_deltas))
 
           summary_path = os.environ.get('GITHUB_STEP_SUMMARY')
           if summary_path:
@@ -140,23 +196,38 @@ jobs:
                   '# Image alt regression guard',
                   '',
                   'This check compares only changed public HTML files with the PR base. '
-                  'It does not guess or rewrite alt text, and it does not fail on existing debt '
-                  'unless a changed page makes the missing-alt count worse.',
+                  'It does not guess or rewrite alt text. Existing historical debt remains allowed; '
+                  'a PR fails only when a changed page increases a guarded bad-alt category.',
+                  '',
+                  'Guarded categories: missing alt attributes, local/data-URL alt values, '
+                  'Windows/cache paths, WeChat cache names, filename-only alt values, and generic alt labels. '
+                  'Empty alt text is not blocked because it can be correct for decorative images.',
                   '',
               ]
               if rows:
                   lines += [
-                      '| Page | Status | Images (base → head) | Missing alt (base → head) | Delta |',
-                      '| --- | --- | ---: | ---: | ---: |',
+                      '| Page | Status | Images (base -> head) | Missing | Local/data URL | Windows/cache | WeChat cache | Filename only | Generic |',
+                      '| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |',
                   ]
-                  for path, status, bi, ci, bm, cm, delta in rows:
-                      lines.append(f'| `{path}` | {status} | {bi} → {ci} | {bm} → {cm} | {delta:+d} |')
+                  for path, status, bi, ci, deltas in rows:
+                      def cell(kind):
+                          before, after, delta = deltas[kind]
+                          return f'{before}->{after} ({delta:+d})'
+                      lines.append(
+                          f'| `{path}` | {status} | {bi}->{ci} | '
+                          f'{cell("missing_alt_attribute")} | '
+                          f'{cell("local_or_data_url_alt")} | '
+                          f'{cell("windows_or_cache_path_alt")} | '
+                          f'{cell("wechat_cache_name_alt")} | '
+                          f'{cell("filename_only_alt")} | '
+                          f'{cell("generic_alt")} |'
+                      )
               else:
                   lines.append('No changed public HTML files were detected in this PR.')
               with open(summary_path, 'a', encoding='utf-8') as fh:
                   fh.write('\n'.join(lines) + '\n')
 
-          print(f'Checked {len(rows)} changed public HTML file(s); regressions={len(regressions)}')
+          print(f'Checked {len(rows)} changed public HTML file(s); quality regressions={len(regressions)}')
           if regressions:
               sys.exit(1)
           PY
@@ -166,6 +237,6 @@ jobs:
         run: |
           echo 'This guard compares a pull request head with its base branch; no mutation is performed.'
 
-# Existing missing-alt findings remain audit-only. This guard only prevents a pull request
-# from increasing the count on public HTML that it changes. It never generates image text,
-# changes product/specification facts, or rewrites customer-facing content.
+# Existing image-alt findings remain audit-only. This guard only prevents a pull request
+# from making guarded alt-quality categories worse on public HTML that it changes. It never
+# generates image text, changes product/specification facts, or rewrites customer-facing content.
