@@ -1,0 +1,108 @@
+name: Yuhua homepage accessibility baseline
+
+on:
+  pull_request:
+    paths:
+      - "index.html"
+      - ".github/workflows/homepage-accessibility-baseline.yml"
+  push:
+    branches: [main]
+    paths:
+      - "index.html"
+      - ".github/workflows/homepage-accessibility-baseline.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  accessibility-baseline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify homepage accessibility contract
+        shell: python
+        run: |
+          from html.parser import HTMLParser
+          from pathlib import Path
+          import re
+          import sys
+
+          source = Path("index.html").read_text(encoding="utf-8")
+          errors = []
+
+          required_literals = {
+              "document language": '<html lang="zh-CN">',
+              "mobile viewport": '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
+              "main navigation label": '<nav class="nav-links" aria-label="主导航">',
+              "mobile navigation state": '<nav class="nav-mobile" id="navMobile" aria-label="移动端导航" aria-hidden="true">',
+              "menu button relationship": 'aria-expanded="false" aria-controls="navMobile"',
+              "product dialog semantics": 'role="dialog" aria-modal="true" aria-labelledby="mTitle"',
+              "catalog search name": 'id="searchInput" aria-label="搜索产品型号或名称"',
+              "catalog search status link": 'aria-describedby="catalogResultStatus" aria-controls="catalogResultTable"',
+              "spec search name": 'id="specSearch" aria-label="搜索产品规格书"',
+              "spec search status link": 'aria-describedby="specResultStatus" aria-controls="specResultTable"',
+              "copy-email live status": 'id="copyEmailStatus" aria-live="polite"',
+              "floating email accessible name": 'aria-label="通过邮件咨询予华仪器"',
+              "back-to-top accessible name": 'aria-label="返回页面顶部"',
+          }
+          for label, token in required_literals.items():
+              if token not in source:
+                  errors.append(f"missing {label}: {token}")
+
+          if source.count('role="status" aria-live="polite" aria-atomic="true"') < 2:
+              errors.append("catalog and spec result counts must both remain polite live regions")
+
+          class AuditParser(HTMLParser):
+              def __init__(self):
+                  super().__init__(convert_charrefs=True)
+                  self.h1_count = 0
+                  self.buttons = []
+                  self._button_stack = []
+
+              def handle_starttag(self, tag, attrs):
+                  attrs = dict(attrs)
+                  if tag == "h1":
+                      self.h1_count += 1
+                  if tag == "button":
+                      item = {"attrs": attrs, "text": []}
+                      self.buttons.append(item)
+                      self._button_stack.append(item)
+
+              def handle_endtag(self, tag):
+                  if tag == "button" and self._button_stack:
+                      self._button_stack.pop()
+
+              def handle_data(self, data):
+                  if self._button_stack:
+                      self._button_stack[-1]["text"].append(data)
+
+          parser = AuditParser()
+          parser.feed(source)
+
+          if parser.h1_count != 1:
+              errors.append(f"homepage must expose exactly one h1; found {parser.h1_count}")
+
+          for index, button in enumerate(parser.buttons, start=1):
+              attrs = button["attrs"]
+              visible_text = "".join(button["text"]).strip()
+              if not visible_text and not attrs.get("aria-label") and not attrs.get("aria-labelledby"):
+                  errors.append(f"button #{index} has no visible text or accessible name")
+
+          search_controls = re.findall(r'<input\b[^>]*type="search"[^>]*>', source, flags=re.I)
+          for control in search_controls:
+              if 'aria-label=' not in control and 'aria-labelledby=' not in control:
+                  errors.append(f"search input has no accessible name: {control}")
+
+          if errors:
+              print("Homepage accessibility baseline failed:")
+              for error in errors:
+                  print(f"- {error}")
+              sys.exit(1)
+
+          print("Homepage accessibility baseline passed")
+          print(f"- h1 count: {parser.h1_count}")
+          print(f"- buttons checked: {len(parser.buttons)}")
+          print(f"- search inputs checked: {len(search_controls)}")
+          print("- navigation, dialog, live-region and control relationships: present")
