@@ -1,0 +1,66 @@
+name: One-off IMG_1655 poster cleanup
+
+on:
+  push:
+    branches:
+      - fix/remove-img-1655-missing-poster
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Remove only the verified broken poster reference
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          mp4 = Path('assets/videos/img_1655.mp4')
+          jpg = Path('assets/videos/img_1655.jpg')
+          assert mp4.is_file(), 'expected IMG_1655 video is missing'
+          assert not jpg.exists(), 'poster now exists; abort cleanup'
+
+          old = '  "file": "assets/videos/img_1655.mp4",\n  "poster": "assets/videos/img_1655.jpg"'
+          new = '  "file": "assets/videos/img_1655.mp4"'
+          for name in ('assets/videos.js', 'videos.json'):
+              path = Path(name)
+              text = path.read_text(encoding='utf-8')
+              assert text.count(old) == 1, f'unexpected IMG_1655 block in {name}'
+              path.write_text(text.replace(old, new, 1), encoding='utf-8')
+
+          index = Path('index.html')
+          text = index.read_text(encoding='utf-8')
+          fallback = '    "assets/videos/img_1655.jpg": true,\n'
+          assert text.count(fallback) == 1, 'unexpected homepage fallback state'
+          assert text.count('assets/videos.js?v=20260920b') == 1, 'unexpected videos.js cache token'
+          text = text.replace(fallback, '', 1)
+          text = text.replace('assets/videos.js?v=20260920b', 'assets/videos.js?v=20260921a', 1)
+          index.write_text(text, encoding='utf-8')
+
+          workflow = Path('.github/workflows/_oneoff-img1655.yml')
+          assert workflow.is_file()
+          workflow.unlink()
+          PY
+
+          test ! -e assets/videos/img_1655.jpg
+          test -e assets/videos/img_1655.mp4
+          ! grep -q 'assets/videos/img_1655.jpg' assets/videos.js
+          ! grep -q 'assets/videos/img_1655.jpg' videos.json
+          ! grep -q 'assets/videos/img_1655.jpg' index.html
+          grep -q 'assets/videos.js?v=20260921a' index.html
+
+      - name: Commit cleanup to branch
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/videos.js videos.json index.html .github/workflows/_oneoff-img1655.yml
+          git diff --cached --check
+          git commit -m 'fix: remove broken IMG_1655 poster reference'
+          git push origin HEAD:fix/remove-img-1655-missing-poster
