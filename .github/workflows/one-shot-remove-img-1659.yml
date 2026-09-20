@@ -1,17 +1,17 @@
 name: One-shot remove missing IMG 1659 poster
 
 on:
-  push:
+  pull_request:
     branches:
-      - fix/remove-missing-img-1659-poster
-    paths:
-      - .github/workflows/one-shot-remove-img-1659.yml
+      - main
+    types: [opened, synchronize, reopened]
 
 permissions:
   contents: write
 
 jobs:
   apply:
+    if: github.head_ref == 'fix/remove-missing-img-1659-poster'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
