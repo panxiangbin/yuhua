@@ -1,0 +1,214 @@
+name: Yuhua video manifest reference guard
+
+on:
+  pull_request:
+    paths:
+      - 'assets/videos/**'
+      - 'assets/videos.js'
+      - 'videos.json'
+      - '.github/workflows/yuhua-video-manifest-reference-guard.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'assets/videos/**'
+      - 'assets/videos.js'
+      - 'videos.json'
+      - '.github/workflows/yuhua-video-manifest-reference-guard.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  video-manifest-reference-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Compare video manifest references with baseline
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_PATH: ${{ github.event_path }}
+          HEAD_SHA: ${{ github.sha }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import subprocess
+          from pathlib import Path
+
+          MANIFESTS = ('assets/videos.js', 'videos.json')
+          REPORT_JSON = Path('video_manifest_reference_report.json')
+          REPORT_MD = Path('video_manifest_reference_report.md')
+
+          def run_git(*args, check=True):
+              return subprocess.run(
+                  ['git', *args],
+                  check=check,
+                  stdout=subprocess.PIPE,
+                  stderr=subprocess.PIPE,
+              )
+
+          def git_text(ref, path):
+              result = run_git('show', f'{ref}:{path}', check=False)
+              if result.returncode:
+                  return None
+              return result.stdout.decode('utf-8', errors='strict')
+
+          def path_exists(ref, path):
+              return run_git('cat-file', '-e', f'{ref}:{path}', check=False).returncode == 0
+
+          def parse_manifest(path, text):
+              if text is None:
+                  raise ValueError(f'manifest missing: {path}')
+              if path.endswith('.js'):
+                  start = text.find('[')
+                  end = text.rfind(']')
+                  if start < 0 or end < start:
+                      raise ValueError(f'cannot find video array in {path}')
+                  text = text[start:end + 1]
+              data = json.loads(text)
+              if not isinstance(data, list):
+                  raise ValueError(f'{path} must contain a list')
+              return data
+
+          def audit(ref):
+              records = []
+              parse_errors = []
+              manifest_counts = {}
+              for source in MANIFESTS:
+                  try:
+                      items = parse_manifest(source, git_text(ref, source))
+                  except Exception as exc:
+                      parse_errors.append({'source': source, 'error': str(exc)})
+                      continue
+                  manifest_counts[source] = len(items)
+                  for item in items:
+                      if not isinstance(item, dict):
+                          continue
+                      title = str(item.get('title') or '')
+                      for field in ('file', 'poster'):
+                          value = item.get(field)
+                          if not isinstance(value, str) or not value.startswith('assets/videos/'):
+                              continue
+                          if not path_exists(ref, value):
+                              records.append({
+                                  'source': source,
+                                  'field': field,
+                                  'path': value,
+                                  'title': title,
+                              })
+              return {
+                  'ref': ref,
+                  'manifest_counts': manifest_counts,
+                  'parse_errors': parse_errors,
+                  'missing': records,
+              }
+
+          event_name = os.environ.get('EVENT_NAME', '')
+          head_sha = os.environ['HEAD_SHA']
+          event = json.loads(Path(os.environ['EVENT_PATH']).read_text(encoding='utf-8'))
+
+          if event_name == 'pull_request':
+              base_sha = event['pull_request']['base']['sha']
+          elif event_name == 'push':
+              before = event.get('before')
+              base_sha = before if before and set(before) != {'0'} else None
+          else:
+              base_sha = None
+
+          if not base_sha:
+              parent = run_git('rev-parse', f'{head_sha}^', check=False)
+              base_sha = parent.stdout.decode().strip() if parent.returncode == 0 else head_sha
+
+          baseline = audit(base_sha)
+          head = audit(head_sha)
+
+          def identity(row):
+              return (row['source'], row['field'], row['path'])
+
+          baseline_missing = {identity(row) for row in baseline['missing']}
+          new_missing = [row for row in head['missing'] if identity(row) not in baseline_missing]
+
+          report = {
+              'policy': {
+                  'mode': 'regression_guard',
+                  'meaning': (
+                      'Existing missing video-manifest references remain visible, but a PR must not add a new '
+                      'missing file/poster reference. Deleting a referenced media file requires the manifest '
+                      'reference to be migrated in the same change.'
+                  ),
+                  'auto_fix_count': 0,
+              },
+              'baseline': baseline,
+              'head': head,
+              'summary': {
+                  'baseline_missing_count': len(baseline['missing']),
+                  'head_missing_count': len(head['missing']),
+                  'new_missing_count': len(new_missing),
+                  'head_parse_error_count': len(head['parse_errors']),
+              },
+              'new_missing': new_missing,
+          }
+          REPORT_JSON.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+          lines = [
+              '# Yuhua video manifest reference guard',
+              '',
+              f'- Baseline: `{base_sha}`',
+              f'- Head: `{head_sha}`',
+              f'- Baseline missing references: {len(baseline["missing"])}',
+              f'- Head missing references: {len(head["missing"])}',
+              f'- Newly missing references: {len(new_missing)}',
+              f'- Head manifest parse errors: {len(head["parse_errors"])}',
+              '',
+          ]
+          if head['parse_errors']:
+              lines += ['## Parse errors', '']
+              for row in head['parse_errors']:
+                  lines.append(f'- `{row["source"]}`: {row["error"]}')
+              lines.append('')
+          if new_missing:
+              lines += ['## New missing references', '']
+              for row in new_missing:
+                  lines.append(
+                      f'- `{row["source"]}` → `{row["path"]}` '
+                      f'({row["field"]}, title: {row["title"] or "(empty)"})'
+                  )
+              lines.append('')
+          REPORT_MD.write_text('\n'.join(lines), encoding='utf-8')
+
+          print(json.dumps(report['summary'], ensure_ascii=False))
+          if head['parse_errors']:
+              raise SystemExit('Video manifest parsing failed on the proposed revision.')
+          if new_missing:
+              for row in new_missing[:100]:
+                  print(
+                      f'NEW MISSING: {row["source"]} -> {row["path"]} '
+                      f'({row["field"]}, {row["title"]})'
+                  )
+              raise SystemExit(
+                  f'Found {len(new_missing)} newly missing video-manifest reference(s). '
+                  'Migrate the manifest reference before deleting or renaming the media file.'
+              )
+          print('No new missing video-manifest references.')
+          PY
+
+      - name: Upload video manifest reference report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-video-manifest-reference-report
+          path: |
+            video_manifest_reference_report.json
+            video_manifest_reference_report.md
+          if-no-files-found: error
+          retention-days: 90
