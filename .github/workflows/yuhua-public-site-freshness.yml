@@ -5,6 +5,9 @@ on:
     paths:
       - 'index.html'
       - 'catalog.html'
+      - '404.html'
+      - 'model/**'
+      - 'sitemap.xml'
       - 'styles.css'
       - 'app.js'
       - 'assets/customer-tools.js'
@@ -15,6 +18,9 @@ on:
     paths:
       - 'index.html'
       - 'catalog.html'
+      - '404.html'
+      - 'model/**'
+      - 'sitemap.xml'
       - 'styles.css'
       - 'app.js'
       - 'assets/customer-tools.js'
@@ -53,14 +59,26 @@ jobs:
           FILES=(
             "index.html"
             "catalog.html"
+            "404.html"
+            "sitemap.xml"
             "styles.css"
             "app.js"
             "assets/customer-tools.js"
             "assets/customer-tools.css"
           )
 
+          while IFS= read -r model_path; do
+            [[ -n "${model_path}" ]] && FILES+=("${model_path}")
+          done < <(
+            curl -fsSL --retry 3 \
+              -H 'Accept: application/vnd.github+json' \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/contents/model?ref=${EXPECTED_REF}" \
+              | jq -r '.[] | select(.type == "file" and (.name | endswith(".html"))) | .path' \
+              | sort
+          )
+
           echo "Expected source commit: ${EXPECTED_REF}"
-          echo "Checking public deployment without cloning the ~1.2 GB repository."
+          echo "Checking ${#FILES[@]} public files without cloning the ~1.2 GB repository."
 
           matched=0
           for attempt in $(seq 1 "${MAX_ATTEMPTS}"); do
@@ -116,7 +134,7 @@ jobs:
             exit 1
           fi
 
-          echo "Public deployment matches ${EXPECTED_REF} for all checked core files."
+          echo "Public deployment matches ${EXPECTED_REF} for all checked customer-critical files."
 
       - name: Upload public deployment freshness report
         if: always()
