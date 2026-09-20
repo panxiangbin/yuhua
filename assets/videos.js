@@ -344,8 +344,7 @@ window.VIDEOS = [
   "title": "IMG_1669",
   "sub": "分子蒸馏",
   "key": "mol_dist",
-  "file": "assets/videos/img_1669.mp4",
-  "poster": "assets/videos/img_1669.jpg"
+  "file": "assets/videos/img_1669.mp4"
  },
  {
   "title": "溶点仪X-4安装视频",
