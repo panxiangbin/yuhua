@@ -129,12 +129,12 @@
     <p>输入型号 / 名称关键词，或点选下方分类筛选。当前有 <b id="totalCount">450</b> 条产品目录记录</p>
   </div>
   <div class="catalog-tools">
-    <input type="search" id="searchInput" aria-label="搜索产品型号或名称" aria-describedby="catalogResultStatus" aria-controls="tableBody" placeholder="🔍 搜索型号或名称，如 YRE-2020Z、反应釜、DLSB…" autocomplete="off">
+    <input type="search" id="searchInput" aria-label="搜索产品型号或名称" aria-describedby="catalogResultStatus" aria-controls="catalogResultTable" placeholder="🔍 搜索型号或名称，如 YRE-2020Z、反应釜、DLSB…" autocomplete="off">
     <div class="chips" id="chips"></div>
   </div>
   <p class="result-info" id="catalogResultStatus" role="status" aria-live="polite" aria-atomic="true"><span id="resultCount">0</span> 个结果</p>
   <div class="table-wrap">
-    <table class="ptable">
+    <table class="ptable" id="catalogResultTable" aria-label="型号查询结果">
       <thead><tr><th>型号</th><th>产品名称 / 类别</th><th class="hide-sm">材质</th><th class="hide-sm">容量</th><th class="hide-sm">控温范围</th><th>详细参数</th></tr></thead>
       <tbody id="tableBody"></tbody>
     </table>
@@ -166,12 +166,12 @@
     <p>输入型号关键词搜索，直接在线查看或下载原始 Word 规格书。共收录 <b id="specCount">660</b> 份</p>
   </div>
   <div class="catalog-tools">
-    <input type="search" id="specSearch" aria-label="搜索产品规格书" aria-describedby="specResultStatus" aria-controls="specBody" placeholder="🔍 搜索型号，如 GDSZ-100-40、YSF-50L、YRE-2020Z…" autocomplete="off">
+    <input type="search" id="specSearch" aria-label="搜索产品规格书" aria-describedby="specResultStatus" aria-controls="specResultTable" placeholder="🔍 搜索型号，如 GDSZ-100-40、YSF-50L、YRE-2020Z…" autocomplete="off">
     <div class="chips" id="specChips"></div>
   </div>
   <p class="result-info" id="specResultStatus" role="status" aria-live="polite" aria-atomic="true"><span id="specResultCount">0</span> 个结果</p>
   <div class="table-wrap">
-    <table class="ptable"><thead><tr><th>型号/文件名</th><th class="hide-sm">产品系列</th><th>在线查看</th><th>下载</th></tr></thead><tbody id="specBody"></tbody></table>
+    <table class="ptable" id="specResultTable" aria-label="规格书查询结果"><thead><tr><th>型号/文件名</th><th class="hide-sm">产品系列</th><th>在线查看</th><th>下载</th></tr></thead><tbody id="specBody"></tbody></table>
     <p class="empty-tip" id="specEmptyTip" hidden>没有匹配的规格书，换个关键词试试～</p>
   </div>
   <noscript><p class="seo-note">规格书筛选需要启用 JavaScript。可直接访问<a href="catalog.html">静态型号与规格书索引</a>查看核心资料入口。</p></noscript>
