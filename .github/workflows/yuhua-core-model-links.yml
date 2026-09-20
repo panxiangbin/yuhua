@@ -25,7 +25,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Verify homepage core-model links
+      - name: Verify core model entry coverage
         run: |
           python - <<'PY'
           from html.parser import HTMLParser
@@ -93,7 +93,26 @@ jobs:
           hrefs = [href for _, href in concrete]
           assert len(hrefs) == len(set(hrefs)), f'Duplicate concrete core-model targets found: {hrefs}'
 
-          print(f'Homepage core-model link integrity: OK ({len(concrete)} concrete model links checked)')
+          model_pages = {page.as_posix() for page in Path('model').glob('*.html')}
+          homepage_models = set(hrefs)
+          missing_from_homepage = sorted(model_pages - homepage_models)
+          missing_from_sitemap = sorted(model_pages - sitemap_paths)
+          unexpected_homepage = sorted(homepage_models - model_pages)
+
+          assert not missing_from_homepage, (
+              f'Core model pages missing from homepage quick-model entries: {missing_from_homepage}'
+          )
+          assert not missing_from_sitemap, (
+              f'Core model pages missing from sitemap.xml: {missing_from_sitemap}'
+          )
+          assert not unexpected_homepage, (
+              f'Homepage quick-model entries without matching model pages: {unexpected_homepage}'
+          )
+
+          print(
+              f'Core model entry coverage: OK '
+              f'({len(model_pages)} model pages covered by homepage quick entries + sitemap)'
+          )
           PY
 
       - name: Verify core-model email inquiry context
