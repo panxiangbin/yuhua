@@ -39,7 +39,7 @@ jobs:
           index = Path("index.html")
           text = index.read_text(encoding="utf-8")
           updated, count = re.subn(
-              r'(?m)^\s*"assets/videos/img_1659\.jpg",\n',
+              r'(?m)^\s*"assets/videos/img_1659\.jpg": true,\n',
               "",
               text,
           )
