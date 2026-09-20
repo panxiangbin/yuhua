@@ -1,0 +1,88 @@
+name: Yuhua SEO discovery integrity
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - robots.txt
+      - sitemap.xml
+      - index.html
+      - catalog.html
+      - 'model/**/*.html'
+      - 'product/**/*.html'
+      - '.github/workflows/yuhua-seo-discovery-guard.yml'
+  pull_request:
+    paths:
+      - robots.txt
+      - sitemap.xml
+      - index.html
+      - catalog.html
+      - 'model/**/*.html'
+      - 'product/**/*.html'
+      - '.github/workflows/yuhua-seo-discovery-guard.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  seo-discovery-integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Validate robots.txt and sitemap.xml
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from urllib.parse import urlparse
+          import xml.etree.ElementTree as ET
+
+          base_url = "https://panxiangbin.github.io/yuhua/"
+          sitemap_url = base_url + "sitemap.xml"
+
+          robots_path = Path("robots.txt")
+          sitemap_path = Path("sitemap.xml")
+          assert robots_path.is_file(), "robots.txt is missing"
+          assert sitemap_path.is_file(), "sitemap.xml is missing"
+
+          robots = robots_path.read_text(encoding="utf-8")
+          assert "User-agent: *" in robots, "robots.txt must include the wildcard user-agent"
+          assert "Allow: /" in robots, "robots.txt must keep the public site crawlable"
+          assert f"Sitemap: {sitemap_url}" in robots, "robots.txt must point to the canonical sitemap"
+
+          root = ET.parse(sitemap_path).getroot()
+          ns = "{http://www.sitemaps.org/schemas/sitemap/0.9}"
+          assert root.tag == ns + "urlset", "sitemap.xml must use the sitemap urlset namespace"
+
+          locs = []
+          for url_node in root.findall(ns + "url"):
+              loc = url_node.findtext(ns + "loc", default="").strip()
+              assert loc, "sitemap.xml contains a URL entry without <loc>"
+              locs.append(loc)
+
+          assert locs, "sitemap.xml has no URLs"
+          assert len(locs) == len(set(locs)), "sitemap.xml contains duplicate <loc> URLs"
+          assert base_url in locs, "sitemap.xml must include the public homepage"
+          assert base_url + "catalog.html" in locs, "sitemap.xml must include the catalog page"
+
+          prefix = "/yuhua/"
+          for loc in locs:
+              parsed = urlparse(loc)
+              assert parsed.scheme == "https", f"non-HTTPS sitemap URL: {loc}"
+              assert parsed.netloc == "panxiangbin.github.io", f"unexpected sitemap host: {loc}"
+              assert parsed.path.startswith(prefix), f"URL is outside /yuhua/: {loc}"
+              assert not parsed.query and not parsed.fragment, f"query/fragment is not allowed in sitemap URL: {loc}"
+
+              relative = parsed.path[len(prefix):]
+              local_path = Path("index.html") if relative in ("", "/") else Path(relative)
+              assert local_path.is_file(), f"sitemap URL has no matching repository file: {loc} -> {local_path}"
+
+          model_urls = {base_url + path.as_posix() for path in Path("model").glob("*.html")}
+          missing_models = sorted(model_urls - set(locs))
+          assert not missing_models, "model pages missing from sitemap.xml: " + ", ".join(missing_models)
+
+          print(f"SEO discovery integrity OK: {len(locs)} sitemap URLs, {len(model_urls)} model pages, robots sitemap linked.")
+          PY
