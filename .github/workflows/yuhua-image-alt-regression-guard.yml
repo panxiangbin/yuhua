@@ -1,0 +1,171 @@
+name: Yuhua image alt regression guard
+
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'catalog.html'
+      - 'model/**'
+      - 'product/**'
+      - 'specs/**'
+      - '.github/workflows/yuhua-image-alt-regression-guard.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  guard-new-missing-alt:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR head
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Prevent missing-alt regressions on changed public HTML
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          python - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          import os
+          import subprocess
+          import sys
+
+          base = os.environ['BASE_SHA']
+          head = os.environ['HEAD_SHA']
+          public_roots = {'model', 'product', 'specs'}
+          fixed_pages = {'index.html', 'catalog.html'}
+
+          class ImgAltCounter(HTMLParser):
+              def __init__(self):
+                  super().__init__(convert_charrefs=True)
+                  self.images = 0
+                  self.missing_alt = 0
+
+              def _capture(self, tag, attrs):
+                  if tag.lower() != 'img':
+                      return
+                  self.images += 1
+                  names = {str(name).lower() for name, _ in attrs}
+                  if 'alt' not in names:
+                      self.missing_alt += 1
+
+              def handle_starttag(self, tag, attrs):
+                  self._capture(tag, attrs)
+
+              def handle_startendtag(self, tag, attrs):
+                  self._capture(tag, attrs)
+
+          def is_public_html(path):
+              p = Path(path)
+              if p.suffix.lower() != '.html':
+                  return False
+              if path in fixed_pages:
+                  return True
+              return len(p.parts) > 1 and p.parts[0] in public_roots
+
+          def read_git(rev, path):
+              proc = subprocess.run(
+                  ['git', 'show', f'{rev}:{path}'],
+                  stdout=subprocess.PIPE,
+                  stderr=subprocess.DEVNULL,
+              )
+              if proc.returncode != 0:
+                  return None
+              return proc.stdout.decode('utf-8', errors='replace')
+
+          def count_missing(html, label):
+              if html is None:
+                  return 0, 0
+              parser = ImgAltCounter()
+              try:
+                  parser.feed(html)
+                  parser.close()
+              except Exception as exc:
+                  print(f'::error::{label}: HTML parser error: {exc}')
+                  raise
+              return parser.images, parser.missing_alt
+
+          proc = subprocess.run(
+              ['git', 'diff', '--name-status', '--find-renames', base, head],
+              check=True,
+              text=True,
+              stdout=subprocess.PIPE,
+          )
+
+          changed = []
+          for raw in proc.stdout.splitlines():
+              if not raw.strip():
+                  continue
+              parts = raw.split('\t')
+              status = parts[0]
+              if status.startswith('D'):
+                  continue
+              if status.startswith('R') and len(parts) >= 3:
+                  base_path, current_path = parts[1], parts[2]
+              elif len(parts) >= 2:
+                  base_path = current_path = parts[1]
+              else:
+                  continue
+              if is_public_html(current_path):
+                  changed.append((status, base_path, current_path))
+
+          rows = []
+          regressions = []
+          for status, base_path, current_path in changed:
+              current_html = Path(current_path).read_text(encoding='utf-8', errors='replace')
+              base_html = read_git(base, base_path)
+              base_images, base_missing = count_missing(base_html, f'{base_path}@base')
+              current_images, current_missing = count_missing(current_html, current_path)
+              delta = current_missing - base_missing
+              rows.append((current_path, status, base_images, current_images, base_missing, current_missing, delta))
+              if delta > 0:
+                  regressions.append((current_path, base_missing, current_missing, delta))
+                  print(
+                      f'::error file={current_path}::Missing alt attributes increased '
+                      f'from {base_missing} to {current_missing} (+{delta}) versus the PR base. '
+                      'Add an evidence-based alt attribute or keep the existing baseline.'
+                  )
+
+          summary_path = os.environ.get('GITHUB_STEP_SUMMARY')
+          if summary_path:
+              lines = [
+                  '# Image alt regression guard',
+                  '',
+                  'This check compares only changed public HTML files with the PR base. '
+                  'It does not guess or rewrite alt text, and it does not fail on existing debt '
+                  'unless a changed page makes the missing-alt count worse.',
+                  '',
+              ]
+              if rows:
+                  lines += [
+                      '| Page | Status | Images (base → head) | Missing alt (base → head) | Delta |',
+                      '| --- | --- | ---: | ---: | ---: |',
+                  ]
+                  for path, status, bi, ci, bm, cm, delta in rows:
+                      lines.append(f'| `{path}` | {status} | {bi} → {ci} | {bm} → {cm} | {delta:+d} |')
+              else:
+                  lines.append('No changed public HTML files were detected in this PR.')
+              with open(summary_path, 'a', encoding='utf-8') as fh:
+                  fh.write('\n'.join(lines) + '\n')
+
+          print(f'Checked {len(rows)} changed public HTML file(s); regressions={len(regressions)}')
+          if regressions:
+              sys.exit(1)
+          PY
+
+      - name: Workflow-dispatch note
+        if: github.event_name != 'pull_request'
+        run: |
+          echo 'This guard compares a pull request head with its base branch; no mutation is performed.'
+
+# Existing missing-alt findings remain audit-only. This guard only prevents a pull request
+# from increasing the count on public HTML that it changes. It never generates image text,
+# changes product/specification facts, or rewrites customer-facing content.
