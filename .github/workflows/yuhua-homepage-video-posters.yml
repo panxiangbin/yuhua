@@ -3,17 +3,23 @@ name: Yuhua homepage video poster audit
 on:
   pull_request:
     paths:
+      - "index.html"
       - "assets/videos.js"
+      - "videos.json"
       - "assets/videos/**"
       - "tools/audit_homepage_video_posters.py"
+      - "tools/check_homepage_video_poster_fallback.py"
       - ".github/workflows/yuhua-homepage-video-posters.yml"
   push:
     branches:
       - main
     paths:
+      - "index.html"
       - "assets/videos.js"
+      - "videos.json"
       - "assets/videos/**"
       - "tools/audit_homepage_video_posters.py"
+      - "tools/check_homepage_video_poster_fallback.py"
       - ".github/workflows/yuhua-homepage-video-posters.yml"
   workflow_dispatch:
 
@@ -30,8 +36,13 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Compile audit script
-        run: python -m py_compile tools/audit_homepage_video_posters.py
+      - name: Compile audit scripts
+        run: |
+          python -m py_compile tools/audit_homepage_video_posters.py
+          python -m py_compile tools/check_homepage_video_poster_fallback.py
+
+      - name: Verify missing poster fallback parity
+        run: python tools/check_homepage_video_poster_fallback.py
 
       - name: Audit homepage video posters
         run: |
