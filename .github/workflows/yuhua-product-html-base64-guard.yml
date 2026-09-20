@@ -1,0 +1,149 @@
+name: Yuhua product HTML base64 regression guard
+
+on:
+  pull_request:
+    paths:
+      - 'product/**/*.html'
+      - '.github/workflows/yuhua-product-html-base64-guard.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  guard-base64-regressions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Prevent embedded base64 payload regressions
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          python - <<'PY'
+          import os
+          import re
+          import subprocess
+          from pathlib import Path
+
+          INLINE_IMAGE_RE = re.compile(
+              rb'data:image/[A-Za-z0-9.+-]+;base64,([A-Za-z0-9+/=]+)',
+              re.IGNORECASE,
+          )
+
+          def decoded_base64_size(payload):
+              if not payload:
+                  return 0
+              padding = 2 if payload.endswith(b'==') else 1 if payload.endswith(b'=') else 0
+              return max(0, (len(payload) * 3) // 4 - padding)
+
+          def metrics(data):
+              matches = list(INLINE_IMAGE_RE.finditer(data))
+              return {
+                  'html_bytes': len(data),
+                  'inline_count': len(matches),
+                  'inline_bytes': sum(decoded_base64_size(m.group(1)) for m in matches),
+              }
+
+          # Small deterministic self-test so workflow-only PRs exercise the parser too.
+          assert metrics(b'<p>plain</p>')['inline_bytes'] == 0
+          sample = b'<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==">'
+          assert metrics(sample)['inline_count'] == 1
+          assert metrics(sample)['inline_bytes'] > 0
+
+          base_sha = os.environ['BASE_SHA']
+          head_sha = os.environ['HEAD_SHA']
+
+          def git_blob(sha, path):
+              proc = subprocess.run(
+                  ['git', 'show', f'{sha}:{path}'],
+                  stdout=subprocess.PIPE,
+                  stderr=subprocess.DEVNULL,
+                  check=False,
+              )
+              return proc.stdout if proc.returncode == 0 else b''
+
+          raw = subprocess.check_output([
+              'git', 'diff', '--name-status', '-z', '--find-renames',
+              base_sha, head_sha, '--', 'product',
+          ])
+          parts = raw.split(b'\0')
+          i = 0
+          changed = []
+          while i < len(parts) and parts[i]:
+              status = parts[i].decode('utf-8', errors='replace')
+              i += 1
+              if status.startswith('R') or status.startswith('C'):
+                  old = parts[i].decode('utf-8', errors='surrogateescape')
+                  new = parts[i + 1].decode('utf-8', errors='surrogateescape')
+                  i += 2
+              else:
+                  old = parts[i].decode('utf-8', errors='surrogateescape')
+                  new = old
+                  i += 1
+              if status.startswith('D'):
+                  continue
+              if not new.startswith('product/') or not new.endswith('.html'):
+                  continue
+              changed.append((status, old, new))
+
+          rows = []
+          regressions = []
+          for status, old, new in changed:
+              before = metrics(git_blob(base_sha, old)) if not status.startswith('A') else metrics(b'')
+              after = metrics(git_blob(head_sha, new))
+              row = (status, old, new, before, after)
+              rows.append(row)
+              if after['inline_bytes'] > before['inline_bytes']:
+                  regressions.append(row)
+
+          summary = [
+              '## Product HTML embedded-base64 regression guard',
+              '',
+              'This guard does not modify product pages. It only blocks PRs that increase the decoded byte payload of embedded `data:image/...;base64` images in changed `product/**/*.html` files.',
+              '',
+          ]
+          if not rows:
+              summary.append('No product HTML files changed in this PR.')
+          else:
+              summary.extend([
+                  '| Status | Page | Baseline inline images | PR inline images | Baseline decoded bytes | PR decoded bytes |',
+                  '|---|---|---:|---:|---:|---:|',
+              ])
+              for status, old, new, before, after in rows:
+                  page = new if old == new else f'{old} → {new}'
+                  summary.append(
+                      f'| {status} | `{page}` | {before["inline_count"]} | {after["inline_count"]} | '
+                      f'{before["inline_bytes"]} | {after["inline_bytes"]} |'
+                  )
+
+          if regressions:
+              summary.extend([
+                  '',
+                  '❌ Embedded base64 payload increased. Keep existing historical debt unchanged or reduce it; new product pages should use normal repository assets instead of adding embedded base64 images.',
+              ])
+          else:
+              summary.extend([
+                  '',
+                  '✅ No embedded base64 payload regression detected.',
+              ])
+
+          text = '\n'.join(summary) + '\n'
+          print(text)
+          summary_path = os.environ.get('GITHUB_STEP_SUMMARY')
+          if summary_path:
+              Path(summary_path).write_text(text, encoding='utf-8')
+
+          if regressions:
+              raise SystemExit(1)
+          PY
+
+      - name: Manual-run note
+        if: github.event_name != 'pull_request'
+        run: |
+          echo "This regression guard compares a pull request with its base branch; workflow_dispatch only validates workflow syntax."
