@@ -6,12 +6,14 @@ on:
     branches: [main]
     paths:
       - 'assets/videos.js'
+      - 'videos.json'
       - 'assets/videos/**'
       - 'tools/audit_homepage_video_runtime.py'
       - '.github/workflows/yuhua-homepage-video-runtime.yml'
   pull_request:
     paths:
       - 'assets/videos.js'
+      - 'videos.json'
       - 'assets/videos/**'
       - 'tools/audit_homepage_video_runtime.py'
       - '.github/workflows/yuhua-homepage-video-runtime.yml'
