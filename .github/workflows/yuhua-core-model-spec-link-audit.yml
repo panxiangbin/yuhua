@@ -1,0 +1,91 @@
+name: Yuhua core model specification link audit
+
+on:
+  pull_request:
+    paths:
+      - 'model/**'
+      - 'specs_index.json'
+      - 'tools/audit_core_model_spec_links.py'
+      - '.github/workflows/yuhua-core-model-spec-link-audit.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'model/**'
+      - 'specs_index.json'
+      - 'tools/audit_core_model_spec_links.py'
+      - '.github/workflows/yuhua-core-model-spec-link-audit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Compile audit script
+        run: python -m py_compile tools/audit_core_model_spec_links.py
+
+      - name: Audit core-model specification mappings
+        run: |
+          set +e
+          python tools/audit_core_model_spec_links.py \
+            --json-output core_model_spec_link_report.json
+          audit_status=$?
+          set -e
+
+          # Existing questionable mappings are evidence to review, not permission
+          # to rewrite customer-facing product/specification facts. Preserve the
+          # report even when the auditor deliberately returns non-zero for them.
+          test -s core_model_spec_link_report.json
+          if [ "$audit_status" -ne 0 ]; then
+            echo "Core-model specification audit found review items; keeping this run report-only."
+          fi
+
+      - name: Verify report policy and partition
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path('core_model_spec_link_report.json').read_text(encoding='utf-8'))
+          policy = report['policy']
+          summary = report['summary']
+          pages = report['pages']
+
+          assert policy['read_only'] is True
+          assert policy['auto_fix_count'] == 0
+          assert summary['core_page_count'] == len(pages)
+          assert (
+              summary['no_exact_spec_count']
+              + summary['unique_exact_spec_count']
+              + summary['multiple_exact_specs_count']
+          ) == summary['core_page_count']
+          assert summary['unsafe_direct_target_count'] == len(report['unsafe_direct_targets'])
+          assert summary['ambiguous_direct_link_count'] == len(report['ambiguous_direct_links'])
+          assert summary['unique_exact_unlinked_count'] == len(report['unique_exact_unlinked'])
+
+          # This workflow is intentionally audit-only. Existing mismatches and
+          # ambiguous exact-model duplicates stay visible in the artifact rather
+          # than being guessed, deleted, or silently rewritten.
+          print('Core model specification link report: OK')
+          print(json.dumps(summary, ensure_ascii=False, sort_keys=True))
+          PY
+
+      - name: Upload core-model specification audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-core-model-spec-link-report
+          path: core_model_spec_link_report.json
+          if-no-files-found: error
+          retention-days: 90
+
+      # Audit-only by design: no product/specification data or links are rewritten.
