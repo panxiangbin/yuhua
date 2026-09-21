@@ -1,0 +1,57 @@
+name: Yuhua model query deep-link guard
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "index.html"
+      - "model/**.html"
+      - ".github/workflows/yuhua-query-deeplink-guard.yml"
+  pull_request:
+    paths:
+      - "index.html"
+      - "model/**.html"
+      - ".github/workflows/yuhua-query-deeplink-guard.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  query-deeplinks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify model query deep links are consumed by homepage search
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from urllib.parse import parse_qs, urlparse
+          import re
+
+          index = Path("index.html").read_text(encoding="utf-8")
+          required = [
+              "new URLSearchParams(window.location.search)",
+              'params.get("q")',
+              'document.getElementById("searchInput")',
+              "searchInput.value = query",
+              'dispatchEvent(new Event("input"',
+          ]
+          missing = [token for token in required if token not in index]
+          if missing:
+              raise SystemExit(f"Homepage no longer consumes ?q= model deep links: {missing}")
+
+          links = []
+          for path in [Path("index.html"), *sorted(Path("model").glob("*.html"))]:
+              text = path.read_text(encoding="utf-8")
+              for href in re.findall(r'href="([^"]*\?q=[^"]*#catalog)"', text):
+                  query = parse_qs(urlparse(href).query).get("q", [""])[0].strip()
+                  if not query:
+                      raise SystemExit(f"Empty q= deep link in {path}: {href}")
+                  links.append((str(path), href, query))
+
+          if not links:
+              raise SystemExit("No model query deep links found to protect")
+
+          print(f"Verified {len(links)} model query deep links and homepage query handoff.")
+          PY
