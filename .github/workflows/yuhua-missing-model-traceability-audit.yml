@@ -1,0 +1,43 @@
+name: Yuhua missing-model source traceability audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "products.json"
+      - "assets/data.js"
+      - "assets/specs.js"
+      - "pages.json"
+      - "tools/audit_missing_model_traceability.py"
+      - ".github/workflows/yuhua-missing-model-traceability-audit.yml"
+  pull_request:
+    paths:
+      - "products.json"
+      - "assets/data.js"
+      - "assets/specs.js"
+      - "pages.json"
+      - "tools/audit_missing_model_traceability.py"
+      - ".github/workflows/yuhua-missing-model-traceability-audit.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Audit missing-model source traceability
+        run: |
+          python tools/audit_missing_model_traceability.py \
+            --json-out reports/yuhua-missing-model-traceability.json
+
+      - name: Upload traceability report
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-missing-model-traceability-report
+          path: reports/yuhua-missing-model-traceability.json
+          retention-days: 90
