@@ -51,6 +51,12 @@ jobs:
               "copy-email live status": 'id="copyEmailStatus" aria-live="polite"',
               "floating email accessible name": 'aria-label="通过邮件咨询予华仪器"',
               "back-to-top accessible name": 'aria-label="返回页面顶部"',
+              "category card keyboard role": 'card.setAttribute("role", "button");',
+              "category card keyboard focus": 'card.tabIndex = 0;',
+              "category card table relationship": 'card.setAttribute("aria-controls", "catalogResultTable");',
+              "category card keyboard activation": 'if (e.key !== "Enter" && e.key !== " ") return;',
+              "category card visible focus": '.cat-card:focus-visible',
+              "filter chip selected state": 'button.setAttribute("aria-pressed", button.classList.contains("active") ? "true" : "false");',
           }
           for label, token in required_literals.items():
               if token not in source:
@@ -133,4 +139,5 @@ jobs:
           print(f"- buttons checked: {len(parser.buttons)}")
           print(f"- search inputs checked: {len(search_controls)}")
           print("- skip link, navigation, dialog, live-region and control relationships: present")
+          print("- category cards are keyboard operable and filter chips expose selection state")
           print("- catalog/spec action controls retain contextual accessible names")
