@@ -4,11 +4,13 @@ on:
   pull_request:
     paths:
       - "index.html"
+      - "app.js"
       - ".github/workflows/homepage-accessibility-baseline.yml"
   push:
     branches: [main]
     paths:
       - "index.html"
+      - "app.js"
       - ".github/workflows/homepage-accessibility-baseline.yml"
   workflow_dispatch:
 
@@ -30,6 +32,7 @@ jobs:
           import sys
 
           source = Path("index.html").read_text(encoding="utf-8")
+          app_source = Path("app.js").read_text(encoding="utf-8")
           errors = []
 
           required_literals = {
@@ -51,6 +54,18 @@ jobs:
           }
           for label, token in required_literals.items():
               if token not in source:
+                  errors.append(f"missing {label}: {token}")
+
+          required_app_literals = {
+              "catalog action fallback label": 'var actionLabel = p["型号"] || name || (keyName[p.key] || p["类别"]) || "产品";',
+              "catalog action accessible name": "esc('查看 ' + actionLabel + ' 参数')",
+              "spec action fallback label": 'var specLabel = s.model || s.title || "规格书";',
+              "spec view accessible name": "esc('查看 ' + specLabel + ' 规格书')",
+              "spec download accessible name": "esc('下载 ' + specLabel + ' Word 规格书')",
+              "spec new-tab isolation": 'target="_blank" rel="noopener" aria-label=',
+          }
+          for label, token in required_app_literals.items():
+              if token not in app_source:
                   errors.append(f"missing {label}: {token}")
 
           if source.count('role="status" aria-live="polite" aria-atomic="true"') < 2:
@@ -118,3 +133,4 @@ jobs:
           print(f"- buttons checked: {len(parser.buttons)}")
           print(f"- search inputs checked: {len(search_controls)}")
           print("- skip link, navigation, dialog, live-region and control relationships: present")
+          print("- catalog/spec action controls retain contextual accessible names")

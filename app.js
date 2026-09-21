@@ -178,8 +178,9 @@
     var html = curRows.map(function (p, i) {
       var name = p["产品名称"] || keyName[p.key] || "";
       var specN = p.specs ? Object.keys(p.specs).length : 0;
+      var actionLabel = p["型号"] || name || (keyName[p.key] || p["类别"]) || "产品";
       var btn = specN
-        ? '<button class="spec-btn' + (p.rich ? ' rich' : '') + '" data-i="' + i + '">查看参数' +
+        ? '<button class="spec-btn' + (p.rich ? ' rich' : '') + '" data-i="' + i + '" aria-label="' + esc('查看 ' + actionLabel + ' 参数') + '">查看参数' +
           (p.rich ? ' ✦' : '') + '</button>'
         : '<span class="muted">—</span>';
       return '<tr data-i="' + i + '">' +
@@ -394,11 +395,12 @@
     // 只渲染前200条避免卡顿
     var show = rows.slice(0, 200);
     specBody.innerHTML = show.map(function(s){
+      var specLabel = s.model || s.title || "规格书";
       return '<tr>' +
         '<td class="model">' + esc(s.model || s.title.slice(0,20)) + '</td>' +
         '<td class="pname">' + esc(s.title) + '<br><span class="ptag">' + esc(s.series) + '</span></td>' +
-        '<td><a class="spec-btn rich" href="' + s.page + '" target="_blank">查看</a></td>' +
-        '<td><a class="spec-btn" href="' + s.dl + '" download>⬇ Word</a></td>' +
+        '<td><a class="spec-btn rich" href="' + s.page + '" target="_blank" rel="noopener" aria-label="' + esc('查看 ' + specLabel + ' 规格书') + '">查看</a></td>' +
+        '<td><a class="spec-btn" href="' + s.dl + '" download aria-label="' + esc('下载 ' + specLabel + ' Word 规格书') + '">⬇ Word</a></td>' +
         '</tr>';
     }).join('');
     if (rows.length > 200) {
