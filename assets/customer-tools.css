@@ -361,7 +361,8 @@
   height: 44px;
 }
 .modal-close:focus-visible,
-.spec-btn:focus-visible {
+.spec-btn:focus-visible,
+.chip:focus-visible {
   outline: 3px solid rgba(20,100,200,.22);
   outline-offset: 2px;
 }
@@ -369,5 +370,14 @@
   .modal-close {
     width: 48px;
     height: 48px;
+  }
+  .chip,
+  .spec-btn {
+    min-height: 44px;
+  }
+  .spec-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 }
