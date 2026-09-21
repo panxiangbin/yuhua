@@ -58,6 +58,7 @@ jobs:
           import subprocess
           from collections import defaultdict
           from pathlib import Path
+          from urllib.parse import quote
 
           MIB = 1024 * 1024
           VIDEO_EXTS = {'.mp4', '.mov', '.webm', '.m4v', '.avi', '.mkv'}
@@ -65,6 +66,8 @@ jobs:
           DOCUMENT_EXTS = {'.pdf', '.doc', '.docx', '.ppt', '.pptx', '.xls', '.xlsx'}
           ARCHIVE_EXTS = {'.zip', '.7z', '.rar', '.tar', '.gz'}
           HASH_CATEGORIES = {'video', 'image', 'document', 'archive'}
+          REFERENCE_SUFFIXES = {'.json', '.js', '.css', '.html', '.xml'}
+          REFERENCE_ROOTS = {'assets', 'product', 'model'}
 
           def category(path):
               suffix = path.suffix.lower()
@@ -86,6 +89,22 @@ jobs:
                   for chunk in iter(lambda: handle.read(1024 * 1024), b''):
                       digest.update(chunk)
               return digest.hexdigest()
+
+          def is_reference_source(path):
+              if path.suffix.lower() not in REFERENCE_SUFFIXES:
+                  return False
+              if len(path.parts) == 1:
+                  return True
+              return path.parts[0] in REFERENCE_ROOTS
+
+          def reference_variants(asset_path):
+              variants = {asset_path, './' + asset_path, '/' + asset_path}
+              if asset_path.startswith('assets/'):
+                  relative = asset_path[len('assets/'):]
+                  variants.update({relative, './' + relative, '/' + relative})
+              encoded = quote(asset_path, safe='/._-')
+              variants.update({encoded, './' + encoded, '/' + encoded})
+              return sorted(variants, key=len, reverse=True)
 
           raw = subprocess.run(
               ['git', 'ls-files', '-z'],
@@ -124,6 +143,51 @@ jobs:
               })
           duplicates.sort(key=lambda row: (-row['potential_duplicate_bytes'], row['paths']))
 
+          reference_sources = []
+          for path in tracked:
+              if not path.is_file() or not is_reference_source(path):
+                  continue
+              try:
+                  text = path.read_text(encoding='utf-8', errors='ignore')
+              except OSError:
+                  continue
+              reference_sources.append((path.as_posix(), text))
+
+          def find_references(asset_path):
+              variants = reference_variants(asset_path)
+              hits = []
+              for source_path, text in reference_sources:
+                  if source_path == asset_path:
+                      continue
+                  if any(variant in text for variant in variants):
+                      hits.append(source_path)
+              return sorted(set(hits))
+
+          reference_status_counts = {
+              'all_paths_referenced': 0,
+              'partial_paths_referenced': 0,
+              'no_tracked_runtime_reference': 0,
+          }
+          partial_reference_candidate_bytes = 0
+          for group in duplicates:
+              references = {path: find_references(path) for path in group['paths']}
+              referenced_count = sum(1 for hits in references.values() if hits)
+              unreferenced_count = len(group['paths']) - referenced_count
+              if referenced_count == len(group['paths']):
+                  status = 'all_paths_referenced'
+              elif referenced_count:
+                  status = 'partial_paths_referenced'
+                  partial_reference_candidate_bytes += group['bytes_each'] * unreferenced_count
+              else:
+                  status = 'no_tracked_runtime_reference'
+              reference_status_counts[status] += 1
+              group['reference_scan'] = {
+                  'status': status,
+                  'referenced_path_count': referenced_count,
+                  'unreferenced_path_count': unreferenced_count,
+                  'references': references,
+              }
+
           thresholds = {
               'ge_1_mib': [row for row in files if row['bytes'] >= 1 * MIB],
               'ge_10_mib': [row for row in files if row['bytes'] >= 10 * MIB],
@@ -136,9 +200,9 @@ jobs:
 
           report = {
               'policy': (
-                  '只读体积审计：报告仅统计 Git 跟踪文件、媒体体积与内容完全相同的重复文件；'
+                  '只读体积审计：报告仅统计 Git 跟踪文件、媒体体积、内容完全相同的重复文件及其仓库内运行时文本引用；'
                   '不会自动压缩、删除、重命名或替换任何图片、视频、规格书或产品资料。'
-                  '重复内容也可能承担不同 URL/兼容性用途，必须确认引用关系后才能治理。'
+                  '引用扫描不代表外部深链、历史书签或仓库外引用，任何删除仍必须单独确认。'
               ),
               'tracked_file_count': len(files),
               'tracked_total_bytes': total_bytes,
@@ -148,6 +212,15 @@ jobs:
               'threshold_counts': {key: len(value) for key, value in thresholds.items()},
               'duplicate_content_group_count': len(duplicates),
               'potential_duplicate_bytes': duplicate_bytes,
+              'reference_scan_scope': {
+                  'source_file_count': len(reference_sources),
+                  'root_files': True,
+                  'included_directories': sorted(REFERENCE_ROOTS),
+                  'included_suffixes': sorted(REFERENCE_SUFFIXES),
+                  'note': '只统计仓库内根目录及 assets/product/model 的运行时文本引用；不推断仓库外 URL、历史书签或动态拼接引用。',
+              },
+              'duplicate_reference_status_counts': reference_status_counts,
+              'partial_reference_candidate_bytes': partial_reference_candidate_bytes,
               'largest_files': files[:50],
               'duplicate_content_groups': duplicates,
           }
@@ -159,10 +232,16 @@ jobs:
           def mib(value):
               return f'{value / MIB:.2f} MiB'
 
+          status_labels = {
+              'all_paths_referenced': '组内全部路径均发现仓库运行时引用',
+              'partial_paths_referenced': '组内仅部分路径发现仓库运行时引用',
+              'no_tracked_runtime_reference': '组内未发现仓库运行时引用',
+          }
+
           lines = [
               '# 予华网站静态资源体积审计',
               '',
-              '> 只读审计：不自动压缩、删除、重命名或替换任何资源。重复文件需先确认 URL/引用用途。',
+              '> 只读审计：不自动压缩、删除、重命名或替换任何资源。引用扫描仅覆盖仓库内运行时文本，不代表外部深链或历史书签。',
               '',
               '## 汇总',
               '',
@@ -174,6 +253,8 @@ jobs:
               f'- ≥50 MiB：{len(thresholds["ge_50_mib"])} 个',
               f'- 内容完全相同的媒体/文档重复组：{len(duplicates)} 组',
               f'- 理论重复字节（不代表可直接删除）：{mib(duplicate_bytes)}',
+              f'- 重复组引用状态：全部路径有引用 {reference_status_counts["all_paths_referenced"]} 组；部分路径有引用 {reference_status_counts["partial_paths_referenced"]} 组；未发现运行时引用 {reference_status_counts["no_tracked_runtime_reference"]} 组',
+              f'- “部分路径有引用”组中的未引用副本体积候选：{mib(partial_reference_candidate_bytes)}（仅供后续逐项核验，不代表可删除）',
               '',
               '## 最大文件（前 30）',
               '',
@@ -184,17 +265,25 @@ jobs:
               safe_path = row['path'].replace('|', '\\|')
               lines.append(f'| `{safe_path}` | {row["category"]} | {mib(row["bytes"])} |')
 
-          lines.extend(['', '## 内容完全相同的重复资源（前 20 组）', ''])
+          lines.extend(['', '## 内容完全相同的重复资源与引用状态（前 20 组）', ''])
           if not duplicates:
               lines.append('未发现。')
           else:
               for idx, group in enumerate(duplicates[:20], start=1):
+                  scan = group['reference_scan']
                   lines.append(
                       f'### {idx}. {len(group["paths"])} 个文件 × {mib(group["bytes_each"])} '
                       f'（理论重复 {mib(group["potential_duplicate_bytes"]) }）'
                   )
+                  lines.append(f'- 引用状态：{status_labels[scan["status"]]}')
                   for path in group['paths']:
-                      lines.append(f'- `{path}`')
+                      hits = scan['references'][path]
+                      if hits:
+                          shown = '、'.join(f'`{source}`' for source in hits[:6])
+                          more = f'，另有 {len(hits) - 6} 个' if len(hits) > 6 else ''
+                          lines.append(f'- `{path}` — 引用来源：{shown}{more}')
+                      else:
+                          lines.append(f'- `{path}` — 扫描范围内未发现引用')
                   lines.append('')
 
           Path('asset_size_audit.md').write_text('\n'.join(lines).rstrip() + '\n', encoding='utf-8')
@@ -204,6 +293,8 @@ jobs:
           print(f'视频: {len(video_rows)}; 视频总体积: {mib(report["video_total_bytes"])}')
           print('体积阈值:', report['threshold_counts'])
           print(f'内容完全相同重复组: {len(duplicates)}; 理论重复: {mib(duplicate_bytes)}')
+          print('重复组引用状态:', reference_status_counts)
+          print(f'部分引用组中的未引用副本体积候选: {mib(partial_reference_candidate_bytes)}')
           print('最大文件前 10:')
           for row in files[:10]:
               print(f'  {mib(row["bytes"]):>10}  {row["path"]}')
@@ -223,7 +314,18 @@ jobs:
           assert report['potential_duplicate_bytes'] == sum(
               row['potential_duplicate_bytes'] for row in report['duplicate_content_groups']
           )
+          status_counts = report['duplicate_reference_status_counts']
+          assert sum(status_counts.values()) == report['duplicate_content_group_count']
+          expected_partial_bytes = 0
+          for group in report['duplicate_content_groups']:
+              scan = group['reference_scan']
+              assert scan['referenced_path_count'] + scan['unreferenced_path_count'] == group['count']
+              assert set(scan['references']) == set(group['paths'])
+              if scan['status'] == 'partial_paths_referenced':
+                  expected_partial_bytes += group['bytes_each'] * scan['unreferenced_path_count']
+          assert report['partial_reference_candidate_bytes'] == expected_partial_bytes
           assert '不会自动压缩、删除' in report['policy']
+          assert '仓库外' in report['policy']
           assert Path('asset_size_audit.md').stat().st_size > 0
           print('Asset-size audit integrity: OK')
           PY
