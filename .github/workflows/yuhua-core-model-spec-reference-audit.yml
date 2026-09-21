@@ -1,0 +1,83 @@
+name: Yuhua ambiguous specification reference audit
+
+on:
+  pull_request:
+    paths:
+      - 'model/**'
+      - 'specs/**'
+      - 'downloads/specs/**'
+      - 'catalog.html'
+      - 'specs_index.json'
+      - 'tools/audit_core_model_spec_links.py'
+      - 'tools/audit_core_model_spec_references.py'
+      - '.github/workflows/yuhua-core-model-spec-reference-audit.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'model/**'
+      - 'specs/**'
+      - 'downloads/specs/**'
+      - 'catalog.html'
+      - 'specs_index.json'
+      - 'tools/audit_core_model_spec_links.py'
+      - 'tools/audit_core_model_spec_references.py'
+      - '.github/workflows/yuhua-core-model-spec-reference-audit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Compile provenance auditor
+        run: python -m py_compile tools/audit_core_model_spec_references.py
+
+      - name: Audit ambiguous specification references
+        run: |
+          python tools/audit_core_model_spec_references.py \
+            --json-output core_model_spec_reference_report.json
+
+      - name: Verify audit-only policy and report shape
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path('core_model_spec_reference_report.json').read_text(encoding='utf-8'))
+          policy = report['policy']
+          summary = report['summary']
+          groups = report['ambiguous_models']
+
+          assert policy['mode'] == 'audit_only'
+          assert policy['read_only'] is True
+          assert policy['auto_fix_count'] == 0
+          assert summary['ambiguous_exact_model_count'] == len(groups)
+          assert summary['ambiguous_candidate_record_count'] == sum(g['candidate_count'] for g in groups)
+          assert all(g['candidate_count'] > 1 for g in groups)
+          assert (
+              summary['all_candidate_paths_referenced_group_count']
+              + summary['partially_referenced_group_count']
+              + summary['no_text_reference_found_group_count']
+          ) == len(groups)
+          print('Ambiguous specification reference report: OK')
+          print(json.dumps(summary, ensure_ascii=False, sort_keys=True))
+          PY
+
+      - name: Upload ambiguous-specification reference report
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-core-model-spec-reference-report
+          path: core_model_spec_reference_report.json
+          if-no-files-found: error
+          retention-days: 90
+
+      # Evidence only: never rewrite, merge, choose, or delete specification records.
