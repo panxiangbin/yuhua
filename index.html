@@ -18,6 +18,7 @@
 <style>
 .copy-email-btn { min-height: 44px; }
 .to-top:focus-visible { outline: 3px solid #0b5fff; outline-offset: 3px; }
+.cat-card:focus-visible { outline: 3px solid #0b5fff; outline-offset: 3px; }
 .skip-link { position: fixed; left: 12px; top: 12px; z-index: 2000; padding: 10px 14px; background: #fff; color: #0a1e36; border-radius: 8px; transform: translateY(-200%); }
 .skip-link:focus { transform: translateY(0); outline: 3px solid #0b5fff; outline-offset: 2px; }
 </style>
@@ -304,6 +305,40 @@
 <script src="assets/specs.js?v=20260614b"></script>
 <script src="app.js?v=20260921a"></script>
 <script src="assets/customer-tools.js?v=20260918a"></script>
+<script>
+(function () {
+  function syncPressed(group) {
+    if (!group) return;
+    Array.prototype.forEach.call(group.querySelectorAll(".chip"), function (button) {
+      button.setAttribute("aria-pressed", button.classList.contains("active") ? "true" : "false");
+    });
+  }
+
+  var catalogChips = document.getElementById("chips");
+  var specChips = document.getElementById("specChips");
+  syncPressed(catalogChips);
+  syncPressed(specChips);
+
+  [catalogChips, specChips].forEach(function (group) {
+    if (!group) return;
+    group.addEventListener("click", function () { syncPressed(group); });
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll(".cat-card"), function (card) {
+    var heading = card.querySelector("h3");
+    card.setAttribute("role", "button");
+    card.setAttribute("aria-controls", "catalogResultTable");
+    card.tabIndex = 0;
+    if (heading) card.setAttribute("aria-label", "查看" + heading.textContent.trim() + "全部型号");
+    card.addEventListener("keydown", function (e) {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      e.preventDefault();
+      card.click();
+    });
+    card.addEventListener("click", function () { syncPressed(catalogChips); });
+  });
+})();
+</script>
 <script>
 (function () {
   var navToggle = document.getElementById("navToggle");
