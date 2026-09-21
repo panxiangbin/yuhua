@@ -57,7 +57,7 @@
       <a href="#inquiry">选型咨询</a>
       <a href="#about">关于我们</a>
     </nav>
-    <button class="nav-toggle" id="navToggle" aria-label="打开或关闭菜单" aria-expanded="false" aria-controls="navMobile">
+    <button class="nav-toggle" id="navToggle" aria-label="打开菜单" aria-expanded="false" aria-controls="navMobile">
       <span></span><span></span><span></span>
     </button>
   </div>
@@ -304,5 +304,36 @@
 <script src="assets/specs.js?v=20260614b"></script>
 <script src="app.js?v=20260921a"></script>
 <script src="assets/customer-tools.js?v=20260918a"></script>
+<script>
+(function () {
+  var navToggle = document.getElementById("navToggle");
+  var navMobile = document.getElementById("navMobile");
+  if (!navToggle || !navMobile) return;
+
+  function isOpen() {
+    return navMobile.classList.contains("open");
+  }
+
+  function syncMenuLabel() {
+    navToggle.setAttribute("aria-label", isOpen() ? "关闭菜单" : "打开菜单");
+  }
+
+  syncMenuLabel();
+  navToggle.addEventListener("click", function () {
+    window.setTimeout(syncMenuLabel, 0);
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.defaultPrevented || e.key !== "Escape" || !isOpen()) return;
+    e.preventDefault();
+    navToggle.click();
+    navToggle.focus();
+  });
+
+  window.addEventListener("resize", function () {
+    if (window.innerWidth > 768 && isOpen()) navToggle.click();
+  }, { passive: true });
+})();
+</script>
 </body>
 </html>
