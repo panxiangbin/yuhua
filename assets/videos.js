@@ -450,8 +450,7 @@ window.VIDEOS = [
   "title": "DJI_20260115_143343_503_video",
   "sub": "其他仪器",
   "key": "others",
-  "file": "assets/videos/dji_20260115_143343_503_video.mp4",
-  "poster": "assets/videos/dji_20260115_143343_503_video.jpg"
+  "file": "assets/videos/dji_20260115_143343_503_video.mp4"
  },
  {
   "title": "2023.3.29安装视频 5000E",
