@@ -1,0 +1,42 @@
+name: Yuhua product missing-field audit
+
+on:
+  pull_request:
+    paths:
+      - 'products.json'
+      - 'tools/audit_product_missing_fields.py'
+      - '.github/workflows/yuhua-product-missing-field-audit.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'products.json'
+      - 'tools/audit_product_missing_fields.py'
+      - '.github/workflows/yuhua-product-missing-field-audit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit-products:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Audit missing fields and exact duplicate rows
+        run: |
+          python tools/audit_product_missing_fields.py \
+            --products products.json \
+            --json-out product_missing_field_audit.json
+
+      - name: Upload audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-product-missing-field-audit
+          path: product_missing_field_audit.json
+          if-no-files-found: error
