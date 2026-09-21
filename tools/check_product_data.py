@@ -107,26 +107,46 @@ def spec_report(specs: list[dict[str, Any]]) -> dict[str, Any]:
     missing_page = []
     missing_download = []
     model_groups: defaultdict[str, list[int]] = defaultdict(list)
+    page_path_groups: defaultdict[str, list[int]] = defaultdict(list)
+    download_path_groups: defaultdict[str, list[int]] = defaultdict(list)
 
     for i, s in enumerate(specs, start=1):
         model = clean(s.get("model"))
         title = clean(s.get("title"))
+        page = clean(s.get("page"))
+        download = clean(s.get("dl"))
         if not model:
             missing_model.append(i)
         else:
             model_groups[norm_model(model)].append(i)
         if is_suspicious_model(model):
             suspicious_model.append({"row": i, "model": model, "title": title})
-        if not clean(s.get("page")):
+        if not page:
             missing_page.append(i)
-        if not clean(s.get("dl")):
+        else:
+            page_path_groups[page].append(i)
+        if not download:
             missing_download.append(i)
+        else:
+            download_path_groups[download].append(i)
 
     duplicates = [
         {"model": m, "count": len(rows), "rows": rows}
         for m, rows in model_groups.items() if m and len(rows) > 1
     ]
     duplicates.sort(key=lambda x: (-x["count"], x["model"]))
+
+    duplicate_page_paths = [
+        {"path": path, "count": len(rows), "rows": rows}
+        for path, rows in page_path_groups.items() if len(rows) > 1
+    ]
+    duplicate_page_paths.sort(key=lambda x: (-x["count"], x["path"]))
+
+    duplicate_download_paths = [
+        {"path": path, "count": len(rows), "rows": rows}
+        for path, rows in download_path_groups.items() if len(rows) > 1
+    ]
+    duplicate_download_paths.sort(key=lambda x: (-x["count"], x["path"]))
 
     return {
         "total": len(specs),
@@ -140,6 +160,10 @@ def spec_report(specs: list[dict[str, Any]]) -> dict[str, Any]:
         "missing_download_rows": missing_download,
         "duplicate_model_group_count": len(duplicates),
         "duplicate_models": duplicates,
+        "duplicate_page_path_group_count": len(duplicate_page_paths),
+        "duplicate_page_paths": duplicate_page_paths,
+        "duplicate_download_path_group_count": len(duplicate_download_paths),
+        "duplicate_download_paths": duplicate_download_paths,
     }
 
 
@@ -274,6 +298,8 @@ def print_human(report: dict[str, Any]) -> None:
     print(f"  缺在线页面: {s['missing_page_count']}")
     print(f"  缺下载路径: {s['missing_download_count']}")
     print(f"  重复型号组: {s['duplicate_model_group_count']}")
+    print(f"  重复在线页路径组: {s['duplicate_page_path_group_count']}")
+    print(f"  重复下载路径组: {s['duplicate_download_path_group_count']}")
     print(f"详情页映射: {m['page_entry_count']} 个页面项 / {m['prefix_count']} 个前缀")
     print(f"  缺失目标文件: {m['missing_target_count']}")
     print(f"  同分类同前缀指向多个页面: {m['ambiguous_same_key_prefix_count']}")
@@ -295,6 +321,16 @@ def print_human(report: dict[str, Any]) -> None:
         print("\n产品重复型号组（前30组；重复不等于错误，需人工判断不同配置/年份）:")
         for item in p["duplicate_models"][:30]:
             print(f"  {item['model']}: {item['count']} 条，rows={item['rows'][:12]}")
+
+    if s["duplicate_page_paths"]:
+        print("\n规格书重复在线页路径（前30组；仅审计，不自动删除资料）:")
+        for item in s["duplicate_page_paths"][:30]:
+            print(f"  {item['path']}: {item['count']} 条，rows={item['rows'][:12]}")
+
+    if s["duplicate_download_paths"]:
+        print("\n规格书重复下载路径（前30组；仅审计，不自动删除资料）:")
+        for item in s["duplicate_download_paths"][:30]:
+            print(f"  {item['path']}: {item['count']} 条，rows={item['rows'][:12]}")
 
     if m["ambiguous_same_key_prefixes"]:
         print("\n高风险详情页映射：同分类同前缀指向多个页面（需人工确认，脚本不会自动修复）:")
