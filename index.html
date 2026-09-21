@@ -18,6 +18,8 @@
 <style>
 .copy-email-btn { min-height: 44px; }
 .to-top:focus-visible { outline: 3px solid #0b5fff; outline-offset: 3px; }
+.skip-link { position: fixed; left: 12px; top: 12px; z-index: 2000; padding: 10px 14px; background: #fff; color: #0a1e36; border-radius: 8px; transform: translateY(-200%); }
+.skip-link:focus { transform: translateY(0); outline: 3px solid #0b5fff; outline-offset: 2px; }
 </style>
 <script type="application/ld+json">
 {
@@ -38,6 +40,7 @@
 </head>
 <body>
 
+<a class="skip-link" href="#main-content">跳到主要内容</a>
 <!-- customer-ready release: email-only public inquiry -->
 <header class="nav" id="top">
   <div class="nav-inner">
@@ -70,6 +73,7 @@
   <a href="#about">关于我们</a>
 </nav>
 
+<main id="main-content" tabindex="-1">
 <section class="hero" id="home">
   <div class="hero-bg"></div>
   <div class="hero-inner">
@@ -216,6 +220,7 @@
     <div class="about-note">💡 本站为产品资料展示，<b>不含价格信息</b>。如需报价、选型建议或技术参数详表，请发送邮件至 <a class="text-email" href="mailto:smxpxb008@gmail.com">smxpxb008@gmail.com</a>。</div>
   </div>
 </section>
+</main>
 
 <footer class="footer">
   <div>予华仪器 YUHUA INSTRUMENT · 实验室仪器产品中心</div>

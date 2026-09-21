@@ -35,6 +35,8 @@ jobs:
           required_literals = {
               "document language": '<html lang="zh-CN">',
               "mobile viewport": '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
+              "skip link": '<a class="skip-link" href="#main-content">跳到主要内容</a>',
+              "main landmark": '<main id="main-content" tabindex="-1">',
               "main navigation label": '<nav class="nav-links" aria-label="主导航">',
               "mobile navigation state": '<nav class="nav-mobile" id="navMobile" aria-label="移动端导航" aria-hidden="true">',
               "menu button relationship": 'aria-expanded="false" aria-controls="navMobile"',
@@ -54,10 +56,15 @@ jobs:
           if source.count('role="status" aria-live="polite" aria-atomic="true"') < 2:
               errors.append("catalog and spec result counts must both remain polite live regions")
 
+          if 'class="skip-link"' in source and '<header class="nav"' in source:
+              if source.index('class="skip-link"') > source.index('<header class="nav"'):
+                  errors.append("skip link must appear before the site header")
+
           class AuditParser(HTMLParser):
               def __init__(self):
                   super().__init__(convert_charrefs=True)
                   self.h1_count = 0
+                  self.main_count = 0
                   self.buttons = []
                   self._button_stack = []
 
@@ -65,6 +72,8 @@ jobs:
                   attrs = dict(attrs)
                   if tag == "h1":
                       self.h1_count += 1
+                  if tag == "main":
+                      self.main_count += 1
                   if tag == "button":
                       item = {"attrs": attrs, "text": []}
                       self.buttons.append(item)
@@ -83,6 +92,8 @@ jobs:
 
           if parser.h1_count != 1:
               errors.append(f"homepage must expose exactly one h1; found {parser.h1_count}")
+          if parser.main_count != 1:
+              errors.append(f"homepage must expose exactly one main landmark; found {parser.main_count}")
 
           for index, button in enumerate(parser.buttons, start=1):
               attrs = button["attrs"]
@@ -103,6 +114,7 @@ jobs:
 
           print("Homepage accessibility baseline passed")
           print(f"- h1 count: {parser.h1_count}")
+          print(f"- main landmark count: {parser.main_count}")
           print(f"- buttons checked: {len(parser.buttons)}")
           print(f"- search inputs checked: {len(search_controls)}")
-          print("- navigation, dialog, live-region and control relationships: present")
+          print("- skip link, navigation, dialog, live-region and control relationships: present")
