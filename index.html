@@ -352,6 +352,50 @@
 </script>
 <script>
 (function () {
+  var specSearch = document.getElementById("specSearch");
+  var specChips = document.getElementById("specChips");
+  var status = document.getElementById("specResultStatus");
+  var specs = window.SPECS || [];
+  if (!specSearch || !status || !specs.length) return;
+
+  var hint = document.createElement("span");
+  hint.id = "specMultiDocHint";
+  status.appendChild(hint);
+
+  function updateSpecMultiDocHint() {
+    var query = (specSearch.value || "").trim().toUpperCase();
+    if (!query) {
+      hint.textContent = "";
+      return;
+    }
+
+    var activeChip = specChips ? specChips.querySelector(".chip.active") : null;
+    var activeKey = activeChip && activeChip.dataset.key ? activeChip.dataset.key : "all";
+    var exactCount = specs.filter(function (spec) {
+      if (activeKey !== "all" && spec.key !== activeKey) return false;
+      return String(spec.model || "").trim().toUpperCase() === query;
+    }).length;
+
+    hint.textContent = exactCount > 1
+      ? "；该型号当前收录 " + exactCount + " 份现有资料，请按文件标题选择"
+      : "";
+  }
+
+  var hintTimer;
+  specSearch.addEventListener("input", function () {
+    clearTimeout(hintTimer);
+    hintTimer = setTimeout(updateSpecMultiDocHint, 180);
+  });
+  if (specChips) {
+    specChips.addEventListener("click", function () {
+      window.setTimeout(updateSpecMultiDocHint, 0);
+    });
+  }
+  updateSpecMultiDocHint();
+})();
+</script>
+<script>
+(function () {
   var navToggle = document.getElementById("navToggle");
   var navMobile = document.getElementById("navMobile");
   if (!navToggle || !navMobile) return;
