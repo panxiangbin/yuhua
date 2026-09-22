@@ -417,11 +417,6 @@
     card.setAttribute("aria-controls", "catalogResultTable");
     card.tabIndex = 0;
     if (heading) card.setAttribute("aria-label", "查看" + heading.textContent.trim() + "全部型号");
-    card.addEventListener("keydown", function (e) {
-      if (e.key !== "Enter" && e.key !== " ") return;
-      e.preventDefault();
-      card.click();
-    });
     card.addEventListener("click", function () { syncPressed(catalogChips); });
   });
 })();
