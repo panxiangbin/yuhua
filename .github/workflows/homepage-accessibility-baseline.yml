@@ -5,12 +5,14 @@ on:
     paths:
       - "index.html"
       - "app.js"
+      - "assets/customer-tools.js"
       - ".github/workflows/homepage-accessibility-baseline.yml"
   push:
     branches: [main]
     paths:
       - "index.html"
       - "app.js"
+      - "assets/customer-tools.js"
       - ".github/workflows/homepage-accessibility-baseline.yml"
   workflow_dispatch:
 
@@ -33,6 +35,7 @@ jobs:
 
           source = Path("index.html").read_text(encoding="utf-8")
           app_source = Path("app.js").read_text(encoding="utf-8")
+          customer_tools_source = Path("assets/customer-tools.js").read_text(encoding="utf-8")
           errors = []
 
           required_literals = {
@@ -54,7 +57,6 @@ jobs:
               "category card keyboard role": 'card.setAttribute("role", "button");',
               "category card keyboard focus": 'card.tabIndex = 0;',
               "category card table relationship": 'card.setAttribute("aria-controls", "catalogResultTable");',
-              "category card keyboard activation": 'if (e.key !== "Enter" && e.key !== " ") return;',
               "category card visible focus": '.cat-card:focus-visible',
               "filter chip selected state": 'button.setAttribute("aria-pressed", button.classList.contains("active") ? "true" : "false");',
           }
@@ -73,6 +75,27 @@ jobs:
           for label, token in required_app_literals.items():
               if token not in app_source:
                   errors.append(f"missing {label}: {token}")
+
+          required_customer_tools_literals = {
+              "category card keyboard handler": 'card.addEventListener("keydown", function (e) {',
+              "category card Enter/Space activation": 'if (e.key === "Enter" || e.key === " ") {',
+              "category card keyboard preventDefault": 'e.preventDefault();',
+              "category card keyboard click": 'card.click();',
+          }
+          for label, token in required_customer_tools_literals.items():
+              if token not in customer_tools_source:
+                  errors.append(f"missing {label}: {token}")
+
+          category_keydown_registration = 'card.addEventListener("keydown", function (e) {'
+          category_handler_count = sum(
+              text.count(category_keydown_registration)
+              for text in (source, app_source, customer_tools_source)
+          )
+          if category_handler_count != 1:
+              errors.append(
+                  "category card keyboard activation handler must exist exactly once; "
+                  f"found {category_handler_count}"
+              )
 
           if source.count('role="status" aria-live="polite" aria-atomic="true"') < 2:
               errors.append("catalog and spec result counts must both remain polite live regions")
@@ -139,5 +162,6 @@ jobs:
           print(f"- buttons checked: {len(parser.buttons)}")
           print(f"- search inputs checked: {len(search_controls)}")
           print("- skip link, navigation, dialog, live-region and control relationships: present")
-          print("- category cards are keyboard operable and filter chips expose selection state")
+          print("- category cards retain exactly one Enter/Space keyboard activation handler")
+          print("- filter chips expose selection state")
           print("- catalog/spec action controls retain contextual accessible names")
