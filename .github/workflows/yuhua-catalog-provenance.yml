@@ -1,0 +1,81 @@
+name: Yuhua runtime catalog provenance audit
+
+on:
+  pull_request:
+    paths:
+      - 'assets/data.js'
+      - 'products.json'
+      - 'specs_index.json'
+      - 'assets/pages.js'
+      - 'tools/check_product_data.py'
+      - 'tools/audit_public_catalog_runtime.py'
+      - 'tools/audit_catalog_git_provenance.py'
+      - '.github/workflows/yuhua-catalog-provenance.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'assets/data.js'
+      - 'products.json'
+      - 'specs_index.json'
+      - 'assets/pages.js'
+      - 'tools/check_product_data.py'
+      - 'tools/audit_public_catalog_runtime.py'
+      - 'tools/audit_catalog_git_provenance.py'
+      - '.github/workflows/yuhua-catalog-provenance.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  provenance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout history without eagerly downloading historical blobs
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          filter: blob:none
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Build base data-quality report
+        run: python tools/check_product_data.py --json-output data_quality_report.json
+
+      - name: Audit customer-facing runtime catalog data
+        run: python tools/audit_public_catalog_runtime.py --report data_quality_report.json
+
+      - name: Trace runtime-only models through Git history
+        run: python tools/audit_catalog_git_provenance.py --report data_quality_report.json
+
+      - name: Verify provenance coverage
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path('data_quality_report.json').read_text(encoding='utf-8'))
+          provenance = report['public_catalog_git_provenance']
+          assert provenance['status'] == 'ok'
+          assert provenance['runtime_history_commit_count'] >= 1
+          assert provenance['source_history_commit_count'] >= 1
+          assert provenance['unresolved_first_seen_model_count'] == 0, (
+              'Every current runtime-only model must be traceable to a checked-in assets/data.js version: '
+              + repr(provenance['unresolved_first_seen_models'])
+          )
+          print(
+              'Runtime-only model Git provenance: OK '
+              f"({provenance['resolved_first_seen_model_count']} models resolved across "
+              f"{provenance['runtime_history_commit_count']} assets/data.js commits)"
+          )
+          PY
+
+      - name: Upload provenance-enhanced data-quality report
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-data-quality-provenance-report
+          path: data_quality_report.json
+
+      # Reporting only: Git age/provenance is never treated as proof of a product fact.
