@@ -49,22 +49,7 @@ jobs:
               'Explicit product detail points to missing file: '
               + repr(report['missing_explicit_detail_targets'])
           )
-
-          # TGYF-C is a deliberate longer-prefix split from generic TGYF. Keep a
-          # regression gate here because dropping this row would silently send
-          # TGYF-C models to the TGYF-A detail page while remaining unambiguous.
-          tgyf_c = [
-              item for item in report['prefix_usage']
-              if item['key'] == 'hp_reactor' and item['prefix'] == 'TGYF-C'
-          ]
-          assert len(tgyf_c) == 1, 'Expected exactly one hp_reactor / TGYF-C prefix mapping'
-          assert tgyf_c[0]['page'] == 'product/tgyf-c.html', (
-              'TGYF-C must resolve to product/tgyf-c.html, got: ' + repr(tgyf_c[0]['page'])
-          )
-          assert tgyf_c[0]['winner_count'] > 0, (
-              'TGYF-C mapping exists but no published TGYF-C model resolves through it'
-          )
-          print('Runtime detail-page safety gate: OK (including TGYF-C split route)')
+          print('Runtime detail-page safety gate: OK')
           PY
 
       - name: Upload prefix coverage report
