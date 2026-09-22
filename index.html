@@ -383,17 +383,6 @@
 </script>
 <script>
 (function () {
-  var params = new URLSearchParams(window.location.search);
-  var query = (params.get("q") || "").trim().slice(0, 120);
-  if (!query) return;
-  var searchInput = document.getElementById("searchInput");
-  if (!searchInput) return;
-  searchInput.value = query;
-  searchInput.dispatchEvent(new Event("input", { bubbles: true }));
-})();
-</script>
-<script>
-(function () {
   function syncPressed(group) {
     if (!group) return;
     Array.prototype.forEach.call(group.querySelectorAll(".chip"), function (button) {
