@@ -44,11 +44,12 @@
     else onFailure();
   }
 
-  function setUrlParam(key, value) {
+  function setUrlParam(key, value, hash) {
     if (!window.history || !history.replaceState) return;
     var url = new URL(window.location.href);
     if (value) url.searchParams.set(key, value);
     else url.searchParams.delete(key);
+    if (value && hash) url.hash = hash;
     history.replaceState(null, "", url.pathname + url.search + url.hash);
   }
 
@@ -73,7 +74,7 @@
     searchInput.addEventListener("input", function () {
       clearTimeout(qTimer);
       qTimer = setTimeout(function () {
-        setUrlParam("q", searchInput.value.trim());
+        setUrlParam("q", searchInput.value.trim(), "catalog");
       }, 250);
     });
   }
@@ -88,7 +89,7 @@
     specSearch.addEventListener("input", function () {
       clearTimeout(specTimer);
       specTimer = setTimeout(function () {
-        setUrlParam("spec", specSearch.value.trim());
+        setUrlParam("spec", specSearch.value.trim(), "specs");
       }, 250);
     });
   }
