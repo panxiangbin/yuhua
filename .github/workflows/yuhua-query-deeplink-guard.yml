@@ -35,8 +35,9 @@ jobs:
           customer_tools = Path("assets/customer-tools.js").read_text(encoding="utf-8")
 
           # The canonical query handoff lives in customer-tools.js. Protect both
-          # model and specification searches so shared URLs keep restoring their query
-          # and point directly at the matching result section without forcing a scroll.
+          # model and specification searches so shared URLs keep restoring their query,
+          # point at the matching result section, and do not retain the other search's
+          # stale parameter when a customer switches lookup type.
           required_customer_tools = [
               "new URLSearchParams(window.location.search)",
               'query.get("q")',
@@ -45,10 +46,11 @@ jobs:
               'document.getElementById("specSearch")',
               "searchInput.value = initialQ",
               "specSearch.value = initialSpec",
-              'function setUrlParam(key, value, hash)',
+              'function setUrlParam(key, value, hash, exclusiveKey)',
+              'if (exclusiveKey) url.searchParams.delete(exclusiveKey);',
               'if (value && hash) url.hash = hash',
-              'setUrlParam("q", searchInput.value.trim(), "catalog")',
-              'setUrlParam("spec", specSearch.value.trim(), "specs")',
+              'setUrlParam("q", searchInput.value.trim(), "catalog", "spec")',
+              'setUrlParam("spec", specSearch.value.trim(), "specs", "q")',
               'dispatchEvent(new Event("input"',
           ]
           missing = [token for token in required_customer_tools if token not in customer_tools]
@@ -96,6 +98,6 @@ jobs:
 
           print(
               f"Verified {len(links)} static model deep links, model/spec query restoration, "
-              "live-search section anchors, and copied model-link handoff."
+              "mutually exclusive live-search share parameters, section anchors, and copied model-link handoff."
           )
           PY
