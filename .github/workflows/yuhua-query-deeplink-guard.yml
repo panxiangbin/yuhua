@@ -34,6 +34,20 @@ jobs:
           index = Path("index.html").read_text(encoding="utf-8")
           customer_tools = Path("assets/customer-tools.js").read_text(encoding="utf-8")
 
+          # Query restoration has a single owner. A legacy inline q= restorer used to
+          # duplicate the initial product search after customer-tools.js had already run.
+          legacy_inline_q_restore = [
+              'var params = new URLSearchParams(window.location.search);',
+              'var query = (params.get("q") || "").trim().slice(0, 120);',
+              'searchInput.value = query;',
+              'searchInput.dispatchEvent(new Event("input", { bubbles: true }));',
+          ]
+          if all(token in index for token in legacy_inline_q_restore):
+              raise SystemExit(
+                  "Legacy inline q= query restoration returned to index.html; "
+                  "assets/customer-tools.js must remain the single owner."
+              )
+
           # The canonical query handoff lives in customer-tools.js. Protect both
           # model and specification searches so shared URLs keep restoring their query,
           # point at the matching result section, and do not retain the other search's
