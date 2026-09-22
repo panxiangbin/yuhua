@@ -4,6 +4,10 @@
 The homepage renders assets/data.js rather than products.json directly. This
 script makes that public/runtime payload visible in the main data-quality
 artifact without changing, inferring, or repairing any product facts.
+
+Runtime-only models are also cross-referenced against specs_index.json using
+exact normalized model matches only. Those matches are evidence for review,
+not permission to merge, rename, delete, or otherwise repair product data.
 """
 from __future__ import annotations
 
@@ -42,6 +46,13 @@ def load_window_array(path: Path, variable: str) -> list[dict[str, Any]]:
         raise SystemExit(f"window.{variable} in {path} must be an array")
     if any(not isinstance(item, dict) for item in value):
         raise SystemExit(f"window.{variable} in {path} must contain objects only")
+    return value
+
+
+def load_json_object_array(path: Path) -> list[dict[str, Any]]:
+    value = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(value, list) or any(not isinstance(item, dict) for item in value):
+        raise SystemExit(f"{path} must contain an array of objects")
     return value
 
 
@@ -93,18 +104,78 @@ def summarize(rows: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
+def compact_spec_match(spec: dict[str, Any]) -> dict[str, str]:
+    fields = ("title", "model", "series", "key", "page", "dl")
+    return {field: clean(spec.get(field)) for field in fields if clean(spec.get(field))}
+
+
+def build_public_only_evidence(
+    public_rows: list[dict[str, Any]],
+    public_only_models: list[str],
+    specs: list[dict[str, Any]],
+) -> dict[str, Any]:
+    rows_by_model: defaultdict[str, list[tuple[int, dict[str, Any]]]] = defaultdict(list)
+    for index, row in enumerate(public_rows, start=1):
+        model = norm_model(row.get("型号"))
+        if model:
+            rows_by_model[model].append((index, row))
+
+    specs_by_model: defaultdict[str, list[dict[str, Any]]] = defaultdict(list)
+    for spec in specs:
+        model = norm_model(spec.get("model"))
+        if model:
+            specs_by_model[model].append(spec)
+
+    entries: list[dict[str, Any]] = []
+    with_exact_spec: list[str] = []
+    without_exact_spec: list[str] = []
+
+    for model in public_only_models:
+        runtime_rows = rows_by_model.get(model, [])
+        categories = sorted({clean(row.get("类别")) for _, row in runtime_rows if clean(row.get("类别"))})
+        names = sorted({clean(row.get("产品名称")) for _, row in runtime_rows if clean(row.get("产品名称"))})
+        exact_matches = specs_by_model.get(model, [])
+        if exact_matches:
+            with_exact_spec.append(model)
+        else:
+            without_exact_spec.append(model)
+        entries.append(
+            {
+                "model": model,
+                "runtime_row_indices": [index for index, _ in runtime_rows],
+                "runtime_categories": categories,
+                "runtime_names": names,
+                "exact_spec_match_count": len(exact_matches),
+                "exact_spec_matches": [compact_spec_match(spec) for spec in exact_matches],
+            }
+        )
+
+    return {
+        "exact_spec_evidence_model_count": len(with_exact_spec),
+        "models_with_exact_spec_evidence": with_exact_spec,
+        "no_exact_spec_evidence_model_count": len(without_exact_spec),
+        "models_without_exact_spec_evidence": without_exact_spec,
+        "models": entries,
+        "matching_rule": (
+            "Only exact normalized matches between runtime 型号 and specs_index.json model are counted. "
+            "No fuzzy/prefix inference is used, and matches are audit evidence only."
+        ),
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--data-js", default="assets/data.js")
     parser.add_argument("--source", default="products.json")
+    parser.add_argument("--spec-index", default="specs_index.json")
     parser.add_argument("--report", default="data_quality_report.json")
     args = parser.parse_args()
 
     source_path = Path(args.source)
+    spec_index_path = Path(args.spec_index)
     report_path = Path(args.report)
-    source = json.loads(source_path.read_text(encoding="utf-8"))
-    if not isinstance(source, list) or any(not isinstance(item, dict) for item in source):
-        raise SystemExit(f"{source_path} must contain an array of objects")
+    source = load_json_object_array(source_path)
+    specs = load_json_object_array(spec_index_path)
 
     public_rows = load_window_array(Path(args.data_js), "PRODUCTS")
     public_summary = summarize(public_rows)
@@ -113,6 +184,7 @@ def main() -> int:
 
     public_only_models = sorted(public_models - source_models)
     source_only_models = sorted(source_models - public_models)
+    public_only_evidence = build_public_only_evidence(public_rows, public_only_models, specs)
     audit = {
         **public_summary,
         "source_total": len(source),
@@ -121,12 +193,14 @@ def main() -> int:
         "source_distinct_model_count": len(source_models),
         "public_only_model_count": len(public_only_models),
         "public_only_models": public_only_models,
+        "public_only_model_evidence": public_only_evidence,
         "source_only_model_count": len(source_only_models),
         "source_only_models": source_only_models,
         "note": (
             "Read-only comparison of the customer-facing assets/data.js window.PRODUCTS payload "
             "against products.json. Differences are audit findings only and are not treated as errors "
-            "or repaired automatically."
+            "or repaired automatically. Exact specs_index.json model matches are attached only as "
+            "traceability evidence for runtime-only models."
         ),
     }
 
@@ -145,6 +219,14 @@ def main() -> int:
     print(f"runtime 重复型号组: {audit['duplicate_model_group_count']}")
     print(f"runtime 独有型号: {audit['public_only_model_count']}")
     print(f"source 独有型号: {audit['source_only_model_count']}")
+    print(
+        "runtime 独有型号中有规格书精确证据: "
+        f"{public_only_evidence['exact_spec_evidence_model_count']}"
+    )
+    print(
+        "runtime 独有型号中无规格书精确证据: "
+        f"{public_only_evidence['no_exact_spec_evidence_model_count']}"
+    )
     if public_only_models:
         print("runtime 独有型号（前30项，仅审计）:", public_only_models[:30])
     if source_only_models:
