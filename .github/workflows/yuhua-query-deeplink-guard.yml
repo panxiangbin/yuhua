@@ -34,8 +34,9 @@ jobs:
           index = Path("index.html").read_text(encoding="utf-8")
           customer_tools = Path("assets/customer-tools.js").read_text(encoding="utf-8")
 
-          # The canonical query handoff now lives in customer-tools.js. Protect both
-          # model and specification searches so shared URLs keep restoring their query.
+          # The canonical query handoff lives in customer-tools.js. Protect both
+          # model and specification searches so shared URLs keep restoring their query
+          # and point directly at the matching result section without forcing a scroll.
           required_customer_tools = [
               "new URLSearchParams(window.location.search)",
               'query.get("q")',
@@ -44,8 +45,10 @@ jobs:
               'document.getElementById("specSearch")',
               "searchInput.value = initialQ",
               "specSearch.value = initialSpec",
-              'setUrlParam("q", searchInput.value.trim())',
-              'setUrlParam("spec", specSearch.value.trim())',
+              'function setUrlParam(key, value, hash)',
+              'if (value && hash) url.hash = hash',
+              'setUrlParam("q", searchInput.value.trim(), "catalog")',
+              'setUrlParam("spec", specSearch.value.trim(), "specs")',
               'dispatchEvent(new Event("input"',
           ]
           missing = [token for token in required_customer_tools if token not in customer_tools]
@@ -54,6 +57,11 @@ jobs:
                   "Shareable model/specification search query handling regressed: "
                   + repr(missing)
               )
+
+          # The result anchors that live search writes must still exist on the homepage.
+          for anchor in ('id="catalog"', 'id="specs"'):
+              if anchor not in index:
+                  raise SystemExit(f"Live search result anchor is missing from index.html: {anchor}")
 
           # The model modal's copied link must stay anchored to the catalog and must
           # not carry an unrelated specification query.
@@ -88,6 +96,6 @@ jobs:
 
           print(
               f"Verified {len(links)} static model deep links, model/spec query restoration, "
-              "and copied model-link handoff."
+              "live-search section anchors, and copied model-link handoff."
           )
           PY
