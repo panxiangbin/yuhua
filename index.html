@@ -307,6 +307,82 @@
 <script src="assets/customer-tools.js?v=20260918a"></script>
 <script>
 (function () {
+  var specBody = document.getElementById("specBody");
+  if (!specBody) return;
+
+  function setCopyStatus(status, text) {
+    status.textContent = text;
+    window.setTimeout(function () {
+      if (status.textContent === text) status.textContent = "";
+    }, 3200);
+  }
+
+  function fallbackCopy(text, onSuccess, onFailure) {
+    var textarea = document.createElement("textarea");
+    var copied = false;
+    textarea.value = text;
+    textarea.setAttribute("readonly", "");
+    textarea.style.position = "fixed";
+    textarea.style.left = "-9999px";
+    document.body.appendChild(textarea);
+    textarea.select();
+    try { copied = document.execCommand("copy"); } catch (e) {}
+    document.body.removeChild(textarea);
+    if (copied) onSuccess();
+    else onFailure();
+  }
+
+  function copyText(text, status) {
+    function done() { setCopyStatus(status, "咨询内容已复制"); }
+    function failed() { setCopyStatus(status, "复制失败，请重试"); }
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(done).catch(function () {
+        fallbackCopy(text, done, failed);
+      });
+    } else {
+      fallbackCopy(text, done, failed);
+    }
+  }
+
+  function syncSpecCopyActions() {
+    Array.prototype.forEach.call(specBody.querySelectorAll(".spec-inquiry-cell"), function (cell) {
+      if (cell.querySelector(".spec-copy-inquiry")) return;
+      var mailLink = cell.querySelector('a[href^="mailto:"]');
+      if (!mailLink) return;
+
+      var button = document.createElement("button");
+      button.type = "button";
+      button.className = "spec-btn spec-copy-inquiry";
+      button.textContent = "复制咨询";
+      button.style.marginLeft = "6px";
+      button.setAttribute("aria-label", "复制当前规格书的邮件咨询内容");
+
+      var status = document.createElement("div");
+      status.className = "inquiry-status";
+      status.setAttribute("aria-live", "polite");
+      status.setAttribute("aria-atomic", "true");
+
+      button.addEventListener("click", function () {
+        var mailUrl = new URL(mailLink.href);
+        var recipient = mailUrl.pathname || "";
+        var subject = mailUrl.searchParams.get("subject") || "";
+        var body = mailUrl.searchParams.get("body") || "";
+        var fullText = "收件人：" + recipient + "\n" +
+          "主题：" + subject + "\n\n" + body;
+        copyText(fullText, status);
+      });
+
+      cell.appendChild(button);
+      cell.appendChild(status);
+    });
+  }
+
+  syncSpecCopyActions();
+  new MutationObserver(syncSpecCopyActions).observe(specBody, { childList: true });
+})();
+</script>
+<script>
+(function () {
   var params = new URLSearchParams(window.location.search);
   var query = (params.get("q") || "").trim().slice(0, 120);
   if (!query) return;
