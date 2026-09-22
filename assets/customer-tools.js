@@ -216,7 +216,6 @@
   var modal = mask ? mask.querySelector(".modal") : null;
   var modalBody = mask ? mask.querySelector(".modal-body") : null;
   var modalClose = document.getElementById("modalClose");
-  var lastFocus = null;
 
   if (modal) modal.setAttribute("aria-labelledby", "mTitle");
   if (modalClose) modalClose.setAttribute("aria-label", "关闭产品参数");
@@ -385,40 +384,6 @@
       selectionForm.reset();
       if (selectionCopyStatus) selectionCopyStatus.textContent = "";
       document.getElementById("inqCategory").focus();
-    });
-  }
-
-  // ---------- 弹窗焦点管理 ----------
-  if (mask && modal) {
-    var tableBody = document.getElementById("tableBody");
-    if (tableBody) {
-      tableBody.addEventListener("click", function () {
-        lastFocus = document.activeElement;
-      }, true);
-    }
-
-    var observer = new MutationObserver(function () {
-      if (!mask.hidden) {
-        if (modalClose) modalClose.focus();
-      } else if (lastFocus && typeof lastFocus.focus === "function") {
-        lastFocus.focus();
-      }
-    });
-    observer.observe(mask, { attributes: true, attributeFilter: ["hidden"] });
-
-    document.addEventListener("keydown", function (e) {
-      if (mask.hidden || e.key !== "Tab") return;
-      var focusable = modal.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),[tabindex]:not([tabindex="-1"])');
-      if (!focusable.length) return;
-      var first = focusable[0];
-      var last = focusable[focusable.length - 1];
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      }
     });
   }
 })();
