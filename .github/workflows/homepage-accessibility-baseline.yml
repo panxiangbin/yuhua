@@ -71,6 +71,15 @@ jobs:
               "spec view accessible name": "esc('查看 ' + specLabel + ' 规格书')",
               "spec download accessible name": "esc('下载 ' + specLabel + ' Word 规格书')",
               "spec new-tab isolation": 'target="_blank" rel="noopener" aria-label=',
+              "product modal focusable helper": 'function getModalFocusable() {',
+              "product modal focus origin": 'var modalReturnFocus = null;',
+              "product modal focus capture": 'modalReturnFocus = opener && typeof opener.focus === "function" ? opener : document.activeElement;',
+              "product modal initial focus": 'window.requestAnimationFrame(function () { modalClose.focus(); });',
+              "product modal focus restore": 'returnTarget.focus();',
+              "product modal keyboard owner": 'document.addEventListener("keydown", function (e) {',
+              "product modal Escape handling": 'if (e.key === "Escape") {',
+              "product modal Tab handling": 'if (e.key !== "Tab") return;',
+              "product modal focus trap": 'var focusable = getModalFocusable();',
           }
           for label, token in required_app_literals.items():
               if token not in app_source:
@@ -96,6 +105,33 @@ jobs:
                   "category card keyboard activation handler must exist exactly once; "
                   f"found {category_handler_count}"
               )
+
+          modal_owner_tokens = (
+              'function getModalFocusable() {',
+              'var modalReturnFocus = null;',
+              'var focusable = getModalFocusable();',
+          )
+          for token in modal_owner_tokens:
+              owner_count = sum(
+                  text.count(token)
+                  for text in (source, app_source, customer_tools_source)
+              )
+              if owner_count != 1 or token not in app_source:
+                  errors.append(
+                      "product modal focus management must have one owner in app.js; "
+                      f"token {token!r} found {owner_count} times"
+                  )
+
+          legacy_modal_focus_tokens = (
+              'var lastFocus = null;',
+              "var focusable = modal.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),[tabindex]:not([tabindex=\"-1\"])');",
+          )
+          for token in legacy_modal_focus_tokens:
+              if token in customer_tools_source:
+                  errors.append(
+                      "duplicate product modal focus manager reintroduced in customer-tools.js: "
+                      f"{token}"
+                  )
 
           if source.count('role="status" aria-live="polite" aria-atomic="true"') < 2:
               errors.append("catalog and spec result counts must both remain polite live regions")
@@ -163,5 +199,6 @@ jobs:
           print(f"- search inputs checked: {len(search_controls)}")
           print("- skip link, navigation, dialog, live-region and control relationships: present")
           print("- category cards retain exactly one Enter/Space keyboard activation handler")
+          print("- product modal focus management remains single-owner in app.js")
           print("- filter chips expose selection state")
           print("- catalog/spec action controls retain contextual accessible names")
