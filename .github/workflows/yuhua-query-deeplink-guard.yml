@@ -1,15 +1,17 @@
-name: Yuhua model query deep-link guard
+name: Yuhua search deep-link guard
 
 on:
   push:
     branches: [main]
     paths:
       - "index.html"
+      - "assets/customer-tools.js"
       - "model/**.html"
       - ".github/workflows/yuhua-query-deeplink-guard.yml"
   pull_request:
     paths:
       - "index.html"
+      - "assets/customer-tools.js"
       - "model/**.html"
       - ".github/workflows/yuhua-query-deeplink-guard.yml"
   workflow_dispatch:
@@ -22,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Verify model query deep links are consumed by homepage search
+      - name: Verify model and specification search deep links
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -30,28 +32,62 @@ jobs:
           import re
 
           index = Path("index.html").read_text(encoding="utf-8")
-          required = [
+          customer_tools = Path("assets/customer-tools.js").read_text(encoding="utf-8")
+
+          # The canonical query handoff now lives in customer-tools.js. Protect both
+          # model and specification searches so shared URLs keep restoring their query.
+          required_customer_tools = [
               "new URLSearchParams(window.location.search)",
-              'params.get("q")',
+              'query.get("q")',
+              'query.get("spec")',
               'document.getElementById("searchInput")',
-              "searchInput.value = query",
+              'document.getElementById("specSearch")',
+              "searchInput.value = initialQ",
+              "specSearch.value = initialSpec",
+              'setUrlParam("q", searchInput.value.trim())',
+              'setUrlParam("spec", specSearch.value.trim())',
               'dispatchEvent(new Event("input"',
           ]
-          missing = [token for token in required if token not in index]
+          missing = [token for token in required_customer_tools if token not in customer_tools]
           if missing:
-              raise SystemExit(f"Homepage no longer consumes ?q= model deep links: {missing}")
+              raise SystemExit(
+                  "Shareable model/specification search query handling regressed: "
+                  + repr(missing)
+              )
 
+          # The model modal's copied link must stay anchored to the catalog and must
+          # not carry an unrelated specification query.
+          model_link_required = [
+              'url.hash = "catalog"',
+              'url.searchParams.delete("spec")',
+              'url.searchParams.set("q", info.model)',
+          ]
+          missing_model_link = [token for token in model_link_required if token not in customer_tools]
+          if missing_model_link:
+              raise SystemExit(
+                  "Copied model-link deep-link behavior regressed: " + repr(missing_model_link)
+              )
+
+          # Keep protecting every static core-model link that hands a q= value to the
+          # homepage catalog search.
           links = []
           for path in [Path("index.html"), *sorted(Path("model").glob("*.html"))]:
               text = path.read_text(encoding="utf-8")
               for href in re.findall(r'href="([^"]*\?q=[^"]*#catalog)"', text):
-                  query = parse_qs(urlparse(href).query).get("q", [""])[0].strip()
-                  if not query:
+                  query_value = parse_qs(urlparse(href).query).get("q", [""])[0].strip()
+                  if not query_value:
                       raise SystemExit(f"Empty q= deep link in {path}: {href}")
-                  links.append((str(path), href, query))
+                  links.append((str(path), href, query_value))
 
           if not links:
               raise SystemExit("No model query deep links found to protect")
 
-          print(f"Verified {len(links)} model query deep links and homepage query handoff.")
+          # index.html must still load the script that owns the query handoff.
+          if "assets/customer-tools.js" not in index:
+              raise SystemExit("index.html no longer loads assets/customer-tools.js")
+
+          print(
+              f"Verified {len(links)} static model deep links, model/spec query restoration, "
+              "and copied model-link handoff."
+          )
           PY
