@@ -5,15 +5,18 @@ The homepage renders assets/data.js rather than products.json directly. This
 script makes that public/runtime payload visible in the main data-quality
 artifact without changing, inferring, or repairing any product facts.
 
-Runtime-only models are also cross-referenced against specs_index.json using
-exact normalized model matches only. Those matches are evidence for review,
-not permission to merge, rename, delete, or otherwise repair product data.
+Runtime-only models are cross-referenced against specs_index.json using exact
+normalized model matches only. When git history is available, the report also
+records the first commit where each runtime-only model appeared in
+assets/data.js. Both evidence sources are for review only and never authorize
+an automatic product-data repair.
 """
 from __future__ import annotations
 
 import argparse
 import json
 import re
+import subprocess
 from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any
@@ -27,26 +30,32 @@ def norm_model(value: Any) -> str:
     return re.sub(r"\s+", "", clean(value).upper())
 
 
-def load_window_array(path: Path, variable: str) -> list[dict[str, Any]]:
-    text = path.read_text(encoding="utf-8")
+def parse_window_array(text: str, variable: str, source_label: str) -> list[dict[str, Any]]:
     marker = f"window.{variable}="
     pos = text.find(marker)
     if pos < 0:
         marker = f"window.{variable} ="
         pos = text.find(marker)
     if pos < 0:
-        raise SystemExit(f"Could not find window.{variable} in {path}")
+        raise ValueError(f"Could not find window.{variable} in {source_label}")
 
     payload = text[pos + len(marker):].lstrip()
     try:
         value, _ = json.JSONDecoder().raw_decode(payload)
     except json.JSONDecodeError as exc:
-        raise SystemExit(f"Could not parse window.{variable} from {path}: {exc}") from exc
+        raise ValueError(f"Could not parse window.{variable} from {source_label}: {exc}") from exc
     if not isinstance(value, list):
-        raise SystemExit(f"window.{variable} in {path} must be an array")
+        raise ValueError(f"window.{variable} in {source_label} must be an array")
     if any(not isinstance(item, dict) for item in value):
-        raise SystemExit(f"window.{variable} in {path} must contain objects only")
+        raise ValueError(f"window.{variable} in {source_label} must contain objects only")
     return value
+
+
+def load_window_array(path: Path, variable: str) -> list[dict[str, Any]]:
+    try:
+        return parse_window_array(path.read_text(encoding="utf-8"), variable, str(path))
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
 
 
 def load_json_object_array(path: Path) -> list[dict[str, Any]]:
@@ -109,10 +118,116 @@ def compact_spec_match(spec: dict[str, Any]) -> dict[str, str]:
     return {field: clean(spec.get(field)) for field in fields if clean(spec.get(field))}
 
 
+def git_output(args: list[str]) -> str:
+    result = subprocess.run(
+        ["git", *args],
+        check=True,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+    )
+    return result.stdout
+
+
+def build_git_first_seen_evidence(data_js_path: Path, target_models: list[str]) -> dict[str, Any]:
+    """Trace exact normalized models to their first appearance in data.js history.
+
+    This is provenance only. Commit metadata says when a string entered the public
+    runtime catalogue; it does not prove that the underlying product fact is valid.
+    """
+    target_set = set(target_models)
+    if not target_set:
+        return {
+            "available": True,
+            "history_commit_count": 0,
+            "traced_model_count": 0,
+            "untraced_model_count": 0,
+            "models": {},
+            "first_seen_commit_groups": [],
+            "note": "No runtime-only models require git provenance tracing.",
+        }
+
+    try:
+        history = git_output([
+            "log",
+            "--follow",
+            "--format=%H%x09%aI%x09%s",
+            "--",
+            data_js_path.as_posix(),
+        ])
+    except (subprocess.CalledProcessError, FileNotFoundError, UnicodeError) as exc:
+        return {
+            "available": False,
+            "reason": f"git history unavailable: {type(exc).__name__}",
+            "traced_model_count": 0,
+            "untraced_model_count": len(target_models),
+            "models": {},
+            "first_seen_commit_groups": [],
+            "note": "Git provenance is optional audit evidence and never changes product data.",
+        }
+
+    commits: list[dict[str, str]] = []
+    for line in history.splitlines():
+        parts = line.split("\t", 2)
+        if len(parts) != 3:
+            continue
+        sha, authored_at, subject = parts
+        commits.append({"sha": sha, "authored_at": authored_at, "subject": subject})
+
+    first_seen: dict[str, dict[str, str]] = {}
+    for commit in reversed(commits):
+        try:
+            text = git_output(["show", f"{commit['sha']}:{data_js_path.as_posix()}"])
+            rows = parse_window_array(text, "PRODUCTS", f"{commit['sha']}:{data_js_path}")
+        except (subprocess.CalledProcessError, ValueError, UnicodeError):
+            continue
+        present = model_set(rows) & target_set
+        for model in sorted(present):
+            if model not in first_seen:
+                first_seen[model] = {
+                    "commit": commit["sha"],
+                    "authored_at": commit["authored_at"],
+                    "subject": commit["subject"],
+                }
+
+    grouped: defaultdict[tuple[str, str, str], list[str]] = defaultdict(list)
+    for model, evidence in first_seen.items():
+        grouped[(evidence["commit"], evidence["authored_at"], evidence["subject"])].append(model)
+
+    groups = [
+        {
+            "commit": commit,
+            "authored_at": authored_at,
+            "subject": subject,
+            "model_count": len(models),
+            "models": sorted(models),
+        }
+        for (commit, authored_at, subject), models in grouped.items()
+    ]
+    groups.sort(key=lambda item: item["authored_at"])
+
+    untraced = sorted(target_set - set(first_seen))
+    return {
+        "available": True,
+        "history_commit_count": len(commits),
+        "traced_model_count": len(first_seen),
+        "untraced_model_count": len(untraced),
+        "untraced_models": untraced,
+        "models": {model: first_seen[model] for model in sorted(first_seen)},
+        "first_seen_commit_groups": groups,
+        "note": (
+            "Read-only git provenance: exact normalized model strings are traced to their first "
+            "appearance in assets/data.js history. First-seen commits are not treated as proof of "
+            "technical correctness and never trigger automatic data repair."
+        ),
+    }
+
+
 def build_public_only_evidence(
     public_rows: list[dict[str, Any]],
     public_only_models: list[str],
     specs: list[dict[str, Any]],
+    git_provenance: dict[str, Any],
 ) -> dict[str, Any]:
     rows_by_model: defaultdict[str, list[tuple[int, dict[str, Any]]]] = defaultdict(list)
     for index, row in enumerate(public_rows, start=1):
@@ -126,6 +241,7 @@ def build_public_only_evidence(
         if model:
             specs_by_model[model].append(spec)
 
+    git_by_model = git_provenance.get("models", {}) if isinstance(git_provenance, dict) else {}
     entries: list[dict[str, Any]] = []
     with_exact_spec: list[str] = []
     without_exact_spec: list[str] = []
@@ -139,16 +255,17 @@ def build_public_only_evidence(
             with_exact_spec.append(model)
         else:
             without_exact_spec.append(model)
-        entries.append(
-            {
-                "model": model,
-                "runtime_row_indices": [index for index, _ in runtime_rows],
-                "runtime_categories": categories,
-                "runtime_names": names,
-                "exact_spec_match_count": len(exact_matches),
-                "exact_spec_matches": [compact_spec_match(spec) for spec in exact_matches],
-            }
-        )
+        entry: dict[str, Any] = {
+            "model": model,
+            "runtime_row_indices": [index for index, _ in runtime_rows],
+            "runtime_categories": categories,
+            "runtime_names": names,
+            "exact_spec_match_count": len(exact_matches),
+            "exact_spec_matches": [compact_spec_match(spec) for spec in exact_matches],
+        }
+        if model in git_by_model:
+            entry["git_first_seen"] = git_by_model[model]
+        entries.append(entry)
 
     return {
         "exact_spec_evidence_model_count": len(with_exact_spec),
@@ -171,20 +288,27 @@ def main() -> int:
     parser.add_argument("--report", default="data_quality_report.json")
     args = parser.parse_args()
 
+    data_js_path = Path(args.data_js)
     source_path = Path(args.source)
     spec_index_path = Path(args.spec_index)
     report_path = Path(args.report)
     source = load_json_object_array(source_path)
     specs = load_json_object_array(spec_index_path)
 
-    public_rows = load_window_array(Path(args.data_js), "PRODUCTS")
+    public_rows = load_window_array(data_js_path, "PRODUCTS")
     public_summary = summarize(public_rows)
     source_models = model_set(source)
     public_models = model_set(public_rows)
 
     public_only_models = sorted(public_models - source_models)
     source_only_models = sorted(source_models - public_models)
-    public_only_evidence = build_public_only_evidence(public_rows, public_only_models, specs)
+    git_provenance = build_git_first_seen_evidence(data_js_path, public_only_models)
+    public_only_evidence = build_public_only_evidence(
+        public_rows,
+        public_only_models,
+        specs,
+        git_provenance,
+    )
     audit = {
         **public_summary,
         "source_total": len(source),
@@ -194,13 +318,14 @@ def main() -> int:
         "public_only_model_count": len(public_only_models),
         "public_only_models": public_only_models,
         "public_only_model_evidence": public_only_evidence,
+        "git_provenance": git_provenance,
         "source_only_model_count": len(source_only_models),
         "source_only_models": source_only_models,
         "note": (
             "Read-only comparison of the customer-facing assets/data.js window.PRODUCTS payload "
             "against products.json. Differences are audit findings only and are not treated as errors "
-            "or repaired automatically. Exact specs_index.json model matches are attached only as "
-            "traceability evidence for runtime-only models."
+            "or repaired automatically. Exact specs_index.json model matches and git first-seen metadata "
+            "are attached only as traceability evidence for runtime-only models."
         ),
     }
 
@@ -227,6 +352,21 @@ def main() -> int:
         "runtime 独有型号中无规格书精确证据: "
         f"{public_only_evidence['no_exact_spec_evidence_model_count']}"
     )
+    if git_provenance.get("available"):
+        print(
+            "runtime 独有型号 git 首次出现可追溯: "
+            f"{git_provenance.get('traced_model_count', 0)}/{len(public_only_models)}"
+        )
+        for group in git_provenance.get("first_seen_commit_groups", []):
+            print(
+                "  ",
+                group["commit"][:12],
+                group["authored_at"],
+                f"{group['model_count']} models",
+                group["subject"],
+            )
+    else:
+        print("runtime 独有型号 git 首次出现追溯: unavailable")
     if public_only_models:
         print("runtime 独有型号（前30项，仅审计）:", public_only_models[:30])
     if source_only_models:
