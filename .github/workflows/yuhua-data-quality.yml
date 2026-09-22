@@ -5,6 +5,7 @@ on:
     paths:
       - 'index.html'
       - 'app.js'
+      - 'assets/data.js'
       - 'assets/pages.js'
       - 'assets/customer-tools.js'
       - 'assets/customer-tools.css'
@@ -14,12 +15,14 @@ on:
       - 'products.json'
       - 'specs_index.json'
       - 'tools/check_product_data.py'
+      - 'tools/audit_public_catalog_runtime.py'
       - '.github/workflows/yuhua-data-quality.yml'
   push:
     branches: [main]
     paths:
       - 'index.html'
       - 'app.js'
+      - 'assets/data.js'
       - 'assets/pages.js'
       - 'assets/customer-tools.js'
       - 'assets/customer-tools.css'
@@ -29,6 +32,7 @@ on:
       - 'products.json'
       - 'specs_index.json'
       - 'tools/check_product_data.py'
+      - 'tools/audit_public_catalog_runtime.py'
       - '.github/workflows/yuhua-data-quality.yml'
 
 permissions:
@@ -236,6 +240,9 @@ jobs:
 
       - name: Check product, spec and detail-page mapping data
         run: python tools/check_product_data.py --json-output data_quality_report.json
+
+      - name: Audit customer-facing runtime catalog data
+        run: python tools/audit_public_catalog_runtime.py --report data_quality_report.json
 
       - name: Enforce unambiguous detail-page mappings
         run: |
