@@ -5,9 +5,13 @@ The homepage renders assets/data.js rather than products.json directly. This
 script makes that public/runtime payload visible in the main data-quality
 artifact without changing, inferring, or repairing any product facts.
 
-Runtime-only models are also cross-referenced against specs_index.json using
-exact normalized model matches only. Those matches are evidence for review,
-not permission to merge, rename, delete, or otherwise repair product data.
+Runtime-only models are cross-referenced against specs_index.json in two
+strictly separated ways:
+1. exact normalized matches against the specification `model` field;
+2. conservative literal-token mentions in existing specification metadata.
+
+Both are audit evidence only. A metadata mention is deliberately weaker than
+an exact model-field match and must never trigger automatic product-data repair.
 """
 from __future__ import annotations
 
@@ -109,6 +113,24 @@ def compact_spec_match(spec: dict[str, Any]) -> dict[str, str]:
     return {field: clean(spec.get(field)) for field in fields if clean(spec.get(field))}
 
 
+def metadata_token_fields(spec: dict[str, Any], model: str) -> list[str]:
+    """Return metadata fields containing the full model token conservatively.
+
+    ASCII letters/numbers immediately before or after the model block the match,
+    preventing short models such as YRE-301 from matching YRE-301D. Punctuation
+    and Chinese text may delimit a model token. This is evidence-only matching.
+    """
+    if not model:
+        return []
+    pattern = re.compile(rf"(?<![A-Z0-9]){re.escape(model)}(?![A-Z0-9])", re.I)
+    matched: list[str] = []
+    for field in ("title", "series", "page", "dl"):
+        value = clean(spec.get(field))
+        if value and pattern.search(value):
+            matched.append(field)
+    return matched
+
+
 def build_public_only_evidence(
     public_rows: list[dict[str, Any]],
     public_only_models: list[str],
@@ -129,16 +151,33 @@ def build_public_only_evidence(
     entries: list[dict[str, Any]] = []
     with_exact_spec: list[str] = []
     without_exact_spec: list[str] = []
+    with_metadata_mentions: list[str] = []
+    without_any_spec_trace: list[str] = []
 
     for model in public_only_models:
         runtime_rows = rows_by_model.get(model, [])
         categories = sorted({clean(row.get("类别")) for _, row in runtime_rows if clean(row.get("类别"))})
         names = sorted({clean(row.get("产品名称")) for _, row in runtime_rows if clean(row.get("产品名称"))})
         exact_matches = specs_by_model.get(model, [])
+
+        metadata_mentions: list[dict[str, Any]] = []
+        for spec in specs:
+            fields = metadata_token_fields(spec, model)
+            if not fields:
+                continue
+            compact = compact_spec_match(spec)
+            compact["matched_fields"] = fields
+            metadata_mentions.append(compact)
+
         if exact_matches:
             with_exact_spec.append(model)
         else:
             without_exact_spec.append(model)
+        if metadata_mentions:
+            with_metadata_mentions.append(model)
+        if not exact_matches and not metadata_mentions:
+            without_any_spec_trace.append(model)
+
         entries.append(
             {
                 "model": model,
@@ -147,6 +186,8 @@ def build_public_only_evidence(
                 "runtime_names": names,
                 "exact_spec_match_count": len(exact_matches),
                 "exact_spec_matches": [compact_spec_match(spec) for spec in exact_matches],
+                "spec_metadata_mention_count": len(metadata_mentions),
+                "spec_metadata_mentions": metadata_mentions,
             }
         )
 
@@ -155,10 +196,15 @@ def build_public_only_evidence(
         "models_with_exact_spec_evidence": with_exact_spec,
         "no_exact_spec_evidence_model_count": len(without_exact_spec),
         "models_without_exact_spec_evidence": without_exact_spec,
+        "spec_metadata_mention_model_count": len(with_metadata_mentions),
+        "models_with_spec_metadata_mentions": with_metadata_mentions,
+        "no_spec_trace_model_count": len(without_any_spec_trace),
+        "models_without_any_spec_trace": without_any_spec_trace,
         "models": entries,
         "matching_rule": (
-            "Only exact normalized matches between runtime 型号 and specs_index.json model are counted. "
-            "No fuzzy/prefix inference is used, and matches are audit evidence only."
+            "Exact evidence requires an exact normalized match between runtime 型号 and specs_index.json model. "
+            "Separately, metadata mentions require the full model token in title/series/page/dl with no adjacent "
+            "ASCII letter or digit. Metadata mentions are weaker traceability clues only; no fuzzy/prefix repair is allowed."
         ),
     }
 
@@ -199,8 +245,8 @@ def main() -> int:
         "note": (
             "Read-only comparison of the customer-facing assets/data.js window.PRODUCTS payload "
             "against products.json. Differences are audit findings only and are not treated as errors "
-            "or repaired automatically. Exact specs_index.json model matches are attached only as "
-            "traceability evidence for runtime-only models."
+            "or repaired automatically. Exact specs_index.json model matches and conservative literal-token "
+            "metadata mentions are attached only as traceability evidence for runtime-only models."
         ),
     }
 
@@ -220,12 +266,16 @@ def main() -> int:
     print(f"runtime 独有型号: {audit['public_only_model_count']}")
     print(f"source 独有型号: {audit['source_only_model_count']}")
     print(
-        "runtime 独有型号中有规格书精确证据: "
+        "runtime 独有型号中有规格书型号字段精确证据: "
         f"{public_only_evidence['exact_spec_evidence_model_count']}"
     )
     print(
-        "runtime 独有型号中无规格书精确证据: "
-        f"{public_only_evidence['no_exact_spec_evidence_model_count']}"
+        "runtime 独有型号中有规格书元数据完整型号提及: "
+        f"{public_only_evidence['spec_metadata_mention_model_count']}"
+    )
+    print(
+        "runtime 独有型号中无任何上述规格书追溯证据: "
+        f"{public_only_evidence['no_spec_trace_model_count']}"
     )
     if public_only_models:
         print("runtime 独有型号（前30项，仅审计）:", public_only_models[:30])
