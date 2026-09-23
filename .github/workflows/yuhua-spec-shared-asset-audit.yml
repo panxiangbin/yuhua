@@ -1,0 +1,66 @@
+name: Yuhua specification shared-asset lifecycle audit
+
+on:
+  pull_request:
+    paths:
+      - 'specs/**'
+      - 'assets/spec-inline-shared/**'
+      - 'tools/audit_spec_shared_assets.py'
+      - '.github/workflows/yuhua-spec-shared-asset-audit.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'specs/**'
+      - 'assets/spec-inline-shared/**'
+      - 'tools/audit_spec_shared_assets.py'
+      - '.github/workflows/yuhua-spec-shared-asset-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit-spec-shared-assets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Audit shared specification assets
+        run: |
+          python tools/audit_spec_shared_assets.py \
+            --json spec_shared_asset_audit.json \
+            --markdown spec_shared_asset_audit.md
+
+      - name: Verify report integrity
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path('spec_shared_asset_audit.json').read_text(encoding='utf-8'))
+          assert report['ok']
+          assert report['tracked_spec_html_count'] > 0
+          assert report['tracked_shared_file_count'] >= 0
+          assert report['shared_reference_count'] >= report['referenced_shared_target_count'] >= 0
+          assert report['unsafe_reference_count'] == 0
+          assert report['missing_reference_count'] == 0
+          assert report['untracked_target_reference_count'] == 0
+          assert report['orphan_shared_file_count'] == 0
+          assert '不会修改规格书、共享图片、技术参数、型号含义、价格或产品数据' in report['policy']
+          print('specification shared-asset lifecycle report: OK')
+          PY
+
+      - name: Upload shared-asset lifecycle audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-spec-shared-asset-audit
+          path: |
+            spec_shared_asset_audit.json
+            spec_shared_asset_audit.md
+          retention-days: 90
