@@ -8,6 +8,7 @@ on:
       - 'tools/audit_spec_html_payloads.py'
       - 'tools/audit_spec_inline_externalization.py'
       - 'tools/audit_top_spec_inline_candidate.py'
+      - 'tools/audit_top_spec_inline_render_equivalence.py'
       - '.github/workflows/yuhua-spec-html-payload-audit.yml'
   push:
     branches: [main]
@@ -17,6 +18,7 @@ on:
       - 'tools/audit_spec_html_payloads.py'
       - 'tools/audit_spec_inline_externalization.py'
       - 'tools/audit_top_spec_inline_candidate.py'
+      - 'tools/audit_top_spec_inline_render_equivalence.py'
       - '.github/workflows/yuhua-spec-html-payload-audit.yml'
   workflow_dispatch:
 
@@ -34,6 +36,9 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
+      - name: Install render-audit dependencies
+        run: python -m pip install --disable-pip-version-check --quiet Pillow==11.3.0 selenium==4.35.0
 
       - name: Audit indexed specification HTML payloads
         run: |
@@ -53,6 +58,14 @@ jobs:
             --feasibility-json spec_inline_externalization_audit.json \
             --json spec_inline_top_candidate_context_audit.json \
             --markdown spec_inline_top_candidate_context_audit.md
+
+      - name: Browser-check largest candidate render equivalence
+        run: |
+          python tools/audit_top_spec_inline_render_equivalence.py \
+            --context-json spec_inline_top_candidate_context_audit.json \
+            --json spec_inline_top_candidate_render_equivalence.json \
+            --markdown spec_inline_top_candidate_render_equivalence.md \
+            --screenshots-dir "$RUNNER_TEMP/yuhua-spec-render-equivalence-screenshots"
 
       - name: Verify report integrity
         run: |
@@ -100,7 +113,21 @@ jobs:
           assert top['projected_combined_bytes_with_one_shared_file'] < top['current_affected_html_bytes']
           assert top['projected_net_bytes_reduction'] > 0
           assert '不证明各页面语义用途一致' in top['policy']
-          print('specification HTML payload, feasibility, and top-candidate context reports: OK')
+
+          render = json.loads(Path('spec_inline_top_candidate_render_equivalence.json').read_text(encoding='utf-8'))
+          assert render['selected_candidate_sha256'] == top['selected_candidate_sha256']
+          assert render['decoded_image_sha256'] == top['decoded_image_sha256']
+          assert render['candidate_shared_path'] == top['candidate_shared_path']
+          assert render['occurrence_count'] == top['occurrence_count']
+          assert render['viewport_count'] == 2
+          assert render['comparison_case_count'] == render['occurrence_count'] * render['viewport_count']
+          assert render['all_geometry_equivalent']
+          assert render['all_element_screenshots_pixel_identical']
+          assert all(case['geometry_identical_with_tolerance'] for case in render['cases'])
+          assert all(case['pixel_identical'] for case in render['cases'])
+          assert all(case['same_dimensions'] for case in render['cases'])
+          assert '不会修改任何受版本控制的规格书' in render['policy']
+          print('specification HTML payload, feasibility, context, and browser render-equivalence reports: OK')
           PY
 
       - name: Upload specification HTML payload audit
@@ -114,4 +141,7 @@ jobs:
             spec_inline_externalization_audit.md
             spec_inline_top_candidate_context_audit.json
             spec_inline_top_candidate_context_audit.md
+            spec_inline_top_candidate_render_equivalence.json
+            spec_inline_top_candidate_render_equivalence.md
+            ${{ runner.temp }}/yuhua-spec-render-equivalence-screenshots/
           retention-days: 90
