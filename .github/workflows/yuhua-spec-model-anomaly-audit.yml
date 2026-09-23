@@ -33,6 +33,44 @@ jobs:
       - name: Compile audit scripts
         run: python -m py_compile tools/check_product_data.py tools/audit_suspicious_spec_models.py
 
+      - name: Verify exact-model evidence preserves internal whitespace
+        run: |
+          python - <<'PY'
+          import sys
+          sys.path.insert(0, 'tools')
+          from audit_suspicious_spec_models import audit
+
+          products = [
+              {'型号': 'AB C', '类别': 'test'},
+              {'型号': 'SHZ-95B', '类别': 'test'},
+          ]
+          specs = [
+              {'model': 'ABC.DOCX', 'title': 'ABC manual', 'series': '', 'page': 'a', 'dl': 'a'},
+              {'model': 'AB C.DOCX', 'title': 'AB C manual', 'series': '', 'page': 'b', 'dl': 'b'},
+              {'model': 'ABC', 'title': 'existing ABC', 'series': '', 'page': 'c', 'dl': 'c'},
+              {'model': 'SHZ-95B.DOCX', 'title': 'SHZ-95B manual', 'series': '', 'page': 'd', 'dl': 'd'},
+          ]
+          report = audit(products, specs)
+          rows = {row['model']: row for row in report['all_suspicious_records']}
+
+          whitespace_product = rows['ABC.DOCX']
+          assert whitespace_product['exact_product_model_matches'] == []
+          assert whitespace_product['whitespace_normalized_only_product_model_matches']
+          assert whitespace_product['fix_readiness'] == 'insufficient_cross_source_evidence'
+
+          whitespace_spec = rows['AB C.DOCX']
+          assert whitespace_spec['exact_product_model_matches']
+          assert whitespace_spec['existing_spec_model_matches'] == []
+          assert whitespace_spec['whitespace_normalized_only_existing_spec_model_matches']
+          assert whitespace_spec['fix_readiness'] == 'whitespace_normalized_existing_spec_review'
+
+          literal_exact = rows['SHZ-95B.DOCX']
+          assert literal_exact['exact_product_model_matches']
+          assert literal_exact['whitespace_normalized_only_product_model_matches'] == []
+          assert literal_exact['fix_readiness'] == 'supported_correction_candidate'
+          print('Literal exact-model regression guard: OK')
+          PY
+
       - name: Classify suspicious specification models
         run: |
           python tools/audit_suspicious_spec_models.py \
@@ -58,11 +96,14 @@ jobs:
 
           assert summary['supported_correction_candidate_count'] == len(groups['supported_correction_candidates'])
           assert summary['existing_spec_model_collision_count'] == len(groups['existing_spec_model_collision_risk'])
+          assert summary['whitespace_normalized_existing_spec_review_count'] == len(groups['whitespace_normalized_existing_spec_review'])
+          assert summary['suffix_candidate_whitespace_normalized_product_match_count'] == len(groups['suffix_candidates_with_whitespace_normalized_product_match'])
           assert summary['other_unresolved_suffix_count'] == len(groups['other_unresolved_suffix_candidates'])
 
           # A supported correction candidate must be backed by both the title and
-          # an existing product model, must not be a capacity-only token, and must
-          # not collide with an already-clean specification model.
+          # a literal existing product model, must not be a capacity-only token,
+          # and must not collide with an existing literal or whitespace-only
+          # specification model spelling.
           for row in groups['supported_correction_candidates']:
               assert row['category'] == 'filename_extension_suffix'
               assert row['candidate_in_title'] is True
@@ -70,17 +111,24 @@ jobs:
               assert row['candidate_itself_suspicious'] is False
               assert row['exact_product_model_matches']
               assert row['existing_spec_model_matches'] == []
+              assert row['whitespace_normalized_only_existing_spec_model_matches'] == []
               assert row['fix_readiness'] == 'supported_correction_candidate'
 
           for row in groups['existing_spec_model_collision_risk']:
               assert row['existing_spec_model_matches']
               assert row['fix_readiness'] == 'existing_spec_model_collision'
 
+          for row in groups['whitespace_normalized_existing_spec_review']:
+              assert row['existing_spec_model_matches'] == []
+              assert row['whitespace_normalized_only_existing_spec_model_matches']
+              assert row['fix_readiness'] == 'whitespace_normalized_existing_spec_review'
+
           # Every .DOC/.DOCX suffix anomaly must land in exactly one readiness bucket.
           readiness = summary['fix_readiness_counts']
           suffix_partition = (
               readiness.get('supported_correction_candidate', 0)
               + readiness.get('existing_spec_model_collision', 0)
+              + readiness.get('whitespace_normalized_existing_spec_review', 0)
               + readiness.get('capacity_only_manual_review', 0)
               + readiness.get('candidate_still_suspicious', 0)
               + readiness.get('insufficient_cross_source_evidence', 0)
