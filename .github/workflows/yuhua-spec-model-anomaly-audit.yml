@@ -5,16 +5,22 @@ on:
     paths:
       - 'products.json'
       - 'specs_index.json'
+      - 'specs/**'
+      - 'downloads/specs/**'
       - 'tools/check_product_data.py'
       - 'tools/audit_suspicious_spec_models.py'
+      - 'tools/audit_spec_model_evidence_closure.py'
       - '.github/workflows/yuhua-spec-model-anomaly-audit.yml'
   push:
     branches: [main]
     paths:
       - 'products.json'
       - 'specs_index.json'
+      - 'specs/**'
+      - 'downloads/specs/**'
       - 'tools/check_product_data.py'
       - 'tools/audit_suspicious_spec_models.py'
+      - 'tools/audit_spec_model_evidence_closure.py'
       - '.github/workflows/yuhua-spec-model-anomaly-audit.yml'
 
 permissions:
@@ -31,7 +37,7 @@ jobs:
           python-version: '3.12'
 
       - name: Compile audit scripts
-        run: python -m py_compile tools/check_product_data.py tools/audit_suspicious_spec_models.py
+        run: python -m py_compile tools/check_product_data.py tools/audit_suspicious_spec_models.py tools/audit_spec_model_evidence_closure.py
 
       - name: Verify exact-model evidence preserves internal whitespace
         run: |
@@ -75,6 +81,11 @@ jobs:
         run: |
           python tools/audit_suspicious_spec_models.py \
             --json-output spec_model_anomaly_report.json
+
+      - name: Verify page and download evidence for supported suffix candidates
+        run: |
+          python tools/audit_spec_model_evidence_closure.py \
+            --json-output spec_model_evidence_closure_report.json
 
       - name: Verify report is read-only and internally consistent
         run: |
@@ -137,11 +148,47 @@ jobs:
           print('Specification-model anomaly report: OK')
           PY
 
-      - name: Upload anomaly audit report
+      - name: Verify evidence-closure report is conservative and complete
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          anomaly = json.loads(Path('spec_model_anomaly_report.json').read_text(encoding='utf-8'))
+          closure = json.loads(Path('spec_model_evidence_closure_report.json').read_text(encoding='utf-8'))
+          summary = closure['summary']
+          records = closure['all_supported_candidate_records']
+
+          assert closure['policy']['read_only'] is True
+          assert closure['policy']['auto_fix_count'] == 0
+          assert closure['policy']['complete_evidence_does_not_authorize_source_rewrite'] is True
+          assert summary['source_supported_correction_candidate_count'] == anomaly['summary']['supported_correction_candidate_count']
+          assert summary['source_supported_correction_candidate_count'] == len(records)
+          assert summary['evidence_closure_complete_count'] + summary['evidence_gap_count'] == len(records)
+          assert len(closure['review_sample']) <= 3
+
+          for row in records:
+              assert row['source_fix_readiness'] == 'supported_correction_candidate'
+              assert row['review_candidate']
+              assert row['exact_product_model_matches']
+              if row['evidence_closure_complete_for_review']:
+                  assert row['failed_checks'] == []
+                  assert row['page_read_error'] == ''
+                  assert all(row['evidence_checks'].values())
+
+          print('Specification-model evidence closure report: OK')
+          PY
+
+      - name: Confirm audits did not modify source facts or source documents
+        run: git diff --exit-code -- products.json specs_index.json specs downloads/specs
+
+      - name: Upload anomaly audit reports
         uses: actions/upload-artifact@v4
         with:
           name: yuhua-spec-model-anomaly-report
-          path: spec_model_anomaly_report.json
+          path: |
+            spec_model_anomaly_report.json
+            spec_model_evidence_closure_report.json
           if-no-files-found: error
           retention-days: 90
 
