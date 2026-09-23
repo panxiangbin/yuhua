@@ -1,0 +1,82 @@
+name: Yuhua public homepage network audit
+
+on:
+  pull_request:
+    paths:
+      - 'tools/audit_public_homepage_network.py'
+      - '.github/workflows/yuhua-public-homepage-network-audit.yml'
+  workflow_run:
+    workflows:
+      - 'pages build and deployment'
+    types:
+      - completed
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  self-test:
+    name: Network audit self-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout deployed commit
+        if: github.event_name == 'workflow_run'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Checkout current revision
+        if: github.event_name != 'workflow_run'
+        uses: actions/checkout@v4
+
+      - name: Compile audit tool
+        run: python3 -m py_compile tools/audit_public_homepage_network.py
+
+      - name: Run deterministic self-test
+        run: python3 tools/audit_public_homepage_network.py --self-test
+
+  live-audit:
+    name: Measure deployed homepage responses
+    if: >-
+      (github.event_name == 'workflow_run' &&
+       github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_branch == 'main') ||
+      github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout deployed commit
+        if: github.event_name == 'workflow_run'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Checkout main for manual run
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Measure public homepage and direct local dependencies
+        run: >-
+          python3 tools/audit_public_homepage_network.py
+          --base-url https://panxiangbin.github.io/yuhua/
+          --index index.html
+          --output-dir reports/public_homepage_network
+          --timeout 30
+
+      - name: Show concise report
+        if: always()
+        run: |
+          if [ -f reports/public_homepage_network/public_homepage_network_report.md ]; then
+            cat reports/public_homepage_network/public_homepage_network_report.md
+          fi
+
+      - name: Upload network audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-public-homepage-network-audit-${{ github.run_id }}
+          path: reports/public_homepage_network/
+          if-no-files-found: error
+          retention-days: 90
