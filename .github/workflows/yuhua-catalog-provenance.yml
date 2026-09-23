@@ -6,9 +6,11 @@ on:
       - 'assets/data.js'
       - 'products.json'
       - 'specs_index.json'
+      - 'md_specs.json'
       - 'assets/pages.js'
       - 'tools/check_product_data.py'
       - 'tools/audit_public_catalog_runtime.py'
+      - 'tools/audit_runtime_md_specs_alignment.py'
       - 'tools/audit_catalog_git_provenance.py'
       - '.github/workflows/yuhua-catalog-provenance.yml'
   push:
@@ -17,9 +19,11 @@ on:
       - 'assets/data.js'
       - 'products.json'
       - 'specs_index.json'
+      - 'md_specs.json'
       - 'assets/pages.js'
       - 'tools/check_product_data.py'
       - 'tools/audit_public_catalog_runtime.py'
+      - 'tools/audit_runtime_md_specs_alignment.py'
       - 'tools/audit_catalog_git_provenance.py'
       - '.github/workflows/yuhua-catalog-provenance.yml'
 
@@ -47,18 +51,27 @@ jobs:
       - name: Audit customer-facing runtime catalog data
         run: python tools/audit_public_catalog_runtime.py --report data_quality_report.json
 
+      - name: Compare runtime-only models with current md_specs values
+        run: python tools/audit_runtime_md_specs_alignment.py --report data_quality_report.json
+
       - name: Trace runtime-only models and same-commit context through Git history
         run: python tools/audit_catalog_git_provenance.py --report data_quality_report.json
 
-      - name: Verify provenance coverage and context accounting
+      - name: Verify provenance coverage, current-value audit, and context accounting
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
 
           report = json.loads(Path('data_quality_report.json').read_text(encoding='utf-8'))
+          alignment = report['public_catalog_md_specs_alignment']
           provenance = report['public_catalog_git_provenance']
           context = provenance['introduction_context']
+
+          assert alignment['status'] == 'ok'
+          assert alignment['compared_model_count'] == alignment['runtime_only_models_with_exact_md_specs_key_count']
+          assert alignment['missing_runtime_model_count'] == 0, repr(alignment['missing_runtime_models'])
+
           assert provenance['status'] == 'ok'
           assert provenance['runtime_history_commit_count'] >= 1
           assert provenance['source_history_commit_count'] >= 1
@@ -75,8 +88,9 @@ jobs:
           )
           assert accounted == provenance['resolved_first_seen_model_count']
           print(
-              'Runtime-only model provenance/context: OK '
-              f"({provenance['resolved_first_seen_model_count']} models; "
+              'Runtime-only audits: OK '
+              f"({alignment['compared_model_count']} current md_specs comparisons; "
+              f"{provenance['resolved_first_seen_model_count']} provenance-resolved models; "
               f"{context['same_commit_context_model_count']} with same-commit context)"
           )
           PY
@@ -87,4 +101,4 @@ jobs:
           name: yuhua-data-quality-provenance-report
           path: data_quality_report.json
 
-      # Reporting only: Git age/provenance/context is never treated as proof of a product fact.
+      # Reporting only: Git age/provenance/context and current-value differences are never treated as proof of a product fact.
