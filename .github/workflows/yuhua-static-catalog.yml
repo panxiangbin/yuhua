@@ -64,6 +64,12 @@ jobs:
               assert actual == value, f'data-{key} is stale: page={actual}, public-runtime={value}'
               assert f'<b>{value}</b>' in html, f'visible count {value} is missing from catalog.html'
 
+          index_hero_count = re.search(r'<b id="stat-models">(\d+)\+</b>\s*<span>产品目录记录</span>', index_html)
+          assert index_hero_count, 'homepage hero must label the counter as product catalog records'
+          assert int(index_hero_count.group(1)) == len(source_products), (
+              f'homepage hero fallback is stale: page={index_hero_count.group(1)}, source={len(source_products)}'
+          )
+
           index_product_count = re.search(r'<b id="totalCount">(\d+)</b>', index_html)
           assert index_product_count, 'static totalCount fallback is missing from index.html'
           assert int(index_product_count.group(1)) == len(source_products), (
