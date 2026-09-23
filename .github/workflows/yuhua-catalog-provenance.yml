@@ -47,10 +47,10 @@ jobs:
       - name: Audit customer-facing runtime catalog data
         run: python tools/audit_public_catalog_runtime.py --report data_quality_report.json
 
-      - name: Trace runtime-only models through Git history
+      - name: Trace runtime-only models and same-commit context through Git history
         run: python tools/audit_catalog_git_provenance.py --report data_quality_report.json
 
-      - name: Verify provenance coverage
+      - name: Verify provenance coverage and context accounting
         run: |
           python - <<'PY'
           import json
@@ -58,6 +58,7 @@ jobs:
 
           report = json.loads(Path('data_quality_report.json').read_text(encoding='utf-8'))
           provenance = report['public_catalog_git_provenance']
+          context = provenance['introduction_context']
           assert provenance['status'] == 'ok'
           assert provenance['runtime_history_commit_count'] >= 1
           assert provenance['source_history_commit_count'] >= 1
@@ -65,10 +66,18 @@ jobs:
               'Every current runtime-only model must be traceable to a checked-in assets/data.js version: '
               + repr(provenance['unresolved_first_seen_models'])
           )
+          assert len(context['models']) == provenance['resolved_first_seen_model_count']
+          accounted = (
+              context['same_commit_structured_key_model_count']
+              + context['same_commit_strict_text_mention_model_count']
+              + context['same_commit_documents_only_model_count']
+              + context['git_provenance_only_model_count']
+          )
+          assert accounted == provenance['resolved_first_seen_model_count']
           print(
-              'Runtime-only model Git provenance: OK '
-              f"({provenance['resolved_first_seen_model_count']} models resolved across "
-              f"{provenance['runtime_history_commit_count']} assets/data.js commits)"
+              'Runtime-only model provenance/context: OK '
+              f"({provenance['resolved_first_seen_model_count']} models; "
+              f"{context['same_commit_context_model_count']} with same-commit context)"
           )
           PY
 
@@ -78,4 +87,4 @@ jobs:
           name: yuhua-data-quality-provenance-report
           path: data_quality_report.json
 
-      # Reporting only: Git age/provenance is never treated as proof of a product fact.
+      # Reporting only: Git age/provenance/context is never treated as proof of a product fact.
