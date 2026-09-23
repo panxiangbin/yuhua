@@ -68,7 +68,17 @@ def sha256_bytes(data: bytes) -> str:
 
 
 def parse_name_status(base_ref: str) -> list[dict]:
-    out = run_git("diff", "--name-status", "-M", f"{base_ref}..HEAD", "--")
+    # Disable Git's default C-style quoting so non-ASCII specification paths
+    # (for example specs/反应釜/...) are audited as their real repository paths.
+    out = run_git(
+        "-c",
+        "core.quotepath=false",
+        "diff",
+        "--name-status",
+        "-M",
+        f"{base_ref}..HEAD",
+        "--",
+    )
     rows: list[dict] = []
     for raw in out.splitlines():
         if not raw.strip():
