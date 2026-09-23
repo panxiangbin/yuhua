@@ -72,6 +72,22 @@ jobs:
           assert alignment['compared_model_count'] == alignment['runtime_only_models_with_exact_md_specs_key_count']
           assert alignment['missing_runtime_model_count'] == 0, repr(alignment['missing_runtime_models'])
 
+          difference_models = set(alignment['models_with_any_shared_component_difference'])
+          classified_difference_models = set().union(
+              alignment['models_with_key_component_difference'],
+              alignment['models_with_selling_component_difference'],
+              alignment['models_with_specs_runtime_only_fields'],
+              alignment['models_with_specs_md_specs_only_fields'],
+              alignment['models_with_specs_shared_value_mismatch'],
+          )
+          assert classified_difference_models == difference_models, (
+              'Every shared-component difference must be covered by at least one structural classification: '
+              + repr(sorted(difference_models ^ classified_difference_models))
+          )
+          assert set(alignment['models_with_product_name_only_runtime_addition']).issubset(
+              set(alignment['models_with_specs_runtime_only_fields'])
+          )
+
           assert provenance['status'] == 'ok'
           assert provenance['runtime_history_commit_count'] >= 1
           assert provenance['source_history_commit_count'] >= 1
@@ -90,6 +106,7 @@ jobs:
           print(
               'Runtime-only audits: OK '
               f"({alignment['compared_model_count']} current md_specs comparisons; "
+              f"{alignment['models_with_any_shared_component_difference_count']} with classified differences; "
               f"{provenance['resolved_first_seen_model_count']} provenance-resolved models; "
               f"{context['same_commit_context_model_count']} with same-commit context)"
           )
