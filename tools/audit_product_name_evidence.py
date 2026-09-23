@@ -2,9 +2,9 @@
 """Read-only audit for missing product names and existing evidence.
 
 This script never writes product facts. It explains how many rows with an empty
-`产品名称` still have a safe category fallback in the current UI, and which rows
-have exact-model matches in the existing specification index that can be used as
-manual evidence in a future review.
+`产品名称` still have a safe category fallback in the current UI, which rows have
+literal same-model matches in the existing specification index, and which rows
+only have separator-normalized model candidates that require manual review.
 """
 from __future__ import annotations
 
@@ -25,36 +25,57 @@ def clean(value: Any) -> str:
     return str(value or "").strip()
 
 
-def norm_model(value: Any) -> str:
-    """Normalize common model separators for evidence matching only.
+def exact_model_key(value: Any) -> str:
+    """Case-insensitive literal model key.
 
-    This mirrors the site's tolerant model search. A match is evidence for
-    manual review, not permission to rewrite product facts automatically.
+    Leading/trailing whitespace and letter case are ignored, but punctuation,
+    separators and internal whitespace are preserved. This is the safe key used
+    when the report labels a specification match as exact same-model evidence.
     """
-    return re.sub(r"[^A-Z0-9]+", "", clean(value).upper())
+    return clean(value).upper()
+
+
+def normalized_model_key(value: Any) -> str:
+    """Loose model key used only to surface manual-review candidates.
+
+    Separator/punctuation removal mirrors tolerant site search, but a match on
+    this key alone is never labelled exact evidence and never authorizes a data
+    rewrite. For example, DLSB-5/30 and DLSB-5-30 remain distinct models in the
+    exact-evidence classification.
+    """
+    return re.sub(r"[^A-Z0-9]+", "", exact_model_key(value))
 
 
 def build_report(products: list[dict[str, Any]], specs: list[dict[str, Any]]) -> dict[str, Any]:
-    specs_by_model: defaultdict[str, list[dict[str, str]]] = defaultdict(list)
+    specs_by_exact_model: defaultdict[str, list[dict[str, str]]] = defaultdict(list)
+    specs_by_normalized_model: defaultdict[str, list[dict[str, str]]] = defaultdict(list)
+
     for row, spec in enumerate(specs, start=1):
         model = clean(spec.get("model"))
-        key = norm_model(model)
-        if not key:
+        exact_key = exact_model_key(model)
+        normalized_key = normalized_model_key(model)
+        if not exact_key:
             continue
-        specs_by_model[key].append({
+
+        item = {
             "row": row,
             "model": model,
             "title": clean(spec.get("title")),
             "page": clean(spec.get("page")),
             "download": clean(spec.get("dl")),
-        })
+        }
+        specs_by_exact_model[exact_key].append(item)
+        if normalized_key:
+            specs_by_normalized_model[normalized_key].append(item)
 
     empty_name_rows: list[int] = []
     category_fallback_rows: list[int] = []
     missing_effective_name_rows: list[int] = []
     empty_model_and_name_rows: list[int] = []
-    evidence_rows: list[dict[str, Any]] = []
-    no_evidence_rows: list[dict[str, Any]] = []
+    exact_evidence_rows: list[dict[str, Any]] = []
+    normalized_only_candidate_rows: list[dict[str, Any]] = []
+    no_candidate_rows: list[dict[str, Any]] = []
+    without_exact_rows: list[dict[str, Any]] = []
     gaps_by_category: Counter[str] = Counter()
 
     for row, product in enumerate(products, start=1):
@@ -77,22 +98,53 @@ def build_report(products: list[dict[str, Any]], specs: list[dict[str, Any]]) ->
             empty_model_and_name_rows.append(row)
             continue
 
-        matches = specs_by_model.get(norm_model(model), [])
-        if matches:
-            unique_titles = sorted({item["title"] for item in matches if item["title"]})
-            evidence_rows.append({
+        exact_matches = specs_by_exact_model.get(exact_model_key(model), [])
+        if exact_matches:
+            unique_titles = sorted({item["title"] for item in exact_matches if item["title"]})
+            exact_evidence_rows.append({
                 "product_row": row,
                 "product_model": model,
                 "product_category": category,
-                "spec_match_count": len(matches),
+                "spec_match_count": len(exact_matches),
+                "spec_models": sorted({item["model"] for item in exact_matches if item["model"]}),
                 "spec_titles": unique_titles,
-                "spec_rows": [item["row"] for item in matches],
+                "spec_rows": [item["row"] for item in exact_matches],
+            })
+            continue
+
+        normalized_matches = specs_by_normalized_model.get(normalized_model_key(model), [])
+        without_exact_item = {
+            "product_row": row,
+            "product_model": model,
+            "product_category": category,
+        }
+
+        if normalized_matches:
+            candidate_models = sorted({item["model"] for item in normalized_matches if item["model"]})
+            unique_titles = sorted({item["title"] for item in normalized_matches if item["title"]})
+            candidate_item = {
+                **without_exact_item,
+                "candidate_match_count": len(normalized_matches),
+                "candidate_models": candidate_models,
+                "candidate_titles": unique_titles,
+                "candidate_spec_rows": [item["row"] for item in normalized_matches],
+                "reason": (
+                    "Model strings match only after removing punctuation/separators; "
+                    "manual review is required before treating them as the same model."
+                ),
+            }
+            normalized_only_candidate_rows.append(candidate_item)
+            without_exact_rows.append({
+                **without_exact_item,
+                "classification": "normalized_only_candidate",
+                "candidate_models": candidate_models,
             })
         else:
-            no_evidence_rows.append({
-                "product_row": row,
-                "product_model": model,
-                "product_category": category,
+            no_candidate_rows.append(without_exact_item)
+            without_exact_rows.append({
+                **without_exact_item,
+                "classification": "no_spec_candidate",
+                "candidate_models": [],
             })
 
     return {
@@ -102,19 +154,25 @@ def build_report(products: list[dict[str, Any]], specs: list[dict[str, Any]]) ->
             "category_fallback_count": len(category_fallback_rows),
             "missing_effective_display_name_count": len(missing_effective_name_rows),
             "empty_model_and_name_count": len(empty_model_and_name_rows),
-            "empty_name_with_exact_spec_evidence_count": len(evidence_rows),
-            "empty_name_without_exact_spec_evidence_count": len(no_evidence_rows),
+            "empty_name_with_exact_spec_evidence_count": len(exact_evidence_rows),
+            "empty_name_without_exact_spec_evidence_count": len(without_exact_rows),
+            "empty_name_with_normalized_only_spec_candidate_count": len(normalized_only_candidate_rows),
+            "empty_name_without_any_spec_candidate_count": len(no_candidate_rows),
         },
         "name_gap_by_category": dict(gaps_by_category.most_common()),
         "empty_product_name_rows": empty_name_rows,
         "category_fallback_rows": category_fallback_rows,
         "missing_effective_display_name_rows": missing_effective_name_rows,
         "empty_model_and_name_rows": empty_model_and_name_rows,
-        "exact_spec_evidence": evidence_rows,
-        "without_exact_spec_evidence": no_evidence_rows,
+        "exact_spec_evidence": exact_evidence_rows,
+        "normalized_only_spec_candidates": normalized_only_candidate_rows,
+        "without_exact_spec_evidence": without_exact_rows,
+        "without_any_spec_candidate": no_candidate_rows,
         "notes": [
             "Category fallback reflects the current catalogue UI behavior when 产品名称 is empty.",
-            "Exact spec matches are evidence for manual review only; specification titles are not automatically treated as product names.",
+            "Exact same-model evidence ignores only surrounding whitespace and letter case; punctuation, separators and internal whitespace remain significant.",
+            "Separator-normalized matches are manual-review candidates only and are never labelled exact evidence.",
+            "Specification titles are evidence for manual review only; they are not automatically treated as product names.",
             "No source product, model, parameter, price, specification text, or mapping is modified by this audit.",
         ],
     }
@@ -128,8 +186,12 @@ def print_human(report: dict[str, Any]) -> None:
     print(f"当前前台可用类别名安全兜底: {s['category_fallback_count']}")
     print(f"连类别名也没有，前台可能真正缺显示名称: {s['missing_effective_display_name_count']}")
     print(f"型号和产品名称同时为空: {s['empty_model_and_name_count']}")
-    print(f"空名称且存在精确型号规格书证据: {s['empty_name_with_exact_spec_evidence_count']}")
-    print(f"空名称且暂无精确型号规格书证据: {s['empty_name_without_exact_spec_evidence_count']}")
+    print(f"空名称且存在字面精确型号规格书证据: {s['empty_name_with_exact_spec_evidence_count']}")
+    print(
+        "空名称且只有分隔符归一化候选（仅供人工复核）: "
+        f"{s['empty_name_with_normalized_only_spec_candidate_count']}"
+    )
+    print(f"空名称且没有任何规格书候选: {s['empty_name_without_any_spec_candidate_count']}")
 
     if report["name_gap_by_category"]:
         print("\n空产品名称按类别分布:")
@@ -137,12 +199,21 @@ def print_human(report: dict[str, Any]) -> None:
             print(f"  {category}: {count}")
 
     if report["exact_spec_evidence"]:
-        print("\n可供人工核对的精确型号规格书证据（前30条，不自动写回）:")
+        print("\n可供人工核对的字面精确型号规格书证据（前30条，不自动写回）:")
         for item in report["exact_spec_evidence"][:30]:
             titles = " | ".join(item["spec_titles"][:4]) or "（规格书标题为空）"
             print(
                 f"  product#{item['product_row']} {item['product_model']} "
                 f"[{item['product_category']}] -> {item['spec_match_count']}份: {titles}"
+            )
+
+    if report["normalized_only_spec_candidates"]:
+        print("\n仅分隔符归一化后相同的候选（前30条，禁止自动等同）:")
+        for item in report["normalized_only_spec_candidates"][:30]:
+            models = " | ".join(item["candidate_models"][:6]) or "（候选型号为空）"
+            print(
+                f"  product#{item['product_row']} {item['product_model']} "
+                f"[{item['product_category']}] -> 候选写法: {models}"
             )
 
 
