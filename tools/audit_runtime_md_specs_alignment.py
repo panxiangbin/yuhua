@@ -9,7 +9,9 @@ set and as exact normalized top-level keys in ``md_specs.json``.
 The comparison is intentionally narrow and reporting-only. It checks current
 values for the directly shared structures ``key``, ``specs`` and ``selling``
 and, separately, same-named top-level fields that also occur inside ``specs``.
-Differences are audit findings, never instructions to rewrite product facts.
+For ``specs`` differences it also classifies whether fields exist only on one
+side or whether the same field has conflicting values. Differences are audit
+findings, never instructions to rewrite product facts.
 """
 from __future__ import annotations
 
@@ -70,6 +72,39 @@ def compact_diff(expected: Any, actual: Any) -> dict[str, Any]:
     }
 
 
+def dict_field_diff(expected: dict[str, Any], actual: dict[str, Any]) -> dict[str, Any]:
+    """Describe dict differences without assigning authority to either side."""
+    expected_keys = set(expected)
+    actual_keys = set(actual)
+    only_md_specs = sorted(expected_keys - actual_keys)
+    only_runtime = sorted(actual_keys - expected_keys)
+    shared_value_mismatches = []
+    for field in sorted(expected_keys & actual_keys):
+        if expected[field] != actual[field]:
+            shared_value_mismatches.append({
+                "field": field,
+                **compact_diff(expected[field], actual[field]),
+            })
+
+    kinds = []
+    if only_runtime:
+        kinds.append("runtime_only_fields")
+    if only_md_specs:
+        kinds.append("md_specs_only_fields")
+    if shared_value_mismatches:
+        kinds.append("shared_value_mismatch")
+
+    return {
+        "kind": "+".join(kinds) if kinds else "exact",
+        "runtime_only_field_count": len(only_runtime),
+        "runtime_only_fields": only_runtime,
+        "md_specs_only_field_count": len(only_md_specs),
+        "md_specs_only_fields": only_md_specs,
+        "shared_value_mismatch_count": len(shared_value_mismatches),
+        "shared_value_mismatches": shared_value_mismatches,
+    }
+
+
 def compare_row(row: dict[str, Any], md_entry: dict[str, Any]) -> dict[str, Any]:
     runtime_key = normalized(row.get("key"))
     md_key = normalized(md_entry.get("key"))
@@ -90,6 +125,8 @@ def compare_row(row: dict[str, Any], md_entry: dict[str, Any]) -> dict[str, Any]
         component_diffs["specs"] = compact_diff(md_specs, runtime_specs)
     if not component_equal["selling"]:
         component_diffs["selling"] = compact_diff(md_selling, runtime_selling)
+
+    specs_field_diff = dict_field_diff(md_specs, runtime_specs)
 
     same_named_fields = []
     same_named_mismatches = []
@@ -113,6 +150,7 @@ def compare_row(row: dict[str, Any], md_entry: dict[str, Any]) -> dict[str, Any]
         "component_equal": component_equal,
         "all_shared_components_exact": all(component_equal.values()),
         "component_diffs": component_diffs,
+        "specs_field_diff": specs_field_diff,
         "same_named_top_level_spec_field_count": len(same_named_fields),
         "same_named_top_level_spec_fields": same_named_fields,
         "same_named_top_level_spec_mismatch_count": len(same_named_mismatches),
@@ -157,6 +195,12 @@ def build_alignment(
     specs_exact_models = []
     selling_exact_models = []
     key_exact_models = []
+    models_with_key_component_difference = []
+    models_with_selling_component_difference = []
+    models_with_specs_runtime_only_fields = []
+    models_with_specs_md_specs_only_fields = []
+    models_with_specs_shared_value_mismatch = []
+    models_with_product_name_only_runtime_addition = []
 
     for model in exact_md_targets:
         raw_md_model, md_entry = md_by_model[model]
@@ -194,6 +238,27 @@ def build_alignment(
             models_with_any_component_difference.append(model)
         if any(item["same_named_top_level_spec_mismatch_count"] for item in comparisons):
             models_with_same_named_top_level_mismatch.append(model)
+        if any(not item["component_equal"]["key"] for item in comparisons):
+            models_with_key_component_difference.append(model)
+        if any(not item["component_equal"]["selling"] for item in comparisons):
+            models_with_selling_component_difference.append(model)
+        if any(item["specs_field_diff"]["runtime_only_field_count"] for item in comparisons):
+            models_with_specs_runtime_only_fields.append(model)
+        if any(item["specs_field_diff"]["md_specs_only_field_count"] for item in comparisons):
+            models_with_specs_md_specs_only_fields.append(model)
+        if any(item["specs_field_diff"]["shared_value_mismatch_count"] for item in comparisons):
+            models_with_specs_shared_value_mismatch.append(model)
+
+        if single:
+            specs_diff = single["specs_field_diff"]
+            if (
+                single["component_equal"]["key"]
+                and single["component_equal"]["selling"]
+                and specs_diff["runtime_only_fields"] == ["产品名称"]
+                and specs_diff["md_specs_only_field_count"] == 0
+                and specs_diff["shared_value_mismatch_count"] == 0
+            ):
+                models_with_product_name_only_runtime_addition.append(model)
 
         rows.append({
             "model": model,
@@ -224,15 +289,29 @@ def build_alignment(
         "models_with_any_shared_component_difference": models_with_any_component_difference,
         "models_with_same_named_top_level_spec_mismatch_count": len(models_with_same_named_top_level_mismatch),
         "models_with_same_named_top_level_spec_mismatch": models_with_same_named_top_level_mismatch,
+        "models_with_key_component_difference_count": len(models_with_key_component_difference),
+        "models_with_key_component_difference": models_with_key_component_difference,
+        "models_with_selling_component_difference_count": len(models_with_selling_component_difference),
+        "models_with_selling_component_difference": models_with_selling_component_difference,
+        "models_with_specs_runtime_only_fields_count": len(models_with_specs_runtime_only_fields),
+        "models_with_specs_runtime_only_fields": models_with_specs_runtime_only_fields,
+        "models_with_specs_md_specs_only_fields_count": len(models_with_specs_md_specs_only_fields),
+        "models_with_specs_md_specs_only_fields": models_with_specs_md_specs_only_fields,
+        "models_with_specs_shared_value_mismatch_count": len(models_with_specs_shared_value_mismatch),
+        "models_with_specs_shared_value_mismatch": models_with_specs_shared_value_mismatch,
+        "models_with_product_name_only_runtime_addition_count": len(models_with_product_name_only_runtime_addition),
+        "models_with_product_name_only_runtime_addition": models_with_product_name_only_runtime_addition,
         "duplicate_normalized_md_specs_key_count": len(duplicate_normalized_md_models),
         "duplicate_normalized_md_specs_keys": duplicate_normalized_md_models,
         "models": rows,
         "comparison_rule": (
             "Reporting only. Models are compared only when runtime 型号 and a top-level md_specs.json key match "
             "after case/whitespace normalization. Directly shared key/specs/selling structures are compared after "
-            "trimming only leading/trailing string whitespace. Same-named runtime top-level fields that also occur "
-            "inside md_specs specs are reported separately. No fuzzy matching, repair, deletion, merge, rename, or "
-            "parameter overwrite is performed."
+            "trimming only leading/trailing string whitespace. specs differences are structurally classified into "
+            "runtime-only fields, md_specs-only fields, and shared-field value mismatches; a separate convenience "
+            "bucket identifies the narrow case where the only runtime addition is the literal 产品名称 field. "
+            "Same-named runtime top-level fields that also occur inside md_specs specs are reported separately. "
+            "No fuzzy matching, repair, deletion, merge, rename, or parameter overwrite is performed."
         ),
     }
 
@@ -264,6 +343,10 @@ def main() -> int:
     print(f"其中 md_specs 顶层型号精确匹配: {alignment['runtime_only_models_with_exact_md_specs_key_count']}")
     print(f"单行且 key/specs/selling 全部一致: {alignment['single_row_all_shared_components_exact_model_count']}")
     print(f"存在共享结构差异: {alignment['models_with_any_shared_component_difference_count']}")
+    print(f"  - specs 仅 runtime 多字段: {alignment['models_with_specs_runtime_only_fields_count']}")
+    print(f"  - specs 仅 md_specs 多字段: {alignment['models_with_specs_md_specs_only_fields_count']}")
+    print(f"  - specs 同字段值冲突: {alignment['models_with_specs_shared_value_mismatch_count']}")
+    print(f"  - 仅 runtime 增加 产品名称: {alignment['models_with_product_name_only_runtime_addition_count']}")
     print(f"存在同名顶层字段差异: {alignment['models_with_same_named_top_level_spec_mismatch_count']}")
     print(f"runtime 同型号多行: {alignment['ambiguous_runtime_model_count']}")
     print(f"Updated report: {report_path}")
