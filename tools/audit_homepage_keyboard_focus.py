@@ -99,7 +99,7 @@ def make_driver(chrome: str, driver: str | None) -> webdriver.Chrome:
 
 def element_summary(driver: webdriver.Chrome) -> dict[str, Any]:
     return driver.execute_script(
-        """
+        r"""
         const el = document.activeElement;
         if (!el) return null;
         return {
@@ -127,7 +127,16 @@ def visible_focus(driver: webdriver.Chrome) -> dict[str, Any]:
           outlineStyle: s.outlineStyle,
           outlineWidth: s.outlineWidth,
           boxShadow: s.boxShadow,
-          rect: {x: r.x, y: r.y, width: r.width, height: r.height},
+          rect: {
+            x: r.x,
+            y: r.y,
+            top: r.top,
+            right: r.right,
+            bottom: r.bottom,
+            left: r.left,
+            width: r.width,
+            height: r.height,
+          },
         };
         """
     )
@@ -303,7 +312,6 @@ def mobile_checks(driver: webdriver.Chrome, page: Path) -> dict[str, Any]:
 
 
 def write_markdown(report: dict[str, Any], path: Path) -> None:
-    desktop = report["desktop"]
     mobile = report["mobile"]
     lines = [
         "# Yuhua homepage keyboard focus audit",
