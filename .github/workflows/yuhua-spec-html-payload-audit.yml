@@ -7,6 +7,7 @@ on:
       - 'specs_index.json'
       - 'tools/audit_spec_html_payloads.py'
       - 'tools/audit_spec_inline_externalization.py'
+      - 'tools/audit_top_spec_inline_candidate.py'
       - '.github/workflows/yuhua-spec-html-payload-audit.yml'
   push:
     branches: [main]
@@ -15,6 +16,7 @@ on:
       - 'specs_index.json'
       - 'tools/audit_spec_html_payloads.py'
       - 'tools/audit_spec_inline_externalization.py'
+      - 'tools/audit_top_spec_inline_candidate.py'
       - '.github/workflows/yuhua-spec-html-payload-audit.yml'
   workflow_dispatch:
 
@@ -44,6 +46,13 @@ jobs:
           python tools/audit_spec_inline_externalization.py \
             --json spec_inline_externalization_audit.json \
             --markdown spec_inline_externalization_audit.md
+
+      - name: Audit largest inline-image candidate context and projected savings
+        run: |
+          python tools/audit_top_spec_inline_candidate.py \
+            --feasibility-json spec_inline_externalization_audit.json \
+            --json spec_inline_top_candidate_context_audit.json \
+            --markdown spec_inline_top_candidate_context_audit.md
 
       - name: Verify report integrity
         run: |
@@ -75,7 +84,23 @@ jobs:
           )
           assert all(row['strict_mechanical_candidate'] for row in feasibility['strict_candidates'])
           assert '不代表已获准修改资料' in feasibility['policy']
-          print('specification HTML payload and externalization feasibility report integrity: OK')
+
+          top = json.loads(Path('spec_inline_top_candidate_context_audit.json').read_text(encoding='utf-8'))
+          assert feasibility['strict_candidates'], 'top-candidate context audit requires a strict candidate'
+          expected = feasibility['strict_candidates'][0]
+          assert top['selected_candidate_sha256'] == expected['sha256']
+          assert top['candidate_shared_path'] == expected['candidate_shared_path']
+          assert top['page_count'] == expected['page_count']
+          assert top['occurrence_count'] == expected['occurrences'] == top['expected_occurrence_count']
+          assert len(top['occurrences']) == top['occurrence_count']
+          assert {row['page'] for row in top['occurrences']} == set(expected['pages'])
+          assert all(row['encoded_payload_sha256'] == top['selected_candidate_sha256'] for row in top['occurrences'])
+          assert top['decoded_image_bytes'] > 0
+          assert top['projected_affected_html_bytes_after_reference_swap'] < top['current_affected_html_bytes']
+          assert top['projected_combined_bytes_with_one_shared_file'] < top['current_affected_html_bytes']
+          assert top['projected_net_bytes_reduction'] > 0
+          assert '不证明各页面语义用途一致' in top['policy']
+          print('specification HTML payload, feasibility, and top-candidate context reports: OK')
           PY
 
       - name: Upload specification HTML payload audit
@@ -87,4 +112,6 @@ jobs:
             spec_html_payload_audit.md
             spec_inline_externalization_audit.json
             spec_inline_externalization_audit.md
+            spec_inline_top_candidate_context_audit.json
+            spec_inline_top_candidate_context_audit.md
           retention-days: 90
