@@ -23,6 +23,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Guard literal exact-model evidence semantics
+        run: |
+          python - <<'PY'
+          from tools.audit_product_name_evidence import build_report
+
+          product = [{"产品名称": "", "型号": "DLSB-5/30", "类别": "低温冷却循环泵"}]
+
+          normalized_only = build_report(
+              product,
+              [{"model": "DLSB-5-30", "title": "separator variant"}],
+          )
+          summary = normalized_only["summary"]
+          assert summary["empty_name_with_exact_spec_evidence_count"] == 0
+          assert summary["empty_name_with_normalized_only_spec_candidate_count"] == 1
+          assert normalized_only["normalized_only_spec_candidates"][0]["candidate_models"] == ["DLSB-5-30"]
+
+          literal_exact = build_report(
+              product,
+              [{"model": "DLSB-5/30", "title": "literal exact"}],
+          )
+          summary = literal_exact["summary"]
+          assert summary["empty_name_with_exact_spec_evidence_count"] == 1
+          assert summary["empty_name_with_normalized_only_spec_candidate_count"] == 0
+          PY
       - name: Audit missing product names and existing specification evidence
         run: |
           python tools/audit_product_name_evidence.py \
