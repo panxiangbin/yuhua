@@ -1,0 +1,85 @@
+name: Yuhua homepage direct-payload audit
+
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'app.js'
+      - 'styles.css'
+      - 'assets/**'
+      - 'tools/audit_homepage_payload.py'
+      - '.github/workflows/yuhua-homepage-payload-audit.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'app.js'
+      - 'styles.css'
+      - 'assets/**'
+      - 'tools/audit_homepage_payload.py'
+      - '.github/workflows/yuhua-homepage-payload-audit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit-homepage-payload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Audit homepage direct static payload
+        run: |
+          python tools/audit_homepage_payload.py \
+            --html index.html \
+            --json-output homepage_payload_audit.json \
+            --markdown-output homepage_payload_audit.md
+
+      - name: Verify report integrity
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path('homepage_payload_audit.json').read_text(encoding='utf-8'))
+          html = report['html']
+          deps = report['dependency_totals']
+          total = report['document_plus_dependency_totals']
+          resources = report['largest_direct_dependencies']
+
+          assert html['path'] == 'index.html'
+          assert html['raw_bytes'] > 0
+          assert html['gzip_estimate_bytes'] > 0
+          assert report['reference_count'] > 0
+          assert report['unique_local_dependency_count'] == len(resources) > 0
+          assert report['missing_local_reference_count'] == 0, report['missing_local_references']
+          assert deps['raw_bytes'] == sum(row['raw_bytes'] for row in resources)
+          assert deps['gzip_estimate_bytes'] == sum(row['gzip_estimate_bytes'] for row in resources)
+          assert total['raw_bytes'] == html['raw_bytes'] + deps['raw_bytes']
+          assert total['gzip_estimate_bytes'] == html['gzip_estimate_bytes'] + deps['gzip_estimate_bytes']
+          assert len({row['path'] for row in resources}) == len(resources)
+          # gzip framing can make tiny/already-compressed assets larger than the source.
+          assert all(row['raw_bytes'] > 0 and row['gzip_estimate_bytes'] > 0 for row in resources)
+          assert '不代表 GitHub Pages' in report['policy']
+          assert any('动态 JavaScript' in note for note in report['notes'])
+
+          print('Homepage payload report integrity: OK')
+          print('Largest direct dependencies:')
+          for row in resources[:10]:
+              print(f"  {row['raw_bytes']:>10} raw  {row['gzip_estimate_bytes']:>10} gzip-est  {row['path']}")
+          PY
+
+      - name: Upload audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-homepage-payload-audit
+          path: |
+            homepage_payload_audit.json
+            homepage_payload_audit.md
+          retention-days: 90
