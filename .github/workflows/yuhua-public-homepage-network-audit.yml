@@ -3,31 +3,33 @@ name: Yuhua public homepage network audit
 on:
   pull_request:
     paths:
+      - 'index.html'
+      - 'styles.css'
+      - 'app.js'
+      - 'assets/**'
       - 'tools/audit_public_homepage_network.py'
       - '.github/workflows/yuhua-public-homepage-network-audit.yml'
-  workflow_run:
-    workflows:
-      - 'pages build and deployment'
-    types:
-      - completed
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'styles.css'
+      - 'app.js'
+      - 'assets/**'
+      - 'tools/audit_public_homepage_network.py'
+      - '.github/workflows/yuhua-public-homepage-network-audit.yml'
   workflow_dispatch:
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
   self-test:
     name: Network audit self-test
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout deployed commit
-        if: github.event_name == 'workflow_run'
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_sha }}
-
       - name: Checkout current revision
-        if: github.event_name != 'workflow_run'
         uses: actions/checkout@v4
 
       - name: Compile audit tool
@@ -38,24 +40,44 @@ jobs:
 
   live-audit:
     name: Measure deployed homepage responses
-    if: >-
-      (github.event_name == 'workflow_run' &&
-       github.event.workflow_run.conclusion == 'success' &&
-       github.event.workflow_run.head_branch == 'main') ||
-      github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
+    timeout-minutes: 16
     steps:
-      - name: Checkout deployed commit
-        if: github.event_name == 'workflow_run'
+      - name: Checkout audited revision
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_sha }}
 
-      - name: Checkout main for manual run
-        if: github.event_name == 'workflow_dispatch'
-        uses: actions/checkout@v4
-        with:
-          ref: main
+      - name: Wait for Pages deployment of this commit
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          matched=0
+          for attempt in $(seq 1 48); do
+            runs="$(curl -fsSL --retry 3 \
+              -H 'Accept: application/vnd.github+json' \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs?head_sha=${GITHUB_SHA}&per_page=30")"
+            status="$(jq -r '[.workflow_runs[] | select(.name == "pages build and deployment")] | sort_by(.created_at) | last | .status // "missing"' <<<"${runs}")"
+            conclusion="$(jq -r '[.workflow_runs[] | select(.name == "pages build and deployment")] | sort_by(.created_at) | last | .conclusion // ""' <<<"${runs}")"
+            echo "Pages deployment attempt ${attempt}/48: status=${status}, conclusion=${conclusion:-pending}"
+
+            if [[ "${status}" == "completed" && "${conclusion}" == "success" ]]; then
+              matched=1
+              break
+            fi
+            if [[ "${status}" == "completed" && "${conclusion}" != "success" ]]; then
+              echo "::error::Pages deployment for ${GITHUB_SHA} completed with ${conclusion}."
+              exit 1
+            fi
+            sleep 15
+          done
+          if [[ "${matched}" -ne 1 ]]; then
+            echo "::error::Timed out waiting for Pages deployment of ${GITHUB_SHA}."
+            exit 1
+          fi
 
       - name: Measure public homepage and direct local dependencies
         run: >-
