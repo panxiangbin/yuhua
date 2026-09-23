@@ -6,9 +6,11 @@ on:
       - 'index.html'
       - 'catalog.html'
       - 'products.json'
+      - 'assets/data.js'
       - 'specs_index.json'
       - 'sitemap.xml'
       - 'model/*.html'
+      - 'tools/audit_public_catalog_runtime.py'
       - '.github/workflows/yuhua-static-catalog.yml'
   push:
     branches: [main]
@@ -16,9 +18,11 @@ on:
       - 'index.html'
       - 'catalog.html'
       - 'products.json'
+      - 'assets/data.js'
       - 'specs_index.json'
       - 'sitemap.xml'
       - 'model/*.html'
+      - 'tools/audit_public_catalog_runtime.py'
       - '.github/workflows/yuhua-static-catalog.yml'
 
 permissions:
@@ -40,27 +44,30 @@ jobs:
           from pathlib import Path
           from urllib.parse import unquote, urlparse
 
-          products = json.loads(Path('products.json').read_text(encoding='utf-8'))
+          from tools.audit_public_catalog_runtime import load_window_array
+
+          source_products = json.loads(Path('products.json').read_text(encoding='utf-8'))
+          public_products = load_window_array(Path('assets/data.js'), 'PRODUCTS')
           specs = json.loads(Path('specs_index.json').read_text(encoding='utf-8'))
           html = Path('catalog.html').read_text(encoding='utf-8')
           index_html = Path('index.html').read_text(encoding='utf-8')
 
           expected = {
-              'product-records': len(products),
-              'modeled-records': sum(1 for item in products if str(item.get('型号') or '').strip()),
+              'product-records': len(public_products),
+              'modeled-records': sum(1 for item in public_products if str(item.get('型号') or '').strip()),
               'spec-records': len(specs),
           }
           for key, value in expected.items():
               match = re.search(rf'data-{key}="(\d+)"', html)
               assert match, f'missing data-{key} in catalog.html'
               actual = int(match.group(1))
-              assert actual == value, f'data-{key} is stale: page={actual}, source={value}'
+              assert actual == value, f'data-{key} is stale: page={actual}, public-runtime={value}'
               assert f'<b>{value}</b>' in html, f'visible count {value} is missing from catalog.html'
 
           index_product_count = re.search(r'<b id="totalCount">(\d+)</b>', index_html)
           assert index_product_count, 'static totalCount fallback is missing from index.html'
-          assert int(index_product_count.group(1)) == len(products), (
-              f'index product count is stale: page={index_product_count.group(1)}, source={len(products)}'
+          assert int(index_product_count.group(1)) == len(source_products), (
+              f'index product count is stale: page={index_product_count.group(1)}, source={len(source_products)}'
           )
           index_spec_count = re.search(r'<b id="specCount">(\d+)</b>', index_html)
           assert index_spec_count, 'static specCount fallback is missing from index.html'
@@ -120,8 +127,8 @@ jobs:
 
           sitemap = Path('sitemap.xml').read_text(encoding='utf-8')
           assert 'https://panxiangbin.github.io/yuhua/catalog.html' in sitemap, 'catalog.html is missing from sitemap.xml'
-          print('Static catalog index: OK', expected)
-          print('Homepage static fallback: OK', {'products': len(products), 'specs': len(specs)})
+          print('Static catalog public-runtime index: OK', expected)
+          print('Homepage static fallback: OK', {'products': len(source_products), 'specs': len(specs)})
           print('Static catalog accessibility baseline: OK')
           print(f'Standalone model coverage in catalog.html: OK ({len(model_pages)}/{len(model_pages)})')
           PY
