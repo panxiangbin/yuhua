@@ -6,6 +6,7 @@ on:
       - 'specs/**'
       - 'specs_index.json'
       - 'tools/audit_spec_html_payloads.py'
+      - 'tools/audit_spec_inline_externalization.py'
       - '.github/workflows/yuhua-spec-html-payload-audit.yml'
   push:
     branches: [main]
@@ -13,6 +14,7 @@ on:
       - 'specs/**'
       - 'specs_index.json'
       - 'tools/audit_spec_html_payloads.py'
+      - 'tools/audit_spec_inline_externalization.py'
       - '.github/workflows/yuhua-spec-html-payload-audit.yml'
   workflow_dispatch:
 
@@ -37,6 +39,12 @@ jobs:
             --json spec_html_payload_audit.json \
             --markdown spec_html_payload_audit.md
 
+      - name: Audit inline image externalization feasibility
+        run: |
+          python tools/audit_spec_inline_externalization.py \
+            --json spec_inline_externalization_audit.json \
+            --markdown spec_inline_externalization_audit.md
+
       - name: Verify report integrity
         run: |
           python - <<'PY'
@@ -51,7 +59,23 @@ jobs:
           assert report['total_inline_data_uri_bytes'] >= report['total_inline_encoded_payload_bytes'] >= 0
           assert report['total_inline_image_occurrences'] >= report['pages_with_inline_images'] >= 0
           assert '不会压缩、删除、提取、重写或替换' in report['policy']
-          print('specification HTML payload report integrity: OK')
+
+          feasibility = json.loads(Path('spec_inline_externalization_audit.json').read_text(encoding='utf-8'))
+          assert feasibility['tracked_spec_html_count'] == report['tracked_spec_html_count']
+          assert feasibility['total_inline_image_occurrences'] == report['total_inline_image_occurrences']
+          assert (
+              feasibility['inline_img_src_occurrence_count']
+              + feasibility['inline_non_img_src_occurrence_count']
+              == feasibility['total_inline_image_occurrences']
+          )
+          assert (
+              feasibility['strict_mechanical_candidate_group_count']
+              + feasibility['rejected_duplicate_group_count']
+              == feasibility['exact_duplicate_payload_group_count']
+          )
+          assert all(row['strict_mechanical_candidate'] for row in feasibility['strict_candidates'])
+          assert '不代表已获准修改资料' in feasibility['policy']
+          print('specification HTML payload and externalization feasibility report integrity: OK')
           PY
 
       - name: Upload specification HTML payload audit
@@ -61,4 +85,6 @@ jobs:
           path: |
             spec_html_payload_audit.json
             spec_html_payload_audit.md
+            spec_inline_externalization_audit.json
+            spec_inline_externalization_audit.md
           retention-days: 90
