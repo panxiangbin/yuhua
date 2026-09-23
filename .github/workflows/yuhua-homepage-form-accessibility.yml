@@ -1,0 +1,39 @@
+name: Yuhua homepage form accessible-name audit
+
+on:
+  pull_request:
+    paths:
+      - "index.html"
+      - "tools/audit_homepage_form_accessibility.py"
+      - ".github/workflows/yuhua-homepage-form-accessibility.yml"
+  push:
+    branches: [main]
+    paths:
+      - "index.html"
+      - "tools/audit_homepage_form_accessibility.py"
+      - ".github/workflows/yuhua-homepage-form-accessibility.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  form-accessible-names:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Audit homepage form accessible names
+        run: |
+          mkdir -p audit-output
+          python tools/audit_homepage_form_accessibility.py \
+            --html index.html \
+            --json-output audit-output/homepage_form_accessibility_audit.json \
+            --markdown-output audit-output/homepage_form_accessibility_audit.md
+
+      - name: Upload audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-homepage-form-accessibility-audit
+          path: audit-output/
+          retention-days: 90
