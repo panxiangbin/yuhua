@@ -55,7 +55,7 @@ jobs:
 
           assert html['path'] == 'index.html'
           assert html['raw_bytes'] > 0
-          assert 0 < html['gzip_estimate_bytes'] <= html['raw_bytes']
+          assert html['gzip_estimate_bytes'] > 0
           assert report['reference_count'] > 0
           assert report['unique_local_dependency_count'] == len(resources) > 0
           assert report['missing_local_reference_count'] == 0, report['missing_local_references']
@@ -64,7 +64,8 @@ jobs:
           assert total['raw_bytes'] == html['raw_bytes'] + deps['raw_bytes']
           assert total['gzip_estimate_bytes'] == html['gzip_estimate_bytes'] + deps['gzip_estimate_bytes']
           assert len({row['path'] for row in resources}) == len(resources)
-          assert all(row['raw_bytes'] >= row['gzip_estimate_bytes'] > 0 for row in resources)
+          # gzip framing can make tiny/already-compressed assets larger than the source.
+          assert all(row['raw_bytes'] > 0 and row['gzip_estimate_bytes'] > 0 for row in resources)
           assert '不代表 GitHub Pages' in report['policy']
           assert any('动态 JavaScript' in note for note in report['notes'])
 
