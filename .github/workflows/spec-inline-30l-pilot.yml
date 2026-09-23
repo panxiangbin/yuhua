@@ -27,10 +27,10 @@ jobs:
           import base64, hashlib, re, struct
 
           target = Path('specs/反应釜/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_30l电动升降技术参数.html')
-          digest = 'd0da2b4c71757738e9963135547210727a163696133551a93154dbee7e177a71'
+          encoded_digest = 'd0da2b4c71757738e9963135547210727a163696133551a93154dbee7e177a71'
           expected_blob = '9c4f414201dc6745873574c0440b03129f896540'
-          asset = Path(f'assets/spec-inline/{digest}.png')
-          relative_url = f'../../../assets/spec-inline/{digest}.png'
+          asset = Path(f'assets/spec-inline/{encoded_digest}.png')
+          relative_url = f'../../../assets/spec-inline/{encoded_digest}.png'
 
           original = target.read_bytes()
           git_blob = hashlib.sha1(b'blob ' + str(len(original)).encode() + b'\0' + original).hexdigest()
@@ -40,16 +40,19 @@ jobs:
           text = original.decode('utf-8')
           matches = []
           for match in re.finditer(r'data:image/png;base64,([A-Za-z0-9+/=]+)', text):
-              raw = base64.b64decode(match.group(1), validate=True)
-              if hashlib.sha256(raw).hexdigest() == digest:
-                  matches.append((match.group(0), raw))
+              payload = match.group(1).encode('ascii')
+              if hashlib.sha256(payload).hexdigest() == encoded_digest:
+                  raw = base64.b64decode(payload, validate=True)
+                  matches.append((match.group(0), payload, raw))
 
           if len(matches) != 2:
               raise SystemExit(f'guard failed: expected exactly 2 candidate occurrences, found {len(matches)}')
-          if matches[0][0] != matches[1][0] or matches[0][1] != matches[1][1]:
+          if matches[0][0] != matches[1][0] or matches[0][1] != matches[1][1] or matches[0][2] != matches[1][2]:
               raise SystemExit('guard failed: candidate occurrences are not byte-identical')
 
-          uri, png = matches[0]
+          uri, payload, png = matches[0]
+          if hashlib.sha256(payload).hexdigest() != encoded_digest:
+              raise SystemExit('guard failed: encoded payload digest mismatch')
           if len(png) != 312110:
               raise SystemExit(f'guard failed: PNG size {len(png)} != 312110')
           if png[:8] != b'\x89PNG\r\n\x1a\n' or png[12:16] != b'IHDR':
@@ -68,8 +71,12 @@ jobs:
           changed = text.replace(uri, relative_url)
           if changed.count(relative_url) != 2:
               raise SystemExit('guard failed: replacement count is not exactly two')
-          if digest in ''.join(re.findall(r'data:image/png;base64,([A-Za-z0-9+/=]+)', changed)):
-              raise SystemExit('guard failed: unexpected candidate residue')
+          remaining_hashes = {
+              hashlib.sha256(m.group(1).encode('ascii')).hexdigest()
+              for m in re.finditer(r'data:image/png;base64,([A-Za-z0-9+/=]+)', changed)
+          }
+          if encoded_digest in remaining_hashes:
+              raise SystemExit('guard failed: candidate payload still remains inline')
 
           restored = changed.replace(relative_url, uri).encode('utf-8')
           if restored != original:
@@ -83,7 +90,8 @@ jobs:
           print(f'html_bytes_saved={savings}')
           print(f'shared_png_bytes={len(png)}')
           print(f'net_repo_bytes_saved={savings-len(png)}')
-          print(f'candidate_sha256={hashlib.sha256(png).hexdigest()}')
+          print(f'encoded_payload_sha256={hashlib.sha256(payload).hexdigest()}')
+          print(f'decoded_png_sha256={hashlib.sha256(png).hexdigest()}')
           print(f'candidate_dimensions={width}x{height}')
           PY
 
