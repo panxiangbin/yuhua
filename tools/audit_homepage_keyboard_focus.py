@@ -1,19 +1,5 @@
 #!/usr/bin/env python3
-"""Browser audit for homepage keyboard navigation and focus management.
-
-This audit is intentionally read-only. It renders the checked-out homepage locally
-and verifies a few high-value keyboard journeys at desktop and mobile viewports:
-
-* first Tab exposes the skip link and activating it moves focus to main content;
-* a product parameter button opens the dialog from the keyboard, focus stays in
-  the dialog, Escape closes it, and focus returns to the opener;
-* the mobile menu can be opened with the keyboard and its first link follows the
-  menu button in sequential focus order;
-* inquiry form controls retain their DOM keyboard order on a narrow viewport.
-
-No product facts, specification content, prices, models, or contact data are
-modified by this script.
-"""
+"""Read-only browser audit for homepage keyboard navigation and focus management."""
 
 from __future__ import annotations
 
@@ -31,26 +17,14 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 
-
-VIEWPORTS = {
-    "desktop": (1280, 900),
-    "mobile": (390, 844),
-}
+VIEWPORTS = {"desktop": (1280, 900), "mobile": (390, 844)}
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--root", default=".", help="Repository root")
-    parser.add_argument(
-        "--json",
-        default="homepage_keyboard_focus_audit.json",
-        help="JSON report path",
-    )
-    parser.add_argument(
-        "--markdown",
-        default="homepage_keyboard_focus_audit.md",
-        help="Markdown report path",
-    )
+    parser.add_argument("--root", default=".")
+    parser.add_argument("--json", default="homepage_keyboard_focus_audit.json")
+    parser.add_argument("--markdown", default="homepage_keyboard_focus_audit.md")
     return parser.parse_args()
 
 
@@ -108,6 +82,7 @@ def element_summary(driver: webdriver.Chrome) -> dict[str, Any]:
           className: typeof el.className === 'string' ? el.className : '',
           text: (el.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 100),
           ariaLabel: el.getAttribute('aria-label') || '',
+          dataI: el.getAttribute('data-i') || '',
         };
         """
     )
@@ -121,21 +96,15 @@ def visible_focus(driver: webdriver.Chrome) -> dict[str, Any]:
         const s = getComputedStyle(el);
         const r = el.getBoundingClientRect();
         const outlineVisible = s.outlineStyle !== 'none' && s.outlineWidth !== '0px';
-        const shadowVisible = s.boxShadow && s.boxShadow !== 'none';
+        const shadowVisible = Boolean(s.boxShadow && s.boxShadow !== 'none');
         return {
           visible: Boolean(outlineVisible || shadowVisible),
           outlineStyle: s.outlineStyle,
           outlineWidth: s.outlineWidth,
           boxShadow: s.boxShadow,
           rect: {
-            x: r.x,
-            y: r.y,
-            top: r.top,
-            right: r.right,
-            bottom: r.bottom,
-            left: r.left,
-            width: r.width,
-            height: r.height,
+            x: r.x, y: r.y, top: r.top, right: r.right,
+            bottom: r.bottom, left: r.left, width: r.width, height: r.height
           },
         };
         """
@@ -155,13 +124,25 @@ def load(driver: webdriver.Chrome, page: Path, viewport: tuple[int, int]) -> Non
     wait_ready(driver)
 
 
-def assert_active_matches(driver: webdriver.Chrome, selector: str, message: str) -> None:
-    ok = driver.execute_script(
+def assert_active(driver: webdriver.Chrome, selector: str, message: str) -> None:
+    if not driver.execute_script(
         "return !!(document.activeElement && document.activeElement.matches(arguments[0]));",
         selector,
-    )
-    if not ok:
+    ):
         raise AssertionError(f"{message}; active={element_summary(driver)!r}")
+
+
+def require_visible_focus(driver: webdriver.Chrome, label: str) -> dict[str, Any]:
+    state = visible_focus(driver)
+    rect = state.get("rect") or {}
+    if (
+        not state.get("visible")
+        or rect.get("width", 0) <= 0
+        or rect.get("height", 0) <= 0
+        or rect.get("bottom", 0) <= 0
+    ):
+        raise AssertionError(f"{label} has no visible keyboard focus: {state!r}")
+    return state
 
 
 def desktop_checks(driver: webdriver.Chrome, page: Path) -> dict[str, Any]:
@@ -169,21 +150,14 @@ def desktop_checks(driver: webdriver.Chrome, page: Path) -> dict[str, Any]:
     wait = WebDriverWait(driver, 10)
     result: dict[str, Any] = {}
 
-    # Start a genuine sequential-navigation journey from the document.
     driver.execute_script(
         "if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); window.scrollTo(0, 0);"
     )
     ActionChains(driver).send_keys(Keys.TAB).perform()
-    assert_active_matches(driver, ".skip-link", "First Tab must expose the skip link")
-    skip_focus = visible_focus(driver)
-    skip_rect = skip_focus["rect"]
-    if not skip_focus["visible"] or skip_rect["width"] <= 0 or skip_rect["height"] <= 0:
-        raise AssertionError(f"Skip link has no visible keyboard focus: {skip_focus!r}")
-    if skip_rect["bottom"] <= 0:
-        raise AssertionError(f"Focused skip link remains outside the viewport: {skip_focus!r}")
+    assert_active(driver, ".skip-link", "First Tab must expose the skip link")
     result["first_tab"] = {
         "active": element_summary(driver),
-        "focus_indicator": skip_focus,
+        "focus_indicator": require_visible_focus(driver, "Skip link"),
     }
 
     driver.switch_to.active_element.send_keys(Keys.ENTER)
@@ -195,14 +169,20 @@ def desktop_checks(driver: webdriver.Chrome, page: Path) -> dict[str, Any]:
     result["skip_link_activation"] = {"active": element_summary(driver)}
 
     search = driver.find_element(By.ID, "searchInput")
-    search.clear()
-    search.send_keys("YRE-2020Z")
-    wait.until(lambda d: len(d.find_elements(By.CSS_SELECTOR, "#tableBody .spec-btn")) > 0)
+    driver.execute_script("arguments[0].focus();", search)
+    assert_active(driver, "#searchInput", "Product search must be keyboard-focusable")
+    result["product_search"] = {
+        "active": element_summary(driver),
+        "focus_indicator": require_visible_focus(driver, "Product search"),
+    }
+
+    # Use an already rendered parameter button so the test does not race the
+    # search input's deliberate 120 ms table re-render debounce.
     opener = driver.find_element(By.CSS_SELECTOR, "#tableBody .spec-btn")
     driver.execute_script("arguments[0].focus();", opener)
-    if not driver.execute_script("return document.activeElement === arguments[0];", opener):
-        raise AssertionError("Could not focus product parameter opener")
-    opener.send_keys(Keys.ENTER)
+    assert_active(driver, "#tableBody .spec-btn", "Product parameter opener must accept focus")
+    opener_signature = element_summary(driver)
+    driver.switch_to.active_element.send_keys(Keys.ENTER)
 
     wait.until(lambda d: not d.find_element(By.ID, "modalMask").get_attribute("hidden"))
     wait.until(
@@ -217,7 +197,7 @@ def desktop_checks(driver: webdriver.Chrome, page: Path) -> dict[str, Any]:
         "return !!(document.activeElement && document.activeElement.closest('.modal'));"
     ):
         raise AssertionError(
-            f"Shift+Tab escaped the open product dialog: {element_summary(driver)!r}"
+            f"Shift+Tab escaped the product dialog: {element_summary(driver)!r}"
         )
     modal_reverse = element_summary(driver)
 
@@ -225,19 +205,27 @@ def desktop_checks(driver: webdriver.Chrome, page: Path) -> dict[str, Any]:
     if not driver.execute_script(
         "return !!(document.activeElement && document.activeElement.closest('.modal'));"
     ):
-        raise AssertionError(
-            f"Tab escaped the open product dialog: {element_summary(driver)!r}"
-        )
+        raise AssertionError(f"Tab escaped the product dialog: {element_summary(driver)!r}")
     modal_forward = element_summary(driver)
 
     ActionChains(driver).send_keys(Keys.ESCAPE).perform()
     wait.until(lambda d: d.find_element(By.ID, "modalMask").get_attribute("hidden") is not None)
-    wait.until(lambda d: d.execute_script("return document.activeElement === arguments[0];", opener))
+    wait.until(
+        lambda d: d.execute_script(
+            "return !!(document.activeElement && document.activeElement.matches('#tableBody .spec-btn'));"
+        )
+    )
+    restored = element_summary(driver)
+    if restored.get("ariaLabel") != opener_signature.get("ariaLabel"):
+        raise AssertionError(
+            f"Dialog focus returned to a different opener: before={opener_signature!r}, after={restored!r}"
+        )
     result["product_dialog"] = {
         "initial_focus": modal_initial,
         "reverse_tab_focus": modal_reverse,
         "forward_tab_focus": modal_forward,
         "focus_restored_to_opener": True,
+        "restored_opener": restored,
     }
     return result
 
@@ -281,8 +269,7 @@ def mobile_checks(driver: webdriver.Chrome, page: Path) -> dict[str, Any]:
         raise AssertionError(f"Expected at least 9 inquiry controls, found {len(controls)}")
 
     driver.execute_script(
-        "arguments[0].scrollIntoView({block:'center'}); arguments[0].focus();",
-        controls[0],
+        "arguments[0].scrollIntoView({block:'center'}); arguments[0].focus();", controls[0]
     )
     visited = [element_summary(driver)]
     focus_indicators = [visible_focus(driver)]
@@ -297,7 +284,7 @@ def mobile_checks(driver: webdriver.Chrome, page: Path) -> dict[str, Any]:
         visited.append(element_summary(driver))
         focus_indicators.append(visible_focus(driver))
 
-    if not all(item["visible"] for item in focus_indicators):
+    if not all(item.get("visible") for item in focus_indicators):
         raise AssertionError(
             "At least one inquiry control lacks a visible keyboard focus indicator: "
             + repr(focus_indicators)
@@ -312,15 +299,14 @@ def mobile_checks(driver: webdriver.Chrome, page: Path) -> dict[str, Any]:
 
 
 def write_markdown(report: dict[str, Any], path: Path) -> None:
-    mobile = report["mobile"]
     lines = [
         "# Yuhua homepage keyboard focus audit",
         "",
         f"- Result: **{'PASS' if report['ok'] else 'FAIL'}**",
         f"- Desktop viewport: {VIEWPORTS['desktop'][0]}×{VIEWPORTS['desktop'][1]}",
         f"- Mobile viewport: {VIEWPORTS['mobile'][0]}×{VIEWPORTS['mobile'][1]}",
-        f"- Inquiry controls checked in order: {mobile['inquiry_form']['control_count']}",
-        "- Desktop journey: first-Tab skip link → main content → product dialog focus trap → Escape focus restoration",
+        f"- Inquiry controls checked in order: {report['mobile']['inquiry_form']['control_count']}",
+        "- Desktop journey: first-Tab skip link → main content → search focus → product dialog focus trap → Escape focus restoration",
         "- Mobile journey: keyboard-opened menu → first mobile link → sequential inquiry form controls",
         "",
         "This audit is read-only and does not rewrite product facts, specification content, models, prices, or contact data.",
@@ -340,9 +326,7 @@ def main() -> int:
     try:
         report = {
             "ok": True,
-            "policy": (
-                "只读键盘与焦点审计：不会修改产品事实、规格书内容、型号、价格或联系方式。"
-            ),
+            "policy": "只读键盘与焦点审计：不会修改产品事实、规格书内容、型号、价格或联系方式。",
             "browser": chrome,
             "desktop": desktop_checks(browser, page),
             "mobile": mobile_checks(browser, page),
@@ -350,12 +334,10 @@ def main() -> int:
     finally:
         browser.quit()
 
-    json_path = root / args.json
-    markdown_path = root / args.markdown
-    json_path.write_text(
+    (root / args.json).write_text(
         json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
-    write_markdown(report, markdown_path)
+    write_markdown(report, root / args.markdown)
     print(
         "Homepage keyboard focus audit: PASS "
         f"(desktop dialog + mobile menu + {report['mobile']['inquiry_form']['control_count']} inquiry controls)"
