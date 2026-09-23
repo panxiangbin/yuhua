@@ -10,6 +10,7 @@ on:
       - 'tools/audit_top_spec_inline_candidate.py'
       - 'tools/audit_top_spec_inline_render_equivalence.py'
       - 'tools/verify_spec_externalization_integrity.py'
+      - 'tools/verify_spec_externalization_render_equivalence.py'
       - '.github/workflows/yuhua-spec-html-payload-audit.yml'
   push:
     branches: [main]
@@ -21,6 +22,7 @@ on:
       - 'tools/audit_top_spec_inline_candidate.py'
       - 'tools/audit_top_spec_inline_render_equivalence.py'
       - 'tools/verify_spec_externalization_integrity.py'
+      - 'tools/verify_spec_externalization_render_equivalence.py'
       - '.github/workflows/yuhua-spec-html-payload-audit.yml'
   workflow_dispatch:
 
@@ -50,6 +52,14 @@ jobs:
 
       - name: Install render-audit dependencies
         run: python -m pip install --disable-pip-version-check --quiet Pillow==11.3.0 selenium==4.35.0
+
+      - name: Browser-check actual externalization diff
+        run: |
+          python tools/verify_spec_externalization_render_equivalence.py \
+            --integrity-json spec_externalization_integrity_report.json \
+            --json spec_externalization_render_equivalence.json \
+            --markdown spec_externalization_render_equivalence.md \
+            --screenshots-dir "$RUNNER_TEMP/yuhua-spec-actual-externalization-screenshots"
 
       - name: Audit indexed specification HTML payloads
         run: |
@@ -88,6 +98,23 @@ jobs:
           assert integrity['ok'], integrity['errors']
           assert integrity['verified_replacement_count'] >= 0
           assert '不修改规格书、技术参数、型号含义或产品数据' in integrity['policy']
+
+          actual_render = json.loads(Path('spec_externalization_render_equivalence.json').read_text(encoding='utf-8'))
+          assert actual_render['externalized_spec_page_count'] == integrity['externalized_spec_page_count']
+          assert actual_render['verified_replacement_count'] == integrity['verified_replacement_count']
+          assert actual_render['viewport_count'] == 2
+          if integrity['verified_replacement_count']:
+              assert not actual_render['skipped']
+              assert actual_render['comparison_case_count'] == integrity['verified_replacement_count'] * 2
+              assert actual_render['all_geometry_equivalent']
+              assert actual_render['all_element_screenshots_pixel_identical']
+              assert all(case['geometry_identical_with_tolerance'] for case in actual_render['cases'])
+              assert all(case['pixel_identical'] for case in actual_render['cases'])
+              assert all(case['same_dimensions'] for case in actual_render['cases'])
+          else:
+              assert actual_render['skipped']
+              assert actual_render['comparison_case_count'] == 0
+          assert '不会修改任何受版本控制的规格书' in actual_render['policy']
 
           report = json.loads(Path('spec_html_payload_audit.json').read_text(encoding='utf-8'))
           assert report['index_entry_count'] > 0
@@ -143,7 +170,7 @@ jobs:
           assert all(case['pixel_identical'] for case in render['cases'])
           assert all(case['same_dimensions'] for case in render['cases'])
           assert '不会修改任何受版本控制的规格书' in render['policy']
-          print('specification externalization integrity, payload, feasibility, context, and browser render-equivalence reports: OK')
+          print('specification externalization integrity, actual-diff render, payload, feasibility, context, and candidate render-equivalence reports: OK')
           PY
 
       - name: Upload specification HTML payload audit
@@ -153,6 +180,8 @@ jobs:
           path: |
             spec_externalization_integrity_report.json
             spec_externalization_integrity_report.md
+            spec_externalization_render_equivalence.json
+            spec_externalization_render_equivalence.md
             spec_html_payload_audit.json
             spec_html_payload_audit.md
             spec_inline_externalization_audit.json
@@ -161,5 +190,6 @@ jobs:
             spec_inline_top_candidate_context_audit.md
             spec_inline_top_candidate_render_equivalence.json
             spec_inline_top_candidate_render_equivalence.md
+            ${{ runner.temp }}/yuhua-spec-actual-externalization-screenshots/
             ${{ runner.temp }}/yuhua-spec-render-equivalence-screenshots/
           retention-days: 90
