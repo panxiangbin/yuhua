@@ -1,0 +1,64 @@
+name: Yuhua specification HTML payload audit
+
+on:
+  pull_request:
+    paths:
+      - 'specs/**'
+      - 'specs_index.json'
+      - 'tools/audit_spec_html_payloads.py'
+      - '.github/workflows/yuhua-spec-html-payload-audit.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'specs/**'
+      - 'specs_index.json'
+      - 'tools/audit_spec_html_payloads.py'
+      - '.github/workflows/yuhua-spec-html-payload-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit-spec-html-payloads:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Audit indexed specification HTML payloads
+        run: |
+          python tools/audit_spec_html_payloads.py \
+            --json spec_html_payload_audit.json \
+            --markdown spec_html_payload_audit.md
+
+      - name: Verify report integrity
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path('spec_html_payload_audit.json').read_text(encoding='utf-8'))
+          assert report['index_entry_count'] > 0
+          assert report['audited_existing_page_count'] + report['missing_indexed_page_count'] == report['index_entry_count']
+          assert report['indexed_unique_page_count'] <= report['indexed_page_path_count']
+          assert report['tracked_spec_html_count'] >= report['indexed_unique_page_count'] - report['indexed_but_untracked_html_count']
+          assert report['total_inline_data_uri_bytes'] >= report['total_inline_encoded_payload_bytes'] >= 0
+          assert report['total_inline_image_occurrences'] >= report['pages_with_inline_images'] >= 0
+          assert '不会压缩、删除、提取、重写或替换' in report['policy']
+          print('specification HTML payload report integrity: OK')
+          PY
+
+      - name: Upload specification HTML payload audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-spec-html-payload-audit
+          path: |
+            spec_html_payload_audit.json
+            spec_html_payload_audit.md
+          retention-days: 90
