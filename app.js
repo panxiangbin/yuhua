@@ -113,6 +113,10 @@
   var searchInput = document.getElementById("searchInput");
 
   function cell(v) { return v ? v : '<span class="muted">—</span>'; }
+  function tableTempRange(p) {
+    // 顶层为空时只回退到同一条产品记录已有的详细参数，不修改任何产品数据。
+    return p["控温范围"] || (p.specs && p.specs["控温范围"]) || "";
+  }
   function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
   function normalizeSearchText(value) {
     return String(value || "").toLowerCase().replace(/[\s_\/.．／‐‑‒–—―·-]+/g, "");
@@ -189,7 +193,7 @@
           '<br><span class="ptag">' + (keyName[p.key] || p["类别"]) + "</span></td>" +
         "<td>" + cell(p["材质"]) + "</td>" +
         "<td>" + cell(p["容量"]) + "</td>" +
-        "<td>" + cell(p["控温范围"]) + "</td>" +
+        "<td>" + cell(tableTempRange(p)) + "</td>" +
         "<td>" + btn + "</td>" +
         "</tr>";
     }).join("");
