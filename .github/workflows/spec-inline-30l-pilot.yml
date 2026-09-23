@@ -27,10 +27,11 @@ jobs:
           import base64, hashlib, re, struct
 
           target = Path('specs/反应釜/4-反应釜_3_高压反应釜_付青杰_fcf升降釜_30l电动升降技术参数.html')
-          encoded_digest = 'd0da2b4c71757738e9963135547210727a163696133551a93154dbee7e177a71'
+          encoded_digest = 'ca03ea5b58423ab621aa3ec637a23161526e1dad46d56c080cf94a61eb0033f5'
+          decoded_digest = '136f628b9577a206eb63397693390fb854cbaa5ef0238d7c32c945b0eac91f5d'
           expected_blob = '9c4f414201dc6745873574c0440b03129f896540'
-          asset = Path(f'assets/spec-inline/{encoded_digest}.png')
-          relative_url = f'../../../assets/spec-inline/{encoded_digest}.png'
+          asset = Path(f'assets/spec-inline-shared/{encoded_digest}.png')
+          relative_url = f'../../assets/spec-inline-shared/{encoded_digest}.png'
 
           original = target.read_bytes()
           git_blob = hashlib.sha1(b'blob ' + str(len(original)).encode() + b'\0' + original).hexdigest()
@@ -53,8 +54,10 @@ jobs:
           uri, payload, png = matches[0]
           if hashlib.sha256(payload).hexdigest() != encoded_digest:
               raise SystemExit('guard failed: encoded payload digest mismatch')
-          if len(png) != 312110:
-              raise SystemExit(f'guard failed: PNG size {len(png)} != 312110')
+          if hashlib.sha256(png).hexdigest() != decoded_digest:
+              raise SystemExit('guard failed: decoded PNG digest mismatch')
+          if len(png) != 312131:
+              raise SystemExit(f'guard failed: PNG size {len(png)} != 312131')
           if png[:8] != b'\x89PNG\r\n\x1a\n' or png[12:16] != b'IHDR':
               raise SystemExit('guard failed: candidate is not the expected PNG structure')
           width, height = struct.unpack('>II', png[16:24])
