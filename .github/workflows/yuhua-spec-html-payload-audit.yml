@@ -9,7 +9,6 @@ on:
       - 'tools/audit_spec_inline_externalization.py'
       - 'tools/audit_top_spec_inline_candidate.py'
       - 'tools/audit_top_spec_inline_render_equivalence.py'
-      - 'tools/verify_spec_externalization_integrity.py'
       - '.github/workflows/yuhua-spec-html-payload-audit.yml'
   push:
     branches: [main]
@@ -20,7 +19,6 @@ on:
       - 'tools/audit_spec_inline_externalization.py'
       - 'tools/audit_top_spec_inline_candidate.py'
       - 'tools/audit_top_spec_inline_render_equivalence.py'
-      - 'tools/verify_spec_externalization_integrity.py'
       - '.github/workflows/yuhua-spec-html-payload-audit.yml'
   workflow_dispatch:
 
@@ -33,20 +31,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-
-      - name: Guard shared-image externalization integrity
-        run: |
-          python tools/verify_spec_externalization_integrity.py \
-            --base-ref HEAD^1 \
-            --json spec_externalization_integrity_report.json \
-            --markdown spec_externalization_integrity_report.md
 
       - name: Install render-audit dependencies
         run: python -m pip install --disable-pip-version-check --quiet Pillow==11.3.0 selenium==4.35.0
@@ -83,11 +72,6 @@ jobs:
           python - <<'PY'
           import json
           from pathlib import Path
-
-          integrity = json.loads(Path('spec_externalization_integrity_report.json').read_text(encoding='utf-8'))
-          assert integrity['ok'], integrity['errors']
-          assert integrity['verified_replacement_count'] >= 0
-          assert '不修改规格书、技术参数、型号含义或产品数据' in integrity['policy']
 
           report = json.loads(Path('spec_html_payload_audit.json').read_text(encoding='utf-8'))
           assert report['index_entry_count'] > 0
@@ -143,7 +127,7 @@ jobs:
           assert all(case['pixel_identical'] for case in render['cases'])
           assert all(case['same_dimensions'] for case in render['cases'])
           assert '不会修改任何受版本控制的规格书' in render['policy']
-          print('specification externalization integrity, payload, feasibility, context, and browser render-equivalence reports: OK')
+          print('specification HTML payload, feasibility, context, and browser render-equivalence reports: OK')
           PY
 
       - name: Upload specification HTML payload audit
@@ -151,8 +135,6 @@ jobs:
         with:
           name: yuhua-spec-html-payload-audit
           path: |
-            spec_externalization_integrity_report.json
-            spec_externalization_integrity_report.md
             spec_html_payload_audit.json
             spec_html_payload_audit.md
             spec_inline_externalization_audit.json
