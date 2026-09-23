@@ -257,16 +257,20 @@ def mobile_checks(driver: webdriver.Chrome, page: Path) -> dict[str, Any]:
         "first_tab_after_toggle": element_summary(driver),
     }
 
-    controls = [
-        el
-        for el in driver.find_elements(
-            By.CSS_SELECTOR,
-            "#selectionForm select, #selectionForm input, #selectionForm textarea, #selectionForm button",
-        )
-        if el.is_displayed() and el.is_enabled()
-    ]
+    # The open drawer intentionally covers the page. Close it before auditing
+    # the inquiry form so displayed/interactable checks reflect the form itself.
+    driver.execute_script("arguments[0].click();", toggle)
+    wait.until(lambda d: d.find_element(By.ID, "navToggle").get_attribute("aria-expanded") == "false")
+
+    all_controls = driver.find_elements(
+        By.CSS_SELECTOR,
+        "#selectionForm select, #selectionForm input, #selectionForm textarea, #selectionForm button",
+    )
+    controls = [el for el in all_controls if el.is_displayed() and el.is_enabled()]
     if len(controls) < 9:
-        raise AssertionError(f"Expected at least 9 inquiry controls, found {len(controls)}")
+        raise AssertionError(
+            f"Expected at least 9 visible inquiry controls, found {len(controls)} of {len(all_controls)} DOM controls"
+        )
 
     driver.execute_script(
         "arguments[0].scrollIntoView({block:'center'}); arguments[0].focus();", controls[0]
