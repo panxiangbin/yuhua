@@ -1,0 +1,61 @@
+name: Yuhua YRE-2012 power evidence
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'products.json'
+      - 'assets/data.js'
+      - 'specs_index.json'
+      - 'specs/**'
+      - 'tools/audit_yre_2012_power_evidence.py'
+      - '.github/workflows/yuhua-yre-2012-power-evidence.yml'
+  pull_request:
+    paths:
+      - 'products.json'
+      - 'assets/data.js'
+      - 'specs_index.json'
+      - 'specs/**'
+      - 'tools/audit_yre_2012_power_evidence.py'
+      - '.github/workflows/yuhua-yre-2012-power-evidence.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Self-test voltage extraction
+        run: python tools/audit_yre_2012_power_evidence.py --self-test
+      - name: Generate review-only evidence report
+        run: python tools/audit_yre_2012_power_evidence.py --output audit-output/yre-2012-power-evidence.json
+      - name: Validate evidence contract
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('audit-output/yre-2012-power-evidence.json').read_text(encoding='utf-8'))
+          summary = report['summary']
+          assert report['policy']['automatic_fix_authorized'] is False
+          assert summary['automatic_fix_authorized'] is False
+          assert summary['exact_spec_index_row_count'] == 2
+          assert summary['spec_page_read_error_count'] == 0
+          assert summary['spec_rated_supply_values'] == ['220V']
+          assert summary['unanimous_spec_rated_supply'] == '220V'
+          assert all(page.get('contains_200va_input_power') for page in report['spec_pages'])
+          print(json.dumps(summary, ensure_ascii=False, indent=2))
+          PY
+      - name: Confirm audited data stayed read-only
+        run: git diff --exit-code -- products.json assets/data.js specs_index.json specs
+      - name: Upload evidence report
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-yre-2012-power-evidence
+          path: audit-output/yre-2012-power-evidence.json
+          retention-days: 90
