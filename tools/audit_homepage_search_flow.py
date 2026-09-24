@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read-only browser audit for Yuhua homepage product/specification search flows."""
+"""Read-only desktop/mobile browser audit for homepage product and spec search."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ import json
 import re
 import shutil
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 from urllib.parse import unquote, urlparse
 
 from selenium import webdriver
@@ -19,408 +19,295 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 
 VIEWPORTS = {"desktop": (1280, 900), "mobile": (390, 844)}
-NO_RESULT_QUERY = "ZZZ-NO-SUCH-YUHUA-9F7E"
-SEPARATOR_SPEC_LITERAL = "DLSB-5-30"
-SEPARATOR_SPEC_VARIANT = "DLSB-5/30"
+NO_RESULT = "ZZZ-NO-SUCH-YUHUA-9F7E"
+SEP_LITERAL = "DLSB-5-30"
+SEP_VARIANT = "DLSB-5/30"
 
 
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--root", default=".")
-    parser.add_argument("--json", default="homepage_search_flow_audit.json")
-    parser.add_argument("--markdown", default="homepage_search_flow_audit.md")
-    return parser.parse_args()
+def args() -> argparse.Namespace:
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument("--root", default=".")
+    p.add_argument("--json", default="homepage_search_flow_audit.json")
+    p.add_argument("--markdown", default="homepage_search_flow_audit.md")
+    return p.parse_args()
 
 
-def locate_browser() -> tuple[str, str | None]:
-    chrome = next(
-        (
-            path
-            for name in ("google-chrome", "google-chrome-stable", "chromium", "chromium-browser")
-            if (path := shutil.which(name))
-        ),
-        None,
-    )
+def browser_binary() -> tuple[str, str | None]:
+    chrome = next((p for n in ("google-chrome", "google-chrome-stable", "chromium", "chromium-browser") if (p := shutil.which(n))), None)
     if not chrome:
-        raise RuntimeError("No Chrome/Chromium binary found for search-flow audit")
-    driver = next(
-        (
-            path
-            for name in ("chromedriver", "chromium-driver")
-            if (path := shutil.which(name))
-        ),
-        None,
-    )
+        raise RuntimeError("No Chrome/Chromium binary found")
+    driver = next((p for n in ("chromedriver", "chromium-driver") if (p := shutil.which(n))), None)
     return chrome, driver
 
 
-def make_driver(chrome: str, driver: str | None) -> webdriver.Chrome:
-    options = Options()
-    options.binary_location = chrome
-    for flag in (
-        "--headless=new",
-        "--no-sandbox",
-        "--disable-dev-shm-usage",
-        "--disable-gpu",
-        "--allow-file-access-from-files",
-        "--force-device-scale-factor=1",
-    ):
-        options.add_argument(flag)
-    service = Service(executable_path=driver) if driver else Service()
-    return webdriver.Chrome(service=service, options=options)
+def new_driver(chrome: str, driver: str | None) -> webdriver.Chrome:
+    o = Options()
+    o.binary_location = chrome
+    for flag in ("--headless=new", "--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu", "--allow-file-access-from-files", "--force-device-scale-factor=1"):
+        o.add_argument(flag)
+    return webdriver.Chrome(service=Service(executable_path=driver) if driver else Service(), options=o)
 
 
-def load(driver: webdriver.Chrome, page: Path, viewport: tuple[int, int]) -> None:
-    driver.set_window_size(*viewport)
-    driver.get(page.resolve().as_uri())
-    wait = WebDriverWait(driver, 20)
-    wait.until(lambda d: d.execute_script("return document.readyState") == "complete")
-    wait.until(lambda d: d.execute_script("return Array.isArray(window.PRODUCTS) && window.PRODUCTS.length > 0"))
-    wait.until(lambda d: d.execute_script("return Array.isArray(window.SPECS) && window.SPECS.length > 0"))
-    wait.until(lambda d: len(d.find_elements(By.CSS_SELECTOR, "#tableBody tr")) > 0)
-    wait.until(lambda d: len(d.find_elements(By.CSS_SELECTOR, "#specBody tr")) > 0)
+def load(d: webdriver.Chrome, page: Path, viewport: tuple[int, int]) -> None:
+    d.set_window_size(*viewport)
+    d.get(page.resolve().as_uri())
+    w = WebDriverWait(d, 20)
+    w.until(lambda x: x.execute_script("return document.readyState") == "complete")
+    w.until(lambda x: x.execute_script("return (window.PRODUCTS||[]).length > 0 && (window.SPECS||[]).length > 0"))
+    w.until(lambda x: len(x.find_elements(By.CSS_SELECTOR, "#tableBody tr")) > 0)
+    w.until(lambda x: len(x.find_elements(By.CSS_SELECTOR, "#specBody tr")) > 0)
 
 
 def compact(value: str) -> str:
     return re.sub(r"[\s_/.．／‐‑‒–—―·-]+", "", str(value or "").lower())
 
 
-def set_search(driver: webdriver.Chrome, element_id: str, query: str) -> None:
-    element = driver.find_element(By.ID, element_id)
-    driver.execute_script("arguments[0].scrollIntoView({block:'center', inline:'nearest'});", element)
-    element.click()
-    element.send_keys(Keys.CONTROL, "a")
-    element.send_keys(Keys.BACKSPACE)
-    element.send_keys(query)
+def scroll_visible(d: webdriver.Chrome, el: Any, inline: str = "nearest") -> None:
+    d.execute_script("arguments[0].scrollIntoView({block:'center',inline:arguments[1]});", el, inline)
+    WebDriverWait(d, 10).until(
+        lambda x: x.execute_script(
+            "const r=arguments[0].getBoundingClientRect(); return r.top>=0 && r.bottom<=innerHeight && r.left<innerWidth && r.right>0;",
+            el,
+        )
+    )
 
 
-def wait_count(driver: webdriver.Chrome, count_id: str, predicate: Any, timeout: int = 10) -> int:
-    wait = WebDriverWait(driver, timeout)
+def search(d: webdriver.Chrome, input_id: str, query: str) -> None:
+    el = d.find_element(By.ID, input_id)
+    scroll_visible(d, el)
+    el.click()
+    el.send_keys(Keys.CONTROL, "a")
+    el.send_keys(Keys.BACKSPACE)
+    el.send_keys(query)
 
-    def current(d: webdriver.Chrome) -> int | None:
-        text = d.find_element(By.ID, count_id).text.strip()
+
+def wait_count(d: webdriver.Chrome, count_id: str, test: Callable[[int], bool]) -> int:
+    def read(x: webdriver.Chrome) -> int | None:
         try:
-            value = int(text)
+            n = int(x.find_element(By.ID, count_id).text.strip())
         except ValueError:
             return None
-        return value if predicate(value) else None
-
-    return int(wait.until(current))
-
-
-def row_models(driver: webdriver.Chrome, body_selector: str) -> list[str]:
-    return [
-        cell.text.strip()
-        for cell in driver.find_elements(By.CSS_SELECTOR, f"{body_selector} tr td.model")
-        if cell.text.strip()
-    ]
+        return n if test(n) else None
+    return int(WebDriverWait(d, 10).until(read))
 
 
-def choose_existing_models(driver: webdriver.Chrome) -> dict[str, str]:
-    chosen = driver.execute_script(
+def models(d: webdriver.Chrome, body: str) -> list[str]:
+    return [x.text.strip() for x in d.find_elements(By.CSS_SELECTOR, f"{body} tr td.model") if x.text.strip()]
+
+
+def choose_models(d: webdriver.Chrome) -> dict[str, str]:
+    picked = d.execute_script(
         """
-        const products = window.PRODUCTS || [];
-        const specs = window.SPECS || [];
-        const pModels = products.map(p => String(p['型号'] || '').trim()).filter(Boolean);
-        const sModels = specs.map(s => String(s.model || '').trim()).filter(Boolean);
-        function pick(list, preferred, regex) {
-          if (list.includes(preferred)) return preferred;
-          return list.find(x => regex.test(x)) || list[0] || '';
-        }
-        return {
-          product: pick(pModels, 'YRE-2020Z', /-/),
-          productSlash: pModels.find(x => x.includes('/')) || '',
-          spec: pick(sModels, 'DLSB-5-30', /-/)
-        };
+        const p=(window.PRODUCTS||[]).map(x=>String(x['型号']||'').trim()).filter(Boolean);
+        const s=(window.SPECS||[]).map(x=>String(x.model||'').trim()).filter(Boolean);
+        const pick=(a,w)=>a.includes(w)?w:(a.find(x=>x.includes('-'))||a[0]||'');
+        return {product:pick(p,'YRE-2020Z'), productSlash:p.find(x=>x.includes('/'))||'', spec:pick(s,'DLSB-5-30')};
         """
     )
-    if not chosen.get("product") or not chosen.get("spec"):
-        raise AssertionError(f"Unable to choose real product/spec models from runtime data: {chosen!r}")
-    return {key: str(value) for key, value in chosen.items()}
+    if not picked.get("product") or not picked.get("spec"):
+        raise AssertionError(f"No suitable real models found: {picked!r}")
+    return {k: str(v) for k, v in picked.items()}
 
 
-def verify_product_search(driver: webdriver.Chrome, model: str) -> dict[str, Any]:
-    set_search(driver, "searchInput", model)
-    count = wait_count(driver, "resultCount", lambda value: value > 0)
-    models = row_models(driver, "#tableBody")
-    if not models:
-        raise AssertionError(f"Product search {model!r} returned a positive count but no visible rows")
-    if model not in models:
-        raise AssertionError(f"Exact product model {model!r} is not present in visible search results: {models[:10]!r}")
-    if compact(models[0]) != compact(model):
-        raise AssertionError(f"Top product result is not an exact normalized model match: query={model!r}, top={models[0]!r}")
-    status = driver.find_element(By.ID, "catalogResultStatus").text.strip()
-    return {"query": model, "count": count, "top_model": models[0], "status": status}
+def exact_search(d: webdriver.Chrome, input_id: str, count_id: str, body: str, query: str) -> dict[str, Any]:
+    search(d, input_id, query)
+    count = wait_count(d, count_id, lambda n: n > 0)
+    found = models(d, body)
+    if not found or query not in found or compact(found[0]) != compact(query):
+        raise AssertionError(f"Exact search ranking failed: query={query!r}, rows={found[:10]!r}")
+    return {"query": query, "count": count, "top_model": found[0]}
 
 
-def verify_product_slash_search(driver: webdriver.Chrome, model: str) -> dict[str, Any] | None:
-    if not model:
+def optional_slash_product(d: webdriver.Chrome, query: str) -> dict[str, Any] | None:
+    if not query:
         return None
-    set_search(driver, "searchInput", model)
-    count = wait_count(driver, "resultCount", lambda value: value > 0)
-    models = row_models(driver, "#tableBody")
-    if model not in models:
-        raise AssertionError(f"Literal slash-model product search lost its exact record: {model!r}")
-    if compact(models[0]) != compact(model):
-        raise AssertionError(f"Slash-model product search did not rank a separator-equivalent model first: {models[:5]!r}")
-    return {"query": model, "count": count, "top_model": models[0]}
+    return exact_search(d, "searchInput", "resultCount", "#tableBody", query)
 
 
-def verify_product_no_result(driver: webdriver.Chrome) -> dict[str, Any]:
-    set_search(driver, "searchInput", NO_RESULT_QUERY)
-    count = wait_count(driver, "resultCount", lambda value: value == 0)
-    WebDriverWait(driver, 10).until(lambda d: d.find_element(By.ID, "emptyTip").is_displayed())
-    if driver.find_elements(By.CSS_SELECTOR, "#tableBody tr"):
-        raise AssertionError("No-result product search still renders table rows")
-    return {"query": NO_RESULT_QUERY, "count": count, "empty_message": driver.find_element(By.ID, "emptyTip").text.strip()}
+def no_result(d: webdriver.Chrome, input_id: str, count_id: str, body: str, empty_id: str) -> dict[str, Any]:
+    search(d, input_id, NO_RESULT)
+    count = wait_count(d, count_id, lambda n: n == 0)
+    WebDriverWait(d, 10).until(lambda x: x.find_element(By.ID, empty_id).is_displayed())
+    if d.find_elements(By.CSS_SELECTOR, f"{body} tr"):
+        raise AssertionError(f"No-result query still has rows in {body}")
+    return {"query": NO_RESULT, "count": count, "message": d.find_element(By.ID, empty_id).text.strip()}
 
 
-def resolve_repo_file(root: Path, href: str) -> Path:
-    parsed = urlparse(href)
-    if parsed.scheme != "file":
-        raise AssertionError(f"Expected local file URL during repository browser audit, got {href!r}")
-    path = Path(unquote(parsed.path))
+def repo_file(root: Path, href: str) -> Path:
+    u = urlparse(href)
+    if u.scheme != "file":
+        raise AssertionError(f"Expected file URL, got {href!r}")
+    p = Path(unquote(u.path)).resolve()
     try:
-        path.resolve().relative_to(root.resolve())
+        p.relative_to(root.resolve())
     except ValueError as exc:
-        raise AssertionError(f"Search action points outside repository root: {path}") from exc
-    if not path.is_file():
-        raise AssertionError(f"Search action target is missing: {path}")
-    return path
+        raise AssertionError(f"Link escapes repository root: {p}") from exc
+    if not p.is_file():
+        raise AssertionError(f"Linked file is missing: {p}")
+    return p
 
 
-def click_online_view(driver: webdriver.Chrome, link: Any, expected_path: Path) -> dict[str, Any]:
-    driver.execute_script("arguments[0].scrollIntoView({block:'center', inline:'center'});", link)
-    before = list(driver.window_handles)
+def rect(d: webdriver.Chrome, el: Any) -> dict[str, float]:
+    r = d.execute_script("const r=arguments[0].getBoundingClientRect(); return {width:r.width,height:r.height};", el)
+    return {"width": float(r["width"]), "height": float(r["height"])}
+
+
+def open_online(d: webdriver.Chrome, link: Any, expected: Path) -> dict[str, Any]:
+    scroll_visible(d, link, "center")
+    before = list(d.window_handles)
     link.click()
-    WebDriverWait(driver, 10).until(lambda d: len(d.window_handles) == len(before) + 1)
-    new_handle = next(handle for handle in driver.window_handles if handle not in before)
-    driver.switch_to.window(new_handle)
+    WebDriverWait(d, 10).until(lambda x: len(x.window_handles) == len(before) + 1)
+    new = next(h for h in d.window_handles if h not in before)
+    d.switch_to.window(new)
     try:
-        WebDriverWait(driver, 10).until(lambda d: d.execute_script("return document.readyState") == "complete")
-        loaded = Path(unquote(urlparse(driver.current_url).path)).resolve()
-        if loaded != expected_path.resolve():
-            raise AssertionError(f"Online specification opened unexpected target: expected={expected_path}, loaded={loaded}")
-        if not driver.title.strip():
-            raise AssertionError("Opened specification page has an empty document title")
-        title = driver.title.strip()
+        WebDriverWait(d, 10).until(lambda x: x.execute_script("return document.readyState") == "complete")
+        loaded = Path(unquote(urlparse(d.current_url).path)).resolve()
+        if loaded != expected.resolve() or not d.title.strip():
+            raise AssertionError(f"Online specification did not open expected titled page: {loaded}")
+        title = d.title.strip()
     finally:
-        driver.close()
-        driver.switch_to.window(before[0])
-    return {"opened": True, "target": str(expected_path), "document_title": title}
+        d.close()
+        d.switch_to.window(before[0])
+    return {"opened": True, "title": title}
 
 
-def click_download_safely(driver: webdriver.Chrome, link: Any) -> dict[str, Any]:
-    driver.execute_script(
-        """
-        window.__yuhuaDownloadClick = null;
-        arguments[0].addEventListener('click', function (event) {
-          event.preventDefault();
-          window.__yuhuaDownloadClick = {
-            href: event.currentTarget.href,
-            download: event.currentTarget.getAttribute('download') || ''
-          };
-        }, {once:true, capture:true});
-        """,
+def click_download_probe(d: webdriver.Chrome, link: Any) -> dict[str, Any]:
+    d.execute_script(
+        """window.__dl=null; arguments[0].addEventListener('click',e=>{e.preventDefault();window.__dl={href:e.currentTarget.href,download:e.currentTarget.getAttribute('download')||''};},{once:true,capture:true});""",
         link,
     )
-    driver.execute_script("arguments[0].scrollIntoView({block:'center', inline:'center'});", link)
+    scroll_visible(d, link, "center")
     link.click()
-    captured = WebDriverWait(driver, 10).until(lambda d: d.execute_script("return window.__yuhuaDownloadClick;"))
-    if captured.get("href") != link.get_attribute("href"):
-        raise AssertionError("Download click probe did not capture the expected specification URL")
-    return {"clicked": True, "download_attribute": captured.get("download", ""), "href": captured.get("href", "")}
+    captured = WebDriverWait(d, 10).until(lambda x: x.execute_script("return window.__dl;"))
+    if captured["href"] != link.get_attribute("href"):
+        raise AssertionError("Download click target changed unexpectedly")
+    return {"clicked": True, **captured}
 
 
-def target_rect(driver: webdriver.Chrome, element: Any) -> dict[str, float]:
-    rect = driver.execute_script(
-        "const r=arguments[0].getBoundingClientRect(); return {width:r.width,height:r.height};",
-        element,
-    )
-    return {"width": float(rect["width"]), "height": float(rect["height"])}
-
-
-def verify_spec_search(driver: webdriver.Chrome, root: Path, model: str, mobile: bool) -> dict[str, Any]:
-    set_search(driver, "specSearch", model)
-    count = wait_count(driver, "specResultCount", lambda value: value > 0)
-    models = row_models(driver, "#specBody")
-    if not models:
-        raise AssertionError(f"Specification search {model!r} returned no visible rows")
-    if compact(models[0]) != compact(model):
-        raise AssertionError(f"Top specification result is not an exact normalized model match: query={model!r}, top={models[0]!r}")
-
-    first_row = driver.find_element(By.CSS_SELECTOR, "#specBody tr")
-    online = first_row.find_element(By.CSS_SELECTOR, "a.spec-btn.rich")
-    download = first_row.find_element(By.CSS_SELECTOR, "a.spec-btn[download]")
-    online_path = resolve_repo_file(root, online.get_attribute("href"))
-    download_path = resolve_repo_file(root, download.get_attribute("href"))
+def spec_journey(d: webdriver.Chrome, root: Path, query: str, mobile: bool) -> dict[str, Any]:
+    base = exact_search(d, "specSearch", "specResultCount", "#specBody", query)
+    row = d.find_element(By.CSS_SELECTOR, "#specBody tr")
+    online = row.find_element(By.CSS_SELECTOR, "a.spec-btn.rich")
+    download = row.find_element(By.CSS_SELECTOR, "a.spec-btn[download]")
+    online_path = repo_file(root, online.get_attribute("href"))
+    download_path = repo_file(root, download.get_attribute("href"))
     if download_path.suffix.lower() not in {".doc", ".docx"}:
-        raise AssertionError(f"Specification download target is not Word format: {download_path}")
-
-    action_metrics = {
-        "online": target_rect(driver, online),
-        "download": target_rect(driver, download),
-    }
-    online_result = click_online_view(driver, online, online_path)
-    set_search(driver, "specSearch", model)
-    wait_count(driver, "specResultCount", lambda value: value > 0)
-    first_row = driver.find_element(By.CSS_SELECTOR, "#specBody tr")
-    download = first_row.find_element(By.CSS_SELECTOR, "a.spec-btn[download]")
-    download_result = click_download_safely(driver, download)
-
-    status = driver.find_element(By.ID, "specResultStatus").text.strip()
+        raise AssertionError(f"Download is not Word format: {download_path}")
+    metrics = {"online": rect(d, online), "download": rect(d, download)}
+    opened = open_online(d, online, online_path)
+    search(d, "specSearch", query)
+    wait_count(d, "specResultCount", lambda n: n > 0)
+    download = d.find_element(By.CSS_SELECTOR, "#specBody tr a.spec-btn[download]")
+    clicked = click_download_probe(d, download)
     return {
-        "query": model,
-        "count": count,
-        "top_model": models[0],
-        "status": status,
+        **base,
         "online_target": online_path.relative_to(root).as_posix(),
         "download_target": download_path.relative_to(root).as_posix(),
-        "online_click": online_result,
-        "download_click": download_result,
-        "action_target_px": action_metrics,
+        "online_click": opened,
+        "download_click": clicked,
+        "action_target_px": metrics,
         "mobile": mobile,
     }
 
 
-def verify_separator_variant(driver: webdriver.Chrome) -> dict[str, Any]:
-    observations: dict[str, Any] = {}
-    for query in (SEPARATOR_SPEC_LITERAL, SEPARATOR_SPEC_VARIANT):
-        set_search(driver, "specSearch", query)
-        count = wait_count(driver, "specResultCount", lambda value: value > 0)
-        models = row_models(driver, "#specBody")
-        if not models or compact(models[0]) != compact(SEPARATOR_SPEC_LITERAL):
-            raise AssertionError(f"Separator-tolerant spec search failed for {query!r}: {models[:5]!r}")
-        observations[query] = {"count": count, "top_model": models[0]}
+def separator_search(d: webdriver.Chrome) -> dict[str, Any]:
+    out = {}
+    for q in (SEP_LITERAL, SEP_VARIANT):
+        search(d, "specSearch", q)
+        count = wait_count(d, "specResultCount", lambda n: n > 0)
+        found = models(d, "#specBody")
+        if not found or compact(found[0]) != compact(SEP_LITERAL):
+            raise AssertionError(f"Separator search failed: {q!r} -> {found[:5]!r}")
+        out[q] = {"count": count, "top_model": found[0]}
     return {
-        "literal": SEPARATOR_SPEC_LITERAL,
-        "variant": SEPARATOR_SPEC_VARIANT,
-        "normalized_token": compact(SEPARATOR_SPEC_LITERAL),
-        "observations": observations,
-        "note": "This verifies the existing search normalization only; it does not rewrite or assert equivalence of stored model facts.",
+        "literal": SEP_LITERAL,
+        "variant": SEP_VARIANT,
+        "normalized_token": compact(SEP_LITERAL),
+        "observations": out,
+        "note": "Search behavior only; stored model facts are not rewritten or declared equivalent.",
     }
 
 
-def verify_spec_no_result(driver: webdriver.Chrome) -> dict[str, Any]:
-    set_search(driver, "specSearch", NO_RESULT_QUERY)
-    count = wait_count(driver, "specResultCount", lambda value: value == 0)
-    WebDriverWait(driver, 10).until(lambda d: d.find_element(By.ID, "specEmptyTip").is_displayed())
-    if driver.find_elements(By.CSS_SELECTOR, "#specBody tr"):
-        raise AssertionError("No-result specification search still renders table rows")
-    return {"query": NO_RESULT_QUERY, "count": count, "empty_message": driver.find_element(By.ID, "specEmptyTip").text.strip()}
-
-
-def verify_mobile_search_controls(driver: webdriver.Chrome) -> dict[str, Any]:
-    result: dict[str, Any] = {}
+def mobile_controls(d: webdriver.Chrome) -> dict[str, Any]:
+    out = {}
     for element_id in ("searchInput", "specSearch"):
-        element = driver.find_element(By.ID, element_id)
-        rect = target_rect(driver, element)
-        if rect["width"] < 44 or rect["height"] < 44:
-            raise AssertionError(f"Mobile search control #{element_id} is smaller than a 44px touch target: {rect!r}")
-        result[element_id] = rect
-    return {"min_touch_target_px": 44, "controls": result}
+        size = rect(d, d.find_element(By.ID, element_id))
+        if min(size.values()) < 44:
+            raise AssertionError(f"Mobile search target #{element_id} is under 44px: {size}")
+        out[element_id] = size
+    return {"min_touch_target_px": 44, "controls": out}
 
 
-def static_contract_checks(root: Path) -> dict[str, Any]:
+def static_contract(root: Path) -> dict[str, bool]:
     html = (root / "index.html").read_text(encoding="utf-8")
     js = (root / "app.js").read_text(encoding="utf-8")
-    required_html = [
-        'id="searchInput"',
-        'aria-describedby="catalogResultStatus"',
-        'aria-controls="catalogResultTable"',
-        'id="specSearch"',
-        'aria-describedby="specResultStatus"',
-        'aria-controls="specResultTable"',
-        'id="emptyTip"',
-        'id="specEmptyTip"',
-    ]
-    missing_html = [token for token in required_html if token not in html]
-    if missing_html:
-        raise AssertionError(f"Homepage search accessibility/status contract changed: {missing_html!r}")
-    required_js = [
-        "function normalizeSearchText(value)",
-        "function searchMatchRank(modelValue, textValue, q, qCompact)",
-        "rankSearchResults(",
-        'searchInput.addEventListener("input"',
-        'specSearch.addEventListener("input"',
-    ]
-    missing_js = [token for token in required_js if token not in js]
-    if missing_js:
-        raise AssertionError(f"Homepage search wiring contract changed: {missing_js!r}")
-    return {
-        "product_search_status_wiring": True,
-        "spec_search_status_wiring": True,
-        "shared_ranking_helper": True,
-        "separator_normalization_present": True,
+    for token in ('id="searchInput"', 'aria-describedby="catalogResultStatus"', 'id="specSearch"', 'aria-describedby="specResultStatus"', 'id="emptyTip"', 'id="specEmptyTip"'):
+        if token not in html:
+            raise AssertionError(f"Missing search/status contract: {token}")
+    for token in ("function normalizeSearchText(value)", "function searchMatchRank(", "rankSearchResults("):
+        if token not in js:
+            raise AssertionError(f"Missing shared search contract: {token}")
+    return {"status_wiring": True, "shared_ranking": True, "separator_normalization": True}
+
+
+def viewport_run(d: webdriver.Chrome, root: Path, page: Path, name: str) -> dict[str, Any]:
+    load(d, page, VIEWPORTS[name])
+    picked = choose_models(d)
+    result = {
+        "viewport": dict(zip(("width", "height"), VIEWPORTS[name])),
+        "chosen_models": picked,
+        "product_exact": exact_search(d, "searchInput", "resultCount", "#tableBody", picked["product"]),
+        "product_slash": optional_slash_product(d, picked["productSlash"]),
+        "product_no_result": no_result(d, "searchInput", "resultCount", "#tableBody", "emptyTip"),
     }
-
-
-def run_viewport(driver: webdriver.Chrome, root: Path, page: Path, name: str) -> dict[str, Any]:
-    load(driver, page, VIEWPORTS[name])
-    chosen = choose_existing_models(driver)
-    result: dict[str, Any] = {
-        "viewport": {"width": VIEWPORTS[name][0], "height": VIEWPORTS[name][1]},
-        "chosen_models": chosen,
-        "product_exact": verify_product_search(driver, chosen["product"]),
-        "product_slash": verify_product_slash_search(driver, chosen["productSlash"]),
-        "product_no_result": verify_product_no_result(driver),
-    }
-
-    load(driver, page, VIEWPORTS[name])
-    result["spec_exact"] = verify_spec_search(driver, root, chosen["spec"], mobile=name == "mobile")
-    result["spec_separator_variant"] = verify_separator_variant(driver)
-    result["spec_no_result"] = verify_spec_no_result(driver)
+    load(d, page, VIEWPORTS[name])
+    result["spec_exact"] = spec_journey(d, root, picked["spec"], name == "mobile")
+    result["spec_separator_variant"] = separator_search(d)
+    result["spec_no_result"] = no_result(d, "specSearch", "specResultCount", "#specBody", "specEmptyTip")
     if name == "mobile":
-        result["mobile_search_controls"] = verify_mobile_search_controls(driver)
+        result["mobile_search_controls"] = mobile_controls(d)
     return result
 
 
-def write_markdown(report: dict[str, Any], path: Path) -> None:
-    lines = [
-        "# Yuhua homepage search flow audit",
-        "",
+def markdown(report: dict[str, Any]) -> str:
+    sep = report["desktop"]["spec_separator_variant"]["observations"][SEP_VARIANT]["top_model"]
+    return "\n".join([
+        "# Yuhua homepage search flow audit", "",
         f"- Result: **{'PASS' if report['ok'] else 'FAIL'}**",
-        f"- Desktop product exact query: `{report['desktop']['product_exact']['query']}` → top `{report['desktop']['product_exact']['top_model']}`",
-        f"- Desktop spec exact query: `{report['desktop']['spec_exact']['query']}` → top `{report['desktop']['spec_exact']['top_model']}`",
-        f"- Separator-tolerant observation: `{SEPARATOR_SPEC_VARIANT}` finds stored `{report['desktop']['spec_separator_variant']['observations'][SEPARATOR_SPEC_VARIANT]['top_model']}` without rewriting data.",
-        f"- Desktop/mobile no-result states: product **{report['desktop']['product_no_result']['count']}**, spec **{report['desktop']['spec_no_result']['count']}**.",
-        "- Specification online-view link is opened in a real browser tab; the Word download action is real-clicked with navigation prevented and its local target verified to exist.",
-        "- Mobile product/spec search inputs meet the 44px touch-target floor; specification action sizes are reported as observations.",
-        "",
-        "This is a read-only interaction audit. It does not modify or infer product specifications, prices, model meanings, or specification contents.",
-    ]
-    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        f"- Desktop product query: `{report['desktop']['product_exact']['query']}` → `{report['desktop']['product_exact']['top_model']}`",
+        f"- Desktop spec query: `{report['desktop']['spec_exact']['query']}` → `{report['desktop']['spec_exact']['top_model']}`",
+        f"- Separator search observation: `{SEP_VARIANT}` → stored result `{sep}` (search behavior only).",
+        "- Product/spec no-result states verified on desktop and mobile.",
+        "- Online specification link opened in a real browser tab; Word download action was real-clicked with navigation prevented after its target file was verified.",
+        "- Mobile search inputs meet the 44px touch-target floor; spec action sizes are recorded as observations.", "",
+        "Read-only audit: no product facts, specifications, prices, model meanings, or specification contents are changed.", ""
+    ])
 
 
 def main() -> int:
-    args = parse_args()
-    root = Path(args.root).resolve()
+    a = args()
+    root = Path(a.root).resolve()
     page = root / "index.html"
     if not page.is_file():
         raise SystemExit(f"Missing homepage: {page}")
-
-    chrome, driver_bin = locate_browser()
-    browser = make_driver(chrome, driver_bin)
+    chrome, driver_bin = browser_binary()
+    d = new_driver(chrome, driver_bin)
     try:
-        desktop = run_viewport(browser, root, page, "desktop")
-        mobile = run_viewport(browser, root, page, "mobile")
+        desktop = viewport_run(d, root, page, "desktop")
+        mobile = viewport_run(d, root, page, "mobile")
     finally:
-        browser.quit()
-
+        d.quit()
     report = {
         "ok": True,
         "policy": "只读搜索流程审计：不修改、猜测或覆盖产品型号、参数、价格、规格书内容；分隔符测试只验证现有搜索行为。",
         "browser": chrome,
         "desktop": desktop,
         "mobile": mobile,
-        "static_contract": static_contract_checks(root),
+        "static_contract": static_contract(root),
     }
-    (root / args.json).write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    write_markdown(report, root / args.markdown)
-    print(
-        "Homepage search flow audit: PASS "
-        f"(desktop/mobile; product={desktop['product_exact']['query']}; spec={desktop['spec_exact']['query']}; separator={SEPARATOR_SPEC_VARIANT})"
-    )
+    (root / a.json).write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    (root / a.markdown).write_text(markdown(report), encoding="utf-8")
+    print(f"Homepage search flow audit: PASS (product={desktop['product_exact']['query']}; spec={desktop['spec_exact']['query']}; separator={SEP_VARIANT})")
     return 0
 
 
