@@ -61,7 +61,13 @@ class ModelPageParser(HTMLParser):
 
 
 def normalize_model(value: object) -> str:
-    return " ".join(str(value or "").split()).casefold()
+    """Return the literal model key used for factual evidence matching.
+
+    Leading/trailing whitespace and case are presentation differences. Internal
+    whitespace, punctuation and separators are retained so visually different
+    model strings are never silently promoted to exact factual evidence.
+    """
+    return str(value or "").strip().casefold()
 
 
 def find_product_model(value: object) -> str:
@@ -69,7 +75,7 @@ def find_product_model(value: object) -> str:
         item_type = value.get("@type")
         types = item_type if isinstance(item_type, list) else [item_type]
         if "Product" in types and value.get("model"):
-            return " ".join(str(value["model"]).split())
+            return str(value["model"]).strip()
         for child in value.values():
             found = find_product_model(child)
             if found:
@@ -303,7 +309,7 @@ def audit() -> dict:
         "policy": {
             "read_only": True,
             "auto_fix_count": 0,
-            "matching_rule": "Product JSON-LD model must equal specs_index.json model after whitespace normalization and case-folding.",
+            "matching_rule": "Product JSON-LD model must equal specs_index.json model after trimming leading/trailing whitespace and case-folding; internal whitespace, punctuation, and separators remain significant.",
             "ambiguity_rule": "Multiple exact specification records are reported for review and never auto-selected.",
             "content_evidence_rule": "Multiple exact candidates are hashed byte-for-byte for evidence only; hashes never authorize automatic deletion, merging, or product-fact changes.",
         },

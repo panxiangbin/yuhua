@@ -33,6 +33,18 @@ jobs:
       - name: Compile audit script
         run: python -m py_compile tools/audit_core_model_spec_links.py
 
+      - name: Verify literal model matching contract
+        run: |
+          python - <<'PY'
+          from tools.audit_core_model_spec_links import normalize_model
+
+          assert normalize_model(' SHZ-95B ') == normalize_model('shz-95b')
+          assert normalize_model('AB C') != normalize_model('ABC')
+          assert normalize_model('DLSB-5/30') != normalize_model('DLSB-5-30')
+          assert normalize_model('GDSZ-10/-20+200') != normalize_model('GDSZ 10 -20+200')
+          print('Literal core-model matching contract: OK')
+          PY
+
       - name: Audit core-model specification mappings
         run: |
           set +e
@@ -62,6 +74,7 @@ jobs:
 
           assert policy['read_only'] is True
           assert policy['auto_fix_count'] == 0
+          assert 'internal whitespace, punctuation, and separators remain significant' in policy['matching_rule']
           assert summary['core_page_count'] == len(pages)
           assert (
               summary['no_exact_spec_count']
