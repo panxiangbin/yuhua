@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
 """Read-only source-product evidence guard for standalone core-model pages.
 
-Every public model/*.html page must claim a Product JSON-LD model that exists
-literally in the authoritative source products.json. Matching intentionally only
-ignores leading/trailing whitespace and letter case: internal whitespace,
-hyphens, slashes, plus signs and punctuation remain factual differences.
+Every public model/*.html page is checked against the authoritative source
+products.json. Matching intentionally only ignores leading/trailing whitespace
+and letter case: internal whitespace, hyphens, slashes, plus signs and
+punctuation remain factual differences.
 
-The guard never creates pages, rewrites product facts, selects among duplicate
-source records, or treats runtime-derived catalogue models as source evidence.
-Multiple literal source records are reported for review but are not guessed away.
+A small explicit baseline may record legacy pages that already lack literal
+source-product evidence. Baseline entries are review debt, not factual approval:
+they prevent historical debt from disabling CI while ensuring any new unsupported
+page fails the guard. The audit never creates pages, rewrites product facts,
+selects among duplicate source records, or treats runtime-derived catalogue
+models as source evidence.
 """
 
 from __future__ import annotations
@@ -23,6 +26,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PRODUCTS_JSON = ROOT / "products.json"
 MODEL_DIR = ROOT / "model"
+BASELINE_JSON = ROOT / ".github" / "yuhua-core-model-source-evidence-baseline.json"
 
 
 class ProductJsonLdParser(HTMLParser):
@@ -104,10 +108,41 @@ def source_snapshot(index: int, record: dict) -> dict:
     }
 
 
+def load_baseline() -> list[dict]:
+    if not BASELINE_JSON.exists():
+        return []
+    payload = json.loads(BASELINE_JSON.read_text(encoding="utf-8"))
+    entries = payload.get("review_only_exceptions", []) if isinstance(payload, dict) else None
+    if not isinstance(entries, list):
+        raise ValueError("baseline review_only_exceptions must be a list")
+    cleaned: list[dict] = []
+    for position, entry in enumerate(entries):
+        if not isinstance(entry, dict):
+            raise ValueError(f"baseline entry {position} must be an object")
+        page = str(entry.get("core_page") or "").strip()
+        model = str(entry.get("model") or "").strip()
+        if not page.startswith("model/") or not page.endswith(".html") or not model:
+            raise ValueError(f"baseline entry {position} has invalid core_page/model")
+        cleaned.append(
+            {
+                "core_page": page,
+                "model": model,
+                "literal_key": literal_model_key(model),
+                "reason": str(entry.get("reason") or "legacy_no_literal_source_product_model").strip(),
+            }
+        )
+    return cleaned
+
+
 def audit() -> dict:
     products = json.loads(PRODUCTS_JSON.read_text(encoding="utf-8"))
     if not isinstance(products, list):
         raise ValueError("products.json must contain a list")
+
+    baseline = load_baseline()
+    baseline_pairs = {(entry["core_page"], entry["literal_key"]): entry for entry in baseline}
+    if len(baseline_pairs) != len(baseline):
+        raise ValueError("baseline contains duplicate core_page/model pairs")
 
     exact_products: dict[str, list[tuple[int, dict]]] = defaultdict(list)
     for index, record in enumerate(products):
@@ -125,9 +160,12 @@ def audit() -> dict:
     blockers: list[dict] = []
     parse_issues: list[dict] = []
     claims_by_model: dict[str, list[str]] = defaultdict(list)
+    current_no_source_pairs: set[tuple[str, str]] = set()
     unique_count = 0
     multiple_count = 0
     no_exact_count = 0
+    baselined_review_count = 0
+    new_no_source_count = 0
 
     for path in pages:
         page_rel = path.relative_to(ROOT).as_posix()
@@ -144,6 +182,7 @@ def audit() -> dict:
                     "literal_key": "",
                     "source_record_count": 0,
                     "evidence_class": "parse_issue",
+                    "baseline_review_only": False,
                     "source_records": [],
                 }
             )
@@ -153,17 +192,24 @@ def audit() -> dict:
         claims_by_model[key].append(page_rel)
         exact = exact_products.get(key, [])
         count = len(exact)
+        baseline_entry = baseline_pairs.get((page_rel, key))
 
         if count == 0:
-            evidence_class = "no_exact_source_product"
             no_exact_count += 1
-            blockers.append(
-                {
-                    "core_page": page_rel,
-                    "model": model,
-                    "reason": "no_literal_source_product_model",
-                }
-            )
+            current_no_source_pairs.add((page_rel, key))
+            if baseline_entry:
+                evidence_class = "no_exact_source_product_baselined_review"
+                baselined_review_count += 1
+            else:
+                evidence_class = "no_exact_source_product_blocker"
+                new_no_source_count += 1
+                blockers.append(
+                    {
+                        "core_page": page_rel,
+                        "model": model,
+                        "reason": "new_no_literal_source_product_model",
+                    }
+                )
         elif count == 1:
             evidence_class = "unique_exact_source_product"
             unique_count += 1
@@ -178,7 +224,22 @@ def audit() -> dict:
                 "literal_key": key,
                 "source_record_count": count,
                 "evidence_class": evidence_class,
+                "baseline_review_only": bool(count == 0 and baseline_entry),
                 "source_records": [source_snapshot(index, record) for index, record in exact],
+            }
+        )
+
+    stale_baseline_entries = [
+        entry
+        for pair, entry in sorted(baseline_pairs.items())
+        if pair not in current_no_source_pairs
+    ]
+    for entry in stale_baseline_entries:
+        blockers.append(
+            {
+                "core_page": entry["core_page"],
+                "model": entry["model"],
+                "reason": "stale_baseline_exception_requires_review",
             }
         )
 
@@ -196,6 +257,8 @@ def audit() -> dict:
             "runtime_only_products_included": False,
             "matching_rule": "trim outer whitespace + case-insensitive only; preserve all internal characters",
             "multiple_source_records_are_merged": False,
+            "baseline_exceptions_are_factual_approval": False,
+            "baseline_scope": "legacy no-literal-source-page debt only; new unsupported pages remain blockers",
         },
         "summary": {
             "source_product_records": len(products),
@@ -208,11 +271,17 @@ def audit() -> dict:
             "unique_exact_source_product_pages": unique_count,
             "multiple_exact_source_product_pages": multiple_count,
             "no_exact_source_product_pages": no_exact_count,
+            "baselined_review_only_pages": baselined_review_count,
+            "new_unbaselined_no_source_pages": new_no_source_count,
             "parse_issue_pages": len(parse_issues),
             "duplicate_model_page_claim_groups": len(duplicate_page_claims),
+            "baseline_entries": len(baseline),
+            "stale_baseline_entries": len(stale_baseline_entries),
             "blocking_issue_count": len(blockers),
         },
         "pages": rows,
+        "baseline_review_only_exceptions": baseline,
+        "stale_baseline_exceptions": stale_baseline_entries,
         "duplicate_model_page_claims": duplicate_page_claims,
         "parse_issues": parse_issues,
         "blocking_issues": blockers,
@@ -225,6 +294,7 @@ def markdown_report(report: dict) -> str:
         "# Yuhua core-model source evidence audit",
         "",
         "This is a read-only provenance guard. It does not create pages, merge duplicate source records, or rewrite product facts.",
+        "Legacy baseline exceptions are review debt only; they are not evidence that a model claim is correct.",
         "",
         "## Summary",
         "",
@@ -234,8 +304,10 @@ def markdown_report(report: dict) -> str:
         f"- Pages with one exact source record: {summary['unique_exact_source_product_pages']}",
         f"- Pages with multiple exact source records: {summary['multiple_exact_source_product_pages']}",
         f"- Pages with no exact source record: {summary['no_exact_source_product_pages']}",
+        f"- Existing no-source pages baselined for review: {summary['baselined_review_only_pages']}",
+        f"- New unsupported pages: {summary['new_unbaselined_no_source_pages']}",
         f"- Product JSON-LD parse/model issues: {summary['parse_issue_pages']}",
-        f"- Duplicate page model-claim groups: {summary['duplicate_model_page_claim_groups']}",
+        f"- Stale baseline entries: {summary['stale_baseline_entries']}",
         f"- Blocking issues: {summary['blocking_issue_count']}",
         "",
         "## Page evidence",
@@ -249,6 +321,13 @@ def markdown_report(report: dict) -> str:
         lines.append(
             f"| `{page}` | `{model}` | {row['source_record_count']} | {row['evidence_class']} |"
         )
+
+    if report["baseline_review_only_exceptions"]:
+        lines.extend(["", "## Legacy baseline review debt", ""])
+        for entry in report["baseline_review_only_exceptions"]:
+            lines.append(
+                f"- `{entry['core_page']}` claims `{entry['model']}`: {entry['reason']}"
+            )
 
     if report["blocking_issues"]:
         lines.extend(["", "## Blocking issues", ""])
@@ -267,7 +346,7 @@ def markdown_report(report: dict) -> str:
             "",
             "## Safety boundary",
             "",
-            "A literal source-model match proves only that the standalone page's model identifier exists in products.json. It does not authorize copying, reconciling, inferring, or overwriting technical parameters, model meaning, pricing, or specification content.",
+            "A literal source-model match proves only that the standalone page's model identifier exists in products.json. It does not authorize copying, reconciling, inferring, or overwriting technical parameters, model meaning, pricing, or specification content. A baseline exception proves even less: it only records pre-existing review debt so that newly introduced unsupported pages can be blocked.",
             "",
         ]
     )
