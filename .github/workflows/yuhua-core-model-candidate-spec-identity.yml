@@ -1,0 +1,136 @@
+name: Yuhua core-model candidate specification identity audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - products.json
+      - specs_index.json
+      - "model/*.html"
+      - "specs/**/*.html"
+      - tools/audit_core_model_page_gaps.py
+      - tools/audit_core_model_candidate_spec_identity.py
+      - .github/workflows/yuhua-core-model-candidate-spec-identity.yml
+  pull_request:
+    paths:
+      - products.json
+      - specs_index.json
+      - "model/*.html"
+      - "specs/**/*.html"
+      - tools/audit_core_model_page_gaps.py
+      - tools/audit_core_model_candidate_spec_identity.py
+      - .github/workflows/yuhua-core-model-candidate-spec-identity.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Compile audits
+        run: |
+          python -m py_compile tools/audit_core_model_page_gaps.py
+          python -m py_compile tools/audit_core_model_candidate_spec_identity.py
+
+      - name: Verify literal identity matching contract
+        run: |
+          python - <<'PY'
+          import importlib.util
+          from pathlib import Path
+
+          path = Path("tools/audit_core_model_candidate_spec_identity.py")
+          spec = importlib.util.spec_from_file_location("candidate_spec_identity", path)
+          module = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(module)
+
+          contains = module.contains_literal_model
+          assert contains("CL-200平板集热式磁力搅拌器", "CL-200")
+          assert contains("型号：FA25 参数", "FA25")
+          assert not contains("FA250 参数", "FA25")
+          assert contains("DLSB-5/30 参数", "DLSB-5/30")
+          assert not contains("DLSB-5-30 参数", "DLSB-5/30")
+          assert contains("GDSZ-10/-20+200", "GDSZ-10/-20+200")
+          assert not contains("GDSZ-10-20+200", "GDSZ-10/-20+200")
+          PY
+
+      - name: Run read-only identity audit
+        run: |
+          python tools/audit_core_model_candidate_spec_identity.py \
+            --json /tmp/core-model-candidate-spec-identity.json \
+            --markdown /tmp/core-model-candidate-spec-identity.md
+
+      - name: Verify report safety contract
+        run: |
+          python - <<'PY'
+          import json
+
+          path = "/tmp/core-model-candidate-spec-identity.json"
+          report = json.load(open(path, encoding="utf-8"))
+          policy = report["policy"]
+          summary = report["summary"]
+          candidates = report["candidates"]
+
+          assert policy["read_only"] is True
+          assert policy["auto_fix_count"] == 0
+          assert policy["page_creation_authorized"] is False
+          assert policy["technical_content_validated"] is False
+          assert policy["technical_facts_rewritten"] is False
+          assert summary["gap_candidate_models"] == len(candidates)
+
+          spec_rows = [item for row in candidates for item in row["spec_identities"]]
+          assert summary["candidate_missing_spec_pages"] == sum(not item["page_exists"] for item in spec_rows)
+          assert summary["candidate_spec_page_read_errors"] == sum(bool(item["read_error"]) for item in spec_rows)
+          assert summary["candidate_spec_pages_literal_identity_confirmed"] == sum(bool(item["literal_identity_confirmed"]) for item in spec_rows)
+          assert summary["candidates_all_spec_pages_literal_identity"] == sum(bool(row["all_spec_pages_literal_identity"]) for row in candidates)
+
+          for row in candidates:
+              assert row["model"].strip()
+              assert row["literal_key"]
+              assert row["product_record_count"] >= 1
+              assert row["spec_record_count"] >= 1
+              assert len(row["spec_identities"]) == row["spec_record_count"]
+          PY
+
+      - name: Verify audit did not modify protected facts or pages
+        run: |
+          if [ -n "$(git status --porcelain -- products.json specs_index.json specs model downloads)" ]; then
+            echo "Audit modified protected product/specification/core-page files"
+            git status --porcelain -- products.json specs_index.json specs model downloads
+            exit 1
+          fi
+
+      - name: Publish concise identity summary
+        run: |
+          cat /tmp/core-model-candidate-spec-identity.md >> "$GITHUB_STEP_SUMMARY"
+          python - <<'PY'
+          import json
+          report = json.load(open("/tmp/core-model-candidate-spec-identity.json", encoding="utf-8"))
+          summary = report["summary"]
+          confirmed = [
+              row["model"] for row in report["top_candidates"]
+              if row["all_spec_pages_literal_identity"]
+          ][:5]
+          message = (
+              f"candidates={summary['gap_candidate_models']}; "
+              f"spec_pages={summary['candidate_spec_pages_examined']}; "
+              f"identity_confirmed={summary['candidate_spec_pages_literal_identity_confirmed']}; "
+              f"identity_review={summary['candidate_spec_pages_without_literal_identity']}; "
+              f"strongest_confirmed={summary['strongest_candidates_all_spec_pages_literal_identity']}; "
+              f"top_confirmed={', '.join(confirmed) or 'none'}"
+          )
+          print(f"::notice title=Candidate spec identity summary::{message}")
+          PY
+
+      - name: Upload audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-core-model-candidate-spec-identity
+          path: |
+            /tmp/core-model-candidate-spec-identity.json
+            /tmp/core-model-candidate-spec-identity.md
+          retention-days: 90
