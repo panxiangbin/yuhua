@@ -92,7 +92,21 @@ def wait_count(d: webdriver.Chrome, count_id: str, test: Callable[[int], bool]) 
 
 
 def models(d: webdriver.Chrome, body: str) -> list[str]:
-    return [x.text.strip() for x in d.find_elements(By.CSS_SELECTOR, f"{body} tr td.model") if x.text.strip()]
+    values = d.execute_script(
+        "return Array.from(document.querySelectorAll(arguments[0] + ' tr td.model')).map(x => (x.textContent || '').trim()).filter(Boolean);",
+        body,
+    )
+    return [str(value) for value in values]
+
+
+def wait_top_match(d: webdriver.Chrome, body: str, expected: str) -> list[str]:
+    def ready(x: webdriver.Chrome) -> list[str] | bool:
+        found = models(x, body)
+        if found and compact(found[0]) == compact(expected):
+            return found
+        return False
+
+    return list(WebDriverWait(d, 10).until(ready))
 
 
 def choose_models(d: webdriver.Chrome) -> dict[str, str]:
@@ -111,10 +125,10 @@ def choose_models(d: webdriver.Chrome) -> dict[str, str]:
 
 def exact_search(d: webdriver.Chrome, input_id: str, count_id: str, body: str, query: str) -> dict[str, Any]:
     search(d, input_id, query)
-    count = wait_count(d, count_id, lambda n: n > 0)
-    found = models(d, body)
-    if not found or query not in found or compact(found[0]) != compact(query):
-        raise AssertionError(f"Exact search ranking failed: query={query!r}, rows={found[:10]!r}")
+    found = wait_top_match(d, body, query)
+    count = int(d.find_element(By.ID, count_id).text.strip())
+    if count <= 0 or query not in found:
+        raise AssertionError(f"Exact search ranking failed: query={query!r}, count={count}, rows={found[:10]!r}")
     return {"query": query, "count": count, "top_model": found[0]}
 
 
@@ -195,8 +209,6 @@ def spec_journey(d: webdriver.Chrome, root: Path, query: str, mobile: bool) -> d
         raise AssertionError(f"Download is not Word format: {download_path}")
     metrics = {"online": rect(d, online), "download": rect(d, download)}
     opened = open_online(d, online, online_path)
-    search(d, "specSearch", query)
-    wait_count(d, "specResultCount", lambda n: n > 0)
     download = d.find_element(By.CSS_SELECTOR, "#specBody tr a.spec-btn[download]")
     clicked = click_download_probe(d, download)
     return {
@@ -214,10 +226,10 @@ def separator_search(d: webdriver.Chrome) -> dict[str, Any]:
     out = {}
     for q in (SEP_LITERAL, SEP_VARIANT):
         search(d, "specSearch", q)
-        count = wait_count(d, "specResultCount", lambda n: n > 0)
-        found = models(d, "#specBody")
-        if not found or compact(found[0]) != compact(SEP_LITERAL):
-            raise AssertionError(f"Separator search failed: {q!r} -> {found[:5]!r}")
+        found = wait_top_match(d, "#specBody", SEP_LITERAL)
+        count = int(d.find_element(By.ID, "specResultCount").text.strip())
+        if count <= 0:
+            raise AssertionError(f"Separator search returned non-positive count: {q!r} -> {count}")
         out[q] = {"count": count, "top_model": found[0]}
     return {
         "literal": SEP_LITERAL,
@@ -247,7 +259,7 @@ def static_contract(root: Path) -> dict[str, bool]:
     for token in ("function normalizeSearchText(value)", "function searchMatchRank(", "rankSearchResults("):
         if token not in js:
             raise AssertionError(f"Missing shared search contract: {token}")
-    return {"status_wiring": True, "shared_ranking": True, "separator_normalization": True}
+    return {"product_search_status_wiring": True, "spec_search_status_wiring": True, "shared_ranking_helper": True, "separator_normalization": True}
 
 
 def viewport_run(d: webdriver.Chrome, root: Path, page: Path, name: str) -> dict[str, Any]:
