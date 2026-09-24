@@ -1,0 +1,63 @@
+name: Yuhua product model duplicate conflict audit
+
+on:
+  pull_request:
+    paths:
+      - 'products.json'
+      - 'tools/audit_product_model_duplicate_conflicts.py'
+      - '.github/workflows/yuhua-product-model-duplicate-conflicts.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'products.json'
+      - 'tools/audit_product_model_duplicate_conflicts.py'
+      - '.github/workflows/yuhua-product-model-duplicate-conflicts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Guard literal model identity and classification semantics
+        run: python tools/audit_product_model_duplicate_conflicts.py --self-test
+      - name: Classify duplicate source product-model records
+        run: |
+          python tools/audit_product_model_duplicate_conflicts.py \
+            --json-output product_model_duplicate_conflict_report.json
+      - name: Validate report contract
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path('product_model_duplicate_conflict_report.json').read_text(encoding='utf-8'))
+          summary = report['summary']
+          required = {
+              'source_product_count',
+              'literal_duplicate_model_group_count',
+              'exact_duplicate_group_count',
+              'complementary_group_count',
+              'conflicting_group_count',
+              'whitespace_normalized_only_candidate_group_count',
+          }
+          assert required <= summary.keys()
+          assert (
+              summary['literal_duplicate_model_group_count']
+              == summary['exact_duplicate_group_count']
+              + summary['complementary_group_count']
+              + summary['conflicting_group_count']
+          )
+          assert report['policy']['whitespace_normalized_candidates'].startswith('manual review only')
+          PY
+      - name: Prove source data stayed read-only
+        run: git diff --exit-code -- products.json
+      - name: Upload duplicate-model audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-product-model-duplicate-conflict-report
+          path: product_model_duplicate_conflict_report.json
+          if-no-files-found: error
+          retention-days: 90
