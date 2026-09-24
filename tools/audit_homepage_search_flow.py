@@ -63,38 +63,49 @@ def compact(value: str) -> str:
 
 
 def scroll_visible(d: webdriver.Chrome, el: Any, inline: str = "nearest") -> None:
-    # Scroll only the document viewport. Element.scrollIntoView() can also scroll
-    # overflow:hidden ancestors (the result table wrapper), which moves the first
-    # result underneath its sticky <th> even though a real user would only scroll
-    # the page. Keeping ancestor scroll offsets untouched avoids that test-only
-    # click interception while still requiring an actual Selenium pointer click.
-    d.execute_script(
-        """
-        const r = arguments[0].getBoundingClientRect();
-        const old = document.documentElement.style.scrollBehavior;
-        document.documentElement.style.scrollBehavior = 'auto';
-        const top = Math.max(0, window.scrollY + r.top - (window.innerHeight - r.height) / 2);
-        window.scrollTo({top: top, behavior: 'auto'});
-        document.documentElement.style.scrollBehavior = old;
-        """,
-        el,
-    )
-    WebDriverWait(d, 10).until(
-        lambda x: x.execute_script(
-            "const r=arguments[0].getBoundingClientRect(); return r.top>=0 && r.bottom<=innerHeight && r.left<innerWidth && r.right>0;",
-            el,
-        )
-    )
-
-    def hittable(x: webdriver.Chrome) -> bool:
-        return bool(x.execute_script(
-            "const r=arguments[0].getBoundingClientRect(); const e=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2); return e===arguments[0] || arguments[0].contains(e);",
+    # Scroll only the document viewport. Element.scrollIntoView() may also move
+    # overflow ancestors, which can place a result beneath the table's sticky
+    # header. Try several viewport positions while leaving ancestor scroll state
+    # untouched, then require Selenium's normal center click to be unobstructed.
+    def hit_info(x: webdriver.Chrome) -> dict[str, Any]:
+        return dict(x.execute_script(
+            """
+            const el=arguments[0], r=el.getBoundingClientRect();
+            const cx=r.left+r.width/2, cy=r.top+r.height/2;
+            const hit=document.elementFromPoint(cx,cy);
+            const wrap=el.closest('.table-wrap');
+            return {
+              visible:r.top>=0 && r.bottom<=innerHeight && r.left>=0 && r.right<=innerWidth,
+              hittable:!!hit && (hit===el || el.contains(hit)),
+              top:r.top, bottom:r.bottom, left:r.left, right:r.right,
+              scrollY:window.scrollY,
+              wrapScrollTop:wrap ? wrap.scrollTop : 0,
+              blocker:hit ? `${hit.tagName}.${hit.className||''}` : 'none'
+            };
+            """,
             el,
         ))
 
-    if not hittable(d):
-        d.execute_script("window.scrollBy(0, -120);")
-    WebDriverWait(d, 10).until(hittable)
+    positions = (0.50, 0.65, 0.78, 0.35)
+    last: dict[str, Any] = {}
+    for fraction in positions:
+        d.execute_script(
+            """
+            const el=arguments[0], f=arguments[1];
+            const r=el.getBoundingClientRect();
+            const docY=window.scrollY+r.top+r.height/2;
+            const old=document.documentElement.style.scrollBehavior;
+            document.documentElement.style.scrollBehavior='auto';
+            window.scrollTo({top:Math.max(0,docY-innerHeight*f),behavior:'auto'});
+            document.documentElement.style.scrollBehavior=old;
+            """,
+            el,
+            fraction,
+        )
+        last = hit_info(d)
+        if last.get("visible") and last.get("hittable"):
+            return
+    raise AssertionError(f"Element could not be positioned for a real center click: {last}")
 
 
 def search(d: webdriver.Chrome, input_id: str, query: str) -> None:
