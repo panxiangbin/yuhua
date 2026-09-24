@@ -12,6 +12,11 @@ models already present in specs_index.json. Those mentions are a conservative
 review signal only: they are not interpreted as variants, equivalents, series
 membership, or permission to copy any parameters.
 
+For each strongest candidate, the specification-index title is also compared
+with the actual referenced specification page's <title> and <h1> text. Exact
+agreement is document-label provenance only: it is never promoted to a source
+product name and never authorizes page creation or parameter copying.
+
 No product/specification/model-page files are modified and no technical value is
 promoted into a product fact by this audit.
 """
@@ -24,6 +29,7 @@ import re
 from html.parser import HTMLParser
 from pathlib import Path
 
+from audit_core_model_candidate_spec_identity import inspect_spec_page
 from audit_core_model_page_gaps import ROOT, PRODUCTS, SPECS, audit as gap_audit, load_json_list
 
 
@@ -179,6 +185,39 @@ def other_indexed_model_mentions(text: str, candidate_model: str, vocabulary: li
     return found
 
 
+def document_label_evidence(spec: dict, identity: dict) -> dict:
+    """Compare spec-index display label with actual page label surfaces.
+
+    Exact cleaned-string equality is deliberately stricter than model-token
+    identity. A confirmation proves only that the index label is visibly backed
+    by the referenced document; it does not make that label an authoritative
+    source product name.
+    """
+    index_title = clean_text(spec.get("title", ""))
+    page_title = clean_text(identity.get("page_title", ""))
+    page_h1 = [
+        clean_text(value)
+        for value in identity.get("page_h1", [])
+        if clean_text(value)
+    ]
+    surfaces: list[str] = []
+    if index_title and page_title == index_title:
+        surfaces.append("html_title")
+    if index_title and index_title in page_h1:
+        surfaces.append("h1")
+    return {
+        "spec_index_title": index_title,
+        "page_title": page_title,
+        "page_h1": page_h1,
+        "index_title_exactly_confirmed": bool(surfaces),
+        "confirmation_surfaces": surfaces,
+        "interpretation": (
+            "document-label consistency only; not an authoritative source product name "
+            "and not permission to write product facts or create a standalone page"
+        ),
+    }
+
+
 def audit() -> dict:
     base = gap_audit()
     products = load_json_list(PRODUCTS, "products.json")
@@ -193,6 +232,8 @@ def audit() -> dict:
     missing_product_name = 0
     missing_category = 0
     with_manual_source_fields = 0
+    document_label_confirmed = 0
+    document_label_unconfirmed = 0
 
     strongest = [row for row in base["candidates"] if row.get("evidence_rank") == 0]
     for row in strongest:
@@ -220,6 +261,9 @@ def audit() -> dict:
         page_exists = not (read_error == "missing specification page")
         mentions = other_indexed_model_mentions(visible_text, model, vocabulary) if visible_text else []
 
+        identity = inspect_spec_page(model, {**spec, "source_index": spec_index})
+        labels = document_label_evidence(spec, identity)
+
         if not page_exists:
             missing_pages += 1
         if read_error and page_exists:
@@ -234,6 +278,10 @@ def audit() -> dict:
             missing_category += 1
         if fields["other_nonempty_source_field_count"]:
             with_manual_source_fields += 1
+        if labels["index_title_exactly_confirmed"]:
+            document_label_confirmed += 1
+        else:
+            document_label_unconfirmed += 1
 
         review_reasons: list[str] = []
         if fields["other_nonempty_source_field_count"]:
@@ -244,6 +292,8 @@ def audit() -> dict:
             review_reasons.append("specification page could not be fully read")
         if fields["source_identity_fields_missing"]:
             review_reasons.append("one or more customer-facing source identity fields are empty")
+        if not labels["index_title_exactly_confirmed"]:
+            review_reasons.append("specification index title is not exactly confirmed by the referenced page title/H1")
 
         candidates.append(
             {
@@ -262,6 +312,7 @@ def audit() -> dict:
                     "other_indexed_model_mentions": mentions,
                     "other_indexed_model_mention_count": len(mentions),
                     "mention_interpretation": "manual review signal only; no equivalence, variant, series, or parameter relationship is inferred",
+                    "document_label_evidence": labels,
                 },
                 "manual_review_required": bool(review_reasons),
                 "manual_review_reasons": review_reasons,
@@ -280,6 +331,8 @@ def audit() -> dict:
         "candidate_spec_page_read_errors": read_errors,
         "candidates_with_other_indexed_models_in_spec_body": with_other_models,
         "candidates_without_other_indexed_models_in_spec_body": without_other_models,
+        "candidates_with_spec_index_title_confirmed_by_page_label": document_label_confirmed,
+        "candidates_without_spec_index_title_confirmation": document_label_unconfirmed,
         "candidates_requiring_manual_review": sum(row["manual_review_required"] for row in candidates),
     }
 
@@ -291,11 +344,18 @@ def audit() -> dict:
             "technical_values_copied": False,
             "technical_values_validated": False,
             "spec_body_parameters_promoted_to_product_facts": False,
+            "spec_document_labels_in_report": True,
+            "spec_document_labels_promoted_to_product_name": False,
             "identity_fields_allowed_in_report": list(IDENTITY_FIELDS),
             "non_identity_values_in_report": False,
             "matching": "literal model syntax; case-insensitive; ASCII alphanumeric token boundaries; no separator/internal-space normalization",
             "cross_model_review_vocabulary": "high-precision indexed model literals with ASCII letters plus a digit or common model separator; digit-leading unit-shaped tokens without separators are excluded to reduce noisy capacity/value matches",
-            "meaning": "This report separates literal source identity evidence from fields and cross-model specification text that still need factual review. It never authorizes page creation.",
+            "meaning": (
+                "This report separates literal source identity evidence from fields and cross-model "
+                "specification text that still need factual review. Specification index/title/H1 "
+                "strings are document-label provenance only, never source product names. "
+                "It never authorizes page creation."
+            ),
         },
         "summary": summary,
         "candidates": candidates,
@@ -307,7 +367,7 @@ def markdown_report(report: dict) -> str:
     lines = [
         "# Yuhua standalone-model candidate fact-source readiness audit",
         "",
-        "> Read-only preflight for the strongest 1-source-product + 1-spec candidates. Identity evidence may be shown verbatim; technical/descriptive source values are intentionally omitted and specification cross-model mentions are review signals only.",
+        "> Read-only preflight for the strongest 1-source-product + 1-spec candidates. Identity evidence may be shown verbatim; technical/descriptive source values are intentionally omitted, specification document labels are provenance only, and cross-model mentions are review signals only.",
         "",
         "## Summary",
         "",
@@ -318,33 +378,43 @@ def markdown_report(report: dict) -> str:
         f"- Candidates with populated non-identity source fields: **{summary['candidates_with_non_identity_source_fields']}**",
         f"- Missing specification pages: **{summary['candidate_spec_pages_missing']}**",
         f"- Specification page read/parse errors: **{summary['candidate_spec_page_read_errors']}**",
+        f"- Spec-index titles exactly confirmed by page title/H1: **{summary['candidates_with_spec_index_title_confirmed_by_page_label']}**",
+        f"- Spec-index titles without exact page-label confirmation: **{summary['candidates_without_spec_index_title_confirmation']}**",
         f"- Specs that mention other indexed model literals: **{summary['candidates_with_other_indexed_models_in_spec_body']}**",
         f"- Specs with no other indexed model literal detected: **{summary['candidates_without_other_indexed_models_in_spec_body']}**",
         f"- Candidates still requiring manual factual review: **{summary['candidates_requiring_manual_review']}**",
         "",
         "## Candidate evidence separation",
         "",
-        "| Model | Source category | Product name | Non-identity source fields | Other indexed models in spec body |",
-        "| --- | --- | --- | ---: | ---: |",
+        "| Model | Source category | Product name | Spec document label | Non-identity source fields | Other indexed models in spec body |",
+        "| --- | --- | --- | --- | ---: | ---: |",
     ]
     for row in report["candidates"]:
         identity = row["source_fields"]["source_identity_fields"]
         model = row["model"].replace("|", "\\|")
         category = str(identity.get("类别", "—")).replace("|", "\\|") or "—"
         product_name = str(identity.get("产品名称", "—")).replace("|", "\\|") or "—"
+        label_state = (
+            "confirmed"
+            if row["specification"]["document_label_evidence"]["index_title_exactly_confirmed"]
+            else "review"
+        )
         lines.append(
-            f"| `{model}` | {category} | {product_name} | {row['source_fields']['other_nonempty_source_field_count']} | {row['specification']['other_indexed_model_mention_count']} |"
+            f"| `{model}` | {category} | {product_name} | {label_state} | "
+            f"{row['source_fields']['other_nonempty_source_field_count']} | "
+            f"{row['specification']['other_indexed_model_mention_count']} |"
         )
     if not report["candidates"]:
-        lines.append("| — | — | — | 0 | 0 |")
+        lines.append("| — | — | — | — | 0 | 0 |")
 
     lines.extend(
         [
             "",
             "## Safety policy",
             "",
-            "- Only literal source identity fields (`型号`, `类别`, `产品名称`) are emitted with values.",
+            "- Only literal source identity fields (`型号`, `类别`, `产品名称`) are emitted with source-product values.",
             "- Technical/descriptive source fields are reported by field name/count only; their values are not copied or validated.",
+            "- Specification index titles and page title/H1 strings are document provenance only and are never written into `产品名称`.",
             "- Other model literals found in a specification body are review signals only and never treated as equivalent/variant models.",
             "- Separators and internal spaces remain meaningful; no model normalization is performed.",
             "- No product data, specification content, downloads or standalone pages are modified.",
@@ -375,6 +445,7 @@ def main() -> None:
     print(
         "Core-model candidate fact-source audit: "
         f"candidates={summary['strongest_candidate_count']}, "
+        f"label_confirmed={summary['candidates_with_spec_index_title_confirmed_by_page_label']}, "
         f"cross_model_specs={summary['candidates_with_other_indexed_models_in_spec_body']}, "
         f"missing_product_name={summary['candidates_missing_source_product_name']}, "
         f"manual_review={summary['candidates_requiring_manual_review']}"
