@@ -123,11 +123,20 @@ def product_field_audit(product: dict) -> dict:
 
 
 def is_review_model_token(model: str) -> bool:
-    """Keep model-like indexed literals and avoid noisy plain words/numbers."""
+    """Keep high-precision model-like literals and reject unit-shaped noise.
+
+    Spec indexes can contain suspicious values such as ``10L``. For this
+    cross-model review signal, a token that starts with a digit is kept only
+    when it also has a model separator, e.g. ``2XZ-2``. This intentionally
+    favors precision over recall; rejected tokens are never treated as facts.
+    """
     text = str(model or "").strip()
     if len(text) < 3 or not re.search(r"[A-Za-z]", text):
         return False
-    return bool(re.search(r"[0-9]", text) or any(mark in text for mark in "-/+()"))
+    has_separator = any(mark in text for mark in "-/+()")
+    if text[0].isdigit() and not has_separator:
+        return False
+    return bool(re.search(r"[0-9]", text) or has_separator)
 
 
 def model_vocabulary(specs: list) -> list[str]:
@@ -285,7 +294,7 @@ def audit() -> dict:
             "identity_fields_allowed_in_report": list(IDENTITY_FIELDS),
             "non_identity_values_in_report": False,
             "matching": "literal model syntax; case-insensitive; ASCII alphanumeric token boundaries; no separator/internal-space normalization",
-            "cross_model_review_vocabulary": "indexed model literals with ASCII letters plus a digit or common model separator; deliberately conservative to reduce plain-word/number noise",
+            "cross_model_review_vocabulary": "high-precision indexed model literals with ASCII letters plus a digit or common model separator; digit-leading unit-shaped tokens without separators are excluded to reduce noisy capacity/value matches",
             "meaning": "This report separates literal source identity evidence from fields and cross-model specification text that still need factual review. It never authorizes page creation.",
         },
         "summary": summary,
