@@ -134,7 +134,16 @@ def emulation_state(driver: webdriver.Chrome) -> dict[str, Any]:
 
 def search_spec(driver: webdriver.Chrome) -> str:
     field = driver.find_element(By.ID, "specSearch")
-    field.click()
+    driver.execute_script(
+        "arguments[0].scrollIntoView({block:'center',inline:'nearest'}); arguments[0].focus();",
+        field,
+    )
+    WebDriverWait(driver, 5).until(
+        lambda d: d.execute_script(
+            "const r=arguments[0].getBoundingClientRect(); return r.top>=0 && r.bottom<=innerHeight;",
+            field,
+        )
+    )
     field.clear()
     field.send_keys(QUERY)
 
