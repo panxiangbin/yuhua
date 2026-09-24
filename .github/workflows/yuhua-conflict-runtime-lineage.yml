@@ -1,0 +1,96 @@
+name: Yuhua conflict runtime lineage audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'products.json'
+      - 'assets/data.js'
+      - 'tools/audit_conflicting_model_evidence_trace.py'
+      - 'tools/audit_product_model_duplicate_conflicts.py'
+      - 'tools/audit_conflict_runtime_lineage.py'
+      - '.github/workflows/yuhua-conflict-runtime-lineage.yml'
+  pull_request:
+    paths:
+      - 'products.json'
+      - 'assets/data.js'
+      - 'tools/audit_conflicting_model_evidence_trace.py'
+      - 'tools/audit_product_model_duplicate_conflicts.py'
+      - 'tools/audit_conflict_runtime_lineage.py'
+      - '.github/workflows/yuhua-conflict-runtime-lineage.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit-conflict-runtime-lineage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Self-test strict lineage classification
+        run: python tools/audit_conflict_runtime_lineage.py --self-test
+
+      - name: Generate review-only runtime lineage report
+        run: |
+          python tools/audit_conflict_runtime_lineage.py \
+            --output audit-output/conflict-runtime-lineage.json
+
+      - name: Validate lineage report contract
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path('audit-output/conflict-runtime-lineage.json').read_text(encoding='utf-8'))
+          policy = report['policy']
+          summary = report['summary']
+
+          assert policy['automatic_fix_authorized'] is False
+          assert summary['automatic_fix_authorized'] is False
+          assert summary['source_product_count'] > 0
+          assert summary['conflicting_model_count'] == len(report['models'])
+          assert summary['runtime_row_count'] == (
+              summary['exact_current_source_row_count']
+              + summary['runtime_name_enrichment_row_count']
+              + summary['unresolved_current_source_delta_row_count']
+          )
+
+          # Current baseline: the strict full-row gaps found by the previous audit are
+          # all explained by one narrow condition only: the source 产品名称 is empty,
+          # the runtime 产品名称 is populated, and every other original source field is
+          # literally identical. A future non-name delta should stop this gate for review.
+          assert summary['unresolved_current_source_delta_row_count'] == 0, report['unresolved_runtime_models']
+          assert summary['unresolved_runtime_model_count'] == 0, report['unresolved_runtime_models']
+          assert set(report['strict_full_row_gap_models']) == set(report['name_enrichment_models'])
+          assert 'YRE-2012' in report['name_enrichment_models']
+
+          for model in report['models']:
+              for row in model['runtime_rows']:
+                  if row['status'] == 'current_source_plus_runtime_name_enrichment':
+                      assert row['name_enrichment_source_row_matches']
+                      matched = set(row['name_enrichment_source_row_matches'])
+                      candidates = {
+                          item['source_row']: item['differing_fields']
+                          for item in row['same_model_source_differences']
+                      }
+                      assert all(candidates[source_row] == ['产品名称'] for source_row in matched)
+
+          print(json.dumps(summary, ensure_ascii=False, indent=2))
+          print('name_enrichment_models:', ', '.join(report['name_enrichment_models']))
+          PY
+
+      - name: Confirm audited customer data stayed read-only
+        run: git diff --exit-code -- products.json assets/data.js specs_index.json specs
+
+      - name: Upload conflict runtime lineage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-conflict-runtime-lineage
+          path: audit-output/conflict-runtime-lineage.json
+          retention-days: 90
