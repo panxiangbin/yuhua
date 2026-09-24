@@ -1,0 +1,151 @@
+name: Yuhua core model source evidence guard
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - products.json
+      - "model/*.html"
+      - .github/yuhua-core-model-source-evidence-baseline.json
+      - tools/audit_core_model_source_evidence.py
+      - .github/workflows/yuhua-core-model-source-evidence.yml
+  pull_request:
+    branches: [main]
+    paths:
+      - products.json
+      - "model/*.html"
+      - .github/yuhua-core-model-source-evidence-baseline.json
+      - tools/audit_core_model_source_evidence.py
+      - .github/workflows/yuhua-core-model-source-evidence.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Compile audit
+        run: python -m py_compile tools/audit_core_model_source_evidence.py
+
+      - name: Verify literal model matching contract
+        run: |
+          python - <<'PY'
+          import importlib.util
+          from pathlib import Path
+
+          path = Path("tools/audit_core_model_source_evidence.py")
+          spec = importlib.util.spec_from_file_location("core_source_audit", path)
+          module = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(module)
+
+          key = module.literal_model_key
+          assert key(" CCA-20 ") == key("cca-20")
+          assert key("AB C") != key("ABC")
+          assert key("DLSB-5/30") != key("DLSB-5-30")
+          assert key("GDSZ-10/-20+200") != key("GDSZ-10-20+200")
+          PY
+
+      - name: Run read-only source evidence audit
+        shell: bash
+        run: |
+          set +e
+          python tools/audit_core_model_source_evidence.py \
+            --json /tmp/core-model-source-evidence.json \
+            --markdown /tmp/core-model-source-evidence.md
+          status=$?
+          echo "AUDIT_EXIT_CODE=$status" >> "$GITHUB_ENV"
+          exit 0
+
+      - name: Verify report safety contract
+        run: |
+          python - <<'PY'
+          import json
+
+          report = json.load(open("/tmp/core-model-source-evidence.json", encoding="utf-8"))
+          policy = report["policy"]
+          summary = report["summary"]
+          pages = report["pages"]
+
+          assert policy["read_only"] is True
+          assert policy["auto_fix_count"] == 0
+          assert policy["page_creation_authorized"] is False
+          assert policy["runtime_only_products_included"] is False
+          assert policy["multiple_source_records_are_merged"] is False
+          assert policy["baseline_exceptions_are_factual_approval"] is False
+          assert summary["core_model_pages"] == len(pages)
+          assert summary["source_product_records"] >= summary["source_records_with_model"]
+          assert summary["core_model_pages"] >= 1
+          assert summary["blocking_issue_count"] == len(report["blocking_issues"])
+          assert summary["baseline_entries"] == len(report["baseline_review_only_exceptions"])
+          assert summary["stale_baseline_entries"] == len(report["stale_baseline_exceptions"])
+
+          classified = (
+              summary["unique_exact_source_product_pages"]
+              + summary["multiple_exact_source_product_pages"]
+              + summary["no_exact_source_product_pages"]
+              + summary["parse_issue_pages"]
+          )
+          assert classified == summary["core_model_pages"]
+          assert summary["no_exact_source_product_pages"] == (
+              summary["baselined_review_only_pages"]
+              + summary["new_unbaselined_no_source_pages"]
+          )
+
+          for row in pages:
+              assert row["core_page"].startswith("model/")
+              if row["evidence_class"] == "unique_exact_source_product":
+                  assert row["source_record_count"] == 1
+              elif row["evidence_class"] == "multiple_exact_source_products":
+                  assert row["source_record_count"] > 1
+              elif row["evidence_class"].startswith("no_exact_source_product"):
+                  assert row["source_record_count"] == 0
+          PY
+
+      - name: Verify audit did not modify protected product facts or pages
+        run: |
+          if [ -n "$(git status --porcelain -- products.json model .github/yuhua-core-model-source-evidence-baseline.json)" ]; then
+            echo "Audit modified protected product/core-page/baseline files"
+            git status --porcelain -- products.json model .github/yuhua-core-model-source-evidence-baseline.json
+            exit 1
+          fi
+
+      - name: Publish concise source evidence summary
+        run: |
+          cat /tmp/core-model-source-evidence.md >> "$GITHUB_STEP_SUMMARY"
+          python - <<'PY'
+          import json
+          report = json.load(open("/tmp/core-model-source-evidence.json", encoding="utf-8"))
+          summary = report["summary"]
+          message = (
+              f"pages={summary['core_model_pages']}; "
+              f"unique_source={summary['unique_exact_source_product_pages']}; "
+              f"multiple_source={summary['multiple_exact_source_product_pages']}; "
+              f"legacy_review={summary['baselined_review_only_pages']}; "
+              f"new_unsupported={summary['new_unbaselined_no_source_pages']}; "
+              f"stale_baseline={summary['stale_baseline_entries']}; "
+              f"blockers={summary['blocking_issue_count']}"
+          )
+          print(f"::notice title=Core model source evidence::{message}")
+          PY
+
+      - name: Upload source evidence report
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-core-model-source-evidence
+          path: |
+            /tmp/core-model-source-evidence.json
+            /tmp/core-model-source-evidence.md
+          retention-days: 90
+
+      - name: Enforce new source-evidence regressions
+        shell: bash
+        run: |
+          if [ "${AUDIT_EXIT_CODE:-1}" -ne 0 ]; then
+            echo "Core-model source evidence audit found a new blocker or stale baseline entry. Review the uploaded report."
+            exit "${AUDIT_EXIT_CODE:-1}"
+          fi
