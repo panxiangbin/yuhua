@@ -23,9 +23,11 @@ jobs:
   audit-conflict-git-provenance:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout history without eagerly downloading historical blobs
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          filter: blob:none
 
       - uses: actions/setup-python@v5
         with:
