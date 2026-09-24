@@ -1,0 +1,145 @@
+name: Yuhua core-model candidate fact-source readiness audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - products.json
+      - specs_index.json
+      - "model/*.html"
+      - "specs/**/*.html"
+      - tools/audit_core_model_page_gaps.py
+      - tools/audit_core_model_candidate_fact_sources.py
+      - .github/workflows/yuhua-core-model-candidate-fact-sources.yml
+  pull_request:
+    paths:
+      - products.json
+      - specs_index.json
+      - "model/*.html"
+      - "specs/**/*.html"
+      - tools/audit_core_model_page_gaps.py
+      - tools/audit_core_model_candidate_fact_sources.py
+      - .github/workflows/yuhua-core-model-candidate-fact-sources.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Compile audits
+        run: |
+          python -m py_compile tools/audit_core_model_page_gaps.py
+          python -m py_compile tools/audit_core_model_candidate_fact_sources.py
+
+      - name: Verify literal model and field-safety contract
+        run: |
+          python - <<'PY'
+          import importlib.util
+          import sys
+          from pathlib import Path
+
+          path = Path("tools/audit_core_model_candidate_fact_sources.py")
+          sys.path.insert(0, str(path.parent.resolve()))
+          spec = importlib.util.spec_from_file_location("candidate_fact_sources", path)
+          module = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(module)
+
+          contains = module.contains_literal_model
+          assert contains("CL-200平板集热式磁力搅拌器", "CL-200")
+          assert contains("型号：FA25 参数", "FA25")
+          assert not contains("FA250 参数", "FA25")
+          assert contains("DLSB-5/30 参数", "DLSB-5/30")
+          assert not contains("DLSB-5-30 参数", "DLSB-5/30")
+          assert contains("GDSZ-10/-20+200", "GDSZ-10/-20+200")
+          assert not contains("GDSZ-10-20+200", "GDSZ-10/-20+200")
+
+          fields = module.product_field_audit({
+              "型号": "TEST-1",
+              "类别": "测试分类",
+              "产品名称": "",
+              "功率": "100W",
+              "容量": "",
+          })
+          assert fields["source_identity_fields"] == {"型号": "TEST-1", "类别": "测试分类"}
+          assert "功率" in fields["other_nonempty_source_field_names"]
+          assert "容量" in fields["empty_source_field_names"]
+          assert "100W" not in str(fields)
+          PY
+
+      - name: Run read-only fact-source readiness audit
+        run: |
+          python tools/audit_core_model_candidate_fact_sources.py \
+            --json /tmp/core-model-candidate-fact-sources.json \
+            --markdown /tmp/core-model-candidate-fact-sources.md
+
+      - name: Verify report safety contract
+        run: |
+          python - <<'PY'
+          import json
+
+          report = json.load(open("/tmp/core-model-candidate-fact-sources.json", encoding="utf-8"))
+          policy = report["policy"]
+          summary = report["summary"]
+          rows = report["candidates"]
+
+          assert policy["read_only"] is True
+          assert policy["auto_fix_count"] == 0
+          assert policy["page_creation_authorized"] is False
+          assert policy["technical_values_copied"] is False
+          assert policy["technical_values_validated"] is False
+          assert policy["spec_body_parameters_promoted_to_product_facts"] is False
+          assert policy["non_identity_values_in_report"] is False
+          assert summary["strongest_candidate_count"] == len(rows)
+          assert summary["candidate_spec_pages_missing"] == sum(not row["specification"]["page_exists"] for row in rows)
+          assert summary["candidates_with_other_indexed_models_in_spec_body"] == sum(bool(row["specification"]["other_indexed_model_mentions"]) for row in rows)
+
+          for row in rows:
+              assert row["evidence_class"] == "unique-product_unique-spec"
+              assert row["page_creation_authorized"] is False
+              assert row["source_fields"]["safe_auto_copy_scope"].startswith("identity fields only")
+              assert set(row["source_fields"]["source_identity_fields"]).issubset({"型号", "类别", "产品名称"})
+          PY
+
+      - name: Verify audit did not modify protected facts or pages
+        run: |
+          if [ -n "$(git status --porcelain -- products.json specs_index.json specs model downloads)" ]; then
+            echo "Audit modified protected product/specification/core-page files"
+            git status --porcelain -- products.json specs_index.json specs model downloads
+            exit 1
+          fi
+
+      - name: Publish concise readiness summary
+        run: |
+          cat /tmp/core-model-candidate-fact-sources.md >> "$GITHUB_STEP_SUMMARY"
+          python - <<'PY'
+          import json
+          report = json.load(open("/tmp/core-model-candidate-fact-sources.json", encoding="utf-8"))
+          summary = report["summary"]
+          clean = [
+              row["model"] for row in report["candidates"]
+              if not row["specification"]["other_indexed_model_mentions"]
+          ][:5]
+          message = (
+              f"candidates={summary['strongest_candidate_count']}; "
+              f"missing_name={summary['candidates_missing_source_product_name']}; "
+              f"cross_model_specs={summary['candidates_with_other_indexed_models_in_spec_body']}; "
+              f"manual_review={summary['candidates_requiring_manual_review']}; "
+              f"no_cross_model_sample={', '.join(clean) or 'none'}"
+          )
+          print(f"::notice title=Candidate fact-source summary::{message}")
+          PY
+
+      - name: Upload audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-core-model-candidate-fact-sources
+          path: |
+            /tmp/core-model-candidate-fact-sources.json
+            /tmp/core-model-candidate-fact-sources.md
+          retention-days: 90
