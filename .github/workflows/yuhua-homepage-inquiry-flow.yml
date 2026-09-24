@@ -1,0 +1,78 @@
+name: Yuhua homepage inquiry flow audit
+
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'app.js'
+      - 'assets/data.js'
+      - 'assets/specs.js'
+      - 'assets/customer-tools.js'
+      - 'assets/customer-tools.css'
+      - 'tools/audit_homepage_inquiry_flow.py'
+      - '.github/workflows/yuhua-homepage-inquiry-flow.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'app.js'
+      - 'assets/data.js'
+      - 'assets/specs.js'
+      - 'assets/customer-tools.js'
+      - 'assets/customer-tools.css'
+      - 'tools/audit_homepage_inquiry_flow.py'
+      - '.github/workflows/yuhua-homepage-inquiry-flow.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inquiry-flow:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install browser audit dependency
+        run: python -m pip install --disable-pip-version-check --quiet selenium==4.35.0
+
+      - name: Run desktop and mobile inquiry flow audit
+        run: |
+          python tools/audit_homepage_inquiry_flow.py \
+            --json homepage_inquiry_flow_audit.json \
+            --markdown homepage_inquiry_flow_audit.md
+
+      - name: Verify report contract
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path('homepage_inquiry_flow_audit.json').read_text(encoding='utf-8'))
+          assert report['ok']
+          assert report['desktop']['runtime_mailto']['unique_recipients'] == ['smxpxb008@gmail.com']
+          assert report['desktop']['form_flow']['copy']['recipient'] == 'smxpxb008@gmail.com'
+          assert report['desktop']['form_flow']['clear_reset_all_fields']
+          assert report['mobile']['form_flow']['clear_reset_all_fields']
+          assert report['mobile']['touch_targets']['min_target_px'] == 44
+          assert len(report['mobile']['touch_targets']['actions']) == 3
+          assert report['static_wiring']['open_mail_uses_shared_mailto_helper']
+          assert report['static_wiring']['email_literals'] == ['smxpxb008@gmail.com']
+          assert '公开收件人只能是 smxpxb008@gmail.com' in report['policy']
+          print('Inquiry flow report contract: OK')
+          PY
+
+      - name: Upload inquiry flow audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-homepage-inquiry-flow-audit
+          path: |
+            homepage_inquiry_flow_audit.json
+            homepage_inquiry_flow_audit.md
+          retention-days: 90
