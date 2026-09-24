@@ -126,6 +126,18 @@ def fill_inquiry(driver: webdriver.Chrome) -> None:
         element.send_keys(TEST_VALUES[key])
 
 
+def click_visible(driver: webdriver.Chrome, element: Any) -> None:
+    """Scroll a far-down control into view before using the real Selenium click."""
+    driver.execute_script("arguments[0].scrollIntoView({block:'center', inline:'nearest'});", element)
+    WebDriverWait(driver, 10).until(
+        lambda d: d.execute_script(
+            "const r=arguments[0].getBoundingClientRect(); return r.top >= 0 && r.bottom <= innerHeight;",
+            element,
+        )
+    )
+    element.click()
+
+
 def assert_copy_content(text: str) -> dict[str, Any]:
     expected_subject = f"予华仪器选型/询价 - {TEST_VALUES['model']}"
     required_lines = [
@@ -200,13 +212,13 @@ def verify_form_flow(driver: webdriver.Chrome) -> dict[str, Any]:
     if copy_button.get_attribute("aria-describedby") != "selectionCopyStatus":
         raise AssertionError("Copy inquiry button must describe its live status region")
 
-    copy_button.click()
+    click_visible(driver, copy_button)
     wait.until(lambda d: bool(d.execute_script("return window.__yuhuaCapturedCopy;")))
     captured = driver.execute_script("return window.__yuhuaCapturedCopy;")
     copy_summary = assert_copy_content(captured)
     wait.until(lambda d: "完整询价内容已复制" in d.find_element(By.ID, "selectionCopyStatus").text)
 
-    clear_button.click()
+    click_visible(driver, clear_button)
     wait.until(lambda d: d.execute_script("return document.activeElement && document.activeElement.id === 'inqCategory';"))
     values = driver.execute_script(
         """
