@@ -15,7 +15,6 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 
 VIEWPORTS = {"desktop": (1280, 900), "mobile": (390, 844)}
@@ -76,9 +75,13 @@ def search(d: webdriver.Chrome, input_id: str, query: str) -> None:
     el = d.find_element(By.ID, input_id)
     scroll_visible(d, el)
     el.click()
-    el.send_keys(Keys.CONTROL, "a")
-    el.send_keys(Keys.BACKSPACE)
-    el.send_keys(query)
+    d.execute_script(
+        "arguments[0].value=arguments[1]; arguments[0].dispatchEvent(new Event('input',{bubbles:true}));",
+        el,
+        query,
+    )
+    if el.get_attribute("value") != query:
+        raise AssertionError(f"Search input #{input_id} did not accept query {query!r}")
 
 
 def wait_count(d: webdriver.Chrome, count_id: str, test: Callable[[int], bool]) -> int:
