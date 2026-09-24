@@ -7,6 +7,7 @@ import argparse
 import json
 import re
 import shutil
+import time
 from pathlib import Path
 from typing import Any, Callable
 from urllib.parse import unquote, urlparse
@@ -143,11 +144,20 @@ def optional_slash_product(d: webdriver.Chrome, query: str) -> dict[str, Any] | 
 
 def no_result(d: webdriver.Chrome, input_id: str, count_id: str, body: str, empty_id: str) -> dict[str, Any]:
     search(d, input_id, NO_RESULT)
-    count = wait_count(d, count_id, lambda n: n == 0)
-    WebDriverWait(d, 10).until(lambda x: x.find_element(By.ID, empty_id).is_displayed())
-    if d.find_elements(By.CSS_SELECTOR, f"{body} tr"):
-        raise AssertionError(f"No-result query still has rows in {body}")
-    return {"query": NO_RESULT, "count": count, "message": d.find_element(By.ID, empty_id).text.strip()}
+    time.sleep(0.6)
+    value = d.find_element(By.ID, input_id).get_attribute("value")
+    count_text = d.find_element(By.ID, count_id).text.strip()
+    found = models(d, body)
+    empty = d.find_element(By.ID, empty_id)
+    try:
+        count = int(count_text)
+    except ValueError as exc:
+        raise AssertionError(f"No-result count is not numeric: {count_text!r}") from exc
+    if value != NO_RESULT or count != 0 or found or not empty.is_displayed():
+        raise AssertionError(
+            f"No-result state mismatch: input={value!r}, count={count}, rows={found[:5]!r}, empty_displayed={empty.is_displayed()}"
+        )
+    return {"query": NO_RESULT, "count": count, "message": empty.text.strip()}
 
 
 def repo_file(root: Path, href: str) -> Path:
