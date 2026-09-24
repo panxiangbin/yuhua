@@ -1,0 +1,151 @@
+name: Yuhua legacy core model evidence trace
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - products.json
+      - assets/data.js
+      - specs_index.json
+      - "model/*.html"
+      - .github/yuhua-core-model-source-evidence-baseline.json
+      - tools/audit_legacy_core_model_evidence_trace.py
+      - .github/workflows/yuhua-legacy-core-model-evidence-trace.yml
+  pull_request:
+    branches: [main]
+    paths:
+      - products.json
+      - assets/data.js
+      - specs_index.json
+      - "model/*.html"
+      - .github/yuhua-core-model-source-evidence-baseline.json
+      - tools/audit_legacy_core_model_evidence_trace.py
+      - .github/workflows/yuhua-legacy-core-model-evidence-trace.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Compile audit
+        run: python -m py_compile tools/audit_legacy_core_model_evidence_trace.py
+
+      - name: Verify literal model matching contract
+        run: |
+          python - <<'PY'
+          import importlib.util
+          from pathlib import Path
+
+          path = Path("tools/audit_legacy_core_model_evidence_trace.py")
+          spec = importlib.util.spec_from_file_location("legacy_trace", path)
+          module = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(module)
+
+          key = module.literal_model_key
+          assert key(" DLSB-5/30 ") == key("dlsb-5/30")
+          assert key("DLSB-5/30") != key("DLSB-5-30")
+          assert key("SHZ-D") != key("SHZ-D(III)")
+          assert key("TGYF-C-0.5L") != key("TGYF-C-05L")
+          assert key("AB C") != key("ABC")
+          PY
+
+      - name: Run read-only provenance trace
+        shell: bash
+        run: |
+          set +e
+          python tools/audit_legacy_core_model_evidence_trace.py \
+            --json /tmp/legacy-core-model-evidence-trace.json \
+            --markdown /tmp/legacy-core-model-evidence-trace.md
+          status=$?
+          echo "AUDIT_EXIT_CODE=$status" >> "$GITHUB_ENV"
+          exit 0
+
+      - name: Verify report safety contract
+        run: |
+          python - <<'PY'
+          import json
+
+          report = json.load(open("/tmp/legacy-core-model-evidence-trace.json", encoding="utf-8"))
+          policy = report["policy"]
+          summary = report["summary"]
+          pages = report["pages"]
+
+          assert policy["read_only"] is True
+          assert policy["auto_fix_count"] == 0
+          assert policy["factual_rewrite_authorized"] is False
+          assert policy["page_creation_authorized"] is False
+          assert policy["baseline_entries_are_factual_approval"] is False
+          assert policy["runtime_exact_is_source_evidence"] is False
+          assert policy["spec_exact_is_source_evidence"] is False
+          assert policy["similar_or_normalized_models_are_matched"] is False
+          assert summary["legacy_review_pages"] == len(pages)
+          assert summary["legacy_review_pages"] >= 1
+          assert summary["blocking_issue_count"] == len(report["blocking_issues"])
+          assert summary["source_exact_pages"] == sum(row["source_exact_count"] > 0 for row in pages)
+          assert summary["runtime_exact_pages"] == sum(row["runtime_exact_count"] > 0 for row in pages)
+          assert summary["spec_exact_pages"] == sum(row["spec_exact_count"] > 0 for row in pages)
+
+          allowed = {
+              "source_exact_present_review_baseline_staleness",
+              "runtime_and_spec_exact_review_only",
+              "runtime_only_exact_review_only",
+              "spec_only_exact_review_only",
+              "no_exact_cross_source_evidence_review_only",
+              "structural_blocker",
+          }
+          for row in pages:
+              assert row["core_page"].startswith("model/")
+              assert row["evidence_class"] in allowed
+              assert row["source_exact_count"] >= 0
+              assert row["runtime_exact_count"] >= 0
+              assert row["spec_exact_count"] >= 0
+          PY
+
+      - name: Verify audit did not modify protected facts or public pages
+        run: |
+          if [ -n "$(git status --porcelain -- products.json assets/data.js specs_index.json model .github/yuhua-core-model-source-evidence-baseline.json)" ]; then
+            echo "Audit modified protected product/spec/runtime/core-page evidence files"
+            git status --porcelain -- products.json assets/data.js specs_index.json model .github/yuhua-core-model-source-evidence-baseline.json
+            exit 1
+          fi
+
+      - name: Publish concise provenance summary
+        run: |
+          cat /tmp/legacy-core-model-evidence-trace.md >> "$GITHUB_STEP_SUMMARY"
+          python - <<'PY'
+          import json
+          report = json.load(open("/tmp/legacy-core-model-evidence-trace.json", encoding="utf-8"))
+          s = report["summary"]
+          message = (
+              f"legacy_pages={s['legacy_review_pages']}; "
+              f"source_exact={s['source_exact_pages']}; "
+              f"runtime_exact={s['runtime_exact_pages']}; "
+              f"spec_exact={s['spec_exact_pages']}; "
+              f"page_model_mismatches={s['page_model_mismatch_count']}; "
+              f"blockers={s['blocking_issue_count']}"
+          )
+          print(f"::notice title=Legacy core-model evidence trace::{message}")
+          PY
+
+      - name: Upload provenance trace
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-legacy-core-model-evidence-trace
+          path: |
+            /tmp/legacy-core-model-evidence-trace.json
+            /tmp/legacy-core-model-evidence-trace.md
+          retention-days: 90
+
+      - name: Enforce structural trace integrity
+        shell: bash
+        run: |
+          if [ "${AUDIT_EXIT_CODE:-1}" -ne 0 ]; then
+            echo "Legacy core-model evidence trace found a structural blocker. Review the uploaded report."
+            exit "${AUDIT_EXIT_CODE:-1}"
+          fi
