@@ -1,0 +1,95 @@
+name: Yuhua homepage search flow audit
+
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'app.js'
+      - 'assets/data.js'
+      - 'assets/specs.js'
+      - 'assets/customer-tools.js'
+      - 'assets/customer-tools.css'
+      - 'specs/**'
+      - 'downloads/specs/**'
+      - 'tools/audit_homepage_search_flow.py'
+      - '.github/workflows/yuhua-homepage-search-flow.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'app.js'
+      - 'assets/data.js'
+      - 'assets/specs.js'
+      - 'assets/customer-tools.js'
+      - 'assets/customer-tools.css'
+      - 'specs/**'
+      - 'downloads/specs/**'
+      - 'tools/audit_homepage_search_flow.py'
+      - '.github/workflows/yuhua-homepage-search-flow.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  search-flow:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install browser audit dependency
+        run: python -m pip install --disable-pip-version-check --quiet selenium==4.35.0
+
+      - name: Compile audit
+        run: python -m py_compile tools/audit_homepage_search_flow.py
+
+      - name: Run desktop and mobile search flow audit
+        run: |
+          python tools/audit_homepage_search_flow.py \
+            --json homepage_search_flow_audit.json \
+            --markdown homepage_search_flow_audit.md
+
+      - name: Verify report contract
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path('homepage_search_flow_audit.json').read_text(encoding='utf-8'))
+          assert report['ok']
+          for viewport in ('desktop', 'mobile'):
+              data = report[viewport]
+              assert data['product_exact']['count'] > 0
+              assert data['product_no_result']['count'] == 0
+              assert data['spec_exact']['count'] > 0
+              assert data['spec_no_result']['count'] == 0
+              assert data['spec_exact']['online_click']['opened']
+              assert data['spec_exact']['download_click']['clicked']
+              assert data['spec_exact']['online_target'].startswith('specs/')
+              assert data['spec_exact']['download_target'].startswith('downloads/specs/')
+              sep = data['spec_separator_variant']
+              assert sep['literal'] == 'DLSB-5-30'
+              assert sep['variant'] == 'DLSB-5/30'
+              assert sep['normalized_token'] == 'dlsb530'
+          assert report['mobile']['mobile_search_controls']['min_touch_target_px'] == 44
+          assert report['static_contract']['product_search_status_wiring']
+          assert report['static_contract']['spec_search_status_wiring']
+          assert report['static_contract']['shared_ranking_helper']
+          assert '不修改、猜测或覆盖产品型号' in report['policy']
+          print('Search flow report contract: OK')
+          PY
+
+      - name: Upload search flow audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-homepage-search-flow-audit
+          path: |
+            homepage_search_flow_audit.json
+            homepage_search_flow_audit.md
+          retention-days: 90
