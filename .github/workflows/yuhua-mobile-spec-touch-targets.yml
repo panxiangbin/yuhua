@@ -1,0 +1,77 @@
+name: Yuhua mobile spec touch-target audit
+
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'app.js'
+      - 'assets/specs.js'
+      - 'assets/customer-tools.css'
+      - 'tools/audit_mobile_spec_touch_targets.py'
+      - '.github/workflows/yuhua-mobile-spec-touch-targets.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'app.js'
+      - 'assets/specs.js'
+      - 'assets/customer-tools.css'
+      - 'tools/audit_mobile_spec_touch_targets.py'
+      - '.github/workflows/yuhua-mobile-spec-touch-targets.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  touch-targets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install browser audit dependency
+        run: python -m pip install --disable-pip-version-check --quiet selenium==4.35.0
+
+      - name: Compile audit
+        run: python -m py_compile tools/audit_mobile_spec_touch_targets.py
+
+      - name: Run mobile specification touch-target audit
+        run: |
+          python tools/audit_mobile_spec_touch_targets.py \
+            --json mobile_spec_touch_targets_audit.json \
+            --markdown mobile_spec_touch_targets_audit.md
+
+      - name: Verify report contract
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path('mobile_spec_touch_targets_audit.json').read_text(encoding='utf-8'))
+          assert report['ok']
+          assert report['emulation']['pointer_coarse']
+          assert report['emulation']['max_touch_points'] >= 1
+          assert report['min_target_px'] == 44
+          for name in ('online', 'download'):
+              size = report['actions'][name]['size_px']
+              assert size['width'] >= 44, (name, size)
+              assert size['height'] >= 44, (name, size)
+              assert report['actions'][name]['target']
+          assert '不修改产品事实' in report['policy']
+          print('Mobile specification touch-target report contract: OK')
+          PY
+
+      - name: Upload mobile specification touch-target audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-mobile-spec-touch-target-audit
+          path: |
+            mobile_spec_touch_targets_audit.json
+            mobile_spec_touch_targets_audit.md
+          retention-days: 90
