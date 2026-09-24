@@ -95,49 +95,64 @@ def hit_info(d: webdriver.Chrome, el: Any) -> dict[str, Any]:
     )
 
 
-def make_clickable(d: webdriver.Chrome, el: Any) -> dict[str, Any]:
-    """Expose an element as a user would, without scrollIntoView side effects.
+def instant_scroll_by(d: webdriver.Chrome, dy: float) -> None:
+    d.execute_script(
+        """
+        const de=document.documentElement, body=document.body;
+        const oldDe=de.style.scrollBehavior, oldBody=body.style.scrollBehavior;
+        de.style.scrollBehavior='auto'; body.style.scrollBehavior='auto';
+        window.scrollBy(0, arguments[0]);
+        de.style.scrollBehavior=oldDe; body.style.scrollBehavior=oldBody;
+        """,
+        float(dy),
+    )
 
-    The specs table uses sticky headers and a horizontally scrollable wrapper on
-    mobile. scrollIntoView() can scroll both ancestors and pin a one-row result
-    beneath its sticky <th>. We instead reveal the target incrementally, and if
-    a sticky header covers it at the document bottom, scroll upward until the
-    normal header/row layout is restored. Selenium still performs the click.
+
+def make_clickable(d: webdriver.Chrome, el: Any) -> dict[str, Any]:
+    """Expose an element without scrollIntoView side effects.
+
+    The specs table has sticky headers and a horizontal scroller. Native
+    scrollIntoView can move overflow ancestors and park a one-row filtered
+    result underneath its sticky <th>. This helper uses instant document-only
+    scrolling plus real horizontal wrapper scrolling; Selenium still performs
+    the actual pointer click.
     """
-    for _ in range(8):
+    for _ in range(10):
         info = hit_info(d, el)
         if info["visible"] and info["hittable"]:
             return info
 
-        # Horizontal reveal inside the real mobile table scroller.
-        if info["left"] < 8 or info["right"] > d.execute_script("return innerWidth-8"):
+        inner_w = float(d.execute_script("return innerWidth"))
+        if info["left"] < 8 or info["right"] > inner_w - 8:
             d.execute_script(
                 """
                 const el=arguments[0], wrap=el.closest('.table-wrap');
                 if(wrap){
+                  const old=wrap.style.scrollBehavior; wrap.style.scrollBehavior='auto';
                   const r=el.getBoundingClientRect();
                   if(r.right>innerWidth-8) wrap.scrollLeft += r.right-(innerWidth-24);
                   if(r.left<8) wrap.scrollLeft += r.left-24;
+                  wrap.style.scrollBehavior=old;
                 }
                 """,
                 el,
             )
+            time.sleep(0.03)
             continue
 
         inner_h = float(d.execute_script("return innerHeight"))
         if info["bottom"] > inner_h - 16:
-            d.execute_script("window.scrollBy(0, arguments[0]);", info["bottom"] - (inner_h - 32))
+            instant_scroll_by(d, info["bottom"] - (inner_h - 32))
         elif info["top"] < 110:
-            d.execute_script("window.scrollBy(0, arguments[0]);", info["top"] - 150)
-        elif str(info["blocker"]).startswith("TH.") or info["blocker"] == "TH.":
-            # Near page bottom a sticky header can be constrained by the short
-            # filtered table and overlap its only row. A small upward scroll is
-            # the natural user action and restores the row below the header.
-            d.execute_script("window.scrollBy(0, -220);")
+            instant_scroll_by(d, info["top"] - 150)
+        elif str(info["blocker"]).startswith("TH"):
+            # Near document bottom, a sticky header may be constrained by a
+            # short filtered table and cover its only row. Moving upward is
+            # the same recovery available to a real user.
+            instant_scroll_by(d, -240)
         else:
-            # Last-resort document-only nudge. Do not alter overflow ancestors.
-            d.execute_script("window.scrollBy(0, -120);")
-        time.sleep(0.05)
+            instant_scroll_by(d, -120)
+        time.sleep(0.03)
 
     raise AssertionError(f"Element could not be exposed for a real click: {hit_info(d, el)}")
 
@@ -240,8 +255,6 @@ def open_online(d: webdriver.Chrome, link: Any, expected: Path) -> dict[str, Any
 
 
 def click_download_probe(d: webdriver.Chrome, link: Any) -> dict[str, Any]:
-    # Keep the real Selenium click, but prevent file navigation/download after
-    # proving the target exists so the audit remains read-only and deterministic.
     d.execute_script(
         """window.__dl=null;arguments[0].addEventListener('click',e=>{e.preventDefault();window.__dl={href:e.currentTarget.href,download:e.currentTarget.getAttribute('download')||''};},{once:true,capture:true});""",
         link,
