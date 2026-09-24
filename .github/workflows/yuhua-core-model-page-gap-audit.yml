@@ -1,0 +1,120 @@
+name: Yuhua core model page gap audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - products.json
+      - specs_index.json
+      - "model/*.html"
+      - tools/audit_core_model_page_gaps.py
+      - .github/workflows/yuhua-core-model-page-gap-audit.yml
+  pull_request:
+    paths:
+      - products.json
+      - specs_index.json
+      - "model/*.html"
+      - tools/audit_core_model_page_gaps.py
+      - .github/workflows/yuhua-core-model-page-gap-audit.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Compile audit
+        run: python -m py_compile tools/audit_core_model_page_gaps.py
+
+      - name: Verify literal model matching contract
+        run: |
+          python - <<'PY'
+          import importlib.util
+          from pathlib import Path
+
+          path = Path("tools/audit_core_model_page_gaps.py")
+          spec = importlib.util.spec_from_file_location("core_gap_audit", path)
+          module = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(module)
+
+          key = module.literal_model_key
+          assert key(" AB C ") == key("ab c")
+          assert key("AB C") != key("ABC")
+          assert key("DLSB-5/30") != key("DLSB-5-30")
+          assert key("GDSZ-10/-20+200") != key("GDSZ-10-20+200")
+          PY
+
+      - name: Run read-only gap audit
+        run: |
+          python tools/audit_core_model_page_gaps.py \
+            --json /tmp/core-model-page-gaps.json \
+            --markdown /tmp/core-model-page-gaps.md
+
+      - name: Verify report safety contract
+        run: |
+          python - <<'PY'
+          import json
+
+          path = "/tmp/core-model-page-gaps.json"
+          report = json.load(open(path, encoding="utf-8"))
+          policy = report["policy"]
+          summary = report["summary"]
+          candidates = report["candidates"]
+
+          assert policy["read_only"] is True
+          assert policy["auto_fix_count"] == 0
+          assert policy["page_creation_authorized"] is False
+          assert policy["runtime_only_products_included"] is False
+          assert summary["gap_candidate_models"] == len(candidates)
+          assert summary["existing_core_pages_with_model"] >= 1
+
+          for row in candidates:
+              assert row["existing_core_page"] is False
+              assert row["product_record_count"] >= 1
+              assert row["spec_record_count"] >= 1
+              assert row["model"].strip()
+              assert row["literal_key"]
+
+          strongest = sum(row["evidence_rank"] == 0 for row in candidates)
+          assert summary["strongest_unique_product_unique_spec_candidates"] == strongest
+          PY
+
+      - name: Verify audit did not modify protected facts or pages
+        run: |
+          if [ -n "$(git status --porcelain -- products.json specs_index.json model)" ]; then
+            echo "Audit modified protected product/specification/core-page files"
+            git status --porcelain -- products.json specs_index.json model
+            exit 1
+          fi
+
+      - name: Publish concise evidence summary
+        run: |
+          cat /tmp/core-model-page-gaps.md >> "$GITHUB_STEP_SUMMARY"
+          python - <<'PY'
+          import json
+          report = json.load(open("/tmp/core-model-page-gaps.json", encoding="utf-8"))
+          summary = report["summary"]
+          top = ", ".join(row["model"] for row in report["top_candidates"][:5]) or "none"
+          message = (
+              f"candidates={summary['gap_candidate_models']}; "
+              f"strongest={summary['strongest_unique_product_unique_spec_candidates']}; "
+              f"missing_spec_pages={summary['candidate_missing_spec_page_references']}; "
+              f"missing_spec_downloads={summary['candidate_missing_spec_download_references']}; "
+              f"top={top}"
+          )
+          print(f"::notice title=Core model page gap summary::{message}")
+          PY
+
+      - name: Upload audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-core-model-page-gap-audit
+          path: |
+            /tmp/core-model-page-gaps.json
+            /tmp/core-model-page-gaps.md
+          retention-days: 90
