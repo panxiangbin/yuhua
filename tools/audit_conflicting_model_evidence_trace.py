@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
-"""Read-only evidence trace for one literal product model with conflicting source rows.
+"""Read-only evidence trace for literal product models with conflicting source rows.
 
 This tool deliberately does not decide which product record is correct. It preserves
-model punctuation/internal whitespace, traces the same literal model across the source
-catalog, customer-facing runtime catalog, specification index, and specification page
-identity labels, then emits a review-only JSON report.
+model punctuation/internal whitespace, traces literal models across the source catalog,
+customer-facing runtime catalog, specification index, and specification page identity
+labels, then emits review-only JSON reports.
+
+By default the historical R-1005 trace remains available. ``--all-conflicts`` discovers
+every literal source-model group whose duplicate rows contain multiple distinct
+non-empty field values and traces the whole review queue in one report.
 
 Specification text is used only for document/model identity. It is never promoted to
 product technical facts by this audit.
@@ -16,6 +20,7 @@ import argparse
 import html
 import json
 import re
+from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
@@ -85,6 +90,31 @@ def conflicting_fields(rows: list[dict[str, Any]]) -> dict[str, list[str]]:
         if len(values) > 1:
             result[field] = values
     return result
+
+
+def discover_conflicting_models(products: list[dict[str, Any]]) -> list[str]:
+    """Return one source spelling for each literal duplicate group with real conflicts.
+
+    Discovery uses the same literal identity rule as ``audit``: only outer whitespace
+    and case are ignored. Internal whitespace and punctuation are never normalized.
+    """
+    grouped: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    display: dict[str, str] = {}
+
+    for row in products:
+        model = clean_text(row.get("型号"))
+        key = literal_key(model)
+        if not key:
+            continue
+        grouped[key].append(row)
+        display.setdefault(key, model)
+
+    models = [
+        display[key]
+        for key, rows in grouped.items()
+        if len(rows) > 1 and conflicting_fields(rows)
+    ]
+    return sorted(models, key=str.casefold)
 
 
 def load_runtime_products(path: Path) -> list[dict[str, Any]]:
@@ -173,14 +203,31 @@ def spec_page_identity(root: Path, item: dict[str, Any], target_model: str) -> d
     return result
 
 
-def audit(root: Path, target_model: str) -> dict[str, Any]:
+def load_sources(root: Path) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
+    products = json.loads((root / "products.json").read_text(encoding="utf-8"))
+    runtime_products = load_runtime_products(root / "assets" / "data.js")
+    specs = json.loads((root / "specs_index.json").read_text(encoding="utf-8"))
+    if not isinstance(products, list) or not all(isinstance(row, dict) for row in products):
+        raise ValueError("products.json must contain a JSON array of objects")
+    if not isinstance(specs, list) or not all(isinstance(row, dict) for row in specs):
+        raise ValueError("specs_index.json must contain a JSON array of objects")
+    return products, runtime_products, specs
+
+
+def audit(
+    root: Path,
+    target_model: str,
+    *,
+    products: list[dict[str, Any]] | None = None,
+    runtime_products: list[dict[str, Any]] | None = None,
+    specs: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
     target_key = literal_key(target_model)
     if not target_key:
         raise ValueError("target model must not be empty")
 
-    products = json.loads((root / "products.json").read_text(encoding="utf-8"))
-    runtime_products = load_runtime_products(root / "assets" / "data.js")
-    specs = json.loads((root / "specs_index.json").read_text(encoding="utf-8"))
+    if products is None or runtime_products is None or specs is None:
+        products, runtime_products, specs = load_sources(root)
 
     source_exact = [
         (index, row)
@@ -272,6 +319,62 @@ def audit(root: Path, target_model: str) -> dict[str, Any]:
     }
 
 
+def audit_all_conflicts(root: Path) -> dict[str, Any]:
+    """Trace every currently conflicting literal duplicate source-model group."""
+    products, runtime_products, specs = load_sources(root)
+    target_models = discover_conflicting_models(products)
+    model_reports = [
+        audit(
+            root,
+            model,
+            products=products,
+            runtime_products=runtime_products,
+            specs=specs,
+        )
+        for model in target_models
+    ]
+
+    spec_page_read_error_count = sum(
+        report["summary"]["spec_page_read_error_count"] for report in model_reports
+    )
+    models_with_related_specs = sum(
+        1 for report in model_reports if report["summary"]["related_spec_page_count"] > 0
+    )
+    runtime_trace_gap_count = sum(
+        1
+        for report in model_reports
+        if report["summary"]["runtime_exact_row_count"]
+        != report["summary"]["runtime_rows_with_exact_source_match"]
+    )
+
+    return {
+        "policy": {
+            "selection_scope": "all literal duplicate source models with multiple distinct non-empty values in at least one non-model field",
+            "literal_model_identity": "trim outer whitespace + case-insensitive only; preserve internal whitespace and punctuation",
+            "trace_scope": "source/runtime/spec identity evidence only; no evidence source is promoted into technical truth",
+            "conflict_resolution": "review-only; no source row is preferred, merged, deleted, or overwritten",
+            "automatic_fix_authorized": False,
+        },
+        "summary": {
+            "source_product_count": len(products),
+            "conflicting_model_count": len(target_models),
+            "traced_model_count": len(model_reports),
+            "models_with_related_spec_pages": models_with_related_specs,
+            "models_without_related_spec_pages": len(model_reports) - models_with_related_specs,
+            "runtime_trace_gap_model_count": runtime_trace_gap_count,
+            "spec_page_read_error_count": spec_page_read_error_count,
+            "automatic_fix_authorized": False,
+        },
+        "target_models": target_models,
+        "models": model_reports,
+        "review_notes": [
+            "The batch is discovered from current source conflicts each run; no model list is hard-coded.",
+            "A model remains unresolved even when runtime or specification identity evidence exists.",
+            "This batch report is an audit queue only and never authorizes automatic product-data changes.",
+        ],
+    }
+
+
 def self_test() -> None:
     assert literal_key(" R-1005 ") == literal_key("r-1005")
     assert literal_key("R-1005") != literal_key("R/1005")
@@ -284,6 +387,18 @@ def self_test() -> None:
     ]
     conflicts = conflicting_fields(sample_rows)
     assert conflicts == {"容量": ["3L", "5L"], "材质": ["不锈钢", "玻璃"]}
+
+    discovered = discover_conflicting_models(
+        [
+            {"型号": "A-1", "类别": "X", "材质": "玻璃"},
+            {"型号": "a-1", "类别": "X", "材质": "不锈钢"},
+            {"型号": "B-1", "类别": "X", "材质": ""},
+            {"型号": "B-1", "类别": "X", "材质": "不锈钢"},
+            {"型号": "AB C", "类别": "X"},
+            {"型号": "ABC", "类别": "Y"},
+        ]
+    )
+    assert discovered == ["A-1"]
 
     marker = "window.PRODUCTS="
     payload = marker + '[{"型号":"X-1"}];window.PAGE_MAP={};'
@@ -298,7 +413,9 @@ def self_test() -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
-    parser.add_argument("--model", default="R-1005")
+    selection = parser.add_mutually_exclusive_group()
+    selection.add_argument("--model")
+    selection.add_argument("--all-conflicts", action="store_true")
     parser.add_argument("--output", type=Path)
     parser.add_argument("--self-test", action="store_true")
     args = parser.parse_args()
@@ -308,7 +425,8 @@ def main() -> None:
         print("self-test: ok")
         return
 
-    report = audit(args.root.resolve(), args.model)
+    root = args.root.resolve()
+    report = audit_all_conflicts(root) if args.all_conflicts else audit(root, args.model or "R-1005")
     rendered = json.dumps(report, ensure_ascii=False, indent=2) + "\n"
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)
