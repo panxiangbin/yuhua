@@ -9,6 +9,7 @@ on:
       - "model/*.html"
       - "specs/**/*.html"
       - tools/audit_core_model_page_gaps.py
+      - tools/audit_core_model_candidate_spec_identity.py
       - tools/audit_core_model_candidate_fact_sources.py
       - .github/workflows/yuhua-core-model-candidate-fact-sources.yml
   pull_request:
@@ -18,6 +19,7 @@ on:
       - "model/*.html"
       - "specs/**/*.html"
       - tools/audit_core_model_page_gaps.py
+      - tools/audit_core_model_candidate_spec_identity.py
       - tools/audit_core_model_candidate_fact_sources.py
       - .github/workflows/yuhua-core-model-candidate-fact-sources.yml
   workflow_dispatch:
@@ -35,6 +37,7 @@ jobs:
       - name: Compile audits
         run: |
           python -m py_compile tools/audit_core_model_page_gaps.py
+          python -m py_compile tools/audit_core_model_candidate_spec_identity.py
           python -m py_compile tools/audit_core_model_candidate_fact_sources.py
 
       - name: Verify literal model and field-safety contract
@@ -70,6 +73,27 @@ jobs:
           assert "功率" in fields["other_nonempty_source_field_names"]
           assert "容量" in fields["empty_source_field_names"]
           assert "100W" not in str(fields)
+
+          labels = module.document_label_evidence(
+              {"title": "CL-200平板集热式磁力搅拌器"},
+              {
+                  "page_title": "CL-200平板集热式磁力搅拌器 · 予华仪器",
+                  "page_h1": ["CL-200平板集热式磁力搅拌器"],
+              },
+          )
+          assert labels["index_title_exactly_confirmed"] is True
+          assert labels["confirmation_surfaces"] == ["h1"]
+          assert "product name" in labels["interpretation"].lower()
+
+          mismatch = module.document_label_evidence(
+              {"title": "CL-200平板集热式磁力搅拌器"},
+              {
+                  "page_title": "Different document",
+                  "page_h1": ["Different document"],
+              },
+          )
+          assert mismatch["index_title_exactly_confirmed"] is False
+          assert mismatch["confirmation_surfaces"] == []
           PY
 
       - name: Run read-only fact-source readiness audit
@@ -94,16 +118,30 @@ jobs:
           assert policy["technical_values_copied"] is False
           assert policy["technical_values_validated"] is False
           assert policy["spec_body_parameters_promoted_to_product_facts"] is False
+          assert policy["spec_document_labels_in_report"] is True
+          assert policy["spec_document_labels_promoted_to_product_name"] is False
           assert policy["non_identity_values_in_report"] is False
           assert summary["strongest_candidate_count"] == len(rows)
           assert summary["candidate_spec_pages_missing"] == sum(not row["specification"]["page_exists"] for row in rows)
           assert summary["candidates_with_other_indexed_models_in_spec_body"] == sum(bool(row["specification"]["other_indexed_model_mentions"]) for row in rows)
+          assert (
+              summary["candidates_with_spec_index_title_confirmed_by_page_label"]
+              + summary["candidates_without_spec_index_title_confirmation"]
+              == len(rows)
+          )
 
           for row in rows:
               assert row["evidence_class"] == "unique-product_unique-spec"
               assert row["page_creation_authorized"] is False
               assert row["source_fields"]["safe_auto_copy_scope"].startswith("identity fields only")
               assert set(row["source_fields"]["source_identity_fields"]).issubset({"型号", "类别", "产品名称"})
+              labels = row["specification"]["document_label_evidence"]
+              assert "spec_index_title" in labels
+              assert "page_title" in labels
+              assert isinstance(labels["page_h1"], list)
+              assert isinstance(labels["index_title_exactly_confirmed"], bool)
+              assert isinstance(labels["confirmation_surfaces"], list)
+              assert "product name" in labels["interpretation"].lower()
           PY
 
       - name: Verify audit did not modify protected facts or pages
@@ -128,6 +166,7 @@ jobs:
           message = (
               f"candidates={summary['strongest_candidate_count']}; "
               f"missing_name={summary['candidates_missing_source_product_name']}; "
+              f"label_confirmed={summary['candidates_with_spec_index_title_confirmed_by_page_label']}; "
               f"cross_model_specs={summary['candidates_with_other_indexed_models_in_spec_body']}; "
               f"manual_review={summary['candidates_requiring_manual_review']}; "
               f"no_cross_model_sample={', '.join(clean) or 'none'}"
