@@ -63,15 +63,21 @@ def compact(value: str) -> str:
 
 
 def scroll_visible(d: webdriver.Chrome, el: Any, inline: str = "nearest") -> None:
+    # Scroll only the document viewport. Element.scrollIntoView() can also scroll
+    # overflow:hidden ancestors (the result table wrapper), which moves the first
+    # result underneath its sticky <th> even though a real user would only scroll
+    # the page. Keeping ancestor scroll offsets untouched avoids that test-only
+    # click interception while still requiring an actual Selenium pointer click.
     d.execute_script(
         """
+        const r = arguments[0].getBoundingClientRect();
         const old = document.documentElement.style.scrollBehavior;
         document.documentElement.style.scrollBehavior = 'auto';
-        arguments[0].scrollIntoView({block:'center', inline:arguments[1], behavior:'auto'});
+        const top = Math.max(0, window.scrollY + r.top - (window.innerHeight - r.height) / 2);
+        window.scrollTo({top: top, behavior: 'auto'});
         document.documentElement.style.scrollBehavior = old;
         """,
         el,
-        inline,
     )
     WebDriverWait(d, 10).until(
         lambda x: x.execute_script(
