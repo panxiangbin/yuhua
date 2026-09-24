@@ -416,3 +416,10 @@
     justify-content: center;
   }
 }
+
+/* A sticky header can cover the only actionable row after a search collapses
+   a long table near the document bottom. Keep sticky headers for normal long
+   lists, but let short (1-4 row) result sets flow normally and stay clickable. */
+.ptable:has(tbody tr:last-child:nth-child(-n+4)) thead th {
+  position: static !important;
+}
