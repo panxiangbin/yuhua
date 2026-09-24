@@ -63,13 +63,32 @@ def compact(value: str) -> str:
 
 
 def scroll_visible(d: webdriver.Chrome, el: Any, inline: str = "nearest") -> None:
-    d.execute_script("arguments[0].scrollIntoView({block:'center',inline:arguments[1]});", el, inline)
+    d.execute_script(
+        """
+        const old = document.documentElement.style.scrollBehavior;
+        document.documentElement.style.scrollBehavior = 'auto';
+        arguments[0].scrollIntoView({block:'center', inline:arguments[1], behavior:'auto'});
+        document.documentElement.style.scrollBehavior = old;
+        """,
+        el,
+        inline,
+    )
     WebDriverWait(d, 10).until(
         lambda x: x.execute_script(
             "const r=arguments[0].getBoundingClientRect(); return r.top>=0 && r.bottom<=innerHeight && r.left<innerWidth && r.right>0;",
             el,
         )
     )
+
+    def hittable(x: webdriver.Chrome) -> bool:
+        return bool(x.execute_script(
+            "const r=arguments[0].getBoundingClientRect(); const e=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2); return e===arguments[0] || arguments[0].contains(e);",
+            el,
+        ))
+
+    if not hittable(d):
+        d.execute_script("window.scrollBy(0, -120);")
+    WebDriverWait(d, 10).until(hittable)
 
 
 def search(d: webdriver.Chrome, input_id: str, query: str) -> None:
