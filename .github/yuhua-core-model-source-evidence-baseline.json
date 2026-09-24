@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "purpose": "Review-only baseline for standalone model pages that already lack a literal source-model match in products.json. Entries are not factual approval and must not be used to infer or rewrite product data.",
+  "review_only_exceptions": [
+    {
+      "core_page": "model/dlsb-5-30.html",
+      "model": "DLSB-5/30",
+      "reason": "legacy_no_literal_source_product_model"
+    },
+    {
+      "core_page": "model/shz-d.html",
+      "model": "SHZ-D",
+      "reason": "legacy_no_literal_source_product_model"
+    },
+    {
+      "core_page": "model/tgyf-c-0-5l.html",
+      "model": "TGYF-C-0.5L",
+      "reason": "legacy_no_literal_source_product_model"
+    },
+    {
+      "core_page": "model/yre-301.html",
+      "model": "YRE-301",
+      "reason": "legacy_no_literal_source_product_model"
+    }
+  ]
+}
