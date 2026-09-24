@@ -1,0 +1,70 @@
+name: Yuhua conflicting model evidence trace
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'products.json'
+      - 'assets/data.js'
+      - 'specs_index.json'
+      - 'specs/**'
+      - 'tools/audit_conflicting_model_evidence_trace.py'
+      - '.github/workflows/yuhua-conflicting-model-evidence-trace.yml'
+  pull_request:
+    paths:
+      - 'products.json'
+      - 'assets/data.js'
+      - 'specs_index.json'
+      - 'specs/**'
+      - 'tools/audit_conflicting_model_evidence_trace.py'
+      - '.github/workflows/yuhua-conflicting-model-evidence-trace.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  trace-r1005-evidence:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Self-test literal identity and conflict rules
+        run: python tools/audit_conflicting_model_evidence_trace.py --self-test
+
+      - name: Generate review-only R-1005 evidence trace
+        run: |
+          python tools/audit_conflicting_model_evidence_trace.py \
+            --model R-1005 \
+            --output audit-output/r1005-evidence-trace.json
+
+      - name: Validate report safety contract
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path('audit-output/r1005-evidence-trace.json').read_text(encoding='utf-8'))
+          assert report['target_model'] == 'R-1005'
+          assert report['policy']['automatic_fix_authorized'] is False
+          assert report['summary']['automatic_fix_authorized'] is False
+          assert report['summary']['spec_page_read_error_count'] == 0
+          assert isinstance(report['source']['conflicting_nonempty_values'], dict)
+          assert isinstance(report['runtime']['rows'], list)
+          assert report['policy']['specification_evidence_scope'].startswith('document/model identity')
+          print(json.dumps(report['summary'], ensure_ascii=False, indent=2))
+          PY
+
+      - name: Confirm audited data stayed read-only
+        run: git diff --exit-code -- products.json assets/data.js specs_index.json specs
+
+      - name: Upload evidence trace
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-r1005-evidence-trace
+          path: audit-output/r1005-evidence-trace.json
+          retention-days: 90
