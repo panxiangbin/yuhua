@@ -1,0 +1,88 @@
+name: Yuhua conflicting model Git provenance
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'products.json'
+      - 'tools/audit_conflicting_model_git_provenance.py'
+      - 'tools/audit_conflicting_model_evidence_trace.py'
+      - '.github/workflows/yuhua-conflicting-model-git-provenance.yml'
+  pull_request:
+    paths:
+      - 'products.json'
+      - 'tools/audit_conflicting_model_git_provenance.py'
+      - 'tools/audit_conflicting_model_evidence_trace.py'
+      - '.github/workflows/yuhua-conflicting-model-git-provenance.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit-conflict-git-provenance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Self-test provenance and literal identity rules
+        run: python tools/audit_conflicting_model_git_provenance.py --self-test
+
+      - name: Generate review-only Git provenance for current conflicts
+        run: |
+          python tools/audit_conflicting_model_git_provenance.py \
+            --all-conflicts \
+            --output audit-output/conflicting-model-git-provenance.json
+
+      - name: Validate report safety and current YRE-2012 provenance
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(
+              Path('audit-output/conflicting-model-git-provenance.json').read_text(encoding='utf-8')
+          )
+          summary = report['summary']
+          assert report['policy']['automatic_fix_authorized'] is False
+          assert summary['automatic_fix_authorized'] is False
+          assert summary['products_json_history_commit_count'] >= 1
+          assert summary['conflicting_model_count'] == summary['traced_model_count']
+          assert len(report['models']) == summary['traced_model_count']
+
+          by_model = {item['target_model'].strip().casefold(): item for item in report['models']}
+          yre = by_model.get('yre-2012')
+          if yre is not None:
+              assert yre['policy']['automatic_fix_authorized'] is False
+              assert yre['summary']['automatic_fix_authorized'] is False
+              assert yre['current_conflicting_nonempty_values'].get('电源') == ['200V', '220V']
+              assert yre['summary']['first_seen_commit']
+              assert yre['summary']['first_conflict_commit']
+              assert yre['summary']['model_revision_count'] >= 1
+
+          for item in report['models']:
+              assert item['summary']['current_conflict_field_count'] > 0
+              assert item['summary']['first_seen_commit']
+              assert item['summary']['first_conflict_commit']
+              assert item['policy']['git_evidence_scope'].startswith('source-edit provenance')
+
+          print(json.dumps(summary, ensure_ascii=False, indent=2))
+          if yre is not None:
+              print('YRE-2012:', json.dumps(yre['summary'], ensure_ascii=False, indent=2))
+          PY
+
+      - name: Confirm product source stayed read-only
+        run: git diff --exit-code -- products.json
+
+      - name: Upload conflict Git provenance report
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuhua-conflicting-model-git-provenance
+          path: audit-output/conflicting-model-git-provenance.json
+          retention-days: 90
