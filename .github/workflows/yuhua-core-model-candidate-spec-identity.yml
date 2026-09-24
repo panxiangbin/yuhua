@@ -41,9 +41,11 @@ jobs:
         run: |
           python - <<'PY'
           import importlib.util
+          import sys
           from pathlib import Path
 
           path = Path("tools/audit_core_model_candidate_spec_identity.py")
+          sys.path.insert(0, str(path.parent.resolve()))
           spec = importlib.util.spec_from_file_location("candidate_spec_identity", path)
           module = importlib.util.module_from_spec(spec)
           spec.loader.exec_module(module)
