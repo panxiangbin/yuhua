@@ -402,6 +402,16 @@ img { display:block; max-width:100% }
 .to-top.show  { opacity:1; pointer-events:auto }
 .to-top:hover { background:var(--blue-d); transform:translateY(-3px) }
 
+/* Respect the visitor's operating-system motion preference. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior:auto }
+  *,*::before,*::after {
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+  }
+}
+
 /* ── RESPONSIVE ──────────────────────────────────────────── */
 /* Tablet */
 @media (max-width:1024px) {
